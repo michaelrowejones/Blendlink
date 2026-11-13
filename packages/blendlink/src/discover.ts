@@ -32,10 +32,10 @@ export class BlenderUnsupportedVersionError extends Error {
       .join('; ')
     const minimumLabel = formatBlenderVersion(minimum)
     super(
-      `Blendlink requires Blender ${minimumLabel} or newer. ` +
+      `SceneToWeb requires Blender ${minimumLabel} or newer. ` +
         `Found only unsupported Blender installation${installs.length === 1 ? '' : 's'}: ${found}. ` +
         `Install Blender ${minimum[0]}.${minimum[1]}+ from blender.org (not the Microsoft Store), ` +
-        'or point Blendlink at a supported installation with BLENDLINK_BLENDER or blenderPath.',
+        'or point SceneToWeb at a supported installation with BLENDLINK_BLENDER or blenderPath.',
     )
     this.name = 'BlenderUnsupportedVersionError'
   }

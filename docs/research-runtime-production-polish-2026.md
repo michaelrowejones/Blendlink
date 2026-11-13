@@ -21,7 +21,7 @@ Evidence snapshot for this implementation pass:
 
 This pass covers the remaining production-facing polish around pointer input, Web Audio activation, decoder workers under CSP, WebGL failure, deployment bases, and Playwright instrumentation.
 
-The dogfood application currently installs React 19.2.4, Next 16.2.6, Three 0.184.0 (r184), `@react-three/fiber` 9.6.1, `@react-three/drei` 10.7.7, and Playwright 1.60.0. Blendlink currently installs meshoptimizer 1.2.0. The current Next documentation is for 16.2.10, so framework claims below are limited to stable documented configuration behavior rather than patch-specific internals. Local installed source was inspected where behavior depends on Three or meshoptimizer implementation details.
+The dogfood application currently installs React 19.2.4, Next 16.2.6, Three 0.184.0 (r184), `@react-three/fiber` 9.6.1, `@react-three/drei` 10.7.7, and Playwright 1.60.0. SceneToWeb currently installs meshoptimizer 1.2.0. The current Next documentation is for 16.2.10, so framework claims below are limited to stable documented configuration behavior rather than patch-specific internals. Local installed source was inspected where behavior depends on Three or meshoptimizer implementation details.
 
 Primary sources:
 
@@ -40,11 +40,11 @@ Primary sources:
 
 ## Conclusions
 
-1. Blendlink's per-pointer down/up transaction is the implemented abstraction for virtual scene targets. It remains separate from browser DOM `click` targeting because every Three hit shares the same canvas DOM target. Native application controls use native links/buttons and `click`. Unit tests cover transaction edge cases; the production Chromium component lab proves real canvas click, drag suppression, hover, and native keyboard activation, but not touch, pen, or multi-touch.
+1. SceneToWeb's per-pointer down/up transaction is the implemented abstraction for virtual scene targets. It remains separate from browser DOM `click` targeting because every Three hit shares the same canvas DOM target. Native application controls use native links/buttons and `click`. Unit tests cover transaction edge cases; the production Chromium component lab proves real canvas click, drag suppression, hover, and native keyboard activation, but not touch, pen, or multi-touch.
 2. The audio coordinator implements the required activation ordering: call `AudioContext.resume()` synchronously inside the trusted gesture, then start audio only after the context is actually `running`. Readiness follows `AudioContext.state` and `statechange`, is exposed through the installed scene and React presentation helper, and was exercised by a trusted Chromium canvas click. WebKit/mobile autoplay and interruption behavior remain device-matrix work.
-3. Three r184's KTX2 loader uses Blob workers. A normal HTTPS policy that permits only `worker-src 'self'` is not sufficient for that worker mechanism; `blob:` must be explicitly permitted unless Blendlink later supplies a non-Blob strategy. The production fixture proves, with a real response header, that this Blob-worker prerequisite is blocked and classifiable. It deliberately does **not** prove that the fixture's otherwise-ready scene required KTX2 or that an actual KTX2 scene reached Blendlink's recoverable failure UI. Meshopt workers remain optional and can fall back to the main thread.
-4. Three internally attempts context restoration, but Blendlink does not promise transparent in-place recovery. A production Chromium fixture now proves the chosen contract: forced loss becomes a loud application error and retry remounts the application-owned Canvas to a ready scene. Creation failure separately reaches an application-owned fallback. Cross-browser and complete GPU-resource restoration matrices remain future work.
-5. `assetBaseUrl` is the correct explicit boundary. Next `assetPrefix` is not a public-asset base. Vite accepts relative bases (`./` and empty string), while Blendlink intentionally rejects them today. That is a current limitation to document and test, not silently describe as Vite-compatible.
+3. Three r184's KTX2 loader uses Blob workers. A normal HTTPS policy that permits only `worker-src 'self'` is not sufficient for that worker mechanism; `blob:` must be explicitly permitted unless SceneToWeb later supplies a non-Blob strategy. The production fixture proves, with a real response header, that this Blob-worker prerequisite is blocked and classifiable. It deliberately does **not** prove that the fixture's otherwise-ready scene required KTX2 or that an actual KTX2 scene reached SceneToWeb's recoverable failure UI. Meshopt workers remain optional and can fall back to the main thread.
+4. Three internally attempts context restoration, but SceneToWeb does not promise transparent in-place recovery. A production Chromium fixture now proves the chosen contract: forced loss becomes a loud application error and retry remounts the application-owned Canvas to a ready scene. Creation failure separately reaches an application-owned fallback. Cross-browser and complete GPU-resource restoration matrices remain future work.
+5. `assetBaseUrl` is the correct explicit boundary. Next `assetPrefix` is not a public-asset base. Vite accepts relative bases (`./` and empty string), while SceneToWeb intentionally rejects them today. That is a current limitation to document and test, not silently describe as Vite-compatible.
 6. `createBrowserSmokeEvidence()` now provides a stable package-owned classifier, while dogfood keeps Playwright instrumentation, route, Canvas, thresholds, and assertions application-owned. One production Chromium run passed the component lab plus base-path, Blob-worker CSP prerequisite, WebGL creation/loss, zero-size/empty-render, CORS, and retry fixtures. A reusable Playwright fixture is still optional future leverage rather than a prerequisite for the classifier.
 
 ## Current claims: implemented, verified, and future
@@ -52,11 +52,11 @@ Primary sources:
 | Area | Implemented in current worktree | Evidence already present | Not yet proven / future |
 | --- | --- | --- | --- |
 | Pointer activation | `threeInteractions.ts` tracks gestures by `pointerId`, captures when available, requires the same virtual target at down and up, suppresses movement beyond a threshold, and clears on `pointercancel` and `lostpointercapture`. | Unit tests cover activation, movement, cancellation, and lost capture. Production Chromium verifies projected canvas click, drag suppression, hover, semantic controls, and native keyboard activation. | Touch scrolling, pen, multi-touch, mobile capture loss, and WebKit/Firefox. |
-| Touch ownership | Blendlink does not mutate the application canvas's `touch-action`. The dogfood overlay uses `touchAction: 'pan-y'`. | Code inspection only. | Mobile browser proof that vertical page scrolling remains owned by the site while scene taps work. |
+| Touch ownership | SceneToWeb does not mutate the application canvas's `touch-action`. The dogfood overlay uses `touchAction: 'pan-y'`. | Code inspection only. | Mobile browser proof that vertical page scrolling remains owned by the site while scene taps work. |
 | Accessible activation | Component installation exposes application-renderable immutable control records; DOM rendering remains application-owned. | Unit interaction tests plus production Chromium focus/Enter activation and an axe WCAG A/AA scan. | Screen-reader/manual assistive-technology and cross-browser evidence. |
 | Web Audio | `threeAudio.ts` exposes `unavailable`, `blocked`, `ready`, and `failed`; calls `resume()` synchronously; observes `statechange`; and never closes the shared Three context. The presentation store subscribes without owning the enable-sound UI. | Unit tests simulate suspended/running ownership and state changes. Production Chromium verifies a drag does not play audio, a trusted canvas click does, and readiness is application-visible. | Keyboard audio unlock, WebKit/mobile autoplay denial, interruption, tab/background transitions, output-device failures, and retry UX. |
 | Renderer presentation | R3F reports attempt-scoped `loading`, `bootstrap`, `full`, or `failed` quality separately from installation, then marks `presented` after its completed frame callback. The React/store adapter merges these facts without erasing newer evidence. | Store/unit contracts plus production Chromium assertions for a presented frame and non-pending full quality. | Pixel fidelity, display-compositor proof, WebXR, hidden-tab behavior, and browser/device matrix. |
-| Worker CSP | Three KTX2 and meshoptimizer worker implementations are known from installed source. Blendlink's Meshopt setup falls back to the main thread if worker setup throws. | Unit/source inspection plus an actual restrictive response-header Chromium fixture proving a Blob worker is blocked and classified. | A required-KTX2 scene failure/recovery fixture, the matching `blob:` success fixture, and Meshopt fallback browser evidence. |
+| Worker CSP | Three KTX2 and meshoptimizer worker implementations are known from installed source. SceneToWeb's Meshopt setup falls back to the main thread if worker setup throws. | Unit/source inspection plus an actual restrictive response-header Chromium fixture proving a Blob worker is blocked and classified. | A required-KTX2 scene failure/recovery fixture, the matching `blob:` success fixture, and Meshopt fallback browser evidence. |
 | WebGL failure | Preview and R3F surface renderer/context failures; the application owns retry/remount. | Unit/source inspection plus production Chromium creation-failure fallback and forced-loss -> error -> Canvas-remount -> ready. | WebKit/Firefox/device coverage and any future transparent in-place restoration claim. |
 | Asset bases | Package-owned loaders can rebase the complete compiler-declared graph and Basis prefix through `assetBaseUrl`; app-owned loaders are required to supply their own policy. | Unit tests cover root and absolute CDN bases and reject relative bases. Current dogfood verifies root deployment. | Next sub-path, CDN, cross-origin CORS, and Vite relative-base behavior in packed production consumers. |
 | Browser smoke | `createBrowserSmokeEvidence()` classifies declared-asset request/HTTP failure, console/page errors, worker CSP, decoder/CORS failure, zero-size Canvas, WebGL unavailable/lost, visibly empty output, and unexpected service-worker control. Dogfood supplies the application-owned instrumentation and thresholds. | Classifier unit tests plus one production Next/Chromium run: 8/8 component and failure fixtures passed. | Reusable fixture, service-worker projects, deployed CDN/origin, actual required-KTX2 CSP failure/success, and Firefox/WebKit/device matrices. |
@@ -69,7 +69,7 @@ Pointer Events Level 3 says that a user agent suppressing a pointer stream dispa
 
 `touch-action` is decided before the gesture. Changing it after panning or zooming has begun does not change that gesture. It is therefore application layout policy, not something a compiled scene should rewrite at runtime.
 
-The platform's DOM `click` target is derived from pointer capture or from the nearest common inclusive ancestor of pointer down/up targets. That does not solve Three targeting: both virtual objects have the same DOM canvas target. Blendlink must perform a virtual down/up transaction itself.
+The platform's DOM `click` target is derived from pointer capture or from the nearest common inclusive ancestor of pointer down/up targets. That does not solve Three targeting: both virtual objects have the same DOM canvas target. SceneToWeb must perform a virtual down/up transaction itself.
 
 Pointer Events do not cover keyboard input. The specification encourages high-level `click`, focus, and blur for equivalent functionality. Application-rendered native `<button>` and `<a>` controls are therefore the correct keyboard/assistive surface; the canvas interaction service should not synthesize a parallel keyboard model.
 
@@ -84,7 +84,7 @@ The current `createThreeInteractionServices()` implementation is aligned with th
 - `pointercancel` and `lostpointercapture` clear without activation;
 - pointer capture is best-effort tracking, not a claim over scrolling;
 - touch does not produce hover;
-- Blendlink does not set `touch-action` on the site-owned canvas.
+- SceneToWeb does not set `touch-action` on the site-owned canvas.
 
 One nuance should remain explicit: `isPrimary === false` excludes secondary simultaneous touches. That is a deliberate single-activation policy, not universal multi-touch behavior.
 
@@ -113,7 +113,7 @@ Web Audio's `resume()` returns a promise. If an `AudioContext` is not allowed to
 
 `statechange` also represents suspend, interruption, closure, and some system audio failures. Web Audio 1.1 includes the `interrupted` state. A context interrupted while already suspended may not reveal the transition for privacy reasons. Consequently, a one-time successful `resume()` is not a permanent “audio ready” claim.
 
-HTML's user-activation model is transient. Three r184's `Audio.play()` does not resume the shared `AudioContext`. Blendlink must make the gated `resume()` call synchronously in the trusted event callback, before awaiting unrelated work.
+HTML's user-activation model is transient. Three r184's `Audio.play()` does not resume the shared `AudioContext`. SceneToWeb must make the gated `resume()` call synchronously in the trusted event callback, before awaiting unrelated work.
 
 ### Current design assessment
 
@@ -185,7 +185,7 @@ not prove visible or correct pixels.
 
 Three r184's `KTX2Loader` builds worker source in memory, creates `URL.createObjectURL(new Blob(...))`, and constructs `new Worker(blobUrl)`. This is a required part of KTX2 transcoding in that loader. Its disposal terminates the pool and revokes the URL.
 
-The installed meshoptimizer decoder's `useWorkers()` similarly creates a Blob URL and `Worker` instances. Blendlink only enables this optimization above its threshold and catches worker-setup failure, emitting a warning before using the decoder on the main thread. KTX2 and Meshopt therefore have different truthful failure contracts: KTX2 worker failure can make a required asset unavailable; Meshopt worker failure can be a measured degradation.
+The installed meshoptimizer decoder's `useWorkers()` similarly creates a Blob URL and `Worker` instances. SceneToWeb only enables this optimization above its threshold and catches worker-setup failure, emitting a warning before using the decoder on the main thread. KTX2 and Meshopt therefore have different truthful failure contracts: KTX2 worker failure can make a required asset unavailable; Meshopt worker failure can be a measured degradation.
 
 CSP3 defines `worker-src` for Worker, SharedWorker, and ServiceWorker creation. If absent, the fallback chain is `child-src`, then `script-src`, then `default-src`. A normal HTTPS `'self'` source does not by itself authorize a `blob:` worker URL; the Blob scheme must be allowed explicitly. The minimal worker addition for Three's default implementation is therefore `worker-src 'self' blob:` plus whatever other origins the application needs. This is not a complete site CSP recommendation.
 
@@ -193,7 +193,7 @@ CSP3 defines `worker-src` for Worker, SharedWorker, and ServiceWorker creation. 
 
 ### Product boundary
 
-Blendlink should publish decoder requirements and failures; the website owns its response headers. Blendlink must not weaken or inject the site's CSP. If an application chooses a CSP without `blob:`, a future package-owned alternative would need a static same-origin worker entry and proof against the installed decoder versions. Until then, failure must be explicit.
+SceneToWeb should publish decoder requirements and failures; the website owns its response headers. SceneToWeb must not weaken or inject the site's CSP. If an application chooses a CSP without `blob:`, a future package-owned alternative would need a static same-origin worker entry and proof against the installed decoder versions. Until then, failure must be explicit.
 
 ### Testable invariants
 
@@ -201,8 +201,8 @@ Blendlink should publish decoder requirements and failures; the website owns its
 - With `worker-src 'self'` and no `blob:`, a real Blob worker is blocked and the classifier records both the CSP-worker prerequisite and the separately supplied decoder failure evidence. **Verified in production Chromium.**
 - With a required KTX2 asset and `worker-src 'self'` (no `blob:`), the scene reaches an artist-readable recoverable error and never reports ready or leaves a blank canvas.
 - With `worker-src 'self' blob:`, the same KTX2 scene loads and renders visible pixels with no CSP violation.
-- If Meshopt Blob workers are blocked, Blendlink emits exactly the documented fallback warning, decodes successfully on the main thread, and does not report worker cancellation or off-thread decoding that did not occur.
-- Every worker pool and Blob URL owned by a disposed installation is terminated/revoked by its owning loader; shared application loaders are not disposed by Blendlink.
+- If Meshopt Blob workers are blocked, SceneToWeb emits exactly the documented fallback warning, decodes successfully on the main thread, and does not report worker cancellation or off-thread decoding that did not occur.
+- Every worker pool and Blob URL owned by a disposed installation is terminated/revoked by its owning loader; shared application loaders are not disposed by SceneToWeb.
 
 The current restrictive-CSP route deliberately loads its scene successfully and
 then probes the Blob-worker prerequisite. It must not be cited as evidence that
@@ -217,7 +217,7 @@ WebGL fires `webglcontextcreationerror` when context creation fails and may retu
 
 On `webglcontextlost`, all WebGL objects become invalid and extensions are disabled except the loss extension. Restoration is attempted only if the loss event is canceled. After `webglcontextrestored`, previous textures, buffers, and extensions are not restored as usable application resources; the application must restore state and resources.
 
-Three r184's `WebGLRenderer` installs lost, restored, and creation-error listeners. It calls `preventDefault()` on loss and recreates internal WebGL subsystems on restoration while preserving selected renderer settings. That is valuable, but it is not sufficient evidence that Blendlink's externally owned scene resources, generated textures, postprocessing pipeline, reflection probes, loaders, audio/components, and R3F lifecycle all recover.
+Three r184's `WebGLRenderer` installs lost, restored, and creation-error listeners. It calls `preventDefault()` on loss and recreates internal WebGL subsystems on restoration while preserving selected renderer settings. That is valuable, but it is not sufficient evidence that SceneToWeb's externally owned scene resources, generated textures, postprocessing pipeline, reflection probes, loaders, audio/components, and R3F lifecycle all recover.
 
 ### Recommended contract
 
@@ -247,9 +247,9 @@ matrix proves it; no transparent restoration claim is made.
 
 Next's `basePath` is a build-time sub-path and is inlined into client bundles. Next links/router apply it automatically, but public/image-like URLs need an explicit prefix. Next documents `basePath` as the sub-path mechanism.
 
-Next's `assetPrefix` targets framework chunks under `/_next/static`. It does not rewrite files in `public`. Blendlink must never infer a scene asset root from `assetPrefix`.
+Next's `assetPrefix` targets framework chunks under `/_next/static`. It does not rewrite files in `public`. SceneToWeb must never infer a scene asset root from `assetPrefix`.
 
-Vite's `base` accepts a root path, full URL, empty string, or `./`. Vite rewrites statically known asset references; dynamic construction uses the exact `import.meta.env.BASE_URL`. Public-directory files are copied as-is and referenced from the root. Blendlink's current resolver supports origin-root paths and absolute HTTP(S) CDN URLs but rejects relative bases. Its suggestion to pass `import.meta.env.BASE_URL` is therefore only correct when that value is root-based or absolute.
+Vite's `base` accepts a root path, full URL, empty string, or `./`. Vite rewrites statically known asset references; dynamic construction uses the exact `import.meta.env.BASE_URL`. Public-directory files are copied as-is and referenced from the root. SceneToWeb's current resolver supports origin-root paths and absolute HTTP(S) CDN URLs but rejects relative bases. Its suggestion to pass `import.meta.env.BASE_URL` is therefore only correct when that value is root-based or absolute.
 
 ### Recommended contract
 
@@ -257,8 +257,8 @@ Keep `assetBaseUrl` explicit and package-owned-loader-only. It rebases the compi
 
 For Vite relative deployments, compare two designs:
 
-1. Resolve a relative base against `document.baseURI` in the application before passing it to Blendlink.
-2. Extend Blendlink's resolver to accept relative bases with a required resolution URL/environment.
+1. Resolve a relative base against `document.baseURI` in the application before passing it to SceneToWeb.
+2. Extend SceneToWeb's resolver to accept relative bases with a required resolution URL/environment.
 
 Design 1 is the smallest current integration and keeps document-route policy application-owned. Design 2 is more ergonomic but should not be implemented until semantics for nested routes, static embeds, SSR, and URL serialization are tested. Until then, relative Vite bases are a loud documented limitation.
 
@@ -306,7 +306,7 @@ The classifier accepts only evidence facts and two optional application policies
 - `declaredAssetUrls`: optional output of `compiledSceneAssetUrls(descriptor)`
   after application base resolution, so unrelated website requests are not
   mislabeled scene failures;
-- `minimumVisiblePixelFraction`: an application-chosen threshold; Blendlink does
+- `minimumVisiblePixelFraction`: an application-chosen threshold; SceneToWeb does
   not invent a universal pixel oracle.
 
 The application records events and retains navigation, server/context,
@@ -344,6 +344,6 @@ consume its `page`/`context` rather than create a second hidden browser context.
    keep application remount as the contract; do not claim transparent restore.
 5. **Extract a reusable Playwright fixture only if repeated application wiring
    warrants it.** The implemented classifier is already package-owned and does
-   not require Blendlink to own a route or browser context.
+   not require SceneToWeb to own a route or browser context.
 
-These steps stay inside Blendlink's product boundary: the package owns compiler/runtime complexity and exposes evidence; the website retains its route, Canvas, layout, loading UI, analytics, headers, framework, deployment, and final smoke assertions.
+These steps stay inside SceneToWeb's product boundary: the package owns compiler/runtime complexity and exposes evidence; the website retains its route, Canvas, layout, loading UI, analytics, headers, framework, deployment, and final smoke assertions.

@@ -2,12 +2,12 @@
 
 Date: 2026-07-24
 Status: source audit, real-Blender prototype, narrow production
-implementation, registered headless differential, and aggregate Blendlink
+implementation, registered headless differential, and aggregate SceneToWeb
 release matrix complete as of 2026-07-24
 
 ## Decision summary
 
-Blendlink and the pinned Needle add-on both Smart Project editable Mesh
+SceneToWeb and the pinned Needle add-on both Smart Project editable Mesh
 coordinates without applying the object's world-linear transform. Blender's
 operator consumes those local coordinates. A `(100, 1, 1)` object can
 therefore receive a nearly square UV island for a `100:1` world-space
@@ -17,10 +17,10 @@ cannot repair the directional distortion.
 The shipped narrow improvement is:
 
 1. keep the existing compiler-private Mesh transaction;
-2. when Blendlink has already chosen its automatic Smart Project fallback,
+2. when SceneToWeb has already chosen its automatic Smart Project fallback,
    make one additional disposable Mesh copy;
 3. transform only that unwrap proxy by the receiver's `matrix_world.to_3x3()`;
-4. run Blendlink's existing Smart Project settings with
+4. run SceneToWeb's existing Smart Project settings with
    `scale_to_bounds=False` explicit;
 5. validate exact vertex/polygon/loop identity and copy only the generated
    corner UVs back to the compiler-private receiver;
@@ -40,7 +40,7 @@ be silently replaced.
 
 ## Capability record
 
-| ID | Needle behavior | Blendlink choice | Relation | Implementation | Evidence |
+| ID | Needle behavior | SceneToWeb choice | Relation | Implementation | Evidence |
 | --- | --- | --- | --- | --- | --- |
 | `NDL-MAT-006` | Needle add-on `1.4.2` Smart Projects source Mesh coordinates with `scale_to_bounds=True`, then averages and packs; object scale participates in a shallow cache/allocation heuristic but is not applied to unwrap geometry. | Use a world-linear disposable unwrap proxy, preserve only generated corner UVs, and retain the artist/source Mesh unchanged. Keep `scale_to_bounds=False` because Blender implements that option as independent U/V scaling. | **Improvement** | **Shipped in the current worktree** | `experiments/nonuniform-selected-field-uv-prototype.py` and the registered Blender 5.2 fixture prove the focused positive/mirrored transform, source-ownership, topology-refusal, and failure-cleanup behavior. `npm.cmd run test:full` passed on 2026-07-24. An ad hoc 1M-triangle prototype observed a 12.7% first-run advantage while Needle's persistent-cache repeat remained faster; that timing is not a checked-in regression benchmark. |
 
@@ -79,7 +79,7 @@ The relevant pinned files are:
 `lightmapping.py` lines `723..765` re-unwrap the lightmap UV, including an
 existing `NEEDLE_LightmapUV`, before cloning the Mesh data. Needle therefore
 does not provide an artist-authored exact-layout bypass analogous to
-Blendlink's dedicated authored atlas.
+SceneToWeb's dedicated authored atlas.
 
 The baseline is `integration=mixed-source`; these are exact add-on source
 claims, not a coherent Needle browser-stack claim.
@@ -135,14 +135,14 @@ unwrap-only proxy. Its geometry and normals are never baked or exported.
 Blender 5.2 also exposed a deprecated-API trap during the registered gate:
 reading `MeshUVLoop.pin_uv` after edit-mode UV operators emitted
 `rna_mesh.cc:1549` once per corner because the legacy reverse lookup
-encountered a non-span float2 attribute. Blendlink now reads the named
+encountered a non-span float2 attribute. SceneToWeb now reads the named
 `MeshUVLoopLayer.pin` attribute in bulk, supported by the package's Blender
 4.2 minimum. `experiments/blender-uv-pin-bulk-check.py` proves the modern API
 without the diagnostic, and the headless orchestrator now treats Blender's
 internal unreachable-code message as a test failure even when a success
 sentinel exists.
 
-## Actual Blendlink transaction
+## Actual SceneToWeb transaction
 
 Dirty-worktree snapshot identities captured at
 `2026-07-24 11:24:30 -04:00`:
@@ -222,18 +222,18 @@ Results:
 
 | Design | Scale | Min directional density | Max directional density | Anisotropy | Area-equivalent scalar |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| current Blendlink local Smart Project | `100,1,1` | `9.9999994` | `999.99994` | `100.0000000` | `99.9999937` |
-| Blendlink world-linear proxy | `100,1,1` | `10.0000000` | `10.0000011` | `1.00000011` | `10.0000004` |
-| current Blendlink local Smart Project | `-100,1,1` | `9.9999994` | `999.99994` | `100.0000000` | `99.9999937` |
-| Blendlink world-linear proxy | `-100,1,1` | `10.0000000` | `10.0000011` | `1.00000011` | `10.0000004` |
+| current SceneToWeb local Smart Project | `100,1,1` | `9.9999994` | `999.99994` | `100.0000000` | `99.9999937` |
+| SceneToWeb world-linear proxy | `100,1,1` | `10.0000000` | `10.0000011` | `1.00000011` | `10.0000004` |
+| current SceneToWeb local Smart Project | `-100,1,1` | `9.9999994` | `999.99994` | `100.0000000` | `99.9999937` |
+| SceneToWeb world-linear proxy | `-100,1,1` | `10.0000000` | `10.0000011` | `1.00000011` | `10.0000004` |
 | pinned Needle flags, local Mesh | `100,1,1` | `10.2160554` | `1021.60542` | `99.9999880` | `102.1605490` |
 | pinned Needle flags on world-linear proxy | `100,1,1` | `10.2159789` | `1021.59783` | `99.9999940` | `102.1597867` |
 
 The prototype asserts:
 
 ```text
-Blendlink local control anisotropy > 90
-Blendlink world-linear proxy anisotropy <= 1.001
+SceneToWeb local control anisotropy > 90
+SceneToWeb world-linear proxy anisotropy <= 1.001
 same result for determinant +100 and -100
 Needle local control anisotropy > 90
 Needle flags still exceed 90 on a world-linear proxy
@@ -284,7 +284,7 @@ Decision: **shipped narrow production implementation**.
 
 ### B. Post-pack island normalization
 
-Blender's `average_islands_scale()` and Blendlink's packer scale each island
+Blender's `average_islands_scale()` and SceneToWeb's packer scale each island
 uniformly. Multiplying all UV coordinates in an island by one scalar changes
 both directional densities by the same factor:
 
@@ -330,7 +330,7 @@ Needle's source is the default behavioral baseline, but its
 The real-Blender control proves that this preserves approximately `100×`
 directional skew even after the world-linear proxy.
 
-Decision: **justified deviation**. Keep Blendlink's
+Decision: **justified deviation**. Keep SceneToWeb's
 `scale_to_bounds=False`; the measured anisotropy improves from about `100×`
 to `1.00000011×`.
 
@@ -399,7 +399,7 @@ but it can change seams and baking appearance.
 
 Recommended sequencing:
 
-1. ship the world-linear proxy only where Blendlink already chose Smart
+1. ship the world-linear proxy only where SceneToWeb already chose Smart
    Project;
 2. dogfood a second variant that world-metric Smart Projects every
    non-authored selected-field receiver;
@@ -477,7 +477,7 @@ per-loop-copy implementation took `7.462s`.
 In the same prototype observation, the exact pinned Needle
 `lightmapping_pack.py` bytes completed the identical
 fresh-receiver function-level fixture in `1.327188s`, then hit its persistent
-source-object hash cache in `0.820232s`. That run observed Blendlink `12.7%`
+source-object hash cache in `0.820232s`. That run observed SceneToWeb `12.7%`
 faster on the first transactional unwrap. Needle was faster on repeated work
 because it writes a
 persistent cache property onto the source object; a content-addressed private

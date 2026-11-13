@@ -50,6 +50,10 @@ jobs:
       - name: Run unit tests
         run: npm run test:unit
 
+      - name: Verify native node coverage policy
+        if: matrix.node == '24'
+        run: python3 scripts/audit-node-coverage.py --self-test
+
       - name: Verify the production dependency audit
         if: matrix.node == '22.15.0'
         run: npm run audit:production

@@ -1,4 +1,4 @@
-// Blendlink starter: this entry point is application-owned and safe to edit.
+// SceneToWeb starter: this entry point is application-owned and safe to edit.
 // The ellie showcase renders through WebGPURenderer so the installer applies
 // the published TSL material programs (WebGL fallback keeps baked carriers).
 import * as THREE from 'three'
@@ -8,7 +8,7 @@ import { installEllieAnimationScene } from './blendlink/EllieAnimationScene'
 import './style.css'
 
 const canvasElement = document.querySelector<HTMLCanvasElement>('#scene')
-if (!canvasElement) throw new Error('Blendlink starter: #scene canvas is missing')
+if (!canvasElement) throw new Error('SceneToWeb starter: #scene canvas is missing')
 const canvas: HTMLCanvasElement = canvasElement
 
 // Diagnostics for the WebGPU pipeline frontier: ?webgl forces the WebGL2

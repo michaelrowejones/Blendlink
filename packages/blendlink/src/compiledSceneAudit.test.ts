@@ -51,7 +51,7 @@ function manifest(
   materials?: readonly TestMaterialDiagnostic[],
 ): SceneManifest {
   return {
-    generator: 'blendlink',
+    generator: 'scenetoweb',
     schemaVersion: 3,
     hash: createHash('sha256').update(bytes).digest('hex').slice(0, 16),
     url: '/models/test.glb',
@@ -86,6 +86,35 @@ function position(
 }
 
 describe('compiled scene artifact audit', () => {
+  it('audits exact GLB bindings against the shipped Mapping/Checker Base Color program', async () => {
+    const document = new Document()
+    const buffer = document.createBuffer()
+    const material = document.createMaterial('Artist.BLENDLINK_TSL').setExtras({ blendlink_source_material: 'Artist' })
+    const primitive = document.createPrimitive().setMaterial(material)
+      .setAttribute('POSITION', position(document, buffer, 'Position', 1))
+      .setAttribute('TEXCOORD_0', document.createAccessor('Artist UV').setType('VEC2')
+        .setArray(new Float32Array([0, 0, 1, 0, 0, 1])).setBuffer(buffer))
+    document.createScene('Scene').addChild(document.createNode('Cube')
+      .setMesh(document.createMesh('Cube').addPrimitive(primitive)))
+    const bytes = await write(document)
+    const programs = new TextEncoder().encode(JSON.stringify({ schemaVersion: 1, model: 'blendlink-material-programs-v1',
+      materials: { Artist: { channels: { 'Base Color': { tslIr: {
+        schemaVersion: 1, model: 'blendlink-tsl-ir-v1', output: { op: 'tex_checker', output: 'color',
+          vector: { op: 'mapping', vectorType: 'POINT', input: { op: 'uv' },
+            location: [0, 0, 0], rotation: [0.19, -0.27, 0.31], scale: [1, 1, 1] },
+          scale: { op: 'const_float', value: 5 }, color1: { op: 'const_vec3', value: [0.025, 0.16, 0.8] },
+          color2: { op: 'const_vec3', value: [0.95, 0.45, 0.04] } },
+      } } } } } }))
+    const pinned = { ...manifest(bytes), materialPrograms: { url: '/scene.materials.json', materials: 1,
+      bytes: programs.length, hash: createHash('sha256').update(programs).digest('hex').slice(0, 16) } }
+    const audit = await auditCompiledSceneArtifact({ manifest: pinned, glbBytes: bytes, materialProgramsBytes: programs })
+    expect(audit.conformance.issues).toEqual([])
+    const noSidecar = await auditCompiledSceneArtifact({ manifest: pinned, glbBytes: bytes })
+    expect(noSidecar.conformance.issues.map(issue => issue.code)).toContain('conformance.base-color-carrier-missing')
+    await expect(auditCompiledSceneArtifact({ manifest: { ...pinned, materialPrograms: { ...pinned.materialPrograms,
+      hash: '0000000000000000' } }, glbBytes: bytes, materialProgramsBytes: programs })).rejects.toThrow(/byte\/hash pin/)
+  })
+
   it('refuses a renderable final GLB with an unsupported required extension', async () => {
     const document = new Document()
     const buffer = document.createBuffer()
@@ -138,7 +167,7 @@ describe('compiled scene artifact audit', () => {
       manifest: manifest(bytes),
       glbBytes: bytes,
     })).rejects.toThrow(
-      /no renderable mesh primitives.*Cameras, lights, Worlds.*non-empty evaluated geometry.*`blendlink plan`/s,
+      /no renderable mesh primitives.*Cameras, lights, Worlds.*non-empty evaluated geometry.*`scenetoweb plan`/s,
     )
   })
 

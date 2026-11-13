@@ -1,0 +1,600 @@
+{
+  "schemaVersion": 1,
+  "proofRole": "engine-fallback-counterexample-not-live-node-admission",
+  "livePortAdmissionCases": 0,
+  "capturedProbeSha256": "fecbdad6701465492e479367e41f14860d6731856de4e27eedad83961f30427e",
+  "trackedReproducer": "experiments/light-falloff-engine-differential/native.py",
+  "sameGraphEnginePairs": 18,
+  "nativeRenders": 36,
+  "camera": {
+    "type": "ORTHO",
+    "location": [
+      0,
+      0,
+      2
+    ],
+    "clipStart": 0.10000000149011612
+  },
+  "note": "GPU platform identity was queried after actual EEVEE/Cycles renders. This does not qualify background export before a GPU context exists, or grant Blender 4.2 Squeeze source admission. Cycles used an explicit CPU override; no Cycles GPU claim.",
+  "reports": [
+    {
+      "nativeVersion": [
+        4,
+        2,
+        0
+      ],
+      "nativeBuild": "a51f293548ad",
+      "sourceBackendAfterRendering": {
+        "backend": "METAL",
+        "renderer": "Metal API",
+        "vendor": "Apple M5 Pro"
+      },
+      "cyclesDevice": "CPU override; not GPU evidence",
+      "retainedRoot": "artifacts/verification-light-falloff-engines/native42",
+      "reportSha256": "f21118e1b225c5d53e99a598f3e607a414308e09a848dd086761e6cf8f9d8fac",
+      "graphPreserved": true,
+      "rows": [
+        {
+          "output": "Quadratic",
+          "strength": 2,
+          "smooth": 0,
+          "engines": {
+            "BLENDER_EEVEE_NEXT": {
+              "center": [
+                2.0,
+                2.0,
+                2.0,
+                1.0
+              ],
+              "minimum": 2.0,
+              "maximum": 2.0,
+              "exrSha256": "930f9db1ab04aeb4aefd48ad10ac7b447f6fea819e25d831fbcc9d28a0bde41c"
+            },
+            "CYCLES": {
+              "center": [
+                2.0,
+                2.0,
+                2.0,
+                1.0
+              ],
+              "minimum": 2.0,
+              "maximum": 2.0,
+              "exrSha256": "4c44738f31596cc0325b4beb864d360e47da0a12b5482852ddbbebd8df14700d"
+            }
+          }
+        },
+        {
+          "output": "Linear",
+          "strength": 2,
+          "smooth": 0,
+          "engines": {
+            "BLENDER_EEVEE_NEXT": {
+              "center": [
+                2.0,
+                2.0,
+                2.0,
+                1.0
+              ],
+              "minimum": 2.0,
+              "maximum": 2.0,
+              "exrSha256": "004a9bcfab3c8ece2239639fb60e51e4ae331014cd6c1c3fb7b9c6f3643710ea"
+            },
+            "CYCLES": {
+              "center": [
+                3.799999952316284,
+                3.799999952316284,
+                3.799999952316284,
+                1.0
+              ],
+              "minimum": 3.799999952316284,
+              "maximum": 3.799999952316284,
+              "exrSha256": "98c7f3e58da19544a4a455f587771134fe870e9a23e22fc89c65e7021bc5f404"
+            }
+          }
+        },
+        {
+          "output": "Constant",
+          "strength": 2,
+          "smooth": 0,
+          "engines": {
+            "BLENDER_EEVEE_NEXT": {
+              "center": [
+                2.0,
+                2.0,
+                2.0,
+                1.0
+              ],
+              "minimum": 2.0,
+              "maximum": 2.0,
+              "exrSha256": "53f01a5c4442b2ffa75069ffa70ad9d705830616e3a9a76cb2b9f3cbf88ba8b1"
+            },
+            "CYCLES": {
+              "center": [
+                7.21999979019165,
+                7.21999979019165,
+                7.21999979019165,
+                1.0
+              ],
+              "minimum": 7.21999979019165,
+              "maximum": 7.21999979019165,
+              "exrSha256": "d5f50979ba8955ecdf0e7141a964b54761bf80f4b6d00c84b9dc51c77a9123fd"
+            }
+          }
+        },
+        {
+          "output": "Quadratic",
+          "strength": 2,
+          "smooth": 1,
+          "engines": {
+            "BLENDER_EEVEE_NEXT": {
+              "center": [
+                2.0,
+                2.0,
+                2.0,
+                1.0
+              ],
+              "minimum": 2.0,
+              "maximum": 2.0,
+              "exrSha256": "81c0629ac43d8f43d240b3f13a26e447d92dca68e8e56782d10ff3ee3d851dac"
+            },
+            "CYCLES": {
+              "center": [
+                1.5661605596542358,
+                1.5661605596542358,
+                1.5661605596542358,
+                1.0
+              ],
+              "minimum": 1.5661605596542358,
+              "maximum": 1.5661605596542358,
+              "exrSha256": "dc5562475198b56a1f25e4e9ab5275cc54612746b18de4d90610c9c249dcb068"
+            }
+          }
+        },
+        {
+          "output": "Linear",
+          "strength": 2,
+          "smooth": 1,
+          "engines": {
+            "BLENDER_EEVEE_NEXT": {
+              "center": [
+                2.0,
+                2.0,
+                2.0,
+                1.0
+              ],
+              "minimum": 2.0,
+              "maximum": 2.0,
+              "exrSha256": "81c0629ac43d8f43d240b3f13a26e447d92dca68e8e56782d10ff3ee3d851dac"
+            },
+            "CYCLES": {
+              "center": [
+                2.9757049083709717,
+                2.9757049083709717,
+                2.9757049083709717,
+                1.0
+              ],
+              "minimum": 2.9757049083709717,
+              "maximum": 2.9757049083709717,
+              "exrSha256": "f0caacfab354785cecb51262627578bbbeb81d558aaeff431f140fb231d8291f"
+            }
+          }
+        },
+        {
+          "output": "Constant",
+          "strength": 2,
+          "smooth": 1,
+          "engines": {
+            "BLENDER_EEVEE_NEXT": {
+              "center": [
+                2.0,
+                2.0,
+                2.0,
+                1.0
+              ],
+              "minimum": 2.0,
+              "maximum": 2.0,
+              "exrSha256": "81c0629ac43d8f43d240b3f13a26e447d92dca68e8e56782d10ff3ee3d851dac"
+            },
+            "CYCLES": {
+              "center": [
+                5.653839588165283,
+                5.653839588165283,
+                5.653839588165283,
+                1.0
+              ],
+              "minimum": 5.653839588165283,
+              "maximum": 5.653839588165283,
+              "exrSha256": "e64bcaa1b2149103baa3056ecb635f788db171f89c33cd4997ffc297c04e69d4"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "nativeVersion": [
+        5,
+        2,
+        0
+      ],
+      "nativeBuild": "fbe6228777e7",
+      "sourceBackendAfterRendering": {
+        "backend": "METAL",
+        "renderer": "Metal API",
+        "vendor": "Apple M5 Pro"
+      },
+      "cyclesDevice": "CPU override; not GPU evidence",
+      "retainedRoot": "artifacts/verification-light-falloff-engines/native52",
+      "reportSha256": "3d4a200f761b77e9a230ac791b54a0bc456812fb5f014ad3cfdf78e39756bfcd",
+      "graphPreserved": true,
+      "rows": [
+        {
+          "output": "Quadratic",
+          "strength": 2,
+          "smooth": 0,
+          "engines": {
+            "BLENDER_EEVEE": {
+              "center": [
+                2.0,
+                2.0,
+                2.0,
+                1.0
+              ],
+              "minimum": 2.0,
+              "maximum": 2.0,
+              "exrSha256": "b4c1e5df6a6d68c4f4ea13e600dc0e8e11005ba15b05f5fff8418da53baed0eb"
+            },
+            "CYCLES": {
+              "center": [
+                2.0,
+                2.0,
+                2.0,
+                1.0
+              ],
+              "minimum": 2.0,
+              "maximum": 2.0,
+              "exrSha256": "90fb43331fcf5fb9e69959caf574d8d7d06ccdf1e45cea282c9d131e8c7362e7"
+            }
+          }
+        },
+        {
+          "output": "Linear",
+          "strength": 2,
+          "smooth": 0,
+          "engines": {
+            "BLENDER_EEVEE": {
+              "center": [
+                2.0,
+                2.0,
+                2.0,
+                1.0
+              ],
+              "minimum": 2.0,
+              "maximum": 2.0,
+              "exrSha256": "cfc2eaca5dc35cb6983ac75ea0228748edbc17647ab811e65b18fc619218ad3b"
+            },
+            "CYCLES": {
+              "center": [
+                3.799999952316284,
+                3.799999952316284,
+                3.799999952316284,
+                1.0
+              ],
+              "minimum": 3.799999952316284,
+              "maximum": 3.799999952316284,
+              "exrSha256": "07e4d0ff80ff087c2cbd2cac4c84d718cf13485ad23e093a64d4ff3cd753319b"
+            }
+          }
+        },
+        {
+          "output": "Constant",
+          "strength": 2,
+          "smooth": 0,
+          "engines": {
+            "BLENDER_EEVEE": {
+              "center": [
+                2.0,
+                2.0,
+                2.0,
+                1.0
+              ],
+              "minimum": 2.0,
+              "maximum": 2.0,
+              "exrSha256": "cfc2eaca5dc35cb6983ac75ea0228748edbc17647ab811e65b18fc619218ad3b"
+            },
+            "CYCLES": {
+              "center": [
+                7.21999979019165,
+                7.21999979019165,
+                7.21999979019165,
+                1.0
+              ],
+              "minimum": 7.21999979019165,
+              "maximum": 7.21999979019165,
+              "exrSha256": "57fdca59530df92b6cc860654653016b6e457bbf3103260daac893c2cee7eb28"
+            }
+          }
+        },
+        {
+          "output": "Quadratic",
+          "strength": 2,
+          "smooth": 1,
+          "engines": {
+            "BLENDER_EEVEE": {
+              "center": [
+                2.0,
+                2.0,
+                2.0,
+                1.0
+              ],
+              "minimum": 2.0,
+              "maximum": 2.0,
+              "exrSha256": "0fcb97196d5cf94ef6940732c8253ff9ed183f27df7c20c469c2a0869a679b4f"
+            },
+            "CYCLES": {
+              "center": [
+                1.5661605596542358,
+                1.5661605596542358,
+                1.5661605596542358,
+                1.0
+              ],
+              "minimum": 1.5661605596542358,
+              "maximum": 1.5661605596542358,
+              "exrSha256": "1bde84000675e460b064668d94597e98cc64d5ab5c8cbfc2bd38016abeb5329c"
+            }
+          }
+        },
+        {
+          "output": "Linear",
+          "strength": 2,
+          "smooth": 1,
+          "engines": {
+            "BLENDER_EEVEE": {
+              "center": [
+                2.0,
+                2.0,
+                2.0,
+                1.0
+              ],
+              "minimum": 2.0,
+              "maximum": 2.0,
+              "exrSha256": "0fcb97196d5cf94ef6940732c8253ff9ed183f27df7c20c469c2a0869a679b4f"
+            },
+            "CYCLES": {
+              "center": [
+                2.9757049083709717,
+                2.9757049083709717,
+                2.9757049083709717,
+                1.0
+              ],
+              "minimum": 2.9757049083709717,
+              "maximum": 2.9757049083709717,
+              "exrSha256": "83f88ea5f5ac4b5253d7302fd01d0c658edefe02a5daae224d22ee898babbe33"
+            }
+          }
+        },
+        {
+          "output": "Constant",
+          "strength": 2,
+          "smooth": 1,
+          "engines": {
+            "BLENDER_EEVEE": {
+              "center": [
+                2.0,
+                2.0,
+                2.0,
+                1.0
+              ],
+              "minimum": 2.0,
+              "maximum": 2.0,
+              "exrSha256": "0fcb97196d5cf94ef6940732c8253ff9ed183f27df7c20c469c2a0869a679b4f"
+            },
+            "CYCLES": {
+              "center": [
+                5.653839588165283,
+                5.653839588165283,
+                5.653839588165283,
+                1.0
+              ],
+              "minimum": 5.653839588165283,
+              "maximum": 5.653839588165283,
+              "exrSha256": "3a57eeb9e884bf97244b0c9c7714a878703ce24b035008fd19ed55aaf4d064d1"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "sourceBackendAfterRendering": {
+        "backend": "METAL",
+        "renderer": "Metal API",
+        "vendor": "Apple M5 Pro"
+      },
+      "cyclesDevice": "CPU override; not GPU evidence",
+      "retainedRoot": "artifacts/verification-light-falloff-engines/native53",
+      "reportSha256": "12b0d647aad3c128eb551590fd909fb0d3899928fd50196250b316766dd621a8",
+      "graphPreserved": true,
+      "rows": [
+        {
+          "output": "Quadratic",
+          "strength": 2,
+          "smooth": 0,
+          "engines": {
+            "BLENDER_EEVEE": {
+              "center": [
+                2.0,
+                2.0,
+                2.0,
+                1.0
+              ],
+              "minimum": 2.0,
+              "maximum": 2.0,
+              "exrSha256": "36a69554c4333cef7fa31c91a38e9140c9a29acee2d23befaad229faf68762f6"
+            },
+            "CYCLES": {
+              "center": [
+                2.0,
+                2.0,
+                2.0,
+                1.0
+              ],
+              "minimum": 2.0,
+              "maximum": 2.0,
+              "exrSha256": "7980f37391ea7724ce129a76557c0e9269b90b9a6587c1b93035aa7fdf84f2f9"
+            }
+          }
+        },
+        {
+          "output": "Linear",
+          "strength": 2,
+          "smooth": 0,
+          "engines": {
+            "BLENDER_EEVEE": {
+              "center": [
+                2.0,
+                2.0,
+                2.0,
+                1.0
+              ],
+              "minimum": 2.0,
+              "maximum": 2.0,
+              "exrSha256": "66ca62b6927c373f67e7e397a237ef2fa24c17bed2a0f794b43216ef82eceea8"
+            },
+            "CYCLES": {
+              "center": [
+                3.799999952316284,
+                3.799999952316284,
+                3.799999952316284,
+                1.0
+              ],
+              "minimum": 3.799999952316284,
+              "maximum": 3.799999952316284,
+              "exrSha256": "7327ff644989816545f6c0dc5058588883467e7d5e025b000542ccae7dc1de9b"
+            }
+          }
+        },
+        {
+          "output": "Constant",
+          "strength": 2,
+          "smooth": 0,
+          "engines": {
+            "BLENDER_EEVEE": {
+              "center": [
+                2.0,
+                2.0,
+                2.0,
+                1.0
+              ],
+              "minimum": 2.0,
+              "maximum": 2.0,
+              "exrSha256": "66ca62b6927c373f67e7e397a237ef2fa24c17bed2a0f794b43216ef82eceea8"
+            },
+            "CYCLES": {
+              "center": [
+                7.21999979019165,
+                7.21999979019165,
+                7.21999979019165,
+                1.0
+              ],
+              "minimum": 7.21999979019165,
+              "maximum": 7.21999979019165,
+              "exrSha256": "dcbc7a63f1c692e8d91929313dd9054bfe30de242c713f679aa9fa4b09365005"
+            }
+          }
+        },
+        {
+          "output": "Quadratic",
+          "strength": 2,
+          "smooth": 1,
+          "engines": {
+            "BLENDER_EEVEE": {
+              "center": [
+                2.0,
+                2.0,
+                2.0,
+                1.0
+              ],
+              "minimum": 2.0,
+              "maximum": 2.0,
+              "exrSha256": "a0f0997850dedefdc8b4850ec75e6cc39a16daa754f55e54265cc6923680b3fb"
+            },
+            "CYCLES": {
+              "center": [
+                1.5661605596542358,
+                1.5661605596542358,
+                1.5661605596542358,
+                1.0
+              ],
+              "minimum": 1.5661605596542358,
+              "maximum": 1.5661605596542358,
+              "exrSha256": "55223c7bcecca457868ba2aba05809845fb7185f186db2d1b9bc01001308c07c"
+            }
+          }
+        },
+        {
+          "output": "Linear",
+          "strength": 2,
+          "smooth": 1,
+          "engines": {
+            "BLENDER_EEVEE": {
+              "center": [
+                2.0,
+                2.0,
+                2.0,
+                1.0
+              ],
+              "minimum": 2.0,
+              "maximum": 2.0,
+              "exrSha256": "a0f0997850dedefdc8b4850ec75e6cc39a16daa754f55e54265cc6923680b3fb"
+            },
+            "CYCLES": {
+              "center": [
+                2.9757049083709717,
+                2.9757049083709717,
+                2.9757049083709717,
+                1.0
+              ],
+              "minimum": 2.9757049083709717,
+              "maximum": 2.9757049083709717,
+              "exrSha256": "a27ec5f5d99ffe15ff43318265b8be895b6aa85d1021963c1a28da2ef7175733"
+            }
+          }
+        },
+        {
+          "output": "Constant",
+          "strength": 2,
+          "smooth": 1,
+          "engines": {
+            "BLENDER_EEVEE": {
+              "center": [
+                2.0,
+                2.0,
+                2.0,
+                1.0
+              ],
+              "minimum": 2.0,
+              "maximum": 2.0,
+              "exrSha256": "a0f0997850dedefdc8b4850ec75e6cc39a16daa754f55e54265cc6923680b3fb"
+            },
+            "CYCLES": {
+              "center": [
+                5.653839588165283,
+                5.653839588165283,
+                5.653839588165283,
+                1.0
+              ],
+              "minimum": 5.653839588165283,
+              "maximum": 5.653839588165283,
+              "exrSha256": "d2cfe7cceac10c89eb8daaf50988fcd78245ebe797067c8bab267399244955b6"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

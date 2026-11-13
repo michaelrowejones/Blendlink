@@ -338,8 +338,8 @@ def known_cycles_capture_blockers(scene, *, excluded_objects=()) -> tuple[str, .
                 blockers.append(
                     f"{material.name} (used by {obj.name}): "
                     + blocker.replace(
-                        "Blendlink's Cycles Appearance bake",
-                        "Blendlink's offline Cycles reflection capture",
+                        "SceneToWeb's Cycles Appearance bake",
+                        "SceneToWeb's offline Cycles reflection capture",
                     )
                 )
     return tuple(blockers)
@@ -391,7 +391,7 @@ def evaluate_status(
     if not stored_source:
         return ProbeStatus(
             "STALE", "Bake required",
-            "This probe has image bytes but no dependency evidence. Bake it once with this Blendlink version.",
+            "This probe has image bytes but no dependency evidence. Bake it once with this SceneToWeb version.",
             "WARNING", mode, image=image, evidence=evidence,
         )
     try:
@@ -522,13 +522,13 @@ def status_for(probe) -> ProbeStatus:
             except (AttributeError, ReferenceError, RuntimeError):
                 return ProbeStatus(
                     "CHECKING", "Checking source…",
-                    "The previous reflection image was removed; Blendlink is rebuilding evidence.",
+                    "The previous reflection image was removed; SceneToWeb is rebuilding evidence.",
                     "INFO", current_mode,
                 )
         return status
     return ProbeStatus(
         "CHECKING", "Checking source…",
-        "Blendlink is rebuilding reflection probe evidence.",
+        "SceneToWeb is rebuilding reflection probe evidence.",
         "INFO", current_mode,
     )
 
@@ -796,7 +796,7 @@ def bake(context, probes: Iterable[object]) -> list[ProbeBakeResult]:
                             f"{probe.name} staged EXR did not survive decode validation: "
                             f"{decoded.issue}"
                         )
-                    image.name = f"Blendlink Reflection · {probe.name}"
+                    image.name = f"SceneToWeb Reflection · {probe.name}"
                     image.filepath = item.relative_path
                     image["blendlink_probe_derived"] = True
                     image["blendlink_probe_object_id"] = probe.object_id

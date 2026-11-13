@@ -1,0 +1,192 @@
+{
+  "schemaVersion": 1,
+  "status": "qualified-browser-interop-and-private-trials",
+  "candidate": "2876e3bdcc03cdfa39014a2e24fc8fe5c947f782",
+  "run": 43415307659,
+  "normalTriggerFix": "eb2e4c9c6034cddcde96badc30054e2bc563880a",
+  "productionAdmissionCases": 0,
+  "windowsProfiles": [
+    {
+      "nativeVersion": [
+        4,
+        2,
+        0
+      ],
+      "sourceBuildHash": "a51f293548ad",
+      "sourceCpuProfile": {
+        "schemaVersion": 1,
+        "mode": "gradual-rne",
+        "underflowWord": 4194304,
+        "denormalInputWord": 8388608,
+        "tieWords": [
+          1065353216,
+          1065353218
+        ],
+        "sourcePlatform": "win32",
+        "sourceArchitecture": "AMD64"
+      },
+      "job": 131851580396,
+      "artifact": 14030679589,
+      "archiveSha256": "da679936c3c45fc635acdf454aaa6081357aeb96f0364eac10f4e0612686801a",
+      "productionSourceAdmission": "SOURCE_ADMISSION_NA",
+      "productionAdmissionCases": 0,
+      "sourcePreserved": true,
+      "browserVersion": "158.0.8127.18",
+      "actualWebGl2": {
+        "available": true,
+        "vendor": "Google Inc. (Microsoft)",
+        "renderer": "ANGLE (Microsoft, Microsoft Basic Render Driver (0x0000008C) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+      },
+      "actualWebGpu": {
+        "apiAvailable": true,
+        "adapterAvailable": true,
+        "deviceAvailable": true,
+        "info": {
+          "vendor": "google",
+          "architecture": "swiftshader",
+          "device": "",
+          "description": "",
+          "isFallbackAdapter": true
+        },
+        "features": [
+          "depth32float-stencil8",
+          "rg11b10ufloat-renderable",
+          "bgra8unorm-storage",
+          "texture-compression-bc",
+          "core-features-and-limits",
+          "chromium-experimental-sampling-resource-table",
+          "chromium-experimental-timestamp-query-inside-passes",
+          "float32-filterable",
+          "indirect-first-instance",
+          "texture-compression-astc-sliced-3d",
+          "float32-blendable",
+          "subgroup-size-control",
+          "texture-compression-unaligned",
+          "texture-compression-astc",
+          "texture-compression-etc2",
+          "depth-clip-control",
+          "texture-compression-bc-sliced-3d",
+          "clip-distances",
+          "timestamp-query",
+          "texture-component-swizzle",
+          "subgroups"
+        ]
+      },
+      "comparisons": {
+        "ordinary-browser": {
+          "rowsPerApi": 21,
+          "maximumErrorOrMismatches": 0
+        },
+        "experimental-browser": {
+          "rowsPerApi": 32,
+          "maximumErrorOrMismatches": 0
+        },
+        "primitive-browser": {
+          "rowsPerApi": 4,
+          "maximumErrorOrMismatches": 0
+        }
+      },
+      "files": {
+        "report.json": "62ce41c8c396d9a3f0045aee77491febff13dd611664d8d0765efae3988629b1",
+        "browser-profile.json": "a44127840af46b95f17c20898c998bf4718fe989df8c96181d068d6d3233a95b",
+        "ordinary/precision-qualification.json": "34e7a8b3d172773ff5f6b6dbc755694b84fd0f76d1971d011c3fd69a439b3feb",
+        "ordinary-browser/results.json": "51e772d4e36c4d0f5ba999e2f9a95df671db6ac868cc2b53e26988b39be6275c",
+        "experimental-browser/results.json": "83ce715820db0e09ffe48ae79709c0e53ba2ea970325f5d55d91208beba87f27",
+        "primitive-browser/results.json": "9292a2ba78a793600fe036e16ea94b8382b08af1238118927aedbd438a99c3c1"
+      }
+    },
+    {
+      "nativeVersion": [
+        5,
+        2,
+        0
+      ],
+      "sourceBuildHash": "fbe6228777e7",
+      "sourceCpuProfile": {
+        "schemaVersion": 1,
+        "mode": "gradual-rne",
+        "underflowWord": 4194304,
+        "denormalInputWord": 8388608,
+        "tieWords": [
+          1065353216,
+          1065353218
+        ],
+        "sourcePlatform": "win32",
+        "sourceArchitecture": "AMD64"
+      },
+      "job": 131851580437,
+      "artifact": 14031657032,
+      "archiveSha256": "b1d3348193f1530fc6dc62c6ebba199d934844505d01432d84f3ecd3c5cd36e2",
+      "productionSourceAdmission": "SOURCE_ADMISSION_NA",
+      "productionAdmissionCases": 0,
+      "sourcePreserved": true,
+      "browserVersion": "158.0.8127.18",
+      "actualWebGl2": {
+        "available": true,
+        "vendor": "Google Inc. (Microsoft)",
+        "renderer": "ANGLE (Microsoft, Microsoft Basic Render Driver (0x0000008C) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+        "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+      },
+      "actualWebGpu": {
+        "apiAvailable": true,
+        "adapterAvailable": true,
+        "deviceAvailable": true,
+        "info": {
+          "vendor": "google",
+          "architecture": "swiftshader",
+          "device": "",
+          "description": "",
+          "isFallbackAdapter": true
+        },
+        "features": [
+          "depth32float-stencil8",
+          "rg11b10ufloat-renderable",
+          "bgra8unorm-storage",
+          "texture-compression-bc",
+          "chromium-experimental-sampling-resource-table",
+          "core-features-and-limits",
+          "chromium-experimental-timestamp-query-inside-passes",
+          "float32-filterable",
+          "indirect-first-instance",
+          "texture-compression-astc-sliced-3d",
+          "float32-blendable",
+          "subgroup-size-control",
+          "texture-compression-unaligned",
+          "texture-compression-astc",
+          "texture-compression-etc2",
+          "depth-clip-control",
+          "texture-compression-bc-sliced-3d",
+          "timestamp-query",
+          "clip-distances",
+          "texture-component-swizzle",
+          "subgroups"
+        ]
+      },
+      "comparisons": {
+        "ordinary-browser": {
+          "rowsPerApi": 47,
+          "maximumErrorOrMismatches": 0
+        },
+        "experimental-browser": {
+          "rowsPerApi": 32,
+          "maximumErrorOrMismatches": 0
+        },
+        "primitive-browser": {
+          "rowsPerApi": 4,
+          "maximumErrorOrMismatches": 0
+        }
+      },
+      "files": {
+        "report.json": "6c97964b9dd4b9029b03b92cd7f9e32c6169fdcef28590c9c86551b09df7bca4",
+        "browser-profile.json": "637a4024cac4a8ed5d431497ec1a76f6460bf29d4b02abf90b514a12a24b425a",
+        "ordinary/precision-qualification.json": "d0979755336c9311e4d5cbab2f750c4e857f791b951132892dc54176d767ff2f",
+        "ordinary-browser/results.json": "8ecaf8a674af02dd1c27000506e74f5fabde936b7698ece185e51cb59538ac09",
+        "experimental-browser/results.json": "ec055e72b2d0d7919f6d30ca60523318920bfec874d56e60630a4627d94152b9",
+        "primitive-browser/results.json": "8788bcac470c9b8b651d1a3fbb4824bf3d7b372d888da4323fe190d0194d7eaf"
+      }
+    }
+  ],
+  "primaryInteropSource": "https://chromium.googlesource.com/chromium/src/+/158.0.8127.18/gpu/command_buffer/service/webgpu_decoder_impl.cc#1756",
+  "scope": "Full Chromium supplies a software D3D11 WARP ANGLE device required before Dawn backend selection; WebGPU uses its actual SwiftShader adapter. This receipt qualifies browser availability, ordinary v1 compatibility and private kernel/primitive trials only. It does not promote Windows production source admission, certify physical Windows GPUs, or rewrite earlier unavailable-adapter receipts."
+}

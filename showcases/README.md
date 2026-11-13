@@ -1,6 +1,6 @@
-# Blendlink showcases
+# SceneToWeb showcases
 
-Real Blender scenes shipped to three.js through the full Blendlink
+Real Blender scenes shipped to three.js through the full SceneToWeb
 pipeline — fidelity routing, appearance atlas bakes, per-channel
 Material bakes with TSL IR evidence, meshopt, WebP/KTX2 delivery, and
 the generated typed runtime.
@@ -33,7 +33,7 @@ The entry point opts into viewer navigation (orbit + zoom around the
 authored framing) and shows a performance readout (fps, frame ms, draw
 calls, triangles). New scaffolds carry the same navigation as an
 `ORBIT_PREVIEW` flag, off by default — interactivity stays a
-per-application choice, never a Blendlink default.
+per-application choice, never a SceneToWeb default.
 
 Result: 41 nodes, 2.31M triangles, ~11 MB delivered. Run it:
 
@@ -75,7 +75,7 @@ node ../../packages/blendlink/dist/cli.js compile --force
 
 Both scenes derive from official Blender demo assets whose pristine
 source bytes are pinned in `docs/demo-corpus-inventory.json`; the
-committed working copies additionally carry Blendlink's saved fidelity
+committed working copies additionally carry SceneToWeb's saved fidelity
 marks (`blendlink_*` custom properties). Blender's `.blend1` backup
 files are not committed.
 
@@ -93,5 +93,5 @@ files are not committed.
   version number). The compiled artifacts under `showcases/ellie/` are
   derivatives of that work and carry the same attribution: *"Ellie Pose
   Library" by Blender Studio, licensed CC-BY.* The showcase's marks and
-  compiled outputs are Blendlink's; the character, rig, animation, and
+  compiled outputs are SceneToWeb's; the character, rig, animation, and
   textures are Blender Studio's.

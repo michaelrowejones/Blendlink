@@ -1,5 +1,5 @@
 {
-  "name": "blendlink-example-react-three-fiber",
+  "name": "scenetoweb-example-react-three-fiber",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@react-three/fiber": "^9.6.1",
-    "blendlink": "^0.9.0",
+    "scenetoweb": "^0.9.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "three": "0.184.0"

@@ -1,66 +1,83 @@
 # Release process
 
-This is the release interface for Blendlink. It produces two separately
+This is the release interface for SceneToWeb. It produces two separately
 installable artifacts from one tagged source revision:
 
-1. the mixed-license `blendlink` npm tarball, whose file-level map is
+1. the mixed-license `scenetoweb` npm tarball, whose file-level map is
    `LICENSES.md`; and
 2. the GPL-3.0-or-later Blender Extension ZIP.
 
 The npm package metadata uses `SEE LICENSE IN LICENSES.md`; its ordinary
-Node/compiler/runtime files are MIT, its Blender-dependent Python/add-on files
-are GPL-3.0-or-later, its Basis notices are Apache-2.0, and the bundled
+Node/compiler/runtime files are MIT, its marked Cycles-derived numerical
+modules (including native Magic) and Basis notices are Apache-2.0, its
+Blender-dependent Python/add-on files are GPL-3.0-or-later, and the bundled
 `n8ao-webgpu` runtime is CC0-1.0 with its original license and notices. Version equality
 does not merge the artifacts' distribution systems or erase those file-level
 licenses.
 
 ## Current release status
 
+The product is now SceneToWeb, distributed as `scenetoweb` and
+`scenetoweb-addon-<version>.zip`. Historical registry checks below refer to
+the former name; they do not establish ownership of the new package name.
+The repository slug and source directory remain `Blendlink` and
+`packages/blendlink`. Publishing requires the new package-specific trust
+binding and `SCENETOWEB_NPM_TRUSTED_PUBLISHING` gate.
+
 The [2026-09-07 first-user audit](FIRST_USER_AUDIT_2026-09-07.md) adds local
 installation, Blender, browser and isolated-consumer evidence. It is not a
-release approval. The status items below retain their original dated evidence;
+release approval. The status items below retain their dated evidence unless explicitly updated;
 this audit did not recheck remote repository settings or registry ownership.
 
 - `npm view blendlink name version --json` returned registry `E404` on
-  2026-07-25 and again on 2026-08-04; no public unscoped `blendlink` package
-  was visible to this client at either check.
+  2026-07-25, 2026-08-04 and 2026-11-11; no public unscoped `blendlink` package
+  was visible to this client at those checks.
 - No approved Blender Extensions release is recorded by this repository.
+- The repository is public; the npm package and GitHub release remain unpublished.
 - Local packaging and toolchain gates exist.
-- The Node contract workflow (`ci.yml`) has produced hosted evidence: run
-  30891723434 passed exact Node 22.15.0, latest Node 22, and Node 24 on
-  commit `a3b8c68`. The tagged release workflow
-  (`blender-contract.yml`) and the reusable application-owned Playwright
-  matrix are defined but have never executed, so every claim that depends on
-  them remains unproven.
-- Exact Blender 4.2.0/5.2.0 Linux/Windows archive acquisition is defined and
-  checksum-pinned, but has not run on hosted workers. The tagged workflow now
-  defines same-run candidate attestation, numeric-ID transfer, OIDC-only npm
+- Source pull requests run the full pinned Blender 5.2/KTX gate and the
+  Linux/Windows 4.2/5.2 desktop installation checks. Desktop checks install the
+  extension ZIP in a clean profile, acquire the private Node runtime with global
+  Node/npm removed from PATH, export a website, and reuse the tools offline.
+  They are installation/scene-export evidence, not the full material fixture
+  suite on every Blender version. Distribution jobs remain restricted to tags.
+- `npm run test:preview-ux` now exercises actual browser rendering, orbit
+  inspection, portrait framing, nonblank PNG capture, keyboard focus, load
+  retry, failed-save recovery, and standalone export in a hosting subfolder.
+  The standalone fixture passes in Playwright Chromium/Firefox/WebKit on
+  macOS and hosted Linux. [Preview UX run 43366540752](https://github.com/michaelrowejones/Blendlink/actions/runs/43366540752)
+  on commit `98ff98a` passed the complete flow and retained screenshots/report.
+  Linux uses Xvfb and software rendering; this does not certify physical GPUs.
+- The Node contract has hosted passes for exact Node 22.15.0, latest Node 22,
+  and Node 24. [Release contract run 43366541099](https://github.com/michaelrowejones/Blendlink/actions/runs/43366541099)
+  on commit `98ff98a` passed those checks, the full Blender 5.2.0/KTX 4.4.2
+  release suite, and all four Linux/Windows Blender 4.2.0/5.2.0 desktop checks.
+  Its latest attempt passed every required job after retrying an archive
+  download failure. The full gate includes real codecs, discovered Blender
+  suites, packed consumers and baked appearance/lighting/material end-to-end
+  checks. [Native canaries run 43366540747](https://github.com/michaelrowejones/Blendlink/actions/runs/43366540747)
+  also passed all sixteen jobs, including the bounded asynchronous Noise
+  install/cancel/reapply lifecycle. These results certify that checkpoint;
+  later node ports require their own combined and hosted qualification.
+- Exact Blender 4.2.0/5.2.0 Linux/Windows archive acquisition and checksums have
+  now run successfully on hosted workers. macOS arm64 retains local CPU-only
+  evidence; its hosted prototype and an application-owned reusable browser
+  matrix remain unrun. The tagged workflow defines same-run candidate
+  attestation, numeric-ID transfer, OIDC-only npm
   publication of the retained tarball, public-registry byte/provenance checks,
-  and exact immutable GitHub prerelease assets. It has not run on hosted
-  workers, and the protected environments, npm trust binding, immutable-release
+  and exact immutable GitHub prerelease assets. Distribution jobs were skipped
+  on this pull-request run. Protected environments, npm trust binding, immutable-release
   setting, marketplace upload, and deployed CDN verification remain external.
 - `npm run release:artifacts` now retains one npm tarball and one Blender ZIP,
   installs the exact ZIP, compiles Vanilla/R3F consumers from the exact
   tarball, compares their add-on fingerprints, and writes `release-manifest.json`
   plus `SHA256SUMS`. The normal command refuses a dirty worktree.
-- A live production audit currently reports exactly two high-severity entries
-  for one Sharp/libvips advisory, `GHSA-f88m-g3jw-g9cj`, through
-  `ndarray-pixels` -> `sharp` (until 2026-08 npm also rolled the same advisory
-  up to `@gltf-transform/functions`; that reporting change was re-reviewed on
-  2026-08-03 against an unchanged lock-chain fingerprint — identical installed
-  bytes, narrower rollup). Blendlink applies
-  the advisory's official GIF/TIFF/VIPS loader blocks at every package-owned
-  Sharp entry point, and behavioral tests prove those inputs are refused. npm
-  still reports the advisory: this is a reviewed public-beta workaround, not a
-  claim that the dependency graph is patched. The fail-closed audit policy
-  accepts only this exact advisory result while the three direct package edges
-  remain exact-pinned. It content-identifies the lock records, registry
-  integrity, and every platform-specific Sharp/libvips payload in the reviewed
-  loader snapshot. A changed/new finding—or an unexpectedly empty report while
-  that vulnerable snapshot remains pinned—is a release blocker. Upgrading to a
-  patched compatible dependency graph requires deliberate policy review rather
-  than inheriting this exception. The policy tests and the live gate passed on
-  2026-08-03 with the reviewed-workaround sentinel.
+- The 2026-11-11 dependency refresh pins Sharp 0.35.5 and ndarray-pixels
+  5.2.0. Both production and complete dependency audits returned zero findings.
+  The former Sharp advisory exception has been removed. The release gate
+  requires an empty, well-formed audit and verifies the exact patched chain's
+  lock records and native-payload integrity. A new advisory or dependency drift
+  blocks release. The existing GIF/TIFF/VIPS input restrictions remain.
 - The Blender source and retained ZIP embed the full GPL version 3 text in
   `LICENSE`; release assembly refuses a missing/wrong text. The npm artifact
   embeds the complete MIT and GPL texts, the Basis Apache notice, and its
@@ -84,7 +101,7 @@ preview deployment as a public release.
 
 ## Required repository evidence
 
-Run from the Blendlink repository:
+Run from the SceneToWeb repository:
 
 ```powershell
 npm ci
@@ -99,16 +116,22 @@ packed Vanilla/R3F consumers, npm archive inspection, isolated Blender add-on
 installation, and baked appearance/lighting e2e. A missing real tool is a
 failure, not an allowed skip.
 
-`audit:production` is a fail-closed policy gate, not a zero-vulnerability
-claim. For the current candidate it may accept only the reviewed
-`GHSA-f88m-g3jw-g9cj` chain — reported by npm as the two-entry
-`ndarray-pixels` -> `sharp` rollup since 2026-08 — plus the tested official
-loader blocks; zero findings fails while the reviewed vulnerable snapshot
-remains pinned because advisory omission is not proof that the installed bytes
-changed. Malformed output, registry failure, changed severity/range/path/
-content identity, or any additional advisory fails. Its current integrated
-pass succeeded live on 2026-08-03; npm reports two high package entries and
-zero critical findings.
+`audit:production` requires zero findings over the exact reviewed patched
+image-processing chain. Malformed output, registry failure, nonzero exit,
+changed dependency/native payload integrity, or any advisory fails. Do not
+restore the old workaround exception to accommodate a failing audit.
+
+For an independent consumer installation, after retaining the archive run:
+
+```sh
+npm run test:fresh-install -- artifacts/release/<version>/scenetoweb-<version>.tgz
+```
+
+This optional network gate installs the exact archive outside the repository
+with an empty npm cache, verifies its lockfile SRI, evaluates the compiler root,
+and builds a browser consumer using only that installation. It complements the
+offline packed consumers. It does not replace post-publication registry-byte or
+provenance checks. The 2026-11-11 local rehearsal passed this independent gate.
 
 `release:artifacts` writes the exact verified `.tgz`, `.zip`, manifest, and
 checksums under `artifacts/release/<version>/`. CI must upload that directory as
@@ -149,7 +172,7 @@ web server, loading/error UI, and Playwright test file. Until a caller commits
 and invokes that workflow, it is proposed CI rather than verified behavior.
 
 An application can invoke it from its own workflow after pinning a reviewed
-Blendlink commit:
+SceneToWeb commit:
 
 ```yaml
 jobs:
@@ -194,7 +217,7 @@ numeric artifact ID, checks the service digest, reruns the retained verifier,
 verifies GitHub build attestations, and invokes exactly:
 
 ```text
-npm publish ./artifacts/release/<version>/blendlink-<version>.tgz \
+npm publish ./artifacts/release/<version>/scenetoweb-<version>.tgz \
   --registry=https://registry.npmjs.org/ --access=public \
   --provenance --tag=<latest-or-beta>
 ```
@@ -210,7 +233,7 @@ Before enabling the job, bind npm's trusted publisher to the exact public
 repository, `.github/workflows/blender-contract.yml`, environment
 `npm-production`, and allowed action `npm publish`. Protect `v*` tags and the
 environment, then set its environment variable
-`BLENDLINK_NPM_TRUSTED_PUBLISHING=true`. Do not place `NODE_AUTH_TOKEN`,
+`SCENETOWEB_NPM_TRUSTED_PUBLISHING=true`. Do not place `NODE_AUTH_TOKEN`,
 `NPM_TOKEN`, or another write token in this steady-state job.
 
 npm currently requires a package to exist before its trusted publisher can be
@@ -237,7 +260,7 @@ ZIP, `release-manifest.json`, and `SHA256SUMS`; downloads and byte-compares the
 assets; then performs one publish transition. It never uses asset clobbering.
 
 Enable GitHub immutable releases first, protect the environment, and set
-`BLENDLINK_IMMUTABLE_RELEASES=true` there only after confirming the repository
+`SCENETOWEB_IMMUTABLE_RELEASES=true` there only after confirming the repository
 setting. The final verifier requires the REST release record to be non-draft,
 prerelease, immutable, targeted at the exact commit, and to expose the exact
 four server-side SHA-256 digests. Workflow definition and local policy tests

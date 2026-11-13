@@ -1,0 +1,30 @@
+{
+  "version": [
+    5,
+    3,
+    0
+  ],
+  "nativeBuild": "02f0899d78e3",
+  "role": "Pinned source provenance; native numeric and creation evidence are independent",
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/blender/blender/v5.3.0/source/blender/nodes/function/nodes/node_fn_get_vector_component.cc",
+      "sha256": "3c5be029bd654786e66bbe0f0c4e47bac281a410d02ba27eb780fa580d0391ff"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/blender/blender/v5.3.0/source/blender/gpu/shaders/material/gpu_shader_material_get_vector_component.bsl.hh",
+      "sha256": "bd4afd8fa8aaadc83d8f90cacf94e7b2becfa24cbeb67ba75668dee5e72ef67e"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/blender/blender/v5.3.0/source/blender/functions/intern/multi_function_common.cc",
+      "sha256": "321f3358ffbe8fcb6fec7c77c212fbd25ba5be9a48ece096352520308fccd3a3"
+    }
+  ],
+  "linuxCanaryArchive": {
+    "version": "5.3.0",
+    "url": "https://download.blender.org/release/Blender5.3/blender-5.3.0-linux-x64.tar.xz",
+    "sha256": "dacb8264197a3f7fda6001285a5a506fc97ee943881261c2c3bd63c882f22e05",
+    "officialChecksumFeed": "https://download.blender.org/release/Blender5.3/blender-5.3.0.sha256",
+    "role": "Checksum pin for pending fresh OpenGL canary; not numerical evidence"
+  }
+}

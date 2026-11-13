@@ -6,7 +6,7 @@
   boundary and its package-local declaration leak
 - Implementation: **Shipped**
 - Evidence: **Verified Needle source bytes, generated local artifacts, ignore
-  ownership, and two existing production output trees**. Blendlink's focused
+  ownership, and two existing production output trees**. SceneToWeb's focused
   typegen/cache/sync regression passed 19/19 on 2026-07-26. The current
   `npm run test:full` package/add-on/archive gate and the exact dogfood-site
   Final publication, generated-closure scan, Next build, and 25/25 browser
@@ -14,7 +14,7 @@
 
 ## Decision
 
-Public Blendlink output must be machine-independent. Generated TypeScript,
+Public SceneToWeb output must be machine-independent. Generated TypeScript,
 manifests, companions, package contents, and copied website assets may contain
 project-relative, slash-normalized identifiers, but must not contain an
 artist's absolute Blender path, website path, home directory, drive letter, or
@@ -38,9 +38,9 @@ However, the current Vite editor-binding generator writes an ambient
 declaration below the installed Engine package whose JSDoc contains the
 absolute GLB path. It can also contain an absolute application source path on
 Windows. That file is local dependency/editor state under ignored
-`node_modules` and was absent from the inspected production outputs. Blendlink
+`node_modules` and was absent from the inspected production outputs. SceneToWeb
 should preserve Needle's public/local ownership boundary while also avoiding
-the local-path leak in any artifact Blendlink itself classifies as public.
+the local-path leak in any artifact SceneToWeb itself classifies as public.
 
 ## Exact identities and source observations
 
@@ -118,7 +118,7 @@ audited evidence proves ignored application state and absence from the two
 build outputs; it does not prove exclusion from every hypothetical dependency
 repacking workflow.
 
-## Blendlink comparison and acceptance seam
+## SceneToWeb comparison and acceptance seam
 
 | Capability ID | Relation | State | Evidence state |
 | --- | --- | --- | --- |
@@ -129,7 +129,7 @@ source and dependency paths become slash-normalized project-relative labels.
 An outside path becomes the opaque public label `external/<sha256>` without
 its basename, plus an additive `localPathKey` (or
 `sourceBlendLocalPathKey`). The exact absolute path is written atomically only
-to Blendlink's per-user OS cache, outside the project, generated companions,
+to SceneToWeb's per-user OS cache, outside the project, generated companions,
 runtime graph, and package. The key binds a canonical local path to the cache
 record; malformed, missing, or key/path-mismatched state returns no path. Sync
 and the Blender addon then report stale state and require a local resync rather
@@ -150,7 +150,7 @@ broader package/deployment claim.
 
 ## Reproduction commands
 
-Run from the Blendlink repository on Windows/PowerShell 5.1:
+Run from the SceneToWeb repository on Windows/PowerShell 5.1:
 
 ```powershell
 npm.cmd run verify:needle-baseline
@@ -183,7 +183,7 @@ BLENDLINK_NEEDLE_BASELINE_VERIFIED 131 files, 9 source version identities
 named=splash-official-preview:coherent
 ```
 
-The focused Blendlink commands above passed on 2026-07-26 under Node 24.15.0
+The focused SceneToWeb commands above passed on 2026-07-26 under Node 24.15.0
 and npm 11.12.1. `npm run test:full`, the installed-addon/archive check, and
 the regenerated MichaelRoweJonesSite publication/path scan remain **Pending
 current run** on these implementation bytes.

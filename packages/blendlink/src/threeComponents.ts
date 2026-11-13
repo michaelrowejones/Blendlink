@@ -54,7 +54,7 @@ export type ThreeComponentAdapterRegistry = Readonly<Record<string, ThreeCompone
 
 const PREPARATION_SAFE_COMPONENT_ADAPTERS = new WeakSet<ThreeComponentAdapter>()
 
-/** Certify a custom adapter for Blendlink's detached atomic path. The factory
+/** Certify a custom adapter for SceneToWeb's detached atomic path. The factory
  * may allocate resources and mutate only its detached target; live DOM,
  * renderer, application-service, and global work belongs in synchronous
  * activate(), with a synchronous idempotent dispose() inverse. Legacy
@@ -75,7 +75,7 @@ export function isPreparationSafeThreeComponentAdapter(
 
 export interface ThreeComponentInstallation {
   /** Complete live Canvas integration after detached preparation. Activation
-   * must be synchronous; Blendlink calls it at most once and supplies the
+   * must be synchronous; SceneToWeb calls it at most once and supplies the
    * committed Scene/camera so adapters never have to retain staging globals. */
   activate?(scene?: THREE.Scene, camera?: THREE.Camera): void
   update?(deltaSeconds: number): void
@@ -112,6 +112,8 @@ export interface ThreeComponentAdapterContext {
 }
 
 export interface InstallThreeComponentsOptions {
+  /** Cancels attempt-owned CPU preparation before any post pipeline installs. */
+  signal?: AbortSignal
   sourcePresentation?: import('./sourceDisplay.js').SourcePresentation
   components?: readonly Readonly<PortableComponentRecord>[] | null
   root: THREE.Object3D
@@ -120,7 +122,7 @@ export interface InstallThreeComponentsOptions {
   renderer: THREE.WebGLRenderer
   /** Tone mapping prepared by the detached compiled-look transaction. Post
    * effects use this value for HDR transfer planning without adopting the
-   * application renderer's current value as Blendlink-owned state. */
+   * application renderer's current value as SceneToWeb-owned state. */
   presentationToneMapping?: THREE.ToneMapping
   bindings: SceneBindings<THREE.Object3D>
   animations?: readonly THREE.AnimationClip[]
@@ -129,15 +131,15 @@ export interface InstallThreeComponentsOptions {
   openUrl?(url: string, target: string): unknown
   /** Reuse a site-configured loader (credentials, CDN, cache) when desired. */
   audioLoader?: Pick<THREE.AudioLoader, 'loadAsync'>
-  /** Optional authenticated/cached, application-owned LUT resolver. Blendlink
+  /** Optional authenticated/cached, application-owned LUT resolver. SceneToWeb
    * does not dispose returned textures. Standard .cube and .3dl URLs use
-   * Three's official loaders and Blendlink ownership when this hook is absent. */
+   * Three's official loaders and SceneToWeb ownership when this hook is absent. */
   loadLut?(url: string): Promise<THREE.Data3DTexture>
   /** Shared attempt manager for package-owned audio and LUT loaders. */
   loadingManager?: THREE.LoadingManager
   /** Receives capability fallbacks and scene-dependent cost warnings. */
   onWarning?(message: string): unknown
-  /** Optional application-owned input adapter. Omit for Blendlink's one-
+  /** Optional application-owned input adapter. Omit for SceneToWeb's one-
    * listener/one-raycast Three canvas host. Application-owned services retain
    * their own registration/activation semantics: deferActivation does not
    * delay their addTarget()/addControl() calls, so a host using detached
@@ -332,7 +334,7 @@ export async function installThreeComponents(
           if (!adapter) {
             const supplied = Object.keys(options.adapters ?? {}).sort().join(', ') || 'none'
             throw new Error(
-              `Blendlink component "${component.type}" (${component.id}) is enabled but has no Three.js adapter. ` +
+              `SceneToWeb component "${component.type}" (${component.id}) is enabled but has no Three.js adapter. ` +
                 `Add it to installThreeCompiledScene({ componentAdapters: { ... } }). Supplied adapters: ${supplied}.`,
             )
           }
@@ -355,7 +357,7 @@ export async function installThreeComponents(
     )
     if (cleanupErrors.length > 0) {
       throw new Error(
-        `Could not install Blendlink components: ${message(error)}. ` +
+        `Could not install SceneToWeb components: ${message(error)}. ` +
           `Rollback also failed: ${cleanupErrors.map(message).join('; ')}`,
       )
     }
@@ -379,7 +381,7 @@ export async function installThreeComponents(
       ? Object.freeze([...pipeline.resolvedOrder])
       : Object.freeze([]),
     activate(scene = options.scene, camera = options.camera) {
-      if (disposed) throw new Error('These installed Blendlink components have been disposed.')
+      if (disposed) throw new Error('These installed SceneToWeb components have been disposed.')
       if (activated) return
       try {
         committedScene = scene
@@ -396,7 +398,7 @@ export async function installThreeComponents(
           websiteSurfaces,
         )
         throw new Error(
-          `Could not activate Blendlink components: ${message(error)}` +
+          `Could not activate SceneToWeb components: ${message(error)}` +
             (cleanupErrors.length > 0
               ? `. Activation rollback also failed: ${cleanupErrors.map(message).join('; ')}`
               : ''),
@@ -405,17 +407,17 @@ export async function installThreeComponents(
       }
     },
     update(deltaSeconds) {
-      if (disposed) throw new Error('These installed Blendlink components have been disposed.')
+      if (disposed) throw new Error('These installed SceneToWeb components have been disposed.')
       lifecycle?.update?.(deltaSeconds)
     },
     fixedUpdate(fixedDeltaSeconds) {
-      if (disposed) throw new Error('These installed Blendlink components have been disposed.')
+      if (disposed) throw new Error('These installed SceneToWeb components have been disposed.')
       lifecycle?.fixedUpdate?.(fixedDeltaSeconds)
     },
     resize(width, height) {
-      if (disposed) throw new Error('These installed Blendlink components have been disposed.')
+      if (disposed) throw new Error('These installed SceneToWeb components have been disposed.')
       if (!positive(width) || !positive(height)) {
-        throw new Error(`Blendlink component resize needs positive finite width/height; got ${width} x ${height}.`)
+        throw new Error(`SceneToWeb component resize needs positive finite width/height; got ${width} x ${height}.`)
       }
       pipeline?.setSize(width, height)
       const pixelRatio = typeof options.renderer.getPixelRatio === 'function'
@@ -424,12 +426,12 @@ export async function installThreeComponents(
       lifecycle?.resize?.(width, height, positive(pixelRatio) ? pixelRatio : 1)
     },
     setQuality(quality) {
-      if (disposed) throw new Error('These installed Blendlink components have been disposed.')
+      if (disposed) throw new Error('These installed SceneToWeb components have been disposed.')
       pipeline?.setQuality(quality)
       lifecycle?.setQuality?.(quality)
     },
     render(deltaSeconds) {
-      if (disposed) throw new Error('These installed Blendlink components have been disposed.')
+      if (disposed) throw new Error('These installed SceneToWeb components have been disposed.')
       lifecycle?.beforeRender?.()
       try {
         if (pipeline) pipeline.render(deltaSeconds)
@@ -446,7 +448,7 @@ export async function installThreeComponents(
         websiteSurfaces,
       )
       if (errors.length > 0) {
-        throw new Error(`Could not fully dispose Blendlink components: ${errors.map(message).join('; ')}`)
+        throw new Error(`Could not fully dispose SceneToWeb components: ${errors.map(message).join('; ')}`)
       }
     },
   }
@@ -612,7 +614,7 @@ class ThreePostPipelineService implements PostPipelineService {
     options: InstallThreeComponentsOptions,
   ) {
     // Registration callbacks share this private copy. Activation replaces its
-    // scene/camera targets, so no Blendlink post callback can keep consulting
+    // scene/camera targets, so no SceneToWeb post callback can keep consulting
     // the detached staging targets after the atomic commit.
     this.options = { ...options }
     const renderer = options.renderer
@@ -631,13 +633,13 @@ class ThreePostPipelineService implements PostPipelineService {
     if (!hdrTarget && (options.components ?? []).some((component) =>
       component.enabled && componentDefinition(component.type)?.requires.includes('hdr-color'))) {
       warn(options,
-        'This device cannot render Blendlink post effects into a half-float color target. ' +
+        'This device cannot render SceneToWeb post effects into a half-float color target. ' +
         'Bloom will use a compatible LDR fallback, so highlights already clipped by tone mapping cannot glow. ' +
         'A Threshold at or above 1 cannot select ordinary clamped highlights; lower Threshold below 1 or disable Bloom.')
     } else if (hdrTarget && presentationToneMapping !== THREE.NoToneMapping && toneMode === null) {
       warn(options,
         `The prepared presentation uses unsupported Three tone-mapping constant ${presentationToneMapping}. ` +
-        'Blendlink left it in place, so HDR post effects run after that custom transform.')
+        'SceneToWeb left it in place, so HDR post effects run after that custom transform.')
     }
 
     this.installedToneMapping = transferToneMapping
@@ -673,10 +675,10 @@ class ThreePostPipelineService implements PostPipelineService {
   }
 
   async addEffect(effect: Readonly<PostEffectDescriptor>): Promise<RuntimeComponentInstallation> {
-    if (this.disposed) throw new Error('The Blendlink post pipeline has already been disposed.')
-    if (this.finalized) throw new Error('Blendlink post effects must be registered before the pipeline is finalized.')
+    if (this.disposed) throw new Error('The SceneToWeb post pipeline has already been disposed.')
+    if (this.finalized) throw new Error('SceneToWeb post effects must be registered before the pipeline is finalized.')
     if (this.registrations.has(effect.id)) {
-      throw new Error(`Blendlink post effect ID ${effect.id} is registered more than once.`)
+      throw new Error(`SceneToWeb post effect ID ${effect.id} is registered more than once.`)
     }
     const registration = await this.createRegistration(effect)
     registration.generatesHardPostEdges = generatesHardPostEdges(effect.type)
@@ -704,7 +706,7 @@ class ThreePostPipelineService implements PostPipelineService {
   }
 
   finalize(): void {
-    if (this.disposed) throw new Error('The Blendlink post pipeline has already been disposed.')
+    if (this.disposed) throw new Error('The SceneToWeb post pipeline has already been disposed.')
     if (this.finalized) return
     const registrations = [...this.registrations.values()]
       .sort((left, right) => phaseRank(left.phase) - phaseRank(right.phase)
@@ -749,8 +751,8 @@ class ThreePostPipelineService implements PostPipelineService {
   }
 
   activate(scene: THREE.Scene, camera: THREE.Camera): void {
-    if (this.disposed) throw new Error('The Blendlink post pipeline has already been disposed.')
-    if (!this.finalized) throw new Error('The Blendlink post pipeline must be finalized before activation.')
+    if (this.disposed) throw new Error('The SceneToWeb post pipeline has already been disposed.')
+    if (!this.finalized) throw new Error('The SceneToWeb post pipeline must be finalized before activation.')
     if (this.activated) return
 
     // postprocessing owns the supported propagation path for RenderPass,
@@ -828,7 +830,7 @@ class ThreePostPipelineService implements PostPipelineService {
       )
     }
     if (errors.length > 0) {
-      throw new Error(`Blendlink post-pipeline disposal failed: ${errors.map(message).join('; ')}`)
+      throw new Error(`SceneToWeb post-pipeline disposal failed: ${errors.map(message).join('; ')}`)
     }
   }
 
@@ -962,7 +964,7 @@ function installShadowCatcher(
   const mode = string(values.mode, 'mask')
   if (mode !== 'mask' && mode !== 'additive' && mode !== 'occluder') {
     throw new Error(
-      `Blendlink Shadow Catcher ${context.component.id} uses unsupported mode ${JSON.stringify(mode)}.`,
+      `SceneToWeb Shadow Catcher ${context.component.id} uses unsupported mode ${JSON.stringify(mode)}.`,
     )
   }
   const tint = color(values.color).toArray()
@@ -975,7 +977,7 @@ function installShadowCatcher(
   })
   return {
     // Mask/occluder use ordinary scene shadow/depth rendering. Additive is a
-    // standard lit material; none requires a second Blendlink frame loop.
+    // standard lit material; none requires a second SceneToWeb frame loop.
     isActive: () => false,
     dispose: () => installed.dispose(),
   }
@@ -989,14 +991,14 @@ function installContactShadows(
   const autoFit = boolean(values.autoFit, true)
   if (!autoFit && !target) {
     throw new Error(
-      `Blendlink Contact Shadows ${context.component.id} uses manual placement ` +
+      `SceneToWeb Contact Shadows ${context.component.id} uses manual placement ` +
         'but targets the Scene. Move it to an Empty/group or enable Fit to Scene.',
     )
   }
   const updatePolicy = string(values.updatePolicy, 'static')
   if (updatePolicy !== 'static' && updatePolicy !== 'continuous') {
     throw new Error(
-      `Blendlink Contact Shadows ${context.component.id} uses unsupported update policy ` +
+      `SceneToWeb Contact Shadows ${context.component.id} uses unsupported update policy ` +
         `${JSON.stringify(updatePolicy)}.`,
     )
   }
@@ -1062,7 +1064,7 @@ function installDepthOfField(
   const focusObject = mode === 'object' ? resolveFocus(context) : undefined
   if (mode === 'object' && !focusObject) {
     throw new Error(
-      `Blendlink Depth of Field ${context.component.id} uses Object focus but no focus target was selected.`,
+      `SceneToWeb Depth of Field ${context.component.id} uses Object focus but no focus target was selected.`,
     )
   }
   return installPostEffect(context, {
@@ -1248,7 +1250,7 @@ function createBloomEffect(
     beforeDispose = () => selective.selection.clear()
     effect = selective
   } else {
-    throw new Error(`Blendlink Bloom ${descriptor.id} uses unsupported mode ${JSON.stringify(mode)}.`)
+    throw new Error(`SceneToWeb Bloom ${descriptor.id} uses unsupported mode ${JSON.stringify(mode)}.`)
   }
   const setQuality = (quality: RuntimeQuality): void => {
     effect.mipmapBlurPass.levels = quality === 'low' ? 5 : quality === 'balanced' ? 7 : 8
@@ -1323,7 +1325,7 @@ function createChromaticAberrationEffect(
     })
   } else {
     throw new Error(
-      `Blendlink Chromatic Aberration ${descriptor.id} uses unsupported Pattern ${JSON.stringify(mode)}.`,
+      `SceneToWeb Chromatic Aberration ${descriptor.id} uses unsupported Pattern ${JSON.stringify(mode)}.`,
     )
   }
   if (amount > 0.01) {
@@ -1365,7 +1367,7 @@ function createPixelationEffect(
   }
   if (normalEdgeStrength > 0 && !normalPass) {
     throw new Error(
-      `Blendlink Pixelation ${descriptor.id} requested Normal Edges but the shared normal pass was not installed.`,
+      `SceneToWeb Pixelation ${descriptor.id} requested Normal Edges but the shared normal pass was not installed.`,
     )
   }
 
@@ -1513,7 +1515,7 @@ function qualityRank(value: string): 0 | 1 | 2 {
   if (value === 'low') return 0
   if (value === 'balanced') return 1
   if (value === 'high') return 2
-  throw new Error(`Unsupported Blendlink runtime quality ${JSON.stringify(value)}.`)
+  throw new Error(`Unsupported SceneToWeb runtime quality ${JSON.stringify(value)}.`)
 }
 
 function createVignetteEffect(
@@ -1551,7 +1553,7 @@ function createAmbientOcclusionPass(
   const values = descriptor.values
   const radiusMode = string(values.radiusMode, 'world')
   if (radiusMode !== 'world' && radiusMode !== 'screen') {
-    throw new Error(`Blendlink Ambient Occlusion ${descriptor.id} uses unsupported Radius mode ${radiusMode}.`)
+    throw new Error(`SceneToWeb Ambient Occlusion ${descriptor.id} uses unsupported Radius mode ${radiusMode}.`)
   }
   pass.configuration.gammaCorrection = false
   pass.configuration.screenSpaceRadius = radiusMode === 'screen'
@@ -1559,7 +1561,7 @@ function createAmbientOcclusionPass(
     ? clamp(finite(values.screenRadius, 32), 1, 512)
     : clamp(finite(values.worldRadius, 1), 0.0001, 1_000_000)
   pass.configuration.intensity = clamp(finite(values.intensity, 2), 0, 100)
-  // Blendlink colors are linear. N8AO 1.10.2 interprets this public field as
+  // SceneToWeb colors are linear. N8AO 1.10.2 interprets this public field as
   // sRGB and converts it to linear during render, so adapt at the boundary.
   pass.configuration.color = color(values.color).convertLinearToSRGB()
   const setQuality = (quality: RuntimeQuality): void => {
@@ -1639,7 +1641,7 @@ function createOutlineEffect(
         // OutlineEffect's Selection toggles layer 0 to hide selected objects
         // from its occluder depth pass. That fails for application-authored
         // nonzero layers and leaves layer 0 enabled afterwards. During this
-        // update only, put the selection exclusively on Blendlink's unused
+        // update only, put the selection exclusively on SceneToWeb's unused
         // layer and keep that layer out of the occluder camera mask. The
         // effect switches to the reserved layer for its mask pass itself.
         for (const object of selected) object.layers.set(selectionLayer)
@@ -1694,7 +1696,7 @@ function unusedOutlineLayer(scene: THREE.Scene): number {
     if (!used.has(layer)) return layer
   }
   throw new Error(
-    'Blendlink Outline needs one temporary render layer, but the application scene uses all 31 non-default layers.',
+    'SceneToWeb Outline needs one temporary render layer, but the application scene uses all 31 non-default layers.',
   )
 }
 
@@ -1711,7 +1713,7 @@ async function createColorGradingEffect(
   if (options.loadLut) {
     texture = await options.loadLut(url)
     if (!(texture instanceof THREE.Data3DTexture)) {
-      throw new Error(`Blendlink Color Grading ${descriptor.id} LUT resolver did not return a Data3DTexture.`)
+      throw new Error(`SceneToWeb Color Grading ${descriptor.id} LUT resolver did not return a Data3DTexture.`)
     }
   } else if (extension === 'cube') {
     const { LUTCubeLoader } = await import('three/addons/loaders/LUTCubeLoader.js')
@@ -1721,7 +1723,7 @@ async function createColorGradingEffect(
     texture = (await new LUT3dlLoader(options.loadingManager).loadAsync(url)).texture3D
   } else {
     throw new Error(
-      `Blendlink Color Grading ${descriptor.id} needs a .cube or .3dl LUT URL; got ${JSON.stringify(url)}.`,
+      `SceneToWeb Color Grading ${descriptor.id} needs a .cube or .3dl LUT URL; got ${JSON.stringify(url)}.`,
     )
   }
   const effect = new post.LUT3DEffect(texture, {
@@ -1745,7 +1747,7 @@ function createDepthOfFieldEffect(
   const values = descriptor.values
   const mode = string(values.focusMode, 'distance')
   if (mode !== 'distance' && mode !== 'object') {
-    throw new Error(`Blendlink Depth of Field ${descriptor.id} uses unsupported focus mode ${mode}.`)
+    throw new Error(`SceneToWeb Depth of Field ${descriptor.id} uses unsupported focus mode ${mode}.`)
   }
   const effect = new post.DepthOfFieldEffect(options.camera, {
     focusDistance: clamp(finite(values.focusDistance, 3), 0, 1_000_000),
@@ -1757,7 +1759,7 @@ function createDepthOfFieldEffect(
   let update: ((deltaSeconds: number) => void) | undefined
   if (mode === 'object') {
     if (!(focusObject instanceof THREE.Object3D)) {
-      throw new Error(`Blendlink Depth of Field ${descriptor.id} could not resolve its object focus target.`)
+      throw new Error(`SceneToWeb Depth of Field ${descriptor.id} could not resolve its object focus target.`)
     }
     const target = new THREE.Vector3()
     focusObject.getWorldPosition(target)
@@ -1928,7 +1930,7 @@ function installWebsiteSurface(
     context, '__blendlinkWebsiteSurfaces',
   )
   if (!surfaces) {
-    throw new Error('Blendlink Website Surface is missing its scene-local ownership coordinator.')
+    throw new Error('SceneToWeb Website Surface is missing its scene-local ownership coordinator.')
   }
   const name = requiredString(
     context.component.values.name, `${context.component.type}.name`,
@@ -2016,7 +2018,7 @@ function installSeeThrough(context: ThreeComponentAdapterContext): ThreeComponen
       const originals = Array.isArray(original) ? original : [original]
       const installed = originals.map((material) => {
         const clone = material.clone()
-        clone.name = material.name ? `${material.name} / Blendlink See Through` : 'Blendlink See Through'
+        clone.name = material.name ? `${material.name} / SceneToWeb See Through` : 'SceneToWeb See Through'
         return clone
       })
       entry = {
@@ -2119,7 +2121,7 @@ function installOpenUrl(context: ThreeComponentAdapterContext): ThreeComponentIn
 function installHover(context: ThreeComponentAdapterContext): ThreeComponentInstallation {
   const object = requireObjectTarget(context)
   const multiplier = finite(context.component.values.scale, 1.08)
-  if (multiplier <= 0) throw new Error(`Blendlink hover component ${context.component.id} needs a positive scale.`)
+  if (multiplier <= 0) throw new Error(`SceneToWeb hover component ${context.component.id} needs a positive scale.`)
   const original = object.scale.clone()
   const installed = original.clone().multiplyScalar(multiplier)
   const duration = Math.max(0, finite(context.component.values.duration, 0.12))
@@ -2151,7 +2153,7 @@ function installPlayAnimationOnClick(context: ThreeComponentAdapterContext): Thr
   const clip = context.animations.find((candidate) => candidate.name === clipName)
   if (!clip) {
     throw new Error(
-      `Blendlink click-animation component ${context.component.id} references clip "${clipName}", ` +
+      `SceneToWeb click-animation component ${context.component.id} references clip "${clipName}", ` +
         `but the GLB contains: ${context.animations.map((entry) => entry.name).join(', ') || 'none'}.`,
     )
   }
@@ -2219,7 +2221,7 @@ async function installAudioSource(context: ThreeComponentAdapterContext): Promis
   } catch (error) {
     const cleanupErrors = disconnectAudio(audio, parent)
     throw new Error(
-      `Blendlink audio source ${context.component.id} could not load "${url}": ${message(error)}` +
+      `SceneToWeb audio source ${context.component.id} could not load "${url}": ${message(error)}` +
         (cleanupErrors.length > 0
           ? `. Audio rollback also failed: ${cleanupErrors.map(message).join('; ')}`
           : ''),
@@ -2253,7 +2255,7 @@ function installPlayAudioOnClick(context: ThreeComponentAdapterContext): ThreeCo
   const source = sources.get(sourceId) ?? [...sources.values()].find((audio) => audio.parent === sourceObject)
   if (!source) {
     throw new Error(
-      `Blendlink click-audio component ${context.component.id} cannot find audio source ` +
+      `SceneToWeb click-audio component ${context.component.id} cannot find audio source ` +
         `"${sourceId || sourceName || 'on this object'}". Put audio-source before it or set sourceId.`,
     )
   }
@@ -2276,7 +2278,7 @@ function resolveObject(component: ObjectComponent, bindings: SceneBindings<THREE
   const object = bindings.byId[objectId] ?? (objectName ? bindings.byName[objectName] : undefined)
   if (!object) {
     throw new Error(
-      `Blendlink component ${component.id} targets object ID "${objectId}" (${objectName}), ` +
+      `SceneToWeb component ${component.id} targets object ID "${objectId}" (${objectName}), ` +
         'but it is not present in this loaded GLB. Re-export the scene after repairing its object identity.',
     )
   }
@@ -2293,26 +2295,26 @@ function resolveFocus(context: ThreeComponentAdapterContext): THREE.Object3D | u
   const object = (id ? context.bindings.byId[id] : undefined) ?? (name ? context.bindings.byName[name] : undefined)
   if (!object) {
     throw new Error(
-      `Blendlink component ${context.component.id} references focus object "${id || name}", but it is not loaded.`,
+      `SceneToWeb component ${context.component.id} references focus object "${id || name}", but it is not loaded.`,
     )
   }
   return object
 }
 
 function requireObjectTarget(context: ThreeComponentAdapterContext): THREE.Object3D {
-  if (!context.object) throw new Error(`Blendlink component ${context.component.id} (${context.component.type}) must target an object.`)
+  if (!context.object) throw new Error(`SceneToWeb component ${context.component.id} (${context.component.type}) must target an object.`)
   return context.object
 }
 
 function requireSceneTarget(context: ThreeComponentAdapterContext): void {
-  if (context.object) throw new Error(`Blendlink component ${context.component.id} (${context.component.type}) must target the Scene.`)
+  if (context.object) throw new Error(`SceneToWeb component ${context.component.id} (${context.component.type}) must target the Scene.`)
 }
 
 function requirePostPipeline(context: ThreeComponentAdapterContext): PostPipelineService {
   const service = context.services.postPipeline
   if (!service) {
     throw new Error(
-      `Blendlink component ${context.component.id} requires the post-pipeline capability, ` +
+      `SceneToWeb component ${context.component.id} requires the post-pipeline capability, ` +
         'but the active runtime did not provide it.',
     )
   }
@@ -2426,7 +2428,7 @@ function interactiveCanvas(context: ThreeComponentAdapterContext): InteractiveCa
   const canvas = context.renderer.domElement as unknown as Partial<InteractiveCanvas>
   if (!canvas.getBoundingClientRect || !canvas.addEventListener || !canvas.removeEventListener) {
     throw new Error(
-      `Blendlink component ${context.component.id} (${context.component.type}) needs an interactive renderer canvas. ` +
+      `SceneToWeb component ${context.component.id} (${context.component.type}) needs an interactive renderer canvas. ` +
         'Use this component in a browser WebGLRenderer or provide a custom adapter.',
     )
   }
@@ -2464,7 +2466,7 @@ function effectivelyVisible(object: THREE.Object3D): boolean {
 
 function ensureAudioListener(context: ThreeComponentAdapterContext): THREE.AudioListener {
   const state = implementationHook<AudioListenerState>(context, '__blendlinkAudioListenerState')
-  if (!state) throw new Error('Blendlink audio adapter is missing its listener ownership state.')
+  if (!state) throw new Error('SceneToWeb audio adapter is missing its listener ownership state.')
   if (state.shared) return state.shared.listener
 
   const stored = state.camera.userData[AUDIO_LISTENER_STATE_KEY]
@@ -2476,7 +2478,7 @@ function ensureAudioListener(context: ThreeComponentAdapterContext): THREE.Audio
     const known = state.camera.userData[AUDIO_LISTENER_KEY]
     if (known instanceof THREE.AudioListener) {
       // Respect an explicitly retained listener from an older integration.
-      // Blendlink may borrow it, but must not remove or disconnect it.
+      // SceneToWeb may borrow it, but must not remove or disconnect it.
       shared = { listener: known, owners: 0, blendlinkOwned: false }
     } else {
       const listener = new THREE.AudioListener()
@@ -2497,12 +2499,12 @@ function activatePreparedAudioListener(state: AudioListenerState, camera: THREE.
   if (!state.pendingOwnedAttachment) return
   const shared = state.shared
   if (shared === null || !shared.blendlinkOwned) {
-    throw new Error('Blendlink audio listener activation lost its prepared ownership state.')
+    throw new Error('SceneToWeb audio listener activation lost its prepared ownership state.')
   }
   const existing = camera.userData[AUDIO_LISTENER_KEY]
   if (existing instanceof THREE.AudioListener && existing !== shared.listener) {
     throw new Error(
-      'Blendlink cannot activate prepared audio because the committed camera gained another AudioListener. ' +
+      'SceneToWeb cannot activate prepared audio because the committed camera gained another AudioListener. ' +
       'Dispose the superseded scene generation before committing this one.',
     )
   }
@@ -2546,7 +2548,7 @@ function releaseAudioListener(state: AudioListenerState): unknown[] {
   try { state.contextLease?.dispose() } catch (error) { errors.push(error) }
   state.contextLease = null
   if (shared.owners <= 0) {
-    errors.push(new Error('Blendlink audio listener ownership underflowed.'))
+    errors.push(new Error('SceneToWeb audio listener ownership underflowed.'))
     return errors
   }
   shared.owners -= 1
@@ -2577,7 +2579,7 @@ function inertComponents(
   const websiteSurfaces = createThreeWebsiteSurfaces({
     ...(requestFrame ? { requestFrame } : {}),
   })
-  const active = (): void => { if (disposed) throw new Error('These installed Blendlink components have been disposed.') }
+  const active = (): void => { if (disposed) throw new Error('These installed SceneToWeb components have been disposed.') }
   return {
     count: 0,
     postprocessing: false,
@@ -2598,7 +2600,7 @@ function inertComponents(
     fixedUpdate() { active() },
     resize(width, height) {
       active()
-      if (!positive(width) || !positive(height)) throw new Error(`Blendlink component resize needs positive finite width/height; got ${width} x ${height}.`)
+      if (!positive(width) || !positive(height)) throw new Error(`SceneToWeb component resize needs positive finite width/height; got ${width} x ${height}.`)
     },
     setQuality() { active() },
     render() { active(); renderer.render(committedScene, committedCamera) },
@@ -2691,7 +2693,7 @@ function string(value: unknown, fallback: string): string {
 
 function requiredString(value: unknown, label: string): string {
   const result = string(value, '')
-  if (!result) throw new Error(`Blendlink component needs a non-empty ${label}.`)
+  if (!result) throw new Error(`SceneToWeb component needs a non-empty ${label}.`)
   return result
 }
 
@@ -2701,12 +2703,12 @@ function safeUrl(value: unknown, label: string, allowedSchemes: ReadonlySet<stri
   try {
     parsed = new URL(result, 'https://blendlink.invalid/')
   } catch (error) {
-    throw new Error(`Blendlink component ${label} is not a valid URL: ${message(error)}`)
+    throw new Error(`SceneToWeb component ${label} is not a valid URL: ${message(error)}`)
   }
   const scheme = parsed.protocol.slice(0, -1).toLowerCase()
   if (!allowedSchemes.has(scheme)) {
     throw new Error(
-      `Blendlink component ${label} uses unsupported ${scheme}: URL. ` +
+      `SceneToWeb component ${label} uses unsupported ${scheme}: URL. ` +
         `Allowed absolute schemes: ${[...allowedSchemes].join(', ')}; site-relative paths are also supported.`,
     )
   }
@@ -2724,3 +2726,6 @@ function message(error: unknown): string { return error instanceof Error ? error
 function implementationHook<T>(context: ThreeComponentAdapterContext, key: string): T | undefined {
   return (context as unknown as Record<string, T | undefined>)[key]
 }
+
+/** Canonical name; BlendlinkPostPipeline remains a compatibility alias. */
+export type SceneToWebPostPipeline = BlendlinkPostPipeline

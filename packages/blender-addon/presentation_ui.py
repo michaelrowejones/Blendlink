@@ -214,7 +214,7 @@ def _camera_id_issue(scene, project, scope: str) -> str | None:
         object_id = camera.get("blendlink_id")
         if not isinstance(object_id, str) or not object_id or counts.get(object_id) != 1:
             return (
-                f"Save this .blend once so Blendlink can preserve {camera.name} "
+                f"Save this .blend once so SceneToWeb can preserve {camera.name} "
                 "across renames, then build the comparison plan again"
             )
     return None
@@ -610,7 +610,7 @@ class BLENDLINK_OT_stop_composition_preview(bpy.types.Operator):
 def _reference_matrix_poll_reason(context) -> str | None:
     project = _project(context)
     if not project or not project.configured:
-        return "Run Set Up Blendlink Scene first"
+        return "Run Set Up SceneToWeb Scene first"
     if not getattr(context.scene, "is_editable", True):
         return "Make this linked scene local before capturing references"
     if not bpy.data.filepath:
@@ -620,7 +620,7 @@ def _reference_matrix_poll_reason(context) -> str | None:
     settings = getattr(context.scene, "blendlink_reference", None)
     if settings is not None:
         if not _cache_matches(context.scene):
-            return "Blendlink is checking published cameras"
+            return "SceneToWeb is checking published cameras"
         issue = _cache["camera_issues"].get(settings.camera_scope)
         if issue:
             return issue
@@ -849,6 +849,6 @@ def unregister_pointers():
 
 
 def re_register_category(category: str):
-    """Move only Blendlink's viewport workspace to the configured tab."""
+    """Move only SceneToWeb's viewport workspace to the configured tab."""
     from . import ui
     ui.re_register_category(category)

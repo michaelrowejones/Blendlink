@@ -70,7 +70,7 @@ scene.render.film_transparent = False
 # lower both dimensions by the same percentage when a source is very large.
 if abs(float(scene.render.pixel_aspect_x) - float(scene.render.pixel_aspect_y)) > 1e-9:
     raise RuntimeError(
-        "Blendlink reference capture requires square pixels; author a square-pixel "
+        "SceneToWeb reference capture requires square pixels; author a square-pixel "
         "render contract before comparing it with a browser Canvas."
     )
 source_long_edge = max(scene.render.resolution_x, scene.render.resolution_y)
@@ -85,7 +85,7 @@ print(
     f"({reference_percentage}%)"
 )
 # A downloaded source may keep its working view layer active while disabling
-# that layer for final renders. Blendlink compiles the active view-layer scope,
+# that layer for final renders. SceneToWeb compiles the active view-layer scope,
 # so the reference must render that same scope instead of silently writing an
 # empty transparent PNG.
 active_view_layer = bpy.context.view_layer

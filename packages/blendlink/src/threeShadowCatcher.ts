@@ -81,7 +81,7 @@ function shadowMaterial(
     color: new THREE.Color().setRGB(...values.color),
     opacity: clamp(finite(values.opacity, 1), 0, 1),
   })
-  material.name = 'Blendlink Shadow Catcher Mask'
+  material.name = 'SceneToWeb Shadow Catcher Mask'
   material.side = source.side
   material.depthWrite = false
   material.stencilWrite = false
@@ -106,7 +106,7 @@ function additiveMaterial(
   material.transparent = true
   material.blending = THREE.AdditiveBlending
   material.depthWrite = false
-  material.name = 'Blendlink Shadow Catcher Additive'
+  material.name = 'SceneToWeb Shadow Catcher Additive'
   material.stencilWrite = false
   material.userData.blendlink_shadow_catcher = 'additive'
   const strength = clamp(finite(values.lightStrength, 6.6), 0, 20)
@@ -114,7 +114,7 @@ function additiveMaterial(
     const seam = 'vec3 outgoingLight = totalDiffuse + totalSpecular + totalEmissiveRadiance;'
     if (!shader.fragmentShader.includes(seam)) {
       throw new Error(
-        'Blendlink additive Shadow Catcher could not find Three.js\' supported lighting seam. ' +
+        'SceneToWeb additive Shadow Catcher could not find Three.js\' supported lighting seam. ' +
           'Use Mask/Occluder or a supported Three release instead of publishing an unverified shader.',
       )
     }
@@ -148,7 +148,7 @@ function occluderMaterial(source: THREE.Material): THREE.Material {
   material.depthWrite = true
   material.colorWrite = false
   material.stencilWrite = true
-  material.name = 'Blendlink Shadow Catcher Occluder'
+  material.name = 'SceneToWeb Shadow Catcher Occluder'
   material.userData.blendlink_shadow_catcher = 'occluder'
   return material
 }
@@ -237,7 +237,7 @@ function installMesh(
   }
 
   // Overlapping preview generations must compile from the authored baseline,
-  // not from another Blendlink replacement material.
+  // not from another SceneToWeb replacement material.
   const source = state.baselineMaterial
   const ownedMaterials = createOwnedMaterials(source, mesh, values)
   const installedMaterial = Array.isArray(source)
@@ -339,7 +339,7 @@ function createGeneratedReceiver(target: THREE.Object3D): GeneratedReceiverState
     metalness: 0,
     transparent: true,
   })
-  material.name = 'Blendlink Generated Shadow Catcher Source'
+  material.name = 'SceneToWeb Generated Shadow Catcher Source'
   const mesh = new THREE.Mesh(geometry, material)
   mesh.name = `${target.name || 'Object'} Shadow Catcher`
   mesh.userData.blendlink_generated_shadow_catcher = true
@@ -434,7 +434,7 @@ export function installThreeShadowCatcher(
       errors.push(...generated.flatMap((state) => releaseGeneratedReceiver(state)))
       if (errors.length > 0) {
         throw new Error(
-          `Blendlink Shadow Catcher cleanup failed: ${errors.map(String).join('; ')}`,
+          `SceneToWeb Shadow Catcher cleanup failed: ${errors.map(String).join('; ')}`,
         )
       }
     },

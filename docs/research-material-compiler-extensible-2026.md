@@ -13,7 +13,7 @@ result = realize_materials(scene, export_objects, plan)
 ```
 
 `plan_materials` is the shared, non-mutating interface for the add-on and the
-headless exporter. `realize_materials` is called only in Blendlink's disposable
+headless exporter. `realize_materials` is called only in SceneToWeb's disposable
 export process, after the complete plan has no blocking errors. Callers do not
 choose transforms, edit nodes, run Cycles, manage images, or interpret rule
 priority.
@@ -40,7 +40,7 @@ Do **not** expose arbitrary Python rule registration as a public product
 interface yet. It would be a hypothetical seam with one implementation, make
 rule ordering and cache identity third-party concerns, and let an unversioned
 plug-in silently change Final output. The internal registry is radically
-extensible for Blendlink's recognized transforms while the external interface
+extensible for SceneToWeb's recognized transforms while the external interface
 stays deep. Revisit a public extension seam only when two real external rule
 providers exist and can be versioned, fingerprinted, and tested against the
 same contract.
@@ -82,7 +82,7 @@ The relevant installed files and SHA-256 identities are:
 | `blender/exp/primitive_extract.py` | `F3CA65FEC33FA15B0360A1621EC621D74CBBF7E42AB25405AA2CD8B798933261` |
 
 Runtime evidence is from Three **0.184.0**, the package's installed and declared
-version. The Blendlink package is **0.8.0**. The retained Splash GLB identifies
+version. The SceneToWeb package is **0.8.0**. The retained Splash GLB identifies
 `Khronos glTF Blender I/O v5.2.39` as its generator.
 
 Direct RNA introspection in this Blender build found:
@@ -145,7 +145,7 @@ claim or attempt to bake the `Shader to RGB` result through Cycles. Compatibilit
 must be computed from the selected socket's upstream dependency subgraph, not
 from every node reachable from the material's active Surface.
 
-### Existing Blendlink and Splash evidence
+### Existing SceneToWeb and Splash evidence
 
 Current diagnosis lives in
 [`procedural.py`](../packages/blender-addon/procedural.py). It walks only the
@@ -192,12 +192,12 @@ must be resolved and validated for every exported mesh binding.
 Any interface must satisfy all of these constraints:
 
 1. **Stock runtime output.** No custom Three shader, runtime node interpreter,
-   generated website material installer, or Blendlink-owned renderer.
+   generated website material installer, or SceneToWeb-owned renderer.
 2. **No guessed semantics.** Automatic rules are limited to transformations
    whose output meaning is proven. Approximate transforms require explicit
    artist intent and name their loss.
 3. **Explicit selected-socket materialization.** The artist selects the exact
-   color/value source. Blendlink never picks the “best looking” socket.
+   color/value source. SceneToWeb never picks the “best looking” socket.
 4. **Separate color and alpha.** A successful color transform cannot erase
    authored transparency, clipping, or double-sided behavior.
 5. **Private mutation.** Plan in the live file without mutation. Clone and
@@ -574,7 +574,7 @@ Central execution clones the material, connects the selected color/value to a
 private Emission surface, installs the canonical active target, and runs an
 `EMIT` bake. For color plus alpha it runs separately attested channel jobs and
 packs them centrally; a rule never writes an image. Saved color bytes follow
-Blendlink's Standard/None/0 contract through the private save scene, and
+SceneToWeb's Standard/None/0 contract through the private save scene, and
 uncovered texels receive the existing one-constant background only after every
 lossy stage. The output becomes an ordinary stock unlit or PBR texture and is
 embedded by the stock exporter for the initial implementation, avoiding a new
@@ -908,9 +908,9 @@ Cycles can truthfully evaluate it, or an explicit application-owned adapter.
 - [Blender Cycles baking manual][cycles-baking]
 - [Blender shader-node introduction][shader-intro]
 - [Blender EEVEE node support][eevee-support]
-- Current Blendlink material analysis:
+- Current SceneToWeb material analysis:
   [`procedural.py`](../packages/blender-addon/procedural.py)
-- Canonical Blendlink bake mechanics:
+- Canonical SceneToWeb bake mechanics:
   [`bakelib.py`](../packages/blendlink/blender/bakelib.py)
 - Current bake/export orchestration:
   [`export_scene.py`](../packages/blendlink/blender/export_scene.py)

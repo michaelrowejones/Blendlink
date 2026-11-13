@@ -1,0 +1,58 @@
+{
+  "primarySources": [
+    {
+      "revision": "v4.2.0",
+      "path": "source/blender/nodes/function/nodes/node_fn_float_to_int.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/v4.2.0/source/blender/nodes/function/nodes/node_fn_float_to_int.cc",
+      "sha256": "91d9a91926dc1a5311a6d61d33e0b620d3d0e35f9c9d8bca71f1276778424bf2"
+    },
+    {
+      "revision": "v5.2.0",
+      "path": "source/blender/nodes/function/nodes/node_fn_float_to_int.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/v5.2.0/source/blender/nodes/function/nodes/node_fn_float_to_int.cc",
+      "sha256": "a09e1238b3f58604eeb27ae47270ec9b87058f3b0c6413c99e95880a247da8bc"
+    },
+    {
+      "revision": "v5.2.0",
+      "path": "source/blender/nodes/function/node_function_util.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/v5.2.0/source/blender/nodes/function/node_function_util.cc",
+      "sha256": "8e58d1140a2c1b397b994883e4ec9088a06c8b29ab5de88ee3f7b084c54249ea"
+    },
+    {
+      "revision": "02f0899d78e3",
+      "path": "source/blender/nodes/function/nodes/node_fn_float_to_int.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/nodes/function/nodes/node_fn_float_to_int.cc",
+      "sha256": "f47ecc37305a7863837dbfbe37678a860fc0e49572cbe9958d1f631f05510c8a"
+    },
+    {
+      "revision": "02f0899d78e3",
+      "path": "source/blender/nodes/function/node_function_util.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/nodes/function/node_function_util.cc",
+      "sha256": "bdb24aeed80d10bf9d4a45a6c431f05a988ea8220c95bc86603f27346eb9a923"
+    },
+    {
+      "revision": "02f0899d78e3",
+      "path": "source/blender/gpu/shaders/material/gpu_shader_material_float_to_int.bsl.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/gpu/shaders/material/gpu_shader_material_float_to_int.bsl.hh",
+      "sha256": "20b66c471a307f4c27957dcac907c19e8fad5c02ff879bd6cdeb5946dce3037d"
+    },
+    {
+      "revision": "02f0899d78e3",
+      "path": "source/blender/compositor/intern/node_tree_evaluator.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/compositor/intern/node_tree_evaluator.cc",
+      "sha256": "370c09bdaf564780a208a0a4498b9760830c96f10ef85a4dbb2358f533a5aab2"
+    },
+    {
+      "revision": "02f0899d78e3",
+      "path": "source/blender/compositor/intern/shader_operation.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/compositor/intern/shader_operation.cc",
+      "sha256": "e224a1074a3bf7b221c536b239f642ed8e912d35af82c1c3bf1a2f9385f8949c"
+    },
+    {
+      "revision": "02f0899d78e3",
+      "path": "source/blender/compositor/intern/multi_function_procedure_operation.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/compositor/intern/multi_function_procedure_operation.cc",
+      "sha256": "d61a452a55f9d333ea8c5fca6e81bf9604627521b547e59fb4ebfe0a59762ce9"
+    }
+  ]
+}

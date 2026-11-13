@@ -7,7 +7,7 @@ Date: 2026-07-22
 
 ## Executive conclusion
 
-The Cube Diorama atlas-plan drift begins before Blendlink's outer packer. The
+The Cube Diorama atlas-plan drift begins before SceneToWeb's outer packer. The
 same evaluated topology can contain different UV float32 values in different
 evaluations. On Blender 5.2.0 LTS the Bevel modifier has a concrete source-level
 ordering seam: UV-connected loops are stored in unordered, pointer-hashed
@@ -23,7 +23,7 @@ Occupancy moved from `0.2439` to `0.2460`, and target achievement moved from
 `0.9660` to `0.9701`. Both clear the quality gate, but neither exact UV bytes nor
 the reported density result are reproducible yet.
 
-Blendlink's MaxRects outer allocator remains deterministic for identical input
+SceneToWeb's MaxRects outer allocator remains deterministic for identical input
 rectangles. It is not, by itself, a deterministic compiler barrier: the
 evaluated/local UV stages own the rectangle dimensions passed across that seam.
 
@@ -33,7 +33,7 @@ cached result still varied across fresh processes. `True` remains necessary when
 the compiler must preserve every authored UV layer; Blender's API explicitly
 says the default computes only the subset needed for display and rendering.
 
-Blendlink's deterministic MaxRects outer pack is still an evidence-backed
+SceneToWeb's deterministic MaxRects outer pack is still an evidence-backed
 improvement over Needle 1.4.2. Needle's lightmap operator first constructs a
 mesh list from a Python `set`, and Blender's box pack invoked by that operator
 explicitly uses a non-deterministic sort. Blender's own `pack_islands` path has
@@ -313,7 +313,7 @@ contains the exact warning that BLI box sorting is non-deterministic
 (`mathutils_geometry.cc:1584`); `boxpack_2d.cc:278-282` independently labels
 that qsort ordering non-deterministic.
 
-Blendlink should therefore retain its deterministic package-owned outer pack.
+SceneToWeb should therefore retain its deterministic package-owned outer pack.
 That is a measurable improvement over the pinned Needle path, not an
 unsupported deviation. Needle does not add a control for Blender Bevel's
 pointer-hashed UV merge; it receives the evaluated mesh as Blender supplies it.
@@ -341,7 +341,7 @@ pointer-hashed UV merge; it receives the evaluated mesh as Blender supplies it.
    it must not rewrite arbitrary authored UV maps.
 6. The ideal upstream Blender repair is to make Bevel's UV averaging order
    stable: iterate loops by a stable element index (or use an insertion-ordered
-   container) before the float reduction. Blendlink cannot assume users have a
+   container) before the float reduction. SceneToWeb cannot assume users have a
    patched Blender, so this remains upstream/future work unless contributed and
    shipped by Blender.
 

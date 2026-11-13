@@ -23,7 +23,7 @@ export { collectThreeTextureEvidence } from './threeTextureEvidence.js'
 // The browser entry must reach every browser-side symbol. Fog and the
 // performance monitor were reachable only through the Node/CLI root
 // barrel, which is why the README told browsers to `import from
-// 'blendlink'` and pull node:child_process, node:fs and sharp with it.
+// 'scenetoweb'` and pull node:child_process, node:fs and sharp with it.
 export { applyCompiledSceneFog } from './sceneFog.js'
 export { createRuntimePerformanceMonitor } from './runtimePerformance.js'
 export type {
@@ -105,6 +105,7 @@ import {
 } from './meshoptWorkers.js'
 import {
   createCompiledAssetUrlModifier,
+  resolveCompiledAssetUrl,
   runtimeAssetGraphRoot,
 } from './assetUrls.js'
 import {
@@ -173,7 +174,7 @@ export type {
 
 /** The small interface emitted by `<scene>.baked.ts`. The implementation is
  * generated once and owned by the website, so published scenes remain usable
- * without a Blendlink-specific asset format or hosted runtime. */
+ * without a SceneToWeb-specific asset format or hosted runtime. */
 export interface ThreeBakedSceneHandle {
   /** New Lighting-aware recipes expose readiness. Optional preserves older
    * artist-owned recipes until the explicit backed-up template migration. */
@@ -263,13 +264,13 @@ export interface InstallThreeCompiledSceneOptions extends MeshoptWorkerOptions {
   descriptor: CompiledSceneDescriptor
   renderer: CompiledSceneRendererOption
   scene: THREE.Scene
-  /** Application-owned manager. Blendlink never calls abort() on it. When
+  /** Application-owned manager. SceneToWeb never calls abort() on it. When
    * omitted, the one-call installer owns a private attempt-scoped manager.
    * Three may still coalesce same-URL FileLoader work across managers, so a
    * manager is not a process-wide request-isolation boundary. */
   loadingManager?: THREE.LoadingManager
   /** Rebase compiler-owned URLs beneath a Next/Vite base path or CDN root.
-   * This is supported only with Blendlink's private loaders; application-owned
+   * This is supported only with SceneToWeb's private loaders; application-owned
    * loaders/managers retain their own URL policy. */
   assetBaseUrl?: string | URL
   /** Abandon this installation. Requests initiated by the private manager are
@@ -280,7 +281,7 @@ export interface InstallThreeCompiledSceneOptions extends MeshoptWorkerOptions {
   /** Reuse an application-owned loader when it has custom glTF plugins. */
   loader?: GLTFLoader
   /** Explicit semantic attestation for custom plugins on an application-owned
-   * loader. A parser plugin name alone never grants support. Blendlink uses
+   * loader. A parser plugin name alone never grants support. SceneToWeb uses
    * only declared extensions that are also present on the loaded parser, and
    * applications should back this declaration with their browser smoke gate. */
   gltfRuntimeCapabilities?: GltfRuntimeCapabilityProfile
@@ -307,7 +308,7 @@ export interface InstallThreeCompiledSceneOptions extends MeshoptWorkerOptions {
   addToScene?: boolean
   /** Default true for installThreeCompiledScene() and the legacy immediate
    * loaded seam. Detached preparation defaults false unless explicitly true:
-   * framework adapters already own renderer sizing while Blendlink still
+   * framework adapters already own renderer sizing while SceneToWeb still
    * updates its authored camera and post-processing targets. */
   resizeRenderer?: boolean
   /** Override the material-programs transport (tests, custom hosting).
@@ -322,7 +323,7 @@ export interface InstallThreeCompiledSceneOptions extends MeshoptWorkerOptions {
   captureReflectionProbes?: boolean
   /** Explicit opt-in: preserve the existing conservative instance policy. */
   instantiateEligibleMeshes?: boolean
-  /** Explicit application adapters for portable components outside Blendlink's
+  /** Explicit application adapters for portable components outside SceneToWeb's
    * core artist-facing library. Enabled unknown components fail loudly unless
    * they are listed here. */
   componentAdapters?: ThreeComponentAdapterRegistry
@@ -337,7 +338,7 @@ export interface InstallThreeCompiledSceneOptions extends MeshoptWorkerOptions {
    * package-owned single-raycast Canvas host and ready-handle controls. */
   componentInteraction?: InteractionService<THREE.Object3D | THREE.Scene>
   componentAccessibility?: AccessibilityService<THREE.Object3D | THREE.Scene>
-  /** Demand-mode host invalidation. Blendlink calls it when semantic input
+  /** Demand-mode host invalidation. SceneToWeb calls it when semantic input
    * starts a bounded animation or hover transition. */
   requestFrame?(): unknown
   /** Preview Studio opt-in. Uses Blender authoring evidence only where the
@@ -353,7 +354,7 @@ export interface InstallThreeCompiledSceneOptions extends MeshoptWorkerOptions {
   /** Anisotropic filtering for material-bound, mipmapped glTF textures.
    * The one-call installer defaults private loaded resources to Needle's
    * balanced value `4`. Already-loaded/cache-owning seams default to
-   * "authored"; opt in there explicitly and Blendlink will coordinate and
+   * "authored"; opt in there explicitly and SceneToWeb will coordinate and
    * restore its shared-resource lease. A number is clamped to renderer
    * capability; "renderer-max" is an explicit quality opt-in. */
   textureAnisotropy?: ThreeTextureAnisotropy
@@ -388,7 +389,7 @@ export interface ThreeCompiledScenePreparationTask {
 
 export interface ThreeCompiledSceneCommitHost {
   /** Synchronously install host-owned camera/render state. The returned lease
-   * is rolled back before Blendlink releases prepared scene resources. */
+   * is rolled back before SceneToWeb releases prepared scene resources. */
   activate?(
     scene: InstalledThreeCompiledScene,
   ): { dispose(): void } | void
@@ -443,7 +444,7 @@ export interface InstalledThreeCompiledScene {
    * shadowless and affect live Standard/Physical receivers. Counts cover
    * unique visible materials under this compiled root only; like every Three
    * scene light, the installed lights can also illuminate eligible application
-   * siblings. Keep Blendlink's one-compiled-scene-per-Canvas ownership rule. */
+   * siblings. Keep SceneToWeb's one-compiled-scene-per-Canvas ownership rule. */
   rectAreaLights: ThreeRectAreaLightReport
   /** Inspectable sampling decision for imported material textures. */
   textureSampling: ThreeTextureSamplingReport
@@ -459,7 +460,7 @@ export interface InstalledThreeCompiledScene {
   components: InstalledThreeComponents
   /** Convenience projection of Components' named live-pixel receivers. */
   websiteSurfaces: InstalledThreeComponents['websiteSurfaces']
-  /** Conservative live signal. False means Blendlink can prove its installed
+  /** Conservative live signal. False means SceneToWeb can prove its installed
    * systems are idle; unknown/custom imperative work remains true. */
   readonly requiresContinuousFrames: boolean
   /** The only per-frame call required by authored animation, controls, and LODs. */
@@ -511,7 +512,7 @@ interface LoadedWithBindings extends GLTF {
 
 export const BLENDLINK_KTX2_TRANSCODER_DIRECTORY = 'blendlink-basis'
 
-/** URL contract shared with internal `blendlink compile` publication. Query/hash
+/** URL contract shared with internal `scenetoweb compile` publication. Query/hash
  * cache keys belong to the GLB. A declared runtime graph owns the transcoder
  * at its graph root even when the GLB itself is nested; legacy/external
  * descriptors without a graph retain the sibling convention. */
@@ -536,7 +537,7 @@ export function threeKtx2TranscoderPath(
   const filename = assetPath.slice(slash + 1)
   if (!filename) {
     throw new Error(
-      `Blendlink cannot derive a KTX2 transcoder URL from scene URL "${sceneUrl}". ` +
+      `SceneToWeb cannot derive a KTX2 transcoder URL from scene URL "${sceneUrl}". ` +
         'Use a URL ending in the generated .glb file or supply an application-configured ktx2Loader.',
     )
   }
@@ -767,7 +768,7 @@ function installAuthoringPreviewWorld(
     THREE.RGBAFormat,
     THREE.FloatType,
   )
-  texture.name = 'Blendlink Preview World'
+  texture.name = 'SceneToWeb Preview World'
   texture.mapping = THREE.EquirectangularReflectionMapping
   texture.colorSpace = THREE.LinearSRGBColorSpace
   texture.magFilter = THREE.LinearFilter
@@ -1000,7 +1001,7 @@ function createThreePublishedReflectionLoader(
           (image.width !== asset.width || image.height !== asset.height)) {
         throw new Error(
           `Reflection probe "${context.definition.name}" decoded ${image.width}x${image.height}; ` +
-            `the manifest declares ${asset.width}x${asset.height}. Re-run blendlink compile.`,
+            `the manifest declares ${asset.width}x${asset.height}. Re-run scenetoweb compile.`,
         )
       }
       source.mapping = THREE.EquirectangularReflectionMapping
@@ -1032,7 +1033,7 @@ function createThreePublishedReflectionLoader(
 
 function installationAbortError(cause?: unknown): Error {
   const error = new Error(
-    'Blendlink scene installation was canceled.',
+    'SceneToWeb scene installation was canceled.',
     cause === undefined ? undefined : { cause },
   )
   error.name = 'AbortError'
@@ -1312,7 +1313,7 @@ function disposePreparedActivation(
   try { camera?.dispose() } catch (error) { errors.push(error) }
   if (errors.length > 0) {
     throw new Error(
-      `Could not roll back activated Blendlink scene behavior: ${errors.map(errorMessage).join('; ')}`,
+      `Could not roll back activated SceneToWeb scene behavior: ${errors.map(errorMessage).join('; ')}`,
     )
   }
 }
@@ -1346,13 +1347,13 @@ function createDeferredPreparationResources(): DeferredPreparationResources {
       }
     }
     if (errors.length > 0) {
-      throw new Error(`Could not release detached Blendlink preparation: ${errors.join('; ')}`)
+      throw new Error(`Could not release detached SceneToWeb preparation: ${errors.join('; ')}`)
     }
   }
 
   return {
     resource: {
-      label: 'detached Blendlink scene preparation',
+      label: 'detached SceneToWeb scene preparation',
       dispose() {
         disposalRequested = true
         release()
@@ -1377,7 +1378,7 @@ function createDeferredPreparationResources(): DeferredPreparationResources {
 class Ktx2WorkerCspError extends Error {
   constructor(directive: string) {
     super(
-      `Blendlink's KTX2 decoder worker was blocked by Content Security Policy (${directive}). ` +
+      `SceneToWeb's KTX2 decoder worker was blocked by Content Security Policy (${directive}). ` +
         `Three's Basis transcoder uses a Blob worker; allow \`worker-src blob:\` for this route, ` +
         'or pass an application-configured ktx2Loader that obeys the website policy.',
     )
@@ -1387,7 +1388,7 @@ class Ktx2WorkerCspError extends Error {
 
 /** A package-owned request failed even though Three's GLTFLoader recovered.
  * GLTFLoader r184 intentionally converts external image failures into null
- * textures; Blendlink refuses to publish that visibly incomplete result. */
+ * textures; SceneToWeb refuses to publish that visibly incomplete result. */
 export class ThreeCompiledSceneDependencyError extends Error {
   readonly urls: readonly string[]
 
@@ -1396,7 +1397,7 @@ export class ThreeCompiledSceneDependencyError extends Error {
     const shown = allUrls.slice(0, 5).map((url) => `"${url}"`).join(', ')
     const omitted = allUrls.length > 5 ? ` (and ${allUrls.length - 5} more)` : ''
     super(
-      `Blendlink refused to publish Ready because its private loader reported ` +
+      `SceneToWeb refused to publish Ready because its private loader reported ` +
         `${allUrls.length === 1 ? 'a failed scene dependency' : 'failed scene dependencies'}: ` +
         `${shown}${omitted}. Three's GLTF loader can otherwise recover with missing textures. ` +
         'Verify that publish included every companion file, that the deployment base path or CDN ' +
@@ -1506,14 +1507,14 @@ async function prepareThreeCompiledSceneAttempt(
   if (options.loadingManager && options.loader
       && options.loader.manager !== options.loadingManager) {
     throw new Error(
-      'Blendlink received a GLTFLoader and a different loadingManager. Configure the loader ' +
+      'SceneToWeb received a GLTFLoader and a different loadingManager. Configure the loader ' +
         'with the same manager or let the application-owned loader retain loading ownership.',
     )
   }
   if (options.assetBaseUrl !== undefined
       && (options.loadingManager || options.loader || options.ktx2Loader)) {
     throw new Error(
-      'Blendlink assetBaseUrl requires package-owned loaders so every compiler-owned request ' +
+      'SceneToWeb assetBaseUrl requires package-owned loaders so every compiler-owned request ' +
         'is rebased consistently. Configure URL policy on the application-owned loader/manager instead.',
     )
   }
@@ -1543,7 +1544,7 @@ async function prepareThreeCompiledSceneAttempt(
         itemsTotal,
       })
     } catch (error) {
-      console.error('Blendlink onProgress callback failed:', error)
+      console.error('SceneToWeb onProgress callback failed:', error)
     }
   }
   if (ownsManager) {
@@ -1575,7 +1576,7 @@ async function prepareThreeCompiledSceneAttempt(
   const abortOwnedRequests = (): void => {
     if (!ownsManager) return
     try { manager.abort() } catch (error) {
-      console.error('Blendlink could not abort its private loading manager:', error)
+      console.error('SceneToWeb could not abort its private loading manager:', error)
     }
   }
   options.signal?.addEventListener('abort', abortOwnedRequests, { once: true })
@@ -1598,7 +1599,7 @@ async function prepareThreeCompiledSceneAttempt(
     }
     // Match Needle's application-loader contract: public decoder fields that
     // are already configured remain authoritative unless the paired explicit
-    // Blendlink option replaces them. Treating an existing Meshopt decoder as
+    // SceneToWeb option replaces them. Treating an existing Meshopt decoder as
     // an explicit option also makes package worker knobs reject loudly instead
     // of silently taking over the application's worker lifecycle.
     const ktx2Loader = options.ktx2Loader
@@ -1653,8 +1654,8 @@ async function prepareThreeCompiledSceneAttempt(
           options.descriptor,
         )
         throw new Error(
-          `Blendlink could not load the KTX2 scene. Its automatic transcoder URL is "${path}". ` +
-            'Run `blendlink compile` and publish the generated blendlink-basis directory beside the GLB, ' +
+          `SceneToWeb could not load the KTX2 scene. Its automatic transcoder URL is "${path}". ` +
+            'Run `scenetoweb compile` and publish the generated blendlink-basis directory beside the GLB, ' +
             `or pass an application-configured ktx2Loader. ${errorMessage(error)}`,
         )
       }
@@ -1685,7 +1686,7 @@ async function prepareThreeCompiledSceneAttempt(
     }
     if (disposalErrors.length > 0) {
       throw new Error(
-        `Could not prepare the Blendlink scene: ${errorMessage(error)}. ` +
+        `Could not prepare the SceneToWeb scene: ${errorMessage(error)}. ` +
           `Loaded glTF cleanup also failed: ${disposalErrors.map(errorMessage).join('; ')}`,
       )
     }
@@ -1734,7 +1735,7 @@ export async function prepareLoadedThreeCompiledScene(
   )
   if (loaded.scene.parent) {
     throw new Error(
-      `Atomic Blendlink preparation requires exclusive ownership of a detached GLTF root, ` +
+      `Atomic SceneToWeb preparation requires exclusive ownership of a detached GLTF root, ` +
         `but "${loaded.scene.name || 'the loaded scene'}" is already parented. ` +
         'Unmount its current owner or provide a separately owned clone before preparing it.',
     )
@@ -1745,8 +1746,8 @@ export async function prepareLoadedThreeCompiledScene(
   if (enabledComponents.length > 0 &&
       (options.componentInteraction || options.componentAccessibility)) {
     throw new Error(
-      'Atomic Blendlink preparation cannot use application-owned interaction/accessibility ' +
-        'services until they expose deferred registration. Omit those services to use Blendlink\'s ' +
+      'Atomic SceneToWeb preparation cannot use application-owned interaction/accessibility ' +
+        'services until they expose deferred registration. Omit those services to use SceneToWeb\'s ' +
         'package-owned Canvas host, or install the scene imperatively with an explicitly staged adapter.',
     )
   }
@@ -1760,7 +1761,7 @@ export async function prepareLoadedThreeCompiledScene(
     .map((component) => component.type)
   if (activeCustomAdapters.length > 0) {
     throw new Error(
-      'Atomic Blendlink preparation cannot prove that these application component adapters are ' +
+      'Atomic SceneToWeb preparation cannot prove that these application component adapters are ' +
         `staging-safe: ${[...new Set(activeCustomAdapters)].sort().join(', ')}. ` +
         'Wrap two-phase adapters with defineThreeComponentAdapter(), keeping all live work in ' +
         'synchronous activate() and its inverse in synchronous dispose().',
@@ -1774,7 +1775,7 @@ export async function prepareLoadedThreeCompiledScene(
   const bufferedRequestFrame = (): void => {
     if (!presentationActive || !activeRequestFrame) return
     try { activeRequestFrame() } catch (error) {
-      console.error('Blendlink requestFrame callback failed:', error)
+      console.error('SceneToWeb requestFrame callback failed:', error)
     }
   }
 
@@ -1807,7 +1808,7 @@ export async function prepareLoadedThreeCompiledScene(
       const abortOwnedRequests = (): void => {
         if (!ownsManager) return
         try { loadingManager.abort() } catch (error) {
-          console.error('Blendlink could not abort its private loading manager:', error)
+          console.error('SceneToWeb could not abort its private loading manager:', error)
         }
       }
       context.signal.addEventListener('abort', abortOwnedRequests, { once: true })
@@ -2069,7 +2070,7 @@ export async function prepareLoadedThreeCompiledScene(
         resources.unlock()
       } catch (cleanupError) {
         throw new Error(
-          `Could not prepare the detached Blendlink scene: ${errorMessage(error)}. ` +
+          `Could not prepare the detached SceneToWeb scene: ${errorMessage(error)}. ` +
             `Cleanup also failed: ${errorMessage(cleanupError)}`,
           { cause: error },
         )
@@ -2185,8 +2186,9 @@ async function installLoadedThreeCompiledSceneNow(
 
     // Phase 4 Track C: a shipped materialPrograms pointer is the artist's
     // compile-time opt-in, so the programs apply automatically on the
-    // WebGPU renderer family. The WebGL family has no node materials to
-    // apply them with — its shipped carriers already render faithfully.
+    // WebGPURenderer family, including its WebGL2 backend. Legacy
+    // WebGLRenderer can retain a portable carrier, but must refuse live-only
+    // base colors rather than silently render the default white surface.
     let tslMaterials:
       | import('./tslMaterialRuntime.js').InstalledTslMaterials
       | null = null
@@ -2197,12 +2199,31 @@ async function installLoadedThreeCompiledSceneNow(
       const { installTslMaterials } = await import('./tslMaterialRuntime.js')
       tslMaterials = await installTslMaterials({
         root,
-        descriptor: descriptor as Parameters<typeof installTslMaterials>[0]['descriptor'],
+        ...(options.signal ? {signal:options.signal} : {}),
+        descriptor: {
+          ...descriptor,
+          materialPrograms: {
+            ...descriptor.materialPrograms,
+            url: options.assetBaseUrl === undefined ? descriptor.materialPrograms.url
+              : resolveCompiledAssetUrl(descriptor.materialPrograms.url, options.assetBaseUrl),
+          },
+        } as Parameters<typeof installTslMaterials>[0]['descriptor'],
         ...(options.loadMaterialPrograms
           ? { loadPrograms: options.loadMaterialPrograms }
           : {}),
       })
       register(() => tslMaterials?.dispose())
+    } else if (descriptor.materialPrograms) {
+      const { assertLegacyMaterialCarriers } = await import('./materialProgramDocument.js')
+      await assertLegacyMaterialCarriers({
+        root,
+        descriptor: { materialPrograms: {
+          ...descriptor.materialPrograms,
+          url: options.assetBaseUrl === undefined ? descriptor.materialPrograms.url
+            : resolveCompiledAssetUrl(descriptor.materialPrograms.url, options.assetBaseUrl),
+        } },
+        ...(options.loadMaterialPrograms ? { loadPrograms: options.loadMaterialPrograms } : {}),
+      })
     }
 
     const hasBakedAssets = Object.keys(descriptor.states ?? {}).length > 0
@@ -2354,7 +2375,7 @@ async function installLoadedThreeCompiledSceneNow(
         const threeCamera = camera as THREE.Camera
         if (behavior === 'free') {
           if (typeof window === 'undefined') {
-            throw new Error('Blendlink Free camera controls require a browser window and interactive canvas.')
+            throw new Error('SceneToWeb Free camera controls require a browser window and interactive canvas.')
           }
           const controls = new FlyControls(threeCamera, renderer.domElement)
           const sceneRadius = measureBounds(root).radius
@@ -2426,7 +2447,7 @@ async function installLoadedThreeCompiledSceneNow(
     if (authoredCamera && !isPerspectiveCamera(authoredCamera)
         && !isOrthographicCamera(authoredCamera)) {
       throw new Error(
-        'The authored Blendlink presentation camera did not load as a Three-compatible PerspectiveCamera or OrthographicCamera.',
+        'The authored SceneToWeb presentation camera did not load as a Three-compatible PerspectiveCamera or OrthographicCamera.',
       )
     }
     const cameraSource = authoredCamera
@@ -2530,7 +2551,7 @@ async function installLoadedThreeCompiledSceneNow(
           !supplied.trackMaterialClone && !baked?.trackMaterialClone) {
         throw new Error(
           'This scene combines baked materials with local reflection probes, but its editable ' +
-            'baked recipe predates material-clone tracking. Run `blendlink recipe update <scene>` ' +
+            'baked recipe predates material-clone tracking. Run `scenetoweb recipe update <scene>` ' +
             'and rebuild, or supply an assignTexture() adapter that coordinates both systems.',
         )
       }
@@ -2650,13 +2671,18 @@ async function installLoadedThreeCompiledSceneNow(
     if (descriptor.sourcePresentation && options.useSourcePresentation !== false
       && (!options.descriptor.look || options.descriptor.look.toneMapping === 'application')) {
       if ((renderer as THREE.WebGLRenderer & { isWebGPURenderer?: boolean }).isWebGPURenderer) {
-        sourcePresentation = await loadSourcePresentation(descriptor.sourcePresentation, options.signal)
+        sourcePresentation = await loadSourcePresentation({
+          ...descriptor.sourcePresentation,
+          url: options.assetBaseUrl === undefined ? descriptor.sourcePresentation.url
+            : resolveCompiledAssetUrl(descriptor.sourcePresentation.url, options.assetBaseUrl),
+        }, options.signal)
         for (const warning of sourcePresentation.warnings) warnThreeInstallation(options, warning)
       } else {
         warnThreeInstallation(options, 'The authored Blender display/compositor needs WebGPURenderer (WebGPU or WebGL2 backend). Native tone mapping remains active.')
       }
     }
     components = await installThreeComponents({
+      ...(options.signal ? { signal: options.signal } : {}),
       ...(sourcePresentation ? { sourcePresentation } : {}),
       // Generated descriptors are `as const`; the component installer never
       // mutates them, but accepts the canonical portable record shape.
@@ -2739,9 +2765,9 @@ async function installLoadedThreeCompiledSceneNow(
           || components?.requiresContinuousFrames === true
       },
       update(deltaSeconds) {
-        if (disposed) throw new Error('This installed Blendlink scene has been disposed.')
+        if (disposed) throw new Error('This installed SceneToWeb scene has been disposed.')
         if (!Number.isFinite(deltaSeconds) || deltaSeconds < 0) {
-          throw new Error(`Blendlink scene update needs a non-negative delta in seconds; got ${deltaSeconds}.`)
+          throw new Error(`SceneToWeb scene update needs a non-negative delta in seconds; got ${deltaSeconds}.`)
         }
         playback?.update(deltaSeconds)
         cameraController?.update(deltaSeconds)
@@ -2751,29 +2777,29 @@ async function installLoadedThreeCompiledSceneNow(
         rectAreaLights?.sync()
       },
       render(deltaSeconds) {
-        if (disposed) throw new Error('This installed Blendlink scene has been disposed.')
+        if (disposed) throw new Error('This installed SceneToWeb scene has been disposed.')
         components?.render(deltaSeconds)
       },
       resize(width, height) {
-        if (disposed) throw new Error('This installed Blendlink scene has been disposed.')
+        if (disposed) throw new Error('This installed SceneToWeb scene has been disposed.')
         resize(width, height)
         components?.resize(width, height)
       },
       setState(name) {
-        if (disposed) throw new Error('This installed Blendlink scene has been disposed.')
+        if (disposed) throw new Error('This installed SceneToWeb scene has been disposed.')
         return baked?.setState(name) ?? false
       },
       async setStateAsync(name) {
-        if (disposed) throw new Error('This installed Blendlink scene has been disposed.')
+        if (disposed) throw new Error('This installed SceneToWeb scene has been disposed.')
         if (!baked) return false
         return baked.setStateAsync ? baked.setStateAsync(name) : baked.setState(name)
       },
       setLightGroup(name, lightOptions) {
-        if (disposed) throw new Error('This installed Blendlink scene has been disposed.')
+        if (disposed) throw new Error('This installed SceneToWeb scene has been disposed.')
         return baked?.setLightGroup(name, lightOptions) ?? false
       },
       async setLightGroupAsync(name, lightOptions) {
-        if (disposed) throw new Error('This installed Blendlink scene has been disposed.')
+        if (disposed) throw new Error('This installed SceneToWeb scene has been disposed.')
         if (!baked) return false
         return baked.setLightGroupAsync
           ? baked.setLightGroupAsync(name, lightOptions)
@@ -2785,7 +2811,7 @@ async function installLoadedThreeCompiledSceneNow(
         const errors = rollback()
         if (errors.length > 0) {
           throw new Error(
-            'Could not fully dispose the installed Blendlink scene: ' +
+            'Could not fully dispose the installed SceneToWeb scene: ' +
               errors.map((error) => error instanceof Error ? error.message : String(error)).join('; '),
           )
         }
@@ -2795,7 +2821,7 @@ async function installLoadedThreeCompiledSceneNow(
     const rollbackErrors = rollback()
     if (rollbackErrors.length > 0) {
       throw new Error(
-        `Could not install the Blendlink scene: ${error instanceof Error ? error.message : String(error)}. ` +
+        `Could not install the SceneToWeb scene: ${error instanceof Error ? error.message : String(error)}. ` +
           `Rollback also failed: ${rollbackErrors.map((item) =>
             item instanceof Error ? item.message : String(item)).join('; ')}`,
       )
@@ -2847,7 +2873,7 @@ function validViewport(value: ThreeSceneViewport | undefined): ThreeSceneViewpor
 function requiredViewport(value: ThreeSceneViewport): ThreeSceneViewport {
   const viewport = validViewport(value)
   if (!viewport) {
-    throw new Error(`Blendlink viewport needs positive finite width/height; got ${value.width} x ${value.height}.`)
+    throw new Error(`SceneToWeb viewport needs positive finite width/height; got ${value.width} x ${value.height}.`)
   }
   return viewport
 }
@@ -2882,7 +2908,7 @@ function ownLoadedThreePreparedResources(
     errors.push(...releaseResources())
     if (errors.length > 0) {
       throw new Error(
-        'Could not fully dispose the prepared Blendlink scene and its loaded glTF resources: ' +
+        'Could not fully dispose the prepared SceneToWeb scene and its loaded glTF resources: ' +
           errors.map(errorMessage).join('; '),
       )
     }
@@ -2903,7 +2929,7 @@ function ownLoadedThreePreparedResources(
           ? []
           : releaseResources()
         return throwCombined(
-          'Could not commit the prepared Blendlink scene',
+          'Could not commit the prepared SceneToWeb scene',
           error,
           cleanupErrors,
         )
@@ -2918,7 +2944,7 @@ function ownLoadedThreePreparedResources(
         errors.push(...releaseResources())
         if (errors.length > 0) {
           throw new Error(
-            'Could not fully dispose the installed Blendlink scene and its loaded glTF resources: ' +
+            'Could not fully dispose the installed SceneToWeb scene and its loaded glTF resources: ' +
               errors.map(errorMessage).join('; '),
           )
         }
@@ -2946,7 +2972,7 @@ function ownLoadedThreeResources(
     }
     if (errors.length > 0) {
       throw new Error(
-        'Could not fully dispose the installed Blendlink scene and its loaded glTF resources: ' +
+        'Could not fully dispose the installed SceneToWeb scene and its loaded glTF resources: ' +
           errors.map(errorMessage).join('; '),
       )
     }
@@ -2969,7 +2995,7 @@ function createOwnedKtx2Loader(
     let cleanupError: unknown = null
     try { loader.dispose() } catch (disposeError) { cleanupError = disposeError }
     throw new Error(
-      `Blendlink could not configure Three's KTX2Loader for "${transcoderPath}". ` +
+      `SceneToWeb could not configure Three's KTX2Loader for "${transcoderPath}". ` +
         'detectSupport(renderer) needs a renderer with compressed-texture capability ' +
         'detection — for WebGPURenderer that means after `await renderer.init()` — or ' +
         `pass an application-configured ktx2Loader. ${errorMessage(error)}` +
@@ -3052,7 +3078,7 @@ function observeLateKtx2CspSceneLoad(load: Promise<LoadedWithBindings>): void {
     const errors = disposeLoadedThreeResources(lateLoaded)
     if (errors.length > 0) {
       console.error(
-        'Blendlink received a late glTF result after a KTX2 CSP failure, but could not ' +
+        'SceneToWeb received a late glTF result after a KTX2 CSP failure, but could not ' +
           `fully dispose it: ${errors.map(errorMessage).join('; ')}`,
       )
     }
@@ -3074,7 +3100,7 @@ function assertCompiledSceneRenderer(renderer: CompiledSceneRendererOption): voi
   }
   if (!identity.isWebGLRenderer && !identity.isWebGPURenderer) {
     throw new Error(
-      'Blendlink\'s standard scene installer requires a Three renderer ' +
+      'SceneToWeb\'s standard scene installer requires a Three renderer ' +
         '(WebGLRenderer, or an initialized WebGPURenderer). Renderer-like ' +
         'adapters need the full renderer surface: environment, shadows, ' +
         'probes, and lifecycle.',

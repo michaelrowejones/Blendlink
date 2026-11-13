@@ -91,7 +91,7 @@ function attestRectAreaLightContract(
   nodes: readonly Node[],
   evidence: readonly RectAreaLightContractEvidence[] | undefined,
 ): void {
-  // Undefined is the generic-GLB seam. Blendlink sync always supplies the
+  // Undefined is the generic-GLB seam. SceneToWeb sync always supplies the
   // Blender light contract (including an empty array), so an unexpected or
   // optimizer-dropped descriptor cannot bypass attestation there.
   if (evidence === undefined) return
@@ -233,7 +233,7 @@ export function meshoptDecodedBytesFromGlb(bytes: Uint8Array): number | undefine
 }
 
 export interface SceneManifest {
-  generator: 'blendlink'
+  generator: 'scenetoweb'
   schemaVersion: typeof MANIFEST_SCHEMA_VERSION
   /** Content hash of the GLB — cache-busting key and drift signal. */
   hash: string
@@ -252,7 +252,7 @@ export interface SceneManifest {
   /** Exact source location is private when the .blend is outside the project. */
   sourceBlendLocalPathKey?: string
   sourceHash?: string
-  /** Exact loaded Blendlink config bytes that produced this publication.
+  /** Exact loaded SceneToWeb config bytes that produced this publication.
    * Additive integration evidence; absent for generic/external typegen. */
   configSourceHash?: string
   externalDependencies?: GeneratedExternalDependency[]
@@ -304,11 +304,11 @@ export interface SceneManifest {
   /** Canonical source URL -> ordered, verified delivery alternatives. */
   textureVariants?: Record<string, TextureDeliveryVariant[]>
   /** True when the decoded GLB itself declares KHR_texture_basisu. This is
-   * independent of Blendlink's optional compression report: external GLBs
+   * independent of SceneToWeb's optional compression report: external GLBs
    * can already contain required KTX2 textures. */
   requiresKtx2?: true
   /** True when the decoded GLB itself requires EXT_meshopt_compression.
-   * External pipelines can publish Meshopt without a Blendlink optimization
+   * External pipelines can publish Meshopt without a SceneToWeb optimization
    * report, but Three's GLTFLoader still needs the official decoder. */
   requiresMeshopt?: true
   textureTransforms?: TextureTransformReport[]
@@ -422,11 +422,11 @@ export function parseManifest(json: string): SceneManifest | null {
     return null
   }
   const manifest = parsed as SceneManifest
-  if (manifest?.generator !== 'blendlink') return null
+  if (manifest?.generator !== 'scenetoweb') return null
   if (manifest.schemaVersion !== MANIFEST_SCHEMA_VERSION) {
     throw new Error(
       `Manifest schemaVersion ${String(manifest.schemaVersion)} is not the ` +
-        `supported version ${MANIFEST_SCHEMA_VERSION} — re-run blendlink compile ` +
+        `supported version ${MANIFEST_SCHEMA_VERSION} — re-run scenetoweb compile ` +
         `with a matching blendlink release.`,
     )
   }
@@ -540,7 +540,7 @@ function validateBakedOutputContract(
     if ((authoredOutput ?? declaredOutput) === 'lighting' && lightmapUv === undefined) {
       throw new Error(
         `Lighting node "${node.name}" has no blendlink_lightmap_uv. ` +
-          'Re-sync so Blendlink can bind its baked texture to the authored UV channel.',
+          'Re-sync so SceneToWeb can bind its baked texture to the authored UV channel.',
       )
     }
     if (authoredOutput === 'lighting' && declaredOutput === undefined) {
@@ -627,7 +627,7 @@ function validateBakedPrimitiveContract(
         throw new Error(
           `Final glTF material "${material.getName() || '(unnamed)'}" is shared across incompatible ` +
             `bake bindings: ${previous.description} and ${description}. ` +
-            'Re-sync so Blendlink can fork the material before runtime state composition.',
+            'Re-sync so SceneToWeb can fork the material before runtime state composition.',
         )
       }
       materialBindings.set(material, { signature, description })
@@ -714,7 +714,7 @@ function validateBakedTriangleUvs(
       throw new Error(
         `${description} primitive ${primitiveIndex} triangle ${triangleIndex} has non-zero geometry ` +
           `but a zero-area ${semantic} triangle. A modifier-generated baked face collapsed onto an ` +
-          'atlas line; re-sync so Blendlink can repair unpinned UVs or report the pinned island.',
+          'atlas line; re-sync so SceneToWeb can repair unpinned UVs or report the pinned island.',
       )
     }
   })
@@ -748,7 +748,7 @@ export async function generateSceneModule(options: {
   configSourceHash?: string
   sidecar?: BlendSidecar
   /** Exact Blender finalized-node evidence. Supplying an empty array attests
-   * that this Blendlink export contains no authored Rect Area descriptors. */
+   * that this SceneToWeb export contains no authored Rect Area descriptors. */
   rectAreaLightContract?: readonly RectAreaLightContractEvidence[]
   excluded?: string[]
   states?: SceneManifest['states']
@@ -828,7 +828,7 @@ export async function generateSceneModule(options: {
       )
       if (authoredProperties.length > 0) {
         throw new Error(
-          `Blendlink cannot publish anonymous glTF node ${nodeIndex} with authored properties ` +
+          `SceneToWeb cannot publish anonymous glTF node ${nodeIndex} with authored properties ` +
             `${authoredProperties.map((property) => JSON.stringify(property)).join(', ')}. ` +
             'Name the object in Blender or the source exporter so its website behavior has a deterministic binding.',
         )
@@ -846,7 +846,7 @@ export async function generateSceneModule(options: {
     // getObjectByName — the exact silent failure the tool exists to kill.
     const name = loadedNames.get(node)
     if (!name) {
-      throw new Error(`Blendlink could not allocate a loaded name for authored node "${raw}".`)
+      throw new Error(`SceneToWeb could not allocate a loaded name for authored node "${raw}".`)
     }
     if (name !== raw) {
       sanitizeNotes.push(
@@ -872,7 +872,7 @@ export async function generateSceneModule(options: {
     if (id && identities[id]) {
       throw new Error(
         `Duplicate blendlink_id "${id}" on "${raw}" and "${identities[id]!.name}". ` +
-        'Run Set Up Blendlink Scene in Blender to repair stable IDs before publishing.',
+        'Run Set Up SceneToWeb Scene in Blender to repair stable IDs before publishing.',
       )
     } else if (id) {
       identities[id] = { name, kind }
@@ -1073,7 +1073,7 @@ export async function generateSceneModule(options: {
     externalDependencies: options.sidecar?.externalDependencies,
   })
   const manifest: SceneManifest = {
-    generator: 'blendlink',
+    generator: 'scenetoweb',
     schemaVersion: MANIFEST_SCHEMA_VERSION,
     hash: createHash('sha256').update(glbBytes).digest('hex').slice(0, 16),
     url: options.url,
@@ -1326,7 +1326,7 @@ function renderModule(
   const defaultState = Object.entries(manifest.states ?? {})
     .find(([, state]) => state.default)?.[0] ?? Object.keys(manifest.states ?? {})[0] ?? null
 
-  return `/* Generated by blendlink — do not edit. Source: ${manifest.sourceBlend ?? manifest.url} */
+  return `/* Generated by SceneToWeb — do not edit. Source: ${manifest.sourceBlend ?? manifest.url} */
 import type * as THREE from 'three'
 
 export const ${exportName} = {

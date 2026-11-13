@@ -50,13 +50,27 @@ export interface SourceCompositorOperation {
 }
 
 export interface SourceCompositorProgram {
+  images?: Record<string, SourceCompositorImage>
   luminance?: [number, number, number]
   version: 1
   status: 'extracted' | 'unsupported' | 'disabled'
   ops: SourceCompositorOperation[]
   output?: CompositorValue
+  /** Fresh legacy Composite output; applied after finite image realization. */
+  outputAlpha?: 'legacy-composite-opaque-v1'
   passes: NonNullable<SourceCompositorOperation['pass']>[]
   diagnostics: { path: string[]; node: string; socket: string; message: string }[]
+}
+
+/** Lossless native CPU input pixels, independently of the compositor output. */
+export interface SourceCompositorImage {
+  model: 'native-cpu-static-image-v1'
+  encoding: 'zlib-le-rgba32f'
+  width: number
+  height: number
+  decodedBytes: number
+  data: string
+  source: { name: string; kind: string; colorSpace: string; alphaMode: string; storage: string }
 }
 
 export interface SourcePresentationAsset {

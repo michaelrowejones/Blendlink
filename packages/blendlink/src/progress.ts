@@ -1,4 +1,5 @@
 import { AsyncLocalStorage } from 'node:async_hooks'
+import type { BakePlan } from './invoke.js'
 
 export interface CompileProgress {
   fraction: number
@@ -7,6 +8,7 @@ export interface CompileProgress {
   device?: 'cpu' | 'gpu'
   backend?: string
   samples?: number
+  atlasPlan?: { sourceBlend: string; quality: 'preview' | 'final'; plan: BakePlan | null }
 }
 
 const listeners = new AsyncLocalStorage<(progress: CompileProgress) => void>()
@@ -37,6 +39,16 @@ export function progressEnabled(): boolean {
 export function emitProgress(fraction: number, label: string): void {
   const clamped = Math.min(1, Math.max(0, fraction))
   report({ fraction: clamped, label })
+}
+
+/** Planning is useful before a website exists. Return the measured plan to
+ * Blender's task panel without claiming any scene assets were published. */
+export function emitAtlasPlanProgress(sourceBlend: string, quality: 'preview' | 'final', plan: BakePlan | undefined, blocked: boolean): void {
+  report({
+    fraction: 1,
+    label: blocked ? 'Atlas fit needs attention' : plan ? 'Atlas fit checked' : 'Realtime scene - no atlas bake needed',
+    atlasPlan: { sourceBlend, quality, plan: plan ?? null },
+  })
 }
 
 /** Incremental line splitter that re-emits ##blendlink lines from a child

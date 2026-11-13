@@ -96,7 +96,9 @@ with tempfile.TemporaryDirectory(prefix='blendlink-preparation-cache-') as direc
         record = next(item for item in cold_uvs['objects'] if item['name'] == 'Cube')
         for loop, coordinates in zip(layer.data, bakelib._decode_packed_uv_record(record)):
             loop.uv = coordinates
-            loop.pin_uv = True
+        # Allocating the optional pin attribute inside this live UV iterator
+        # invalidates its CustomData pointers in native Blender4.2.
+        bakelib.set_uv_layer_pin_mask(layer, [True] * len(layer.data))
     assert compile_scene('pinned-cold', pin_layout)[0] > 0
     assert compile_scene('pinned-hot', pin_layout)[0] == 0
     compile_scene('restore')

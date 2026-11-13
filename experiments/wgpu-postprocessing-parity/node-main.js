@@ -36,7 +36,7 @@ import {
   blendlinkRadialChromaticAberration,
   blendlinkTiltShift,
   blendlinkVignette,
-} from 'blendlink/three/tsl-effects'
+} from 'scenetoweb/three/tsl-effects'
 import { ThreeWebgpuPostPipelineService } from '@blendlink-dist/threeWebgpuPostPipeline.js'
 import { bloom } from 'three/addons/tsl/display/BloomNode.js'
 import { chromaticAberration } from 'three/addons/tsl/display/ChromaticAberrationNode.js'

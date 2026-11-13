@@ -1,3 +1,7 @@
+import { prepareTslNoiseFields, type NoiseFieldPreparationStatistics } from './tslNoiseFields.js'
+export { createTslBuildResources } from './tslNodeRecipe.js'
+export { prepareTslNoiseFields, type PreparedTslNoiseFields, type PrepareTslNoiseFieldsOptions, type NoiseFieldPreparationStatistics } from './tslNoiseFields.js'
+import { collectBumpHeights, validateBumpHeightBinding } from './tslBumpHeight.js'
 /**
  * Phase 4 Track C: apply shipped TSL IR programs to loaded materials.
  *
@@ -13,16 +17,29 @@
  * WebGL-only applications never bundle the node system.
  */
 import * as THREE from 'three'
+import { collectMagicTextures, createMagicCoordinateProof, validateMagicCoordinates, type MagicCoordinateProof } from './tslMagicBounds.js'
+import { trackMaterialDrawCallback, trackMaterialDrawOrientation } from './tslMaterialDrawOrientation.js'
 import { MeshStandardNodeMaterial, MeshPhysicalNodeMaterial } from 'three/webgpu'
 import { uniform } from 'three/tsl'
+import { collectVectorTransformRequirements, validateVectorTransformBinding, type VectorTransformRequirement } from './tslVectorTransform.js'
+import { collectGeometryContextOutputs, validateGeometryContextBinding, type GeometryContextOutput } from './tslGeometryContext.js'
+import { trackCameraDataGeometry } from './tslCameraGeometry.js'
+import { hasNativeCameraData, validateCameraDataBinding } from './tslCameraData.js'
+import { collectNormalMapRequirements, validateNormalMapBinding } from './tslNormalNodes.js'
+import {collectTangentRequirements,validateTangentBinding} from './tslTangentNodes.js'
+import {collectTangentNormalMaps,validateTangentNormalMapBinding} from './tslTangentNormalMap.js'
+import type { TslIrExpression } from './tslNodeRecipe.js'
 import {
   createTslBuildResources,
+  TslIrError,
   type BuildTslOptions,
 } from './tslNodeRecipe.js'
 import {
   buildMaterialProgram,
   buildOptionsFor,
   collectObjectAttributeNames,
+  requiresActiveUv,
+  validateActiveUvMesh,
   type MaterialNodeSlot,
   type MaterialProgramChannel,
   type TslRuntimeMeshExtras,
@@ -44,26 +61,14 @@ export {
   type TslRuntimeMeshExtras,
 } from './tslMaterialProgram.js'
 
-export interface MaterialProgramImage {
-  /** Basename beside the sidecar; resolved against the sidecar URL. */
-  file: string
-  bytes: number
-  hash: string
-  mime: string
-  width: number
-  height: number
-  colorSpace: string
-}
-
-export interface MaterialProgramsDocument {
-  schemaVersion: 1
-  model: 'blendlink-material-programs-v1'
-  materials: Record<string, { channels: Record<string, MaterialProgramChannel>; skipped?: { channel?: string; reason: string }[] }>
-  /** texture_ref source images published beside the sidecar. */
-  images?: Record<string, MaterialProgramImage>
-}
+export type { MaterialProgramImage, MaterialProgramsDocument } from './materialProgramDocument.js'
+import { fetchMaterialPrograms, materialProgramObjectOwnerNode } from './materialProgramDocument.js'
+import { collectObjectInfoOutputs, createObjectInfoResolver, validateObjectInfoBinding } from './tslObjectInfo.js'
+import type { MaterialProgramImage, MaterialProgramsDocument } from './materialProgramDocument.js'
 
 export interface InstallTslMaterialsOptions {
+  /** Cancel asynchronous field preparation before any material or draw callback changes. */
+  signal?: AbortSignal
   root: THREE.Object3D
   descriptor: {
     materialPrograms?: {
@@ -75,7 +80,8 @@ export interface InstallTslMaterialsOptions {
   }
   /** Override the fetch+hash-verify transport (tests, custom hosting).
    * The default fetches descriptor.materialPrograms.url and refuses on
-   * byte-count or sha256-prefix mismatch. */
+   * byte-count or sha256-prefix mismatch. Custom transports must keep their
+   * returned document immutable until this installation settles. */
   loadPrograms?: () => Promise<MaterialProgramsDocument>
   /** Baked-composition seam: keep clones connected to state machinery. */
   trackMaterialClone?: (
@@ -84,7 +90,7 @@ export interface InstallTslMaterialsOptions {
   ) => (transferred: boolean) => void
   /** Override texture_ref image decoding (tests, custom decoders). The
    * default fetches the published bytes (count + hash verified) and
-   * decodes through createImageBitmap with glTF orientation. */
+   * decodes through createImageBitmap into native bottom-up shader rows. */
   loadProgramTexture?: (
     name: string,
     entry: MaterialProgramImage,
@@ -101,10 +107,12 @@ export interface TslMaterialSkip {
 export interface InstalledTslMaterials {
   /** Source materials that matched a shipped program. */
   materials: number
-  /** Node materials installed (per material x runtime-extras variant). */
+  /** Node materials installed (per material x runtime-extras/object-owner variant). */
   applied: number
   /** Named non-applications; never silent. */
   skipped: readonly TslMaterialSkip[]
+  /** CPU tables prepared cooperatively for this attempt, before material mutation. */
+  noisePreparation?: Readonly<NoiseFieldPreparationStatistics>
   dispose(): void
 }
 
@@ -180,59 +188,21 @@ export function installProgramIntoMaterial(
   return clone
 }
 
-async function fetchPrograms(pointer: {
-  url: string
-  bytes: number
-  hash: string
-}): Promise<MaterialProgramsDocument> {
-  const response = await fetch(pointer.url)
-  if (!response.ok) {
-    throw new Error(
-      `Blendlink material programs fetch failed (${response.status}) for ${pointer.url}`,
-    )
-  }
-  const payload = new Uint8Array(await response.arrayBuffer())
-  if (payload.byteLength !== pointer.bytes) {
-    throw new Error(
-      `Blendlink material programs at ${pointer.url} are ${payload.byteLength} bytes; ` +
-        `the descriptor pins ${pointer.bytes}. Re-run blendlink compile and republish together.`,
-    )
-  }
-  const digest = await crypto.subtle.digest(
-    'SHA-256', payload.buffer.slice(payload.byteOffset, payload.byteOffset + payload.byteLength),
-  )
-  const hash = [...new Uint8Array(digest)]
-    .map((item) => item.toString(16).padStart(2, '0')).join('').slice(0, 16)
-  if (hash !== pointer.hash) {
-    throw new Error(
-      `Blendlink material programs at ${pointer.url} hash ${hash}; the descriptor pins ` +
-        `${pointer.hash}. Re-run blendlink compile and republish together.`,
-    )
-  }
-  const document = JSON.parse(new TextDecoder().decode(payload)) as MaterialProgramsDocument
-  if (document?.schemaVersion !== 1
-    || document.model !== 'blendlink-material-programs-v1') {
-    throw new Error(
-      `Blendlink material programs at ${pointer.url} use unsupported model ` +
-        `${JSON.stringify({ schemaVersion: document?.schemaVersion, model: document?.model })}.`,
-    )
-  }
-  return document
-}
 
 async function defaultProgramTexture(
   entry: MaterialProgramImage,
   url: string,
+  signal?: AbortSignal,
 ): Promise<THREE.Texture> {
-  const response = await fetch(url)
+  const response = await fetch(url, signal ? {signal} : undefined)
   if (!response.ok) {
-    throw new Error(`Blendlink program image fetch failed (${response.status}) for ${url}`)
+    throw new Error(`SceneToWeb program image fetch failed (${response.status}) for ${url}`)
   }
   const payload = new Uint8Array(await response.arrayBuffer())
   if (payload.byteLength !== entry.bytes) {
     throw new Error(
-      `Blendlink program image at ${url} is ${payload.byteLength} bytes; the sidecar pins ` +
-        `${entry.bytes}. Re-run blendlink compile and republish together.`,
+      `SceneToWeb program image at ${url} is ${payload.byteLength} bytes; the sidecar pins ` +
+        `${entry.bytes}. Re-run scenetoweb compile and republish together.`,
     )
   }
   const digest = await crypto.subtle.digest(
@@ -242,16 +212,17 @@ async function defaultProgramTexture(
     .map((item) => item.toString(16).padStart(2, '0')).join('').slice(0, 16)
   if (hash !== entry.hash) {
     throw new Error(
-      `Blendlink program image at ${url} hash ${hash}; the sidecar pins ${entry.hash}.`,
+      `SceneToWeb program image at ${url} hash ${hash}; the sidecar pins ${entry.hash}.`,
     )
   }
   const bitmap = await createImageBitmap(
     new Blob([payload], { type: entry.mime }),
-    { premultiplyAlpha: 'none', colorSpaceConversion: 'none' },
+    { imageOrientation: 'flipY', premultiplyAlpha: 'none', colorSpaceConversion: 'none' },
   )
   const texture = new THREE.Texture(bitmap as unknown as HTMLImageElement)
-  // glTF orientation: exported TEXCOORDs are already V-flipped from
-  // Blender space, matching standard top-down image rows.
+  // Graph vectors are native Blender coordinates, including constants and
+  // transformed UVs. Bitmap rows are flipped at decode (Texture.flipY is
+  // ignored for ImageBitmap), independently of glTF geometry UV conversion.
   texture.flipY = false
   texture.colorSpace = entry.colorSpace === 'sRGB'
     ? THREE.SRGBColorSpace
@@ -265,10 +236,10 @@ interface ProgramTextureSet {
   dispose(): void
 }
 
-async function loadProgramTextures(
+export async function loadProgramTextures(
   document: MaterialProgramsDocument,
   programsUrl: string,
-  options: InstallTslMaterialsOptions,
+  options: Pick<InstallTslMaterialsOptions, 'loadProgramTexture' | 'signal'>,
 ): Promise<ProgramTextureSet | null> {
   const entries = Object.entries(document.images ?? {})
   if (entries.length === 0) return null
@@ -279,14 +250,23 @@ async function loadProgramTextures(
       : 'http://blendlink.local/',
   )
   const decoded = new Map<string, THREE.Texture>()
-  for (const [name, entry] of entries) {
-    const url = new URL(entry.file, base).toString()
-    decoded.set(
-      name,
-      options.loadProgramTexture
+  const aborted = (): void => {
+    if (!options.signal?.aborted) return
+    const error = new Error('SceneToWeb program texture loading aborted')
+    error.name='AbortError';throw error
+  }
+  try {
+    for (const [name, entry] of entries) {
+      aborted()
+      const url = new URL(entry.file, base).toString()
+      decoded.set(name, options.loadProgramTexture
         ? await options.loadProgramTexture(name, entry, url)
-        : await defaultProgramTexture(entry, url),
-    )
+        : await defaultProgramTexture(entry, url, options.signal))
+      aborted()
+    }
+  } catch (error) {
+    for (const texture of decoded.values()) texture.dispose()
+    throw error
   }
   const configured = new Map<string, THREE.Texture>()
   return {
@@ -296,6 +276,9 @@ async function loadProgramTextures(
       if (!source) return null
       const interpolation = String((ref as { interpolation?: unknown }).interpolation ?? 'Linear')
       const extension = String((ref as { extension?: unknown }).extension ?? 'REPEAT')
+      if (!['Linear', 'Closest'].includes(interpolation) || !['REPEAT', 'EXTEND'].includes(extension)) {
+        throw new TslIrError(`Program image ${JSON.stringify(name)} needs unsupported texture sampling ${interpolation}/${extension}`)
+      }
       const key = `${name}|${interpolation}|${extension}`
       let texture = configured.get(key)
       if (!texture) {
@@ -325,10 +308,27 @@ async function loadProgramTextures(
 }
 
 /** One shared resolver: every attribute_object op becomes a per-object
- * uniform reading the exported node extras through onObjectUpdate (the
- * harness-proven per-object delivery contract). Missing values read
- * black; the per-mesh presence check skips by name before that. */
-function objectAttributeResolver(): NonNullable<BuildTslOptions['objectAttribute']> {
+ * uniform reading the exported node extras through onObjectUpdate. Values
+ * are validated before install and again at draw time; missing/malformed
+ * data must never silently become a black material. */
+export function objectAttributeValue(raw: unknown): [number, number, number] | null {
+  if (typeof raw === 'number' && Number.isFinite(raw)) return [raw, raw, raw]
+  if (Array.isArray(raw) && raw.length >= 3 && raw.slice(0, 3).every(
+    item => typeof item === 'number' && Number.isFinite(item),
+  )) return [raw[0], raw[1], raw[2]]
+  return null
+}
+
+export function objectAttributeOwner(object: THREE.Object3D): THREE.Object3D {
+  return materialProgramObjectOwnerNode(object)
+}
+
+function objectAttributeRaw(object: THREE.Object3D, name: string): unknown {
+  const owner = objectAttributeOwner(object)
+  return Object.hasOwn(owner.userData ?? {}, name) ? owner.userData[name] : object.userData?.[name]
+}
+
+export function objectAttributeResolver(): NonNullable<BuildTslOptions['objectAttribute']> {
   return (name) => {
     const value = uniform(new THREE.Vector3())
     ;(value as unknown as {
@@ -336,14 +336,9 @@ function objectAttributeResolver(): NonNullable<BuildTslOptions['objectAttribute
         callback: (frame: { object: THREE.Object3D }) => unknown,
       ): unknown
     }).onObjectUpdate(({ object }) => {
-      const raw = object.userData?.[name]
-      if (Array.isArray(raw)) {
-        return new THREE.Vector3(
-          Number(raw[0]) || 0, Number(raw[1]) || 0, Number(raw[2]) || 0,
-        )
-      }
-      if (typeof raw === 'number') return new THREE.Vector3(raw, raw, raw)
-      return new THREE.Vector3()
+      const raw = objectAttributeValue(objectAttributeRaw(object, name))
+      if (!raw) throw new Error(`Per-object attribute ${JSON.stringify(name)} on ${JSON.stringify(object.name)} must be a finite scalar or RGB/vector value.`)
+      return new THREE.Vector3(...raw)
     })
     return value as unknown as ReturnType<
       NonNullable<BuildTslOptions['objectAttribute']>
@@ -370,20 +365,69 @@ export async function installTslMaterials(
   if (!pointer) {
     return { materials: 0, applied: 0, skipped: [], dispose() {} }
   }
+  const aborted = (): void => {
+    if (!options.signal?.aborted) return
+    const error = new Error('SceneToWeb material installation aborted')
+    error.name = 'AbortError';throw error
+  }
+  aborted()
   const programs = options.loadPrograms
     ? await options.loadPrograms()
-    : await fetchPrograms(pointer)
-  const programTextures = await loadProgramTextures(programs, pointer.url, options)
+    : await fetchMaterialPrograms(pointer, options.signal)
+  aborted()
+  const used = new Set<string>()
+  options.root.traverse(object => {
+    const mesh = object as THREE.Mesh
+    if (!mesh.isMesh) return
+    for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
+      const source = material?.userData?.blendlink_source_material
+      if (typeof source === 'string' && (material as THREE.MeshStandardMaterial).isMeshStandardMaterial) used.add(source)
+    }
+  })
+  const preparation = await prepareTslNoiseFields([...used].map(source => programs.materials[source]),
+    options.signal ? {signal:options.signal} : {})
+  let programTextures: ProgramTextureSet | null = null
+  try { aborted();programTextures = await loadProgramTextures(programs, pointer.url, options);aborted() }
+  catch (error) { programTextures?.dispose();preparation.dispose();throw error }
   const objectAttribute = objectAttributeResolver()
   // Per-material attribute needs, computed once: applied meshes must ship
   // the property in their exported extras or skip by name.
   const attributeNames = new Map<string, string[]>()
+  const objectInfoOutputs = new Map<string, Set<string>>()
+  const vectorTransforms = new Map<string, VectorTransformRequirement[]>()
   for (const [source, program] of Object.entries(programs.materials)) {
     const names = new Set<string>()
     collectObjectAttributeNames(program.channels, names)
     if (names.size > 0) attributeNames.set(source, [...names].sort())
+    const outputs = new Set<string>()
+    collectObjectInfoOutputs(program.channels, outputs)
+    if (outputs.size) objectInfoOutputs.set(source, outputs)
+    const transforms: VectorTransformRequirement[] = []
+    collectVectorTransformRequirements(program.channels, transforms)
+    if (transforms.length) vectorTransforms.set(source, transforms)
   }
 
+  const geometryContexts = new Map<string, Set<GeometryContextOutput>>()
+  const cameraDataContexts = new Set<string>()
+  const normalMapContexts = new Map<string,TslIrExpression[]>()
+  const tangentContexts=new Map<string,TslIrExpression[]>()
+  const tangentMapContexts=new Map<string,TslIrExpression[]>()
+  const magicContexts=new Map<string,TslIrExpression[]>()
+  const activeUvPrograms = new Set<string>()
+  for(const [name,program] of Object.entries(programs.materials)){
+    if(hasNativeCameraData(program.channels))cameraDataContexts.add(name)
+    if (requiresActiveUv(program.channels)) activeUvPrograms.add(name)
+    const magics:TslIrExpression[]=[];collectMagicTextures(program.channels,magics)
+    if(magics.length)magicContexts.set(name,magics)
+    const outputs=new Set<GeometryContextOutput>();collectGeometryContextOutputs(program.channels,outputs)
+    if(outputs.size)geometryContexts.set(name,outputs)
+    const normalMaps:TslIrExpression[]=[];collectNormalMapRequirements(program.channels,normalMaps)
+    if(normalMaps.length)normalMapContexts.set(name,normalMaps)
+    const tangents:TslIrExpression[]=[];collectTangentRequirements(program.channels,tangents)
+    if(tangents.length)tangentContexts.set(name,tangents)
+    const tangentMaps:TslIrExpression[]=[];collectTangentNormalMaps(program.channels,tangentMaps)
+    if(tangentMaps.length)tangentMapContexts.set(name,tangentMaps)
+  }
   const skipped: TslMaterialSkip[] = []
   interface InstalledSwap {
     mesh: THREE.Mesh
@@ -391,19 +435,22 @@ export async function installTslMaterials(
     original: THREE.Material
     clone: MeshStandardNodeMaterial
     release?: (transferred: boolean) => void
+    magic?: { proofs:MagicCoordinateProof[]; options:ReturnType<typeof buildOptionsFor> }
   }
   const installed: InstalledSwap[] = []
-  // One clone per (source material x runtime-extras variant): meshes whose
-  // extras agree share the node material, mirroring the compiler's variant
-  // consolidation.
+  // Geometry-only programs can share clones when their runtime extras agree.
+  // Attribute programs also bind their explicit object owner, so separate
+  // shared-geometry instances never share mutable object uniform state.
   const variants = new Map<string, {
     clone: MeshStandardNodeMaterial
     resources: ReturnType<typeof createTslBuildResources>
   }>()
   const matchedSources = new Set<string>()
   let disposed = false
+  const releaseDrawCallbacks: Array<() => void> = []
 
   const rollback = (): void => {
+    for (const release of releaseDrawCallbacks.splice(0).reverse()) release()
     for (const item of installed.slice().reverse()) {
       if (item.slot === null) {
         if (item.mesh.material === item.clone) item.mesh.material = item.original
@@ -418,16 +465,19 @@ export async function installTslMaterials(
       variant.resources.dispose()
     }
     variants.clear()
+    installed.length = 0
     programTextures?.dispose()
   }
 
   try {
+    aborted()
     options.root.traverse((object) => {
       const mesh = object as THREE.Mesh
       if (!mesh.isMesh) return
       const extras = meshRuntimeExtras(mesh)
       const list = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
       list.forEach((material, index) => {
+        aborted()
         if (!material) return
         const source = material.userData?.blendlink_source_material
         if (typeof source !== 'string') return
@@ -447,15 +497,86 @@ export async function installTslMaterials(
           return
         }
         const needed = attributeNames.get(source)
+        if (activeUvPrograms.has(source)) {
+          try { validateActiveUvMesh(mesh.geometry, extras, source) }
+          catch (error) {
+            if (!(error instanceof TslIrError)) throw error
+            skipped.push({material:source,reason:`mesh "${mesh.name}" active UV refused: ${error.message}; its carrier stays`})
+            return
+          }
+        }
+        const owner = objectAttributeOwner(mesh)
+        const info = objectInfoOutputs.get(source)
+        const transforms = vectorTransforms.get(source)
+        const geometry = geometryContexts.get(source)
+        if(geometry){
+          try{validateGeometryContextBinding(geometry,mesh,extras?.objectSpace)}
+          catch(error){
+            if(!(error instanceof TslIrError))throw error
+            skipped.push({material:source,reason:`mesh "${mesh.name}" Geometry context refused: ${error.message}; its carrier stays`});return
+          }
+        }
+        if(cameraDataContexts.has(source)){
+          try{validateCameraDataBinding(mesh,extras?.objectSpace)}
+          catch(error){
+            if(!(error instanceof TslIrError))throw error
+            skipped.push({material:source,reason:`mesh "${mesh.name}" Camera Data refused: ${error.message}; its carrier stays`});return
+          }
+        }
+        const normalMaps=normalMapContexts.get(source)
+        if(normalMaps){
+          try{
+            if(!extras?.geometryContext?.includes('normal'))throw new TslIrError('Native Normal Map requires its exported primary-normal context declaration')
+            validateNormalMapBinding(normalMaps,mesh,extras?.objectSpace)
+          }
+          catch(error){
+            if(!(error instanceof TslIrError))throw error
+            skipped.push({material:source,reason:`mesh "${mesh.name}" Normal Map refused: ${error.message}; its carrier stays`});return
+          }
+        }
+        const tangents=tangentContexts.get(source)
+        if(tangents){
+          try{validateTangentBinding(tangents,mesh,extras?.objectSpace,extras)}
+          catch(error){
+            if(!(error instanceof TslIrError))throw error
+            skipped.push({material:source,reason:`mesh "${mesh.name}" UV Tangent refused: ${error.message}; its carrier stays`});return
+          }
+        }
+        const objectTransform = transforms?.some(item => item.from === 'OBJECT' || item.to === 'OBJECT')
+        if (transforms) {
+          try { validateVectorTransformBinding(transforms, mesh, extras?.objectSpace) }
+          catch (error) {
+            if (!(error instanceof TslIrError)) throw error
+            skipped.push({ material: source, reason: `mesh "${mesh.name}" Vector Transform refused: ${error.message}; its carrier stays` })
+            return
+          }
+        }
+        if (info) {
+          try { validateObjectInfoBinding(info, owner.userData?.blendlink_tsl_object,
+            material.userData?.blendlink_tsl_material, Boolean((mesh as THREE.InstancedMesh).isInstancedMesh)) }
+          catch (error) {
+            if (!(error instanceof TslIrError)) throw error
+            skipped.push({ material: source, reason: `mesh "${mesh.name}" Object Info refused: ${error.message}; its carrier stays` })
+            return
+          }
+        }
         if (needed) {
+          const properties = owner === mesh ? mesh.userData : { ...mesh.userData, ...owner.userData }
           const missing = needed.filter(
-            (name) => !(name in (mesh.userData ?? {})),
+            (name) => !Object.hasOwn(properties ?? {}, name),
           )
           if (missing.length > 0) {
             skipped.push({
               material: source,
               reason: `mesh "${mesh.name}" ships no per-object attribute `
                 + `${missing.join(', ')}; its carrier stays`,
+            })
+            return
+          }
+          const invalid = needed.filter(name => !objectAttributeValue(objectAttributeRaw(mesh, name)))
+          if (invalid.length > 0) {
+            skipped.push({ material: source,
+              reason: `mesh "${mesh.name}" has invalid per-object attribute ${invalid.join(', ')}; finite scalar or RGB/vector values are required; its carrier stays`,
             })
             return
           }
@@ -467,39 +588,73 @@ export async function installTslMaterials(
         // one clone would make createBakedScene refuse ("shared by atlas
         // groups"). Meshes sharing one loaded material still share one
         // clone per runtime-extras variant.
+        const heightEntries:TslIrExpression[]=[];collectBumpHeights(programs.materials[source]?.channels,heightEntries)
+        if(heightEntries.length){
+          try{validateBumpHeightBinding(heightEntries,mesh,buildOptionsFor(extras,undefined,source,programTextures?.resolver))}
+          catch(error){if(!(error instanceof TslIrError))throw error;skipped.push({material:source,reason:`mesh "${mesh.name}" Bump Height refused: ${error.message}; its carrier stays`});return}
+        }
+        const tangentMaps=tangentMapContexts.get(source)
+        if(tangentMaps){
+          try{validateTangentNormalMapBinding(tangentMaps,mesh,extras?.objectSpace,extras,
+            buildOptionsFor(extras,undefined,source,programTextures?.resolver))}
+          catch(error){
+            if(!(error instanceof TslIrError))throw error
+            skipped.push({material:source,reason:`mesh "${mesh.name}" tangent Normal Map refused: ${error.message}; its carrier stays`});return
+          }
+        }
+        const magics=magicContexts.get(source)
+        // The installed UV nodes bind channels once. Later metadata edits
+        // cannot redirect the range validator away from those actual inputs.
+        const magicExtras=extras?.uvChannels?{...extras,uvChannels:{...extras.uvChannels}}:extras
+        const magicOptions=magics?buildOptionsFor(magicExtras,undefined,source,programTextures?.resolver):undefined
+        let magicProofs:MagicCoordinateProof[]|undefined
+        if(magics&&magicOptions){
+          try{
+            for(const entry of magics)validateMagicCoordinates(entry,mesh,magicOptions)
+            magicProofs=magics.map(createMagicCoordinateProof)
+          }
+          catch(error){if(!(error instanceof TslIrError))throw error;skipped.push({material:source,reason:`mesh "${mesh.name}" Magic Texture refused: ${error.message}; its carrier stays`});return}
+        }
         const normalMapBasis = !mesh.geometry.hasAttribute('uv') ? 'missing'
           : mesh.geometry.hasAttribute('tangent') ? 'attribute' : 'derivative'
-        const variantKey = `${material.uuid} ${normalMapBasis} ${JSON.stringify(extras ?? null)}`
+        const variantKey = `${material.uuid} ${normalMapBasis} ${JSON.stringify(extras ?? null)} ${needed?.length || info?.size || objectTransform ? owner.uuid : ''}`
         let variant = variants.get(variantKey)
         if (!variant) {
           const resources = createTslBuildResources()
-          // Build first, install second (the 8b.3 seam): the builder
-          // returns slot nodes and named skips; the installer constructs
-          // the clone only when something built, so the no-channel path
-          // never allocates a material at all.
-          const program = buildMaterialProgram(
-            Object.fromEntries(channels),
-            { ...buildOptionsFor(
-              extras, resources, source, programTextures?.resolver,
-              objectAttribute,
-            ), normalMapBasis },
-          )
-          for (const item of program.skipped) {
-            skipped.push({ material: source, ...item })
-          }
-          if (Object.keys(program.nodes).length === 0) {
+          try {
+            // Build first, install second (the 8b.3 seam): the builder
+            // returns slot nodes and named skips; the installer constructs
+            // the clone only when something built, so the no-channel path
+            // never allocates a material at all.
+            const program = buildMaterialProgram(
+              Object.fromEntries(channels),
+              { ...buildOptionsFor(
+                extras, resources, source, programTextures?.resolver,
+                objectAttribute,
+              ), preparedNoiseFields: preparation, validateMagicCoordinates:expression=>validateMagicCoordinates(expression,mesh,magicOptions??{}), normalMapBasis, ...(info ? { objectInfo: createObjectInfoResolver(
+                owner.userData?.blendlink_tsl_object, material.userData?.blendlink_tsl_material,
+              ) } : {}) },
+            )
+            for (const item of program.skipped) {
+              skipped.push({ material: source, ...item })
+            }
+            if (Object.keys(program.nodes).length === 0) {
+              resources.dispose()
+              skipped.push({
+                material: source,
+                reason: 'no channel produced a node; the shipped carrier stays',
+              })
+              return
+            }
+            variant = {
+              clone: installProgramIntoMaterial(material, program.nodes),
+              resources,
+            }
+            variants.set(variantKey, variant)
+          } catch (error) {
             resources.dispose()
-            skipped.push({
-              material: source,
-              reason: 'no channel produced a node; the shipped carrier stays',
-            })
-            return
+            throw error
           }
-          variant = {
-            clone: installProgramIntoMaterial(material, program.nodes),
-            resources,
-          }
-          variants.set(variantKey, variant)
         }
         const release = options.trackMaterialClone?.(material, variant.clone)
         installed.push({
@@ -508,7 +663,9 @@ export async function installTslMaterials(
           original: material,
           clone: variant.clone,
           ...(release ? { release } : {}),
+          ...(magicProofs&&magicOptions?{magic:{proofs:magicProofs,options:magicOptions}}:{}),
         })
+        aborted()
         if (Array.isArray(mesh.material)) {
           mesh.material[index] = variant.clone
         } else {
@@ -516,15 +673,44 @@ export async function installTslMaterials(
         }
       })
     })
+    aborted()
+    const drawMaterials = new Map<THREE.Mesh, Set<THREE.Material>>()
+    for (const { mesh, clone } of installed) {
+      let materials = drawMaterials.get(mesh)
+      if (!materials) drawMaterials.set(mesh, materials = new Set())
+      materials.add(clone)
+    }
+    for (const [mesh, materials] of drawMaterials) {
+      releaseDrawCallbacks.push(trackMaterialDrawOrientation(mesh, materials))
+      if(installed.some(item=>item.mesh===mesh&&cameraDataContexts.has(item.clone.userData.blendlink_source_material))){
+        const basis=meshRuntimeExtras(mesh)?.objectSpace
+        const allMaterials=new Set(Array.isArray(mesh.material)?mesh.material:[mesh.material])
+        releaseDrawCallbacks.push(trackCameraDataGeometry(mesh,allMaterials,basis,()=>validateCameraDataBinding(mesh,basis)))
+      }
+      const contexts=new Map(installed.filter(item=>item.mesh===mesh&&item.magic).map(item=>[item.clone,item.magic!]))
+      const firstDraw=new Set(contexts.keys())
+      if(contexts.size)releaseDrawCallbacks.push(trackMaterialDrawCallback(mesh,new Set(contexts.keys()),function(...args){
+        const context=contexts.get(args[4] as MeshStandardNodeMaterial)
+        if(context){
+          let refresh=firstDraw.has(args[4] as MeshStandardNodeMaterial)
+          for(const proof of context.proofs){
+            proof.validate(mesh,context.options,refresh,args[3])
+            if(proof.requiresAttributes)refresh=false
+          }
+          firstDraw.delete(args[4] as MeshStandardNodeMaterial)
+        }
+      }))
+    }
   } catch (error) {
     rollback()
     throw error
-  }
+  } finally { preparation.dispose() }
 
   return {
     materials: matchedSources.size,
     applied: installed.length,
     skipped,
+    ...(preparation.statistics.fields ? {noisePreparation:preparation.statistics} : {}),
     dispose() {
       if (disposed) return
       disposed = true

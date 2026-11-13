@@ -10,8 +10,10 @@ from __future__ import annotations
 
 import collections
 import json
+import math
 import os
 import queue
+import signal
 import subprocess
 import threading
 import time
@@ -213,7 +215,7 @@ def _remember_diagnostic(message: str) -> None:
 
 
 def start(
-    command: str,
+    command: str | list[str],
     cwd: str,
     *,
     blend_path: str | None = None,
@@ -227,7 +229,7 @@ def start(
     try:
         process = subprocess.Popen(
             command,
-            shell=True,
+            shell=isinstance(command, str),
             cwd=cwd,
             env=env,
             stdout=subprocess.PIPE,
@@ -236,6 +238,7 @@ def start(
             encoding="utf8",
             errors="replace",
             creationflags=creationflags,
+            start_new_session=os.name != "nt",
         )
     except OSError as error:
         return str(error)
@@ -248,7 +251,7 @@ def start(
         updating=False,
         update_error="",
         fraction=0.0,
-        label="Compiling Preview quality",
+        label="Preparing website preview",
         # A restarted server must earn a fresh reachable URL. Retaining the
         # previous run here can hide a failed restart behind a dead Open button.
         url="",
@@ -281,13 +284,13 @@ def start(
 
 
 def replace(
-    command: str,
+    command: str | list[str],
     cwd: str,
     *,
     blend_path: str,
     session_id: str | None = None,
 ) -> str | None:
-    """Stop a stale Blendlink child and start the requested source afterward.
+    """Stop a stale SceneToWeb child and start the requested source afterward.
 
     Only the process launched by this module is terminated.  When that child
     merely watches an explicitly configured external website, the unrelated
@@ -331,7 +334,10 @@ def cancel():
             creationflags=subprocess.CREATE_NO_WINDOW,
         )
     else:
-        process.kill()
+        try:
+            os.killpg(process.pid, signal.SIGTERM)
+        except ProcessLookupError:
+            pass
 
 
 def _validate_protocol_identity(payload, raw_line: str) -> bool:
@@ -427,10 +433,19 @@ def _handle_line(line):
             payload = json.loads(line[len(_PREFIX):])
             if not isinstance(payload, dict):
                 raise TypeError("progress payload must be a JSON object")
+            value = payload.get("fraction", _state["fraction"])
+            if isinstance(value, bool):
+                raise TypeError("progress fraction must be a finite number")
+            fraction = float(value)
+            if not math.isfinite(fraction):
+                raise ValueError("progress fraction must be a finite number")
+            label = payload.get("label", _state["label"])
+            if not isinstance(label, str):
+                raise TypeError("progress label must be text")
             if not _validate_protocol_identity(payload, line):
                 return
-            _state["fraction"] = float(payload.get("fraction", _state["fraction"]))
-            _state["label"] = str(payload.get("label", _state["label"]))
+            _state["fraction"] = max(0.0, min(1.0, fraction))
+            _state["label"] = label
             preview_watching = payload.get("previewWatching")
             if isinstance(preview_watching, bool):
                 _state["watching"] = preview_watching
@@ -471,7 +486,7 @@ def _handle_line(line):
                     open_browser()
             if preview_update == "ready":
                 _refresh_published_state()
-        except (ValueError, TypeError) as error:
+        except (ValueError, TypeError, OverflowError) as error:
             _remember_diagnostic(
                 "blendlink preview: malformed progress protocol "
                 f"({type(error).__name__}: {error}); raw line: {line}"

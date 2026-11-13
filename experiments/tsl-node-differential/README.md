@@ -165,9 +165,12 @@ beyond ±1, all four atan2 quadrants, the snap/wrap zero-range guards).
 Measured: every cell sits at float-rounding noise — means 1e-5 class,
 maxima under 5.6e-4 (the inverse-sqrt pole texel) — and the discrete
 cells (CEIL, TRUNC, ROUND, SIGN, COMPARE) are byte-exact. Two semantics
-the mapping must carry: Blender rounds half away from zero while WGSL's
-native `round` is half-to-even (the mapping uses sign·floor(|x|+0.5)),
-and COMPARE's epsilon has a 1e-5 floor inside Cycles.
+the mapping must carry: WGSL's native `round` is half-to-even, while
+native Blender 5.3 Cycles shader Math uses `floor(x + 0.5)`. The original
+sweep never landed on exact half-integers and therefore did not establish
+tie behavior. The later fixed-input boundary cells prove `ROUND(-0.5)=0`
+and `ROUND(+0.5)=1`; they replaced the incorrect half-away mapping.
+COMPARE's epsilon has a 1e-5 floor inside Cycles.
 
 One cell-design finding the harness produced: the first compare sweep
 used a factor slope of exactly 0.2, which put 13 texel rows on exact
@@ -193,11 +196,20 @@ compiler gained, each family behind its own cells:
 - **Color utilities**: Invert, Gamma, Bright/Contrast, RGB→BW,
   Hue/Saturation, Separate/Combine HSV.
 - **Deterministic textures**: Checker (byte-exact), Gradient (all seven
-  types), Magic (trig cascade), Wave (all types/profiles + distortion
+  types), legacy serialized Magic (compatibility only), Wave (all types/profiles + distortion
   through the ported fractal).
 - **The hash family**: White Noise byte-exact through the ported Jenkins
   lookup3 on raw float bits, and Voronoi F1 (2D/3D, Distance + Color) at
   3e-5 through Blender's own `hash_pcg3d_i`.
+
+The two `tex-magic` / `tex-magic-fac` cells now have explicit
+`legacy-ir` / `legacy-serialized-runtime-only` scope. They keep fixed old
+`tex_magic` documents, the original native graphs, and the historical budgets.
+Reference generation verifies the current producer's named Cycles refusal;
+reused references without that record are rejected. These compatibility cells
+do not establish a fresh Cycles source port. Fresh EEVEE Magic qualification is
+the separate [native Magic gate](../magic-node-differential/README.md), with its
+own calibrated raw-unit precision budget and version/profile limits.
 
 The straggler batch (Noise Color, Voronoi SMOOTH_F1, Magic Fac) added
 four more measured lessons:
@@ -290,3 +302,200 @@ belongs with Phase 4's material application, not a lossy hack here.
   stage, then bounded random-graph composition over the proven allowlist.
 - Evidence is valid for the exact (Blender 5.2.0, three 0.184.0) pair and
   re-runs when either pin moves.
+
+
+## Focused native mode proofs — 2026-11-11
+
+`run-mapping.mjs` runs focused source proofs without rebuilding the shared
+package. It uses actual Blender Cycles CPU node graphs, the production
+Python emitter, the production TypeScript builder through Vite, and both
+WebGPURenderer backends: WebGPU and its WebGL2 fallback. The latter is not
+legacy `WebGLRenderer`, whose portable glTF/material carriers do not install
+these live TSL expressions. Each backend independently calibrates constant
+linear values and UV orientation before measuring node cells. Source and
+emitter hashes must remain stable throughout a run.
+
+```sh
+npm exec --yes --package=node@24 -- node experiments/tsl-node-differential/run-mapping.mjs
+npm exec --yes --package=node@24 -- node experiments/tsl-node-differential/run-mapping.mjs --mix
+npm exec --yes --package=node@24 -- node experiments/tsl-node-differential/run-mapping.mjs --map-range
+npm exec --yes --package=node@24 -- node experiments/tsl-node-differential/run-mapping.mjs --hue-ramp
+npm exec --yes --package=node@24 -- node experiments/tsl-node-differential/run-mapping.mjs --boundary
+npm exec --yes --package=node@24 -- node experiments/tsl-node-differential/run-mapping.mjs --math
+npm exec --yes --package=node@24 -- node experiments/tsl-node-differential/run-mapping.mjs --vectors
+```
+
+`BLENDLINK_BLENDER_PATH` (or `BLENDLINK_BLENDER`) selects a native Blender
+executable; `BLENDLINK_TSL_DIFF_ARTIFACTS` selects a separate evidence
+directory when testing another version. `BLENDLINK_TEST_CHROMIUM_ARGS`
+accepts a JSON array of extra Chromium flags, including CI software GPU
+flags. Backend initialization must still prove the requested backend.
+
+Add `--built` after a coordinated package build to verify the shipping
+JavaScript module. That flag refuses an older build. Reports and native
+float buffers live in `artifacts/verification-{mapping,mix-math,map-range,
+hue-ramp,math-boundary,shader-math}`. The report records the actual Blender
+version; a run with one Blender version does not establish other versions.
+
+| Family | Live translation earned by the focused cells | Explicit boundary |
+| --- | --- | --- |
+| Mapping | POINT/TEXTURE/VECTOR/NORMAL; static and linked XYZ transforms, nonuniform/negative scale, safe inverse and zero scale | NORMAL and varying transforms feeding frequency-bounded Noise require a separate coordinate-frequency proof and refuse. Inverse texture scale is included in static Noise bounds. |
+| Vector Rotate | AXIS_ANGLE/X_AXIS/Y_AXIS/Z_AXIS/EULER_XYZ; inverse, linked center/axis/angle/rotation, zero-axis no-op and inverse round trips | Varying transforms feeding frequency-bounded Noise refuse. |
+| Vector Math | All native operation enums: 27 in Blender 4.2, 30 in Blender 5.3, including PROJECT/REFLECT/REFRACT/FACEFORWARD and newer ROUND/POWER/SIGN | Before 5.2 Reflect/Refract require a provably nonzero normal; static POWER zero-base/negative-exponent refuses. New geometric/nonlinear transforms feeding frequency-bounded Noise refuse. |
+| Mix | FLOAT and VECTOR; uniform/per-component factor, clamp and extrapolation, scalar-to-vector broadcasts | RGBA behavior stays in its existing path; inactive outputs and unsupported future types refuse. |
+| Map Range | FLOAT and FLOAT_VECTOR; LINEAR, STEPPED, SMOOTHSTEP, SMOOTHERSTEP, reversed ranges, zero Steps and collapsed source ranges | STEPPED requires finite nonnegative static Steps; dynamic/negative Steps refuse. Scalar and vector collapsed-range semantics differ natively and are preserved. |
+| ColorRamp | HSV/HSL × NEAR/FAR/CW/CCW; all five interpolation settings, RGB and alpha outputs | Native Cycles' 257-entry evaluator table is preserved: floor lookup for CONSTANT, linear lookup otherwise. RGB LINEAR/CONSTANT keep their analytic path. |
+| Math boundary | Exact half-integer ROUND and out-of-domain ASIN/ACOS under native shader Cycles | These are shader semantics; legacy compositor node semantics can differ. |
+
+“Exact” is the gated native-shader comparison in the cell's declared
+numeric tolerance, including calibrated rasterizer interpolation differences.
+The ColorRamp table is the native shader algorithm itself; it does not
+claim exact evaluation of the continuous `ColorRamp.evaluate()` function.
+A denser table can disagree more with Blender's rendered shader near hue
+kinks, so it is not substituted. The source color space, hue direction,
+interpolation setting and native table/lookup provenance travel in the IR.
+The factor stays live. This is a sampled node function, not a UV surface
+bake, and it introduces no additional approximation relative to the native
+Cycles table. EEVEE parity needs separate native-render evidence.
+
+Approximate/decorrelated texture cells retain their separately declared
+budgets and algorithm proofs in `cells.json`; these focused exact-node
+proofs do not widen those bands or establish whole-scene pixel parity.
+
+Measured in the 2026-11-11 focused source batch on Blender 5.3:
+Mapping's four new cells maxAbs ≤1.97e-6, Mix's seven new cells ≤2.40e-5,
+and Map Range's seventeen new cells ≤8.20e-6. Fifty new ColorRamp cells
+cover forty color mode/direction/interpolation combinations, eight alpha
+outputs and two exact constant-factor bin boundaries. Smooth ramp
+maxAbs ≤1.50e-4; every CONSTANT cell is byte-exact on both backends.
+The maximum native hue-table derivative 7.495 × factor slope 1.273 ×
+independently calibrated UV max 3.1233e-5 predicts less than 2.99e-4;
+the corresponding moving-color gate is mean 4e-5, p99 1.8e-4, max 3.2e-4.
+This accounts for known rasterizer interpolation and does not relax the
+native algorithm. Full scalar Math's 38 cells pass; its inverse-square-root
+pole is the existing maximum 5.65e-4. Native Blender 4.2 also passes the
+focused Math boundary and full hue-ramp families with the same tolerances.
+These source reports still require `--built` verification for shipping.
+
+
+The 2026-11-12 vector batch adds complete Mapping and Vector Rotate modes,
+and all remaining Vector Math enums. The focused `--vectors` gate passed
+63 cells per browser backend on Blender 5.3 and 57 on Blender 4.2. Its report
+explicitly identifies native configurations that are unavailable: four cells
+requiring ROUND/SIGN/POWER in 4.2, and two zero-normal cases requiring the
+safe native normalization introduced by the 5.2 source contract. Such cases
+are not counted as passes. Native refusal tests establish the older finite
+domain and reject zero-base negative powers. Largest error among the new
+cases is below 5.40e-5; the existing tangent/trigonometric sweep remains the
+family maximum 1.34e-4. Local Blender 5.2 also passes all 63 cells on both
+browser backends. Shader proof
+servers disable file watching/HMR, and source hashes remain part of every
+report. Oversized Cubic image transport now refuses explicitly because its
+runtime resolver has no proven cubic sampler; embedded Cubic stays live.
+
+## Brick textures
+
+`node experiments/tsl-node-differential/run-mapping.mjs --brick --built`
+checks 130 native Cycles graphs on both browser backends. Local source proofs
+pass on Blender 4.2, 5.2 and 5.3. Eighty fixed-input kernel cases differ by at
+most 5.96e-8. The spatial cases cover both outputs, signed coordinates,
+offset/squash frequencies, zero scale/mortar, bias extremes, linked colors,
+scale, mortar size/smoothing, and dimensions bounded positively by Math Maximum.
+
+Nearest-sampled exactly representable coordinate and control images isolate
+the native Brick kernel from unrelated affine/FMA contraction. Fixed shader-stage
+inputs also prevent modern multi-function folding; additional literal controls
+exercise that separate path. Both evaluators receive the same authored images. This isolates the node from the independent bake UV nudge, which
+the unchanged UV calibration fixture still measures. Negative color probes
+encode their signal after the native node so the production bake can retain it.
+
+Two sharp spatial variants amplify float32 partition/remainder rounding at
+mortar edges. Their maximum-error allowance uses independently compared
+pre-Brick position carriers, eight rounded float operations at the measured
+coordinate magnitude, and the analytic smoothstep derivative bound
+`1.5 / (mortarSize * mortarSmooth)`. The local smoothstep derivative is applied only where the independently bounded
+coordinate interval intersects a mortar transition. All three strict budgets
+apply to the remaining numerical residual; raw maximum/mean/p99 and the local
+allowance are retained separately. Linux retained-reference replay gives a
+maximum residual of 1.20e-7. Measured raw worst error is 3.58e-4; this precision allowance does not
+apply to hard/discontinuous mortar or the fixed-input algorithm probes.
+
+The exporter requires provably positive brick dimensions and effective squash
+width, preserving live bounded dimensions while refusing undefined zero
+division. Animated inputs still follow the material animation transport limits.
+These fixtures do not certify arbitrary frequency, parameter, or whole-scene
+pixel equivalence.
+
+Retained native artifacts can be replayed with `--reference-dir /path/to/reference`
+and an optional comma-separated `--ids` subset. Replays record manifest/IR hashes
+and explicitly record that the current native emitter was not executed. Final
+release checks regenerate native references.
+
+## Clamp ranges
+
+`node experiments/tsl-node-differential/run-mapping.mjs --clamp --built`
+checks 58 native graphs per Blender version on both browser backends. Blender
+4.2, 5.2 and 5.3 pass with maximum absolute error 3.94e-6. Both MINMAX and
+RANGE are covered with negative/HDR values, reversed/collapsed bounds, and live
+bounds crossing inside the tile. RANGE lowers to existing min/max algebra;
+MINMAX keeps the native authored order. The native bake observes the unchanged
+Clamp result through a positive 1/32 scale plus 0.5 carrier. Constant cells are
+exact; the fixed 1e-5 spatial budget covers the independently measured Cycles
+UV nudge after that observation scale. This does not certify nonfinite inputs
+or animated node parameters.
+
+## Native image sampling
+
+`node experiments/tsl-node-differential/run-mapping.mjs --images --built`
+checks 220 actual native graphs per Blender version on both browser backends.
+Blender 4.2, 5.2 and 5.3 source proofs pass. The same production emitter walks
+the graph evaluated by Cycles CPU or EEVEE; actual scene-linear pixels come
+from isolated channel bakes or orthographic emission renders. All four
+extensions (Repeat/Extend/Mirror/Clip), three filters (Closest/Linear/Cubic),
+RGB/Alpha outputs, signed multi-tile fields and exact dyadic boundary probes
+are covered. This is the Flat 8x8 floating Non-Color image magnification
+contract; arbitrary minification/mipmap footprints and every color/alpha
+association remain outside this numerical claim.
+
+Cycles nearest selection reproduces the native truncation-minus-negative
+index rule at exact negative integers. Old schema-1 programs without an
+engine tag retain their previous floor behavior. Clip reads transparent black
+per out-of-bounds tap; Cubic border footprints therefore fade rather than
+being cut off at the image rectangle. Mirror wraps each tap independently.
+
+The native GPU float data-image upload unassociates texels (zero alpha keeps
+its authored RGB), then truncates to half storage when the source Image's
+Half Precision setting is enabled. Disabling it retains float32 storage.
+Cubic EEVEE sampling pairs positive B-spline weights into four bilinear
+lookups; native Metal uses eight-bit filter fractions. This precision belongs
+to the image sampling operation, separate from EEVEE's eventual scene target.
+Two independent nontrivial emission carriers first verify that target's
+half-float bound; the report retains raw error and per-component target
+allowance separately from strict residual mean/p99/maximum budgets. Fixed
+CPU boundary probes differ by at most1.20e-7; their strict budget is5e-6.
+
+Floating GPU images that exceed finite half storage refuse with an actionable
+Half Precision message. Media/tile/viewer sources refuse before reading their
+current frame as a static image. Source pixels and precision settings are
+never changed by extraction. External image transport retains its separate
+pinned-byte/decoded-dimension contract, and currently refuses Cubic/Mirror/Clip.
+
+### Smart image filtering
+
+Fresh embedded Image Texture graphs accept the authored Smart selector and
+canonicalize it to Cubic. Native Blender routes both selectors through the
+same cubic B-spline path. The large-image sidecar transport continues to refuse
+Cubic/Smart; it does not substitute a linear hardware sampler.
+
+The image family now contains 300 graphs per Blender 4.2/5.2/5.3. Its 80 new
+Smart graphs have byte-identical native pixels and canonical IR to their Cubic
+counterparts on every version. All 1,800 graph/backend readbacks pass the
+existing budgets on WebGPU and WebGL2. Coverage includes Color/Alpha, signed
+multi-tile coordinates, all four extensions, exact boundaries and native half/
+full image storage. This does not certify general Linear mipmapped minification
+or new color/alpha-association domains.
+
+Reproduce with `run-mapping.mjs --images --built` and `BLENDLINK_BLENDER` plus
+`BLENDLINK_TSL_DIFF_ARTIFACTS`. Native admission checks include all four selectors
+and refuse oversized Smart/Cubic images before sidecar export. Source pixels,
+precision settings and users stay unchanged.

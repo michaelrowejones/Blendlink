@@ -1,16 +1,16 @@
-# Bake workflow: Needle 1.4.2 evidence and a deep Blendlink seam
+# Bake workflow: Needle 1.4.2 evidence and a deep SceneToWeb seam
 
 - Research date: 2026-07-21
 - Needle Blender add-on inspected: 1.4.2, installed for Blender 5.2
 - Needle runtime inspected: `@needle-tools/engine` 5.1.7
-- Blendlink comparison target: current working tree on 2026-07-21
+- SceneToWeb comparison target: current working tree on 2026-07-21
 
 ## Question
 
 Which concrete baking affordances make Needle Engine approachable, which of
 its guarantees are actually present in the installed source, where does
-Blendlink still have an evidenced gap, and what is the smallest deep module
-interface that can own Blendlink's bake workflow without moving bake mechanics
+SceneToWeb still have an evidenced gap, and what is the smallest deep module
+interface that can own SceneToWeb's bake workflow without moving bake mechanics
 out of `packages/blendlink/blender/bakelib.py` or casually reshaping the
 manifest?
 
@@ -22,7 +22,7 @@ exact files in [Source anchors](#source-anchors).
 ## Decision
 
 Do not copy Needle's lightmap file format, runtime extension, global shader
-patch, proxy-quad allocator, or bake-setting surface. Preserve Blendlink's
+patch, proxy-quad allocator, or bake-setting surface. Preserve SceneToWeb's
 existing atlas, color, cache, delivery, and schema contracts. Adopt the useful
 shape of Needle's artist loop—clear participation, visible preview, one
 prominent action, raw-result inspection—through a two-entry deep module:
@@ -152,7 +152,7 @@ disabled caustics, light-tree use, subdivision simplification, and a 2048
 render texture limit. [N7]
 
 Those preset names therefore do not mean “1024-sample” and “4096-sample” in
-ordinary use: the time limits may terminate much earlier. Blendlink should not
+ordinary use: the time limits may terminate much earlier. SceneToWeb should not
 copy the labels without reporting the resolved settings and measured outcome.
 
 The installed bake is a Cycles `COMBINED` image-texture bake. Its actual pass
@@ -201,16 +201,16 @@ does not imply that every advertised path is safe enough to copy into a
 compiler contract. [Needle lightmapping documentation][needle-lightmapping]
 [N5]
 
-| Mechanic | Installed Needle 1.4.2 evidence | Blendlink decision | Reason |
+| Mechanic | Installed Needle 1.4.2 evidence | SceneToWeb decision | Reason |
 | --- | --- | --- | --- |
 | Artist participation | `Lightmapped` on meshes and lights plus `Lightmap Scale`; selection is collected before baking. [N2] [N5] | **Match the interaction shape.** Keep Automatic/Realtime/Baked and texel weight rather than adopting Needle property names. | One visible participation decision and one relative-detail control are artist-readable. |
-| Contributor filtering | Every non-lightmapped mesh is hidden from render while baking. `lightmapping.py:258-325` | **Deviate.** Keep safe static realtime receivers as shadow/bounce contributors; continue excluding dynamic/collision geometry. | Hiding a static table because it is not a receiver changes another receiver's baked shadows and bounce. Blendlink's distinction is evidenced, not cosmetic. |
+| Contributor filtering | Every non-lightmapped mesh is hidden from render while baking. `lightmapping.py:258-325` | **Deviate.** Keep safe static realtime receivers as shadow/bounce contributors; continue excluding dynamic/collision geometry. | Hiding a static table because it is not a receiver changes another receiver's baked shadows and bounce. SceneToWeb's distinction is evidenced, not cosmetic. |
 | Bake pass | Cycles `COMBINED`; executable pass set contains `EMIT`, `DIRECT`, `INDIRECT`, `COLOR`, `DIFFUSE`, and `TRANSMISSION`; margin is `max(2, resolution / 256)`. `lightmapping.py:423-449` | **Match only for Bake Appearance.** Keep the separate indirect-diffuse Bake Lighting route. | Appearance is the same “bake is the painting” class. Lighting must remain material-independent to multiply with authored PBR at runtime. |
 | Receiver ownership and gutter | One shared image; one Blender call over separate selected receivers; Blender clears once and bakes each receiver in native object context; global pack reserves `2 * margin + 4px`. `lightmapping.py:364-450`; `lightmapping_pack.py:194-207` | **Match.** Keep frozen receivers as separate objects, select only the current atlas, leave every eligible receiver visible as a contributor, and use the same two-margin gutter. | This preserves Object Attribute, Object Info, generated/object coordinates, transforms, ray visibility, and unknown nested semantics. A joined proxy cannot represent that contract generally. |
 | Local UV generation | Reuses/renames a second layer, then batches Smart UV Project with adaptive local margins. `lightmapping.py:692-752`; `lightmapping_pack.py:335-465` | **Match after evaluated geometry exists.** Retain authored/pinned ownership; use Smart Project as an unpinned fallback or repair, not as unconditional author-data replacement. | Smart Project is a useful default. Running it only on source topology misses modifier-generated faces, which the dogfood proves. [B9] |
 | UV reuse | MD5 cache covers source counts/positions, object scale, Lightmap Scale, resolution, and object count. `lightmapping_pack.py:11-36`, `:392-465` | **Match the cache affordance; deviate in dependencies.** Keep evaluated geometry, modifiers, exact UV bytes, and pipeline version in the fingerprint. | Source topology alone cannot attest the final triangles Cycles and glTF consume. |
-| Global allocation | One proxy quad per object, sized from the sum of source bounding-box dimensions times Lightmap Scale, packed without rotation by Blender; scale/offset is stored on the object. `lightmapping_pack.py:38-90`, `:149-223` | **Match the two-level, fixed-orientation ownership shape; improve the allocator.** Keep measured surface area, target/achieved px/m, camera weighting, named atlases, padding, and capacity blocking, and place the outer receiver rectangles with a deterministic MaxRects portfolio. | On this dogfood, Needle's exact default proxy formula gives about 48.79% to distant exterior `Cube`, 47.06% to `Wall`, and only 4.14% to all other hero props combined. On Cube's actual 38 measured Blendlink receiver rectangles, Blender's outer pack used 73.59% of the edge-usable area while fixed-orientation MaxRects reached 87.75%; a headless differential locks pure-allocator determinism, exact gutters, uniform scale, and a material shelf-control win. Evaluated Blender UVs remain a separate input seam. [B9] [B11] [B12] |
-| Runtime representation | One RGBM image plus renderer scale/offset metadata and a global Three lightmap decode patch. [N10] [N11] | **Deviate.** Keep ordinary Three/glTF materials, explicit Appearance versus Lighting composition, multiple atlases, and application-owned renderer lifecycle. | Needle can make a vertically integrated engine assumption; Blendlink's product boundary cannot. |
+| Global allocation | One proxy quad per object, sized from the sum of source bounding-box dimensions times Lightmap Scale, packed without rotation by Blender; scale/offset is stored on the object. `lightmapping_pack.py:38-90`, `:149-223` | **Match the two-level, fixed-orientation ownership shape; improve the allocator.** Keep measured surface area, target/achieved px/m, camera weighting, named atlases, padding, and capacity blocking, and place the outer receiver rectangles with a deterministic MaxRects portfolio. | On this dogfood, Needle's exact default proxy formula gives about 48.79% to distant exterior `Cube`, 47.06% to `Wall`, and only 4.14% to all other hero props combined. On Cube's actual 38 measured SceneToWeb receiver rectangles, Blender's outer pack used 73.59% of the edge-usable area while fixed-orientation MaxRects reached 87.75%; a headless differential locks pure-allocator determinism, exact gutters, uniform scale, and a material shelf-control win. Evaluated Blender UVs remain a separate input seam. [B9] [B11] [B12] |
+| Runtime representation | One RGBM image plus renderer scale/offset metadata and a global Three lightmap decode patch. [N10] [N11] | **Deviate.** Keep ordinary Three/glTF materials, explicit Appearance versus Lighting composition, multiple atlases, and application-owned renderer lifecycle. | Needle can make a vertically integrated engine assumption; SceneToWeb's product boundary cannot. |
 | Partial object/view bake | UI is experimental and the previous-atlas merge is commented out. [N4] [N5] | **Do not match yet.** Rebuild the complete invalidated atlas job. | A selected receiver can still change another island through shadows or bounce; safe partial work needs dependency evidence. |
 | Iteration UX | One prominent bake, Preview/High/Custom, raw view, texture/UV preview, last duration. [N3] [N4] | **Match.** Preserve truthful resolved settings and measured history rather than copying the preset names literally. | This is Needle's strongest transferable design and does not require its runtime. |
 
@@ -226,7 +226,7 @@ per-renderer lightmap scale/offset through material property blocks. Its
 runtime globally replaces Three's lightmap shader chunk to decode RGBM,
 including an alpha multiplier of 8 whose source comment says it was
 heuristically derived. [N11] This works as an engine-owned vertical slice; it
-is not a portable glTF/Three contract that Blendlink should adopt.
+is not a portable glTF/Three contract that SceneToWeb should adopt.
 
 The installed exporter has one global image named
 `NEEDLE_lightmap_image`, and exported renderers use lightmap index zero. Unique
@@ -242,7 +242,7 @@ quickly. [N5] [N11]
 
 ### Dogfood differential: collapsed modifier UVs and tier magnification
 
-The hero's approved Blender reference is Eevee while Blendlink's current
+The hero's approved Blender reference is Eevee while SceneToWeb's current
 Appearance baker uses Cycles. That renderer difference explains neither issue
 below: both are measurable geometry/delivery failures after the bake result
 exists.
@@ -265,7 +265,7 @@ Cycles samples or comparing against Eevee cannot repair it. [B9]
 
 The precise pipeline hole is:
 
-1. Blendlink freezes evaluated meshes, so the final Solidify geometry exists.
+1. SceneToWeb freezes evaluated meshes, so the final Solidify geometry exists.
 2. It adopts the evaluated propagation of the authored source layer.
 3. The existing exact zero-area check runs only for islands containing pinned
    loops.
@@ -275,7 +275,7 @@ The precise pipeline hole is:
 
 Needle is useful precedent for Smart Project, but not a fix as installed. It
 unwraps and hashes `obj.data` before Cycles evaluates modifiers. A Solidify rim
-created later can inherit the same collapsed edge. Blendlink should deviate by
+created later can inherit the same collapsed edge. SceneToWeb should deviate by
 validating the evaluated/final triangle domain and either repairing only fully
 unpinned affected faces or blocking loudly when pinned placement would need to
 move. [N8] [B3] [B9]
@@ -320,7 +320,7 @@ samples, with choices from 64×32 through 2048×1024. It renders a panorama with
 GPU/CPU fallback to a 32-bit-float EXR using **lossy** DWAA compression, packs
 it into the `.blend`, and restores render, camera, and output state. [N12]
 
-Blendlink's Runtime/Baked/Custom probe ownership, stable derived paths,
+SceneToWeb's Runtime/Baked/Custom probe ownership, stable derived paths,
 transactional Bake All, byte attestation, staleness evidence, and published
 PMREM adapter already exceed that safety contract. Needle's first-class
 thumbnail, action, and influence-volume presentation remains a useful UX
@@ -350,11 +350,11 @@ Several installed behaviors materially limit a parity claim:
   installed code warns and continues, permitting World/emissive-only input.
   That behavior may be useful, but the contract is inconsistent. [N5]
 
-## Blendlink's evidenced position
+## SceneToWeb's evidenced position
 
 ### Already stronger
 
-Blendlink already exceeds the inspected Needle path in the following areas:
+SceneToWeb already exceeds the inspected Needle path in the following areas:
 
 1. **Explicit output semantics.** Each atlas chooses Lighting—indirect GI with
    authored PBR retained—or Appearance—a finished visible result. The UI names
@@ -374,7 +374,7 @@ Blendlink already exceeds the inspected Needle path in the following areas:
    excluded to prevent permanent ghosts. Every frozen atlas receiver exists before any
    bake so other atlases remain shadow/bounce contributors. Needle instead
    hides every non-lightmapped mesh. [B5] [N5]
-5. **States and controllable lights.** Blendlink bakes visibility states and
+5. **States and controllable lights.** SceneToWeb bakes visibility states and
    additive Cycles Light Groups over the same atlas layout, with an explicit
    blocker where visibility-changing states would make additive bounce or
    shadows false. [B5]
@@ -392,8 +392,8 @@ Blendlink already exceeds the inspected Needle path in the following areas:
 8. **Saved-result inspection.** The Blender add-on already exposes verified
    thumbnails, exact saved-pixel isolation, density/UV-grid views, allocated
    texels, atlas membership, and the plan table. Needle's raw view remains a
-   useful simplicity reference, not a missing Blendlink capability. [B2]
-9. **Failure and cancellation truth.** Blendlink runs the compiler in a child
+   useful simplicity reference, not a missing SceneToWeb capability. [B2]
+9. **Failure and cancellation truth.** SceneToWeb runs the compiler in a child
    Blender process, streams job progress and a heartbeat, treats sentinel plus
    result artifacts as success evidence, surfaces stderr tails, and can kill
    the complete process tree. It does not claim in-process Cycles sample
@@ -406,14 +406,14 @@ Blendlink already exceeds the inspected Needle path in the following areas:
    loops, artifact staging, and manifest assembly live across a large
    `export_scene.py` path. `bakelib.py` correctly owns the mechanics, but
    callers and tests lack one narrow orchestration interface. [B4] [B5]
-2. **The artist still lacks a truthful pre-build cost.** Blendlink now shows
+2. **The artist still lacks a truthful pre-build cost.** SceneToWeb now shows
    measured total/per-job duration, rebuilt/reused status, effective size,
    profile, and device/backend for the prior build. It still does not show a
    pre-build dirty-job count or an estimate learned from comparable historical
    jobs. A future estimate must be labeled and derived; it must not pretend
    sample count alone predicts time. [N4] [B2]
 3. **No safe object-only final bake.** Needle exposes this experimentally, but
-   its preservation/merge code is disabled. Blendlink correctly rebuilds an
+   its preservation/merge code is disabled. SceneToWeb correctly rebuilds an
    invalidated atlas job. A real improvement would require a tile/island-level
    dependency graph plus contributor/shadow reach evidence; simply baking the
    selection would ship stale bounce and shadows. Do not add the button before
@@ -427,7 +427,7 @@ Blendlink already exceeds the inspected Needle path in the following areas:
 5. **Material-domain expansion is still prototype work.** Eevee UV-canvas
    material baking, tangent-normal materialization, selected-to-active high/low
    baking, UDIM/virtualized output, and a proven compressed HDR lightmap format
-   are not production Blendlink contracts. Needle 1.4.2 does not provide a
+   are not production SceneToWeb contracts. Needle 1.4.2 does not provide a
    superior portable implementation of them either. Keep them outside the
    production interface until a focused prototype has byte and browser proof.
 6. **Per-job evidence is not yet a prediction model.** The current manifest
@@ -589,7 +589,7 @@ selects them together, and calls Blender once. Blender internally loops over
 the receivers, so they keep native shader/ray state while continuing to cast
 shadows and contribute bounce. Only non-lightmapped meshes are hidden.
 
-Blendlink now matches that ownership seam. Evaluated receiver meshes stay as
+SceneToWeb now matches that ownership seam. Evaluated receiver meshes stay as
 separate objects, one shared image is cleared once, and only the current
 atlas's receivers are selected while every eligible receiver remains visible.
 The package retains its stronger global surface-area/density/pinned-island
@@ -617,7 +617,7 @@ ray switches directly rather than approximating two of them in a joined graph.
 
 Needle's useful architectural baseline is one local chart layout and one outer
 rectangle per receiver, with rotation disabled so applying the result requires
-only scale and offset. Blendlink keeps that interface. It deviates only in the
+only scale and offset. SceneToWeb keeps that interface. It deviates only in the
 outer implementation: generated Blender proxy objects and
 `bpy.ops.uv.pack_islands` are replaced by a pure fixed-orientation MaxRects
 portfolio. Every receiver gets the same global scale; only its translation
@@ -635,7 +635,7 @@ The decision was measured before implementation on the real Cube Final input:
 
 The rotation gain is only about 0.34% in linear scale over fixed-orientation
 MaxRects. It is rejected: Needle's scale/offset semantics are simpler, and
-Blendlink does not need a new receiver-level rotation mapping for a negligible
+SceneToWeb does not need a new receiver-level rotation mapping for a negligible
 Cube gain. Perfect rectangle placement would still be bounded near `0.2845`
 UV occupancy because receiver-local AABBs contain substantial empty space;
 that is a separate local-chart problem, especially for Bracken, Bird Cage,
@@ -671,7 +671,7 @@ receiver-local stages remain upstream inputs to that contract.
 This remains an improvement over Needle 1.4.2's outer path. Needle derives its
 mesh list from a Python `set` and calls Blender's explicitly non-deterministic
 box sort, and it adds no control for Blender Bevel's pointer-hashed UV merge.
-Blendlink should retain the pure allocator without claiming it repairs the
+SceneToWeb should retain the pure allocator without claiming it repairs the
 separate evaluated-UV seam.
 
 Four production-policy families were tested only on disposable automatic atlas
@@ -711,7 +711,7 @@ masking the original failure.
 - **N10 — RGBM PNG, dummy material/quad, custom glTF extension:** installed `extensions\NEEDLE_lightmaps.py:174-231` and `:263-322`; RGBM conversion in `lightmapping\lightmapping.py:573-672`.
 - **N11 — runtime registration, decode, and per-renderer application:** `experiments\needle-spike\node_modules\@needle-tools\engine\src\engine\extensions\NEEDLE_lightmaps.ts:18-128`; `src\engine\engine_lightdata.ts:31-130`; `src\engine-components\RendererLightmap.ts:20-193`.
 - **N12 — reflection-probe UI and bake:** installed `panels_reflectionprobe.py:7-100`; `operators_reflectionprobe.py:295-512`.
-- **B1 — Blendlink authored settings/defaults:** `packages\blender-addon\props.py:77-119`, `:832-860`, and `:1546-1636`.
+- **B1 — SceneToWeb authored settings/defaults:** `packages\blender-addon\props.py:77-119`, `:832-860`, and `:1546-1636`.
 - **B2 — artist atlas/quality/result surface:** `packages\blender-addon\ui.py:1754-1905` and `:2880-3260`; current summary in `docs\FEATURE_PARITY.md:111-115`.
 - **B3 — UV mechanics and evidence:** `packages\blendlink\blender\bakelib.py:1585-3073`; plan evidence in `packages\blendlink\blender\export_scene.py:2237-2431`.
 - **B4 — output-specific bake configuration:** `packages\blendlink\blender\bakelib.py:3100-3157`; dispatch/execution in `packages\blendlink\blender\export_scene.py:1894-1961`.

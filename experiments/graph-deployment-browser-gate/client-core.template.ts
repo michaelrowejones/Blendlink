@@ -2,7 +2,7 @@ import {
   compiledSceneAssetUrls,
   createCompiledAssetUrlModifier,
   resolveCompiledAssetUrl,
-} from 'blendlink/assets'
+} from 'scenetoweb/assets'
 import { LoadingManager, Mesh, Texture } from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 

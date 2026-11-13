@@ -51,8 +51,8 @@ const lockfile = JSON.parse(
 const graph = verifyReviewedDependencyChain(lockfile)
 const policy = verifyProductionAuditReport(report)
 
-if (policy.status === 'reviewed-workaround' && result.status !== 1) {
-  throw new Error('npm audit unexpectedly returned success for the reviewed vulnerable graph')
+if (result.status !== 0) {
+  throw new Error('npm audit returned a failure status despite a clean report')
 }
 
 console.log(

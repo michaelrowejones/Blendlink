@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
+import { deflateSync } from 'node:zlib'
 import * as THREE from 'three'
 import {
   BlendFunction, BloomEffect, Effect, EffectComposer, LUT3DEffect, OutlineEffect, SMAAEffect,
@@ -61,6 +62,31 @@ function postFixture(hdr = true) {
 }
 
 describe('installThreeComponents', () => {
+  it('aborts Image preparation without activating replacements or disposing the existing components', async () => {
+    const f = fixture(), previous = await installThreeComponents({ ...f })
+    Object.assign(f.renderer, { isWebGPURenderer: true, getPixelRatio: () => 1 })
+    const controller = new AbortController(), input = new Float32Array(16).fill(.25)
+    const sourcePresentation: import('./sourceDisplay.js').SourcePresentation = {
+      schemaVersion: 1, model: 'blendlink-source-presentation-v1', warnings: [], compositor: {
+        version: 1, status: 'extracted', passes: [], diagnostics: [], images: { image: {
+          model: 'native-cpu-static-image-v1', encoding: 'zlib-le-rgba32f', width: 2, height: 2,
+          decodedBytes: input.byteLength, data: deflateSync(new Uint8Array(input.buffer)).toString('base64'),
+          source: { name: 'Background', kind: 'GENERATED', colorSpace: 'Raw', alphaMode: 'PREMUL', storage: 'direct-float-buffer' },
+        } }, ops: [{ id: 'image', kind: 'image-input', type: 'RGBA', inputs: {}, properties: {
+          evaluation_device: 'CPU', image_id: 'image', image_window_model: 'modern-cpu-v1',
+        }, source: { path: ['Compositor'], node: 'Image', nodeType: 'CompositorNodeImage', output: 'Image' } }],
+        output: { kind: 'ref', type: 'RGBA', node: 'image' },
+      },
+    }
+    const pending = installThreeComponents({ ...f, sourcePresentation, signal: controller.signal })
+    controller.abort()
+    await expect(pending).rejects.toMatchObject({ name: 'AbortError' })
+    sourcePresentation.compositor!.images!.image!.data = '???='
+    await expect(installThreeComponents({ ...f, sourcePresentation })).rejects.toThrow(/Static Image/)
+    previous.render()
+    expect(f.render).toHaveBeenCalledWith(f.scene, f.camera)
+    previous.dispose()
+  })
   it('keeps the normal Three render path as a first-class no-component case', async () => {
     const f = fixture()
     const installed = await installThreeComponents({ ...f })
@@ -185,8 +211,8 @@ describe('installThreeComponents', () => {
     expect(installed.requiresContinuousFrames).toBe(false)
     installed.render()
     expect(f.render).toHaveBeenCalledTimes(6)
-    const helper = f.scene.getObjectByName('Blendlink Contact Shadows Root')!
-    expect(helper.getObjectByName('Blendlink Contact Shadows Plane')?.layers.mask)
+    const helper = f.scene.getObjectByName('SceneToWeb Contact Shadows Root')!
+    expect(helper.getObjectByName('SceneToWeb Contact Shadows Plane')?.layers.mask)
       .toBe(f.camera.layers.mask)
 
     surface.dispatchEvent(new Event('webglcontextlost'))
@@ -197,7 +223,7 @@ describe('installThreeComponents', () => {
     installed.update(1 / 60)
     expect(f.render).toHaveBeenCalledTimes(11)
     installed.dispose()
-    expect(f.scene.getObjectByName('Blendlink Contact Shadows Root')).toBeUndefined()
+    expect(f.scene.getObjectByName('SceneToWeb Contact Shadows Root')).toBeUndefined()
   })
 
   it('keeps Contact Shadows Canvas listeners out of a deferred component preparation', async () => {
@@ -229,20 +255,20 @@ describe('installThreeComponents', () => {
     const committedScene = new THREE.Scene()
     const committedCamera = new THREE.PerspectiveCamera()
     committedCamera.layers.set(5)
-    expect(f.scene.getObjectByName('Blendlink Contact Shadows Root')).toBeDefined()
+    expect(f.scene.getObjectByName('SceneToWeb Contact Shadows Root')).toBeDefined()
     committed.activate(committedScene, committedCamera)
     committed.activate(committedScene, committedCamera)
     expect(surface.addEventListener).toHaveBeenCalledTimes(2)
     expect(committed.requiresContinuousFrames).toBe(true)
-    expect(f.scene.getObjectByName('Blendlink Contact Shadows Root')).toBeUndefined()
+    expect(f.scene.getObjectByName('SceneToWeb Contact Shadows Root')).toBeUndefined()
     const committedHelper =
-      committedScene.getObjectByName('Blendlink Contact Shadows Root')
+      committedScene.getObjectByName('SceneToWeb Contact Shadows Root')
     expect(committedHelper).toBeDefined()
-    expect(committedHelper?.getObjectByName('Blendlink Contact Shadows Plane')?.layers.mask)
+    expect(committedHelper?.getObjectByName('SceneToWeb Contact Shadows Plane')?.layers.mask)
       .toBe(committedCamera.layers.mask)
     committed.dispose()
     expect(surface.removeEventListener).toHaveBeenCalledTimes(2)
-    expect(committedScene.getObjectByName('Blendlink Contact Shadows Root')).toBeUndefined()
+    expect(committedScene.getObjectByName('SceneToWeb Contact Shadows Root')).toBeUndefined()
   })
 
   it('rejects manual Scene Contact Shadows before taking renderer ownership', async () => {
@@ -793,7 +819,7 @@ describe('installThreeComponents', () => {
     installed.dispose()
   })
 
-  it('adapts Blendlink linear AO tint to the sRGB-facing N8AO configuration boundary', async () => {
+  it('adapts SceneToWeb linear AO tint to the sRGB-facing N8AO configuration boundary', async () => {
     const setQualityMode = N8AOPostPass.prototype.setQualityMode
     let configuredColor: THREE.Color | undefined
     const qualitySpy = vi.spyOn(N8AOPostPass.prototype, 'setQualityMode').mockImplementation(function (

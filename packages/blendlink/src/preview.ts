@@ -39,12 +39,12 @@ import type { CompileProgress } from './progress.js'
 
 export { websitePackageRunner } from './packageRunner.js'
 
-const PREVIEW_STUDIO_MARKER = '.blendlink-preview-studio.json'
-const PREVIEW_STUDIO_STATE = '.blendlink-preview-studio-state.json'
-const PREVIEW_STUDIO_KIND = 'blendlink-preview-studio'
+const PREVIEW_STUDIO_MARKER = '.scenetoweb-preview-studio.json'
+const PREVIEW_STUDIO_STATE = '.scenetoweb-preview-studio-state.json'
+const PREVIEW_STUDIO_KIND = 'scenetoweb-preview-studio'
 const LEGACY_PREVIEW_STUDIO_INDEX = `<!doctype html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Blendlink Preview</title></head>
-<body><canvas id="scene" aria-label="Blendlink web preview"></canvas><script type="module" src="/src/main.ts"></script></body></html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>SceneToWeb Preview</title></head>
+<body><canvas id="scene" aria-label="SceneToWeb web preview"></canvas><script type="module" src="/src/main.ts"></script></body></html>
 `
 
 export interface PreviewStudioPlan {
@@ -153,7 +153,7 @@ export class PreviewStudioReportLedger {
     const generation = prior?.phase === 'ready' || prior?.phase === 'published'
       ? prior.generation
       : undefined
-    // Stats are emitted by Blendlink's internal compiler. Warnings are also
+    // Stats are emitted by SceneToWeb's internal compiler. Warnings are also
     // useful evidence for an older/external report, but a bare duration from
     // the pre-ledger host may itself be the misleading no-op check we are
     // repairing, so it is deliberately not enough to seed the ledger.
@@ -217,7 +217,7 @@ interface PreviewStudioState {
 }
 
 interface PreviewStudioPackage {
-  blendlinkPreviewStudio?: { kind?: string; sessionId?: string }
+  scenetowebPreviewStudio?: { kind?: string; sessionId?: string }
   scripts?: Record<string, string>
   dependencies?: Record<string, string>
 }
@@ -233,10 +233,10 @@ export function defaultPreviewStudioCacheRoot(
   home = homedir(),
 ): string {
   if (process.platform === 'win32' && environment.LOCALAPPDATA) {
-    return join(environment.LOCALAPPDATA, 'Blendlink', 'Preview Studio')
+    return join(environment.LOCALAPPDATA, 'SceneToWeb', 'Preview Studio')
   }
-  if (environment.XDG_CACHE_HOME) return join(environment.XDG_CACHE_HOME, 'blendlink', 'preview-studio')
-  return join(home || tmpdir(), '.cache', 'blendlink', 'preview-studio')
+  if (environment.XDG_CACHE_HOME) return join(environment.XDG_CACHE_HOME, 'scenetoweb', 'preview-studio')
+  return join(home || tmpdir(), '.cache', 'scenetoweb', 'preview-studio')
 }
 
 /** The plan is deliberately path-only: one saved .blend always maps to one
@@ -268,13 +268,13 @@ function previewStudioPackageIdentity(): PreviewStudioPackageIdentity {
   const packagePath = fileURLToPath(new URL('../package.json', import.meta.url))
   try {
     const pkg = JSON.parse(readFileSync(packagePath, 'utf8')) as { name?: string; version?: string }
-    if (pkg.name === 'blendlink' && pkg.version) {
+    if (pkg.name === 'scenetoweb' && pkg.version) {
       return { root: dirname(packagePath), version: pkg.version }
     }
   } catch {
     // The later dependency-install stage explains a broken package install.
   }
-  throw new Error('Blendlink cannot read its own package identity. Reinstall Blendlink, then preview again.')
+  throw new Error('SceneToWeb cannot read its own package identity. Reinstall SceneToWeb, then preview again.')
 }
 
 function packageFileSpec(packageRoot: string): string {
@@ -347,7 +347,7 @@ export function resolvePreviewStudioBlendlinkDependency(
   return version
 }
 
-function previewStudioPackageDependency(): string {
+export function previewStudioPackageDependency(): string {
   const identity = previewStudioPackageIdentity()
   return resolvePreviewStudioBlendlinkDependency(identity.root, identity.version)
 }
@@ -358,15 +358,15 @@ function previewStudioLiveMainSource(
 ): string {
   const generated = `./generated/${plan.sceneName}`
   const authoringPreviewOption = useAuthoringPreview ? '  useAuthoringPreview: true,\n' : ''
-  return `// Blendlink Preview Studio owns this disposable entry point.
+  return `// SceneToWeb Preview Studio owns this disposable entry point.
 import * as THREE from 'three'
-import { installThreeCompiledScene } from 'blendlink/three'
+import { installThreeCompiledScene } from 'scenetoweb/three'
 import { ${plan.sceneName} as compiledScene } from '${generated}.gen'
 import { createBakedScene } from '${generated}.baked'
 import './style.css'
 
 const canvas = document.querySelector<HTMLCanvasElement>('#scene')
-if (!canvas) throw new Error('Blendlink Preview Studio: #scene canvas is missing')
+if (!canvas) throw new Error('SceneToWeb Preview Studio: #scene canvas is missing')
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true })
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 const world = new THREE.Scene()
@@ -429,15 +429,15 @@ export function legacyLivePreviewStudioMainSource(plan: PreviewStudioPlan): stri
  * overwriting an artist-edited entry point. */
 export function legacyPreviewStudioMainSource(plan: PreviewStudioPlan): string {
   const generated = `./generated/${plan.sceneName}`
-  return `// Blendlink Preview Studio owns this disposable entry point.
+  return `// SceneToWeb Preview Studio owns this disposable entry point.
 import * as THREE from 'three'
-import { installThreeCompiledScene } from 'blendlink/three'
+import { installThreeCompiledScene } from 'scenetoweb/three'
 import { ${plan.sceneName} as compiledScene } from '${generated}.gen'
 import { createBakedScene } from '${generated}.baked'
 import './style.css'
 
 const canvas = document.querySelector<HTMLCanvasElement>('#scene')
-if (!canvas) throw new Error('Blendlink Preview Studio: #scene canvas is missing')
+if (!canvas) throw new Error('SceneToWeb Preview Studio: #scene canvas is missing')
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true })
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 const world = new THREE.Scene()
@@ -471,25 +471,25 @@ window.addEventListener('beforeunload', () => installed.dispose(), { once: true 
 
 function previewStudioFiles(
   plan: PreviewStudioPlan,
-  blendlinkDependency: string,
+  scenetowebDependency: string,
 ): Record<string, string> {
   return {
-    'blendlink.config.mjs': `// Blendlink Preview Studio owns this disposable config.\nexport default {\n  outDir: 'public/models',\n  genDir: 'src/generated',\n  urlPrefix: '/models',\n  scenes: [{ file: ${JSON.stringify(plan.blendPath.replace(/\\/g, '/'))}, name: ${JSON.stringify(plan.sceneName)} }],\n}\n`,
+    'scenetoweb.config.mjs': `// SceneToWeb Preview Studio owns this disposable config.\nexport default {\n  outDir: 'public/models',\n  genDir: 'src/generated',\n  urlPrefix: '/models',\n  scenes: [{ file: ${JSON.stringify(plan.blendPath.replace(/\\/g, '/'))}, name: ${JSON.stringify(plan.sceneName)} }],\n}\n`,
     'package.json': JSON.stringify({
-      name: `blendlink-preview-${plan.sessionId}`,
+      name: `scenetoweb-preview-${plan.sessionId}`,
       private: true,
       version: '0.0.0',
       type: 'module',
-      blendlinkPreviewStudio: { kind: PREVIEW_STUDIO_KIND, sessionId: plan.sessionId },
+      scenetowebPreviewStudio: { kind: PREVIEW_STUDIO_KIND, sessionId: plan.sessionId },
       scripts: { 'preview:dev': 'vite --host 127.0.0.1 --port 0' },
       dependencies: {
         // The generated bindings and runtime share a schema contract. Keep
         // them on the exact CLI release, or on the executing package while a
         // local checkout/install is being tested before publication.
-        blendlink: blendlinkDependency,
+        scenetoweb: scenetowebDependency,
         three: '0.184.0',
       },
-      devDependencies: { vite: '^7.0.0' },
+      devDependencies: { vite: '7.3.8' },
     }, null, 2) + '\n',
     'index.html': PREVIEW_STUDIO_INDEX,
     'tsconfig.json': JSON.stringify({
@@ -527,7 +527,7 @@ function assertPreviewStudioOwnership(plan: PreviewStudioPlan): void {
   const marker = readStudioState(markerPath)
   if (marker) {
     if (marker.sessionId !== plan.sessionId) {
-      throw new Error(`Preview Studio workspace identity mismatch at ${plan.workspace}; Blendlink will not overwrite it.`)
+      throw new Error(`Preview Studio workspace identity mismatch at ${plan.workspace}; SceneToWeb will not overwrite it.`)
     }
     return
   }
@@ -546,12 +546,12 @@ function assertPreviewStudioOwnership(plan: PreviewStudioPlan): void {
 
 function writeMissingPreviewStudioFiles(
   plan: PreviewStudioPlan,
-  blendlinkDependency: string,
+  scenetowebDependency: string,
 ): string[] {
   const created: string[] = []
-  for (const [relativePath, content] of Object.entries(previewStudioFiles(plan, blendlinkDependency))) {
+  for (const [relativePath, content] of Object.entries(previewStudioFiles(plan, scenetowebDependency))) {
     const path = join(plan.workspace, relativePath)
-    // A disposable session is Blendlink-owned, but we still never replace a
+    // A disposable session is SceneToWeb-owned, but we still never replace a
     // file once present: a partial/manual edit must remain visible and safe.
     if (existsSync(path)) continue
     mkdirSync(dirname(path), { recursive: true })
@@ -593,7 +593,7 @@ function migrateManagedPreviewStudioIndex(plan: PreviewStudioPlan): boolean {
     ? Number(versionLine.slice(PREVIEW_STUDIO_INDEX_VERSION_MARKER.length)
         .replace('-->', '').trim())
     : current.includes('<main id="studio" data-background="dark" data-viewport="fill">')
-      && current.includes('<title>Blendlink Preview Studio</title>')
+      && current.includes('<title>SceneToWeb Preview Studio</title>')
       ? 1
       : undefined
   if (!legacyExact && (managedVersion === undefined
@@ -604,8 +604,8 @@ function migrateManagedPreviewStudioIndex(plan: PreviewStudioPlan): boolean {
 }
 
 function legacyPreviewStudioViteConfigSource(): string {
-  return `// Blendlink Preview Studio owns this disposable config.
-// A file-linked Blendlink checkout can otherwise give Vite one Three instance
+  return `// SceneToWeb Preview Studio owns this disposable config.
+// A file-linked SceneToWeb checkout can otherwise give Vite one Three instance
 // for the app and another for GLTFLoader. Three objects intentionally expose
 // stable is* flags, but renderer/loaders/materials must still share one module.
 export default {
@@ -659,7 +659,7 @@ function migrateManagedPreviewStudioHostFile(options: {
   if (!recognized) {
     throw new Error(
       `Preview Studio ${options.label} host at ${options.path} is unversioned and does not match ` +
-      'a known Blendlink template; Blendlink will not mix host generations or overwrite it. ' +
+      'a known SceneToWeb template; SceneToWeb will not mix host generations or overwrite it. ' +
       'Remove this disposable cache session and preview again.',
     )
   }
@@ -728,16 +728,16 @@ function migrateManagedPreviewStudioDependency(
   packageJson: PreviewStudioPackage,
   desiredDependency: string,
 ): void {
-  const currentDependency = packageJson.dependencies?.blendlink
+  const currentDependency = packageJson.dependencies?.scenetoweb
   if (currentDependency === desiredDependency) return
   if (!currentDependency || !MANAGED_BLENDLINK_DEPENDENCY.test(currentDependency)) {
     throw new Error(
-      `Preview Studio package at ${packagePath} declares an unrecognized Blendlink dependency ` +
-      `${JSON.stringify(currentDependency)}; Blendlink will not overwrite it. ` +
+      `Preview Studio package at ${packagePath} declares an unrecognized SceneToWeb dependency ` +
+      `${JSON.stringify(currentDependency)}; SceneToWeb will not overwrite it. ` +
       'Remove this disposable cache session and preview again.',
     )
   }
-  packageJson.dependencies = { ...packageJson.dependencies, blendlink: desiredDependency }
+  packageJson.dependencies = { ...packageJson.dependencies, scenetoweb: desiredDependency }
   writeFileSync(packagePath, JSON.stringify(packageJson, null, 2) + '\n')
 }
 
@@ -747,9 +747,9 @@ function migrateManagedPreviewStudioDependency(
  * so an earlier Preview Studio session can self-heal. */
 export function scaffoldPreviewStudio(plan: PreviewStudioPlan): PreviewStudioScaffoldResult {
   assertPreviewStudioOwnership(plan)
-  const blendlinkDependency = previewStudioPackageDependency()
+  const scenetowebDependency = previewStudioPackageDependency()
   migrateManagedPreviewStudioEntry(plan)
-  const created = writeMissingPreviewStudioFiles(plan, blendlinkDependency)
+  const created = writeMissingPreviewStudioFiles(plan, scenetowebDependency)
   const packagePath = join(plan.workspace, 'package.json')
   if (!existsSync(packagePath)) {
     throw new Error(`Preview Studio setup did not create ${packagePath}.`)
@@ -760,19 +760,19 @@ export function scaffoldPreviewStudio(plan: PreviewStudioPlan): PreviewStudioSca
   } catch (error) {
     throw new Error(`Preview Studio package is invalid at ${packagePath}: ${error instanceof Error ? error.message : String(error)}`)
   }
-  if (packageJson.blendlinkPreviewStudio?.kind !== PREVIEW_STUDIO_KIND
-      || packageJson.blendlinkPreviewStudio.sessionId !== plan.sessionId
+  if (packageJson.scenetowebPreviewStudio?.kind !== PREVIEW_STUDIO_KIND
+      || packageJson.scenetowebPreviewStudio.sessionId !== plan.sessionId
       || packageJson.scripts?.['preview:dev'] !== 'vite --host 127.0.0.1 --port 0') {
     throw new Error(
-      `Preview Studio package at ${packagePath} is no longer Blendlink-managed; ` +
-      'Blendlink will not run or overwrite it. Remove this disposable cache session and preview again.',
+      `Preview Studio package at ${packagePath} is no longer SceneToWeb-managed; ` +
+      'SceneToWeb will not run or overwrite it. Remove this disposable cache session and preview again.',
     )
   }
   migrateManagedPreviewStudioIndex(plan)
   migrateManagedPreviewStudioHostFiles(plan)
   migrateManagedPreviewStudioBakedRecipe(plan)
   migrateManagedPreviewStudioBakedBridge(plan)
-  migrateManagedPreviewStudioDependency(packagePath, packageJson, blendlinkDependency)
+  migrateManagedPreviewStudioDependency(packagePath, packageJson, scenetowebDependency)
   ensurePreviewStudioControl(plan)
   return {
     workspace: plan.workspace,
@@ -790,7 +790,7 @@ export function previewStudioNeedsInstall(snapshot: {
 }
 
 function previewStudioPackagesPresent(workspace: string): boolean {
-  return ['blendlink', 'three', 'vite'].every((name) =>
+  return ['scenetoweb', 'three', 'vite'].every((name) =>
     existsSync(join(workspace, 'node_modules', name, 'package.json')))
 }
 
@@ -826,7 +826,7 @@ async function runPreviewStudioCommand(command: string, cwd: string, stage: stri
   })
 }
 
-async function installPreviewStudioDependencies(plan: PreviewStudioPlan, packageHash: string): Promise<void> {
+export async function installPreviewStudioDependencies(plan: PreviewStudioPlan, packageHash: string): Promise<void> {
   const state = readStudioState(join(plan.workspace, PREVIEW_STUDIO_STATE))
   if (!previewStudioNeedsInstall({
     packageHash,
@@ -1096,7 +1096,7 @@ async function waitForReachableUrl(
   const checked = candidates.size > 0 ? [...candidates].join(', ') : 'no loopback URL was printed'
   throw new Error(
     `Website preview did not become reachable within ${(timeoutMs / 1000).toFixed(0)}s (${checked}). ` +
-      'Set website.url in blendlink.config.mjs if the server uses a custom hostname.',
+      'Set website.url in scenetoweb.config.mjs if the server uses a custom hostname.',
   )
 }
 
@@ -1175,9 +1175,9 @@ export async function runWebsitePreview(
   if (!target.command) {
     if (live) await live.close()
     throw new Error(
-      `Blendlink could not find a website dev server in ${target.root}. ` +
+      `SceneToWeb could not find a website dev server in ${target.root}. ` +
         'Add a package.json dev/start script, or set website: { root, devCommand, url } ' +
-        'in blendlink.config.mjs.',
+        'in scenetoweb.config.mjs.',
     )
   }
 
@@ -1238,7 +1238,7 @@ export async function runWebsitePreview(
 
 async function previewStudioOwnsUrl(url: string, sessionId: string): Promise<boolean> {
   try {
-    const markerUrl = new URL('/.blendlink-preview-studio.json', url)
+    const markerUrl = new URL('/.scenetoweb-preview-studio.json', url)
     const response = await fetch(markerUrl, {
       method: 'GET',
       signal: AbortSignal.timeout(900),
@@ -1274,7 +1274,7 @@ function recordPreviewStudioUrl(plan: PreviewStudioPlan, packageHash: string, ur
 }
 
 /** One artist-facing action for a saved .blend: provision a cache-owned
- * Three/Vite/Blendlink website, compile Preview quality, then open it. */
+ * Three/Vite/SceneToWeb website, compile Preview quality, then open it. */
 export async function runPreviewStudio(options: PreviewStudioOptions): Promise<number> {
   const plan = planPreviewStudio(options.blendPath, { cacheRoot: options.cacheRoot })
   if (!/\.blend$/i.test(plan.blendPath)) {

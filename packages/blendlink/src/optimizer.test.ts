@@ -74,7 +74,7 @@ describe('Meshopt optimization stage', () => {
       ).sort()
       expect(pairs(decodedUv!.getArray()!)).toEqual(pairs(texcoords))
 
-      // Generic typegen has no Blendlink optimization report to infer from.
+      // Generic typegen has no SceneToWeb optimization report to infer from.
       // Decoder intent must therefore come from the required GLB extension.
       const generated = await generateSceneModule({
         glbPath: path,
@@ -263,13 +263,16 @@ describe('Meshopt optimization stage', () => {
     }
   })
 
-  it('enforces a named texture maximum without changing its semantic format', async () => {
+  it.each([
+    ['Hero Poster', []],
+    ['hero-poster', ['hero-poster.png']],
+  ])('enforces the authored maximum when Blender exports the image as %s', async (exportedName, aliases) => {
     const document = new Document()
     document.createBuffer()
     const pixels = await sharp({
       create: { width: 64, height: 32, channels: 4, background: '#cc8844' },
     }).png().toBuffer()
-    const texture = document.createTexture('Hero Poster')
+    const texture = document.createTexture(exportedName)
       .setImage(new Uint8Array(pixels))
       .setMimeType('image/png')
     document.createMaterial('Poster').setBaseColorTexture(texture)
@@ -279,9 +282,10 @@ describe('Meshopt optimization stage', () => {
     try {
       const io = new NodeIO().registerExtensions(ALL_EXTENSIONS)
       writeFileSync(path, await io.writeBinary(document))
-      const result = await resizeTextures(path, [{ name: 'Hero Poster', maxSize: 16 }])
+      const result = await resizeTextures(path, [{ name: 'Hero Poster', aliases, maxSize: 16 }])
       expect(result.warnings).toEqual([])
       expect(result.transforms[0]).toMatchObject({
+        name: 'Hero Poster',
         originalWidth: 64,
         originalHeight: 32,
         publishedWidth: 16,
@@ -295,6 +299,24 @@ describe('Meshopt optimization stage', () => {
     } finally {
       rmSync(directory, { recursive: true, force: true })
     }
+  })
+
+  it('refuses ambiguous image aliases before changing the GLB', async () => {
+    const document = new Document()
+    document.createBuffer()
+    const pixels = new Uint8Array(await sharp({ create: { width: 32, height: 16, channels: 4, background: '#cc8844' } }).png().toBuffer())
+    for (const name of ['poster', 'poster.png']) {
+      document.createMaterial(name).setBaseColorTexture(document.createTexture(name).setImage(pixels).setMimeType('image/png'))
+    }
+    document.createScene('Scene')
+    const directory = mkdtempSync(join(tmpdir(), 'blendlink-texture-ambiguous-'))
+    const path = join(directory, 'texture.glb')
+    try {
+      const bytes = Buffer.from(await new NodeIO().writeBinary(document))
+      writeFileSync(path, bytes)
+      await expect(resizeTextures(path, [{ name: 'Artist Poster', aliases: ['poster.png'], maxSize: 8 }])).rejects.toThrow(/multiple exported images/)
+      expect(readFileSync(path)).toEqual(bytes)
+    } finally { rmSync(directory, { recursive: true, force: true }) }
   })
 
   it('merges byte-identical generated channel textures and leaves authored names alone', async () => {

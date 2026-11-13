@@ -13,7 +13,7 @@ export type BakedRecipeTemplateStatus =
   | { kind: 'outdated'; version: number }
   | { kind: 'future'; version: number }
 
-/** Inspect only Blendlink's explicit marker. An unmarked recipe may contain
+/** Inspect only SceneToWeb's explicit marker. An unmarked recipe may contain
  * artist edits, so callers must treat it as legacy and never overwrite it
  * without an explicit backed-up migration action. */
 export function inspectBakedRecipeTemplate(source: string): BakedRecipeTemplateStatus {
@@ -47,7 +47,7 @@ export function updateBakedRecipeTemplateFile(
   if (status.kind === 'future') {
     throw new Error(
       `${recipePath} uses baked recipe template v${status.version}, newer than this release supports ` +
-        `(v${BAKED_RECIPE_TEMPLATE_VERSION}); install the matching newer Blendlink release.`,
+        `(v${BAKED_RECIPE_TEMPLATE_VERSION}); install the matching newer SceneToWeb release.`,
     )
   }
   const backupPath = bakedRecipeBackupPath(recipePath, status)
@@ -428,7 +428,7 @@ export function createBakedScene(
         throw new Error(
           'Baked material "' + material.name + '" is shared by atlas groups "' +
           prior.group + '" and "' + binding.group + '" or incompatible output/UV modes. ' +
-          'Re-sync so Blendlink can fork it per atlas.',
+          'Re-sync so SceneToWeb can fork it per atlas.',
         )
       }
       materialBindings.set(material, binding)
@@ -443,7 +443,7 @@ export function createBakedScene(
     if (unsupported.length > 0) {
       throw new Error(
         'Lighting atlas "' + binding.group + '" has interactive light groups (' +
-        unsupported.join(', ') + '). Blendlink refuses to fake these through the appearance-map ' +
+        unsupported.join(', ') + '). SceneToWeb refuses to fake these through the appearance-map ' +
         'shader path because that would bypass PBR lighting. Use Bake Appearance for that atlas ' +
         'until a dedicated PBR light-map layer adapter is available.',
       )
@@ -752,7 +752,7 @@ export function createBakedScene(
       if (!shader.fragmentShader.includes('#include <map_pars_fragment>') ||
           !shader.fragmentShader.includes('#include <map_fragment>')) {
         throw new Error(
-          'Three MeshBasicMaterial shader chunks changed; Blendlink Appearance composition refused.',
+          'Three MeshBasicMaterial shader chunks changed; SceneToWeb Appearance composition refused.',
         )
       }
       shader.uniforms.blStateScale = stateScale

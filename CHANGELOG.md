@@ -1,15 +1,59 @@
 # Changelog
 
-All notable user-facing changes to Blendlink will be recorded here.
+All notable user-facing changes to SceneToWeb will be recorded here.
 
 This project follows [Semantic Versioning](https://semver.org/) and keeps an
 Unreleased section using the categories from
-[Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Blendlink is still
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/). SceneToWeb is still
 pre-1.0; breaking changes must still be called out with a migration note.
 
 ## [Unreleased]
 
+### Changed
+
+- Rename public product, Blender extension, CLI, npm package and new project templates to SceneToWeb (`scenetoweb`).
+- Keep existing Blender scene metadata and compiled contracts, a legacy CLI alias, and legacy config discovery for existing projects.
+- Update retained package verification, release artifact names, documentation and node coverage tracker branding.
+
 ### Fixed
+
+- Final export accepts a live-only base color when its exact shipped program and
+  mesh dependencies validate. Missing or invalid program evidence still blocks;
+  legacy renderers explain the required renderer instead of showing white.
+- Shader Math rounding follows native Cycles at negative half values; greater-than
+  excludes equality. Negative integer powers preserve their sign, and inactive
+  invalid power branches no longer fail WebGPU shader compilation.
+- The material panel reports automatic live programs and static channel routes
+  without requiring a Website Color marker. Appearance-owned surfaces retain
+  their deliberate static-capture explanation.
+- Unported Film Like RGB Curves and legacy premultiplied Brightness/Contrast
+  settings refuse their live route with a named diagnostic.
+- Play starts authored manual animations in Preview Studio and exported sites.
+  Paused/reduced-motion scenes retain camera navigation; finished clips can replay.
+- Comparison mode pauses inspection correctly, closes when choosing a viewport
+  preset, and returns keyboard focus. Details returns focus to its actual opener.
+- Narrow Preview Studio windows keep every toolbar action visible with touch-sized
+  controls. Inspect supports keyboard navigation and retains focus across saves.
+- Blender-relative export paths and folder aliases resolve to the intended folder.
+- Invalid task progress cannot leave Blender's website panel stuck busy.
+- Blender 4.2 website export tolerates the absence of newer white-balance settings.
+- Managed desktop tools forward compiler progress and exact errors on Windows.
+- Stopping the Preview CLI closes its owned website server; Reset view clears
+  the orbit-inspection hint.
+- Image size and compression settings follow linked images when the stock
+  exporter uses a filename instead of the Blender datablock name. Ambiguous
+  identity is refused instead of applying an override to an unrelated image.
+- Root-relative source-presentation and TSL material-program sidecars honor the
+  installation's deployment base path, including standalone exports in a subfolder.
+- Default Blender 5.3 Principled materials are no longer marked approximate
+  merely because dormant transmission-dispersion sockets exist. Active spectral
+  dispersion remains explicitly unverified.
+- macOS temporary-path tests compare canonical paths, and the fixed-camera
+  Preview reset now restores authored framing after orbit inspection.
+- Stopping a Blender website task terminates its owned POSIX process group.
+- Sharp 0.35.5 and ndarray-pixels 5.2.0 replace the vulnerable image chain.
+  Release auditing now requires zero advisories; the old exception is removed.
+  Vitest and its dependency chain are updated to a clean audited version.
 
 - Repeated baked compiles reuse validated atlas preparation when evaluated
   geometry, UVs, pins, cameras and layout settings match. Lighting, material,
@@ -50,6 +94,28 @@ pre-1.0; breaking changes must still be called out with a migration note.
   and lighting choices. Both examples include mobile viewport metadata.
 
 ### Added
+
+- Live XYZ Mapping transforms for Point, Texture and Vector; scalar/vector Mix;
+  scalar/vector Map Range including verified stepped interpolation domains.
+- Native compositor Color Balance (Lift/Gamma/Gain and ASC-CDL) with separate
+  legacy and modern color models, plus all 41 scalar Math operations.
+- Native compositor Separate/Combine Color in RGB, HSV and HSL, including
+  alpha, legacy RGBA aliases, and version/device-specific color conversions.
+- HSV/HSL ColorRamp shading preserves all four hue directions and five
+  interpolation settings using the native Cycles table and live factor input.
+- A versioned native node/mode/socket inventory, explicit capability map, and
+  native-float-versus-browser gate for both node-renderer backends. Deliberate
+  bakes and partial modes remain separately classified.
+- **Check Atlas Fit** works without a connected site, using
+  `blendlink plan --blend <saved-scene.blend>`. Measurements reach Blender's
+  atlas panel without publishing assets; later edits mark old measurements stale.
+- Terminal-free desktop preview setup downloads and SHA-256-verifies a private
+  Node runtime. It respects Blender online access and reuses cached tools.
+- **Export Website Folder** and `blendlink export --blend ... --out ...` build
+  an independent Final-quality static site with all companion assets, without
+  modifying a connected application or overwriting unrelated folders.
+- Preview Studio orbit inspection, direct phone framing, PNG capture, and
+  keyboard focus return for the diagnostics drawer.
 
 - Preview Studio shows the current compile stage and object, total and stage
   elapsed time, and the selected Cycles backend and sample count. Progress

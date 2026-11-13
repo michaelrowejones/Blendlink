@@ -57,7 +57,7 @@ function acquireTextureSamplingLease(
   texture: THREE.Texture,
   anisotropy: number,
 ): { changed: boolean; dispose(): void } {
-  const id = Symbol('Blendlink texture-sampling lease')
+  const id = Symbol('SceneToWeb texture-sampling lease')
   let state = textureSamplingLeases.get(texture)
   if (!state) {
     state = {
@@ -146,13 +146,13 @@ function resolveAnisotropy(
   const maximum = rendererMaxAnisotropy(renderer)
   if (!Number.isFinite(maximum) || maximum < 1) {
     throw new Error(
-      `Blendlink needs a finite renderer maximum anisotropy of at least 1; got ${maximum}.`,
+      `SceneToWeb needs a finite renderer maximum anisotropy of at least 1; got ${maximum}.`,
     )
   }
   if (policy === 'renderer-max') return maximum
   if (!Number.isFinite(policy) || policy < 1) {
     throw new Error(
-      `Blendlink texture anisotropy must be "authored", "renderer-max", or a finite number of at least 1; got ${policy}.`,
+      `SceneToWeb texture anisotropy must be "authored", "renderer-max", or a finite number of at least 1; got ${policy}.`,
     )
   }
   return Math.min(policy, maximum)

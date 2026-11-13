@@ -1,0 +1,52 @@
+{
+  "source": "Chromium official primary Gitiles sources",
+  "version": "158.0.8127.18",
+  "scope": "QA-only forced Graphite/Dawn SwiftShader presentation candidate, no shader/kernel semantics",
+  "sources": [
+    {
+      "path": "gpu/config/gpu_switches.cc",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/158.0.8127.18/gpu/config/gpu_switches.cc",
+      "sha256": "7dd32bc9ea4fc4ee7697a0e3a4a3acdcd6a9849257b0c31bff2b78609029bc5b"
+    },
+    {
+      "path": "gpu/command_buffer/service/service_utils.cc",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/158.0.8127.18/gpu/command_buffer/service/service_utils.cc",
+      "sha256": "cb6cfcdeadb1875ad24b66a8a8a6e9c5a26aa242812cb5371476ba1164c82f2f"
+    },
+    {
+      "path": "gpu/command_buffer/service/shared_image/wrapped_sk_image_backing_factory.cc",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/158.0.8127.18/gpu/command_buffer/service/shared_image/wrapped_sk_image_backing_factory.cc",
+      "sha256": "0b47bf9bd30d4f8254395d430f96cd8e02f372582d092b965242a11a095f0d42"
+    },
+    {
+      "path": "content/browser/gpu/gpu_process_host.cc",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/158.0.8127.18/content/browser/gpu/gpu_process_host.cc",
+      "sha256": "82259c004403aade94feb2bfe2a83e4161ec8f37bca0a6c42c80dabe24b29ab9"
+    },
+    {
+      "path": "content/public/common/content_switches.cc",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/158.0.8127.18/content/public/common/content_switches.cc",
+      "sha256": "b382d678d144da4d658fa6aba65a5658f78cbe1102d158ca617582ef9651a6cc"
+    },
+    {
+      "path": "components/viz/service/display_embedder/skia_output_surface_impl_on_gpu.cc",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/158.0.8127.18/components/viz/service/display_embedder/skia_output_surface_impl_on_gpu.cc",
+      "sha256": "9076a86c3f43d5ccd2500bab9cf7628cea08c0cd2d22eb65c2c73d9759f5ee48"
+    },
+    {
+      "path": "ui/ozone/public/ozone_platform.h",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/158.0.8127.18/ui/ozone/public/ozone_platform.h",
+      "sha256": "2aec06d9543c69d62a7a12a3781a04bb8c38e9aa13b1f090841ccbaa2f5bebba"
+    },
+    {
+      "path": "ui/ozone/platform/headless/ozone_platform_headless.cc",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/158.0.8127.18/ui/ozone/platform/headless/ozone_platform_headless.cc",
+      "sha256": "254040186a4f4efbc5743ea77fb6ba3404df7782639459c41cf112d2ac2ac5de"
+    },
+    {
+      "path": "ui/ozone/platform/x11/ozone_platform_x11.cc",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/tags/158.0.8127.18/ui/ozone/platform/x11/ozone_platform_x11.cc",
+      "sha256": "4937abca213a167ca637922cf3ed88d6c2d1a80b064bf4c5ea1886da26abf18f"
+    }
+  ]
+}

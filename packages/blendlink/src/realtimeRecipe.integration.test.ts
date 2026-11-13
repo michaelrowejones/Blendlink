@@ -79,8 +79,8 @@ describe('Realtime recipe publication', () => {
 
     const entryPath = join(root, 'src', 'main.ts')
     const entry = readFileSync(entryPath, 'utf8')
-    const integrationSpecifier = entry.match(/from '([^']+\/blendlink\/[^']+)'/)?.[1]
-    expect(integrationSpecifier).toBe(`./blendlink/SampleScene`)
+    const integrationSpecifier = entry.match(/from '([^']+\/scenetoweb\/[^']+)'/)?.[1]
+    expect(integrationSpecifier).toBe(`./scenetoweb/SampleScene`)
     const integrationImport = ts.resolveModuleName(
       integrationSpecifier!,
       entryPath,
@@ -104,7 +104,7 @@ describe('Realtime recipe publication', () => {
     const migrationIssue = (await verifyAll(config)).find(
       (issue) => issue.problem.includes('predates baked composition template'),
     )
-    expect(migrationIssue?.fix).toContain(`blendlink recipe update ${scene.name}`)
+    expect(migrationIssue?.fix).toContain(`scenetoweb recipe update ${scene.name}`)
     expect(migrationIssue?.fix).toContain(`${recipePath}.blendlink-legacy.bak`)
     const realtimeSkip = await syncScene(scene, {
       executable: 'mock-blender', version: '5.2.0', semver: [5, 2, 0],
@@ -120,7 +120,7 @@ describe('Realtime recipe publication', () => {
     writeFileSync(scene.manifestPath, JSON.stringify(manifest, null, 2) + '\n')
     await expect(syncScene(scene, {
       executable: 'mock-blender', version: '5.2.0', semver: [5, 2, 0],
-    })).rejects.toThrow(/normalized Appearance state.*blendlink recipe update.*did not publish or preview/s)
+    })).rejects.toThrow(/normalized Appearance state.*scenetoweb recipe update.*did not publish or preview/s)
     expect(readFileSync(recipePath, 'utf8')).toBe(artistLegacyRecipe)
 
     manifest.bakeOutputs = { main: 'lighting' }
@@ -128,7 +128,7 @@ describe('Realtime recipe publication', () => {
     writeFileSync(scene.manifestPath, JSON.stringify(manifest, null, 2) + '\n')
     await expect(syncScene(scene, {
       executable: 'mock-blender', version: '5.2.0', semver: [5, 2, 0],
-    })).rejects.toThrow(/Lighting atlas.*blendlink recipe update.*did not publish or preview/s)
+    })).rejects.toThrow(/Lighting atlas.*scenetoweb recipe update.*did not publish or preview/s)
     expect(readFileSync(recipePath, 'utf8')).toBe(artistLegacyRecipe)
   })
 })

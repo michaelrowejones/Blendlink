@@ -1,4 +1,4 @@
-# Render scope: Blender, Needle 1.4.2, and Blendlink
+# Render scope: Blender, Needle 1.4.2, and SceneToWeb
 
 - Research date: 2026-07-22
 - Blender exercised: 5.2.0 LTS, build `fbe6228777e7`
@@ -9,7 +9,7 @@
 
 ## Decision
 
-Blendlink should use Blender's **render** intent, not viewport visibility, as
+SceneToWeb should use Blender's **render** intent, not viewport visibility, as
 the source of truth for publishing and baking. One unblocked root-to-membership
 path makes a direct object or light render-participating. Object, Collection,
 and LayerCollection viewport switches must not remove a render participant;
@@ -32,7 +32,7 @@ caller supplies already-scoped receiver objects.
 Collection Instances require occurrence-level decisions. An object can have a
 hidden direct occurrence and a visible instanced occurrence at the same time.
 An object-level `hide_render` mutation cannot keep one and remove the other.
-Until Blendlink materializes an occurrence-aware throwaway export graph, mixed
+Until SceneToWeb materializes an occurrence-aware throwaway export graph, mixed
 visibility in one source object should block loudly rather than silently ship
 extra or missing geometry/lights.
 
@@ -89,9 +89,9 @@ reports `(1, 4, 2)`. The inspected file SHA-256 is
   File SHA-256:
   `C4165224511B93F9F50A7FFC4018F3704BE64BABC9EE09A3CB23325D98E95F92`.
 
-This is a justified Blendlink deviation from Needle: render truth is the
+This is a justified SceneToWeb deviation from Needle: render truth is the
 artist's Final intent, while viewport switches are workspace ergonomics.
-Blendlink's path-aware approach is measurably more faithful and can still make
+SceneToWeb's path-aware approach is measurably more faithful and can still make
 viewport-hidden receivers temporarily selectable without changing the bake.
 
 ## Executed differential evidence
@@ -134,7 +134,7 @@ LayerCollection paths. Blender reported `Object.holdout_get()` or
 `Object.indirect_only_get()` true even though the second path was normal; the
 holdout emission surface was absent from the final color. Thus the visibility
 rule (any unblocked path participates) cannot silently stand in for surface
-transport. Blendlink should diagnose/block unsupported Holdout and Indirect
+transport. SceneToWeb should diagnose/block unsupported Holdout and Indirect
 Only publishing until their intended bake/runtime treatment is explicit.
 
 ### Mixed direct/instance glTF occurrence
@@ -158,12 +158,12 @@ stockSourceNodeCount=2
 blendlinkSourceNodeCount=2
 ```
 
-At characterization time, both stock Blender and Blendlink enforcement emitted
+At characterization time, both stock Blender and SceneToWeb enforcement emitted
 the hidden direct node plus the visible instance child. Production enforcement
 now preflights this mixed state before any datablock mutation and blocks with
 an artist-readable realize/visibility remedy; the registered headless fixture
 verifies that journal-free failure. Occurrence-aware export remains a gap, but
-Blendlink no longer silently claims or ships the wrong multiplicity.
+SceneToWeb no longer silently claims or ships the wrong multiplicity.
 
 ## Designs considered
 

@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import ast
 import contextlib
+from array import array
 from dataclasses import dataclass
 import hashlib
 import struct
@@ -65,7 +66,7 @@ _PORTABLE_OBJECT_TRANSFORM_PATHS = frozenset({
 
 @dataclass(frozen=True)
 class EvaluatedMaterialUse:
-    """One material index that owns faces in Blendlink's export mesh.
+    """One material index that owns faces in SceneToWeb's export mesh.
 
     ``source_slot_index`` is deliberately narrower than
     ``source_candidate_indices``.  A compiler may replace a material only when
@@ -397,10 +398,10 @@ def _single_input_link(socket):
 
 
 def _fixed_camera_unlit_nodes(tree):
-    """Recognize Blendlink's exact stock-glTF fixed-camera card grammar.
+    """Recognize SceneToWeb's exact stock-glTF fixed-camera card grammar.
 
     Blender glTF exporter 5.2.39 recognizes a wider private shadeless grammar.
-    Blendlink deliberately accepts only the independently exported subset its
+    SceneToWeb deliberately accepts only the independently exported subset its
     own fixed-camera capture primitive authors: one RGBA Image Texture drives
     both camera-visible Emission color and an outer Transparent alpha mix.
     Keeping this matcher direct and structural prevents a successful stock
@@ -669,6 +670,11 @@ def _principled_omissions(node, tree, capabilities):
     """Name non-default Principled details the stock glTF path omits."""
     omitted = []
     for socket_name, expected, artist_label in _PRINCIPLED_OMITTED_INPUTS:
+        if socket_name == "Subsurface Scale" and tuple(bpy.app.version[:3]) == (4, 2, 0):
+            # Actual 4.2 default is 0.05; measured 5.2/5.3 use 0.005.
+            # A pristine legacy material must not be labeled authored/lossy
+            # merely because its native default differs from the modern one.
+            expected = 0.05
         socket = _node_input(node, socket_name)
         if socket is None:
             continue
@@ -722,7 +728,7 @@ def _principled_omissions(node, tree, capabilities):
         if socket.is_linked:
             omitted.append((
                 "needsBake",
-                f"{socket_name} is linked, but Blendlink has only verified Blender "
+                f"{socket_name} is linked, but SceneToWeb has only verified Blender "
                 "5.2's constant glTF iridescence mapping.",
             ))
         elif _value_differs(socket.default_value, expected) and not iridescence_pair:
@@ -794,6 +800,14 @@ def _principled_omissions(node, tree, capabilities):
     known_inputs = _PRINCIPLED_GLTF_INPUTS | {
         name for name, _expected, _label in _PRINCIPLED_OMITTED_INPUTS
     } | _PRINCIPLED_CONDITIONAL_INPUTS | _PRINCIPLED_CONTEXTUAL_INPUTS
+    # Blender 5.3 added spectral transmission. The documented scale/weight
+    # zero gates prove these sockets dormant; their presence alone must not
+    # downgrade every new default material. Active dispersion stays unverified.
+    # https://docs.blender.org/manual/en/5.3/render/shader_nodes/shader/principled.html
+    transmission = _constant_float(_node_input(node, "Transmission Weight"))
+    dispersion = _constant_float(_node_input(node, "Transmission Dispersion Scale"))
+    if transmission == 0.0 or dispersion == 0.0:
+        known_inputs = known_inputs | {"Transmission Dispersion Scale", "Transmission Dispersion Abbe Number"}
     for socket in node.inputs:
         socket_name = socket.name or socket.identifier
         if socket_name in known_inputs:
@@ -806,8 +820,8 @@ def _principled_omissions(node, tree, capabilities):
         else:
             omitted.append((
                 "approximated",
-                f"{socket_name} is a newer Principled input Blendlink has not verified against stock glTF yet; "
-                "update Blendlink before relying on an Exact result.",
+                f"{socket_name} is a newer Principled input SceneToWeb has not verified against stock glTF yet; "
+                "update SceneToWeb before relying on an Exact result.",
             ))
     return omitted
 
@@ -827,7 +841,7 @@ def _cycles_appearance_compatibility(nodes):
     if any(node.bl_idname == "ShaderNodeShaderToRGB" for node in nodes):
         blockers.append(
             "Shader to RGB is EEVEE-only and cannot be evaluated by "
-            "Blendlink's Cycles Appearance bake.",
+            "SceneToWeb's Cycles Appearance bake.",
         )
     return {
         "status": "blocked" if blockers else "compatible",
@@ -913,6 +927,7 @@ _CHANNEL_NEUTRAL_NODES = {
     "ShaderNodeMixRGB", "ShaderNodeValToRGB", "ShaderNodeRGB",
     "ShaderNodeValue", "ShaderNodeSeparateColor", "ShaderNodeSeparateRGB",
     "ShaderNodeSeparateXYZ", "ShaderNodeCombineColor", "ShaderNodeCombineRGB",
+    "ShaderNodeSeparateHSV", "ShaderNodeCombineHSV",
     "ShaderNodeCombineXYZ", "ShaderNodeInvert", "ShaderNodeHueSaturation",
     "ShaderNodeBrightContrast", "ShaderNodeGamma", "ShaderNodeClamp",
     "ShaderNodeMapRange", "ShaderNodeRGBCurve", "ShaderNodeVectorCurve",
@@ -960,20 +975,20 @@ def _matching_socket(sockets, reference):
     )
 
 
-def _walk_channel_upstream(socket):
+def _walk_channel_upstream(socket, *, group_stack=()):
     """Return (node, output_socket) pairs feeding one input socket.
 
     The walk crosses node-group walls in both directions: it enters a group
     instance through its matching active Group Output and leaves through the
     instance input feeding a Group Input node.  Reroutes are transparent.
     Muted nodes are kept — counting a muted texture is conservative, never
-    unsafe.  The walk must start from a socket in the material's root tree so
-    every Group Input has a known enclosing instance.
+    unsafe. Start at the material root, or supply the actual enclosing
+    instance stack for a socket inside the selected surface's group.
     """
     visited = []
     seen = set()
     stack = [
-        (link.from_node, link.from_socket, ())
+        (link.from_node, link.from_socket, tuple(group_stack))
         for link in getattr(socket, "links", ())
     ]
     while stack:
@@ -1596,10 +1611,29 @@ def _expression_uses_frame(expression):
 def _driver_time_dependent(curve, seen):
     if getattr(curve, "mute", False):
         return False
-    if any(not getattr(modifier, "mute", False)
+    # Native4.2 creates a linear Generator on every new driver. It maps the
+    # driver result to itself; BKE evaluate_fcurve_driver uses that result in
+    # place of timeline time before evaluating F-Curve modifiers. Keep this
+    # narrow identity case separate from unknown/nonidentity modifiers.
+    def identity_generator(modifier):
+        return (
+            getattr(modifier, "type", None) == "GENERATOR"
+            and getattr(modifier, "mode", None) == "POLYNOMIAL"
+            and getattr(modifier, "poly_order", None) == 1
+            and getattr(modifier, "use_additive", None) is False
+            and tuple(getattr(modifier, "coefficients", ())) == (0.0, 1.0)
+        )
+    if any(not getattr(modifier, "mute", False) and not identity_generator(modifier)
            for modifier in getattr(curve, "modifiers", ())):
         return True
     driver = curve.driver
+    # A Python driver can read scene time through bpy, self or a registered
+    # namespace function without naming frame/time in its AST or variables.
+    # Only Blender's verified simple-expression subset admits this static
+    # classification; missing/unknown representations remain conservative.
+    if getattr(driver, "type", None) == "SCRIPTED" \
+            and getattr(driver, "is_simple_expression", False) is not True:
+        return True
     if _expression_uses_frame(getattr(driver, "expression", "")):
         return True
     for variable in driver.variables:
@@ -1949,7 +1983,7 @@ def pointer_animation_reason(obj):
 def pointer_animation_issues(scene, allow_forced_bake=False, objects=None):
     """List non-transform animation that needs an explicit Three loader plugin.
 
-    Blendlink currently emits portable core-Three assets, so these are loud
+    SceneToWeb currently emits portable core-Three assets, so these are loud
     blockers. An explicitly Baked mesh may freeze the values only when the
     active compiler mode actually bakes it.
     """
@@ -2714,7 +2748,7 @@ def _finalize_procedural(facts, scene, full, fixed_camera):
         reason = (
             f"An exhaustive audit of {frame_count} frames across the admitted procedural "
             f"scene requires {facts['audit_required_snapshots']} evaluated object-frame "
-            f"snapshots, which exceeds Blendlink's deterministic "
+            f"snapshots, which exceeds SceneToWeb's deterministic "
             f"{MAX_AUDIT_SNAPSHOTS}-snapshot "
             "budget. Shorten the publish range, exclude unrelated objects from this scene, "
             "or provide an explicit cache/proxy recipe; endpoint/current samples are "
@@ -2733,7 +2767,7 @@ def _finalize_procedural(facts, scene, full, fixed_camera):
             reason = (
                 f"Topology is constant across all {frame_count} frames; a finite deformation "
                 f"cache is technically possible (~{estimated_morph_bytes / (1024 * 1024):.1f} MiB "
-                "raw positions), but Blendlink will not emit a non-standard cache without an "
+                "raw positions), but SceneToWeb will not emit a non-standard cache without an "
                 "explicit VAT/morph adapter and visual gate."
             )
     elif time_dependent:
@@ -2892,9 +2926,9 @@ def _original_material(material):
 def evaluated_material_uses(obj, depsgraph=None):
     """Resolve the face-owning material indices used by stock glTF export.
 
-    Blendlink owns ``export_apply=True``.  Blender's exporter reads ordinary
+    SceneToWeb owns ``export_apply=True``.  Blender's exporter reads ordinary
     object slots directly when no modifier exists, and otherwise reads the
-    evaluated Mesh produced by ``to_mesh``.  Because Blendlink also owns
+    evaluated Mesh produced by ``to_mesh``.  Because SceneToWeb also owns
     ``export_skins=True``, every ARMATURE modifier is temporarily disabled
     before evaluation and its exact ``show_viewport`` value is restored after
     the temporary Mesh is cleared.  An evaluated table containing exactly one
@@ -2925,7 +2959,7 @@ def evaluated_material_uses(obj, depsgraph=None):
     armature_states = []
     try:
         if len(getattr(obj, "modifiers", ())) == 0:
-            polygons = tuple(getattr(obj.data, "polygons", ()))
+            polygons = obj.data.polygons
             exported_materials = source_materials
         else:
             armature_states = [
@@ -2951,16 +2985,22 @@ def evaluated_material_uses(obj, depsgraph=None):
                 raise EvaluatedMaterialUseError(
                     f'Evaluated Mesh for "{obj.name}" is unavailable.'
                 )
-            polygons = tuple(mesh.polygons)
+            polygons = mesh.polygons
             exported_materials = tuple(
                 _original_material(material) for material in mesh.materials
             )
             if exported_materials == (None,):
                 exported_materials = source_materials
 
-        used_indices = sorted({
-            int(polygon.material_index) for polygon in polygons
-        })
+        # Read native integer storage in one RNA operation. Material planning
+        # needs only the used slot indices; creating one Python RNA wrapper per
+        # evaluated face can dominate large real scenes (e.g. a subdivided
+        # planar floor). This does not cache evaluation or change slot order,
+        # modifier suppression, sentinel handling, or temporary-mesh ownership.
+        material_indices = array("i", [0]) * len(polygons)
+        if material_indices:
+            polygons.foreach_get("material_index", material_indices)
+        used_indices = sorted(set(material_indices))
         if any(index < 0 for index in used_indices):
             raise EvaluatedMaterialUseError(
                 f'Evaluated Mesh for "{obj.name}" contains a negative material index.'
@@ -3011,14 +3051,14 @@ def evaluated_material_uses(obj, depsgraph=None):
 
 
 # ---------------------------------------------------------------------------
-# Phase 0c / 0d: name the two silent losses in Blendlink's applied-modifier
+# Phase 0c / 0d: name the two silent losses in SceneToWeb's applied-modifier
 # export contract — shape keys that never reach the glb, and ARMATURE options
 # glTF cannot carry.  Both are reports, not refusals, except for the one case
 # that is provably wrong: a dropped key whose value actually animates.
 # ---------------------------------------------------------------------------
 
 # io_scene_gltf2/blender/exp/export.py:28-29 calls ``frame_set(0)`` unless
-# ``gltf_current_frame`` is set, and Blendlink never sets it
+# ``gltf_current_frame`` is set, and SceneToWeb never sets it
 # (packages/blendlink/blender/export_scene.py:5125-5160 pins export_apply,
 # export_skins and export_morph and nothing else).  Frame 0 is therefore the
 # frame whose evaluated state freezes into the shipped mesh, and on a scene
@@ -3090,7 +3130,7 @@ def _exported_shape_keys(shape_keys):
 def _applied_mesh(obj):
     """Yield the Mesh io_scene_gltf2 would export for ``obj``, or ``None``.
 
-    Follows ``blender/exp/nodes.py:294-330``.  Under Blendlink's pinned
+    Follows ``blender/exp/nodes.py:294-330``.  Under SceneToWeb's pinned
     ``export_apply=True``/``export_skins=True``
     (packages/blendlink/blender/export_scene.py:5125-5126) the exporter exports
     the source Mesh datablock when the object carries no modifier, and
@@ -3431,7 +3471,7 @@ def _finalize_shape_keys(facts, scene):
         severity = "refuse"
         message = (
             f'{obj.name}: shape key "{worst["name"]}" animates between '
-            f"{low:.3f} and {high:.3f} but cannot reach the glb. Blendlink "
+            f"{low:.3f} and {high:.3f} but cannot reach the glb. SceneToWeb "
             f"publishes with Apply Modifiers on, and this object's evaluated "
             f"mesh changes the vertex container "
             f"({facts['source_vertices']} -> {facts['applied_vertices']} "
@@ -3593,7 +3633,7 @@ def _skin_approximation_record(obj):
             f"Volume enabled. glTF skinning is linear blend skinning only — "
             f"neither the format nor three's SkinningNode has a "
             f"dual-quaternion mode — so the website ships the linearised "
-            f"deformation. On Blendlink's reference character that "
+            f"deformation. On SceneToWeb's reference character that "
             f"linearisation moves vertices up to 1.62% of the bounding-box "
             f"diagonal; this scene's magnitude is not measured here. Clear "
             f"Preserve Volume and re-weight if the website must match "
@@ -3832,7 +3872,7 @@ def _deformer_lowering_candidate(obj, frozen_record, scene):
             obj, bind.name, target_name,
             f"{bind.name!r} is a {bind.type.lower().replace('_', ' ')} "
             "modifier. Only SurfaceDeform binds lower to skin weights; the "
-            "mesh-deform cage bind is a different interpolation Blendlink has "
+            "mesh-deform cage bind is a different interpolation SceneToWeb has "
             "not measured.",
         )
 
@@ -3914,7 +3954,7 @@ def _deformer_lowering_candidate(obj, frozen_record, scene):
             "POSITION from the Basis cage whenever a key block survives, so "
             "the shipped rest positions are not the ones this lowering "
             "measures and the residual gate would be blind to the difference. "
-            "Blendlink has no measurement for that path and refuses rather "
+            "SceneToWeb has no measurement for that path and refuses rather "
             "than guessing.",
         )
 
@@ -4008,7 +4048,7 @@ def _deformer_lowering_candidate(obj, frozen_record, scene):
             obj, bind.name, target_name,
             f"the deformer cage {target.name!r} is weighted to "
             + ", ".join(repr(name) for name in sorted(non_deform))
-            + ", which are bones with Deform switched off. Blendlink exports "
+            + ", which are bones with Deform switched off. SceneToWeb exports "
             "with export_def_bones=True, so those bones are not joints and the "
             "transferred weight would vanish -- the exporter reassigns the "
             "affected vertices to a fabricated neutral joint "

@@ -4,7 +4,7 @@
 - Needle Blender add-on: `1.4.2`
 - Needle runtime: `@needle-tools/engine 5.1.7`
 - Needle Three.js: `0.169.19`
-- Blendlink comparison target: package `0.8.0`, Three.js `0.184.0`
+- SceneToWeb comparison target: package `0.8.0`, Three.js `0.184.0`
 - Scope: Contact Shadows, Shadow Catcher, Ground Projection, Blender
   authoring, glTF serialization, runtime lifecycle, ownership, and focused
   evidence design
@@ -16,13 +16,13 @@
 The three Needle features do not belong behind one undifferentiated “ground
 effects” switch:
 
-- **Ground Projection** is environment presentation. Blendlink already ships
+- **Ground Projection** is environment presentation. SceneToWeb already ships
   the core outcome through `recipe.environment.background = "grounded"` and
   the official Three.js `GroundedSkybox`.
 - **Contact Shadows** is a scene-level offscreen renderer with its own render
   targets, camera, fitting policy, frame cost, and renderer-state transaction.
-  Blendlink now implements it as an opt-in portable component.
-- **Shadow Catcher** is object-level material behavior. Blendlink now
+  SceneToWeb now implements it as an opt-in portable component.
+- **Shadow Catcher** is object-level material behavior. SceneToWeb now
   implements Mask, Additive, and Occluder as an object component.
 
 The smallest coherent design is therefore ownership-aligned:
@@ -105,10 +105,10 @@ The relevant official Three sources were also inspected:
 | --- | --- | --- |
 | Needle-installed `three/examples/jsm/objects/GroundedSkybox.js` | `0.169.19` | `2c15df3f78e136fe37ba3adcdba38ee0bf867cffc54b545f688d85778e8774c2` |
 | Needle-installed `three/src/materials/ShadowMaterial.js` | `0.169.19` | `0d6839015caa58e29916599fbfad511a4ebe20fddf9a654fcccb743b2de0b663` |
-| Blendlink-installed `three/examples/jsm/objects/GroundedSkybox.js` | `0.184.0` | `14ad38d785bb998bba0dc9e74b5d8f93ea45753b24341be539755d8e567ee456` |
-| Blendlink-installed `three/src/materials/ShadowMaterial.js` | `0.184.0` | `9de4022504a8da0934569c8d125e00d6309892af78d3c485dac0c02e909efc40` |
+| SceneToWeb-installed `three/examples/jsm/objects/GroundedSkybox.js` | `0.184.0` | `14ad38d785bb998bba0dc9e74b5d8f93ea45753b24341be539755d8e567ee456` |
+| SceneToWeb-installed `three/src/materials/ShadowMaterial.js` | `0.184.0` | `9de4022504a8da0934569c8d125e00d6309892af78d3c485dac0c02e909efc40` |
 
-The current Blendlink comparison files were content-identified at audit time:
+The current SceneToWeb comparison files were content-identified at audit time:
 
 | Path | SHA-256 |
 | --- | --- |
@@ -170,7 +170,7 @@ The manually added component exposes a wider contract:
 The generic schema and project shortcut do not have identical ranges or
 defaults. For example, the manual schema declares Darkness `1..5`, while the
 project shortcut accepts `0..2`, and the runtime class default is `0.5`.
-Blendlink should preserve the artist outcome but define one consistent field
+SceneToWeb should preserve the artist outcome but define one consistent field
 contract instead of reproducing this disagreement. [N-ADDON-SCHEMA
 `ContactShadows`; N-CONTACT lines 113-148]
 
@@ -212,7 +212,7 @@ rather than to the previously observed value. [N-CONTACT lines 462-574]
 Destroy disposes both render targets and several materials/geometries. The
 source does not explicitly dispose the visible plane material or the occluder
 material. These source facts are reasons to require injected-failure and GPU
-resource tests before calling a Blendlink port an improvement. They are not,
+resource tests before calling a SceneToWeb port an improvement. They are not,
 on their own, browser leak evidence. [N-CONTACT lines 273-295]
 
 ### Shadow Catcher
@@ -253,7 +253,7 @@ The three modes are materially different:
 The class has `start()` but no local `onDisable()` or `onDestroy()` restoration
 path. Therefore disabling only this component does not restore the exact
 original material, `receiveShadow`, layers, or render order through code in
-this class. A Blendlink implementation must make those values an owned,
+this class. A SceneToWeb implementation must make those values an owned,
 transactional lease, including shared-material and later-owner cases.
 [N-CATCHER lines 85-230]
 
@@ -316,7 +316,7 @@ position/look-at/FOV but does not propagate that returned maximum-zoom value,
 so the source does not establish a continuing camera-radius constraint.
 [N-CAMERA-FIT lines 249-264 and its pinned OrbitControls call path]
 
-## Blendlink’s current behavior
+## SceneToWeb’s current behavior
 
 ### Grounded environment is already shipped
 
@@ -359,7 +359,7 @@ intensity, rotation, auto-fit, and disposal browser cells.
 
 ### Current GroundedSkybox geometry is more expensive than Needle
 
-Needle passes resolution `64`; Blendlink omits the constructor’s fourth
+Needle passes resolution `64`; SceneToWeb omits the constructor’s fourth
 argument and therefore uses official Three `0.184.0` default resolution
 `128`. An exact local geometry probe produced:
 
@@ -390,7 +390,7 @@ A later five-view photographic forest-EXR browser gate compared `64` and
 `128` through the same Three `0.184.0` renderer, texture, and camera paths.
 Resolution `64` removed 75.2% of the triangles but exceeded the predeclared
 image-error budget: worst MAE `2.2264`, RMSE `6.4582`, and `7.615%` of pixels
-had a channel error over `8`. Blendlink deliberately retains `128` for
+had a channel error over `8`. SceneToWeb deliberately retains `128` for
 evidenced visual fidelity; no GPU-speed claim is made.
 
 ### Historical pre-implementation finding (superseded)
@@ -399,7 +399,7 @@ evidenced visual fidelity; no GPU-speed claim is made.
 Contact Shadows but is not the same planar, top-down, blurred depth projection
 and must not be counted as parity.
 
-Blendlink previously recorded Blender shadow-catcher state only while
+SceneToWeb previously recorded Blender shadow-catcher state only while
 fingerprinting bake inputs. It now ships first-party
 `blendlink.contact-shadows` and `blendlink.shadow-catcher` definitions,
 Blender editors, serialization, and deep Three adapters. The historical
@@ -420,21 +420,21 @@ Implementation and evidence are intentionally separate.
 
 | Capability ID | Exact comparison | Relation | Implementation | Evidence |
 | --- | --- | --- | --- | --- |
-| NDL-GRD-001 | Published HDR projected through official Three GroundedSkybox with authored capture height/radius | **Match** | **Shipped** | Actual pinned-Needle/Blendlink Chromium common projection MAE `0.0560`, max channel error `6` |
-| NDL-GRD-002 | Atomic install, rollback, later-owner transfer, and explicit grounded geometry/material disposal | **Improvement** | **Shipped** | Unit transactions pass; browser renderer geometry count falls on Blendlink disposal while Needle retains geometry until manual disposal |
-| NDL-GRD-003 | Center projection on rendered scene X/Z and floor | **Match / Improvement** | **Shipped** | Both actual implementations place the off-origin fixture at `(3, 0.5, 1)` with pixel MAE `0.0556`; Blendlink bounds only its compiled root and excludes hidden/UI/opt-out helpers |
+| NDL-GRD-001 | Published HDR projected through official Three GroundedSkybox with authored capture height/radius | **Match** | **Shipped** | Actual pinned-Needle/SceneToWeb Chromium common projection MAE `0.0560`, max channel error `6` |
+| NDL-GRD-002 | Atomic install, rollback, later-owner transfer, and explicit grounded geometry/material disposal | **Improvement** | **Shipped** | Unit transactions pass; browser renderer geometry count falls on SceneToWeb disposal while Needle retains geometry until manual disposal |
+| NDL-GRD-003 | Center projection on rendered scene X/Z and floor | **Match / Improvement** | **Shipped** | Both actual implementations place the off-origin fixture at `(3, 0.5, 1)` with pixel MAE `0.0556`; SceneToWeb bounds only its compiled root and excludes hidden/UI/opt-out helpers |
 | NDL-GRD-004 | Keep the initial camera far plane large enough for projected radius without stealing camera ownership | **Improvement** | **Shipped** | Browser fixture: former package fallback clips 282 vertices and differs from far-1000 reference at MAE `4.2893`; repaired fallback clips none and is byte-identical. Unsafe application perspective/orthographic cameras reject without far/projection/world/root mutation |
-| NDL-GRD-005 | Force continuing camera framing/max zoom to stay within projection radius | **Boundary** | **Future** | Blendlink leaves page composition with Blender responsive frames/the site. Pinned Needle calculates maxZoom during generic fit but the inspected OrbitControls caller does not propagate it; no automatic radius reframe should ship without an artist request |
-| NDL-GRD-006 | Ground background intensity and Y rotation | **Match / Improvement** at runtime; authoring intensity is fixed | **Shipped** runtime / **Future** richer authoring | Intensity `0.65` matches at MAE `0.0372`; Blendlink raw-equirect rotation changes all pixels while the pinned Needle raw branch changes none. CubeUV rotation remains Pending |
-| NDL-GRD-007 | Blurred projected HDR horizon | **Gap** | **Future** | Blendlink warns and authoring emits blur `0`; Needle source verified; WebGL/TSL visual and cost fixture Pending |
+| NDL-GRD-005 | Force continuing camera framing/max zoom to stay within projection radius | **Boundary** | **Future** | SceneToWeb leaves page composition with Blender responsive frames/the site. Pinned Needle calculates maxZoom during generic fit but the inspected OrbitControls caller does not propagate it; no automatic radius reframe should ship without an artist request |
+| NDL-GRD-006 | Ground background intensity and Y rotation | **Match / Improvement** at runtime; authoring intensity is fixed | **Shipped** runtime / **Future** richer authoring | Intensity `0.65` matches at MAE `0.0372`; SceneToWeb raw-equirect rotation changes all pixels while the pinned Needle raw branch changes none. CubeUV rotation remains Pending |
+| NDL-GRD-007 | Blurred projected HDR horizon | **Gap** | **Future** | SceneToWeb warns and authoring emits blur `0`; Needle source verified; WebGL/TSL visual and cost fixture Pending |
 | NDL-GRD-008 | AR/passthrough real-world blending | **Boundary** | **Future** | XR is outside the current website compiler core; no XR browser fixture |
-| NDL-GRD-009 | Cross-renderer standard material path when projected blur is off | **Improvement** | **Shipped** | Source/API evidence: Blendlink stock MeshBasicMaterial path avoids Needle `onBeforeCompile`; WebGPU runtime Pending |
+| NDL-GRD-009 | Cross-renderer standard material path when projected blur is off | **Improvement** | **Shipped** | Source/API evidence: SceneToWeb stock MeshBasicMaterial path avoids Needle `onBeforeCompile`; WebGPU runtime Pending |
 | NDL-GRD-010 | Projection geometry budget | **Deliberate fidelity improvement / cost tradeoff** | **Shipped** at 128 | A five-view photographic gate rejected 64's visual error against the predeclared budget despite its 75.2% triangle reduction; no speed claim |
 | NDL-CS-001 | Blender-authored Contact Shadows with auto-fit, darkness, opacity, blur, below-ground occlusion, and backface policy | **Match** | **Shipped (Preview)** | Add-on schema/headless and focused runtime tests pass; wider browser field matrices remain Pending |
-| NDL-CS-002 | Top-down depth mask plus separable blur and scene-content refit | **Match** | **Shipped (Preview)** | Actual pinned Needle and Blendlink settled masks are byte-identical; both submit five draws |
-| NDL-CS-003 | Default per-render update and developer manual update | **Improvement** | **Shipped (Preview)** | Blendlink Static renders `5` then `0/120`; Needle default and Blendlink Continuous render five per frame |
+| NDL-CS-002 | Top-down depth mask plus separable blur and scene-content refit | **Match** | **Shipped (Preview)** | Actual pinned Needle and SceneToWeb settled masks are byte-identical; both submit five draws |
+| NDL-CS-003 | Default per-render update and developer manual update | **Improvement** | **Shipped (Preview)** | SceneToWeb Static renders `5` then `0/120`; Needle default and SceneToWeb Continuous render five per frame |
 | NDL-CS-004 | Exact renderer/scene state restoration when any auxiliary pass throws | **Improvement** | **Shipped (Preview)** | Production injected-failure unit cases pass; browser failure injection remains Pending |
-| NDL-CS-005 | Contact Shadows automatically enabled in every project unless disabled | **Boundary** | **Shipped opt-in only** | Blendlink does not silently double-ground baked/Eevee-source scenes; integrated conflict warnings remain Pending |
+| NDL-CS-005 | Contact Shadows automatically enabled in every project unless disabled | **Boundary** | **Shipped opt-in only** | SceneToWeb does not silently double-ground baked/Eevee-source scenes; integrated conflict warnings remain Pending |
 | NDL-SC-001 | Object shadow-only mask using official Three ShadowMaterial | **Match** | **Shipped (Preview)** | Focused Chromium verifies partial-alpha Mask pixels; actual Needle differential remains Pending |
 | NDL-SC-002 | Additive direct-light catcher | **Match / Improvement** | **Shipped (Preview)** | Visible default Additive output and loud shader failure pass; portable WebGPU fallback remains limited |
 | NDL-SC-003 | Depth-only occluder | **Match** | **Shipped (Preview)** | Chromium verifies depth changes without color output |
@@ -456,7 +456,7 @@ Advantages:
 
 Costs:
 
-- duplicates Blendlink’s existing environment owner;
+- duplicates SceneToWeb’s existing environment owner;
 - silently enables fake grounding over baked scenes if Needle’s default is
   copied;
 - imports engine-owned renderer and camera policy into a website-owned Canvas;
@@ -568,7 +568,7 @@ to visibly double-darken contact regions.
 `occluder` should use a package-owned depth-only material. Both can be
 WebGL/WebGPU candidates.
 
-`additive` must remain Future until Blendlink has:
+`additive` must remain Future until SceneToWeb has:
 
 1. a physically explainable composition rather than an unexplained constant;
 2. equivalent WebGL and TSL behavior;
@@ -576,7 +576,7 @@ WebGL/WebGPU candidates.
 4. point, spot, and directional-light reference pixels.
 
 Do not silently place catcher meshes on a non-interactive layer. Website
-interactivity belongs to the application and authored Blendlink actions.
+interactivity belongs to the application and authored SceneToWeb actions.
 
 ## Differential evidence required
 
@@ -591,7 +591,7 @@ Create a tiny `.blend` with:
   horizon, and a distinct lower hemisphere; and
 - rotations `0°`, `90°`, and `-90°`.
 
-Needle and Blendlink browser harnesses must use the same HDR bytes, camera
+Needle and SceneToWeb browser harnesses must use the same HDR bytes, camera
 matrix, viewport, DPR, tone mapping, and exposure.
 
 Assertions:
@@ -626,7 +626,7 @@ Use bare primitives with:
 
 Assertions:
 
-- reviewed Needle and Blendlink masks stay within a named pixel threshold for
+- reviewed Needle and SceneToWeb masks stay within a named pixel threshold for
   the common settings;
 - backface and below-ground toggles change the intended regions;
 - helpers never contribute;
@@ -647,12 +647,12 @@ measure auxiliary GPU elapsed time with Khronos
 [`EXT_disjoint_timer_query_webgl2`](https://registry.khronos.org/webgl/extensions/EXT_disjoint_timer_query_webgl2/)
 and discard disjoint samples. Record CPU and GPU results separately.
 
-A provable Blendlink improvement is:
+A provable SceneToWeb improvement is:
 
 ```text
 static unchanged frame:
 Needle default auxiliary renders = 5
-Blendlink static auxiliary renders = 0
+SceneToWeb static auxiliary renders = 0
 ```
 
 That claim becomes Verified only after the browser harness observes both
@@ -719,7 +719,7 @@ to exercise context-loss cleanup separately from ordinary disposal.
 
 5. **AR blending and camera max-zoom coupling**
    - retain as explicit product-boundary work. Do not pull WebXR or
-     engine-owned composition into Blendlink merely to make a parity count
+     engine-owned composition into SceneToWeb merely to make a parity count
      reach 100%.
 
 ## Primary sources

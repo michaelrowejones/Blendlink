@@ -124,7 +124,7 @@ describe('installThreeContactShadows', () => {
     expect(targets.every((target) =>
       target.depthBuffer === false && target.stencilBuffer === false)).toBe(true)
 
-    const helper = data.scene.getObjectByName('Blendlink Contact Shadows Root')
+    const helper = data.scene.getObjectByName('SceneToWeb Contact Shadows Root')
     expect(helper).toBeDefined()
     expect(helper?.parent).toBe(data.scene)
     // Needle's blur-border heuristic expands a 2x6 box by one full original
@@ -132,7 +132,7 @@ describe('installThreeContactShadows', () => {
     expect(helper?.scale.x).toBeCloseTo(6)
     expect(helper?.scale.z).toBeCloseTo(18)
     installed.dispose()
-    expect(data.scene.getObjectByName('Blendlink Contact Shadows Root')).toBeUndefined()
+    expect(data.scene.getObjectByName('SceneToWeb Contact Shadows Root')).toBeUndefined()
   })
 
   it('refreshes exactly once per host frame in both update+render and render-only hosts', () => {
@@ -191,7 +191,7 @@ describe('installThreeContactShadows', () => {
       renderer: renderer(data.renderer),
       values: DEFAULTS,
     })
-    const helper = data.scene.getObjectByName('Blendlink Contact Shadows Root')
+    const helper = data.scene.getObjectByName('SceneToWeb Contact Shadows Root')
     expect(helper?.scale.x).toBeCloseTo(6)
     expect(helper?.scale.z).toBeCloseTo(18)
     installed.dispose()
@@ -335,7 +335,7 @@ describe('installThreeContactShadows', () => {
     installed.dispose()
     expect(addEventListener).not.toHaveBeenCalled()
     expect(removeEventListener).not.toHaveBeenCalled()
-    expect(data.scene.getObjectByName('Blendlink Contact Shadows Root')).toBeUndefined()
+    expect(data.scene.getObjectByName('SceneToWeb Contact Shadows Root')).toBeUndefined()
     expect(() => installed.activate()).toThrow(/disposed/i)
   })
 
@@ -379,26 +379,26 @@ describe('installThreeContactShadows', () => {
       values: DEFAULTS,
       deferActivation: true,
     })
-    const preparedHelper = data.scene.getObjectByName('Blendlink Contact Shadows Root')
+    const preparedHelper = data.scene.getObjectByName('SceneToWeb Contact Shadows Root')
     expect(preparedHelper?.parent).toBe(data.scene)
 
     data.root.removeFromParent()
     committedScene.add(data.root)
     installed.activate(committedScene, committedCamera)
 
-    expect(data.scene.getObjectByName('Blendlink Contact Shadows Root')).toBeUndefined()
-    const committedHelper = committedScene.getObjectByName('Blendlink Contact Shadows Root')
+    expect(data.scene.getObjectByName('SceneToWeb Contact Shadows Root')).toBeUndefined()
+    const committedHelper = committedScene.getObjectByName('SceneToWeb Contact Shadows Root')
     expect(committedHelper).toBe(preparedHelper)
     expect(committedHelper?.parent).toBe(committedScene)
 
     installed.update()
     expect(data.renderer.calls[0]?.object).toBe(committedScene)
     expect(data.renderer.calls[0]?.camera).toBeInstanceOf(THREE.OrthographicCamera)
-    expect(committedHelper?.getObjectByName('Blendlink Contact Shadows Plane')?.layers.mask)
+    expect(committedHelper?.getObjectByName('SceneToWeb Contact Shadows Plane')?.layers.mask)
       .toBe(committedCamera.layers.mask)
 
     installed.dispose()
-    expect(committedScene.getObjectByName('Blendlink Contact Shadows Root')).toBeUndefined()
+    expect(committedScene.getObjectByName('SceneToWeb Contact Shadows Root')).toBeUndefined()
   })
 
   it('retains a refresh requested during a pass and follows the main camera layer mask', () => {
@@ -424,9 +424,9 @@ describe('installThreeContactShadows', () => {
     expect(installed.evidence.refreshes).toBe(1)
     expect(installed.isActive()).toBe(true)
     expect(requestFrame).toHaveBeenCalledOnce()
-    const helper = data.scene.getObjectByName('Blendlink Contact Shadows Root')!
+    const helper = data.scene.getObjectByName('SceneToWeb Contact Shadows Root')!
     expect(helper.userData.blendlink_internal).toBe(true)
-    expect(helper.getObjectByName('Blendlink Contact Shadows Plane')?.layers.mask)
+    expect(helper.getObjectByName('SceneToWeb Contact Shadows Plane')?.layers.mask)
       .toBe(data.camera.layers.mask)
 
     installed.beforeRender()
@@ -435,9 +435,9 @@ describe('installThreeContactShadows', () => {
     expect(installed.isActive()).toBe(false)
     data.camera.layers.set(3)
     installed.update()
-    expect(helper.getObjectByName('Blendlink Contact Shadows Plane')?.layers.mask)
+    expect(helper.getObjectByName('SceneToWeb Contact Shadows Plane')?.layers.mask)
       .toBe(data.camera.layers.mask)
-    expect(helper.getObjectByName('Blendlink Contact Shadows Occluder')?.layers.mask)
+    expect(helper.getObjectByName('SceneToWeb Contact Shadows Occluder')?.layers.mask)
       .toBe(data.camera.layers.mask)
     installed.dispose()
   })
@@ -451,7 +451,7 @@ describe('installThreeContactShadows', () => {
       renderer: renderer(data.renderer),
       values: { ...DEFAULTS, autoFit: false },
     })
-    const helper = data.anchor.getObjectByName('Blendlink Contact Shadows Root')
+    const helper = data.anchor.getObjectByName('SceneToWeb Contact Shadows Root')
     expect(helper?.parent).toBe(data.anchor)
     expect(helper?.position.toArray()).toEqual([0, 0, 0])
     expect(helper?.scale.toArray()).toEqual([1, 1, 1])
@@ -472,7 +472,7 @@ describe('installThreeContactShadows', () => {
       renderer: renderer(data.renderer),
       values: DEFAULTS,
     })
-    const firstHelper = data.scene.getObjectByName('Blendlink Contact Shadows Root')!
+    const firstHelper = data.scene.getObjectByName('SceneToWeb Contact Shadows Root')!
     const secondAnchor = new THREE.Group()
     data.scene.add(secondAnchor)
     let firstWasExcluded = false
@@ -489,9 +489,9 @@ describe('installThreeContactShadows', () => {
     expect(firstWasExcluded).toBe(true)
     expect(firstHelper.visible).toBe(true)
     first.dispose()
-    expect(secondAnchor.getObjectByName('Blendlink Contact Shadows Root')).toBeDefined()
+    expect(secondAnchor.getObjectByName('SceneToWeb Contact Shadows Root')).toBeDefined()
     second.dispose()
-    expect(secondAnchor.getObjectByName('Blendlink Contact Shadows Root')).toBeUndefined()
+    expect(secondAnchor.getObjectByName('SceneToWeb Contact Shadows Root')).toBeUndefined()
   })
 
   it('disposes every owned GPU resource exactly once', () => {
@@ -538,7 +538,7 @@ describe('installThreeContactShadows', () => {
       'webglcontextlost',
       expect.any(Function),
     )
-    expect(data.scene.getObjectByName('Blendlink Contact Shadows Root')).toBeUndefined()
+    expect(data.scene.getObjectByName('SceneToWeb Contact Shadows Root')).toBeUndefined()
     expect(targetDispose).toHaveBeenCalledTimes(2)
     expect(materialDispose).toHaveBeenCalledTimes(5)
     expect(geometryDispose).toHaveBeenCalledTimes(1)
@@ -577,8 +577,8 @@ describe('installThreeContactShadows', () => {
       'webglcontextlost',
       expect.any(Function),
     )
-    expect(data.scene.getObjectByName('Blendlink Contact Shadows Root')).toBeUndefined()
-    expect(committedScene.getObjectByName('Blendlink Contact Shadows Root')).toBeUndefined()
+    expect(data.scene.getObjectByName('SceneToWeb Contact Shadows Root')).toBeUndefined()
+    expect(committedScene.getObjectByName('SceneToWeb Contact Shadows Root')).toBeUndefined()
     expect(targetDispose).toHaveBeenCalledTimes(2)
     expect(materialDispose).toHaveBeenCalledTimes(5)
     expect(geometryDispose).toHaveBeenCalledTimes(1)

@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { installThreeCompiledScene } from 'blendlink/three'
+import { installThreeCompiledScene } from 'scenetoweb/three'
 import { blender40SplashSelectedSky as descriptor } from '../../artifacts/release-dogfood/blender-4-splash/src/generated/blender40SplashSelectedSky.gen'
 import { createBakedScene } from '../../artifacts/release-dogfood/blender-4-splash/src/generated/blender40SplashSelectedSky.baked'
 

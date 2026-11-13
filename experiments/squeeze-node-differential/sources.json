@@ -1,0 +1,52 @@
+{
+  "sources": [
+    {
+      "version": "4.2.0",
+      "revision": "v4.2.0",
+      "kind": "node",
+      "path": "source/blender/nodes/shader/nodes/node_shader_squeeze.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/v4.2.0/source/blender/nodes/shader/nodes/node_shader_squeeze.cc",
+      "sha256": "03fa3566894a359d6b31f4d1bebc17b637130a60168b1431214887b4d33b8b8d"
+    },
+    {
+      "version": "4.2.0",
+      "revision": "v4.2.0",
+      "kind": "gpu",
+      "path": "source/blender/gpu/shaders/material/gpu_shader_material_squeeze.glsl",
+      "url": "https://raw.githubusercontent.com/blender/blender/v4.2.0/source/blender/gpu/shaders/material/gpu_shader_material_squeeze.glsl",
+      "sha256": "b7b4ad51dcb1839cf201f4cd5bba26919ca6cd33861ee47c1068727e181bf4f5"
+    },
+    {
+      "version": "5.2.0",
+      "revision": "v5.2.0",
+      "kind": "node",
+      "path": "source/blender/nodes/shader/nodes/node_shader_squeeze.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/v5.2.0/source/blender/nodes/shader/nodes/node_shader_squeeze.cc",
+      "sha256": "3911089295c997ad05f6217c2cf0914cb90d646037d715c41c3959dc7307efd8"
+    },
+    {
+      "version": "5.2.0",
+      "revision": "v5.2.0",
+      "kind": "gpu",
+      "path": "source/blender/gpu/shaders/material/gpu_shader_material_squeeze.glsl",
+      "url": "https://raw.githubusercontent.com/blender/blender/v5.2.0/source/blender/gpu/shaders/material/gpu_shader_material_squeeze.glsl",
+      "sha256": "36e2c3115c40b420cd8f73a47dd63b616d6a748f52059173995679a702af15f9"
+    },
+    {
+      "version": "5.3.0",
+      "revision": "02f0899d78e3",
+      "kind": "node",
+      "path": "source/blender/nodes/shader/nodes/node_shader_squeeze.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/nodes/shader/nodes/node_shader_squeeze.cc",
+      "sha256": "3911089295c997ad05f6217c2cf0914cb90d646037d715c41c3959dc7307efd8"
+    },
+    {
+      "version": "5.3.0",
+      "revision": "02f0899d78e3",
+      "kind": "gpu",
+      "path": "source/blender/gpu/shaders/material/gpu_shader_material_squeeze.bsl.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/gpu/shaders/material/gpu_shader_material_squeeze.bsl.hh",
+      "sha256": "c64cefcabbbcc7aed094d2d56b1a7a3b98d8f1c7081685decd6dc54d6f97ae67"
+    }
+  ]
+}

@@ -53,14 +53,14 @@ export const KTX2_RUNTIME_GRAPH_PATHS = Object.freeze([
 function normalizedGraphPath(value: string): string {
   if (!value || value.includes('\\') || value.includes('?') || value.includes('#') ||
       value.startsWith('/') || /^[A-Za-z]:/.test(value)) {
-    throw new Error(`Blendlink runtime asset path must be a plain relative POSIX path: ${value}`)
+    throw new Error(`SceneToWeb runtime asset path must be a plain relative POSIX path: ${value}`)
   }
   if (/%(?:2f|5c)/i.test(value)) {
-    throw new Error(`Blendlink runtime asset path contains an encoded path separator: ${value}`)
+    throw new Error(`SceneToWeb runtime asset path contains an encoded path separator: ${value}`)
   }
   const parts = value.split('/')
   if (parts.some((part) => !part || part === '.' || part === '..')) {
-    throw new Error(`Blendlink runtime asset path contains an empty or traversal segment: ${value}`)
+    throw new Error(`SceneToWeb runtime asset path contains an empty or traversal segment: ${value}`)
   }
   return parts.join('/')
 }
@@ -72,20 +72,20 @@ function gltfJsonFromBytes(scenePath: string, bytes: Uint8Array): Record<string,
   } else if (scenePath.toLowerCase().endsWith('.glb')) {
     const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength)
     if (bytes.byteLength < 20 || view.getUint32(0, true) !== 0x46546c67) {
-      throw new Error(`Blendlink scene ${scenePath} is not a valid GLB container`)
+      throw new Error(`SceneToWeb scene ${scenePath} is not a valid GLB container`)
     }
     if (view.getUint32(4, true) !== 2) {
-      throw new Error(`Blendlink scene ${scenePath} is not a glTF 2 GLB container`)
+      throw new Error(`SceneToWeb scene ${scenePath} is not a glTF 2 GLB container`)
     }
     const declaredLength = view.getUint32(8, true)
     const jsonLength = view.getUint32(12, true)
     if (declaredLength !== bytes.byteLength || view.getUint32(16, true) !== 0x4e4f534a ||
         jsonLength > bytes.byteLength - 20) {
-      throw new Error(`Blendlink scene ${scenePath} has a malformed GLB JSON chunk`)
+      throw new Error(`SceneToWeb scene ${scenePath} has a malformed GLB JSON chunk`)
     }
     jsonBytes = bytes.subarray(20, 20 + jsonLength)
   } else {
-    throw new Error(`Blendlink scene payload must end in .glb or .gltf: ${scenePath}`)
+    throw new Error(`SceneToWeb scene payload must end in .glb or .gltf: ${scenePath}`)
   }
 
   let parsed: unknown
@@ -97,12 +97,12 @@ function gltfJsonFromBytes(scenePath: string, bytes: Uint8Array): Record<string,
     parsed = JSON.parse(json)
   } catch (error) {
     throw new Error(
-      `Blendlink scene ${scenePath} has unreadable glTF JSON: ` +
+      `SceneToWeb scene ${scenePath} has unreadable glTF JSON: ` +
       `${error instanceof Error ? error.message : String(error)}`,
     )
   }
   if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
-    throw new Error(`Blendlink scene ${scenePath} glTF JSON root must be an object`)
+    throw new Error(`SceneToWeb scene ${scenePath} glTF JSON root must be an object`)
   }
   return parsed as Record<string, unknown>
 }
@@ -182,7 +182,7 @@ export function sceneAssetGraphPath(publicationDirectory: string, assetPath: str
   const asset = resolve(assetPath)
   const name = relative(root, asset)
   if (!name || name === '..' || name.startsWith(`..${sep}`) || isAbsolute(name)) {
-    throw new Error(`Blendlink runtime asset is outside its publication directory: ${assetPath}`)
+    throw new Error(`SceneToWeb runtime asset is outside its publication directory: ${assetPath}`)
   }
   return normalizedGraphPath(name.split(sep).join('/'))
 }
@@ -288,7 +288,7 @@ export function createSceneAssetGraph(
   inputs: readonly SceneAssetGraphInput[],
   options: { requiresKtx2?: boolean } = {},
 ): SceneAssetGraph {
-  if (inputs.length === 0) throw new Error('Blendlink runtime asset graph cannot be empty')
+  if (inputs.length === 0) throw new Error('SceneToWeb runtime asset graph cannot be empty')
   const seen = new Map<string, string>()
   const prepared = inputs.map((input) => {
     const path = normalizedGraphPath(input.path)
@@ -296,7 +296,7 @@ export function createSceneAssetGraph(
     const collision = seen.get(folded)
     if (collision) {
       throw new Error(
-        `Blendlink runtime asset paths collide on case-insensitive hosts: ${collision} and ${path}`,
+        `SceneToWeb runtime asset paths collide on case-insensitive hosts: ${collision} and ${path}`,
       )
     }
     seen.set(folded, path)
@@ -305,14 +305,14 @@ export function createSceneAssetGraph(
 
   const scenes = prepared.filter((entry) => entry.role === 'scene')
   if (scenes.length !== 1 || !scenes[0]!.path.toLowerCase().endsWith('.glb')) {
-    throw new Error(`Blendlink runtime asset graph needs exactly one scene GLB; found ${scenes.length}`)
+    throw new Error(`SceneToWeb runtime asset graph needs exactly one scene GLB; found ${scenes.length}`)
   }
   const closureProblem = scenePayloadClosureProblem(
     scenes[0]!.path,
     scenes[0]!.bytes,
     prepared,
   )
-  if (closureProblem) throw new Error(`Blendlink runtime asset graph is not closed: ${closureProblem}`)
+  if (closureProblem) throw new Error(`SceneToWeb runtime asset graph is not closed: ${closureProblem}`)
   if (options.requiresKtx2) {
     const paths = new Set(prepared.map((entry) => entry.path))
     const missing = KTX2_RUNTIME_GRAPH_PATHS.filter((path) => !paths.has(path))

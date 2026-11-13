@@ -106,7 +106,7 @@ function callInstanceParent(
 ): void {
   const method = Reflect.get(parent, methodName)
   if (typeof method !== 'function') {
-    throw new Error(`Blendlink instance parent no longer exposes ${methodName}().`)
+    throw new Error(`SceneToWeb instance parent no longer exposes ${methodName}().`)
   }
   Reflect.apply(method, parent, [batch])
 }
@@ -124,7 +124,7 @@ export function applyCompiledSceneInstances(
 ): CompiledSceneInstances | null {
   const minimumCount = options.minimumCount ?? 2
   if (!Number.isInteger(minimumCount) || minimumCount < 2) {
-    throw new Error('Blendlink instance minimumCount must be an integer of at least 2.')
+    throw new Error('SceneToWeb instance minimumCount must be an integer of at least 2.')
   }
   const candidates = (resolveRuntimeSceneDiagnostics(descriptor)?.instanceGroups ?? [])
     .filter((group) => group.eligible && group.count >= minimumCount)
@@ -137,7 +137,7 @@ export function applyCompiledSceneInstances(
     const id = object.userData?.blendlink_id
     if (typeof id === 'string') {
       if (objectsById.has(id)) {
-        throw new Error(`Blendlink instance binding found duplicate stable object ID ${id}.`)
+        throw new Error(`SceneToWeb instance binding found duplicate stable object ID ${id}.`)
       }
       objectsById.set(id, object)
     }
@@ -159,42 +159,42 @@ export function applyCompiledSceneInstances(
       const members = group.members.map((member) => {
         const loadedName = member.loadedName ?? sanitizeNodeName(member.name)
         const object = (member.id ? objectsById.get(member.id) : undefined) ?? objects.get(loadedName)
-        if (!object) throw new Error(`Blendlink instance group ${group.id} cannot find ${loadedName}.`)
+        if (!object) throw new Error(`SceneToWeb instance group ${group.id} cannot find ${loadedName}.`)
         return object
       })
       if (members.length !== group.count) {
         throw new Error(
-          `Blendlink instance group ${group.id} expected ${group.count} members, found ${members.length}.`,
+          `SceneToWeb instance group ${group.id} expected ${group.count} members, found ${members.length}.`,
         )
       }
       const first = members[0]!
       if (first.geometry === undefined || first.material === undefined || first.matrix === undefined) {
-        throw new Error(`Blendlink instance group ${group.id} contains a non-Mesh object.`)
+        throw new Error(`SceneToWeb instance group ${group.id} contains a non-Mesh object.`)
       }
       if (!hasInstanceParentMethods(first.parent)) {
-        throw new Error(`Blendlink instance group ${group.id} needs one mutable common parent.`)
+        throw new Error(`SceneToWeb instance group ${group.id} needs one mutable common parent.`)
       }
       const parent = first.parent
       for (const member of members) {
         if (member.parent !== parent) {
-          throw new Error(`Blendlink instance group ${group.id} members no longer share one parent.`)
+          throw new Error(`SceneToWeb instance group ${group.id} members no longer share one parent.`)
         }
         if (member.geometry !== first.geometry || !materialsEqual(member.material, first.material)) {
-          throw new Error(`Blendlink instance group ${group.id} geometry/material identity drifted after compile.`)
+          throw new Error(`SceneToWeb instance group ${group.id} geometry/material identity drifted after compile.`)
         }
         if (member.visible === false) {
-          throw new Error(`Blendlink instance group ${group.id} contains a hidden member; per-instance visibility cannot be merged.`)
+          throw new Error(`SceneToWeb instance group ${group.id} contains a hidden member; per-instance visibility cannot be merged.`)
         }
         if (member.castShadow !== first.castShadow || member.receiveShadow !== first.receiveShadow) {
-          throw new Error(`Blendlink instance group ${group.id} shadow intent differs at runtime.`)
+          throw new Error(`SceneToWeb instance group ${group.id} shadow intent differs at runtime.`)
         }
         if (member.matrix === undefined) {
-          throw new Error(`Blendlink instance group ${group.id} member ${member.name} has no local matrix.`)
+          throw new Error(`SceneToWeb instance group ${group.id} member ${member.name} has no local matrix.`)
         }
       }
       const stableIds = group.members.map((member) => member.id).filter((id): id is string => Boolean(id))
       if (stableIds.length !== members.length) {
-        throw new Error(`Blendlink instance group ${group.id} cannot preserve stable identity: an ID is missing.`)
+        throw new Error(`SceneToWeb instance group ${group.id} cannot preserve stable identity: an ID is missing.`)
       }
       const batch = options.createInstancedMesh(first.geometry, first.material, members.length)
       const owned = { batch, parent, attached: false }
@@ -262,7 +262,7 @@ export function applyCompiledSceneInstances(
       drawCallsSaved: bindings.reduce((sum, binding) => sum + binding.drawCallsSaved, 0),
     },
     update() {
-      if (stopped) throw new Error('Blendlink instance batches have already been stopped.')
+      if (stopped) throw new Error('SceneToWeb instance batches have already been stopped.')
       for (const binding of bindings) {
         binding.members.forEach((member, index) => {
           member.updateMatrix?.()
@@ -274,10 +274,10 @@ export function applyCompiledSceneInstances(
       }
     },
     resolveInstance(batch, instanceId) {
-      if (stopped) throw new Error('Blendlink instance batches have already been stopped.')
+      if (stopped) throw new Error('SceneToWeb instance batches have already been stopped.')
       const binding = byBatch.get(batch)
       if (!binding || !Number.isInteger(instanceId) || instanceId < 0 || instanceId >= binding.members.length) {
-        throw new Error(`Blendlink cannot resolve instanceId ${instanceId}; it is not in an owned batch.`)
+        throw new Error(`SceneToWeb cannot resolve instanceId ${instanceId}; it is not in an owned batch.`)
       }
       return {
         id: binding.stableIds[instanceId]!,

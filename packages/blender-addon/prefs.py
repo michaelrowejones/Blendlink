@@ -15,8 +15,8 @@ class BlendlinkPreferences(bpy.types.AddonPreferences):
 
     category: bpy.props.StringProperty(
         name="Sidebar Tab",
-        description="Choose the sidebar tab the Blendlink panel appears in",
-        default="Blendlink",
+        description="Choose the sidebar tab the SceneToWeb panel appears in",
+        default="SceneToWeb",
         update=_update_category,
     )
     overlay_xray: bpy.props.BoolProperty(
@@ -26,7 +26,7 @@ class BlendlinkPreferences(bpy.types.AddonPreferences):
     )
     preview_package: bpy.props.StringProperty(
         name="Local Preview Package",
-        description="Optional built Blendlink package folder (containing package.json and dist/cli.js), used for scenes anywhere on this computer",
+        description="Optional built SceneToWeb package folder (containing package.json and dist/cli.js), used for scenes anywhere on this computer",
         subtype="DIR_PATH",
         default="",
     )

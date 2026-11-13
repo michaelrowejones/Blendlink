@@ -66,7 +66,7 @@ export interface CompositionFrameRecipe {
 }
 
 export interface PresentationCameraRecipe {
-  /** Rename-stable Blendlink ID; objectName remains a human-readable diagnostic. */
+  /** Rename-stable SceneToWeb ID; objectName remains a human-readable diagnostic. */
   objectId: string
   objectName: string
   behavior: CameraBehavior
@@ -128,7 +128,7 @@ export interface ShadowRecipe {
 }
 
 export interface EnvironmentRecipe {
-  /** Application means Blendlink neither publishes nor assigns an HDR asset. */
+  /** Application means SceneToWeb neither publishes nor assigns an HDR asset. */
   source: EnvironmentSource
   /** Blender image datablock used as the source diagnostic; runtime uses the
    * separately published environment asset URL in the manifest. */

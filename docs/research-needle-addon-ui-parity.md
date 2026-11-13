@@ -2,7 +2,7 @@
 
 Research date: 2026-07-19  
 Inspected implementation: locally installed Needle Blender add-on 1.4.2  
-Product target: Blendlink for solo artists and small custom Three.js teams
+Product target: SceneToWeb for solo artists and small custom Three.js teams
 
 The maintained implementation-status table now lives in
 [`FEATURE_PARITY.md`](FEATURE_PARITY.md). This document retains the design
@@ -13,15 +13,15 @@ analysis behind its scope and priorities.
 Use Needle's information architecture as competitive evidence, not as a screen
 to clone. Its best pattern is a contextual split between **project actions** and
 **selected-object settings**, with a dominant browser-preview action and deeper
-controls progressively disclosed. Blendlink should adopt that skeleton while
+controls progressively disclosed. SceneToWeb should adopt that skeleton while
 keeping a much smaller promise: compile a Blender-authored scene into portable
 Three.js assets.
 
 Feature parity means that an artist can achieve the same relevant publishing
-outcome—not that Blendlink exposes every Needle checkbox. WebXR, networking,
+outcome—not that SceneToWeb exposes every Needle checkbox. WebXR, networking,
 voice chat, cloud deployment, visual runtime components, and application menu
 branding belong to Needle's engine/application scope and are deliberately not
-Blendlink parity targets.
+SceneToWeb parity targets.
 
 ## What Needle's layout gets right
 
@@ -52,24 +52,24 @@ Blendlink parity targets.
    texture and dimensions. Needle documents environment compression and local
    reflection probes as part of the Blender workflow. [Environment lighting](https://engine.needle.tools/docs/blender/environment.html)
 
-## Where Blendlink should improve the model
+## Where SceneToWeb should improve the model
 
 - Needle asks artists to enable a Lightmap Preview mode before baking and ties
-  availability to viewport shading state. Blendlink should let artists plan and
+  availability to viewport shading state. SceneToWeb should let artists plan and
   build from any normal object-mode viewport; inspection modes should be aids,
   not gates.
 - Needle's automatic UV promise removes setup but does not expose target versus
   achieved density, committed atlas ownership, protected islands, or a capacity
-  failure before baking. Blendlink should preserve its Main/additional atlas,
+  failure before baking. SceneToWeb should preserve its Main/additional atlas,
   proposal/materialize/pin, and Stop-and-Explain model.
 - Needle's project surface mixes asset compilation with project generation,
   runtime components, networking, XR, deployment, licensing, and cloud status.
-  Blendlink should keep integration settings outside the artistic hierarchy and
+  SceneToWeb should keep integration settings outside the artistic hierarchy and
   never make cloud state part of scene correctness.
 - A checkbox should only appear when its downstream consequence is implemented,
   exported, typed, and verified. A nonfunctional parity checkbox is worse than
   an explicit roadmap gap.
-- Blendlink should show consequences in artist language: “Realtime objects cast
+- SceneToWeb should show consequences in artist language: “Realtime objects cast
   a 2048px shadow until 30m” is better than a disconnected collection of bias,
   width, height, distance, and resolution fields.
 
@@ -81,7 +81,7 @@ makes the iteration loop obvious; project actions and selected-object settings
 have distinct homes; familiar Blender rows, toggles, data-block pickers, and
 collapsed advanced sections reduce the amount an artist must learn; and visual
 asset rows expose useful identity and dimensions instead of presenting opaque
-IDs. These remain the standard Blendlink must meet.
+IDs. These remain the standard SceneToWeb must meet.
 
 The same review also made Needle's limits clearer. Its project surface carries
 project creation, local preview, production build, deployment, cloud and
@@ -94,7 +94,7 @@ model rather than toward a truthful summary of a Blender selection. This is
 appropriate for Needle's product, but it is not the best model for a focused,
 portable Blender-to-Three.js compiler.
 
-Blendlink's synthesis is therefore not a denser Needle clone:
+SceneToWeb's synthesis is therefore not a denser Needle clone:
 
 1. **The viewport owns the publishing loop.** A compact state card reports
    not-configured, blocked, ready, building, preview-running, or failed state;
@@ -126,7 +126,7 @@ Blendlink's synthesis is therefore not a denser Needle clone:
    timers or explicit operators. Blender may request `draw()` constantly; its
    cost must remain small and independent of project complexity.
 
-This exceeds Needle where Blendlink's narrower scope permits it: less cloud and
+This exceeds Needle where SceneToWeb's narrower scope permits it: less cloud and
 engine clutter, a clearer next action in every workflow state, native and
 unambiguous data ownership, reliable narrow-width behavior, honest batch
 editing, and diagnostics that remain useful on large scenes. The capability
@@ -140,7 +140,7 @@ Blender work routinely mixes portable meshes and animation with evaluated
 Geometry Nodes, authored control data, view-dependent shading, simulations, and
 compositor effects. A larger export form cannot make all of those equivalent.
 
-Blendlink should give every important object or effect one explicit route:
+SceneToWeb should give every important object or effect one explicit route:
 
 | Route | Artist meaning | Typical output |
 | --- | --- | --- |
@@ -178,15 +178,15 @@ The supporting source reports are
 
 ## Capability matrix
 
-| Artist outcome | Needle surface | Blendlink status | Decision / acceptance criterion |
+| Artist outcome | Needle surface | SceneToWeb status | Decision / acceptance criterion |
 | --- | --- | --- | --- |
 | Save-to-browser loop | Export On Save, local server, browser export | Preview Website now opens a connected site's reported URL or provisions an identity-verified private Preview Studio; Watch Saves, progress, cancel, and separate logs remain available | Keep the one dominant action and explicit server ownership |
 | Preview versus final | browser export; development/production build; lightmap Preview/High | Preview/Final scene profiles and builds | Keep; make actions always visible after setup |
-| Static/realtime split | per-object Lightmapped | Automatic/Realtime/Baked | Blendlink exceeds: automatic safety plus explicit override |
-| Per-object lightmap budget | Lightmap Scale | texel weight and measured density | Blendlink exceeds when target/achieved consequence is shown beside the control |
-| Atlas construction | automatic single lightmap | Main/additional atlases, preview/materialize/pin | Blendlink differentiator; do not regress to an anonymous resolution field |
+| Static/realtime split | per-object Lightmapped | Automatic/Realtime/Baked | SceneToWeb exceeds: automatic safety plus explicit override |
+| Per-object lightmap budget | Lightmap Scale | texel weight and measured density | SceneToWeb exceeds when target/achieved consequence is shown beside the control |
+| Atlas construction | automatic single lightmap | Main/additional atlases, preview/materialize/pin | SceneToWeb differentiator; do not regress to an anonymous resolution field |
 | Bake diagnostics | raw-lightmap debug, UV tile preview | density checker, UV grid, per-object plan | Add final-image thumbnail and atlas/object pixel readout |
-| Multiple lighting scenarios | documented scenarios | named full states plus additive bounced Light Groups | Blendlink exceeds; improve state authoring beyond comma-separated collection names |
+| Multiple lighting scenarios | documented scenarios | named full states plus additive bounced Light Groups | SceneToWeb exceeds; improve state authoring beyond comma-separated collection names |
 | Texture compression | project defaults; per-texture max size/format/quality | not yet implemented end to end | P0: KTX2 pipeline with Auto/ETC1S/UASTC/None, semantic slot defaults, before/after bytes, visual regression checks |
 | Production-parity preview | Auto Compress | preview/final bake profiles, no post-export compression parity yet | P0: Preview Optimized Output; cache each transform and report duration/size |
 | Mesh compression | production Draco/Meshopt | Meshopt decoder only; no encoder stage | P0: deterministic Meshopt transform with geometry/animation regression tests |
@@ -202,9 +202,9 @@ The supporting source reports are
 | XR/networking/voice/full component catalog | project toggles and 100+ runtime components | XR/networking/voice remain out of scope; a focused ten-type portable Components library now covers recurring effects, interaction, animation, visibility, and audio jobs | Keep the versioned adapter contract extensible, but do not pursue catalog-count parity or absorb Needle's application framework |
 | Cloud/deployment | Needle Cloud and production deployment | portable files, hosting-agnostic | Deliberate non-parity and product advantage |
 
-## Proposed Blendlink panel hierarchy
+## Proposed SceneToWeb panel hierarchy
 
-### Blendlink — project workspace
+### SceneToWeb — project workspace
 
 1. **Project status card** — saved/compiled/preview-quality/error, source and
    output consequence, open log.
@@ -220,7 +220,7 @@ The supporting source reports are
 7. **Advanced Integration** — collection/exporter escape hatches remain project
    config and should generally not be duplicated in Blender.
 
-### Blendlink Object — selected-object workspace
+### SceneToWeb Object — selected-object workspace
 
 1. Object identity and Include in Web Scene.
 2. Automatic/Realtime/Baked with the reason Automatic chose its result.
@@ -243,11 +243,11 @@ The supporting source reports are
 5. Add shadow semantics through extras and thin adapters.
 6. Add environment and reflection-probe publishing.
 7. Evaluate progressive delivery only after ordinary portable builds are
-   excellent; do not require a Blendlink engine runtime to claim parity.
+   excellent; do not require a SceneToWeb engine runtime to claim parity.
 
 ## Research intake guardrail
 
-Continue mining expert artists, but only promote a technique into Blendlink when
+Continue mining expert artists, but only promote a technique into SceneToWeb when
 it has a recurring artist job, a plausible portable route, and a reference scene
 that can become a Blender-to-Three.js regression test. This keeps the research
 program from turning the add-on into a collection of fascinating but unrelated

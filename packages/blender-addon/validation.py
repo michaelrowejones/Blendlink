@@ -346,6 +346,23 @@ def _material_fidelity(item: dict) -> FidelityItem:
     outcome = compilation.get("outcome")
     limitations = " ".join(compilation.get("limitations", []))
     if outcome == "lowered":
+        if compilation.get("intent") in {"tslProgram", "materialBake"}:
+            channels = (compilation.get("channels") or {}).get("channels", ())
+            live = sum(entry.get("route") == "program" for entry in channels)
+            baked = sum(entry.get("route") == "bake" for entry in channels)
+            refused = sum(entry.get("route") == "refused" for entry in channels)
+            automatic = bool((compilation.get("channels") or {}).get("automatic"))
+            route = "Native shader graph compiles automatically" if automatic else "Authored material compilation"
+            summary = "; ".join(filter(None, (
+                f"{live} live node channel(s) on the node renderer" if live else "",
+                f"{baked} static channel texture bake(s)" if baked else "",
+                f"{refused} unsupported channel(s) need attention" if refused else "",
+            )))
+            return FidelityItem(
+                object_name, f"Material: {name}", "Realize",
+                f"{route}: {summary or 'portable material inputs'}. "
+                f"{limitations} Blender and website lighting can still differ.".strip(),
+            )
         source = compilation.get("colorSource") or {}
         transport = compilation.get("transport", "stock glTF")
         source_label = " / ".join(
@@ -356,7 +373,7 @@ def _material_fidelity(item: dict) -> FidelityItem:
             f"Material: {name}",
             "Realize",
             (
-                f"Blendlink Web Color {source_label or 'selection'} will compile through "
+                f"SceneToWeb Web Color {source_label or 'selection'} will compile through "
                 f"{transport}. {limitations}"
             ).strip(),
         )
@@ -369,8 +386,18 @@ def _material_fidelity(item: dict) -> FidelityItem:
             object_name,
             f"Material: {name}",
             "Block",
-            (problems or "The selected Blendlink Web Color cannot be compiled truthfully.").strip(),
+            (problems or "The requested website material route cannot be compiled truthfully.").strip(),
             blocking=True,
+        )
+    captured = set(item.get("appearanceBakeObjects") or ())
+    used = set(item.get("usedBy") or ())
+    cycles = item.get("cyclesAppearance") or {}
+    if captured and used.issubset(captured) and cycles.get("status") != "blocked":
+        return FidelityItem(
+            object_name, f"Material: {name}", "Bake",
+            "The scene's Appearance atlas captures this native Blender surface "
+            "into an image. No separate node graph or Material Bake switch is needed. "
+            "It is a static appearance capture, not live shader-node translation.",
         )
     if status != "needsBake":
         return FidelityItem(
@@ -450,16 +477,18 @@ def _material_compiler_inspection_scope(project, visible_objects, scene=None):
         for atlas in atlases
     )
     if has_lighting:
-        # Mirror of the exporter's composition rule (Phase 2 unit E):
-        # unmarked atlas-owned objects are subtracted exactly like the
-        # all-Appearance case; objects whose materials carry an explicit
-        # Material Bake / TSL Program intent stay in scope (the exporter
-        # composes them on Lighting atlases and refuses them by name on
-        # surface-replacing ones -- the UI deliberately shows the plan
-        # either way, so the refusal is never a surprise).
+        # Lighting retains the live material surface, including automatic
+        # node translation. Appearance replaces the surface with its capture.
+        # Match the exporter's exact override-or-main atlas ownership here;
+        # inspection stays cached in recompute, never in a panel redraw.
         fixed_camera_appearance = _fixed_camera_appearance_enabled(
             project, scene or bpy.context.scene,
         )
+        by_id = {str(atlas.atlas_id): atlas for atlas in atlases}
+
+        def _lighting_owned(obj):
+            atlas = by_id.get(str(obj.get("blendlink_atlas", "main"))) or by_id.get("main")
+            return getattr(atlas, "bake_output", "APPEARANCE") == "LIGHTING"
 
         def _material_intent_marked(obj):
             for slot in getattr(obj, "material_slots", ()):
@@ -476,6 +505,7 @@ def _material_compiler_inspection_scope(project, visible_objects, scene=None):
             if not _appearance_bake_owned(
                 obj, fixed_camera_appearance=fixed_camera_appearance,
             )
+            or _lighting_owned(obj)
             or _material_intent_marked(obj)
         ), True
     # Appearance owns complete static surfaces. Only the exact surviving live
@@ -544,11 +574,24 @@ def recompute(scene) -> bool:
         _material_compiler_inspection_scope(project, visible_objects, scene)
     )
     material_plan = material_compiler.plan_materials(
-        compiler_objects, purpose="inspect",
+        compiler_objects, purpose="inspect", automatic_programs=True,
     )
     material_compiler.merge_diagnostics(
         diagnostics.setdefault("materials", []), material_plan,
     )
+    compiler_names = {obj.name for obj in compiler_objects}
+    capture_fixed_camera = _fixed_camera_appearance_enabled(project, scene)
+    captured_names = {
+        obj.name for obj in visible_objects
+        if obj.name not in compiler_names
+        and _appearance_bake_owned(
+            obj, fixed_camera_appearance=capture_fixed_camera,
+        )
+    }
+    for record in diagnostics.get("materials", ()):
+        captured = sorted(captured_names.intersection(record.get("usedBy") or ()))
+        if captured:
+            record["appearanceBakeObjects"] = captured
     if lighting_blocks_selected_fields:
         for record in diagnostics.get("materials", []):
             compilation = record.get("materialCompilation") or {}
@@ -575,6 +618,7 @@ def recompute(scene) -> bool:
     )
     light_analysis = weblights.analyze_scene(
         scene,
+        source_version=bpy.app.version[:3],
         view_layer=active_view_layer,
         instance_source_objects=instance_source_objects,
     )
@@ -677,7 +721,7 @@ def recompute(scene) -> bool:
             object_name=warning.object_name,
             blocking=warning.blocking,
             remedy=(
-                "Open this light's Data Properties and review Blendlink Web "
+                "Open this light's Data Properties and review SceneToWeb Web "
                 "Light; an Area light also has a Website Area Light mode there."
             ),
         ))
@@ -696,13 +740,13 @@ def recompute(scene) -> bool:
                 severity="WARNING",
                 message=(
                     f'Linked object "{obj.name}" has no persistent web identity. '
-                    "Open its source .blend with Blendlink enabled and save it once."
+                    "Open its source .blend with SceneToWeb enabled and save it once."
                 ),
                 object_name=obj.name,
             ))
         elif isinstance(identity, str) and identity and identity_counts[identity] > 1:
             remedy = (
-                "Open its source .blend with Blendlink enabled and save it once."
+                "Open its source .blend with SceneToWeb enabled and save it once."
                 if not getattr(obj, "is_editable", True)
                 else "Save this .blend once before publishing."
             )

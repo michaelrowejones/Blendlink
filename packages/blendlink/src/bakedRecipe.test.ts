@@ -455,10 +455,10 @@ export const ClampToEdgeWrapping = 'clamp'
         { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } },
       ).outputText
       const recipePath = join(directory, 'hero.baked.js')
-      writeFileSync(recipePath, output)
+      writeFileSync(recipePath, output + "\nexport { hero as testDescriptor } from './hero.gen.js'\n")
 
       const THREE = await import(pathToFileURL(join(threeDirectory, 'index.js')).href)
-      const { createBakedScene } = await import(`${pathToFileURL(recipePath).href}?test=${Date.now()}`)
+      const { createBakedScene, testDescriptor } = await import(`${pathToFileURL(recipePath).href}?test=${Date.now()}`)
       const root = new THREE.Object3D('Root')
       const material = new THREE.MeshStandardMaterial()
       material.name = 'Painted PBR'
@@ -502,11 +502,12 @@ export const ClampToEdgeWrapping = 'clamp'
       expect(day.disposed).toBe(true)
       expect(night.disposed).toBe(true)
 
-      const generated = await import(pathToFileURL(join(directory, 'hero.gen.js')).href)
-      delete generated.hero.stateScales.night.main
+      // Read through the recipe's module graph: Vitest's external-module
+      // runner can otherwise load a second copy of this temporary descriptor.
+      delete testDescriptor.stateScales.night.main
       expect(() => createBakedScene(root)).toThrow(/no finite positive state scale/)
-      generated.hero.stateScales.night.main = 0.4
-      generated.hero.lightGroups.lamp = { url: '/lamp.png', maxValue: 1 }
+      testDescriptor.stateScales.night.main = 0.4
+      testDescriptor.lightGroups.lamp = { url: '/lamp.png', maxValue: 1 }
       expect(() => createBakedScene(root)).toThrow(/refuses to fake.*PBR lighting/s)
     } finally {
       rmSync(directory, { recursive: true, force: true })

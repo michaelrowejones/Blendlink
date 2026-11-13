@@ -69,10 +69,14 @@ def grease_pencil_object(name, collection):
     gp = bpy.data.grease_pencils.new(f"{name} Data")
     layer = gp.layers.new("Layer")
     frame = layer.frames.new(1)
-    frame.drawing.add_strokes([6])
-    for index, point in enumerate(frame.drawing.strokes[0].points):
-        point.position = (index * 0.2, 0.1, 0.4)
-        point.radius = 0.03
+    if hasattr(frame, "drawing"):
+        frame.drawing.add_strokes([6])
+        for index, point in enumerate(frame.drawing.strokes[0].points):
+            point.position = (index * 0.2, 0.1, 0.4)
+            point.radius = 0.03
+    else:
+        stroke = frame.strokes.new(); stroke.display_mode = "3DSPACE"; stroke.points.add(count=6)
+        for index, point in enumerate(stroke.points): point.co = (index * .2, .1, .4)
     obj = bpy.data.objects.new(name, gp)
     collection.objects.link(obj)
     obj["blendlink_id"] = "sketch-id"
@@ -137,6 +141,13 @@ def main():
         "Fur", scene.collection, strands=3, points_per_strand=5,
     )
     sketch = grease_pencil_object("Sketch", scene.collection)
+    if sketch.type == "GPENCIL":
+        refusal = exporter.realizable_renderable_plan([sketch])
+        expect(not refusal["realize"] and refusal["refuse"][0]["refusalReason"] == "legacy-grease-pencil", refusal)
+        try: exporter.enforce_supported_renderable_transport([sketch])
+        except (RuntimeError, SystemExit) as error: expect("Grease Pencil" in str(error), str(error))
+        else: raise AssertionError("Legacy GPENCIL silently acquired a modern converter")
+        data = sketch.data; bpy.data.objects.remove(sketch, do_unlink=True); bpy.data.grease_pencils.remove(data); sketch = None
     emitter, _system = particle_emitter(
         "Grass", scene.collection, count=12,
     )
@@ -155,7 +166,7 @@ def main():
         )
         kinds = sorted(item["kind"] for item in realized["realize"])
         expect(
-            kinds == ["greasePencil", "hairCurves", "particleStrands"],
+            kinds == (["greasePencil"] if sketch else []) + ["hairCurves", "particleStrands"],
             f"expected all three realization kinds: {kinds}",
         )
         expect(
@@ -196,7 +207,7 @@ def main():
                     total += accessors[indices]["count"] // 3
             return total
 
-        for node_name in ("Fur", "Sketch", "Grass.Strand System"):
+        for node_name in ("Fur", "Grass.Strand System", *(("Sketch",) if sketch else ())):
             triangles = realized_triangles(node_name)
             expect(
                 triangles > 0,
@@ -206,11 +217,12 @@ def main():
             "Fur.blendlink-realized-source" not in nodes,
             "the renamed realization source leaked into the GLB",
         )
-        sketch_node = nodes.get("Sketch")
-        expect(
-            (sketch_node.get("extras") or {}).get("blendlink_id") == "sketch-id",
-            f"realized carrier lost its blendlink_id: {sketch_node}",
-        )
+        if sketch:
+            sketch_node = nodes.get("Sketch")
+            expect(
+                (sketch_node.get("extras") or {}).get("blendlink_id") == "sketch-id",
+                f"realized carrier lost its blendlink_id: {sketch_node}",
+            )
         export_result = json.loads(result_path.read_text(encoding="utf8"))
         executed = export_result["sidecar"]["diagnostics"]["realizedGeometry"]
         expect(
@@ -227,7 +239,8 @@ def main():
 
         # --- Over-budget and children-configured systems keep refusing ----
         bpy.data.objects.remove(fur, do_unlink=True)
-        bpy.data.objects.remove(sketch, do_unlink=True)
+        if sketch:
+            bpy.data.objects.remove(sketch, do_unlink=True)
         bpy.data.objects.remove(emitter, do_unlink=True)
         heavy, _heavy_system = particle_emitter(
             "Meadow", scene.collection, count=50_000,

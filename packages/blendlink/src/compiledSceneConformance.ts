@@ -4,7 +4,7 @@ import {
 } from './gltfRuntimeCompatibility.js'
 
 /**
- * Conformance of one finished GLB with the runtime Blendlink claims to
+ * Conformance of one finished GLB with the runtime SceneToWeb claims to
  * support. It is a pure function of the artifact: no Blender, no depsgraph, no
  * compiler state - which is exactly the point, because the compiler is not the
  * only thing that can put a joint, a UV binding, or a material into a GLB, and
@@ -45,7 +45,7 @@ export const COMPILED_SCENE_CONFORMANCE_CODES: readonly CompiledSceneConformance
  *
  * `blocking` means the artifact cannot render what the artist authored on any
  * supported runtime, so publishing it would ship a scene that is wrong
- * everywhere. The two advisory codes are deliberately not that: Blendlink
+ * everywhere. The two advisory codes are deliberately not that: SceneToWeb
  * substitutes a neutral material on purpose when a mesh has none, and a skin
  * past the joint ceiling still renders on the classic WebGL runtime - refusing
  * publication there would block a scene that works, which is why the joint
@@ -94,6 +94,10 @@ export interface CompiledSceneConformanceInput {
    * look wrong, so it is evidence rather than a defect.
    */
   readonly materialRenderedTriangles?: readonly number[]
+  /** Produced only from manifest-pinned shipped bytes plus production-builder
+   * validation for every bound primitive. These colors require WebGPURenderer,
+   * including its WebGL2 fallback; legacy WebGLRenderer must retain a carrier. */
+  readonly validatedBaseColorProgramMaterials?: ReadonlySet<number>
 }
 
 const BLENDER_DEFAULT_MATERIAL_MARKER = 'blender-default-material'
@@ -157,10 +161,10 @@ function referencedTexCoords(material: Record<string, unknown>): Map<number, str
  * glTF's default base colour is opaque white, and a material that carries the
  * default explicitly is indistinguishable from one that carries nothing: both
  * render pure white. So an all-ones `baseColorFactor` counts as absent. Vertex
- * colours count as present, because Blendlink itself lowers a proven colour
+ * colours count as present, because SceneToWeb itself lowers a proven colour
  * attribute to `COLOR_0` and that surface is fully decided.
  */
-function hasBaseColorCarrier(
+export function hasBaseColorCarrier(
   material: Record<string, unknown>,
   attributeSets: readonly Set<string>[],
 ): boolean {
@@ -271,6 +275,7 @@ export function inspectCompiledSceneConformance(
     if (bindings.length) {
       checked['conformance.base-color-carrier-missing'] += 1
       if (!hasBaseColorCarrier(material, bindings.map((binding) => binding.attributes)) &&
+          !input.validatedBaseColorProgramMaterials?.has(index) &&
           (renderedTriangles === undefined || renderedTriangles > 0)) {
         issues.push(Object.freeze({
           code: 'conformance.base-color-carrier-missing',
@@ -279,11 +284,12 @@ export function inspectCompiledSceneConformance(
           affects: Object.freeze([...new Set(bindings.map((binding) => binding.mesh))].sort()),
           summary:
             `Material "${name}" reaches the runtime with neither a base-colour texture nor a ` +
-            'base-colour factor.',
+            'base-colour factor, and has no validated shipped Base Color program.',
           fix:
             "glTF's default base colour is opaque white, so this surface renders pure white " +
-            'with no warning of any kind. Give the material a colour Blendlink can carry, or ' +
-            'route it through a bake so the compiled artifact carries one.',
+            'with no warning of any kind. Give the material a colour SceneToWeb can carry, or ' +
+            'route it through a bake so the compiled artifact carries one. A live Base Color ' +
+            'program must ship with its verified sidecar and use WebGPURenderer (including its WebGL2 fallback).',
         }))
       }
 
@@ -297,10 +303,10 @@ export function inspectCompiledSceneConformance(
           subject: name,
           affects: Object.freeze([...new Set(bindings.map((binding) => binding.mesh))].sort()),
           summary:
-            `${bindings.length} primitive(s) are bound to Blendlink's stand-in for Blender's ` +
+            `${bindings.length} primitive(s) are bound to SceneToWeb's stand-in for Blender's ` +
             'own default material, which means they had no material of their own.',
           fix:
-            'Blendlink substitutes a neutral dielectric so the surface is visible rather than ' +
+            'SceneToWeb substitutes a neutral dielectric so the surface is visible rather than ' +
             'undefined, but nobody authored it. Assign a material to those meshes in Blender.',
         }))
       }

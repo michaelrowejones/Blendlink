@@ -25,7 +25,7 @@ def composed_processor(scene, cfg):
         )
     group = O.GroupTransform()
     matrix = np.eye(4)
-    if view.use_white_balance:
+    if getattr(view, "use_white_balance", False):
         # RNA already evaluates Blender's temperature/tint locus into scene RGB.
         basis = np.eye(3, dtype=np.float32)
         cfg.getProcessor(

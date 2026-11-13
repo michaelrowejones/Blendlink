@@ -13,21 +13,21 @@
 Enumerated from the exact pinned `three@0.184.0` package on disk
 (`node_modules/three/examples/jsm/tsl/display/`), not from documentation.
 Three's node-based `PostProcessing` pipeline plus these TSL display nodes
-cover most of Blendlink's eleven shipped post-processing Components in-tree:
+cover most of SceneToWeb's eleven shipped post-processing Components in-tree:
 
 | Component | pmndrs class today | three 0.184 TSL replacement | Gap class |
 | --- | --- | --- | --- |
-| Bright/Selective Bloom | `BloomEffect` / `SelectiveBloomEffect` | `BloomNode` | selective masking needs a Blendlink design (layers/MRT mask) |
-| Vignette | custom `Effect` | — | small Blendlink-owned TSL node (uv math) |
+| Bright/Selective Bloom | `BloomEffect` / `SelectiveBloomEffect` | `BloomNode` | selective masking needs a SceneToWeb design (layers/MRT mask) |
+| Vignette | custom `Effect` | — | small SceneToWeb-owned TSL node (uv math) |
 | Chromatic Aberration | `ChromaticAberrationEffect` | `ChromaticAberrationNode` | direct |
 | Pixelation | `PixelationEffect` | `PixelationPassNode` | direct |
 | CAS / Sharpen | custom `Effect` | `SharpenNode` | direct |
-| Tilt Shift | `TiltShiftEffect` | `GaussianBlurNode` + focus-mask math | small Blendlink-owned composition |
+| Tilt Shift | `TiltShiftEffect` | `GaussianBlurNode` + focus-mask math | small SceneToWeb-owned composition |
 | N8AO Ambient Occlusion | `N8AOPostPass` | `GTAONode` | **different algorithm** — the largest look-continuity risk |
 | Outline | `OutlineEffect` | `OutlineNode` | direct |
 | 3D LUT Color Grading | `LUT3DEffect` | `Lut3DNode` | direct |
 | Depth of Field | `DepthOfFieldEffect` | `DepthOfFieldNode` | direct |
-| Kuwahara | custom `Effect` | — | small Blendlink-owned TSL kernel |
+| Kuwahara | custom `Effect` | — | small SceneToWeb-owned TSL kernel |
 
 Tone mapping ordering — today owned by the tuned fusion service — is native
 to the node pipeline (`RenderOutputNode`), which removes the single-tone-map
@@ -38,7 +38,7 @@ ordering machinery rather than porting it.
 - Per effect: a deterministic-camera Chromium fixture comparing the new TSL
   output against the **current pmndrs WebGL output** on the same scene.
   Deltas are measured and recorded; direct replacements are expected to be
-  near, Blendlink-owned rewrites are tuned to match, and the N8AO→GTAO cell
+  near, SceneToWeb-owned rewrites are tuned to match, and the N8AO→GTAO cell
   is expected to differ — that difference is a named product decision with
   side-by-side evidence, never a silent swap.
 - The fusion service's semantics (lazy pipeline, compatible-effect fusion)

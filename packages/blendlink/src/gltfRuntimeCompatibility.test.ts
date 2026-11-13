@@ -207,7 +207,7 @@ describe('glTF runtime compatibility', () => {
    * node-material renderers bind bone matrices as a uniform buffer that holds
    * exactly 1024; the classic WebGLRenderer uploads them through a texture and
    * has no limit at all. A profile that states no ceiling must therefore
-   * accept a skin that would be unrenderable elsewhere - otherwise Blendlink
+   * accept a skin that would be unrenderable elsewhere - otherwise SceneToWeb
    * would refuse a scene that renders perfectly well.
    */
   describe('skin joint budget', () => {

@@ -31,7 +31,7 @@ budget.
   the `12 scene / 9 object` catalog, installed Contact Shadows, and the Shadow
   Catcher `mask` mode through the real generated R3F scene.
 - The site owns the non-public route, Canvas, loading/failure/retry UI,
-  navigation policy, DOM accessibility affordance, and deployment. Blendlink
+  navigation policy, DOM accessibility affordance, and deployment. SceneToWeb
   remains a package/compiler rather than a route or application framework.
 
 ## Acceptance matrix

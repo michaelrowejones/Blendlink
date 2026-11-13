@@ -14,5 +14,5 @@ The locally inspected Blender 5.1 resave has SHA-256
 
 The repository does not redistribute either `.blend` file. The headless test
 constructs a minimal scratch scene containing only the names and unsupported
-behavior needed to verify Blendlink's refusal contract. It does not reproduce
+behavior needed to verify SceneToWeb's refusal contract. It does not reproduce
 Pip artwork, geometry, textures, or the complete shader implementation.

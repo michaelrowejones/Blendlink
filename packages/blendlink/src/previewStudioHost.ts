@@ -1,4 +1,4 @@
-import { randomBytes } from 'node:crypto'
+import { createHash, randomBytes } from 'node:crypto'
 import {
   existsSync,
   mkdirSync,
@@ -11,21 +11,21 @@ import { dirname, join } from 'node:path'
 import { renderBakedRecipe } from './bakedRecipe.js'
 import type { CompileProgress } from './progress.js'
 
-export const PREVIEW_STUDIO_STATUS = '.blendlink-preview-status.json'
-export const PREVIEW_STUDIO_CONTROL = '.blendlink-preview-control.json'
-export const PREVIEW_STUDIO_ACK = '.blendlink-preview-ack.json'
+export const PREVIEW_STUDIO_STATUS = '.scenetoweb-preview-status.json'
+export const PREVIEW_STUDIO_CONTROL = '.scenetoweb-preview-control.json'
+export const PREVIEW_STUDIO_ACK = '.scenetoweb-preview-ack.json'
 export const PREVIEW_STUDIO_CLIENT_PREFIX = '##blendlink-preview-client '
-export const PREVIEW_STUDIO_HOST_VERSION = 15
+export const PREVIEW_STUDIO_HOST_VERSION = 21
 export const PREVIEW_STUDIO_MAIN_MARKER =
-  '// Blendlink Preview Studio owns this disposable, browser-verified viewer.'
+  '// SceneToWeb Preview Studio owns this disposable, browser-verified viewer.'
 export const PREVIEW_STUDIO_MAIN_VERSION_MARKER =
-  '// Blendlink Preview Studio host template:'
+  '// SceneToWeb Preview Studio host template:'
 export const PREVIEW_STUDIO_INDEX_VERSION_MARKER =
-  '<!-- Blendlink Preview Studio host template:'
+  '<!-- SceneToWeb Preview Studio host template:'
 export const PREVIEW_STUDIO_STYLE_VERSION_MARKER =
-  '/* Blendlink Preview Studio host template:'
+  '/* SceneToWeb Preview Studio host template:'
 export const PREVIEW_STUDIO_VITE_VERSION_MARKER =
-  '// Blendlink Preview Studio host template:'
+  '// SceneToWeb Preview Studio host template:'
 
 export interface PreviewStudioHostPlan {
   workspace: string
@@ -119,8 +119,8 @@ function writeTextAtomic(path: string, contents: string): void {
 }
 
 export const LEGACY_PREVIEW_STUDIO_INDEX_WITH_FAVICON = `<!doctype html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23101116'/%3E%3Cpath d='M4 4h8v8H4z' fill='%2366d9ef'/%3E%3C/svg%3E"><title>Blendlink Preview</title></head>
-<body><canvas id="scene" aria-label="Blendlink web preview"></canvas><script type="module" src="/src/main.ts"></script></body></html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23101116'/%3E%3Cpath d='M4 4h8v8H4z' fill='%2366d9ef'/%3E%3C/svg%3E"><title>SceneToWeb Preview</title></head>
+<body><canvas id="scene" aria-label="SceneToWeb web preview"></canvas><script type="module" src="/src/main.ts"></script></body></html>
 `
 
 export const PREVIEW_STUDIO_INDEX = `${PREVIEW_STUDIO_INDEX_VERSION_MARKER} ${PREVIEW_STUDIO_HOST_VERSION} -->
@@ -131,18 +131,21 @@ export const PREVIEW_STUDIO_INDEX = `${PREVIEW_STUDIO_INDEX_VERSION_MARKER} ${PR
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="dark">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='4' fill='%230d1016'/%3E%3Cpath d='M3.5 4.2h5.2a3.3 3.3 0 0 1 0 6.6H3.5z' fill='%236ee7c7'/%3E%3C/svg%3E">
-  <title>Blendlink Preview Studio</title>
+  <title>SceneToWeb Preview Studio</title>
 </head>
 <body>
   <main id="studio" data-background="dark" data-viewport="fill">
-    <section id="viewport" aria-label="Blendlink Web Presentation"><img id="reference-image" alt="Blender reference render" hidden></section>
+    <section id="viewport" aria-label="SceneToWeb Web Presentation"><img id="reference-image" alt="Blender reference render" hidden></section>
     <header class="studio-bar">
-      <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span>Blendlink</span><span class="muted">Preview Studio</span></div>
+      <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span>SceneToWeb</span><span class="muted">Preview Studio</span></div>
       <div id="status-chip" class="status-chip" role="status"><span class="status-dot"></span><span id="status-label">Opening preview…</span></div>
       <nav class="toolbar" aria-label="Preview controls">
         <button id="pause" type="button" title="Pause animation" aria-pressed="false">Pause</button>
         <button id="reset" type="button" title="Reset authored camera">Reset view</button>
-        <button id="compare" type="button" title="Compare with a Blender render">Compare</button>
+        <button id="inspect" type="button" title="Pause playback and orbit around the scene without changing Blender" aria-pressed="false">Inspect</button>
+        <button id="mobile" type="button" title="Check phone framing" aria-pressed="false">Phone</button>
+        <button id="capture" type="button" title="Save the current rendered view as a PNG">Save image</button>
+        <button id="compare" type="button" title="Compare with a Blender render" aria-pressed="false" aria-controls="comparison-controls">Compare</button>
         <button id="background" type="button" title="Background: dark. Cycle dark, checker, and light." aria-label="Background: dark">Background</button>
         <button id="fullscreen" type="button" title="Enter fullscreen">Fullscreen</button>
         <button id="details" type="button" aria-expanded="false" aria-controls="drawer">Details</button>
@@ -167,7 +170,7 @@ export const PREVIEW_STUDIO_INDEX = `${PREVIEW_STUDIO_INDEX_VERSION_MARKER} ${PR
         <button id="failure-details" type="button">View error details</button>
       </div>
     </section>
-    <aside id="drawer" class="drawer" hidden>
+    <aside id="drawer" class="drawer" hidden aria-label="Scene details">
       <div class="drawer-heading"><div><strong id="scene-name">Scene</strong><div id="generation" class="muted">Waiting for first generation</div></div><button id="close-details" type="button" aria-label="Close details">×</button></div>
       <div class="viewport-presets" aria-label="Responsive viewport">
         <button type="button" data-viewport="fill" aria-pressed="true">Fit window</button>
@@ -198,22 +201,24 @@ export const UNVERSIONED_PREVIEW_STUDIO_STYLE = `
 :root { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #f4f7f5; background: #0d1016; font-synthesis: none; }
 * { box-sizing: border-box; }
 html, body, #studio { width: 100%; height: 100%; margin: 0; overflow: hidden; }
-button { appearance: none; border: 1px solid rgba(255,255,255,.12); border-radius: 9px; color: inherit; background: rgba(15,19,26,.78); padding: 8px 11px; font: inherit; font-size: 12px; cursor: pointer; backdrop-filter: blur(18px); }
+button { white-space: nowrap; appearance: none; border: 1px solid rgba(255,255,255,.12); border-radius: 9px; color: inherit; background: rgba(15,19,26,.78); padding: 8px 11px; font: inherit; font-size: 12px; cursor: pointer; backdrop-filter: blur(18px); }
 button:hover { background: rgba(38,46,57,.9); border-color: rgba(110,231,199,.34); }
 button[data-active], button[aria-pressed="true"] { border-color: rgba(110,231,199,.48); background: rgba(38,73,69,.88); }
 button:focus-visible { outline: 2px solid #6ee7c7; outline-offset: 2px; }
 #studio { position: relative; display: grid; place-items: center; background: #11151d; }
 #studio[data-background="checker"] { background-color: #141921; background-image: linear-gradient(45deg,#1d2430 25%,transparent 25%),linear-gradient(-45deg,#1d2430 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#1d2430 75%),linear-gradient(-45deg,transparent 75%,#1d2430 75%); background-size: 28px 28px; background-position: 0 0,0 14px,14px -14px,-14px 0; }
 #studio[data-background="light"] { background: #cbd2d1; }
-#viewport { position: relative; width: 100%; height: 100%; overflow: hidden; box-shadow: 0 28px 80px rgba(0,0,0,.28); transition: width .22s ease, height .22s ease, border-radius .22s ease; }
-#studio[data-viewport="desktop"] #viewport { width: min(92vw, 1440px); height: min(82vh, 900px); border-radius: 12px; }
-#studio[data-viewport="mobile"] #viewport { width: min(88vw, 430px); height: min(82vh, 860px); border-radius: 18px; }
+#viewport { position: relative; min-width: 0; min-height: 0; width: 100%; height: 100%; overflow: hidden; box-shadow: 0 28px 80px rgba(0,0,0,.28); transition: width .22s ease, height .22s ease, border-radius .22s ease; }
+#studio[data-viewport="desktop"] #viewport { width: min(92vw, 131.2vh, 1440px); height: auto; aspect-ratio: 16 / 10; border-radius: 12px; }
+#studio[data-viewport="mobile"] #viewport { width: min(88vw, 41vh, 430px); height: auto; aspect-ratio: 1 / 2; border-radius: 18px; }
 .scene-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: 0; pointer-events: none; }
 .scene-canvas.active { opacity: 1; pointer-events: auto; }
+.scene-canvas:focus-visible { outline: 2px solid #6ee7c7; outline-offset: -3px; }
 #reference-image { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
-.comparison-controls { position: fixed; z-index: 22; left: 18px; bottom: 18px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; max-width: calc(100vw - 36px); background: rgba(10,13,18,.94); border-radius: 10px; padding: 12px; font-size: 12px; }
+.comparison-controls { position: fixed; z-index: 22; left: 18px; bottom: 18px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; max-width: calc(100vw - 36px); max-height: 35dvh; overflow: auto; background: rgba(10,13,18,.94); border-radius: 10px; padding: 12px; font-size: 12px; }
 .comparison-controls[hidden], #reference-image[hidden] { display: none; }
 .comparison-controls label { display: flex; align-items: center; gap: 6px; }
+#reference-name { overflow-wrap: anywhere; }
 .studio-bar { position: fixed; z-index: 20; top: 14px; left: 14px; right: 14px; min-height: 44px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; pointer-events: none; }
 .brand, .status-chip, .toolbar { pointer-events: auto; }
 .brand { justify-self: start; display: flex; gap: 8px; align-items: center; padding: 9px 12px; border: 1px solid rgba(255,255,255,.1); border-radius: 11px; background: rgba(10,13,18,.7); backdrop-filter: blur(18px); font-size: 12px; font-weight: 650; }
@@ -254,7 +259,21 @@ button:disabled { opacity: .45; cursor: default; }
 .range-summary { margin: 8px 0 0; font-size: 11px; line-height: 1.45; }
 pre { margin: 0; padding: 11px; white-space: pre-wrap; word-break: break-word; border-radius: 9px; background: rgba(255,141,134,.08); color: #ffc1bd; font: 11px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace; }
 @keyframes pulse { to { opacity: .42; } } @keyframes breathe { to { transform: scale(.92); opacity: .72; } }
-@media (max-width: 820px) { .studio-bar { top: 10px; left: 10px; right: 10px; grid-template-columns: 1fr auto; }.status-chip { order: 3; grid-column: 1/-1; }.brand .muted { display: none; }.toolbar { position: fixed; left: 10px; right: 10px; bottom: 10px; justify-content: flex-start; overflow-x: auto; padding: 3px; }.toolbar button { display: block; flex: 0 0 auto; }.notice { bottom: 66px; }.drawer { bottom: 66px; } }
+@media (max-width: 1100px) {
+  #studio { padding: var(--preview-top, 104px) 0 var(--preview-bottom, 180px); }
+  .studio-bar { top: 10px; left: 10px; right: 10px; grid-template-columns: 1fr auto; }
+  .status-chip { order: 3; grid-column: 1/-1; max-width: 100%; }
+  .brand .muted { display: none; }
+  .toolbar { position: fixed; left: 10px; right: 10px; bottom: max(10px,env(safe-area-inset-bottom)); justify-self: stretch; min-width: 0; display: grid; grid-template-columns: repeat(auto-fit,minmax(88px,1fr)); gap: 6px; padding: 6px; border: 1px solid rgba(255,255,255,.1); border-radius: 12px; background: rgba(10,13,18,.9); backdrop-filter: blur(18px); }
+  .toolbar button { min-width: 0; min-height: 44px; padding: 8px 5px; white-space: normal; }
+  .drawer-heading > button { min-width: 44px; min-height: 44px; }
+  .comparison-controls button { min-height: 44px; }
+  #studio[data-viewport="desktop"] #viewport { width: min(92vw,calc((100dvh - var(--preview-top,104px) - var(--preview-bottom,180px)) * 1.6),1440px); }
+  #studio[data-viewport="mobile"] #viewport { width: min(88vw,calc((100dvh - var(--preview-top,104px) - var(--preview-bottom,180px)) / 2),430px); }
+  .notice { bottom: var(--preview-toolbar-offset,180px); }
+  .comparison-controls { left: 10px; bottom: var(--preview-toolbar-offset,180px); max-width: calc(100vw - 20px); }
+  .drawer { top: var(--preview-top,104px); bottom: var(--preview-toolbar-offset,180px); }
+}
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 `
 
@@ -275,7 +294,7 @@ export function previewStudioBakedBridgeSource(plan: PreviewStudioHostPlan): str
 }
 
 export function unversionedPreviewStudioViteConfigSource(): string {
-  return `// Blendlink Preview Studio owns this disposable host adapter.
+  return `// SceneToWeb Preview Studio owns this disposable host adapter.
 import { existsSync, readFileSync, renameSync, unlinkSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 
@@ -298,7 +317,7 @@ function writeAck(ack) {
 
 function previewControlPlugin() {
   return {
-    name: 'blendlink-preview-control',
+    name: 'scenetoweb-preview-control',
     handleHotUpdate(context) {
       const path = context.file.replace(/\\\\/g, '/')
       if (path.includes('/src/generated/') || path.includes('/public/models/') ||
@@ -307,7 +326,7 @@ function previewControlPlugin() {
           path.includes('/public/${PREVIEW_STUDIO_ACK}')) return []
     },
     configureServer(server) {
-      server.middlewares.use('/__blendlink/preview-client', (request, response, next) => {
+      server.middlewares.use('/__scenetoweb/preview-client', (request, response, next) => {
         if (request.method !== 'POST') return next()
         let body = ''
         request.setEncoding('utf8')
@@ -396,7 +415,8 @@ export function previewStudioMainSource(plan: PreviewStudioHostPlan): string {
 ${PREVIEW_STUDIO_MAIN_VERSION_MARKER} ${PREVIEW_STUDIO_HOST_VERSION}
 import * as THREE from 'three'
 import { WebGPURenderer } from 'three/webgpu'
-import { installThreeCompiledScene } from 'blendlink/three'
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import { installThreeCompiledScene } from 'scenetoweb/three'
 import { bindPreviewDescriptor, createBakedScene } from './previewBaked'
 import './style.css'
 
@@ -405,7 +425,7 @@ const SCENE_NAME = ${JSON.stringify(plan.sceneName)}
 const GENERATED_MODULE = ${JSON.stringify(generatedModule)}
 const STATUS_URL = '/${PREVIEW_STUDIO_STATUS}'
 const CONTROL_URL = '/${PREVIEW_STUDIO_CONTROL}'
-const CLIENT_URL = '/__blendlink/preview-client'
+const CLIENT_URL = '/__scenetoweb/preview-client'
 
 type StudioStatus = {
   schemaVersion: 1
@@ -437,11 +457,12 @@ type Presentation = {
   warnings: string[]
   lastWidth: number
   lastHeight: number
+  inspection?: OrbitControls
 }
 
 const element = <T extends HTMLElement>(id: string): T => {
   const value = document.getElementById(id)
-  if (!value) throw new Error('Blendlink Preview Studio is missing #' + id)
+  if (!value) throw new Error('SceneToWeb Preview Studio is missing #' + id)
   return value as T
 }
 const studio = element<HTMLElement>('studio')
@@ -471,7 +492,9 @@ let queuedPromotion: StudioStatus | null = null
 let latestStatus: StudioStatus | null = null
 let failedLoad: StudioStatus | null = null
 let lastSequence = -1
-let paused = false
+let paused = matchMedia('(prefers-reduced-motion: reduce)').matches
+let playbackOverride: boolean | null = null
+let playbackButtonState = ''
 let updateNoticeTimer = 0
 let animationFrame = 0
 let previousTime = performance.now()
@@ -539,8 +562,10 @@ function updateRecoveryControls(): void {
   retryButton.disabled = Boolean(loadingGeneration) || !retryable
   retryButton.textContent = loadingGeneration ? 'Retrying…' : 'Retry preview'
   const usable = Boolean(active && runtimeFailedGeneration !== active.generation)
-  element<HTMLButtonElement>('pause').disabled = !usable
+  element<HTMLButtonElement>('pause').disabled = !usable || Boolean(active?.inspection)
   element<HTMLButtonElement>('reset').disabled = !usable
+  element<HTMLButtonElement>('inspect').disabled = !usable
+  element<HTMLButtonElement>('capture').disabled = !usable
 }
 
 function renderChecks(messages: readonly string[]): void {
@@ -706,11 +731,12 @@ function reportRuntimeFailure(error: unknown, source = 'Scene runtime'): void {
     failureKind: 'runtime',
     error: message,
   }).catch(ackError => {
-    console.error('Blendlink Preview Studio could not report its runtime failure:', ackError)
+    console.error('SceneToWeb Preview Studio could not report its runtime failure:', ackError)
   })
 }
 
 function disposePresentation(presentation: Presentation): void {
+  presentation.inspection?.dispose()
   try {
     presentation.installed.dispose()
   } finally {
@@ -842,6 +868,9 @@ async function createPresentation(generation: string, status: StudioStatus): Pro
     await new Promise<void>(resolve => requestAnimationFrame(() => resolve()))
     if (deviceLoss) throw new Error(deviceLoss)
     if (shaderErrors.length > 0) throw new Error('A material shader did not compile:\\n' + shaderErrors.join('\\n\\n'))
+    canvas.dataset.tslMaterialsApplied = String(installed.tslMaterials?.applied ?? 0)
+    canvas.dataset.tslMaterialsSkipped = String(installed.tslMaterials?.skipped.length ?? 0)
+    canvas.dataset.postprocessingOrder = JSON.stringify(installed.components.postprocessingOrder)
     const camera = installed.camera
     return {
       generation, canvas, renderer, world, installed, descriptor,
@@ -858,9 +887,9 @@ async function createPresentation(generation: string, status: StudioStatus): Pro
       try { await validationDevice!.popErrorScope() } catch { /* retain the original failure */ }
     }
     try { installed?.dispose() }
-    catch (disposeError) { console.warn('Blendlink Preview Studio install cleanup failed:', disposeError) }
+    catch (disposeError) { console.warn('SceneToWeb Preview Studio install cleanup failed:', disposeError) }
     try { renderer?.dispose() }
-    catch (disposeError) { console.warn('Blendlink Preview Studio renderer cleanup failed:', disposeError) }
+    catch (disposeError) { console.warn('SceneToWeb Preview Studio renderer cleanup failed:', disposeError) }
     canvas.remove()
     throw error
   }
@@ -891,6 +920,8 @@ async function promote(status: StudioStatus): Promise<void> {
       candidate = null
       return
     }
+    if (paused) candidate.installed.animation?.pause()
+    else if (playbackOverride === false) candidate.installed.animation?.play()
     // A retained generation represents the last successfully published files
     // after the current Blender save failed. It is useful to show, but must
     // not turn that invalid save into a false ready acknowledgement.
@@ -907,6 +938,10 @@ async function promote(status: StudioStatus): Promise<void> {
       return
     }
     const previous = active
+    // An inspection view can itself violate a live node's qualified domain.
+    // Retry must recreate the authored view, rather than immediately restore
+    // the camera that stopped this generation. Good-view hot reloads retain it.
+    if (inspecting && previous && runtimeFailedGeneration === previous.generation) stopInspection()
     candidate.canvas.classList.add('active')
     candidate.canvas.removeAttribute('aria-hidden')
     candidate.canvas.setAttribute('aria-label', SCENE_NAME + ' preview')
@@ -914,6 +949,24 @@ async function promote(status: StudioStatus): Promise<void> {
     previous?.canvas.setAttribute('aria-hidden', 'true')
     const promoted = candidate
     active = promoted
+    updatePlaybackButton()
+    if (inspecting && promoted.installed.cameraController?.interactive) {
+      stopInspection()
+    } else if (inspecting) {
+      const sameCamera = previous && previous.cameraSnapshot.position.equals(promoted.cameraSnapshot.position)
+        && previous.cameraSnapshot.quaternion.equals(promoted.cameraSnapshot.quaternion)
+        && previous.cameraSnapshot.zoom === promoted.cameraSnapshot.zoom
+      if (sameCamera) {
+        promoted.installed.camera.position.copy(previous.installed.camera.position)
+        promoted.installed.camera.quaternion.copy(previous.installed.camera.quaternion)
+        if ('zoom' in promoted.installed.camera && 'zoom' in previous.installed.camera) {
+          promoted.installed.camera.zoom = previous.installed.camera.zoom
+          promoted.installed.camera.updateProjectionMatrix()
+        }
+      }
+      startInspection(promoted, sameCamera ? previous?.inspection?.target : undefined,
+        document.activeElement === previous?.canvas)
+    }
     runtimeFailedGeneration = ''
     runtimeFailureMessage = ''
     candidate = null
@@ -929,7 +982,7 @@ async function promote(status: StudioStatus): Promise<void> {
     }
     if (previous) {
       try { disposePresentation(previous) }
-      catch (error) { console.warn('Blendlink Preview Studio could not completely release the previous scene:', error) }
+      catch (error) { console.warn('SceneToWeb Preview Studio could not completely release the previous scene:', error) }
     }
     if (retainedAfterFailure) {
       setPhase('failed', 'Saved update failed · showing last good scene')
@@ -940,7 +993,7 @@ async function promote(status: StudioStatus): Promise<void> {
   } catch (error) {
     if (candidate) {
       try { disposePresentation(candidate) }
-      catch (disposeError) { console.warn('Blendlink Preview Studio candidate cleanup failed:', disposeError) }
+      catch (disposeError) { console.warn('SceneToWeb Preview Studio candidate cleanup failed:', disposeError) }
     }
     if (desiredGeneration !== generation) return
     const message = errorText(error)
@@ -965,7 +1018,7 @@ async function promote(status: StudioStatus): Promise<void> {
         error: message,
       })
     } catch (ackError) {
-      console.error('Blendlink Preview Studio could not report its runtime failure:', ackError)
+      console.error('SceneToWeb Preview Studio could not report its runtime failure:', ackError)
     }
   } finally {
     loadingGeneration = ''
@@ -1056,7 +1109,7 @@ function applyStatus(status: StudioStatus): void {
         phase: failed ? 'failed' : 'ready',
         ...(failed && runtimeFailureMessage ? { error: runtimeFailureMessage } : {}),
       }).catch(error => {
-        console.warn('Blendlink Preview Studio could not refresh its ready acknowledgement:', error)
+        console.warn('SceneToWeb Preview Studio could not refresh its ready acknowledgement:', error)
       })
     } else if (runtimeFailedGeneration !== active.generation) {
       setPhase('ready', 'Ready · updates when you save')
@@ -1081,7 +1134,7 @@ async function pollStatus(): Promise<void> {
       }
     } else throw new Error('Preview status returned ' + response.status)
   } catch (error) {
-    console.warn('Blendlink Preview Studio status retry:', error)
+    console.warn('SceneToWeb Preview Studio status retry:', error)
     statusPollFailures += 1
     if (statusPollFailures >= 3 && active && runtimeFailedGeneration !== active.generation) {
       statusConnectionLost = true
@@ -1111,24 +1164,49 @@ function frame(now: number): void {
         active.installed.resize(width, height)
         active.lastWidth = width; active.lastHeight = height
       }
-      if (!paused) active.installed.update(deltaSeconds)
-      active.installed.render(deltaSeconds)
+      // A paused timeline still needs camera damping, LOD and input updates.
+      // Inspection owns its temporary camera and must not be reset by playback.
+      if (!active.inspection) active.installed.update(paused ? 0 : deltaSeconds)
+      active.inspection?.update()
+      active.installed.render(paused || active.inspection ? 0 : deltaSeconds)
+      updatePlaybackButton()
     } catch (error) {
       reportRuntimeFailure(error)
     }
   }
 }
 
-element<HTMLButtonElement>('pause').addEventListener('click', event => {
-  paused = !paused
-  const button = event.currentTarget as HTMLButtonElement
-  button.textContent = paused ? 'Play' : 'Pause'
-  button.title = paused ? 'Resume animation' : 'Pause animation'
-  button.setAttribute('aria-pressed', String(paused))
+function playbackIsPaused(): boolean {
+  return paused || Boolean(active?.installed.animation && active.installed.animation.state.phase !== 'playing')
+}
+function updatePlaybackButton(): void {
+  const stopped = playbackIsPaused()
+  const finished = active?.installed.animation?.state.phase === 'finished'
+  const state = stopped ? finished ? 'Replay' : 'Play' : 'Pause'
+  if (state === playbackButtonState) return
+  playbackButtonState = state
+  const button = element<HTMLButtonElement>('pause')
+  button.textContent = state
+  button.title = state === 'Replay' ? 'Replay animation' : stopped ? 'Start or resume animation' : 'Pause animation'
+  button.setAttribute('aria-pressed', String(stopped))
+}
+function setPaused(value: boolean, applyTransport = true): void {
+  paused = value
+  if (applyTransport) {
+    playbackOverride = value
+    if (value) active?.installed.animation?.pause()
+    else active?.installed.animation?.play()
+  }
+  updatePlaybackButton()
+}
+element<HTMLButtonElement>('pause').addEventListener('click', () => {
+  try { setPaused(!playbackIsPaused()) }
+  catch (error) { showNotice('Animation needs attention: ' + errorText(error), true) }
 })
-element<HTMLButtonElement>('reset').addEventListener('click', () => {
+function resetView(): void {
   if (!active) return
-  if (active.installed.cameraController) {
+  stopInspection()
+  if (active.installed.cameraController?.interactive) {
     active.installed.cameraController.reset()
     return
   }
@@ -1138,6 +1216,64 @@ element<HTMLButtonElement>('reset').addEventListener('click', () => {
   camera.scale.copy(active.cameraSnapshot.scale)
   if (active.cameraSnapshot.zoom !== undefined && 'zoom' in camera) camera.zoom = active.cameraSnapshot.zoom
   camera.updateProjectionMatrix()
+}
+element<HTMLButtonElement>('reset').addEventListener('click', resetView)
+
+let inspecting = false
+function startInspection(presentation: Presentation, target?: THREE.Vector3, focus = false): void {
+  presentation.inspection?.dispose()
+  const camera = presentation.installed.camera
+  const controls = new OrbitControls(camera, presentation.canvas)
+  const sphere = new THREE.Box3().setFromObject(presentation.installed.root).getBoundingSphere(new THREE.Sphere())
+  const direction = camera.getWorldDirection(new THREE.Vector3())
+  const distance = Math.max(sphere.radius * .05, sphere.center.clone().sub(camera.position).dot(direction), .01)
+  controls.target.copy(target || camera.position.clone().addScaledVector(direction, distance))
+  controls.enableDamping = true
+  controls.listenToKeyEvents(presentation.canvas)
+  controls.update()
+  presentation.inspection = controls
+  presentation.canvas.tabIndex = 0
+  presentation.canvas.title = 'Drag to orbit. Arrow keys pan; Shift + arrow keys orbit.'
+  if (focus) presentation.canvas.focus({ preventScroll: true })
+  updateRecoveryControls()
+}
+function stopInspection(): void {
+  inspecting = false
+  active?.inspection?.dispose()
+  if (active) {
+    active.inspection = undefined
+    active.canvas.removeAttribute('tabindex')
+    active.canvas.removeAttribute('title')
+  }
+  element<HTMLButtonElement>('inspect').setAttribute('aria-pressed', 'false')
+  if (noticeMessage.textContent?.startsWith('Inspecting ·')) hideNotice()
+  updateRecoveryControls()
+}
+element<HTMLButtonElement>('inspect').addEventListener('click', () => {
+  if (!active) return
+  if (inspecting) { resetView(); return }
+  if (active.installed.cameraController?.interactive) {
+    showNotice('This scene already has authored camera controls. Drag in the preview to explore it.')
+    return
+  }
+  inspecting = true
+  startInspection(active, undefined, true)
+  element<HTMLButtonElement>('inspect').setAttribute('aria-pressed', 'true')
+  showNotice('Inspecting · drag to orbit, scroll to zoom. Arrow keys pan; Shift + arrows orbit. Reset view returns to your Blender camera.')
+})
+element<HTMLButtonElement>('capture').addEventListener('click', () => {
+  if (!active) return
+  try {
+    active.installed.render(0)
+    active.canvas.toBlob(blob => {
+      if (!blob) { showNotice('The browser could not capture this frame.', true); return }
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url; link.download = SCENE_NAME + '-preview.png'
+      link.click()
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000)
+    }, 'image/png')
+  } catch (error) { showNotice('Could not save the image: ' + errorText(error), true) }
 })
 
 const referenceImage = element<HTMLImageElement>('reference-image')
@@ -1148,26 +1284,45 @@ let referenceUrl: string | null = null
 function resizeReference(): void {
   if (referenceImage.hidden || !referenceImage.naturalWidth) return
   const ratio = referenceImage.naturalWidth / referenceImage.naturalHeight
-  const width = Math.min(window.innerWidth * .92, window.innerHeight * .82 * ratio)
+  const style = getComputedStyle(studio)
+  const height = studio.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom)
+  const width = Math.min(studio.clientWidth * .92, Math.max(24, height) * .92 * ratio)
   viewport.style.width = width + 'px'
   viewport.style.height = (width / ratio) + 'px'
+}
+function updateStudioLayout(): void {
+  if (matchMedia('(max-width: 1100px)').matches) {
+    const toolbar = document.querySelector<HTMLElement>('.toolbar')!
+    const header = document.querySelector<HTMLElement>('.studio-bar')!
+    const comparison = element<HTMLElement>('comparison-controls')
+    const bottom = Math.ceil(window.innerHeight - toolbar.getBoundingClientRect().top + 12)
+    studio.style.setProperty('--preview-top', Math.ceil(header.getBoundingClientRect().bottom + 12) + 'px')
+    studio.style.setProperty('--preview-toolbar-offset', bottom + 'px')
+    studio.style.setProperty('--preview-bottom', (bottom + (comparison.hidden ? 0 : comparison.offsetHeight + 12)) + 'px')
+  } else {
+    for (const property of ['--preview-top', '--preview-toolbar-offset', '--preview-bottom']) studio.style.removeProperty(property)
+  }
+  resizeReference()
 }
 function updateComparison(): void {
   referenceImage.style.clipPath = comparisonDifference.checked ? 'none' : 'inset(0 ' + (100 - Number(comparisonSplit.value)) + '% 0 0)'
   referenceImage.style.mixBlendMode = comparisonDifference.checked ? 'difference' : 'normal'
   comparisonSplit.disabled = comparisonDifference.checked
 }
-function closeComparison(): void {
+function closeComparison(restoreFocus = false): void {
   referenceImage.onload = null
   referenceImage.onerror = null
   referenceImage.hidden = true
   referenceImage.removeAttribute('src')
   element<HTMLElement>('comparison-controls').hidden = true
+  element<HTMLButtonElement>('compare').setAttribute('aria-pressed', 'false')
   viewport.style.removeProperty('width')
   viewport.style.removeProperty('height')
   if (referenceUrl) URL.revokeObjectURL(referenceUrl)
   referenceUrl = null
   referenceFile.value = ''
+  updateStudioLayout()
+  if (restoreFocus) element<HTMLButtonElement>('compare').focus()
 }
 element<HTMLButtonElement>('compare').addEventListener('click', () => referenceFile.click())
 referenceFile.addEventListener('change', () => {
@@ -1178,20 +1333,25 @@ referenceFile.addEventListener('change', () => {
   referenceImage.onload = () => {
     referenceImage.hidden = false
     element<HTMLElement>('comparison-controls').hidden = false
+    element<HTMLButtonElement>('compare').setAttribute('aria-pressed', 'true')
     element<HTMLElement>('reference-name').textContent = file.name + ' · use the same saved frame'
-    if (!paused) element<HTMLButtonElement>('pause').click()
-    element<HTMLButtonElement>('reset').click()
-    resizeReference()
+    // Pause directly: the playback button is disabled during orbit inspection.
+    // Reset then removes inspection without resuming animation under the image.
+    setPaused(true)
+    resetView()
+    updateStudioLayout()
     updateComparison()
+    if (comparisonSplit.disabled) comparisonDifference.focus()
+    else comparisonSplit.focus()
   }
   referenceImage.onerror = () => { closeComparison(); showNotice('The reference image could not be decoded.', true) }
   referenceImage.src = referenceUrl
 })
 comparisonSplit.addEventListener('input', updateComparison)
 comparisonDifference.addEventListener('change', updateComparison)
-element<HTMLButtonElement>('comparison-close').addEventListener('click', closeComparison)
-window.addEventListener('resize', resizeReference)
-window.addEventListener('beforeunload', closeComparison)
+element<HTMLButtonElement>('comparison-close').addEventListener('click', () => closeComparison(true))
+window.addEventListener('resize', updateStudioLayout)
+window.addEventListener('beforeunload', () => closeComparison())
 element<HTMLButtonElement>('background').addEventListener('click', event => {
   const modes = ['dark', 'checker', 'light']
   const current = modes.indexOf(studio.dataset.background || 'dark')
@@ -1201,19 +1361,36 @@ element<HTMLButtonElement>('background').addEventListener('click', event => {
   button.title = 'Background: ' + next + '. Cycle dark, checker, and light.'
   button.setAttribute('aria-label', 'Background: ' + next)
 })
-element<HTMLButtonElement>('fullscreen').addEventListener('click', () => {
-  const change = document.fullscreenElement ? document.exitFullscreen() : studio.requestFullscreen()
-  void change.catch(error => showNotice('Fullscreen is unavailable: ' + errorText(error), true))
+element<HTMLButtonElement>('fullscreen').addEventListener('click', async () => {
+  try {
+    if (document.fullscreenElement) await document.exitFullscreen()
+    else if (typeof studio.requestFullscreen === 'function') await studio.requestFullscreen()
+    else showNotice('Fullscreen is unavailable in this browser.')
+  } catch (error) { showNotice('Fullscreen is unavailable: ' + errorText(error), true) }
 })
 document.addEventListener('fullscreenchange', () => {
-  element<HTMLButtonElement>('fullscreen').textContent = document.fullscreenElement ? 'Exit fullscreen' : 'Fullscreen'
+  const button = element<HTMLButtonElement>('fullscreen')
+  button.textContent = document.fullscreenElement ? 'Exit fullscreen' : 'Fullscreen'
+  button.title = document.fullscreenElement ? 'Exit fullscreen' : 'Enter fullscreen'
 })
-function setDrawer(open: boolean): void {
+let drawerOpener: HTMLElement | null = null
+function setDrawer(open: boolean, opener?: HTMLElement): void {
+  // Safari deliberately does not focus buttons on pointer activation. Keep
+  // the actual trigger instead of inferring it from document.activeElement.
+  if (open) drawerOpener = opener || element<HTMLButtonElement>('details')
   drawer.hidden = !open
   element<HTMLButtonElement>('details').setAttribute('aria-expanded', String(open))
+  if (open) element<HTMLButtonElement>('close-details').focus()
+  else {
+    const target = opener || drawerOpener
+    const returnTo = target?.isConnected && !target.closest('[hidden]') && !target.matches(':disabled')
+      ? target : element<HTMLButtonElement>('details')
+    returnTo.focus()
+    drawerOpener = null
+  }
 }
-element<HTMLButtonElement>('failure-details').addEventListener('click', () => {
-  setDrawer(true)
+element<HTMLButtonElement>('failure-details').addEventListener('click', event => {
+  setDrawer(true, event.currentTarget as HTMLButtonElement)
   errorSection.scrollIntoView({ block: 'nearest' })
 })
 retryButton.addEventListener('click', () => {
@@ -1225,18 +1402,30 @@ retryButton.addEventListener('click', () => {
   setPhase('published', 'Retrying preview…')
   void promote({ ...failure, phase: 'published' })
 })
-element<HTMLButtonElement>('details').addEventListener('click', () => setDrawer(drawer.hidden))
+element<HTMLButtonElement>('details').addEventListener('click', event => setDrawer(drawer.hidden, event.currentTarget as HTMLButtonElement))
 element<HTMLButtonElement>('close-details').addEventListener('click', () => setDrawer(false))
+function setViewport(name: string): void {
+  // A reference temporarily owns its exact aspect ratio. Choosing a responsive
+  // preset exits that comparison instead of leaving the preset ineffective.
+  if (!referenceImage.hidden) closeComparison()
+  studio.dataset.viewport = name
+  element<HTMLButtonElement>('mobile').setAttribute('aria-pressed', String(name === 'mobile'))
+  for (const button of document.querySelectorAll<HTMLButtonElement>('button[data-viewport]')) {
+    button.setAttribute('aria-pressed', String(button.dataset.viewport === name))
+  }
+}
+element<HTMLButtonElement>('mobile').addEventListener('click', () => {
+  setViewport(studio.dataset.viewport === 'mobile' ? 'fill' : 'mobile')
+})
 for (const button of document.querySelectorAll<HTMLButtonElement>('button[data-viewport]')) {
   button.addEventListener('click', () => {
-    studio.dataset.viewport = button.dataset.viewport || 'fill'
-    for (const sibling of document.querySelectorAll<HTMLButtonElement>('button[data-viewport]')) {
-      sibling.setAttribute('aria-pressed', String(sibling === button))
-    }
+    setViewport(button.dataset.viewport || 'fill')
   })
 }
 document.addEventListener('keydown', event => {
-  if (event.key === 'Escape' && !drawer.hidden && !document.fullscreenElement) setDrawer(false)
+  if (event.key !== 'Escape' || document.fullscreenElement) return
+  if (!drawer.hidden) { event.preventDefault(); setDrawer(false) }
+  else if (!referenceImage.hidden) { event.preventDefault(); closeComparison(true) }
 })
 window.addEventListener('error', event => {
   if (!active) return
@@ -1252,7 +1441,12 @@ window.addEventListener('beforeunload', () => {
   if (active) disposePresentation(active)
 }, { once: true })
 
+setPaused(paused, false)
 updateRecoveryControls()
+const chromeObserver = new ResizeObserver(updateStudioLayout)
+for (const target of document.querySelectorAll('.studio-bar, .toolbar, #comparison-controls')) chromeObserver.observe(target)
+updateStudioLayout()
+window.addEventListener('beforeunload', () => chromeObserver.disconnect(), { once: true })
 const compileClock = window.setInterval(renderCompileProgress, 1000)
 window.addEventListener('beforeunload', () => window.clearInterval(compileClock), { once: true })
 void pollStatus()
@@ -1300,7 +1494,18 @@ export function readPreviewStudioGeneration(plan: PreviewStudioHostPlan): string
   const path = join(plan.workspace, 'src', 'generated', `${plan.sceneName}.manifest.json`)
   if (!existsSync(path)) return undefined
   try {
-    const manifest = JSON.parse(readFileSync(path, 'utf8')) as { hash?: unknown }
+    const manifest = JSON.parse(readFileSync(path, 'utf8')) as { hash?: unknown; generatedModuleHash?: unknown }
+    if (Object.hasOwn(manifest, 'generatedModuleHash')) {
+      if (typeof manifest.generatedModuleHash !== 'string' || !/^[a-f0-9]{16}$/.test(manifest.generatedModuleHash)) return undefined
+      // The generated descriptor binds every runtime sidecar, display setting,
+      // material program and recipe. A GLB-only hash misses authored changes
+      // that leave the geometry/material carrier bytes unchanged.
+      const module = readFileSync(join(plan.workspace, 'src', 'generated', `${plan.sceneName}.gen.ts`))
+      const actual = createHash('sha256').update(module).digest('hex').slice(0, 16)
+      return actual === manifest.generatedModuleHash ? actual : undefined
+    }
+    // Older cache manifests predate the descriptor-byte pin; compilation
+    // upgrades them before future publications. Preserve their read contract.
     return typeof manifest.hash === 'string' && manifest.hash.length > 0 ? manifest.hash : undefined
   } catch {
     return undefined

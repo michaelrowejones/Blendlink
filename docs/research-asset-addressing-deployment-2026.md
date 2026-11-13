@@ -2,7 +2,7 @@
 
 Date: 2026-07-21
 
-Implementation update, 2026-07-23: Blendlink now emits an additive schema-v3
+Implementation update, 2026-07-23: SceneToWeb now emits an additive schema-v3
 `runtimeAssetGraph` from the exact publication candidates. The graph uses full
 SHA-256, rejects traversal, ambiguous encoded separators, and case-fold
 collisions, requires one GLB, and requires concrete Basis
@@ -40,7 +40,7 @@ resolution preserve nested paths. It remains a prototype: production URL
 generation, incremental-bake reverse mapping, compatibility output,
 concurrency, cleanup, and deployed cache-header/browser evidence must migrate
 together before immutable caching is a release claim. Generic external
-`typegen` remains honest but incomplete because Blendlink cannot discover an
+`typegen` remains honest but incomplete because SceneToWeb cannot discover an
 external pipeline's full file closure.
 
 Implementation update, 2026-07-23 (deeper production audit): the package now
@@ -114,9 +114,9 @@ outside the claim.
 
 ## Scope and conclusion
 
-This note audits Blendlink's compiler-owned scene assets against Next.js
+This note audits SceneToWeb's compiler-owned scene assets against Next.js
 16.2.6 and Vite 7.3.6. The question is narrower than deployment generally:
-how can a website-owned Next or Vite application place a complete Blendlink
+how can a website-owned Next or Vite application place a complete SceneToWeb
 scene under a base path or on a CDN, and when may the host truthfully apply an
 immutable cache policy?
 
@@ -131,7 +131,7 @@ The implemented answer is:
    header from the complete graph. The website decides whether and how to
    install it.
 4. Keep schema version 3 while the runtime still consumes its existing URL
-   fields. A schema version 4 should be considered only if Blendlink wants
+   fields. A schema version 4 should be considered only if SceneToWeb wants
    first-class asset IDs, typed roles, per-request transport policy, or a public
    manifest whose byte representation is intrinsically relocatable. That is a
    real reshape, not a casual additive field.
@@ -200,11 +200,11 @@ The current primary-source rules are:
 
 The installed source adds useful exact-version evidence. Vite 7.3.6 replaces
 internal asset placeholders through its `toOutputFilePathInJS()` path; an
-ordinary string literal emitted by Blendlink has no placeholder and is not
+ordinary string literal emitted by SceneToWeb has no placeholder and is not
 rebased. Three r184 requests `basis_transcoder.js` and
 `basis_transcoder.wasm` beneath `transcoderPath` and synthesizes a Blob worker
 from the fetched wrapper. These observations agree with the public docs; they
-are not extra contracts Blendlink should depend on.
+are not extra contracts SceneToWeb should depend on.
 
 ### Exact Needle baseline
 
@@ -236,14 +236,14 @@ but Engine 5.1.7 likewise does not use it to provide a complete addressed scene
 bundle.
 
 Therefore Needle's current approach is the baseline for **local recursive
-publication and relative dependency locality**. Blendlink now improves upon it
+publication and relative dependency locality**. SceneToWeb now improves upon it
 for compiler-owned assets by recording a deterministic, exact graph and
-revalidating every declared entry before skip/publish verification. Blendlink
+revalidating every declared entry before skip/publish verification. SceneToWeb
 now also improves Needle's stable-directory deployment behavior for internally
 compiled scenes: the graph digest is the directory identity, and packed
 non-root/CDN browser cells prove the resolver and header contract. This remains
 a product-boundary improvement rather than framework ownership creep:
-Blendlink owns compilation identity and returns policy data, while the website
+SceneToWeb owns compilation identity and returns policy data, while the website
 owns deployment and response headers.
 
 ## Current implementation audit
@@ -308,7 +308,7 @@ The important implementation path is:
 | Basis transcoder JS/WASM, README, license | Concrete, exact-byte graph entries under the digest directory | Stable compatibility copies remain during migration | The graph directory versions all four together |
 | Generated manifest | Hash-enforced schema-v3 file in `genDir`; not normally a public runtime request | Not part of the static scene directory; absolute machine/source metadata also harms cross-machine reproducibility | Keep the authoritative build manifest in `genDir`; optionally publish a normalized runtime copy inside the addressed directory only after its role and canonicalization are specified |
 | Generated TypeScript and editable baked recipe | Module hash is verified; website build fingerprints bundled JavaScript; recipe remains application-owned | These are build inputs, not static scene requests, and copying them into `public/` would duplicate framework ownership | Keep outside the scene graph; their job is to point to one graph identity |
-| Audio URL and color-grade LUT URL in portable Components | Artist-authored `http(s)` locator; application loaders may own credentials/cache | No compiler-owned bytes/hash, so Blendlink cannot claim immutability or relocation | Classify as external dependencies; optional future import-to-bundle must be explicit, never inferred |
+| Audio URL and color-grade LUT URL in portable Components | Artist-authored `http(s)` locator; application loaders may own credentials/cache | No compiler-owned bytes/hash, so SceneToWeb cannot claim immutability or relocation | Classify as external dependencies; optional future import-to-bundle must be explicit, never inferred |
 | Navigation URL | Artist intent, not an asset request | Must never be rewritten as a scene asset | Explicitly excluded from graph discovery |
 
 ### Audit against the known deeper-work requirement
@@ -333,7 +333,7 @@ These invariants should hold regardless of the chosen interface:
    Basis runtime/attribution files. Embedded GLB resources are represented by
    the GLB entry, not duplicated.
 2. **One-way ownership.** Remote Component media and application loader
-   resources are explicitly external. Blendlink neither downloads nor rewrites
+   resources are explicitly external. SceneToWeb neither downloads nor rewrites
    them without a future opt-in import feature.
 3. **Path safety.** Entry paths are normalized POSIX-relative paths. Absolute
    paths, drive letters, backslashes, `.`/`..`, fragments, queries, duplicate
@@ -362,7 +362,7 @@ These invariants should hold regardless of the chosen interface:
    source, and unaddressed external URLs do not inherit that header.
 9. **CORS honesty.** Cross-origin public assets default to credential omission.
    Credentialed/custom-header loading uses an application-owned loader or
-   manager and an exact-origin CORS configuration; Blendlink never emits
+   manager and an exact-origin CORS configuration; SceneToWeb never emits
    wildcard-plus-credentials advice.
 10. **Loud verification.** Missing entries, byte/hash disagreement, an
     unexpected KTX2 requirement without Basis, manifest/schema disagreement,
@@ -378,7 +378,7 @@ The dependency classification is common to all three designs:
 - filesystem staging/rename is **local-substitutable** and already has a test
   stand-in through injected rename behavior;
 - a CDN or static host is **true external**; its headers, CORS, credentials, and
-  upload behavior require an explicit Adapter if Blendlink ever crosses that
+  upload behavior require an explicit Adapter if SceneToWeb ever crosses that
   seam;
 - Next and Vite are build-time **local-substitutable** dependencies for packed
   consumer tests, but they are not runtime asset transports.
@@ -536,7 +536,7 @@ and generated application-owned association code has no runtime asset option.
 It keeps schema v3 but requires rebuilding/reconnecting for another base.
 
 ```ts
-// blendlink.config.mjs
+// scenetoweb.config.mjs
 export default defineConfig({
   publicBase: '/portfolio/',
   scenes: [/* ... */],
@@ -556,7 +556,7 @@ must match the actual deployment and is fixed for that application build.
 **Errors.** Missing/ambiguous framework base configuration, a Next
 `basePath`/configured base disagreement, a Vite configured `base` disagreement,
 or a full CDN base without explicit CORS acknowledgement blocks `connect` or
-the production check. Blendlink must not edit `next.config.ts` or
+the production check. SceneToWeb must not edit `next.config.ts` or
 `vite.config.ts` to repair it.
 
 **Usage.** The normal caller remains only `<WorkbenchScene />` or
@@ -570,7 +570,7 @@ and deployment.
 **Dependencies and Adapters.** Next and Vite readers would be
 local-substitutable Adapters only if both are implemented and tested. Executing
 arbitrary framework config to infer values is unsafe and phase-dependent, so
-the reliable implementation should prefer explicit Blendlink config and use
+the reliable implementation should prefer explicit SceneToWeb config and use
 framework inspection only for diagnostics.
 
 **Depth, locality, and leverage.** Caller leverage is ideal for the common
@@ -591,7 +591,7 @@ the easiest user experience but should not be the only lower-level Interface.
 Design A has the best current **depth**: a small Interface hides a large,
 well-bounded implementation and gives every caller the same behavior. It
 maximizes **locality** by keeping graph discovery, rewriting, and verification
-inside Blendlink. Design B has the most expressive seam and the strongest
+inside SceneToWeb. Design B has the most expressive seam and the strongest
 future manifest model, but its Interface is too large for the demonstrated
 base-path/CDN job and forces a schema reshape. Design C makes the default
 nearly invisible but couples a relocatable artifact to one application build

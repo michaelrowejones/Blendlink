@@ -1,6 +1,6 @@
-# Blendlink
+# SceneToWeb
 
-Blendlink compiles a `.blend` into portable web scene artifacts — GLB, textures,
+SceneToWeb compiles a `.blend` into portable web scene artifacts — GLB, textures,
 a validated manifest, and typed bindings. This glossary fixes the vocabulary the
 compiler, the add-on, and the docs share. It is a glossary only: no
 implementation detail belongs here.

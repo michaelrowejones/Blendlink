@@ -235,7 +235,7 @@ export function publicationScopeRegistryDirectory(
     ?? environmentOverride
     ?? join(
       defaultCacheBase(environment),
-      'Blendlink',
+      'SceneToWeb',
       'publication-leases-v1',
     )
   return canonicalizePublicationRoot(configured)
@@ -411,7 +411,7 @@ function artistWaitFact(
   } else if (wait.metadataProblem !== undefined) {
     message = `Waiting to publish ${scope.root}; the existing lease owner metadata cannot be read (${wait.metadataProblem}).`
   } else {
-    message = `Waiting for another Blendlink operation to finish publishing ${scope.root}.`
+    message = `Waiting for another SceneToWeb operation to finish publishing ${scope.root}.`
   }
   return Object.freeze({
     scope,

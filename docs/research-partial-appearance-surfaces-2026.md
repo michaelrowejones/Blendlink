@@ -4,7 +4,7 @@ Research date: 2026-07-22
 
 ## Decision
 
-Blendlink should support an Automatic mesh whose **used** material slots divide
+SceneToWeb should support an Automatic mesh whose **used** material slots divide
 into static Appearance receivers and Realtime surfaces, but it should not split
 the authored object into public child nodes. Keep the authored Blender object as
 one glTF node and use glTF's existing mesh-primitive/material seam for final
@@ -28,7 +28,7 @@ limitation.
 
 ## Evidence status
 
-- **Inspected:** Blendlink's current object-level dynamic classification, atlas
+- **Inspected:** SceneToWeb's current object-level dynamic classification, atlas
   preparation, material rebuilding, glTF output, and Three r184 runtime binding.
 - **Inspected:** the actual Cube Diorama Appearance fixture in Blender 5.2.0 LTS
   and its current final GLB.
@@ -123,7 +123,7 @@ slots with generated unlit atlas materials and tag those materials in glTF
 This aligns with the standard transport. The glTF specification defines a mesh
 as an array of primitives and specifically identifies material assignment as a
 reason to split a mesh into primitives. Blender's exporter already constructs
-primitive indices from triangle material indices, so Blendlink does not need to
+primitive indices from triangle material indices, so SceneToWeb does not need to
 fork or reproduce that exporter. Three's `GLTFLoader` already creates one child
 mesh per primitive while keeping the glTF node transform/name/extras on their
 common group.
@@ -251,7 +251,7 @@ those extras in `Material.userData`.
 
 Runtime binding becomes material-first:
 
-1. validate and use complete material-level Blendlink metadata;
+1. validate and use complete material-level SceneToWeb metadata;
 2. on a node marked `blendlink_partial_bake`, treat an untagged material as
    Realtime rather than inheriting an ancestor atlas;
 3. otherwise retain the current object/ancestor lookup as the legacy and full-
@@ -283,7 +283,7 @@ mechanism.
 8. Realtime faces consume no atlas area and receive no atlas material or state
    swap.
 9. Realtime faces are excluded from permanent Appearance contributions. If that
-   omitted shadow/bounce matters, diagnostics name the approximation; Blendlink
+   omitted shadow/bounce matters, diagnostics name the approximation; SceneToWeb
    does not bake it and render it again at runtime.
 10. Every generated baked material is private to the complete binding identity
     `(source material, output, atlas, UV channel)`. A material cannot silently
@@ -294,7 +294,7 @@ mechanism.
     Realtime with a named reason.
 12. Default embedded maps and every external state/layer map use the same
     attested texture channel.
-13. Material metadata survives Blender export, Blendlink optimization, and
+13. Material metadata survives Blender export, SceneToWeb optimization, and
     `GLTFLoader` material cloning. Final verification checks it after all
     transforms.
 14. The Material Compiler plans only Realtime bindings on a mixed Appearance
@@ -327,7 +327,7 @@ The prototype passes only if:
 - transparent rendering, root-object lookup, visibility, sibling transform
   animation, and interaction/raycast behavior still work in Chromium;
 - disposal restores application-owned materials/textures and frees only
-  Blendlink-owned state textures.
+  SceneToWeb-owned state textures.
 
 Production coverage should then add:
 
@@ -360,7 +360,7 @@ Production coverage should then add:
   `C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2`
   (the retained GLB reports generator `Khronos glTF Blender I/O v5.2.39`).
 - Installed Three inspected at `node_modules/three`, version `0.184.0`.
-- Current Blendlink source anchors:
+- Current SceneToWeb source anchors:
   [`procedural.py`](../packages/blender-addon/procedural.py),
   [`bakelib.py`](../packages/blendlink/blender/bakelib.py),
   [`export_scene.py`](../packages/blendlink/blender/export_scene.py), and

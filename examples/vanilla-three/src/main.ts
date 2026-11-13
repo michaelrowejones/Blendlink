@@ -1,14 +1,14 @@
-// A complete minimal Blendlink consumer: the website owns the renderer,
+// A complete minimal SceneToWeb consumer: the website owns the renderer,
 // canvas, and frame loop; the generated module owns scene installation,
 // presentation camera, states, components, and playback.
-// `src/blendlink/HeroScene.ts` and `src/generated/` are produced by
-// `blendlink connect` (or the CI gate) — see examples/README.md.
+// `src/scenetoweb/HeroScene.ts` and `src/generated/` are produced by
+// `scenetoweb connect` (or the CI gate) — see examples/README.md.
 import * as THREE from 'three'
 import { WebGPURenderer } from 'three/webgpu'
-import { installHeroScene } from './blendlink/HeroScene'
+import { installHeroScene } from './scenetoweb/HeroScene'
 
 // WebGPURenderer renders on native WebGPU where available and falls back
-// to WebGL2 on its own. On the WebGPU family, Blendlink's installer also
+// to WebGL2 on its own. On the WebGPU family, SceneToWeb's installer also
 // applies any published TSL material programs automatically; a classic
 // THREE.WebGLRenderer remains fully supported and renders the shipped
 // baked carriers.
@@ -28,7 +28,7 @@ window.addEventListener('resize', () => {
 const clock = new THREE.Clock()
 renderer.setAnimationLoop(() => {
   const delta = clock.getDelta()
-  // The only two per-frame calls Blendlink needs: update() drives authored
+  // The only two per-frame calls SceneToWeb needs: update() drives authored
   // animation/controls/LODs, render() selects the artist-authored
   // post-processing chain or plain renderer.render().
   installed.update(delta)

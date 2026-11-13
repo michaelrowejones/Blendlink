@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-"""Viewport guides: draw what Blendlink sees and what authored choices cost.
+"""Viewport guides: draw what SceneToWeb sees and what authored choices cost.
 
 Collider proxies as green wireframes, sockets as RGB axes, hotspots and audio
 anchors as colored crosses, plus cached component ranges, reflection influence,
@@ -229,7 +229,7 @@ def _draw_pixel():
     if hidden > 0:
         blf.position(font_id, 12.0, 12.0, 0.0)
         blf.color(font_id, 1.0, 1.0, 1.0, 0.7)
-        blf.draw(font_id, f"+{hidden} more Blendlink label(s)")
+        blf.draw(font_id, f"+{hidden} more SceneToWeb label(s)")
 
 
 # Bounds for the label pass. Chosen so a dense scene stays readable rather

@@ -73,15 +73,7 @@ def _unpack(value, expected):
 
 def _apply(layer, coordinates, pins):
     layer.data.foreach_set('uv', coordinates)
-    modern = getattr(layer, 'pin', None)
-    if modern is not None:
-        if len(modern) == 0 and any(pins):
-            layer.data[0].pin_uv = True  # Allocate Blender's optional pin attribute.
-        if len(layer.pin):
-            layer.pin.foreach_set('value', pins)
-    else:
-        for item, pin in zip(layer.data, pins):
-            item.pin_uv = bool(pin)
+    bakelib.set_uv_layer_pin_mask(layer, pins)
 
 
 def _boolean_attributes(mesh):

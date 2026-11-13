@@ -120,6 +120,23 @@ describe('scene output identity', () => {
 })
 
 describe('config loading', () => {
+  it('prefers the canonical config and preserves legacy fallback discovery', async () => {
+    const root = mkdtempSync(resolve(tmpdir(), 'scenetoweb-config-migration-'))
+    const legacy = resolve(root, 'blendlink.config.mjs')
+    const canonical = resolve(root, 'scenetoweb.config.mjs')
+    try {
+      writeFileSync(legacy, "export default { scenes: [{ file: 'legacy.blend', external: true }] }\n")
+      expect((await loadConfig(root)).configSource?.path).toBe(legacy)
+      writeFileSync(canonical, "export default { scenes: [{ file: 'modern.blend', external: true }] }\n")
+      const loaded = await loadConfig(root)
+      expect(loaded.configSource?.path).toBe(canonical)
+      expect(loaded.scenes[0]?.name).toBe('modern')
+      expect(readFileSync(legacy, 'utf8')).toContain('legacy.blend')
+    } finally {
+      rmSync(root, { recursive: true, force: true })
+    }
+  })
+
   it('reloads changed config source in the same process', async () => {
     const root = mkdtempSync(resolve(tmpdir(), 'blendlink-config-reload-'))
     const path = resolve(root, 'blendlink.config.mjs')

@@ -10,7 +10,7 @@ The smallest honest beta now ships a **shared, pure compatibility classifier**
 at the exact glTF JSON seam, with two thin adapters:
 
 1. Final compilation/type generation classifies the exact GLB bytes against
-   Blendlink's package-owned Three runtime profile before publication.
+   SceneToWeb's package-owned Three runtime profile before publication.
 2. The Three adapter classifies `loaded.parser.json` again against the exact
    r184 built-ins, configured decoders, and any **explicit application
    capability attestation that is also present on the concrete parser** before
@@ -45,7 +45,7 @@ The Khronos registry says `extensionsRequired` exists so an engine can decide
 whether it can properly load an asset without walking every extension object.
 The animation-pointer specification deliberately omits `target.node`; a loader
 without the extension therefore ignores that channel. That is conforming
-fallback, but it is not acceptable when Blendlink promises to transport the
+fallback, but it is not acceptable when SceneToWeb promises to transport the
 artist's animated material.
 
 ## Exact Three r184 behavior
@@ -81,10 +81,10 @@ installed directly by the `extensionsUsed` switch. The list below means
 
 | Extension | Required configuration | r184 failure behavior |
 | --- | --- | --- |
-| `KHR_draco_mesh_compression` | `setDRACOLoader()` | Its direct extension constructor throws whenever the extension is used and no DRACO loader exists. Blendlink's current high-level installer does not configure DRACO. |
-| `KHR_texture_basisu` | `setKTX2Loader()` | A required texture throws when KTX2 is not configured; an optional extension returns to its core fallback. Blendlink auto-configures its owned KTX2 path when the descriptor requires it. |
-| `EXT_meshopt_compression` | supported `setMeshoptDecoder()` value | A required compressed view throws when the decoder is absent/unsupported; an optional extension returns to fallback data. Blendlink configures this path. |
-| `KHR_meshopt_compression` | same Meshopt decoder | r184 registers a second plugin under the KHR name. Blendlink currently derives `requiresMeshopt` only from the EXT name, so KHR-name support needs a matching descriptor/typegen test before it is promised. |
+| `KHR_draco_mesh_compression` | `setDRACOLoader()` | Its direct extension constructor throws whenever the extension is used and no DRACO loader exists. SceneToWeb's current high-level installer does not configure DRACO. |
+| `KHR_texture_basisu` | `setKTX2Loader()` | A required texture throws when KTX2 is not configured; an optional extension returns to its core fallback. SceneToWeb auto-configures its owned KTX2 path when the descriptor requires it. |
+| `EXT_meshopt_compression` | supported `setMeshoptDecoder()` value | A required compressed view throws when the decoder is absent/unsupported; an optional extension returns to fallback data. SceneToWeb configures this path. |
+| `KHR_meshopt_compression` | same Meshopt decoder | r184 registers a second plugin under the KHR name. SceneToWeb currently derives `requiresMeshopt` only from the EXT name, so KHR-name support needs a matching descriptor/typegen test before it is promised. |
 
 `EXT_texture_avif` and `EXT_texture_webp` are registered handlers, but r184
 does not use a compile-time browser feature flag in these classes. Successful
@@ -113,7 +113,7 @@ Three retains two core transform tracks while silently dropping its optional
 material-color pointer track. A required-extension allowlist alone cannot
 detect that loss.
 
-## Current Blendlink seams
+## Current SceneToWeb seams
 
 The implementation uses the existing publication and detached-preparation
 transactions:
@@ -164,7 +164,7 @@ Problems:
 - a profile verified from one Three revision cannot truthfully bless another.
 
 Reject as the complete design. A static profile remains useful as one adapter
-for Blendlink's package-owned beta runtime. Blendlink resolved the version
+for SceneToWeb's package-owned beta runtime. SceneToWeb resolved the version
 precondition by narrowing the executable `three` peer to exact `0.184.0`.
 Generated projects now default to that exact runtime and reject ranges that
 escape r184. The declaration-only `@types/three` peer permits
@@ -287,7 +287,7 @@ the same policy seam. Merely finding `KHR_animation_pointer` in
 1. `readGlbJson()` is the strict raw-GLB JSON reader shared by typegen and the
    compiled-scene audit.
 2. `generateSceneModule()` classifies before `NodeIO.readBinary()`. This
-   covers the standalone external `blendlink typegen` path and prevents an
+   covers the standalone external `scenetoweb typegen` path and prevents an
    unsupported extension from disappearing inside a library that does not
    implement it.
 3. `auditCompiledSceneArtifact()` classifies the exact fully transformed
@@ -358,7 +358,7 @@ compiled r184 profile remains closed.
 The refreshed consolidated focused command passed 42/42 tests on 2026-07-25:
 
 ```powershell
-npm run test --workspace blendlink -- src/gltfRuntimeCompatibility.test.ts src/compiledSceneAudit.test.ts src/runtimeCompatibilityTypegen.test.ts src/threeRuntime.atomic.test.ts src/reactThreeFiber.test.ts src/syncRenderableArtifact.integration.test.ts
+npm run test --workspace scenetoweb -- src/gltfRuntimeCompatibility.test.ts src/compiledSceneAudit.test.ts src/runtimeCompatibilityTypegen.test.ts src/threeRuntime.atomic.test.ts src/reactThreeFiber.test.ts src/syncRenderableArtifact.integration.test.ts
 ```
 
 1. Package-owned r184 KTX2 and Meshopt scenes retain their existing successful
@@ -379,7 +379,7 @@ experiment-local allowlist. The Chrome gate passed on 2026-07-25 with the
 hash-pinned 20-asset / 26-file official corpus:
 
 ```powershell
-npm run build --workspace blendlink
+npm run build --workspace scenetoweb
 node experiments/khronos-runtime-corpus/run.mjs --browser
 ```
 
@@ -413,11 +413,11 @@ Needle Engine 5.1.4 asynchronously imports
 `GLTFAnimationPointerExtension`, and installs its pointer resolver. The pinned
 plugin implements `loadAnimation()`, recognizes pointer targets, maps material,
 node, punctual-light, and camera properties, and creates Three keyframe
-tracks. That is a real implementation path absent from Blendlink.
+tracks. That is a real implementation path absent from SceneToWeb.
 
 The source inspection does not by itself prove every plugin mapping in a
-browser. Blendlink should continue to record pointer playback as a Gap until a
-coherent Needle/Blendlink differential runs. Loud refusal is an Improvement
+browser. SceneToWeb should continue to record pointer playback as a Gap until a
+coherent Needle/SceneToWeb differential runs. Loud refusal is an Improvement
 over raw core Three's optimistic partial result, not parity with Needle.
 
 ## Release judgment
@@ -429,7 +429,7 @@ the exact production classifier running against the official corpus in
 Chromium before raw loader construction. The named last-known-good
 capability-failure rollback and private-loader cleanup/status cells also pass.
 
-**Explicit Gap, not silently accepted:** Blendlink does not package pointer
+**Explicit Gap, not silently accepted:** SceneToWeb does not package pointer
 playback or browser-attest third-party plugins. The explicit application
 capability seam is shipped, but the application owns the plugin and evidence.
 Visual parity for every built-in material extension remains separate work.

@@ -58,6 +58,9 @@ except ModuleNotFoundError:
     import web_runtime_limits  # noqa: E402
     import weblights  # noqa: E402
 
+import camera_axes  # noqa: E402
+import geometry_export  # noqa: E402
+
 
 def artifact_filename_token(value: str) -> str:
     """Cross-platform, traversal-proof token for an artist-facing label.
@@ -245,7 +248,7 @@ def validate_website_surface_components(recipe: dict, scene) -> None:
         if not bool(obj.get("blendlink_dynamic", False)):
             raise SystemExit(
                 f"Website Surface {name!r} on {obj.name!r} must be Realtime; "
-                "choose Realtime in Blendlink's Object controls"
+                "choose Realtime in SceneToWeb's Object controls"
             )
         if len(obj.data.materials) != 1 or obj.data.materials[0] is None:
             raise SystemExit(
@@ -278,7 +281,7 @@ def resolve_scene_recipe(config_settings: dict) -> tuple[dict, dict | None]:
     if raw is None:
         return config_settings, None
     if not isinstance(raw, str):
-        raise SystemExit(f"{RECIPE_PROPERTY} must be JSON text; run Set Up Blendlink Scene again")
+        raise SystemExit(f"{RECIPE_PROPERTY} must be JSON text; run Set Up SceneToWeb Scene again")
     try:
         recipe = json.loads(raw)
     except (TypeError, json.JSONDecodeError) as error:
@@ -689,7 +692,7 @@ def resolve_scene_recipe(config_settings: dict) -> tuple[dict, dict | None]:
         effective["mode"] = "standard"
         effective["_presentationWarnings"] = [
             "Realtime-only Hybrid scene: every published render mesh is set to "
-            "Realtime (or otherwise excluded from baking), so Blendlink skipped "
+            "Realtime (or otherwise excluded from baking), so SceneToWeb skipped "
             "atlas baking and exported the live materials."
         ]
         return effective, recipe
@@ -758,7 +761,7 @@ def _assert_environment_encoding(prefix: bytes, image_name: str, extension: str)
             "Save the intended image as Radiance HDR or OpenEXR, reload that saved file "
             "as an image in Blender, select it in HDR Environment, and pack it again if needed. "
             "Generated images can pack as PNG even when their filename ends in .hdr. "
-            "Blendlink will not reinterpret or color-convert these bytes."
+            "SceneToWeb will not reinterpret or color-convert these bytes."
         )
 
 
@@ -1359,16 +1362,16 @@ def evaluated_non_bezier_curve_points(
         )
         data_name = getattr(getattr(obj, "data", None), "name", "<unnamed>")
         raise SystemExit(
-            f"Blendlink cannot compile render-visible Curve {obj.name!r} "
+            f"SceneToWeb cannot compile render-visible Curve {obj.name!r} "
             f"(data {data_name!r}, spline type {spline.type}; source library "
-            f"'{library_path}'): Blender returned no evaluated Mesh. Blendlink "
+            f"'{library_path}'): Blender returned no evaluated Mesh. SceneToWeb "
             "will not substitute raw spline points because that would discard "
             "bevels, Geometry Nodes, modifiers, or other evaluated geometry "
             "and misrepresent the artist's scene. If this Curve is "
             "intentionally empty, disable it for renders. Otherwise, repair "
             "the modifier or linked data so it evaluates, make a local "
             "website-owned copy or Library Override, or convert a "
-            "website-owned copy to Mesh, then retry. Blendlink did not modify "
+            "website-owned copy to Mesh, then retry. SceneToWeb did not modify "
             "the linked source."
         )
     try:
@@ -1462,12 +1465,34 @@ def collect_sidecar(
             compression = None
         textures.append({
             "name": image.name,
+            # Stock exporter revisions may name a linked image from its file
+            # rather than its Blender datablock. Preserve both identities.
+            "aliases": list(dict.fromkeys([
+                os.path.basename(bpy.path.abspath(image.filepath)),
+                os.path.splitext(os.path.basename(bpy.path.abspath(image.filepath)))[0],
+            ])) if image.filepath else [],
             "width": width,
             "height": height,
             "colorSpace": image.colorspace_settings.name,
             **({"maxSize": int(max_size)} if isinstance(max_size, (int, float)) and max_size > 0 else {}),
             **({"compression": compression} if compression else {}),
         })
+
+    def image_keys(record):
+        return {
+            re.sub(r"\.(?:png|jpe?g|webp|avif|ktx2)$", "", name.lower())
+            for name in [record["name"], *record.get("aliases", [])] if name
+        }
+    for texture in textures:
+        if "maxSize" not in texture and "compression" not in texture:
+            continue
+        collisions = [other["name"] for other in textures
+                      if other is not texture and image_keys(texture) & image_keys(other)]
+        if collisions:
+            raise RuntimeError(
+                f'Image policy for "{texture["name"]}" is ambiguous with {", ".join(collisions)}. '
+                'Give these images distinct datablock names and filenames before publishing.'
+            )
 
     camera_recipe = recipe.get("camera") if isinstance(recipe, dict) else None
     fixed_camera = bool(
@@ -1477,7 +1502,7 @@ def collect_sidecar(
         and camera_recipe.get("objectId") == scene.camera.get("blendlink_id")
     )
     light_analysis = weblights.analyze_scene(
-        scene, view_layer=bpy.context.view_layer,
+        scene, view_layer=bpy.context.view_layer, source_version=bpy.app.version[:3],
     )
     return {
         "fps": fps,
@@ -2104,7 +2129,7 @@ def lightmap_uv_channel(obj) -> int:
     """Return the glTF TEXCOORD index of the derived atlas UV.
 
     Blender's glTF exporter maps UV-layer order directly to ``TEXCOORD_n``.
-    TEXCOORD_0 remains the authored material UV; Blendlink supports a lightmap
+    TEXCOORD_0 remains the authored material UV; SceneToWeb supports a lightmap
     on channels 1..3. Blocking here is deliberately earlier than Cycles so an
     artist never waits through a bake that the runtime cannot bind.
     """
@@ -2118,7 +2143,7 @@ def lightmap_uv_channel(obj) -> int:
         )
     if index > 3:
         raise RuntimeError(
-            f"{obj.name}: lightmap UV would export as TEXCOORD_{index}, but Blendlink "
+            f"{obj.name}: lightmap UV would export as TEXCOORD_{index}, but SceneToWeb "
             "supports lightmap channels 1..3; remove or consolidate unused UV maps "
             "before syncing"
         )
@@ -2156,7 +2181,7 @@ def light_group_output_issue(bake_outputs: dict, light_group_names) -> str | Non
     return (
         "Additive Light Groups cannot target Lighting atlas(es) "
         f"{', '.join(lighting_atlases)}: Three.js lightMap composition does not "
-        "support Blendlink's additive bounced layers. Switch those atlases to "
+        "support SceneToWeb's additive bounced layers. Switch those atlases to "
         "Bake Appearance or remove Light Groups. Affected Light Groups: "
         + ", ".join(names)
     )
@@ -2499,7 +2524,7 @@ def bake_prepare_geometry(bake: dict, supersample: int = 1, *, cache_path=None) 
             layout["_warnings"].append(
                 f"{repair['object']}: atlas packing collapsed "
                 f"{repair['triangleCount']} evaluated surface triangle(s) at "
-                f"float32 UV precision; Blendlink {action}. {preserved}"
+                f"float32 UV precision; SceneToWeb {action}. {preserved}"
             )
     layout["_errors"].extend(packed_atlas_coverage_errors(layout))
     if cache_path and cache_key:
@@ -2522,7 +2547,7 @@ def packed_atlas_coverage_errors(layout: dict) -> list[str]:
                 f"at {entry['size']}px with {entry['margin']}px artist padding "
                 "on both receiver islands plus the 4px bake guard; lower "
                 "Padding or increase Resolution. "
-                "Blendlink refused to publish an empty atlas"
+                "SceneToWeb refused to publish an empty atlas"
             )
     return errors
 
@@ -4809,7 +4834,7 @@ def promoted_bone_parents(scene, *, view_layer=None, export_kwargs=None,
                 for armature, bone, obj_name in promoted[:8]
             )
             + (f" (+{len(promoted) - 8} more)" if len(promoted) > 8 else "")
-            + ". Blendlink exports deforming joints only; the rig itself is "
+            + ". SceneToWeb exports deforming joints only; the rig itself is "
             "unchanged."
         )
         yield
@@ -4824,8 +4849,8 @@ def bone_parented_export_audit(scene, node_names, *, view_layer=None,
     deform-filtered root set. A control bone with no deforming ancestor
     therefore deletes the object and its entire subtree, with no log line and
     no error - and on a rig that is exactly where an artist puts sockets,
-    hotspots, and props. Blendlink owns ``export_def_bones``, so this is
-    Blendlink's loss to name.
+    hotspots, and props. SceneToWeb owns ``export_def_bones``, so this is
+    SceneToWeb's loss to name.
 
     Scope is deliberately narrow. This does not assert that every Blender
     object appears as a node: realized renderables, instance sources, and
@@ -4853,7 +4878,7 @@ def bone_parented_export_audit(scene, node_names, *, view_layer=None,
     if not missing:
         return
     raise RuntimeError(
-        "finished GLB is missing objects parented to bones. Blendlink exports "
+        "finished GLB is missing objects parented to bones. SceneToWeb exports "
         "deforming joints only, and their parent bone has no deforming "
         "ancestor, so Blender's exporter dropped each object together with "
         "every child beneath it:\n  - "
@@ -4911,7 +4936,7 @@ def _grease_pencil_stroke_evidence(obj) -> dict:
 
     Blender 4.2's legacy Grease Pencil frames expose ``strokes`` directly;
     current Blender frames expose them through ``frame.drawing``.  Supporting
-    both inspection shapes keeps the refusal truthful across Blendlink's
+    both inspection shapes keeps the refusal truthful across SceneToWeb's
     Blender compatibility floor.  An unfamiliar nonempty representation is a
     hard inspection error rather than an excuse to approve lossy export.
     """
@@ -5126,7 +5151,10 @@ def realizable_renderable_plan(objects) -> dict:
             )
             entry = {**issue, "kind": "greasePencil",
                      "estimatedTriangles": triangles}
-            if triangles <= bakelib.MAX_REALIZED_TRIANGLES:
+            if issue.get("objectType") == "GPENCIL":
+                entry["refusalReason"] = "legacy-grease-pencil"
+                refuse.append(entry)
+            elif triangles <= bakelib.MAX_REALIZED_TRIANGLES:
                 realize.append(entry)
             else:
                 refuse.append(entry)
@@ -5231,6 +5259,12 @@ def enforce_supported_renderable_transport(objects) -> None:
             "the scene blocked until a dedicated Grease Pencil adapter can prove "
             "strokes, fills, opacity, depth order, and animation."
         )
+        if any(item.get("refusalReason") == "legacy-grease-pencil" for item in grease_pencil):
+            details.append(
+                "  - Legacy GPENCIL stroke data has no native Grease Pencil "
+                "to Curves converter in Blender4.2; convert it to supported "
+                "geometry before publishing."
+            )
     if hair_curves:
         total_curves = sum(item["evaluatedCurves"] for item in hair_curves)
         total_points = sum(item["evaluatedPoints"] for item in hair_curves)
@@ -5249,7 +5283,10 @@ def enforce_supported_renderable_transport(objects) -> None:
             "dedicated Hair Curves adapter can prove evaluated strands, radii, "
             "materials, Geometry Nodes, and animation."
         )
-    budgeted = [item for item in issues if item.get("estimatedTriangles")]
+    budgeted = [
+        item for item in issues if item.get("estimatedTriangles")
+        and item.get("refusalReason") != "legacy-grease-pencil"
+    ]
     if budgeted:
         examples = "; ".join(
             f"{item['object']!r}"
@@ -5510,7 +5547,7 @@ def enforce_export_render_visibility(
                 for item in surviving_occurrences
             })
             raise RuntimeError(
-                "Blendlink cannot preserve mixed direct/Collection Instance "
+                "SceneToWeb cannot preserve mixed direct/Collection Instance "
                 f"render visibility for {obj.name!r}: Blender's glTF exporter "
                 "filters this source object as one unit and would publish an "
                 "extra or missing occurrence. Make all occurrences consistently "
@@ -5613,7 +5650,7 @@ def _blender_default_gltf_material() -> dict:
     downstream inspection; it is not authored back into the .blend.
     """
     return {
-        "name": "Blendlink Blender Default",
+        "name": "SceneToWeb Blender Default",
         "doubleSided": True,
         "pbrMetallicRoughness": {
             "baseColorFactor": [0.8, 0.8, 0.8, 1.0],
@@ -5664,7 +5701,7 @@ def normalize_materialless_glb(path: str) -> dict:
     elif materials[generated_index] != generated:
         raise ValueError(
             f"cannot normalize material-less GLB {path!r}: its existing "
-            "Blendlink default material does not match the exporter contract"
+            "SceneToWeb default material does not match the exporter contract"
         )
 
     labels = []
@@ -5805,7 +5842,7 @@ def normalize_light_shadow_extras_glb(
     for obj in export_objects:
         if getattr(obj, "type", None) != "LIGHT":
             continue
-        plan = weblights.plan_rect_area_light(obj, scene)
+        plan = weblights.plan_rect_area_light(obj, scene, source_version=bpy.app.version[:3])
         if plan.refusals:
             details = "; ".join(issue.detail for issue in plan.refusals)
             raise ValueError(
@@ -5997,7 +6034,7 @@ def bevel_uv_reproducibility_warnings(
         "Blender 5.2 Bevel UV reproducibility warning: evaluated UV floats can "
         "vary microscopically across unchanged forced rebuilds, changing split-vertex "
         "counts and exact GLB/cache hashes even when topology and rendered triangles "
-        "stay stable. Blendlink preserves authored UV bytes instead of silently "
+        "stay stable. SceneToWeb preserves authored UV bytes instead of silently "
         "rounding them; prefer ordinary no-op compile caching. Affected exported "
         f"meshes: {preview}" + (f" (+{remainder} more)" if remainder > 0 else "")
     ]
@@ -6029,7 +6066,7 @@ def gltf_export_contract(out_path: str, settings: dict) -> tuple[dict, list[str]
     )
     if missing_evaluated_material:
         raise RuntimeError(
-            "This Blender glTF exporter cannot enforce Blendlink's "
+            "This Blender glTF exporter cannot enforce SceneToWeb's "
             "evaluated-material contract; missing exporter option(s): "
             + ", ".join(missing_evaluated_material)
         )
@@ -6039,8 +6076,8 @@ def gltf_export_contract(out_path: str, settings: dict) -> tuple[dict, list[str]
     )
     if conflicting_evaluated_material:
         raise ValueError(
-            "exporterOverrides cannot replace Blendlink's evaluated-material "
-            f"contract ({', '.join(conflicting_evaluated_material)}). Blendlink "
+            "exporterOverrides cannot replace SceneToWeb's evaluated-material "
+            f"contract ({', '.join(conflicting_evaluated_material)}). SceneToWeb "
             "owns applied-modifier and skin evaluation so material preflight "
             "matches the stock GLB."
         )
@@ -6066,7 +6103,7 @@ def gltf_export_contract(out_path: str, settings: dict) -> tuple[dict, list[str]
     missing_joint_budget = sorted(set(joint_budget_owned) - supported)
     if missing_joint_budget:
         raise RuntimeError(
-            "This Blender glTF exporter cannot enforce Blendlink's joint-budget "
+            "This Blender glTF exporter cannot enforce SceneToWeb's joint-budget "
             "contract; missing exporter option(s): "
             + ", ".join(missing_joint_budget)
             + ". Without it a control rig exports every mechanism bone and the "
@@ -6079,8 +6116,8 @@ def gltf_export_contract(out_path: str, settings: dict) -> tuple[dict, list[str]
     )
     if conflicting_joint_budget:
         raise ValueError(
-            "exporterOverrides cannot replace Blendlink's joint-budget contract "
-            f"({', '.join(conflicting_joint_budget)}). Blendlink owns deform-only "
+            "exporterOverrides cannot replace SceneToWeb's joint-budget contract "
+            f"({', '.join(conflicting_joint_budget)}). SceneToWeb owns deform-only "
             "joint export and animation force-sampling together, because Blender "
             "silently disables deform-only export when force sampling is off."
         )
@@ -6151,7 +6188,7 @@ def apply_material_exporter_contract(material_plan, export_kwargs: dict) -> bool
 def enforce_pointer_animation_policy(
     settings: dict, issues: list[dict], frame: float,
 ) -> list[str]:
-    """Allow a truthful still only in Blendlink's private authoring preview.
+    """Allow a truthful still only in SceneToWeb's private authoring preview.
 
     The stock glTF/Three path exports the evaluated value but cannot play
     KHR_animation_pointer.  Preview Studio may therefore show that current
@@ -6441,7 +6478,7 @@ def main() -> None:
                 )
                 warnings.append(
                     f"material {material.get('material', 'unnamed')!r}: explicit "
-                    f"Blendlink Web Color will compile through "
+                    f"SceneToWeb Web Color will compile through "
                     f"{compilation.get('transport', 'stock glTF')} as a selected field; "
                     f"its website response is {surface_response}. Exact downstream "
                     "Shader-to-RGB or AO shading and authored shadow appearance "
@@ -6534,7 +6571,7 @@ def main() -> None:
             "Geometry Fidelity blocked:\n  - " + "\n  - ".join(
                 f'{item["object"]}: {item["reason"]}'
                 + (
-                    "\n    Blendlink tried to lower this to skin weights and "
+                    "\n    SceneToWeb tried to lower this to skin weights and "
                     f'could not: {attempted[item["object"]]}'
                     if item["object"] in attempted else ""
                 )
@@ -6626,7 +6663,20 @@ def main() -> None:
                 )
                 stamped_random.append(stamped_obj)
             try:
-                return bpy.ops.export_scene.gltf(**export_kwargs)
+                import tangent_ir
+                import tangent_export
+                tangent_bindings=tangent_ir.export_bindings(material_plan)
+                if tangent_bindings:
+                    if (settings.get('exporterOverrides') or {}).get('export_tangents') is False:
+                        raise ValueError('Native UV Tangent programs require export_tangents; exporterOverrides cannot disable their exact frame')
+                    export_kwargs['export_tangents']=True
+                with geometry_export.exact_normals(material_plan),tangent_export.exact_tangents(tangent_bindings):
+                    result = bpy.ops.export_scene.gltf(**export_kwargs)
+                if "FINISHED" in result:
+                    camera_axes.canonicalize_camera_axes(
+                        filepath, export_yup=export_kwargs.get("export_yup", True),
+                    )
+                return result
             finally:
                 for stamped_obj in stamped_random:
                     try:
@@ -6671,6 +6721,7 @@ def main() -> None:
                 emit_pipeline,
                 emit_replaces_mesh_data=(settings.get("mode") == "baked"),
                 preserve_custom_attributes=preserve_custom_attributes,
+                object_space="gltf-y-up" if kwargs.get("export_yup", True) else "blender-z-up",
             )
         else:
             emit_pipeline()
@@ -6749,6 +6800,7 @@ def main() -> None:
         )
     sidecar["lightDiagnostics"] = weblights.analyze_scene(
         bpy.context.scene,
+        source_version=bpy.app.version[:3],
         published_object_names=published_light_names,
         published_source_objects=published_light_objects,
         published_rect_area_objects=published_rect_area_objects,

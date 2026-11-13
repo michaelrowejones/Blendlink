@@ -45,7 +45,7 @@ scheduling:
 
 > The acceptance evidence for generated progressive meshes must be
 > **self-standing**, not comparative. Determinism, decoded geometry gates,
-> refusal coverage, and same-camera Blendlink-versus-Blendlink bytes and
+> refusal coverage, and same-camera SceneToWeb-versus-SceneToWeb bytes and
 > pixels are the whole case. That is a genuinely weaker claim than parity,
 > and the ledger must say so as a *recorded constraint*, not as a pending
 > task.
@@ -57,19 +57,19 @@ differential is merely unbuilt; here it is unavailable.
 
 **One design divergence is forced and is the largest in this document.**
 Needle embeds the *simplified* mesh and treats full detail as the progressive
-upgrade. Blendlink must invert that: embed **Final**, publish tiers as opt-in
+upgrade. SceneToWeb must invert that: embed **Final**, publish tiers as opt-in
 **downgrades**. The reason is measured, not aesthetic — the atlas-tier
 dogfood proved that implicit DPR-1 selection could halve Wall from 222.7 to
 about 111.35 px/m, and the conclusion written into the ledger is that a
 future recommendation "may improve `adaptive`, but cannot silently weaken
 Final" (`docs/FEATURE_PARITY.md:152`). Copying Needle's artifact shape would
-make every Blendlink scene ship degraded geometry by default. So "parity"
+make every SceneToWeb scene ship degraded geometry by default. So "parity"
 here can never mean "same artifact shape", and the ledger row should say
 that too.
 
 ---
 
-## 2. What Blendlink already has
+## 2. What SceneToWeb already has
 
 ### 2.1 The selector exists and is ownership-safe
 
@@ -239,7 +239,7 @@ throw on an unindexed one.** `dist/index.js` reads
 `const srcIndices = prim.getIndices(); let indicesArray = srcIndices.getArray()`
 with no null check. The document-level `simplify()` transform gets away with
 it because it runs `await document.transform(weld({ overwrite: false }))`
-first. Blendlink's Final GLB is normally welded at `optimizer.ts:963`
+first. SceneToWeb's Final GLB is normally welded at `optimizer.ts:963`
 (`weld({ overwrite: true })`) — but weld is a *refusable* pass with two
 documented refusal paths (`optimizer.ts:954` for
 `KHR_mesh_primitive_restart`, `:957` for an invalid primitive). A tier
@@ -518,7 +518,7 @@ simplifies to zero rendered vertices, disposes the owning mesh when its last
 primitive goes, and only `logger.warn`s about primitives skipped for
 unsupported draw mode. All three are silent data loss and all three violate
 the repo's loud-refusal rule. Drive `simplifyPrimitive`, or the raw
-`MeshoptSimplifier`, under Blendlink's own refusal policy.
+`MeshoptSimplifier`, under SceneToWeb's own refusal policy.
 
 **Opt-in.** Add `meshTiers` to `OptimizationRecipe`
 (`sceneRecipe.ts:83`, interface at :205) as an authored array of ratios or
@@ -596,7 +596,7 @@ the bake plan (`cli.ts:697-717`): per mesh, the full triangle count, each
 tier's triangle count and bytes, the density at which each tier activates in
 the same **px/m × distance** unit the plan already prints, and every refusal
 reason verbatim. A quality reduction that is not visible in
-`blendlink plan` / `inspect` output does not ship.
+`scenetoweb plan` / `inspect` output does not ship.
 
 **Evidence gates.**
 
@@ -757,7 +757,7 @@ than a rewrite.
 
 - **The Needle differential, permanently.** Build pipeline 3.0.0 is CLI-only
   and JWT-gated. Determinism plus decoded gates plus same-camera
-  Blendlink-versus-Blendlink evidence is a *weaker* claim than parity and
+  SceneToWeb-versus-SceneToWeb evidence is a *weaker* claim than parity and
   must be labelled as such in the ledger, every time.
 - **The gutter-crossing number.** Everything in §4.1 is currently a reading
   of `meshoptimizer/README.md`. It is unproven on this corpus.

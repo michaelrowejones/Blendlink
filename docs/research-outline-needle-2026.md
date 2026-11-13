@@ -1,8 +1,8 @@
-# Outline handling: installed Needle, Three.js, and Blendlink
+# Outline handling: installed Needle, Three.js, and SceneToWeb
 
 **Date:** 2026-07-21
 **Question:** What does the installed Needle Engine stack actually provide for
-outlines, and which evidenced design should Blendlink adopt?
+outlines, and which evidenced design should SceneToWeb adopt?
 **Scope:** Research and design only. No runtime, add-on, manifest, or dogfood
 implementation was changed for this note.
 
@@ -16,13 +16,13 @@ maps those values to a `three-mesh-ui` border on a sibling `Graphic`. The
 official current component catalog also describes it only as “Add an outline
 effect to UI elements.” [N1] [N2] [Needle component catalog][needle-components]
 
-Needle therefore provides no 3D outline implementation for Blendlink to copy.
+Needle therefore provides no 3D outline implementation for SceneToWeb to copy.
 The useful precedent is narrower: a small artist interface, one coordinated
 postprocessing stack, lazy loading, explicit enable/disable/dispose lifecycle,
 and quality controls that can reduce MSAA or device pixel ratio. Those are host
 and UX ideas, not an outline algorithm. [N3] [N4]
 
-Blendlink's current `blendlink.outline` is a more ambitious 3D scene effect,
+SceneToWeb's current `blendlink.outline` is a more ambitious 3D scene effect,
 implemented with pmndrs `OutlineEffect`. Its lifecycle and dark-outline blend
 mode are sound, but its present target semantics do not match the selected-
 object algorithm underneath:
@@ -52,7 +52,7 @@ The recommended product model is to keep three distinct meanings separate:
 Do not expose pmndrs `Selection`, layer numbers, render targets, or composer
 ordering to applications. A package-owned outline module should present one
 small intent interface and keep WebGL selective, WebGL scene-line, and future
-TSL adapters behind its seam. That preserves Blendlink's application-owned
+TSL adapters behind its seam. That preserves SceneToWeb's application-owned
 Canvas and renderer while concentrating mutation, invalidation, quality, and
 cleanup in one implementation.
 
@@ -64,9 +64,9 @@ cleanup in one implementation.
 | Needle Engine | 5.1.7 | installed experimental package [N1] |
 | Needle Three fork | 0.169.19 | installed nested package [N1] |
 | Needle pmndrs postprocessing | 6.39.0 | installed nested package [N1] |
-| Blendlink | 0.8.0 | package metadata [B1] |
-| Blendlink Three development version | 0.184.0 | installed package [B1] |
-| Blendlink pmndrs postprocessing | 6.39.3 | installed package [B1] |
+| SceneToWeb | 0.8.0 | package metadata [B1] |
+| SceneToWeb Three development version | 0.184.0 | installed package [B1] |
+| SceneToWeb pmndrs postprocessing | 6.39.3 | installed package [B1] |
 
 Official web documentation can move ahead of these installations. Claims about
 Needle behavior below use the installed source as the implementation of record;
@@ -130,10 +130,10 @@ adaptive resolution may lower DPR when performance drops.
 **Inference:** a project-specific Needle component could create pmndrs
 `OutlineEffect` through this host, but that is not an installed Needle artist
 feature. It would also inherit an engine-owned composer and render loop, which
-conflicts with Blendlink's product boundary: the website retains ownership of
+conflicts with SceneToWeb's product boundary: the website retains ownership of
 its Canvas, renderer, route, post stack, and deployment.
 
-## What the current Blendlink outline actually does
+## What the current SceneToWeb outline actually does
 
 ### Authored interface
 
@@ -164,7 +164,7 @@ effect's `Selection`, lowers the internal resolution at Low/Balanced quality,
 clears selection before composer disposal, and adds a final SMAA effect because
 outline edge detection happens after scene MSAA. [B3] [B4]
 
-The lifecycle module is deep: the application calls the Blendlink installer,
+The lifecycle module is deep: the application calls the SceneToWeb installer,
 while composer creation, effect ordering, renderer-state ownership, resize,
 quality, render, and reverse-order disposal remain inside the implementation.
 That is stronger than asking each generated binding to create its own effect.
@@ -195,7 +195,7 @@ The selection layer has two exact ownership hazards:
   layers may collide;
 - `setVisible(true)` always enables layer 0 instead of restoring the old mask.
 
-A read-only probe against Blendlink's installed Three 0.184.0 and
+A read-only probe against SceneToWeb's installed Three 0.184.0 and
 postprocessing 6.39.3 started an object on layer 5 only (`mask = 32`), added it
 to selection layer 2 (`36`), hid and showed the selection (`36`, then `37`),
 and cleared it (`33`). Layer 0 remained incorrectly enabled. This is
@@ -217,13 +217,13 @@ Resolution scaling reduces pixel cost but not scene traversal or the two
 supporting scene renders. `xRay = false` suppresses hidden-edge composition; it
 does not remove the supporting depth/mask renders. [P2]
 
-Blendlink adds final SMAA for Outline because the effect generates fresh edges
+SceneToWeb adds final SMAA for Outline because the effect generates fresh edges
 after scene MSAA. This is correct, but it is another full-screen stage. The
 runtime's demand-mode ownership means a fully static page can still settle;
 camera controls, animation, resize, quality changes, or application invalidates
 pay the outline work on those rendered frames. [B3] [B4]
 
-Blendlink now journals the selected renderables' and camera's exact layer
+SceneToWeb now journals the selected renderables' and camera's exact layer
 masks around every pmndrs update. The adapter reserves an otherwise-unused
 nonzero layer only for that update, removes it from the occluder depth camera,
 and restores all masks on success, a thrown render, and disposal. The composer
@@ -259,12 +259,12 @@ outlines. [pmndrs OutlineEffect][pmndrs-outline]
 - correct conceptual fit for hover, selection, hotspots, and configurators;
 - stable screen-space styling under a moving camera;
 - visible versus hidden edge colors and X-Ray are native concepts;
-- works inside Blendlink's existing WebGL composer.
+- works inside SceneToWeb's existing WebGL composer.
 
 **Limitations**
 
 - two supporting scene renders plus screen-space work per rendered frame;
-- the installed selection implementation mutates layers, requiring Blendlink's
+- the installed selection implementation mutates layers, requiring SceneToWeb's
   exact per-update mask journal rather than direct use;
 - transparency and alpha-cutout silhouettes are not material-exact;
 - selecting the entire scene erases the selected/non-selected distinction;
@@ -272,7 +272,7 @@ outlines. [pmndrs OutlineEffect][pmndrs-outline]
 
 **Recommendation:** retain as the preferred semantic for a future object or
 collection **Selection Outline** behind the package-owned adapter. Do not
-expose pmndrs layers. Blendlink's exact mask journal is now regression-tested;
+expose pmndrs layers. SceneToWeb's exact mask journal is now regression-tested;
 a future render-object filter could remove the mutation entirely. Zero targets
 or zero strength should remove/skip the effect rather than execute invisible
 passes.
@@ -307,10 +307,10 @@ without normals, wireframes, and depth-test-disabled materials. [T1]
   `ToonOutlinePassNode`. [Three WebGL toon outline][three-toon-outline]
 
 **Recommendation:** the better short-path prototype for a scene-wide **Toon
-Silhouette**, provided Blendlink wraps or forks it behind its own module with
+Silhouette**, provided SceneToWeb wraps or forks it behind its own module with
 transactional material restoration, explicit cache disposal, dynamic-object
 coverage, and visual fixtures. Do not reuse its per-material `userData`
-interface as Blendlink's authored schema.
+interface as SceneToWeb's authored schema.
 
 ### Design C — depth/normal whole-scene edge pass
 
@@ -361,7 +361,7 @@ renderer remains experimental despite improved maturity.
 
 **Recommendation:** use these as the future TSL adapter reference, especially
 the mutation-free render-object filtering and explicit disposal. Do not switch
-Blendlink's production WebGL outline merely because a similarly named node
+SceneToWeb's production WebGL outline merely because a similarly named node
 exists. Match the semantic and rendered fixtures first.
 
 ## Decision matrix
@@ -379,7 +379,7 @@ exists. Match the semantic and rendered fixtures first.
 | Mutation risk | Render layers | Materials/hooks | Renderer/pass state | Render-object function with state helper |
 | Empty-effect idle | Must explicitly skip | Still extra render if enabled | Can skip | `OutlineNode` skips empty selection |
 
-## Recommended Blendlink seam
+## Recommended SceneToWeb seam
 
 Keep the authored manifest values stable while putting strategy and ownership
 behind one package module:
@@ -428,8 +428,8 @@ adapter, generated bindings, and application code would each have to reproduce
 selection maintenance, occlusion meaning, composer placement, quality, and
 cleanup.
 
-Needle's engine owns and may replace the global composer. Blendlink should
-deviate: its module attaches to the existing Blendlink post-pipeline adapter and
+Needle's engine owns and may replace the global composer. SceneToWeb should
+deviate: its module attaches to the existing SceneToWeb post-pipeline adapter and
 never takes ownership of the website's route, Canvas, or renderer.
 
 ## Implementation recommendations, in evidence order
@@ -511,7 +511,7 @@ acceptable appearance or cost.
 | Status | Finding |
 | --- | --- |
 | **Exact installed evidence** | Needle 1.4.2/Engine 5.1.7 has UI `Outline` only; no installed 3D outline effect/component was found in its generated catalog, registered component list, or postprocessing effects. |
-| **Implemented in Blendlink** | Scene-targeted WebGL outline through pmndrs, explicit ALPHA blend, colors/strength/approximate thickness/X-Ray, quality scaling, post-edge SMAA, and package-owned cleanup. The adapter now reserves an otherwise-unused scene layer only during the effect update, isolates selected objects from the occluder depth pass regardless of their authored layer, and restores exact object/camera masks on success, failure, and disposal. |
+| **Implemented in SceneToWeb** | Scene-targeted WebGL outline through pmndrs, explicit ALPHA blend, colors/strength/approximate thickness/X-Ray, quality scaling, post-edge SMAA, and package-owned cleanup. The adapter now reserves an otherwise-unused scene layer only during the effect update, isolates selected objects from the occluder depth pass regardless of their authored layer, and restores exact object/camera masks on success, failure, and disposal. |
 | **Probe-verified and fixed** | pmndrs selection introduced layer 0 permanently for an object originally occupying only a custom layer. A regression now exercises a layer-7 object, the depth/mask phases, an application layer change, a thrown mask render, and disposal without retained mutation. |
 | **Source-evidenced gap** | Whole-scene selection collapses selected-versus-occluder semantics; membership is static; generic depth/mask materials do not preserve arbitrary transparent/cutout shaders; zero thickness still costs supporting renders. |
 | **Inference awaiting browser proof** | Selected-behind-selected X-Ray behavior, exact transparent/cutout artifacts, thickness stability, and moving-camera appearance. |
@@ -539,16 +539,16 @@ acceptable appearance or cost.
   `experiments\needle-spike\node_modules\@needle-tools\engine\src\engine-components\postprocessing\PostProcessingHandler.ts:51-208,231-308,314-482,571-608`.
 - **N5 — separate Needle occlusion behavior:**
   `experiments\needle-spike\node_modules\@needle-tools\engine\src\engine-components\SeeThrough.ts:34-112,114-198,225-340`.
-- **B1 — Blendlink versions:** `packages\blendlink\package.json:1-4,38-62`;
+- **B1 — SceneToWeb versions:** `packages\blendlink\package.json:1-4,38-62`;
   `node_modules\three\package.json:1-4`;
   `node_modules\postprocessing\package.json:1-4`.
-- **B2 — Blendlink authored outline contract:**
+- **B2 — SceneToWeb authored outline contract:**
   `packages\blendlink\src\components.ts:304-320`;
   `packages\blender-addon\component_schema.py:47-51,252-276`;
   `packages\blender-addon\props.py:662-684,1368-1375`.
-- **B3 — Blendlink outline adapter and lifecycle:**
+- **B3 — SceneToWeb outline adapter and lifecycle:**
   `packages\blendlink\src\threeComponents.ts:391-588,621-650,725-734,1271-1320,1516-1528,2091-2110`.
-- **B4 — Blendlink outline tests and post-edge AA:**
+- **B4 — SceneToWeb outline tests and post-edge AA:**
   `packages\blendlink\src\threeComponents.test.ts:218-337`;
   `packages\blendlink\src\threeComponents.ts:534-551`.
 - **P1 — installed pmndrs selection mechanics:**

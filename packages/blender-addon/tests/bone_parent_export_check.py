@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 """Objects parented to bones survive the deform-only joint contract, or say so.
 
-Blendlink exports deforming joints only, because a control rig's mechanism
+SceneToWeb exports deforming joints only, because a control rig's mechanism
 bones produce a skin whose matrix buffer no web backend can bind. Blender's
 exporter keeps a non-deform BONE that parents an object, but it gathers the
 OBJECT only when that bone resolves to a joint reachable from the
@@ -11,7 +11,7 @@ line. On a rig that is exactly where sockets, hotspots and props live.
 
 This suite measures the mechanism rather than trusting a source reading:
 
-  1. the drop reproduces on the stock exporter with the flag Blendlink sets;
+  1. the drop reproduces on the stock exporter with the flag SceneToWeb sets;
   2. enabling Deform on the parent bone is sufficient to publish the object;
   3. doing so is joint-set neutral - byte-identical joints, inverse bind
      matrices, and skin weights - which is what makes it safe to do for the
@@ -143,24 +143,35 @@ def main():
     view_layer = bpy.context.view_layer
 
     with tempfile.TemporaryDirectory(prefix="blendlink-bone-parent-") as tmp:
-        # 1. The drop reproduces. If a future Blender fixes this upstream,
+        # 1. The drop reproduces on the modern exporter. The measured 4.2.0
+        # exporter already retains this anchor; keep that native distinction
+        # explicit while still testing preservation and joint neutrality.
+        # If a future Blender fixes the modern exporter upstream,
         #    this assertion fails loudly and the audit can be retired rather
         #    than kept forever out of superstition.
         dropped_document, dropped_binary = export(
             exporter, Path(tmp) / "dropped.glb",
         )
         names = node_names(dropped_document)
-        expect(
-            anchor.name not in names,
-            "Blender's exporter no longer drops an object parented to a "
-            "non-deforming bone; re-check whether this contract is still needed",
-        )
-        expect(mesh.name in names, f"the weighted mesh must still export: {names}")
-
-        # 4. The audit refuses that exact loss, by name, with the remedy.
-        try:
+        native_drop = anchor.name not in names
+        if bpy.app.version[:3] == (4, 2, 0):
+            expect(not native_drop, "The measured 4.2 exporter stopped preserving the bone-parented anchor")
             exporter.bone_parented_export_audit(
                 scene, names, view_layer=view_layer, export_kwargs=None,
+            )
+        else:
+            expect(
+                native_drop,
+                "Blender's exporter no longer drops an object parented to a "
+                "non-deforming bone; re-check whether this contract is still needed",
+            )
+        expect(mesh.name in names, f"the weighted mesh must still export: {names}")
+
+        # 4. The audit refuses that loss by name. For the legacy preserving
+        # exporter this is an explicitly synthetic missing-node control.
+        try:
+            exporter.bone_parented_export_audit(
+                scene, names - {anchor.name}, view_layer=view_layer, export_kwargs=None,
             )
         except RuntimeError as error:
             refusal = str(error)
@@ -284,7 +295,7 @@ def main():
             )
         else:
             raise AssertionError(
-                f"exporterOverrides silently replaced Blendlink's {key} contract"
+                f"exporterOverrides silently replaced SceneToWeb's {key} contract"
             )
 
     # The joint-budget preflight reads the shared registry, not a local number.

@@ -2,7 +2,7 @@
 
 Date: 2026-07-25
 
-Status: **Shipped and verified** for in-scope Mesh export with Blendlink's
+Status: **Shipped and verified** for in-scope Mesh export with SceneToWeb's
 owned `export_apply=True` and `export_skins=True` contract. Non-Mesh
 conversion remains outside this cell.
 
@@ -66,7 +66,7 @@ owned split:
 - no modifier: source face indices plus object-resolved material slots;
 - any modifier: `evaluated_get(...).to_mesh(...)`, evaluated face indices, and
   evaluated Mesh materials;
-- because Blendlink owns `export_skins=True`, temporarily disable all ARMATURE
+- because SceneToWeb owns `export_skins=True`, temporarily disable all ARMATURE
   modifiers before acquiring the current dependency graph and evaluating the
   Mesh, clear the temporary Mesh first, then restore every original
   `show_viewport` value in `finally`;
@@ -137,7 +137,7 @@ respectively, before the same Blender command above. The `[None]` fixture first
 failed with:
 
 ```text
-AssertionError: Blendlink did not mirror stock [None] material fallback:
+AssertionError: SceneToWeb did not mirror stock [None] material fallback:
 (EvaluatedMaterialUse(evaluated_slot_index=0, material=None,
 source_slot_index=None, source_candidate_indices=()),)
 ```
@@ -145,14 +145,14 @@ source_slot_index=None, source_candidate_indices=()),)
 The armature fixture independently failed with:
 
 ```text
-AssertionError: Blendlink did not evaluate material ownership with skin
+AssertionError: SceneToWeb did not evaluate material ownership with skin
 ARMATURE modifiers disabled:
 (EvaluatedMaterialUse(evaluated_slot_index=1,
 material=bpy.data.materials['Skin Deformed Material'],
 source_slot_index=None, source_candidate_indices=()),)
 ```
 
-In the green fixture, each stock GLB primitive and each Blendlink use/plan
+In the green fixture, each stock GLB primitive and each SceneToWeb use/plan
 names the same material. Both new source materials are deliberately
 non-portable Noise-driven graphs, so `analyze_scene` also proves that the
 correct material—not merely some material identity—owns the Needs Bake
@@ -191,19 +191,19 @@ override-refusal cells on 2026-07-25.
 
 Needle matches Blender's final result by delegating to the stock exporter, but
 the inspected add-on has no analogous preflight that distinguishes a used
-primitive material from an attached unused slot. Blendlink now matches the
+primitive material from an attached unused slot. SceneToWeb now matches the
 stock/Needle emitted material set before export and adds an artist-readable,
 source-safe refusal when evaluated material ownership cannot support a private
 compiler transaction.
 
 ## Limits
 
-- This cell covers Mesh objects under Blendlink's owned `export_apply=True`
+- This cell covers Mesh objects under SceneToWeb's owned `export_apply=True`
   and `export_skins=True` contract. The advanced `exporterOverrides` object
   cannot replace either flag; both conflicts now refuse before export. Curves,
   text, surfaces, Grease Pencil, and other conversion paths need their own
   exporter-aligned evidence.
-- Loose-edge and loose-point export are not enabled by Blendlink's current
+- Loose-edge and loose-point export are not enabled by SceneToWeb's current
   export contract and are not claimed here.
 - The helper resolves the current evaluated dependency graph. Timeline-varying
   geometry remains governed by the separate exhaustive procedural audit.

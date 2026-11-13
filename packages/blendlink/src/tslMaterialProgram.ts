@@ -1,3 +1,4 @@
+import { irInspectionChildren } from './tslIrInspection.js'
 /**
  * The IR-to-node-graph half of the TSL material runtime (plan-doc gap
  * 8b.3): everything needed to turn a shipped program's channels plus
@@ -16,6 +17,8 @@
  * no concurrent builds. This was already true inside installTslMaterials;
  * the seam makes the contract explicit instead of incidental.
  */
+import type { BufferGeometry } from 'three'
+import type { MaterialProgramRendererRequirement } from './materialProgramRendererRequirements.js'
 import {
   buildTslColorNode,
   buildTslScalarNode,
@@ -33,10 +36,15 @@ export interface MaterialProgramChannel {
 /** The mesh extras stamped by the exporter (blendlink_tsl_runtime). */
 export interface TslRuntimeMeshExtras {
   schemaVersion?: number
+  requiresNodeRenderer?: MaterialProgramRendererRequirement
   uvChannels?: Record<string, number>
+  activeRenderUv?: { schemaVersion: 1; model: 'source-active-render-v1'; uvMap: string; channel: number }
   colorLayers?: Record<string, string>
   texspace?: { location: number[]; size: number[] }
   objectSpace?: string
+  objectAttributes?: readonly string[]
+  geometryContext?: readonly string[]
+  tangentFrame?: {schemaVersion?: number;model?: string;uvMap?: string}
 }
 
 export type MaterialNodeSlot =
@@ -105,10 +113,38 @@ export function collectObjectAttributeNames(
     if (record.op === 'attribute_object' && typeof record.name === 'string') {
       names.add(record.name)
     }
-    for (const item of Object.values(record)) {
+    for (const item of irInspectionChildren(record)) {
       collectObjectAttributeNames(item, names)
     }
   }
+}
+
+export function requiresActiveUv(value: unknown): boolean {
+  if (Array.isArray(value)) return value.some(requiresActiveUv)
+  if (!value || typeof value !== 'object') return false
+  const record = value as Record<string, unknown>
+  return record.op === 'uv_active' || irInspectionChildren(record).some(requiresActiveUv)
+}
+
+function activeUvChannel(extras: TslRuntimeMeshExtras | null, materialName: string): number {
+  const binding = extras?.activeRenderUv
+  if (!binding || binding.schemaVersion !== 1 || binding.model !== 'source-active-render-v1'
+    || typeof binding.uvMap !== 'string' || !binding.uvMap
+    || !Number.isInteger(binding.channel) || binding.channel < 0 || binding.channel > 3
+    || extras?.uvChannels?.[binding.uvMap] !== binding.channel)
+    throw new TslIrError(`Material "${materialName}" requires a valid source active-render UV binding`)
+  return binding.channel
+}
+
+export function validateActiveUvMesh(geometry: BufferGeometry, extras: TslRuntimeMeshExtras | null, materialName: string): void {
+  const channel = activeUvChannel(extras, materialName)
+  const uv = geometry.getAttribute(channel === 0 ? 'uv' : `uv${channel}`)
+  const position = geometry.getAttribute('position')
+  if (!uv || uv.itemSize !== 2 || !position || uv.count !== position.count)
+    throw new TslIrError(`Material "${materialName}" needs its actual exported TEXCOORD_${channel} attribute`)
+  for (let index = 0; index < uv.count; index++)
+    if (!Number.isFinite(uv.getX(index)) || !Number.isFinite(uv.getY(index)))
+      throw new TslIrError(`Material "${materialName}" has nonfinite active-render UV coordinates`)
 }
 
 /** BuildTslOptions from plain-data mesh extras: named-UV and color-layer
@@ -121,7 +157,8 @@ export function buildOptionsFor(
   textures?: BuildTslOptions['textures'],
   objectAttribute?: BuildTslOptions['objectAttribute'],
 ): BuildTslOptions {
-  const options: BuildTslOptions = { resources }
+  const options: BuildTslOptions = { resources, uvSpace: 'gltf' }
+  if (extras?.activeRenderUv) options.activeUvChannel = activeUvChannel(extras, materialName)
   if (textures) options.textures = textures
   if (objectAttribute) options.objectAttribute = objectAttribute
   if (extras?.uvChannels) {
@@ -158,8 +195,8 @@ export function buildOptionsFor(
       size: [...extras.texspace.size] as [number, number, number],
     }
   }
-  if (extras?.objectSpace === 'gltf-y-up') {
-    options.objectSpace = { basis: 'gltf-y-up' }
+  if (extras?.objectSpace === 'gltf-y-up' || extras?.objectSpace === 'blender-z-up') {
+    options.objectSpace = { basis: extras.objectSpace }
   }
   return options
 }

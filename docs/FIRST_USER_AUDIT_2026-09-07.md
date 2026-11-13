@@ -1,6 +1,6 @@
 # First-user audit, 2026-09-07
 
-Blendlink can already take a saved, authored Blender scene through a local
+SceneToWeb can already take a saved, authored Blender scene through a local
 browser preview and into an existing Three.js or React Three Fiber website.
 The useful next step is a small private artist pilot. Public distribution still
 needs independent release evidence and a clearer supported scene/device scope.
@@ -22,7 +22,7 @@ This inventory does not imply that every feature received fresh visual testing.
 The main integration boundary is useful: Blender owns authored scene intent;
 the website owns its renderer, Canvas, page UI and hosting. The generated
 installer follows the manifest's companion assets. A generic GLB loader alone
-does not reproduce every authored Blendlink setting.
+does not reproduce every authored SceneToWeb setting.
 
 ## Failures found and fixed
 
@@ -73,7 +73,7 @@ Environment: Windows, Node 24.15.0, npm 11.12.1, Blender 5.2.0 LTS, Three
 | `node scripts/test-baked-e2e.mjs` after build | Passed the real Blender multi-state bake/export/verify paths, including HDR decoding |
 | `environment_payload_check.py` in real Blender | Bad packed/linked payloads refused before publication; valid HDR/EXR bytes preserved |
 | Isolated add-on installation | Installed and enabled compiler-matching 0.9.0 in a disposable Blender profile |
-| Actual Set Up Blendlink Scene operator | Finished on the default scene, created the Main atlas recipe, saved a real `.blend` |
+| Actual Set Up SceneToWeb Scene operator | Finished on the default scene, created the Main atlas recipe, saved a real `.blend` |
 | First-scene Live Preview | Browser-verified Ready; a material change and Blender save produced a different verified generation automatically |
 | Existing Three and R3F sites | Local archive installation, connect, Preview compilation and Final publish/build passed; connect preserved application source |
 | Production browsers | Visible scene and no page errors in both sites; WebGPU-family examples and WebGL variants checked, plus independent installed consumers outside the checkout |
@@ -334,7 +334,7 @@ for a cold two-sample compile, retaining 2,314,974 triangles. A subsequent fresh
 Blender process missed the preparation cache. Two isolated input probes found
 different evaluated UV bytes on 17 meshes, including Bevel-affected furniture
 and beams; their reported changed attributes were source UVs and the staged
-atlas layer. Blendlink retains exact matching and falls back to preparation.
+atlas layer. SceneToWeb retains exact matching and falls back to preparation.
 No cache speedup is claimed for this file. The earlier 398.1-second run is not
 a controlled comparison against this cold run.
 
@@ -356,3 +356,102 @@ corrupt payloads, rollback and refusal to cache failed layouts. The build,
 794 unit tests with two codec skips, 19 release-policy checks and the baked
 end-to-end suite passed. The full headless/release matrix was not repeated.
 Logs and input probes remain under `artifacts/verification-performance/`.
+
+
+## Installation and preview verification — 2026-11-11
+
+The target is a free Blender-to-web publishing workflow, with multiplayer and
+XR deferred. The repository is public; npm publication is still pending.
+
+This pass adds a private, SHA-256-pinned Node 24.22.3 runtime behind Blender's
+Preview/Publish/Export actions. A fresh macOS arm64 download and cached execution
+both succeeded with system Node/npm absent from PATH. Online Access is respected,
+including npm's offline mode. Installing from the local CLI connects the matching
+compiler in the extension preferences automatically. An isolated Blender 5.3
+profile verified that binding and the new Export Website operator.
+
+Preview Studio adds orbit inspection, a stable portrait preset, rendered PNG
+capture and keyboard focus return. A fixed-camera Reset bug found during browser
+inspection is corrected. `npm run test:preview-ux` now reproduces inspection,
+nonblank capture, keyboard interaction, failed initial-load retry without a new
+bake, a malformed-save failure retaining the good canvas, and recovery on a valid
+save. The same test exports a complete static site and renders it under a nested
+hosting path in Playwright Chromium, Firefox and WebKit, checking failed requests,
+page errors, nonblank pixels and absence of external network dependencies.
+Screenshots and the structured report are retained under
+`artifacts/verification-preview-ux/`. [Hosted browser run 43144004793](https://github.com/michaelrowejones/Blendlink/actions/runs/43144004793)
+on commit `b66b635` passed the complete flow and all three engines. Linux uses
+Xvfb and software rendering; this is not physical-GPU or real-device evidence.
+Stopping Preview also verifies that its owned local server becomes unreachable.
+
+Standalone export compiles Final, verifies before/after its website build,
+includes all companion assets and third-party notices, refuses unrelated output
+folders, and preserves a previous export on failure. Browser testing found and
+fixed missing deployment-base handling for directly fetched source-presentation
+and TSL material sidecars. Bake testing also found stock-exporter filename changes
+that caused image size policies to miss their target; resize/compression policies
+now retain source filename aliases and refuse ambiguous identity.
+
+The complete local release suite passed on Node 24 with checksum-verified Blender
+5.2.0 / exporter 5.2.39 and KTX 4.4.2, using an explicit Cycles CPU override. It
+includes real codec round trips, packed consumers, 41 discovered Blender suites,
+isolated ZIP installation and the appearance/lighting/material bake contracts.
+The unit run passed 812 tests with four optional skips; the required real-tool
+step separately passed all 16 codec assertions. The exact Node 22.15 floor also
+passed the unit/release-policy suite before the final image-alias test additions.
+The new preview/publishing browser suite passed separately on Blender 5.3.
+
+These CPU bake results do not certify Blender 5.2 Metal on this hardware: its
+native Metal compiler crashed in the first direct attempt. The general Blender
+5.3 preview and bake smoke worked, but the full material fixtures intentionally
+require the source-audited 5.2.39 exporter. macOS temporary-path aliases and native
+Smart Project variation were corrected in tests by requiring canonical identities
+and the actual non-overlap/non-degenerate UV result, preserving the original
+quality assertions.
+
+Sharp 0.35.5 and ndarray-pixels 5.2.0 replace the vulnerable image chain. Complete
+and production npm audits return zero findings; no advisory exception remains.
+A final local archive rehearsal is distinct from a public release. Public
+publishing still requires source review, npm ownership/trusted publishing and
+the release settings in RELEASE.md.
+Artist pilots remain deliberately deferred.
+
+[Release contract run 43143849609](https://github.com/michaelrowejones/Blendlink/actions/runs/43143849609)
+on commit `1ad1c78` passed the complete pinned Blender 5.2/KTX suite on hosted
+Linux, the three Node versions, and the four Linux/Windows Blender 4.2/5.2
+installation checks. Each desktop check installed the exact extension ZIP in a
+clean profile, downloaded its private runtime with global Node/npm absent from
+PATH, exported a saved scene to a website, and reused the tools offline. These
+checks found and fixed a missing white-balance property on Blender 4.2 and
+missing Windows child-process output forwarding. Distribution jobs were skipped
+because the run was on a pull request. Hosted macOS and physical-GPU coverage
+remain separate gaps.
+
+
+The retained local archive also passed `test:fresh-install`: an empty-cache npm
+installation outside the repository, exact tarball SRI in the lockfile,
+framework-neutral root evaluation and a Vite browser build using only the fresh
+installation. This closes the local borrowed-dependency gap for that artifact;
+public-registry provenance remains a publication-time check.
+
+### Follow-up workflow polish
+
+The follow-up acceptance uses authored animated, manual-playback, orbit-camera
+and baked-planning scenes. Local checks pass actual moving/paused pixels,
+keyboard inspection, comparison transitions, 390px controls, reduced motion,
+manual Play, failed-save recovery, Back/Forward, exported-site retry and
+preservation of every prior export file after a failed compile. Preview controls
+and exported animation controls are exercised in all three Playwright engines.
+The macOS WebKit mouse driver misplaces trusted coordinates even on plain HTML;
+its native touch backend is correct, so the explicit local touch mode is recorded
+in `artifacts/verification-preview-ux/report.json`. Hosted pointer checks remain
+enabled. This is not real-device evidence.
+
+An isolated native Blender 5.3 test also passes the complete **Check Atlas Fit**
+path through a fresh private runtime, CLI planning and the atlas panel. The saved
+source is unchanged during planning, later saves mark the result stale, Realtime
+clears prior baked capacity, and publication status remains `NO_MANIFEST`.
+Evidence is retained under `artifacts/verification-polish-addon/`. Malformed
+progress and malformed capacity payloads preserve the last valid measurement and
+recover on the next valid record. The Node suite passes 819 tests with five
+optional codec/tool skips; the full pinned hosted toolchain gate is separate.

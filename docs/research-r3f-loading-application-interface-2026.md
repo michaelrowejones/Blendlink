@@ -6,13 +6,13 @@ unit evidence, production Next dogfood, and production-source Chromium evidence
 
 ## Decision
 
-Keep Blendlink's package-owned, effect-started, detached preparation path as the
+Keep SceneToWeb's package-owned, effect-started, detached preparation path as the
 production default. Do not replace it with R3F `useLoader`, Drei `useGLTF`, or a
 render-time cache of complete prepared scenes.
 
 The shipped loading interface is already correctly placed:
 
-- Blendlink owns loading, detached renderer preparation, atomic commit,
+- SceneToWeb owns loading, detached renderer preparation, atomic commit,
   generation gating, and disposal;
 - the application owns its route, Canvas, Error Boundary, loading visuals,
   analytics, and deployment; and
@@ -38,7 +38,7 @@ const lifecycle = useCompiledScenePresentation()
 `onPresentationStateChange`. `retry()` synchronously invalidates the old
 callback generation, resets the presentation snapshot, and advances the key.
 The application still chooses its Error Boundary, fallback, Canvas-remount
-policy, and button. Blendlink should not ship a loading screen or a generic
+policy, and button. SceneToWeb should not ship a loading screen or a generic
 Error Boundary wrapper.
 
 Do not add a public preload function in the same change. A complete prepared
@@ -66,23 +66,23 @@ correctly remains `integration=mixed-source`.
 
 ## Exact inspected versions and identities
 
-The Blendlink workspace resolves:
+The SceneToWeb workspace resolves:
 
 - React and ReactDOM `19.0.0`;
 - `@react-three/fiber` `9.6.1`;
 - `suspend-react` `0.1.3`; and
 - Three `0.184.0`.
 
-Drei is deliberately not a Blendlink dependency. The dogfood site resolves
+Drei is deliberately not a SceneToWeb dependency. The dogfood site resolves
 React/ReactDOM `19.2.4`, R3F `9.6.1`, Drei `10.7.7`, `three-stdlib` `2.36.1`,
 and Three `0.184.0`.
 
 | Source | Version | Normalized path | SHA-256 |
 | --- | --- | --- | --- |
-| Blendlink R3F adapter | current worktree | `packages/blendlink/src/reactThreeFiber.ts` | `18b85df943994a46a158161df8aec75fd2f5383f8a8586dd2e796c94c74f939c` |
-| Blendlink Three installer | current worktree | `packages/blendlink/src/threeRuntime.ts` | `d8dba507e20446eea7588a83028a65140f6b32b6f90cd5e8523ddbd9b1d43120` |
-| Blendlink presentation store | current worktree | `packages/blendlink/src/scenePresentation.ts` | `868fdb67cb82ce379e2344d0e4bae83ee7b5584510565ba3084a4880a8e7d495` |
-| Blendlink React hook | current worktree | `packages/blendlink/src/react.ts` | `5dfabb7a815b7c8e507da4caab9ce252466c09ceb3a4d71a7f20e5f9f2ba1a4f` |
+| SceneToWeb R3F adapter | current worktree | `packages/blendlink/src/reactThreeFiber.ts` | `18b85df943994a46a158161df8aec75fd2f5383f8a8586dd2e796c94c74f939c` |
+| SceneToWeb Three installer | current worktree | `packages/blendlink/src/threeRuntime.ts` | `d8dba507e20446eea7588a83028a65140f6b32b6f90cd5e8523ddbd9b1d43120` |
+| SceneToWeb presentation store | current worktree | `packages/blendlink/src/scenePresentation.ts` | `868fdb67cb82ce379e2344d0e4bae83ee7b5584510565ba3084a4880a8e7d495` |
+| SceneToWeb React hook | current worktree | `packages/blendlink/src/react.ts` | `5dfabb7a815b7c8e507da4caab9ce252466c09ceb3a4d71a7f20e5f9f2ba1a4f` |
 | R3F loader implementation | 9.6.1 | `node_modules/@react-three/fiber/dist/events-b389eeca.esm.js` | `dd92f7b70d669b7a0f3f4db35bcddd8f3aa9d10e2b2d76ddec63a7f041ef06d1` |
 | `suspend-react` cache | 0.1.3 | `node_modules/suspend-react/index.js` | `12b503b08c451b0f378d547b960399517da189f3d565ac8d0c909714b4d4bb4e` |
 | Three LoadingManager | 0.184.0 | `node_modules/three/src/loaders/LoadingManager.js` | `d71a203b1ba2382e1d95d0993302a20a774cc38d0c323ecbe2892a76e3c6a772` |
@@ -103,15 +103,15 @@ The last Needle helper is content-identified here but is not yet part of
 `needle-baseline.json`; any future behavior change based specifically on its
 heuristic should first add it to the machine-verified baseline.
 
-## What Blendlink currently guarantees
+## What SceneToWeb currently guarantees
 
 | Fact | Current interface | Truthful guarantee | Deliberate non-guarantee |
 | --- | --- | --- | --- |
 | Loading | `phase: "loading"`, optional item, `itemsLoaded`, `itemsTotal` | Attempt-scoped item completion from a package-owned manager; totals may grow as dependencies are discovered; a private-manager item error is terminal even if GLTFLoader recovers | Not bytes, a stable percentage, decode progress, or GPU progress |
-| Preparing | `phase: "preparing"` | The root GLTF load resolved and Blendlink is configuring a detached candidate, including baked defaults, presentation policy, Components, known texture initialization, and shader preparation | Not a display-compositor fence |
+| Preparing | `phase: "preparing"` | The root GLTF load resolved and SceneToWeb is configuring a detached candidate, including baked defaults, presentation policy, Components, known texture initialization, and shader preparation | Not a display-compositor fence |
 | Ready | `phase: "ready"` plus installed handle | The complete detached candidate committed synchronously and ready-only children may mount | Not necessarily promoted full atlas quality or first presented frame |
 | Quality | presentation `bootstrap`, `full`, or `failed` | Whether tracked baked-quality promotion remains or failed | Not proof of visual parity |
-| Presented | presentation `presented: true` | Blendlink's R3F frame callback completed and a following animation-frame callback ran | Not a GPU fence, pixel oracle, or proof the display compositor showed nonblank output |
+| Presented | presentation `presented: true` | SceneToWeb's R3F frame callback completed and a following animation-frame callback ran | Not a GPU fence, pixel oracle, or proof the display compositor showed nonblank output |
 | Failed | error plus conservative `recoverable` | The attempt will not publish Ready; the render throw reaches the nearest React Error Boundary; private companion errors name the URL and deployment remedies | Generic errors are not classified as safely recoverable |
 | Cancel | task cancellation and generation replacement | A canceled/stale attempt cannot commit; privately initiated manager-aware work is asked to abort and late results are disposed | Shared same-URL fetches, all image paths, worker transcodes, CPU decodes, `compileAsync`, and GPU work do not all stop immediately |
 
@@ -135,10 +135,10 @@ small interface. The React hook is a thin adapter over that seam using
    correctly tells the application to remount the Canvas. A boolean does not
    encode “retry scene” versus “remount Canvas”; do not make automatic retry
    policy from it.
-2. With an application-owned loader/manager, Blendlink deliberately neither
+2. With an application-owned loader/manager, SceneToWeb deliberately neither
    aborts the manager nor overwrites its single callback properties. The
    application therefore retains progress and dependency-failure policy;
-   Blendlink reports only its high-level Loading/Preparing/Ready/Failed phases.
+   SceneToWeb reports only its high-level Loading/Preparing/Ready/Failed phases.
 3. One presentation hook/store is one scene lifecycle producer. Sharing it
    across independently mounted scene producers is intentionally unsupported.
 4. The missing-companion browser gate is one same-origin HTTP 404 cell. The
@@ -198,7 +198,7 @@ no completion Promise and is not a transport/decode/GPU/presented barrier.
 
 Drei `useProgress` takes over the four callback properties of Three's
 `DefaultLoadingManager`. That is convenient for a single globally managed app,
-but it cannot observe Blendlink's private manager and is not a composable
+but it cannot observe SceneToWeb's private manager and is not a composable
 subscription seam for an application-owned manager.
 
 ### Three cancellation and preparation
@@ -209,7 +209,7 @@ implements abort and the browser supports `AbortSignal.any()`.
 
 The installed `FileLoader` further deduplicates in-flight work by resolved URL
 alone. A later same-URL consumer can join a request initiated with another
-manager, headers, or credentials. This is why Blendlink correctly promises
+manager, headers, or credentials. This is why SceneToWeb correctly promises
 private-manager abort invocation rather than a private network namespace.
 [Three r184 FileLoader source](https://github.com/mrdoob/three.js/blob/r184/src/loaders/FileLoader.js)
 
@@ -235,20 +235,20 @@ product/licensing rules in the inspected source.
 
 Needle's computed progress combines the current top-level file index with
 per-file byte progress; when the total is unknown, it advances a small
-heuristic amount. Blendlink's item counts are less visually smooth but more
+heuristic amount. SceneToWeb's item counts are less visually smooth but more
 truthful. The website can choose an indeterminate progress treatment without
-Blendlink inventing a percentage.
+SceneToWeb inventing a percentage.
 
 Needle Addressables separates binary `preload()` from `loadAssetAsync()`, which
 is the correct conceptual split to retain. The inspected implementation caches
 raw bytes or one shared mutable loaded instance, returns `null` to a concurrent
 raw-binary preload, and contains explicit TODOs for resource abort and
-reference-safe disposal. Blendlink should match the separation and improve the
+reference-safe disposal. SceneToWeb should match the separation and improve the
 ownership before exposing it.
 
 Needle creates a new GLTFLoader per load, installs Components, and invokes
 `compileAsync`; shader-preparation failure is logged and loading continues.
-Blendlink's detached transaction and loud rollback remain measured
+SceneToWeb's detached transaction and loud rollback remain measured
 improvements, not reasons to adopt Needle's engine-owned UI or loop.
 
 ## Designs compared
@@ -266,9 +266,9 @@ facts, and disposal. It does not prescribe DOM or Canvas structure.
 This gives a concise fallback and avoids duplicate same-key render loads.
 However, it shares mutable loaded scenes, omits loader policy from cache
 identity, has no release/abort/disposal ownership, and reports through a global
-default manager that Blendlink deliberately does not use.
+default manager that SceneToWeb deliberately does not use.
 
-**Decision:** reject for the complete Blendlink scene lifecycle. Keep
+**Decision:** reject for the complete SceneToWeb scene lifecycle. Keep
 `createUseBlendlink(useGLTF)` as an explicitly cache-owning low-level binding
 adapter, not the recommended compiled-scene installer.
 
@@ -294,7 +294,7 @@ GLTFLoader's later request hits the browser cache is not a strong interface.
 **Decision:** Future. Prototype after retry ergonomics and the cancellation
 matrix, not in the same production change.
 
-### Design E: Blendlink-owned loading/error wrapper
+### Design E: SceneToWeb-owned loading/error wrapper
 
 A wrapper could render a spinner and Error Boundary automatically. It would
 reduce a few lines while taking ownership of DOM, fallback style, analytics,
@@ -401,7 +401,7 @@ Before exposing `prefetchAssets()`:
 ```text
 npm.cmd ls react react-dom @react-three/fiber @react-three/drei three --all
 npm.cmd run verify:needle-baseline
-npm.cmd run test --workspace blendlink -- threeRuntime.test.ts reactThreeFiber.test.ts react.test.ts scenePresentation.test.ts
+npm.cmd run test --workspace scenetoweb -- threeRuntime.test.ts reactThreeFiber.test.ts react.test.ts scenePresentation.test.ts
 npm.cmd run test:r3f-missing-companion-browser
 npm.cmd run build
 npx.cmd playwright test e2e/blendlink-components-lab.spec.ts --workers=1
@@ -409,11 +409,11 @@ npx.cmd playwright test e2e/blendlink-components-lab.spec.ts --workers=1
 
 Results:
 
-- Blendlink dependency tree: React/ReactDOM 19.0.0, R3F 9.6.1, Three 0.184.0,
+- SceneToWeb dependency tree: React/ReactDOM 19.0.0, R3F 9.6.1, Three 0.184.0,
   no Drei dependency;
 - Needle identity: 110 files, five source-version identities,
   `integration=mixed-source`; and
-- focused Blendlink runtime/presentation gate: four files, 65/65 tests passed;
+- focused SceneToWeb runtime/presentation gate: four files, 65/65 tests passed;
 - Chromium 150 missing-companion gate: HTTP 200 GLB + HTTP 404 PNG, Failed
   `1`, Ready `0`, committed nodes `0`; and
 - production Next 16.2.6 build plus component-lab browser dogfood: 2/2 passed,

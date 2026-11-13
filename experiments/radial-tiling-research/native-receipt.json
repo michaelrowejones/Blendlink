@@ -1,0 +1,473 @@
+{
+  "proofRole": "RESEARCH_NATIVE_VIABILITY_AND_COUNTEREXAMPLES_NO_PORT",
+  "baseCommit": "509a58eecba6ba59ca45685ae71b6c0570755241",
+  "productionKernelImplementations": 0,
+  "browserReadbacks": 0,
+  "finalSiteProofs": 0,
+  "supportPromoted": false,
+  "schemas": {
+    "42": {
+      "version": [
+        4,
+        2,
+        0
+      ],
+      "buildHash": "a51f293548ad",
+      "availability": {
+        "ShaderNodeTree": false,
+        "GeometryNodeTree": false,
+        "CompositorNodeTree": false
+      },
+      "sha256": "aaa1ccf0dcd151873dbdc087c7cb2afae5dab778682ebe237df51e0ab8c7745c"
+    },
+    "52": {
+      "version": [
+        5,
+        2,
+        0
+      ],
+      "buildHash": "fbe6228777e7",
+      "availability": {
+        "ShaderNodeTree": true,
+        "GeometryNodeTree": true,
+        "CompositorNodeTree": true
+      },
+      "sha256": "7d13bd7cb2f3013155cd6ee88b799d0a5e77f431e84a8b38da6eaaf933cbf5ac"
+    },
+    "53": {
+      "version": [
+        5,
+        3,
+        0
+      ],
+      "buildHash": "02f0899d78e3",
+      "availability": {
+        "ShaderNodeTree": true,
+        "GeometryNodeTree": true,
+        "CompositorNodeTree": true
+      },
+      "sha256": "210e8f06367d11fafcc6e60a6cf6a121fe20d5983c0f47e1828ab96ea4cffd6f"
+    }
+  },
+  "datasets": {
+    "mf52": {
+      "indexSha256": "738f60f398dd85b97f89b00ecfbef58a2427212d8a4471288ab0a006ebbde7e5",
+      "version": [
+        5,
+        2,
+        0
+      ],
+      "buildHash": "fbe6228777e7",
+      "platform": "Darwin",
+      "machine": "arm64",
+      "nativeGpuProfile": null,
+      "sourceEngine": null,
+      "cases": 42,
+      "fixtureSha256": "a3971220b95bd26f7b8d0924b29042194e2ee994c8b5ef5ff2ef9dbf273e25bd",
+      "sourcePreserved": true,
+      "sourceReloadPreserved": null,
+      "unqualifiedScalarSamples": 0,
+      "nonfiniteMfValues": 747,
+      "sourceBlendSha256": "ce5781d88dfeeae40a895835a741fd82e27133fd3bde7d6c0e7e08b818cacad4"
+    },
+    "mf53": {
+      "indexSha256": "a358e05e63818e827bbbb637a4f52a816bb3eb1609cf80029c0ee837d56d0d6a",
+      "version": [
+        5,
+        3,
+        0
+      ],
+      "buildHash": "02f0899d78e3",
+      "platform": "Darwin",
+      "machine": "arm64",
+      "nativeGpuProfile": null,
+      "sourceEngine": null,
+      "cases": 42,
+      "fixtureSha256": "a3971220b95bd26f7b8d0924b29042194e2ee994c8b5ef5ff2ef9dbf273e25bd",
+      "sourcePreserved": true,
+      "sourceReloadPreserved": null,
+      "unqualifiedScalarSamples": 0,
+      "nonfiniteMfValues": 747,
+      "sourceBlendSha256": "c2a193790b3225116027b3042708707324c14dedc9312cd752397816ab24a038"
+    },
+    "eevee52-calibrated": {
+      "indexSha256": "1307d9b93f726ad727c9528d749c7c94eeaf15f030498e5bd9a5ad528721209a",
+      "version": [
+        5,
+        2,
+        0
+      ],
+      "buildHash": "fbe6228777e7",
+      "platform": "Darwin",
+      "machine": "arm64",
+      "nativeGpuProfile": {
+        "backend": "METAL",
+        "vendor": "Apple M5 Pro",
+        "renderer": "Metal API",
+        "version": "1.2",
+        "source": "Blender gpu.platform",
+        "intrinsicModel": "metal-native-v1"
+      },
+      "sourceEngine": "BLENDER_EEVEE",
+      "cases": 140,
+      "fixtureSha256": "d8c5a943cfd091abd7aa4ae32bcd6a809acdc2fab60dfadb7c1228d7be9b6084",
+      "sourcePreserved": true,
+      "sourceReloadPreserved": true,
+      "unqualifiedScalarSamples": 510,
+      "nonfiniteMfValues": 0,
+      "sourceBlendSha256": "c2508b56bd0d3fea3f0c73008f73edd20cf8e57d1e42348bd2b64fcf53f6dc73",
+      "calibrations": [
+        {
+          "id": "control-coordinate-0",
+          "maximumError": 2.8311713862194665e-08,
+          "calibratedBound": 2.9802322387695312e-08,
+          "sha256": "c0190aa47f01f1fab5e28b9ed252a58815efc3d1a5dd2e96a0c6c936774b94bd",
+          "packedSha256": "ba0edf8bcdc20affccd53e4597c60f94876a61f24f2cdadd392075b111dac9e7",
+          "coarseSha256": "fcc14f0971d3ca5dd3271d9ba7092bfc9b7c5ef52399c556fab90c410b90bbf0",
+          "finiteBandMaskSha256": "5a648d8015900d89664e00e125df179636301a2d8fa191c1aa2bd9358ea53a69"
+        },
+        {
+          "id": "control-coordinate-1",
+          "maximumError": 2.7818146008939948e-08,
+          "calibratedBound": 2.9802322387695312e-08,
+          "sha256": "12a22145db4f6ec0a65608af3dcfce804ee0206e6b71daa1f83de20889ffa5bf",
+          "packedSha256": "f141dc1b4b689c356b131ec777538832668e27e169a4e777c5b0b1e5bd4c93c4",
+          "coarseSha256": "6dc542ae68ab06c8ce81fb61538dff770f109f0278dd39945e1e5f9783428855",
+          "finiteBandMaskSha256": "5a648d8015900d89664e00e125df179636301a2d8fa191c1aa2bd9358ea53a69"
+        },
+        {
+          "id": "control-signed-powers",
+          "maximumError": 0.0,
+          "calibratedBound": 2.9802322387695312e-08,
+          "sha256": "5794bcc8c2a81a277e249c6fd7f61eb7385284c46af9eb1319e8e18f051b63ef",
+          "packedSha256": "cbc9273389bdf705867c7fe18d8421bdca249f6a22a1e9687f0fc7528f77a55b",
+          "coarseSha256": "70dc88f11b20bddaca2dab0af69fe0c3d35d4b96216518752cf09728a7ca08e7",
+          "finiteBandMaskSha256": "5a648d8015900d89664e00e125df179636301a2d8fa191c1aa2bd9358ea53a69"
+        }
+      ]
+    },
+    "eevee53-calibrated": {
+      "indexSha256": "dc58cbbd8a9c724750fcf417bdb8fc28c40229d6ae8021e9a20533faf53e5631",
+      "version": [
+        5,
+        3,
+        0
+      ],
+      "buildHash": "02f0899d78e3",
+      "platform": "Darwin",
+      "machine": "arm64",
+      "nativeGpuProfile": {
+        "backend": "METAL",
+        "vendor": "Apple M5 Pro",
+        "renderer": "Metal API",
+        "version": "1.2",
+        "source": "Blender gpu.platform",
+        "intrinsicModel": "metal-native-v1"
+      },
+      "sourceEngine": "BLENDER_EEVEE",
+      "cases": 140,
+      "fixtureSha256": "d8c5a943cfd091abd7aa4ae32bcd6a809acdc2fab60dfadb7c1228d7be9b6084",
+      "sourcePreserved": true,
+      "sourceReloadPreserved": true,
+      "unqualifiedScalarSamples": 510,
+      "nonfiniteMfValues": 0,
+      "sourceBlendSha256": "4f7aa29d852722c05994dfb33154c669d4c8446b8149cfb70f5870702a8f0e05",
+      "calibrations": [
+        {
+          "id": "control-coordinate-0",
+          "maximumError": 2.8311713862194665e-08,
+          "calibratedBound": 2.9802322387695312e-08,
+          "sha256": "c0190aa47f01f1fab5e28b9ed252a58815efc3d1a5dd2e96a0c6c936774b94bd",
+          "packedSha256": "ba0edf8bcdc20affccd53e4597c60f94876a61f24f2cdadd392075b111dac9e7",
+          "coarseSha256": "fcc14f0971d3ca5dd3271d9ba7092bfc9b7c5ef52399c556fab90c410b90bbf0",
+          "finiteBandMaskSha256": "5a648d8015900d89664e00e125df179636301a2d8fa191c1aa2bd9358ea53a69"
+        },
+        {
+          "id": "control-coordinate-1",
+          "maximumError": 2.7818146008939948e-08,
+          "calibratedBound": 2.9802322387695312e-08,
+          "sha256": "12a22145db4f6ec0a65608af3dcfce804ee0206e6b71daa1f83de20889ffa5bf",
+          "packedSha256": "f141dc1b4b689c356b131ec777538832668e27e169a4e777c5b0b1e5bd4c93c4",
+          "coarseSha256": "6dc542ae68ab06c8ce81fb61538dff770f109f0278dd39945e1e5f9783428855",
+          "finiteBandMaskSha256": "5a648d8015900d89664e00e125df179636301a2d8fa191c1aa2bd9358ea53a69"
+        },
+        {
+          "id": "control-signed-powers",
+          "maximumError": 0.0,
+          "calibratedBound": 2.9802322387695312e-08,
+          "sha256": "5794bcc8c2a81a277e249c6fd7f61eb7385284c46af9eb1319e8e18f051b63ef",
+          "packedSha256": "cbc9273389bdf705867c7fe18d8421bdca249f6a22a1e9687f0fc7528f77a55b",
+          "coarseSha256": "70dc88f11b20bddaca2dab0af69fe0c3d35d4b96216518752cf09728a7ca08e7",
+          "finiteBandMaskSha256": "5a648d8015900d89664e00e125df179636301a2d8fa191c1aa2bd9358ea53a69"
+        }
+      ]
+    },
+    "cycles52": {
+      "indexSha256": "78a4805874bed21b09cad944ecd086e03fcebd9503f82ab1d966a984d235fc6d",
+      "version": [
+        5,
+        2,
+        0
+      ],
+      "buildHash": "fbe6228777e7",
+      "platform": "Darwin",
+      "machine": "arm64",
+      "nativeGpuProfile": null,
+      "sourceEngine": "CYCLES",
+      "cases": 70,
+      "fixtureSha256": "d8c5a943cfd091abd7aa4ae32bcd6a809acdc2fab60dfadb7c1228d7be9b6084",
+      "sourcePreserved": true,
+      "sourceReloadPreserved": true,
+      "unqualifiedScalarSamples": 0,
+      "nonfiniteMfValues": 0,
+      "sourceBlendSha256": "9e42c052e87347e828a06542ca15f912d80bcbbb8da993f975adb8da591a6306",
+      "calibrations": [
+        {
+          "id": "control-coordinate-0",
+          "maximumError": 2.8311713862194665e-08,
+          "calibratedBound": 2.9802322387695312e-08,
+          "sha256": "c0190aa47f01f1fab5e28b9ed252a58815efc3d1a5dd2e96a0c6c936774b94bd",
+          "packedSha256": "ba0edf8bcdc20affccd53e4597c60f94876a61f24f2cdadd392075b111dac9e7",
+          "coarseSha256": "8795562e2d2cad9037e96c5e25502794a80d8988afa992758bc1354d9631a317",
+          "finiteBandMaskSha256": "5a648d8015900d89664e00e125df179636301a2d8fa191c1aa2bd9358ea53a69"
+        },
+        {
+          "id": "control-coordinate-1",
+          "maximumError": 2.7818146008939948e-08,
+          "calibratedBound": 2.9802322387695312e-08,
+          "sha256": "245c0bdc3745c3ae9434d7cf5cf480b96d3d81f903adfca360bc226d743fda1e",
+          "packedSha256": "71fc3619cac6804a77aef28c9c0914fdc2c86b6110ac090aeca34e4a209aedcd",
+          "coarseSha256": "e5a4d733bff85ab51d8e6d5c3697f1a60fac2ea63161f999c9cd8ea4ad2e7247",
+          "finiteBandMaskSha256": "5a648d8015900d89664e00e125df179636301a2d8fa191c1aa2bd9358ea53a69"
+        },
+        {
+          "id": "control-signed-powers",
+          "maximumError": 0.0,
+          "calibratedBound": 2.9802322387695312e-08,
+          "sha256": "5794bcc8c2a81a277e249c6fd7f61eb7385284c46af9eb1319e8e18f051b63ef",
+          "packedSha256": "cbc9273389bdf705867c7fe18d8421bdca249f6a22a1e9687f0fc7528f77a55b",
+          "coarseSha256": "7e41ea6030b01ef97f52c8ea3cd33408c470e755d472d08b67a03ae8eae39ec3",
+          "finiteBandMaskSha256": "5a648d8015900d89664e00e125df179636301a2d8fa191c1aa2bd9358ea53a69"
+        }
+      ]
+    },
+    "cycles53": {
+      "indexSha256": "36476f60a4c33ad93aabb297defb8c7f0b8fd75c836978fcbdb18581fde27579",
+      "version": [
+        5,
+        3,
+        0
+      ],
+      "buildHash": "02f0899d78e3",
+      "platform": "Darwin",
+      "machine": "arm64",
+      "nativeGpuProfile": null,
+      "sourceEngine": "CYCLES",
+      "cases": 70,
+      "fixtureSha256": "d8c5a943cfd091abd7aa4ae32bcd6a809acdc2fab60dfadb7c1228d7be9b6084",
+      "sourcePreserved": true,
+      "sourceReloadPreserved": true,
+      "unqualifiedScalarSamples": 0,
+      "nonfiniteMfValues": 0,
+      "sourceBlendSha256": "87bd8a85179730e16d4bd2d0ab2a6f37302c488ec2dc19be15b1d7c6c57c3a71",
+      "calibrations": [
+        {
+          "id": "control-coordinate-0",
+          "maximumError": 2.8311713862194665e-08,
+          "calibratedBound": 2.9802322387695312e-08,
+          "sha256": "c0190aa47f01f1fab5e28b9ed252a58815efc3d1a5dd2e96a0c6c936774b94bd",
+          "packedSha256": "ba0edf8bcdc20affccd53e4597c60f94876a61f24f2cdadd392075b111dac9e7",
+          "coarseSha256": "8795562e2d2cad9037e96c5e25502794a80d8988afa992758bc1354d9631a317",
+          "finiteBandMaskSha256": "5a648d8015900d89664e00e125df179636301a2d8fa191c1aa2bd9358ea53a69"
+        },
+        {
+          "id": "control-coordinate-1",
+          "maximumError": 2.7818146008939948e-08,
+          "calibratedBound": 2.9802322387695312e-08,
+          "sha256": "12a22145db4f6ec0a65608af3dcfce804ee0206e6b71daa1f83de20889ffa5bf",
+          "packedSha256": "f141dc1b4b689c356b131ec777538832668e27e169a4e777c5b0b1e5bd4c93c4",
+          "coarseSha256": "e5a4d733bff85ab51d8e6d5c3697f1a60fac2ea63161f999c9cd8ea4ad2e7247",
+          "finiteBandMaskSha256": "5a648d8015900d89664e00e125df179636301a2d8fa191c1aa2bd9358ea53a69"
+        },
+        {
+          "id": "control-signed-powers",
+          "maximumError": 0.0,
+          "calibratedBound": 2.9802322387695312e-08,
+          "sha256": "5794bcc8c2a81a277e249c6fd7f61eb7385284c46af9eb1319e8e18f051b63ef",
+          "packedSha256": "cbc9273389bdf705867c7fe18d8421bdca249f6a22a1e9687f0fc7528f77a55b",
+          "coarseSha256": "7e41ea6030b01ef97f52c8ea3cd33408c470e755d472d08b67a03ae8eae39ec3",
+          "finiteBandMaskSha256": "5a648d8015900d89664e00e125df179636301a2d8fa191c1aa2bd9358ea53a69"
+        }
+      ]
+    }
+  },
+  "nativeComparisons": [
+    {
+      "a": "mf52",
+      "b": "mf53",
+      "maximum": 1000.0,
+      "bitIdenticalCases": 14
+    },
+    {
+      "a": "eevee52-calibrated",
+      "b": "eevee53-calibrated",
+      "maximum": 0.0,
+      "bitIdenticalCases": 140
+    },
+    {
+      "a": "cycles52",
+      "b": "cycles53",
+      "maximum": 6.283185243606567,
+      "bitIdenticalCases": 66
+    }
+  ],
+  "independentNativePrimitives": [
+    {
+      "dataset": "eevee52-calibrated",
+      "comparedFiniteBandSamples": 1009,
+      "differentSamples": 0,
+      "maximum": 0.0,
+      "excludedRadialSamples": 15,
+      "note": "Native Shader Math composition vs native Radial ID, not a browser port."
+    },
+    {
+      "dataset": "cycles52",
+      "comparedFiniteBandSamples": 1024,
+      "differentSamples": 6,
+      "maximum": 3.0,
+      "excludedRadialSamples": 0,
+      "note": "Native Shader Math composition vs native Radial ID, not a browser port."
+    },
+    {
+      "dataset": "eevee53-calibrated",
+      "comparedFiniteBandSamples": 1009,
+      "differentSamples": 0,
+      "maximum": 0.0,
+      "excludedRadialSamples": 15,
+      "note": "Native Shader Math composition vs native Radial ID, not a browser port."
+    },
+    {
+      "dataset": "cycles53",
+      "comparedFiniteBandSamples": 1024,
+      "differentSamples": 6,
+      "maximum": 3.0,
+      "excludedRadialSamples": 0,
+      "note": "Native Shader Math composition vs native Radial ID, not a browser port."
+    }
+  ],
+  "carrier": {
+    "absoluteLimitExclusive": 16,
+    "absoluteTruncationBound": 2.9802322387695312e-08,
+    "zeroSignPreserved": false,
+    "coarseBeforeCarrier": "v/64+.5",
+    "coarseQualifiedInterval": [
+      0.25,
+      0.75
+    ],
+    "coarseTargetAllowance": 0.0009765625,
+    "unqualifiedValuesNeverCompared": true
+  },
+  "counterexamples": [
+    {
+      "kind": "different-actual-native-evaluation-paths",
+      "dataset": "eevee53-calibrated",
+      "case": "field-s5-r0-n0-segment-coordinates-0",
+      "witness": {
+        "index": 121,
+        "coordinate": [
+          -0.10112711042165756,
+          0.07347317785024643,
+          0.0
+        ],
+        "sourceStageA": -0.07347315549850464,
+        "nativeMf": 0.07347313314676285,
+        "absoluteDifference": 0.1469462886452675
+      }
+    },
+    {
+      "kind": "different-actual-native-evaluation-paths",
+      "dataset": "eevee53-calibrated",
+      "case": "field-s5-r0-n0-segment-id",
+      "witness": {
+        "index": 121,
+        "coordinate": [
+          -0.10112711042165756,
+          0.07347317785024643,
+          0.0
+        ],
+        "sourceStageA": 2.0,
+        "nativeMf": 1.0,
+        "absoluteDifference": 1.0
+      }
+    },
+    {
+      "kind": "actual-native-mf-nonfinite",
+      "dataset": "mf52",
+      "case": "field-s2-r0.5-n0",
+      "fileSha256": "bc8aa8661c06cc98304fc8ef28245fe4dd171bc85445d29acf828c05e446d46c",
+      "sample": 4,
+      "component": 1,
+      "coordinate": [
+        -2.0,
+        -2.0,
+        0.0
+      ],
+      "nativeWordLittleEndianHex": "0000c07f",
+      "nonfiniteValueCount": 249,
+      "minimumObservedFiniteValue": -5135914.0
+    },
+    {
+      "kind": "actual-native-mf-nonfinite",
+      "dataset": "mf53",
+      "case": "field-s2-r0.5-n0",
+      "fileSha256": "9d53e274d9ff6ed1f587ccaf379709d8d978cedf9a4c5f683a0f081106b67e0a",
+      "sample": 4,
+      "component": 1,
+      "coordinate": [
+        -2.0,
+        -2.0,
+        0.0
+      ],
+      "nativeWordLittleEndianHex": "0000c07f",
+      "nonfiniteValueCount": 249,
+      "minimumObservedFiniteValue": -5135914.0
+    },
+    {
+      "kind": "native-shader-finite-band-unqualified-origin",
+      "dataset": "eevee53-calibrated",
+      "case": "field-s5-r0-n0-segment-id",
+      "sample": 0,
+      "coordinate": [
+        0,
+        0
+      ],
+      "coarseSourceBeforeCarrier": 0.0,
+      "finiteBandQualified": false,
+      "decodedNumberIsNotAQualifiedNativeValue": true,
+      "coarseSha256": "ef15c569a42d6186748f96b6a3b21724253596268b7c85dbeee33bc4e97daa22",
+      "maskSha256": "28002fc109a2a609ff088975c7c15d60f13049b0ccdac896f83eb8c0a412cc44"
+    },
+    {
+      "kind": "native-shader-finite-band-unqualified-origin",
+      "dataset": "eevee53-calibrated",
+      "case": "field-s5-r0-n0-segment-rotation",
+      "sample": 0,
+      "coordinate": [
+        0,
+        0
+      ],
+      "coarseSourceBeforeCarrier": 0.0,
+      "finiteBandQualified": false,
+      "decodedNumberIsNotAQualifiedNativeValue": true,
+      "coarseSha256": "8f91b3f9bc554c5a16199237bb3e3d28afc811f13755ca987712195130a96a8f",
+      "maskSha256": "28002fc109a2a609ff088975c7c15d60f13049b0ccdac896f83eb8c0a412cc44"
+    }
+  ],
+  "researchSourcePins": {
+    "schema_probe.py": "1d28ac8b7a88373f7dde49102a02e1197cbd0f49ef34c8462ac6bbfe136f0148",
+    "native_mf.py": "a3971220b95bd26f7b8d0924b29042194e2ee994c8b5ef5ff2ef9dbf273e25bd",
+    "native_eevee.py": "d8c5a943cfd091abd7aa4ae32bcd6a809acdc2fab60dfadb7c1228d7be9b6084",
+    "analyze.py": "ea09699866fd0e9ccac89af6c79f2fba9f08a7e9485b8e347521ca55f36dc7ac",
+    "sources.json": "5ce022468e21ced6b5b2cd5d24d9eb484972dd2308caf2579678dcee585b9877"
+  }
+}

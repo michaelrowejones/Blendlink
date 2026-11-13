@@ -120,7 +120,7 @@ export function prepareGeneratedProvenance(options: {
     if (dependency.relativeToBlend && !dependencyIsAbsolute) {
       if (!absoluteSource) {
         throw new Error(
-          `Blendlink cannot resolve relative Blender dependency ${JSON.stringify(dependency.path)} ` +
+          `SceneToWeb cannot resolve relative Blender dependency ${JSON.stringify(dependency.path)} ` +
             'without sourceBlend; regenerate it from the Blender export.',
         )
       }
@@ -176,15 +176,15 @@ export function defaultLocalProvenanceCacheRoot(): string {
   if (process.platform === 'win32') {
     const localAppData = process.env.LOCALAPPDATA
     return localAppData
-      ? join(localAppData, 'Blendlink', 'Cache', 'local-provenance-v1')
-      : join(homedir(), 'AppData', 'Local', 'Blendlink', 'Cache', 'local-provenance-v1')
+      ? join(localAppData, 'SceneToWeb', 'Cache', 'local-provenance-v1')
+      : join(homedir(), 'AppData', 'Local', 'SceneToWeb', 'Cache', 'local-provenance-v1')
   }
   if (process.platform === 'darwin') {
-    return join(homedir(), 'Library', 'Caches', 'blendlink', 'local-provenance-v1')
+    return join(homedir(), 'Library', 'Caches', 'scenetoweb', 'local-provenance-v1')
   }
   return join(
     process.env.XDG_CACHE_HOME || join(homedir(), '.cache'),
-    'blendlink',
+    'scenetoweb',
     'local-provenance-v1',
   )
 }
@@ -229,14 +229,14 @@ export function writeLocalPathProvenance(
   for (const entry of entries) {
     const absolutePath = resolve(entry.absolutePath)
     if (!LOCAL_PATH_KEY.test(entry.key) || localPathProvenanceKey(absolutePath) !== entry.key) {
-      throw new Error(`Blendlink refused invalid local provenance key ${entry.key}.`)
+      throw new Error(`SceneToWeb refused invalid local provenance key ${entry.key}.`)
     }
     const finalPath = cacheFile(entry.key, root)!
     const existing = readLocalPathProvenance(entry.key, { cacheRoot: root })
     if (existing && canonicalLocalPath(existing) === canonicalLocalPath(absolutePath)) continue
     if (existsSync(finalPath)) {
       throw new Error(
-        `Blendlink local provenance at ${finalPath} is corrupt or belongs to another path; ` +
+        `SceneToWeb local provenance at ${finalPath} is corrupt or belongs to another path; ` +
           'remove that one cache record and retry.',
       )
     }

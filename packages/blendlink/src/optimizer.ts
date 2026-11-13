@@ -724,14 +724,14 @@ function protectNamedResourcesForPrune(document: Document): Map<Property, Record
  * `material_compiler.py:6454-6543` writes `channel-<token>-<slot>.png` for the
  * base, orm, emissive and normal slots; the token is the variant hash (or,
  * for `page-` names, the shared-surface-page content hash). Nothing
- * else in a Blendlink asset carries this shape, and an artist cannot author it
+ * else in a SceneToWeb asset carries this shape, and an artist cannot author it
  * from Blender, so matching on it can never claim a hand-named texture. */
 const GENERATED_CHANNEL_TEXTURE = /^(?:channel|page)-[0-9a-f]+-(?:base|orm|emissive|normal)$/
 
 /** Merge compiler-generated channel textures whose payloads are byte-identical.
  *
  * The general `dedup` pass runs with `keepUniqueNames: true` and every texture
- * in a Blendlink asset has a unique name, so it merges none of them. That is
+ * in a SceneToWeb asset has a unique name, so it merges none of them. That is
  * deliberate — the policy below `prune` refuses to "discard a named resource
  * that may be addressed by application code", and `TextureResizePolicy`
  * (:746) really does address textures by name and throws when one is missing.
@@ -792,6 +792,7 @@ function mergeGeneratedChannelTextures(document: Document) {
 
 export interface TextureResizePolicy {
   name: string
+  aliases?: readonly string[]
   maxSize: number
 }
 
@@ -835,8 +836,10 @@ export async function resizeTextures(
   const warnings: string[] = []
   let changed = false
   for (const policy of policies) {
-    const texture = textures.find((candidate) => candidate.getName() === policy.name)
-      ?? textures.find((candidate) => textureKey(candidate.getName()) === textureKey(policy.name))
+    const keys = new Set([policy.name, ...(policy.aliases ?? [])].map(textureKey))
+    const matches = textures.filter(candidate => keys.has(textureKey(candidate.getName())) || keys.has(textureKey(candidate.getURI())))
+    if (matches.length > 1) throw new Error(`Texture size override for "${policy.name}" matches multiple exported images. Give the source images distinct names and filenames.`)
+    const texture = matches[0]
     if (!texture) {
       warnings.push(
         `Texture size override for "${policy.name}" did not match an exported image; ` +
@@ -880,7 +883,7 @@ export async function resizeTextures(
     }
     const published = await sharp(output).metadata()
     transforms.push({
-      name: texture.getName() || policy.name,
+      name: policy.name,
       originalWidth,
       originalHeight,
       publishedWidth: published.width ?? originalWidth,
@@ -991,7 +994,7 @@ export async function optimizeMeshopt(glbPath: string): Promise<OptimizationRepo
     refusePass('Texture de-duplication was skipped because at least one texture has authored extras.')
   }
   // Runs before the general pass and is accounted separately: this is the one
-  // place Blendlink drops a resource name, and it must never be hidden inside
+  // place SceneToWeb drops a resource name, and it must never be hidden inside
   // the dedup delta.
   const mergedGeneratedTextures = mergeGeneratedChannelTextures(document)
   const beforeDedup = resourceCounts(document)
@@ -1017,6 +1020,10 @@ export async function optimizeMeshopt(glbPath: string): Promise<OptimizationRepo
       || node.getMesh()!.listPrimitives().some((primitive) =>
         primitive.getMaterial()?.getExtension('KHR_materials_volume'))
     ))
+  const nativeGeometryContext = root.listMeshes().some(mesh => {
+    const runtime = mesh.getExtras().blendlink_tsl_runtime as { geometryContext?: unknown } | undefined
+    return Array.isArray(runtime?.geometryContext) && runtime.geometryContext.length > 0
+  })
   const positionQuantizationRisk = hierarchySensitiveMeshNode ?? animatedMeshNode
   if (positionQuantizationRisk && !hasPrimitiveRestart) {
     refusePass(
@@ -1026,7 +1033,10 @@ export async function optimizeMeshopt(glbPath: string): Promise<OptimizationRepo
         + `quantizing it would replace an authored attachment or insert a correction child.`,
     )
   }
-  const quantizedSemantics = positionQuantizationRisk
+  if(nativeGeometryContext)refusePass('POSITION/NORMAL/TANGENT quantization was skipped because live geometry inputs require authored float32 surface data.')
+  const quantizedSemantics = nativeGeometryContext
+    ? /^(?!(?:POSITION|NORMAL|TANGENT|TEXCOORD(?:_\d+)?)$).*$/
+    : positionQuantizationRisk
     ? /^(?!(?:POSITION|TEXCOORD(?:_\d+)?)$).*$/
     : /^(?!TEXCOORD(?:_\d+)?$).*$/
   if (hasPrimitiveRestart) {

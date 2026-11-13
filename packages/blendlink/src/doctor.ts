@@ -44,7 +44,7 @@ export async function doctor(root: string): Promise<DoctorLine[]> {
 
   if (supportedNodeVersion(process.versions.node)) ok(`node ${process.version}`)
   else fail(
-    `node ${process.version} is outside Blendlink's tested Node 22.15+ / 24 release lines; ` +
+    `node ${process.version} is outside SceneToWeb's tested Node 22.15+ / 24 release lines; ` +
       'switch to a supported LTS runtime before publishing',
   )
   const ktx = findKtxTool()
@@ -77,7 +77,7 @@ export async function doctor(root: string): Promise<DoctorLine[]> {
       }
     } catch (error) {
       fail(
-        'Blender known-issue registry is invalid or missing; reinstall Blendlink: ' +
+        'Blender known-issue registry is invalid or missing; reinstall SceneToWeb: ' +
           (error instanceof Error ? error.message : String(error)),
       )
     }
@@ -104,33 +104,33 @@ export async function doctor(root: string): Promise<DoctorLine[]> {
         `${status.objectBehaviorCount ?? 'unknown'} object behaviors` +
         `${status.catalogPath ? ` at ${status.catalogPath}` : ''}`
       if (status.error) {
-        fail(`Blendlink artist workspace inspection failed: ${status.error}; run \`blendlink addon install\``)
+        fail(`SceneToWeb artist workspace inspection failed: ${status.error}; run \`scenetoweb addon install\``)
       } else if (!status.installed) {
-        warn('Blendlink artist workspace not installed — run `blendlink addon install`')
+        warn('SceneToWeb artist workspace not installed — run `scenetoweb addon install`')
       } else if (status.version !== expected) {
         fail(
-          `Blendlink addon ${status.version ?? 'unknown'} does not match compiler ${expected}; ` +
-            'run `blendlink addon install`',
+          `SceneToWeb addon ${status.version ?? 'unknown'} does not match compiler ${expected}; ` +
+            'run `scenetoweb addon install`',
         )
       } else if (status.fingerprint !== expectedFingerprint) {
         fail(
-          `Blendlink addon ${expected} files do not match this compiler bundle ` +
+          `SceneToWeb addon ${expected} files do not match this compiler bundle ` +
             `(installed ${status.fingerprint?.slice(0, 16) ?? 'unknown'}, ` +
             `expected ${expectedFingerprint.slice(0, 16)}; catalog ${catalog}); ` +
-            'run `blendlink addon install`',
+            'run `scenetoweb addon install`',
         )
       } else if (!status.enabled) {
-        warn(`Blendlink addon ${expected} is installed but disabled — run \`blendlink addon install\``)
+        warn(`SceneToWeb addon ${expected} is installed but disabled — run \`scenetoweb addon install\``)
       } else {
         ok(
-          `Blendlink addon ${expected} installed and enabled ` +
+          `SceneToWeb addon ${expected} installed and enabled ` +
             `(${status.path ?? 'user_default'}; catalog ${catalog}; ` +
             `files ${expectedFingerprint.slice(0, 16)})`,
         )
       }
     } catch (error) {
       fail(
-        'Could not verify the Blendlink artist workspace: ' +
+        'Could not verify the SceneToWeb artist workspace: ' +
           (error instanceof Error ? error.message : String(error)),
       )
     }
@@ -152,7 +152,7 @@ export async function doctor(root: string): Promise<DoctorLine[]> {
     }
     const manifest = readManifest(scene.manifestPath)
     if (!manifest) {
-      warn(`${label}: never synced — run \`blendlink compile\``)
+      warn(`${label}: never synced — run \`scenetoweb compile\``)
       continue
     }
     if (!existsSync(scene.glbPath)) {
@@ -162,7 +162,7 @@ export async function doctor(root: string): Promise<DoctorLine[]> {
     if (manifest.blendBytesHash && manifest.blendBytesHash !== hash16(scene.blendPath)) {
       const fix = scene.external
         ? (scene.build ?? 'your export pipeline + typegen --blend')
-        : 'blendlink compile'
+        : 'scenetoweb compile'
       warn(`${label}: .blend changed since last sync — run \`${fix}\``)
       continue
     }

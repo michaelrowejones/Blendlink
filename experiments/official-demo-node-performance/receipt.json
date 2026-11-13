@@ -1,0 +1,1755 @@
+{
+  "schemaVersion": 1,
+  "kind": "official-demo-performance-receipt-v1",
+  "date": "2026-11-13",
+  "host": {
+    "platform": "darwin",
+    "architecture": "arm64",
+    "nativeGpu": "Apple M5 Pro / Metal API"
+  },
+  "qualification": "Research cost/compatibility observations only; no browser/Final visual parity or universal node qualification.",
+  "corpusSha256": "4cf26200e6ec31fd21b7792e2c5b99df03cf517532270a79bee9634562fd6156",
+  "nativeStockControls": [
+    {
+      "scene": "mandelbrot-grow",
+      "native": {
+        "version": [
+          5,
+          3,
+          0
+        ],
+        "versionString": "5.3.0",
+        "buildHash": "02f0899d78e3",
+        "autoexecEnabled": false
+      },
+      "sourceSha256": "08b1928c3b8c6c2ed120a470cdc08277a706e624c8133e72bc2f0e0c6c4255f9",
+      "sourcePreserved": true,
+      "physicalNodesAllData": 35,
+      "usedActiveSurfaceNodes": 25,
+      "usedActiveSurfaceClasses": {
+        "GeometryNodeRepeatInput": 1,
+        "GeometryNodeRepeatOutput": 1,
+        "NodeReroute": 3,
+        "ShaderNodeBsdfPrincipled": 1,
+        "ShaderNodeBump": 1,
+        "ShaderNodeCombineXYZ": 1,
+        "ShaderNodeMath": 7,
+        "ShaderNodeMix": 3,
+        "ShaderNodeSeparateXYZ": 1,
+        "ShaderNodeTexCoord": 1,
+        "ShaderNodeValue": 1,
+        "ShaderNodeVectorMath": 4
+      },
+      "geometryMs": 0.7857499876990914,
+      "materialPlanMs": 36.80137504125014,
+      "stockExportMs": 32.82295796088874,
+      "stockArtifact": {
+        "bytes": 1416,
+        "sha256": "ea94439fe886bf72f52f21f072651f8c6e9ca8234f3a93415bbd869e2efc7e95",
+        "renderedTriangles": 2,
+        "drawPrimitives": 1,
+        "materials": 1,
+        "images": 0,
+        "embeddedImageBytes": 0,
+        "role": "Current-frame stock exporter control, not Blendlink Final."
+      },
+      "materialOutcomes": {
+        "blocked": 1
+      },
+      "channelRefusals": [
+        {
+          "material": "Mandelbrot Grow",
+          "channel": "Base Color",
+          "tslIrRefusal": "node tree 'Shader Nodetree' has animation or drivers; live curve transport is required",
+          "route": "refused"
+        },
+        {
+          "material": "Mandelbrot Grow",
+          "channel": "Metallic",
+          "tslIrRefusal": "node tree 'Shader Nodetree' has animation or drivers; live curve transport is required",
+          "route": "refused"
+        },
+        {
+          "material": "Mandelbrot Grow",
+          "channel": "Roughness",
+          "tslIrRefusal": "node tree 'Shader Nodetree' has animation or drivers; live curve transport is required",
+          "route": "refused"
+        },
+        {
+          "material": "Mandelbrot Grow",
+          "channel": "Alpha",
+          "tslIrRefusal": "node tree 'Shader Nodetree' has animation or drivers; live curve transport is required",
+          "route": "refused"
+        },
+        {
+          "material": "Mandelbrot Grow",
+          "channel": "Emission",
+          "tslIrRefusal": "node tree 'Shader Nodetree' has animation or drivers; live curve transport is required",
+          "route": "refused"
+        },
+        {
+          "material": "Mandelbrot Grow",
+          "channel": "Normal",
+          "tslIrRefusal": "node tree 'Shader Nodetree' has animation or drivers; live curve transport is required",
+          "route": "refused"
+        },
+        {
+          "material": "Mandelbrot Grow",
+          "channel": "IOR",
+          "tslIrRefusal": "node tree 'Shader Nodetree' has animation or drivers; live curve transport is required",
+          "route": "refused"
+        }
+      ],
+      "runReceiptSha256": "5e107c007cb08e039545e41b63d23505b3133ac7c1b93363feeba3828b5983cf"
+    },
+    {
+      "scene": "radial-tiling",
+      "native": {
+        "version": [
+          5,
+          3,
+          0
+        ],
+        "versionString": "5.3.0",
+        "buildHash": "02f0899d78e3",
+        "autoexecEnabled": false
+      },
+      "sourceSha256": "bfc3cea66963e84c4468e8fac6b0313ef72265cafa5df36cf0f03d21479d1e3c",
+      "sourcePreserved": true,
+      "physicalNodesAllData": 30,
+      "usedActiveSurfaceNodes": 24,
+      "usedActiveSurfaceClasses": {
+        "NodeGroupInput": 1,
+        "NodeReroute": 6,
+        "ShaderNodeBsdfPrincipled": 2,
+        "ShaderNodeCombineXYZ": 1,
+        "ShaderNodeGroup": 2,
+        "ShaderNodeMapRange": 1,
+        "ShaderNodeMath": 4,
+        "ShaderNodeMix": 1,
+        "ShaderNodeRadialTiling": 1,
+        "ShaderNodeSeparateXYZ": 1,
+        "ShaderNodeTexCoord": 1,
+        "ShaderNodeTexImage": 1,
+        "ShaderNodeVectorMath": 2
+      },
+      "geometryMs": 2.6028339634649456,
+      "materialPlanMs": 38.578375009819865,
+      "stockExportMs": 24.23670800635591,
+      "stockArtifact": {
+        "bytes": 348076,
+        "sha256": "d907a13b7ca5f31748691e651b146cf8c676ca761ad5cc9727890363a9b640a2",
+        "renderedTriangles": 4,
+        "drawPrimitives": 2,
+        "materials": 2,
+        "images": 1,
+        "embeddedImageBytes": 345720,
+        "role": "Current-frame stock exporter control, not Blendlink Final."
+      },
+      "materialOutcomes": {
+        "lowered": 1,
+        "preserved": 1
+      },
+      "channelRefusals": [
+        {
+          "material": "Coordinates",
+          "channel": "Base Color",
+          "tslIrRefusal": "ShaderNodeRadialTiling has no proven TSL mapping",
+          "route": "refused"
+        }
+      ],
+      "runReceiptSha256": "5e107c007cb08e039545e41b63d23505b3133ac7c1b93363feeba3828b5983cf"
+    },
+    {
+      "scene": "cube-diorama",
+      "native": {
+        "version": [
+          5,
+          3,
+          0
+        ],
+        "versionString": "5.3.0",
+        "buildHash": "02f0899d78e3",
+        "autoexecEnabled": false
+      },
+      "sourceSha256": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e",
+      "sourcePreserved": true,
+      "physicalNodesAllData": 723,
+      "usedActiveSurfaceNodes": 98,
+      "usedActiveSurfaceClasses": {
+        "NodeGroupInput": 5,
+        "NodeReroute": 2,
+        "ShaderNodeBsdfPrincipled": 6,
+        "ShaderNodeBump": 5,
+        "ShaderNodeCombineColor": 1,
+        "ShaderNodeGroup": 7,
+        "ShaderNodeMapRange": 4,
+        "ShaderNodeMath": 24,
+        "ShaderNodeMix": 9,
+        "ShaderNodeObjectInfo": 3,
+        "ShaderNodeRGBCurve": 1,
+        "ShaderNodeSeparateColor": 1,
+        "ShaderNodeSeparateXYZ": 2,
+        "ShaderNodeTexCoord": 3,
+        "ShaderNodeTexImage": 3,
+        "ShaderNodeTexNoise": 4,
+        "ShaderNodeUVMap": 4,
+        "ShaderNodeValToRGB": 3,
+        "ShaderNodeValue": 1,
+        "ShaderNodeVectorMath": 10
+      },
+      "geometryMs": 415.956458018627,
+      "materialPlanMs": 599.8026659945026,
+      "stockExportMs": 1580.7552919723094,
+      "stockArtifact": {
+        "bytes": 64673072,
+        "sha256": "7bc7a0afd1646bcd6e46de2bf1b6b9253ebd8860a4c85d3a60557a9ba98318c4",
+        "renderedTriangles": 2106644,
+        "drawPrimitives": 19,
+        "materials": 6,
+        "images": 4,
+        "embeddedImageBytes": 3648862,
+        "role": "Current-frame stock exporter control, not Blendlink Final."
+      },
+      "materialOutcomes": {
+        "blocked": 5,
+        "preserved": 1
+      },
+      "channelRefusals": [
+        {
+          "material": "Boards - Basketweave",
+          "channel": "Normal",
+          "tslIrRefusal": "Bump Height live translation currently uses EEVEE; Cycles appearance uses baking",
+          "route": "refused"
+        },
+        {
+          "material": "Concrete",
+          "channel": "Normal",
+          "tslIrRefusal": "Bump Height live translation currently uses EEVEE; Cycles appearance uses baking",
+          "route": "refused"
+        },
+        {
+          "material": "Plaster - Teal",
+          "channel": "Base Color",
+          "tslIrRefusal": "Normalized Noise has no verified live source precision profile for CYCLES on darwin/arm64; use source baking for this Cycles profile",
+          "route": "refused"
+        },
+        {
+          "material": "Plaster - Teal",
+          "channel": "Normal",
+          "tslIrRefusal": "Bump Height live translation currently uses EEVEE; Cycles appearance uses baking",
+          "route": "refused"
+        },
+        {
+          "material": "Wood 6",
+          "channel": "Normal",
+          "tslIrRefusal": "Bump Height live translation currently uses EEVEE; Cycles appearance uses baking",
+          "route": "refused"
+        },
+        {
+          "material": "Wood 6",
+          "channel": "Coat Normal",
+          "tslIrRefusal": "Bump Height live translation currently uses EEVEE; Cycles appearance uses baking",
+          "route": "refused"
+        },
+        {
+          "material": "Wooden Bars",
+          "channel": "Base Color",
+          "tslIrRefusal": "Normalized Noise has no verified live source precision profile for CYCLES on darwin/arm64; use source baking for this Cycles profile",
+          "route": "refused"
+        },
+        {
+          "material": "Wooden Bars",
+          "channel": "Roughness",
+          "tslIrRefusal": "Normalized Noise has no verified live source precision profile for CYCLES on darwin/arm64; use source baking for this Cycles profile",
+          "route": "refused"
+        },
+        {
+          "material": "Wooden Bars",
+          "channel": "Normal",
+          "tslIrRefusal": "Bump Height live translation currently uses EEVEE; Cycles appearance uses baking",
+          "route": "refused"
+        }
+      ],
+      "runReceiptSha256": "5e107c007cb08e039545e41b63d23505b3133ac7c1b93363feeba3828b5983cf"
+    },
+    {
+      "scene": "mandelbrot-grow",
+      "native": {
+        "version": [
+          5,
+          2,
+          0
+        ],
+        "versionString": "5.2.0 LTS",
+        "buildHash": "fbe6228777e7",
+        "autoexecEnabled": false
+      },
+      "sourceSha256": "08b1928c3b8c6c2ed120a470cdc08277a706e624c8133e72bc2f0e0c6c4255f9",
+      "sourcePreserved": true,
+      "physicalNodesAllData": 35,
+      "usedActiveSurfaceNodes": 25,
+      "usedActiveSurfaceClasses": {
+        "GeometryNodeRepeatInput": 1,
+        "GeometryNodeRepeatOutput": 1,
+        "NodeReroute": 3,
+        "ShaderNodeBsdfPrincipled": 1,
+        "ShaderNodeBump": 1,
+        "ShaderNodeCombineXYZ": 1,
+        "ShaderNodeMath": 7,
+        "ShaderNodeMix": 3,
+        "ShaderNodeSeparateXYZ": 1,
+        "ShaderNodeTexCoord": 1,
+        "ShaderNodeValue": 1,
+        "ShaderNodeVectorMath": 4
+      },
+      "geometryMs": 0.8053749916143715,
+      "materialPlanMs": 125.31779101118445,
+      "stockExportMs": 24.717624997720122,
+      "stockArtifact": {
+        "bytes": 1416,
+        "sha256": "2007caaa2dd7728cf98861e3140fe2893540ac6c9e15eec03810f6a4d23b563e",
+        "renderedTriangles": 2,
+        "drawPrimitives": 1,
+        "materials": 1,
+        "images": 0,
+        "embeddedImageBytes": 0,
+        "role": "Current-frame stock exporter control, not Blendlink Final."
+      },
+      "materialOutcomes": {
+        "blocked": 1
+      },
+      "channelRefusals": [
+        {
+          "material": "Mandelbrot Grow",
+          "channel": "Base Color",
+          "tslIrRefusal": "node tree 'Shader Nodetree' has animation or drivers; live curve transport is required",
+          "route": "refused"
+        },
+        {
+          "material": "Mandelbrot Grow",
+          "channel": "Metallic",
+          "tslIrRefusal": "node tree 'Shader Nodetree' has animation or drivers; live curve transport is required",
+          "route": "refused"
+        },
+        {
+          "material": "Mandelbrot Grow",
+          "channel": "Roughness",
+          "tslIrRefusal": "node tree 'Shader Nodetree' has animation or drivers; live curve transport is required",
+          "route": "refused"
+        },
+        {
+          "material": "Mandelbrot Grow",
+          "channel": "Alpha",
+          "tslIrRefusal": "node tree 'Shader Nodetree' has animation or drivers; live curve transport is required",
+          "route": "refused"
+        },
+        {
+          "material": "Mandelbrot Grow",
+          "channel": "Emission",
+          "tslIrRefusal": "node tree 'Shader Nodetree' has animation or drivers; live curve transport is required",
+          "route": "refused"
+        },
+        {
+          "material": "Mandelbrot Grow",
+          "channel": "Normal",
+          "tslIrRefusal": "node tree 'Shader Nodetree' has animation or drivers; live curve transport is required",
+          "route": "refused"
+        },
+        {
+          "material": "Mandelbrot Grow",
+          "channel": "IOR",
+          "tslIrRefusal": "node tree 'Shader Nodetree' has animation or drivers; live curve transport is required",
+          "route": "refused"
+        }
+      ],
+      "runReceiptSha256": "d2e8ba7908148e8cd1af0439c16c1166a0c28dcceb36b85dc04ad4f6bb1a5bdc"
+    },
+    {
+      "scene": "radial-tiling",
+      "native": {
+        "version": [
+          5,
+          2,
+          0
+        ],
+        "versionString": "5.2.0 LTS",
+        "buildHash": "fbe6228777e7",
+        "autoexecEnabled": false
+      },
+      "sourceSha256": "bfc3cea66963e84c4468e8fac6b0313ef72265cafa5df36cf0f03d21479d1e3c",
+      "sourcePreserved": true,
+      "physicalNodesAllData": 30,
+      "usedActiveSurfaceNodes": 24,
+      "usedActiveSurfaceClasses": {
+        "NodeGroupInput": 1,
+        "NodeReroute": 6,
+        "ShaderNodeBsdfPrincipled": 2,
+        "ShaderNodeCombineXYZ": 1,
+        "ShaderNodeGroup": 2,
+        "ShaderNodeMapRange": 1,
+        "ShaderNodeMath": 4,
+        "ShaderNodeMix": 1,
+        "ShaderNodeRadialTiling": 1,
+        "ShaderNodeSeparateXYZ": 1,
+        "ShaderNodeTexCoord": 1,
+        "ShaderNodeTexImage": 1,
+        "ShaderNodeVectorMath": 2
+      },
+      "geometryMs": 2.608290989883244,
+      "materialPlanMs": 36.307709000539035,
+      "stockExportMs": 21.75358298700303,
+      "stockArtifact": {
+        "bytes": 348076,
+        "sha256": "d928c74402ee22aae0ee9ac8075d7b2f827a6f0f01a3eb3d3af86adf30c1e338",
+        "renderedTriangles": 4,
+        "drawPrimitives": 2,
+        "materials": 2,
+        "images": 1,
+        "embeddedImageBytes": 345720,
+        "role": "Current-frame stock exporter control, not Blendlink Final."
+      },
+      "materialOutcomes": {
+        "lowered": 1,
+        "preserved": 1
+      },
+      "channelRefusals": [
+        {
+          "material": "Coordinates",
+          "channel": "Base Color",
+          "tslIrRefusal": "ShaderNodeRadialTiling has no proven TSL mapping",
+          "route": "refused"
+        }
+      ],
+      "runReceiptSha256": "d2e8ba7908148e8cd1af0439c16c1166a0c28dcceb36b85dc04ad4f6bb1a5bdc"
+    },
+    {
+      "scene": "cube-diorama",
+      "native": {
+        "version": [
+          5,
+          2,
+          0
+        ],
+        "versionString": "5.2.0 LTS",
+        "buildHash": "fbe6228777e7",
+        "autoexecEnabled": false
+      },
+      "sourceSha256": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e",
+      "sourcePreserved": true,
+      "physicalNodesAllData": 723,
+      "usedActiveSurfaceNodes": 98,
+      "usedActiveSurfaceClasses": {
+        "NodeGroupInput": 5,
+        "NodeReroute": 2,
+        "ShaderNodeBsdfPrincipled": 6,
+        "ShaderNodeBump": 5,
+        "ShaderNodeCombineColor": 1,
+        "ShaderNodeGroup": 7,
+        "ShaderNodeMapRange": 4,
+        "ShaderNodeMath": 24,
+        "ShaderNodeMix": 9,
+        "ShaderNodeObjectInfo": 3,
+        "ShaderNodeRGBCurve": 1,
+        "ShaderNodeSeparateColor": 1,
+        "ShaderNodeSeparateXYZ": 2,
+        "ShaderNodeTexCoord": 3,
+        "ShaderNodeTexImage": 3,
+        "ShaderNodeTexNoise": 4,
+        "ShaderNodeUVMap": 4,
+        "ShaderNodeValToRGB": 3,
+        "ShaderNodeValue": 1,
+        "ShaderNodeVectorMath": 10
+      },
+      "geometryMs": 414.97804096434265,
+      "materialPlanMs": 660.2144589996897,
+      "stockExportMs": 1567.6815420156345,
+      "stockArtifact": {
+        "bytes": 64672616,
+        "sha256": "7a35e69342acf7794fb473e48e47cb7bcb885959083f318b47c8aad5ed74b236",
+        "renderedTriangles": 2106644,
+        "drawPrimitives": 19,
+        "materials": 6,
+        "images": 4,
+        "embeddedImageBytes": 3648500,
+        "role": "Current-frame stock exporter control, not Blendlink Final."
+      },
+      "materialOutcomes": {
+        "blocked": 5,
+        "preserved": 1
+      },
+      "channelRefusals": [
+        {
+          "material": "Boards - Basketweave",
+          "channel": "Normal",
+          "tslIrRefusal": "Bump Height live translation currently uses EEVEE; Cycles appearance uses baking",
+          "route": "refused"
+        },
+        {
+          "material": "Concrete",
+          "channel": "Normal",
+          "tslIrRefusal": "Bump Height live translation currently uses EEVEE; Cycles appearance uses baking",
+          "route": "refused"
+        },
+        {
+          "material": "Plaster - Teal",
+          "channel": "Base Color",
+          "tslIrRefusal": "Normalized Noise has no verified live source precision profile for CYCLES on darwin/arm64; use source baking for this Cycles profile",
+          "route": "refused"
+        },
+        {
+          "material": "Plaster - Teal",
+          "channel": "Normal",
+          "tslIrRefusal": "Bump Height live translation currently uses EEVEE; Cycles appearance uses baking",
+          "route": "refused"
+        },
+        {
+          "material": "Wood 6",
+          "channel": "Normal",
+          "tslIrRefusal": "Bump Height live translation currently uses EEVEE; Cycles appearance uses baking",
+          "route": "refused"
+        },
+        {
+          "material": "Wood 6",
+          "channel": "Coat Normal",
+          "tslIrRefusal": "Bump Height live translation currently uses EEVEE; Cycles appearance uses baking",
+          "route": "refused"
+        },
+        {
+          "material": "Wooden Bars",
+          "channel": "Base Color",
+          "tslIrRefusal": "Normalized Noise has no verified live source precision profile for CYCLES on darwin/arm64; use source baking for this Cycles profile",
+          "route": "refused"
+        },
+        {
+          "material": "Wooden Bars",
+          "channel": "Roughness",
+          "tslIrRefusal": "Normalized Noise has no verified live source precision profile for CYCLES on darwin/arm64; use source baking for this Cycles profile",
+          "route": "refused"
+        },
+        {
+          "material": "Wooden Bars",
+          "channel": "Normal",
+          "tslIrRefusal": "Bump Height live translation currently uses EEVEE; Cycles appearance uses baking",
+          "route": "refused"
+        }
+      ],
+      "runReceiptSha256": "d2e8ba7908148e8cd1af0439c16c1166a0c28dcceb36b85dc04ad4f6bb1a5bdc"
+    },
+    {
+      "scene": "cube-diorama",
+      "native": {
+        "version": [
+          4,
+          2,
+          0
+        ],
+        "versionString": "4.2.0",
+        "buildHash": "a51f293548ad",
+        "autoexecEnabled": false
+      },
+      "sourceSha256": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e",
+      "sourcePreserved": true,
+      "physicalNodesAllData": 723,
+      "usedActiveSurfaceNodes": 98,
+      "usedActiveSurfaceClasses": {
+        "NodeGroupInput": 5,
+        "NodeReroute": 2,
+        "ShaderNodeBsdfPrincipled": 6,
+        "ShaderNodeBump": 5,
+        "ShaderNodeCombineColor": 1,
+        "ShaderNodeGroup": 7,
+        "ShaderNodeMapRange": 4,
+        "ShaderNodeMath": 24,
+        "ShaderNodeMix": 9,
+        "ShaderNodeObjectInfo": 3,
+        "ShaderNodeRGBCurve": 1,
+        "ShaderNodeSeparateColor": 1,
+        "ShaderNodeSeparateXYZ": 2,
+        "ShaderNodeTexCoord": 3,
+        "ShaderNodeTexImage": 3,
+        "ShaderNodeTexNoise": 4,
+        "ShaderNodeUVMap": 4,
+        "ShaderNodeValToRGB": 3,
+        "ShaderNodeValue": 1,
+        "ShaderNodeVectorMath": 10
+      },
+      "geometryMs": 67.60741700418293,
+      "materialPlanMs": 1262.313625018578,
+      "stockExportMs": 1807.0606249966659,
+      "stockArtifact": {
+        "bytes": 64674344,
+        "sha256": "a80f5999bd079d47af26cdbac156cdb10d6806890a5bc53edf4da02c84337489",
+        "renderedTriangles": 2106644,
+        "drawPrimitives": 19,
+        "materials": 6,
+        "images": 4,
+        "embeddedImageBytes": 3648493,
+        "role": "Current-frame stock exporter control, not Blendlink Final."
+      },
+      "materialOutcomes": {
+        "blocked": 5,
+        "preserved": 1
+      },
+      "channelRefusals": [
+        {
+          "material": "Boards - Basketweave",
+          "channel": "Normal",
+          "tslIrRefusal": "Bump Height live translation currently uses EEVEE; Cycles appearance uses baking",
+          "route": "refused"
+        },
+        {
+          "material": "Concrete",
+          "channel": "Normal",
+          "tslIrRefusal": "Bump Height live translation currently uses EEVEE; Cycles appearance uses baking",
+          "route": "refused"
+        },
+        {
+          "material": "Plaster - Teal",
+          "channel": "Base Color",
+          "tslIrRefusal": "Normalized Noise has no verified live source precision profile for CYCLES on darwin/arm64; use source baking for this Cycles profile",
+          "route": "refused"
+        },
+        {
+          "material": "Plaster - Teal",
+          "channel": "Normal",
+          "tslIrRefusal": "Bump Height live translation currently uses EEVEE; Cycles appearance uses baking",
+          "route": "refused"
+        },
+        {
+          "material": "Wood 6",
+          "channel": "Normal",
+          "tslIrRefusal": "Bump Height live translation currently uses EEVEE; Cycles appearance uses baking",
+          "route": "refused"
+        },
+        {
+          "material": "Wood 6",
+          "channel": "Coat Normal",
+          "tslIrRefusal": "Bump Height live translation currently uses EEVEE; Cycles appearance uses baking",
+          "route": "refused"
+        },
+        {
+          "material": "Wooden Bars",
+          "channel": "Base Color",
+          "tslIrRefusal": "Normalized Noise has no verified live source precision profile for CYCLES on darwin/arm64; use source baking for this Cycles profile",
+          "route": "refused"
+        },
+        {
+          "material": "Wooden Bars",
+          "channel": "Roughness",
+          "tslIrRefusal": "Normalized Noise has no verified live source precision profile for CYCLES on darwin/arm64; use source baking for this Cycles profile",
+          "route": "refused"
+        },
+        {
+          "material": "Wooden Bars",
+          "channel": "Normal",
+          "tslIrRefusal": "Bump Height live translation currently uses EEVEE; Cycles appearance uses baking",
+          "route": "refused"
+        }
+      ],
+      "runReceiptSha256": "c3b2b6f5bd5f95d9d32db55166d9faffc84195539e04f8dbf7fda57db1f74e2a"
+    }
+  ],
+  "nativeRenders": [
+    {
+      "scene": "mandelbrot-grow",
+      "version": [
+        5,
+        3,
+        0
+      ],
+      "buildHash": "02f0899d78e3",
+      "sourcePreserved": true,
+      "status": "passed",
+      "adjustments": [
+        {
+          "role": "bounded-eevee-cost-control",
+          "previous": {
+            "engine": "BLENDER_EEVEE",
+            "resolution": [
+              1920,
+              1024,
+              100
+            ],
+            "compositing": true,
+            "samples": 64,
+            "imageFormat": "FFMPEG",
+            "mediaType": "VIDEO"
+          },
+          "effectiveEngine": "BLENDER_EEVEE",
+          "resolution": [
+            256,
+            256,
+            100
+          ],
+          "samples": 1,
+          "compositing": true,
+          "savedToSource": false
+        }
+      ],
+      "result": {
+        "bytes": 83471,
+        "sha256": "1a5d6ec8a35c569e786d877e9d2a5c83039677e98af46594531e5d0df5a16337",
+        "pixels": {
+          "width": 256,
+          "height": 256,
+          "minimum": 0.07450980693101883,
+          "maximum": 0.8313726186752319,
+          "mean": 0.2986545058591143
+        },
+        "renderOperatorMs": 415.9323750063777,
+        "gpuProfile": {
+          "requestedBackend": "METAL",
+          "renderer": "Metal API",
+          "vendor": "Apple M5 Pro",
+          "version": "1.2",
+          "backend": "METAL"
+        },
+        "role": "Controlled native render/cost observation; no web parity threshold or authored full-resolution timing."
+      },
+      "runReceiptSha256": "205d016022c3d32f33c150271579c8de6ad9bb7b6ad865014ec8c6907179f1f4"
+    },
+    {
+      "scene": "radial-tiling",
+      "version": [
+        5,
+        3,
+        0
+      ],
+      "buildHash": "02f0899d78e3",
+      "sourcePreserved": true,
+      "status": "passed",
+      "adjustments": [
+        {
+          "role": "explicit-generated-camera-cost-control",
+          "camera": "RESEARCH_COST_CAMERA",
+          "location": [
+            -7.545948028564453e-05,
+            0,
+            5
+          ],
+          "orthographicScale": 2.500275135040283,
+          "sourceHadCamera": false
+        },
+        {
+          "role": "bounded-eevee-cost-control",
+          "previous": {
+            "engine": "BLENDER_EEVEE",
+            "resolution": [
+              1920,
+              1080,
+              100
+            ],
+            "compositing": true,
+            "samples": 64,
+            "imageFormat": "PNG",
+            "mediaType": "IMAGE"
+          },
+          "effectiveEngine": "BLENDER_EEVEE",
+          "resolution": [
+            256,
+            256,
+            100
+          ],
+          "samples": 1,
+          "compositing": true,
+          "savedToSource": false
+        }
+      ],
+      "result": {
+        "bytes": 61829,
+        "sha256": "2ee291e1522678a0c78bf306ff66053b038c629caf171e34c39f07bbf950b02a",
+        "pixels": {
+          "width": 256,
+          "height": 256,
+          "minimum": 0,
+          "maximum": 0.23137256503105164,
+          "mean": 0.1796061321492838
+        },
+        "renderOperatorMs": 176.76741699688137,
+        "gpuProfile": {
+          "requestedBackend": "METAL",
+          "renderer": "Metal API",
+          "vendor": "Apple M5 Pro",
+          "version": "1.2",
+          "backend": "METAL"
+        },
+        "role": "Controlled native render/cost observation; no web parity threshold or authored full-resolution timing."
+      },
+      "runReceiptSha256": "205d016022c3d32f33c150271579c8de6ad9bb7b6ad865014ec8c6907179f1f4"
+    },
+    {
+      "scene": "cube-diorama",
+      "version": [
+        5,
+        3,
+        0
+      ],
+      "buildHash": "02f0899d78e3",
+      "sourcePreserved": true,
+      "status": "passed",
+      "adjustments": [
+        {
+          "role": "enable-active-view-layer-cost-control",
+          "layer": "Studio",
+          "previousUse": false
+        },
+        {
+          "role": "bounded-eevee-cost-control",
+          "previous": {
+            "engine": "CYCLES",
+            "resolution": [
+              1024,
+              1024,
+              200
+            ],
+            "compositing": false,
+            "samples": 64,
+            "imageFormat": "PNG",
+            "mediaType": "IMAGE"
+          },
+          "effectiveEngine": "BLENDER_EEVEE",
+          "resolution": [
+            256,
+            256,
+            100
+          ],
+          "samples": 1,
+          "compositing": false,
+          "savedToSource": false
+        }
+      ],
+      "result": {
+        "bytes": 88956,
+        "sha256": "f95e6728fb9f1dd2435811e659ad49cb513773b29da0874fba91e43fe0cac1ba",
+        "pixels": {
+          "width": 256,
+          "height": 256,
+          "minimum": 0.019607843831181526,
+          "maximum": 0.9764706492424011,
+          "mean": 0.27189679522702664
+        },
+        "renderOperatorMs": 1684.0553750516847,
+        "gpuProfile": {
+          "requestedBackend": "METAL",
+          "renderer": "Metal API",
+          "vendor": "Apple M5 Pro",
+          "version": "1.2",
+          "backend": "METAL"
+        },
+        "role": "Controlled native render/cost observation; no web parity threshold or authored full-resolution timing."
+      },
+      "runReceiptSha256": "205d016022c3d32f33c150271579c8de6ad9bb7b6ad865014ec8c6907179f1f4"
+    },
+    {
+      "scene": "mandelbrot-grow",
+      "version": [
+        5,
+        2,
+        0
+      ],
+      "buildHash": "fbe6228777e7",
+      "sourcePreserved": true,
+      "status": "passed",
+      "adjustments": [
+        {
+          "role": "bounded-eevee-cost-control",
+          "previous": {
+            "engine": "BLENDER_EEVEE",
+            "resolution": [
+              1920,
+              1024,
+              100
+            ],
+            "compositing": true,
+            "samples": 64,
+            "imageFormat": "FFMPEG",
+            "mediaType": "VIDEO"
+          },
+          "effectiveEngine": "BLENDER_EEVEE",
+          "resolution": [
+            256,
+            256,
+            100
+          ],
+          "samples": 1,
+          "compositing": true,
+          "savedToSource": false
+        }
+      ],
+      "result": {
+        "bytes": 79351,
+        "sha256": "3ec586d780a6ecd6269988f7683d8346941d7494bbe357955fd22c3c43d8808b",
+        "pixels": {
+          "width": 256,
+          "height": 256,
+          "minimum": 0.04313725605607033,
+          "maximum": 0.8235294818878174,
+          "mean": 0.2565543077549819
+        },
+        "renderOperatorMs": 1796.3067080127075,
+        "gpuProfile": {
+          "requestedBackend": "METAL",
+          "renderer": "Metal API",
+          "vendor": "Apple M5 Pro",
+          "version": "1.2",
+          "backend": "METAL"
+        },
+        "role": "Controlled native render/cost observation; no web parity threshold or authored full-resolution timing."
+      },
+      "runReceiptSha256": "6e316ee0ff693a814ca62d285fa92e72deeff1d70bc4e68e1e139d5398284459"
+    },
+    {
+      "scene": "radial-tiling",
+      "version": [
+        5,
+        2,
+        0
+      ],
+      "buildHash": "fbe6228777e7",
+      "sourcePreserved": true,
+      "status": "passed",
+      "adjustments": [
+        {
+          "role": "explicit-generated-camera-cost-control",
+          "camera": "RESEARCH_COST_CAMERA",
+          "location": [
+            -7.545948028564453e-05,
+            0,
+            5
+          ],
+          "orthographicScale": 2.500275135040283,
+          "sourceHadCamera": false
+        },
+        {
+          "role": "bounded-eevee-cost-control",
+          "previous": {
+            "engine": "BLENDER_EEVEE",
+            "resolution": [
+              1920,
+              1080,
+              100
+            ],
+            "compositing": true,
+            "samples": 64,
+            "imageFormat": "PNG",
+            "mediaType": "IMAGE"
+          },
+          "effectiveEngine": "BLENDER_EEVEE",
+          "resolution": [
+            256,
+            256,
+            100
+          ],
+          "samples": 1,
+          "compositing": true,
+          "savedToSource": false
+        }
+      ],
+      "result": {
+        "bytes": 61547,
+        "sha256": "4d462f43e6710386baa2f3bcaec7df68a36bca69958e48bbca0172911baf3548",
+        "pixels": {
+          "width": 256,
+          "height": 256,
+          "minimum": 0,
+          "maximum": 0.23137256503105164,
+          "mean": 0.17962352517450123
+        },
+        "renderOperatorMs": 534.7619579988532,
+        "gpuProfile": {
+          "requestedBackend": "METAL",
+          "renderer": "Metal API",
+          "vendor": "Apple M5 Pro",
+          "version": "1.2",
+          "backend": "METAL"
+        },
+        "role": "Controlled native render/cost observation; no web parity threshold or authored full-resolution timing."
+      },
+      "runReceiptSha256": "6e316ee0ff693a814ca62d285fa92e72deeff1d70bc4e68e1e139d5398284459"
+    },
+    {
+      "scene": "cube-diorama",
+      "version": [
+        5,
+        2,
+        0
+      ],
+      "buildHash": "fbe6228777e7",
+      "sourcePreserved": true,
+      "status": "passed",
+      "adjustments": [
+        {
+          "role": "enable-active-view-layer-cost-control",
+          "layer": "Studio",
+          "previousUse": false
+        },
+        {
+          "role": "bounded-eevee-cost-control",
+          "previous": {
+            "engine": "CYCLES",
+            "resolution": [
+              1024,
+              1024,
+              200
+            ],
+            "compositing": false,
+            "samples": 64,
+            "imageFormat": "PNG",
+            "mediaType": "IMAGE"
+          },
+          "effectiveEngine": "BLENDER_EEVEE",
+          "resolution": [
+            256,
+            256,
+            100
+          ],
+          "samples": 1,
+          "compositing": false,
+          "savedToSource": false
+        }
+      ],
+      "result": {
+        "bytes": 102207,
+        "sha256": "40b744d6eb32048be871a27f5ab4eb6c9f0b128c474f85fccd6dd888f68c9953",
+        "pixels": {
+          "width": 256,
+          "height": 256,
+          "minimum": 0.01568627543747425,
+          "maximum": 0.9764706492424011,
+          "mean": 0.19052946836007814
+        },
+        "renderOperatorMs": 4990.271667018533,
+        "gpuProfile": {
+          "requestedBackend": "METAL",
+          "renderer": "Metal API",
+          "vendor": "Apple M5 Pro",
+          "version": "1.2",
+          "backend": "METAL"
+        },
+        "role": "Controlled native render/cost observation; no web parity threshold or authored full-resolution timing."
+      },
+      "runReceiptSha256": "6e316ee0ff693a814ca62d285fa92e72deeff1d70bc4e68e1e139d5398284459"
+    },
+    {
+      "scene": "cube-diorama",
+      "version": [
+        4,
+        2,
+        0
+      ],
+      "buildHash": "a51f293548ad",
+      "sourcePreserved": true,
+      "status": "passed",
+      "adjustments": [
+        {
+          "role": "enable-active-view-layer-cost-control",
+          "layer": "Studio",
+          "previousUse": false
+        },
+        {
+          "role": "bounded-eevee-cost-control",
+          "previous": {
+            "engine": "CYCLES",
+            "resolution": [
+              1024,
+              1024,
+              200
+            ],
+            "compositing": false,
+            "samples": 64,
+            "imageFormat": "PNG",
+            "mediaType": null
+          },
+          "effectiveEngine": "BLENDER_EEVEE_NEXT",
+          "resolution": [
+            256,
+            256,
+            100
+          ],
+          "samples": 1,
+          "compositing": false,
+          "savedToSource": false
+        }
+      ],
+      "result": {
+        "bytes": 103207,
+        "sha256": "f8b498d5b91bf12f307fe564c1a20daa057accd4d5008f7a34e10e8f969e419f",
+        "pixels": {
+          "width": 256,
+          "height": 256,
+          "minimum": 0.01568627543747425,
+          "maximum": 0.9764706492424011,
+          "mean": 0.18459493604907115
+        },
+        "renderOperatorMs": 9817.461667000316,
+        "gpuProfile": {
+          "requestedBackend": "METAL",
+          "renderer": "Metal API",
+          "vendor": "Apple M5 Pro",
+          "version": "1.2",
+          "backend": "METAL"
+        },
+        "role": "Controlled native render/cost observation; no web parity threshold or authored full-resolution timing."
+      },
+      "runReceiptSha256": "72f143817d29d21d8c2846850acb63bd6cf2b62cacadd234e5a18f10d723fe73"
+    }
+  ],
+  "legacyLoadFailures": [
+    {
+      "scene": "mandelbrot-grow",
+      "version": [
+        4,
+        2,
+        0
+      ],
+      "processExit": 1,
+      "status": "native-file-load-refused",
+      "reason": "Native Blender 4.2 rejects this official Blender 5.0-format file as not a blend file. No node/render/export observations exist for this cell.",
+      "stdoutSha256": "677ba424020f86fe746c744976e25b31a96d3d8c21797b807ee0ca1c952a522b",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "scene": "radial-tiling",
+      "version": [
+        4,
+        2,
+        0
+      ],
+      "processExit": 1,
+      "status": "native-file-load-refused",
+      "reason": "Native Blender 4.2 rejects this official Blender 5.0-format file as not a blend file. No node/render/export observations exist for this cell.",
+      "stdoutSha256": "1eacd39962db8c36ea8bfb87e57e4296e72e4106cc7f66014e501d48c8667747",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "explicitFloorExperiment": {
+    "sourceSha256": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e",
+    "sourcePreserved": true,
+    "adjustments": [
+      {
+        "role": "explicit-derivative-experiment",
+        "object": "Floor",
+        "modifier": "Subdivision",
+        "originalViewport": true,
+        "originalRender": true,
+        "levels": 4,
+        "renderLevels": 5
+      }
+    ],
+    "geometryMs": 91.51858399854973,
+    "materialPlanMs": 151.74033300718293,
+    "stockExportMs": 263.5362499859184,
+    "stockArtifact": {
+      "bytes": 4186976,
+      "sha256": "782609c0d15dbeec23dbb9328b51f8b27f54cb4d033abaf9349da06a05ff2212",
+      "renderedTriangles": 17684,
+      "drawPrimitives": 19,
+      "materials": 6,
+      "images": 4,
+      "embeddedImageBytes": 3648862,
+      "role": "Current-frame stock exporter control, not Blendlink Final."
+    },
+    "role": "Explicit in-process derivative; no source save, automatic simplification, Final success or visual acceptance."
+  },
+  "actualProductionFinal": {
+    "nodeVersion": "v24.22.3",
+    "capturedSdkFiles": 818,
+    "sdkSnapshotStable": true,
+    "sourceSnapshotReceiptSha256": "b236d3fa1aa2fbaa627a8720cb8062aa6b676d8a346e752f39b1bae895abf984",
+    "finalReceiptSha256": "6bfef9164bcca0ed1e4726ebd7c56560c475991666ea9038dfd96c98014dcbab",
+    "observations": [
+      {
+        "scene": "mandelbrot-grow",
+        "elapsedMs": 1871.1475,
+        "exitCode": 1,
+        "signal": null,
+        "publishedWebsite": false,
+        "publicationFiles": [],
+        "sourceSha256Before": "08b1928c3b8c6c2ed120a470cdc08277a706e624c8133e72bc2f0e0c6c4255f9",
+        "sourceSha256After": "08b1928c3b8c6c2ed120a470cdc08277a706e624c8133e72bc2f0e0c6c4255f9",
+        "copySha256After": "08b1928c3b8c6c2ed120a470cdc08277a706e624c8133e72bc2f0e0c6c4255f9",
+        "status": "production-refused-source-preserved"
+      },
+      {
+        "scene": "radial-tiling",
+        "elapsedMs": 1885.8491659999997,
+        "exitCode": 1,
+        "signal": null,
+        "publishedWebsite": false,
+        "publicationFiles": [],
+        "sourceSha256Before": "bfc3cea66963e84c4468e8fac6b0313ef72265cafa5df36cf0f03d21479d1e3c",
+        "sourceSha256After": "bfc3cea66963e84c4468e8fac6b0313ef72265cafa5df36cf0f03d21479d1e3c",
+        "copySha256After": "bfc3cea66963e84c4468e8fac6b0313ef72265cafa5df36cf0f03d21479d1e3c",
+        "status": "production-refused-source-preserved"
+      },
+      {
+        "scene": "cube-diorama",
+        "elapsedMs": 2319.470458,
+        "exitCode": 1,
+        "signal": null,
+        "publishedWebsite": false,
+        "publicationFiles": [],
+        "sourceSha256Before": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e",
+        "sourceSha256After": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e",
+        "copySha256After": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e",
+        "status": "production-refused-source-preserved"
+      }
+    ]
+  },
+  "initialPlannerProfile": {
+    "nativeVersion": [
+      5,
+      3,
+      0
+    ],
+    "totalSeconds": 0.5663839180000001,
+    "scope": "Instrumented cold material planner; overhead included, not an ordinary elapsed-time benchmark.",
+    "topFunctions": [
+      {
+        "function": "plan_materials",
+        "calls": 1,
+        "ownSeconds": 3.373e-06,
+        "cumulativeSeconds": 0.566450083
+      },
+      {
+        "function": "wrapper",
+        "calls": 1,
+        "ownSeconds": 3.7930000000000004e-06,
+        "cumulativeSeconds": 0.5662410840000001
+      },
+      {
+        "function": "_plan_materials_uncached",
+        "calls": 1,
+        "ownSeconds": 1.908e-05,
+        "cumulativeSeconds": 0.566235875
+      },
+      {
+        "function": "_binding_map",
+        "calls": 1,
+        "ownSeconds": 0.016938790000000002,
+        "cumulativeSeconds": 0.486459167
+      },
+      {
+        "function": "evaluated_material_uses",
+        "calls": 19,
+        "ownSeconds": 0.469357658,
+        "cumulativeSeconds": 0.469444126
+      },
+      {
+        "function": "<genexpr>",
+        "calls": 7,
+        "ownSeconds": 1.496e-05,
+        "cumulativeSeconds": 0.07839133400000001
+      },
+      {
+        "function": "_plan_selected_material",
+        "calls": 6,
+        "ownSeconds": 4.7039e-05,
+        "cumulativeSeconds": 0.078376374
+      },
+      {
+        "function": "_plan_tsl_program",
+        "calls": 5,
+        "ownSeconds": 0.000159659,
+        "cumulativeSeconds": 0.078027751
+      }
+    ]
+  },
+  "pairedCompilerOptimization": {
+    "role": "Actual original-Cube planner; no rendering/export during timing. First and two warm calls per fresh factory process. Tracemalloc is a separate untimed fourth call. No native/GPU-memory or frame-rate claim.",
+    "pairs": [
+      {
+        "baselineRevision": "1827c2412131343b31769487db409c1b8f3b3a8c",
+        "candidateRevision": "6e268ffaf147e969704ac85a59ace4ae94af64c0",
+        "sourceChanges": [
+          "packages/blender-addon/procedural.py"
+        ],
+        "executionOrder": "baseline-first",
+        "fullPlanJsonIdentical": true,
+        "baseline": {
+          "schemaVersion": 1,
+          "kind": "real-cube-native-planner-benchmark-v1",
+          "version": [
+            4,
+            2,
+            0
+          ],
+          "nativeBuildHash": "a51f293548ad",
+          "sourceSha256": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e",
+          "proceduralSha256": "cb6b850ff5c284aab982cbff4f22ea1bb4352e65572d613aeb8816b049a208bf",
+          "materialCompilerImportMs": 79.2832089937292,
+          "timings": [
+            {
+              "iteration": 0,
+              "role": "first-call",
+              "elapsedMs": 750.1278340350837,
+              "fullPlanSha256": "387927e6a957422631b46abbb1245a66a44689f60741ebe13658a2f9ae376b32"
+            },
+            {
+              "iteration": 1,
+              "role": "warm-call",
+              "elapsedMs": 592.6755409454927,
+              "fullPlanSha256": "387927e6a957422631b46abbb1245a66a44689f60741ebe13658a2f9ae376b32"
+            },
+            {
+              "iteration": 2,
+              "role": "warm-call",
+              "elapsedMs": 598.226165981032,
+              "fullPlanSha256": "387927e6a957422631b46abbb1245a66a44689f60741ebe13658a2f9ae376b32"
+            }
+          ],
+          "warmTracemalloc": {
+            "currentBytes": 189723,
+            "peakBytes": 67112024,
+            "scope": "Python-tracked allocations only; native Blender/GPU memory is excluded. This fourth call is not a timing sample."
+          },
+          "sourceStatePreserved": true,
+          "sourceFilePreserved": true,
+          "meshObjects": 19,
+          "scope": "Original Cube active view layer; first+two warm plans per fresh factory process, one Blender render thread, no render/export/source mutation."
+        },
+        "candidate": {
+          "schemaVersion": 1,
+          "kind": "real-cube-native-planner-benchmark-v1",
+          "version": [
+            4,
+            2,
+            0
+          ],
+          "nativeBuildHash": "a51f293548ad",
+          "sourceSha256": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e",
+          "proceduralSha256": "a012b02b21754f24f08dbba80b2f12facfa9c92e6a0557b1beb42909d954f974",
+          "materialCompilerImportMs": 74.54987498931587,
+          "timings": [
+            {
+              "iteration": 0,
+              "role": "first-call",
+              "elapsedMs": 559.0483749983832,
+              "fullPlanSha256": "387927e6a957422631b46abbb1245a66a44689f60741ebe13658a2f9ae376b32"
+            },
+            {
+              "iteration": 1,
+              "role": "warm-call",
+              "elapsedMs": 463.93024997087196,
+              "fullPlanSha256": "387927e6a957422631b46abbb1245a66a44689f60741ebe13658a2f9ae376b32"
+            },
+            {
+              "iteration": 2,
+              "role": "warm-call",
+              "elapsedMs": 458.21587496902794,
+              "fullPlanSha256": "387927e6a957422631b46abbb1245a66a44689f60741ebe13658a2f9ae376b32"
+            }
+          ],
+          "warmTracemalloc": {
+            "currentBytes": 164563,
+            "peakBytes": 8392904,
+            "scope": "Python-tracked allocations only; native Blender/GPU memory is excluded. This fourth call is not a timing sample."
+          },
+          "sourceStatePreserved": true,
+          "sourceFilePreserved": true,
+          "meshObjects": 19,
+          "scope": "Original Cube active view layer; first+two warm plans per fresh factory process, one Blender render thread, no render/export/source mutation."
+        },
+        "receiptSha256": "72c4ebebe1c5a01ddabd279061ca96d57e59ac6fec0a03a7eb390ed83f70ce8b"
+      },
+      {
+        "baselineRevision": "1827c2412131343b31769487db409c1b8f3b3a8c",
+        "candidateRevision": "6e268ffaf147e969704ac85a59ace4ae94af64c0",
+        "sourceChanges": [
+          "packages/blender-addon/procedural.py"
+        ],
+        "executionOrder": "baseline-first",
+        "fullPlanJsonIdentical": true,
+        "baseline": {
+          "schemaVersion": 1,
+          "kind": "real-cube-native-planner-benchmark-v1",
+          "version": [
+            5,
+            2,
+            0
+          ],
+          "nativeBuildHash": "fbe6228777e7",
+          "sourceSha256": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e",
+          "proceduralSha256": "cb6b850ff5c284aab982cbff4f22ea1bb4352e65572d613aeb8816b049a208bf",
+          "materialCompilerImportMs": 104.67454104218632,
+          "timings": [
+            {
+              "iteration": 0,
+              "role": "first-call",
+              "elapsedMs": 619.653332978487,
+              "fullPlanSha256": "387927e6a957422631b46abbb1245a66a44689f60741ebe13658a2f9ae376b32"
+            },
+            {
+              "iteration": 1,
+              "role": "warm-call",
+              "elapsedMs": 469.9143750476651,
+              "fullPlanSha256": "387927e6a957422631b46abbb1245a66a44689f60741ebe13658a2f9ae376b32"
+            },
+            {
+              "iteration": 2,
+              "role": "warm-call",
+              "elapsedMs": 469.9002080014907,
+              "fullPlanSha256": "387927e6a957422631b46abbb1245a66a44689f60741ebe13658a2f9ae376b32"
+            }
+          ],
+          "warmTracemalloc": {
+            "currentBytes": 163235,
+            "peakBytes": 134222912,
+            "scope": "Python-tracked allocations only; native Blender/GPU memory is excluded. This fourth call is not a timing sample."
+          },
+          "sourceStatePreserved": true,
+          "sourceFilePreserved": true,
+          "meshObjects": 19,
+          "scope": "Original Cube active view layer; first+two warm plans per fresh factory process, one Blender render thread, no render/export/source mutation."
+        },
+        "candidate": {
+          "schemaVersion": 1,
+          "kind": "real-cube-native-planner-benchmark-v1",
+          "version": [
+            5,
+            2,
+            0
+          ],
+          "nativeBuildHash": "fbe6228777e7",
+          "sourceSha256": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e",
+          "proceduralSha256": "a012b02b21754f24f08dbba80b2f12facfa9c92e6a0557b1beb42909d954f974",
+          "materialCompilerImportMs": 102.2039579693228,
+          "timings": [
+            {
+              "iteration": 0,
+              "role": "first-call",
+              "elapsedMs": 482.54220897797495,
+              "fullPlanSha256": "387927e6a957422631b46abbb1245a66a44689f60741ebe13658a2f9ae376b32"
+            },
+            {
+              "iteration": 1,
+              "role": "warm-call",
+              "elapsedMs": 377.84791697049513,
+              "fullPlanSha256": "387927e6a957422631b46abbb1245a66a44689f60741ebe13658a2f9ae376b32"
+            },
+            {
+              "iteration": 2,
+              "role": "warm-call",
+              "elapsedMs": 375.8584589813836,
+              "fullPlanSha256": "387927e6a957422631b46abbb1245a66a44689f60741ebe13658a2f9ae376b32"
+            }
+          ],
+          "warmTracemalloc": {
+            "currentBytes": 163299,
+            "peakBytes": 8393152,
+            "scope": "Python-tracked allocations only; native Blender/GPU memory is excluded. This fourth call is not a timing sample."
+          },
+          "sourceStatePreserved": true,
+          "sourceFilePreserved": true,
+          "meshObjects": 19,
+          "scope": "Original Cube active view layer; first+two warm plans per fresh factory process, one Blender render thread, no render/export/source mutation."
+        },
+        "receiptSha256": "72c4ebebe1c5a01ddabd279061ca96d57e59ac6fec0a03a7eb390ed83f70ce8b"
+      },
+      {
+        "baselineRevision": "1827c2412131343b31769487db409c1b8f3b3a8c",
+        "candidateRevision": "6e268ffaf147e969704ac85a59ace4ae94af64c0",
+        "sourceChanges": [
+          "packages/blender-addon/procedural.py"
+        ],
+        "executionOrder": "baseline-first",
+        "fullPlanJsonIdentical": true,
+        "baseline": {
+          "schemaVersion": 1,
+          "kind": "real-cube-native-planner-benchmark-v1",
+          "version": [
+            5,
+            3,
+            0
+          ],
+          "nativeBuildHash": "02f0899d78e3",
+          "sourceSha256": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e",
+          "proceduralSha256": "cb6b850ff5c284aab982cbff4f22ea1bb4352e65572d613aeb8816b049a208bf",
+          "materialCompilerImportMs": 11.573416995815933,
+          "timings": [
+            {
+              "iteration": 0,
+              "role": "first-call",
+              "elapsedMs": 570.2101250062697,
+              "fullPlanSha256": "387927e6a957422631b46abbb1245a66a44689f60741ebe13658a2f9ae376b32"
+            },
+            {
+              "iteration": 1,
+              "role": "warm-call",
+              "elapsedMs": 467.17870800057426,
+              "fullPlanSha256": "387927e6a957422631b46abbb1245a66a44689f60741ebe13658a2f9ae376b32"
+            },
+            {
+              "iteration": 2,
+              "role": "warm-call",
+              "elapsedMs": 469.4769160123542,
+              "fullPlanSha256": "387927e6a957422631b46abbb1245a66a44689f60741ebe13658a2f9ae376b32"
+            }
+          ],
+          "warmTracemalloc": {
+            "currentBytes": 163235,
+            "peakBytes": 134222912,
+            "scope": "Python-tracked allocations only; native Blender/GPU memory is excluded. This fourth call is not a timing sample."
+          },
+          "sourceStatePreserved": true,
+          "sourceFilePreserved": true,
+          "meshObjects": 19,
+          "scope": "Original Cube active view layer; first+two warm plans per fresh factory process, one Blender render thread, no render/export/source mutation."
+        },
+        "candidate": {
+          "schemaVersion": 1,
+          "kind": "real-cube-native-planner-benchmark-v1",
+          "version": [
+            5,
+            3,
+            0
+          ],
+          "nativeBuildHash": "02f0899d78e3",
+          "sourceSha256": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e",
+          "proceduralSha256": "a012b02b21754f24f08dbba80b2f12facfa9c92e6a0557b1beb42909d954f974",
+          "materialCompilerImportMs": 7.495499972719699,
+          "timings": [
+            {
+              "iteration": 0,
+              "role": "first-call",
+              "elapsedMs": 449.9242089805193,
+              "fullPlanSha256": "387927e6a957422631b46abbb1245a66a44689f60741ebe13658a2f9ae376b32"
+            },
+            {
+              "iteration": 1,
+              "role": "warm-call",
+              "elapsedMs": 380.843167018611,
+              "fullPlanSha256": "387927e6a957422631b46abbb1245a66a44689f60741ebe13658a2f9ae376b32"
+            },
+            {
+              "iteration": 2,
+              "role": "warm-call",
+              "elapsedMs": 380.08745800470933,
+              "fullPlanSha256": "387927e6a957422631b46abbb1245a66a44689f60741ebe13658a2f9ae376b32"
+            }
+          ],
+          "warmTracemalloc": {
+            "currentBytes": 163299,
+            "peakBytes": 8393152,
+            "scope": "Python-tracked allocations only; native Blender/GPU memory is excluded. This fourth call is not a timing sample."
+          },
+          "sourceStatePreserved": true,
+          "sourceFilePreserved": true,
+          "meshObjects": 19,
+          "scope": "Original Cube active view layer; first+two warm plans per fresh factory process, one Blender render thread, no render/export/source mutation."
+        },
+        "receiptSha256": "72c4ebebe1c5a01ddabd279061ca96d57e59ac6fec0a03a7eb390ed83f70ce8b"
+      },
+      {
+        "baselineRevision": "1827c2412131343b31769487db409c1b8f3b3a8c",
+        "candidateRevision": "6e268ffaf147e969704ac85a59ace4ae94af64c0",
+        "sourceChanges": [
+          "packages/blender-addon/procedural.py"
+        ],
+        "executionOrder": "candidate-first",
+        "fullPlanJsonIdentical": true,
+        "baseline": {
+          "schemaVersion": 1,
+          "kind": "real-cube-native-planner-benchmark-v1",
+          "version": [
+            5,
+            3,
+            0
+          ],
+          "nativeBuildHash": "02f0899d78e3",
+          "sourceSha256": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e",
+          "proceduralSha256": "cb6b850ff5c284aab982cbff4f22ea1bb4352e65572d613aeb8816b049a208bf",
+          "materialCompilerImportMs": 104.50079204747453,
+          "timings": [
+            {
+              "iteration": 0,
+              "role": "first-call",
+              "elapsedMs": 570.4257080215029,
+              "fullPlanSha256": "387927e6a957422631b46abbb1245a66a44689f60741ebe13658a2f9ae376b32"
+            },
+            {
+              "iteration": 1,
+              "role": "warm-call",
+              "elapsedMs": 466.66100004222244,
+              "fullPlanSha256": "387927e6a957422631b46abbb1245a66a44689f60741ebe13658a2f9ae376b32"
+            },
+            {
+              "iteration": 2,
+              "role": "warm-call",
+              "elapsedMs": 465.99866601172835,
+              "fullPlanSha256": "387927e6a957422631b46abbb1245a66a44689f60741ebe13658a2f9ae376b32"
+            }
+          ],
+          "warmTracemalloc": {
+            "currentBytes": 163235,
+            "peakBytes": 134222912,
+            "scope": "Python-tracked allocations only; native Blender/GPU memory is excluded. This fourth call is not a timing sample."
+          },
+          "sourceStatePreserved": true,
+          "sourceFilePreserved": true,
+          "meshObjects": 19,
+          "scope": "Original Cube active view layer; first+two warm plans per fresh factory process, one Blender render thread, no render/export/source mutation."
+        },
+        "candidate": {
+          "schemaVersion": 1,
+          "kind": "real-cube-native-planner-benchmark-v1",
+          "version": [
+            5,
+            3,
+            0
+          ],
+          "nativeBuildHash": "02f0899d78e3",
+          "sourceSha256": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e",
+          "proceduralSha256": "a012b02b21754f24f08dbba80b2f12facfa9c92e6a0557b1beb42909d954f974",
+          "materialCompilerImportMs": 105.32287502428517,
+          "timings": [
+            {
+              "iteration": 0,
+              "role": "first-call",
+              "elapsedMs": 485.0983750075102,
+              "fullPlanSha256": "387927e6a957422631b46abbb1245a66a44689f60741ebe13658a2f9ae376b32"
+            },
+            {
+              "iteration": 1,
+              "role": "warm-call",
+              "elapsedMs": 382.4968329863623,
+              "fullPlanSha256": "387927e6a957422631b46abbb1245a66a44689f60741ebe13658a2f9ae376b32"
+            },
+            {
+              "iteration": 2,
+              "role": "warm-call",
+              "elapsedMs": 378.8650840288028,
+              "fullPlanSha256": "387927e6a957422631b46abbb1245a66a44689f60741ebe13658a2f9ae376b32"
+            }
+          ],
+          "warmTracemalloc": {
+            "currentBytes": 163299,
+            "peakBytes": 8393152,
+            "scope": "Python-tracked allocations only; native Blender/GPU memory is excluded. This fourth call is not a timing sample."
+          },
+          "sourceStatePreserved": true,
+          "sourceFilePreserved": true,
+          "meshObjects": 19,
+          "scope": "Original Cube active view layer; first+two warm plans per fresh factory process, one Blender render thread, no render/export/source mutation."
+        },
+        "receiptSha256": "9dba4508fbc1576cc9fff30341c425edfac3a11cd81bf738d737509ab2a3dda0"
+      },
+      {
+        "baselineRevision": "1827c2412131343b31769487db409c1b8f3b3a8c",
+        "candidateRevision": "6e268ffaf147e969704ac85a59ace4ae94af64c0",
+        "sourceChanges": [
+          "packages/blender-addon/procedural.py"
+        ],
+        "executionOrder": "baseline-first",
+        "fullPlanJsonIdentical": true,
+        "baseline": {
+          "schemaVersion": 1,
+          "kind": "real-cube-native-planner-benchmark-v1",
+          "version": [
+            5,
+            3,
+            0
+          ],
+          "nativeBuildHash": "02f0899d78e3",
+          "sourceSha256": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e",
+          "proceduralSha256": "cb6b850ff5c284aab982cbff4f22ea1bb4352e65572d613aeb8816b049a208bf",
+          "materialCompilerImportMs": 105.44054204365239,
+          "timings": [
+            {
+              "iteration": 0,
+              "role": "first-call",
+              "elapsedMs": 577.0822500344366,
+              "fullPlanSha256": "387927e6a957422631b46abbb1245a66a44689f60741ebe13658a2f9ae376b32"
+            },
+            {
+              "iteration": 1,
+              "role": "warm-call",
+              "elapsedMs": 468.8934580190107,
+              "fullPlanSha256": "387927e6a957422631b46abbb1245a66a44689f60741ebe13658a2f9ae376b32"
+            },
+            {
+              "iteration": 2,
+              "role": "warm-call",
+              "elapsedMs": 467.52395801013336,
+              "fullPlanSha256": "387927e6a957422631b46abbb1245a66a44689f60741ebe13658a2f9ae376b32"
+            }
+          ],
+          "warmTracemalloc": {
+            "currentBytes": 163235,
+            "peakBytes": 134222912,
+            "scope": "Python-tracked allocations only; native Blender/GPU memory is excluded. This fourth call is not a timing sample."
+          },
+          "sourceStatePreserved": true,
+          "sourceFilePreserved": true,
+          "meshObjects": 19,
+          "scope": "Original Cube active view layer; first+two warm plans per fresh factory process, one Blender render thread, no render/export/source mutation."
+        },
+        "candidate": {
+          "schemaVersion": 1,
+          "kind": "real-cube-native-planner-benchmark-v1",
+          "version": [
+            5,
+            3,
+            0
+          ],
+          "nativeBuildHash": "02f0899d78e3",
+          "sourceSha256": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e",
+          "proceduralSha256": "a012b02b21754f24f08dbba80b2f12facfa9c92e6a0557b1beb42909d954f974",
+          "materialCompilerImportMs": 104.24683301243931,
+          "timings": [
+            {
+              "iteration": 0,
+              "role": "first-call",
+              "elapsedMs": 500.4854580038227,
+              "fullPlanSha256": "387927e6a957422631b46abbb1245a66a44689f60741ebe13658a2f9ae376b32"
+            },
+            {
+              "iteration": 1,
+              "role": "warm-call",
+              "elapsedMs": 381.62720802938566,
+              "fullPlanSha256": "387927e6a957422631b46abbb1245a66a44689f60741ebe13658a2f9ae376b32"
+            },
+            {
+              "iteration": 2,
+              "role": "warm-call",
+              "elapsedMs": 377.13270797394216,
+              "fullPlanSha256": "387927e6a957422631b46abbb1245a66a44689f60741ebe13658a2f9ae376b32"
+            }
+          ],
+          "warmTracemalloc": {
+            "currentBytes": 163299,
+            "peakBytes": 8393152,
+            "scope": "Python-tracked allocations only; native Blender/GPU memory is excluded. This fourth call is not a timing sample."
+          },
+          "sourceStatePreserved": true,
+          "sourceFilePreserved": true,
+          "meshObjects": 19,
+          "scope": "Original Cube active view layer; first+two warm plans per fresh factory process, one Blender render thread, no render/export/source mutation."
+        },
+        "receiptSha256": "8c74a85f8d51f04ebd6215b374344ce76893f9263846be9fd2637d428fb76705"
+      }
+    ],
+    "warmed53Summary": {
+      "baselineSamplesMs": [
+        467.17870800057426,
+        469.4769160123542,
+        466.66100004222244,
+        465.99866601172835,
+        468.8934580190107,
+        467.52395801013336
+      ],
+      "candidateSamplesMs": [
+        380.843167018611,
+        380.08745800470933,
+        382.4968329863623,
+        378.8650840288028,
+        381.62720802938566,
+        377.13270797394216
+      ],
+      "baselineMedianMs": 467.3513330053538,
+      "candidateMedianMs": 380.46531251166016,
+      "reductionPercent": 18.591157092665945
+    }
+  }
+}

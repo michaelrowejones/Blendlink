@@ -311,6 +311,12 @@ try {
     if (!reference.cells[cell.id]) {
       throw new Error(`reference missing cell ${cell.id}`)
     }
+    if (cell.pipeline === 'legacy-ir' && (cell.scope !== 'legacy-serialized-runtime-only'
+      || reference.cells[cell.id].pipeline !== 'legacy-ir'
+      || reference.cells[cell.id].scope !== cell.scope
+      || reference.cells[cell.id].freshSourceRefusal !== 'Magic Texture native live translation requires EEVEE; use source baking for Cycles')) {
+      throw new Error(`${cell.id}: regenerate the legacy compatibility reference with its explicit fresh-source refusal`)
+    }
   }
 
   const results = {}
@@ -495,6 +501,8 @@ try {
       }
     }
     results[cell.id] = {
+      scope: cell.scope ?? 'fresh-source',
+      ...(cell.pipeline === 'legacy-ir' ? { freshSourceRefusal: reference.cells[cell.id].freshSourceRefusal } : {}),
       ok: true,
       claim,
       gated,
@@ -716,6 +724,8 @@ try {
     webgpuBackendReal: Boolean(environment.backend),
     referenceBackend: Object.values(reference.cells)[0]?.backend ?? null,
     cells: results,
+    legacyRuntimeOnly: Object.entries(results).filter(([, entry]) => entry.scope === 'legacy-serialized-runtime-only')
+      .map(([id, entry]) => ({ id, pass: entry.pass, freshSourceRefusal: entry.freshSourceRefusal })),
     // Hoisted so an approximation cannot be skimmed past inside a hundred-odd
     // per-cell entries. `claims` is the honest headline; `approximations`
     // names every declared divergence with the exact cells that prove its
@@ -738,7 +748,7 @@ try {
     pageErrorCount: pageErrors.length,
     pageErrorSample: pageErrors.slice(0, 8),
     limits: [
-      'Cells drive the production IR pipeline (tsl_ir.py -> tslNodeRecipe.ts); only diagnostic cells without an IR route stay hand-written.',
+      'Fresh-source cells drive tsl_ir.py -> tslNodeRecipe.ts. Explicit legacy-ir cells instead retain fixed serialized compatibility documents, verify a fresh-source refusal, and do not establish a live source port. Diagnostic cells without an IR route stay hand-written.',
       'One 64px tile per configuration; scene sampling covers UV-driven compiled channels only (the tile proxy provides UV space).',
       'Scene coverage refusals are the compiler to-do list, tallied by named reason.',
       'Scene chains carrying declared approximations gate on their declaration: bounded chains on the loosest member budget, falling back to the distribution gate as approximate/amplified when node-level bounded-ness is amplified past it by thresholding, and decorrelated chains on the distribution gate directly. Chain-level per-texel figures for those categories are reported, not gated.',

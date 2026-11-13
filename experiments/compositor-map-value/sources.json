@@ -1,0 +1,38 @@
+[
+  {
+    "revision": "v4.2.0",
+    "url": "https://raw.githubusercontent.com/blender/blender/v4.2.0/source/blender/nodes/composite/nodes/node_composite_map_value.cc",
+    "path": "source/blender/nodes/composite/nodes/node_composite_map_value.cc",
+    "sha256": "df2e54bcb784a45821e48a37cb77a29636f78528b57d118a17dbf4c5025d9ed7"
+  },
+  {
+    "revision": "v4.2.0",
+    "url": "https://raw.githubusercontent.com/blender/blender/v4.2.0/source/blender/compositor/operations/COM_MapValueOperation.cc",
+    "path": "source/blender/compositor/operations/COM_MapValueOperation.cc",
+    "sha256": "55cecf354d558b165bc1d9aa0109823903ae2d0a03eeccb8a425c13d4152c7c1"
+  },
+  {
+    "revision": "v4.2.0",
+    "url": "https://raw.githubusercontent.com/blender/blender/v4.2.0/source/blender/compositor/nodes/COM_MapValueNode.cc",
+    "path": "source/blender/compositor/nodes/COM_MapValueNode.cc",
+    "sha256": "5458df031c43d88e61424fdaebaa70d6c7d6bd15d65d36dc0ef16291e042b8e1"
+  },
+  {
+    "revision": "v4.2.0",
+    "url": "https://raw.githubusercontent.com/blender/blender/v4.2.0/source/blender/compositor/realtime_compositor/shaders/library/gpu_shader_compositor_map_value.glsl",
+    "path": "source/blender/compositor/realtime_compositor/shaders/library/gpu_shader_compositor_map_value.glsl",
+    "sha256": "5d30437d436747bbe03d364d6ee407b21c939c207ae6bb8f4aa28d6db7a1026f"
+  },
+  {
+    "revision": "v4.2.0",
+    "url": "https://raw.githubusercontent.com/blender/blender/v4.2.0/source/blender/compositor/operations/COM_ConvertOperation.cc",
+    "path": "source/blender/compositor/operations/COM_ConvertOperation.cc",
+    "sha256": "3ae581c7127d2125ce45e15e68b42bd411c441261043b9d3ad0d413042b90381"
+  },
+  {
+    "revision": "v4.2.0",
+    "url": "https://raw.githubusercontent.com/blender/blender/v4.2.0/source/blender/compositor/realtime_compositor/shaders/library/gpu_shader_compositor_type_conversion.glsl",
+    "path": "source/blender/compositor/realtime_compositor/shaders/library/gpu_shader_compositor_type_conversion.glsl",
+    "sha256": "dfedc0d16febe0002e7115b05ea52e8d15bfa96e19214fede807180801b01cc4"
+  }
+]

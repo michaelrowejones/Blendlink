@@ -1,12 +1,31 @@
 # Your first scene on a website
 
-Blendlink is currently private source work. Use a local package built from this
+SceneToWeb is public source in pre-release development. Use a local package built from this
 checkout, or an archive supplied by the maintainer. The package's `0.9.0`
 version is not evidence that an installable public release exists.
 
 This walkthrough starts with a saved Blender scene, previews it without a web
 project, then attaches it to a small existing Three.js or React Three Fiber
 site. No hosting account is needed.
+
+## Install from an extension ZIP
+
+The artist installation starts in Blender: **Preferences → Get Extensions →
+Install from Disk**, choose the matching SceneToWeb extension ZIP, and enable it.
+No global Node or npm installation is required for Preview Website or Export
+Website Folder. On first use, SceneToWeb downloads Node 24.22.3 from nodejs.org,
+checks its pinned SHA-256, and keeps it with a private npm cache in Blender's
+extension data. Later uses reuse those tools. Blender remains responsive during
+setup. Allow Online Access must be enabled for the first download; existing
+cached tools can be used offline.
+
+A public registry release is still pending. When testing an unpublished build,
+follow the source installation below. `addon install` connects that local
+compiler automatically. For a ZIP installed separately, set **Local Preview Package**
+in SceneToWeb preferences to the built `packages/blendlink` folder. That connects
+an installed extension to the matching local compiler even for scenes saved
+outside this repository. The source guide requires Node only to build the
+compiler; the artist buttons use their private runtime.
 
 ## Build and install the local tools
 
@@ -15,7 +34,7 @@ declared range; the [September audit](FIRST_USER_AUDIT_2026-09-07.md) ran on
 Windows with Node 24.15 and Blender 5.2. KTX-Software is optional unless you
 enable KTX2 compression.
 
-From the Blendlink checkout:
+From the SceneToWeb checkout:
 
 ```sh
 npm ci
@@ -27,7 +46,7 @@ node packages/blendlink/dist/cli.js addon install
 The last command installs and enables this compiler's matching Blender add-on.
 Restart Blender if it was already open. When returning to an older installation,
 run it again after building the new compiler. `doctor` checks the add-on version
-and file fingerprint, not just whether an add-on named Blendlink exists.
+and file fingerprint, not just whether an add-on named SceneToWeb exists.
 
 Keep compiler rebuilds separate from running Preview sessions: rebuilding this
 checkout replaces `dist`, which a source-based preview still uses.
@@ -36,7 +55,7 @@ checkout replaces `dist`, which a source-based preview still uses.
 
 1. Save a copy of your `.blend`. For a team website, keep it under that site's
    `assets/hero.blend` and pack or preserve its external images and linked files.
-2. In Blender's 3D View sidebar, open Blendlink and choose **Set Up Blendlink
+2. In Blender's 3D View sidebar, open SceneToWeb and choose **Set Up SceneToWeb
    Scene**. Follow **Website Readiness**. Save after changing settings.
 3. Start with a few meshes, a camera aimed at them, and straightforward
    Principled materials. Designate the **Website Camera** if the scene should
@@ -49,17 +68,25 @@ checkout replaces `dist`, which a source-based preview still uses.
    captures the complete baked look as unlit pixels. It is useful when flattening
    a stylized material is intentional. Fully Realtime avoids lighting bakes for
    scenes whose materials and lights already have portable representations.
-5. Check **Blendlink Web Material** for unsupported shader branches. A `.blend`
-   can render correctly in Blender while containing shader logic glTF cannot
-   carry. Choose the named bake/material route before expecting the browser to
-   match it. TSL programs require the WebGPU renderer family.
+5. Check **SceneToWeb Web Material** for the per-channel live, portable, bake,
+   or refused route. Supported nodes translate automatically; you can still
+   choose a specific bake/material route. Preview and export use the node-capable
+   renderer, including its WebGL2 fallback. See [Blender node translation](NODE_TRANSLATION.md)
+   for compositing, version differences, and current coverage limits.
 6. Run **Check Atlas Fit** before an expensive bake. An oversized Final atlas
    blocks with a remedy; Preview may scale it down and report the detail loss.
+
+**Check Atlas Fit** works before connecting a website. It measures the saved
+scene without running a Cycles bake, then shows capacity in Blender's atlas
+panel. Later edits mark that measurement stale; run the check again to refresh
+it. From the checkout, use
+`node packages/blendlink/dist/cli.js plan --blend "/path/to/scene.blend"`;
+add `--preview` to measure the Preview profile. Planning does not publish a site.
 
 For an HDR environment, load a real Radiance `.hdr` or OpenEXR `.exr` file.
 If you create one from a generated Blender image, save it, reload that saved
 file, select the loaded image in **HDR Environment**, and then pack it. A
-generated image can contain PNG bytes despite an HDR filename. Blendlink refuses
+generated image can contain PNG bytes despite an HDR filename. SceneToWeb refuses
 that mismatch instead of publishing an environment the browser cannot decode.
 
 ## Preview before connecting a site
@@ -79,6 +106,13 @@ run on the CPU even when Cycles later bakes on the GPU. Large environments can
 take several minutes on their first bake. Leave the command running.
 Wait for **Ready**, which requires browser installation and a completed render.
 Save in Blender to rebuild. Unsaved viewport edits do not appear in the browser.
+Use **Inspect** to pause and orbit, **Reset view** to restore the Blender camera,
+**Phone** to check portrait framing, and **Save image** to capture the rendered
+canvas. **Compare** overlays a Blender reference so visual differences are easier
+to spot. These preview controls do not change your saved Blender scene.
+Inspect focuses the canvas for keyboard navigation: arrows pan and Shift+arrows
+orbit. Escape closes comparison or Details and returns focus. Reduced-motion
+preferences start playback paused; **Play** starts it when you choose.
 Use **Details** for warnings. Failed initial loads show the exact error on screen;
 **View error details** opens the full error. If browser loading fails, **Retry
 preview** reloads the compiled scene without another Blender save or bake.
@@ -100,6 +134,27 @@ It authors a cabin, trees, stone path, camera and lighting with a 512px Appearan
 atlas. It has no external image dependencies. The desktop camera crops the outer
 island on a narrow phone; use it to practice authoring Responsive Frames too.
 
+## Export a standalone website
+
+Choose **Export Website Folder** in Blender and select a new or empty output
+folder. SceneToWeb saves the scene, compiles Final quality, verifies every scene
+artifact, builds a minimal viewer, and verifies again. Progress and errors stay
+in Blender's Website Task panel. You can also run:
+
+```sh
+node packages/blendlink/dist/cli.js export --blend "/path/to/scene.blend" --out "/path/to/Scene Website"
+```
+
+Upload the folder contents to a static web host. A subfolder is supported; you
+do not need Blender, npm, or a server application on the host. The result has
+no watermark and requires no SceneToWeb account. Use the hosted page URL in an
+iframe to embed it in another website. Serve the folder through HTTP for local
+inspection; double-clicking `index.html` does not bypass browser file security.
+
+A later export can replace this scene's own prior export. An unrelated folder
+is refused. Failed compilation/build leaves the previous export intact. Keep
+custom application code in your own project using the connection route below.
+
 ## Attach your existing website
 
 The supported integration currently requires exact `three: "0.184.0"`.
@@ -108,7 +163,7 @@ first; `connect` refuses incompatible declarations. Upgrading a site's renderer
 is a separate change that needs testing. Matching r184 `@types/three` patches
 are supported.
 
-From the Blendlink checkout, use the actual website folder and saved scene:
+From the SceneToWeb checkout, use the actual website folder and saved scene:
 
 ```sh
 node packages/blendlink/dist/cli.js connect "/path/to/site" --blend "/path/to/site/assets/hero.blend"
@@ -124,8 +179,8 @@ For those projects, build with `npm run dogfood:package`, then use the site's
 package manager to add the exact archive path printed by that command.
 
 For a recipient who already has an archive, install its absolute path with
-`npm install "/path/to/blendlink-0.9.0-<hash>.tgz"` in the website, then run
-`npx blendlink connect . --blend assets/hero.blend`. Retain the archive at the
+`npm install "/path/to/scenetoweb-0.9.0-<hash>.tgz"` in the website, then run
+`npx scenetoweb connect . --blend assets/hero.blend`. Retain the archive at the
 location recorded in the lockfile for future installs. It is a local dependency,
 not a registry release.
 
@@ -136,7 +191,7 @@ Canvas. Give the Canvas container a nonzero height:
 
 ```tsx
 import { Canvas } from '@react-three/fiber'
-import { HeroScene } from './blendlink/HeroScene'
+import { HeroScene } from './scenetoweb/HeroScene'
 
 export function Hero() {
   return (
@@ -161,7 +216,7 @@ Hard-coded state or light-group names from another scene are not portable.
 Use your existing renderer and scene with the generated installer:
 
 ```ts
-import { installHeroScene } from './blendlink/HeroScene'
+import { installHeroScene } from './scenetoweb/HeroScene'
 
 const installed = await installHeroScene({ renderer, scene })
 // Inside your existing animation loop, with elapsed time in seconds:
@@ -184,8 +239,8 @@ post-processing. Avoid rendering the same Canvas twice each frame.
 After adding the integration, run from the website:
 
 ```sh
-npx blendlink compile --preview
-npx blendlink preview
+npx scenetoweb compile --preview
+npx scenetoweb preview
 ```
 
 The first command also creates the generated imports an editor may initially
@@ -194,8 +249,8 @@ saved scene changes. Check the scene at desktop and mobile sizes, then stop
 Preview and run:
 
 ```sh
-npx blendlink publish
-npx blendlink verify
+npx scenetoweb publish
+npx scenetoweb verify
 ```
 
 Here **publish** means Final compile, artifact verification, the site's build,

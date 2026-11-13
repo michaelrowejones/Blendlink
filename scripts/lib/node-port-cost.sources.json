@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Primary implementation references; no numerical or timing qualification",
+  "sources": [
+    {
+      "id": "blender-5.3-evaluator",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/compositor/intern/node_tree_evaluator.cc",
+      "sha256": "370c09bdaf564780a208a0a4498b9760830c96f10ef85a4dbb2358f533a5aab2"
+    },
+    {
+      "id": "blender-5.3-shader-operation",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/compositor/intern/shader_operation.cc",
+      "sha256": "e224a1074a3bf7b221c536b239f642ed8e912d35af82c1c3bf1a2f9385f8949c"
+    },
+    {
+      "id": "three-r184-node",
+      "url": "https://raw.githubusercontent.com/mrdoob/three.js/r184/src/nodes/core/Node.js",
+      "sha256": "38dd00e0f1d40db4268db577bc6d09457e9b29d4893d6ab2caf0cf4a6c67ccc3"
+    },
+    {
+      "id": "three-r184-temp-node",
+      "url": "https://raw.githubusercontent.com/mrdoob/three.js/r184/src/nodes/core/TempNode.js",
+      "sha256": "874dbcd71605af420746d9ebd03a12dc33c60732effc007863ff82d549d24ed0"
+    },
+    {
+      "id": "three-r184-rtt",
+      "url": "https://raw.githubusercontent.com/mrdoob/three.js/r184/src/nodes/utils/RTTNode.js",
+      "sha256": "f87704938524dc419b91d9dd29c89d53272c78819d17537780a1c3b7e42c921b"
+    },
+    {
+      "id": "three-r184-tsl-core",
+      "url": "https://raw.githubusercontent.com/mrdoob/three.js/r184/src/nodes/tsl/TSLCore.js",
+      "sha256": "60d1430ca99f4724bd26fa1b9d18a30ed26e8e15a6193b88765c4671b51e013d"
+    }
+  ]
+}

@@ -88,7 +88,7 @@ describe('compiled camera controls', () => {
     expect(hero.position).toMatchObject({ x: 0, y: 0, z: 10 })
     expect(hero.quaternion).toMatchObject({ x: 0, y: 0, z: 0, w: 1 })
     expect(saveState).toHaveBeenCalledOnce()
-    // Unknown application controls stay conservative: Blendlink cannot prove
+    // Unknown application controls stay conservative: SceneToWeb cannot prove
     // that their internal input, damping, or keyboard state is idle.
     expect(handle.requiresContinuousFrames).toBe(true)
     handle.update(1 / 60)

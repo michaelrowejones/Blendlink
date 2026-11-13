@@ -2,18 +2,18 @@
 
 **Audit date:** 2026-07-23
 **Scope:** Needle's raw HTML/Vanilla project workflow and asset/base-path
-behavior versus Blendlink `connect`, project setup, and `publish`.
+behavior versus SceneToWeb `connect`, project setup, and `publish`.
 **Implementation status:** research and interface design only. No production
 behavior was changed by this note.
 
 ## Executive conclusion
 
-Raw HTML/no-package support belongs inside Blendlink's product scope. A solo
+Raw HTML/no-package support belongs inside SceneToWeb's product scope. A solo
 developer's existing static page is a legitimate website framework choice, and
 supporting it strengthens the promise that the website owns its route, Canvas,
 layout, loading presentation, analytics, and deployment.
 
-Blendlink should adopt Needle's **breadth** here, but not copy Needle's complete
+SceneToWeb should adopt Needle's **breadth** here, but not copy Needle's complete
 mechanism:
 
 - recognize an existing root `index.html` without requiring `package.json`;
@@ -21,7 +21,7 @@ mechanism:
 - emit a small application-owned ESM binding and print the exact import/mount
   call;
 - copy a content-identified, package-built browser runtime into a dedicated
-  same-origin Blendlink namespace instead of depending on an unversioned CDN;
+  same-origin SceneToWeb namespace instead of depending on an unversioned CDN;
 - require the application to pass an existing `HTMLCanvasElement`; never create
   a route, Canvas, overlay, or application layout;
 - resolve the compiler-owned graph from the binding module's `import.meta.url`
@@ -135,7 +135,7 @@ template:
 <needle-engine src="assets/scene.glb" camera-controls></needle-engine>
 ```
 
-That is an extremely small interface, but it has three properties Blendlink
+That is an extremely small interface, but it has three properties SceneToWeb
 should not inherit:
 
 1. the runtime URL is not version-pinned;
@@ -169,7 +169,7 @@ The audited Next plugin configures the framework build but does not solve
 general scene URL prefixing. That agrees with Next's current platform contract:
 `assetPrefix` covers `/_next/static`, not arbitrary `public/` files.
 
-## Current Blendlink behavior
+## Current SceneToWeb behavior
 
 The current working tree was inspected at Git `9966b01ae9ba07ec33fcd87ffac3c0abe4f5e7a3`
 plus the repository's existing uncommitted work.
@@ -198,7 +198,7 @@ The behavior is deliberately safe:
 - an actually empty directory receives the complete Vite starter (`238-331`).
 
 This is correct preservation behavior, but it leaves `NDL-WF-006` open:
-Blendlink cannot yet distinguish “existing static website” from “unsafe
+SceneToWeb cannot yet distinguish “existing static website” from “unsafe
 partial Vite scaffold.”
 
 The generated `.ts` association imports `three`, `blendlink/three`, the typed
@@ -219,7 +219,7 @@ must not be conflated with “the caller opted out of application verification.�
 
 ### Asset addressing
 
-Blendlink is already stronger in several dimensions:
+SceneToWeb is already stronger in several dimensions:
 
 - `runtimeAssetGraph` identifies the complete compiler-owned runtime graph;
 - `compiledSceneAssetUrls()` enumerates the GLB and declared companions;
@@ -236,9 +236,9 @@ weakening the resolver: pass the absolute URL produced by
 
 ## Capability record
 
-| ID | Capability | Needle | Blendlink | Relation | Implementation | Evidence |
+| ID | Capability | Needle | SceneToWeb | Relation | Implementation | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| `NDL-WF-006` | Attach an existing root-HTML/no-package site | Recognizes root `index.html`; exports/previews without rewriting it | Rejects it as an incomplete scaffold | **Gap** | **Future** | Needle baseline verifier passed 2026-07-23. No Blendlink acceptance fixture exists. |
+| `NDL-WF-006` | Attach an existing root-HTML/no-package site | Recognizes root `index.html`; exports/previews without rewriting it | Rejects it as an incomplete scaffold | **Gap** | **Future** | Needle baseline verifier passed 2026-07-23. No SceneToWeb acceptance fixture exists. |
 | `NDL-WF-007` | Static host publish without an application build | Raw panel exposes export/preview but no package build transaction | Only `--assets-only`, which also skips smoke | **Gap** | **Future** | Exact source inspection; publish differential pending. |
 | `NDL-ASSET-007` | Relocatable static scene root | Document-relative root GLB plus GLB-relative companions; Vite uses relative base | Explicit origin-root/CDN rebasing exists, but no static binding supplies a module-relative default | **Boundary / proposed Improvement** | **Future** | `assetUrls.test.ts` covers explicit bases; packed relocation fixture pending. |
 | `NDL-DIAG-005` | Reproducible package-free runtime identity | Shipped raw template imports an unversioned unpkg runtime | No package-free runtime yet | **Proposed Improvement** | **Future** | Exact Needle template/source identity only; packed same-origin runtime and no-remote-request evidence pending. |
@@ -267,7 +267,7 @@ Generate or ask the user to add:
 
 - Needle's analogous element creates the Canvas in its shadow root;
 - a full element naturally owns layout and default loading presentation;
-- replacing the site's Canvas ownership contradicts the explicit Blendlink
+- replacing the site's Canvas ownership contradicts the explicit SceneToWeb
   product boundary; and
 - a runtime CDN dependency weakens offline, CSP, and reproducibility behavior.
 
@@ -303,7 +303,7 @@ manual two-line mount call.
 Example application code:
 
 ```js
-import { mountHeroScene } from './blendlink/HeroScene.mjs'
+import { mountHeroScene } from './scenetoweb/HeroScene.mjs'
 
 const canvas = document.querySelector('#hero-scene')
 const hero = await mountHeroScene({ canvas, onLoadStateChange })
@@ -348,7 +348,7 @@ contract.
 
 **Costs and constraints**
 
-- Blendlink must package a browser-safe runtime graph with its own pinned
+- SceneToWeb must package a browser-safe runtime graph with its own pinned
   internal bundler; the site must not need that tool;
 - bundle size, license notices, source maps, and runtime deduplication need a
   packed-package test;
@@ -411,7 +411,7 @@ adapters justify this seam; hypothetical frameworks do not.
 
 ### Static output ownership
 
-For a newly connected static site with no existing Blendlink config, use one
+For a newly connected static site with no existing SceneToWeb config, use one
 dedicated served namespace, for example:
 
 ```text
@@ -434,7 +434,7 @@ An ownership marker must list the exact generated paths and creator version.
 Reconnect may update only marker-owned compiler files. A pre-existing
 unmarked `blendlink/` path is a loud collision, not an overwrite target.
 
-An existing `blendlink.config.mjs` remains authoritative. If its `outDir` or
+An existing `scenetoweb.config.mjs` remains authoritative. If its `outDir` or
 `genDir` cannot be served/imported by the static host, connect must explain the
 exact path mismatch rather than silently reshape executable configuration.
 
@@ -449,7 +449,7 @@ Detection and all blockers must run before mutation.
 | Neither package nor HTML; current starter guard paths absent | Keep the current new Three/Vite starter behavior. |
 | Neither package nor HTML; unrelated nonempty/incomplete scaffold | Refuse exactly as today; do not guess static ownership. |
 | Malformed package | Refuse as today; do not fall through to static HTML. |
-| Unmarked collision in the static Blendlink namespace | Refuse before creating config, output directories, or bindings; name every conflicting path. |
+| Unmarked collision in the static SceneToWeb namespace | Refuse before creating config, output directories, or bindings; name every conflicting path. |
 | Existing generated-once binding | Preserve it exactly; update only compiler-owned imports/targets behind its stable path. |
 | Static Canvas missing, zero-sized, detached, or already mounted incompatibly | Reject with the selector/element and remedy; never create or resize CSS layout to hide the problem. |
 | Static host has no build step | Return `status: "not-required"` (or an equally distinct typed state), run second artifact verification, and still run configured browser smoke. |
@@ -471,7 +471,7 @@ Add `projectSetup.staticHtml.test.ts`:
 2. record SHA-256 for every application file;
 3. connect and require `kind: "static-html"`;
 4. require no `package.json`, no edited HTML, and no writes outside the
-   declared Blendlink namespace/config;
+   declared SceneToWeb namespace/config;
 5. verify the generated binding imports the actual configured scene module;
 6. reconnect and require byte-identical application files and binding; and
 7. place an unmarked output collision and prove the entire operation fails
@@ -505,7 +505,7 @@ Assert that:
 
 Add `scripts/test-static-html-consumer.mjs` to the portable consumer gate:
 
-- install/invoke the packed Blendlink tarball from a separate runner, while the
+- install/invoke the packed SceneToWeb tarball from a separate runner, while the
   website fixture itself has no `package.json` or `node_modules`;
 - connect, compile a small real scene, and serve only the static website;
 - assert no requests to unpkg, jsDelivr, or another runtime CDN;
@@ -573,7 +573,7 @@ the dogfood route.
 On 2026-07-23, with Node `24.15.0`, npm `11.12.1`, and Vitest `3.2.7`:
 
 ```text
-npm exec --workspace blendlink -- vitest run \
+npm exec --workspace scenetoweb -- vitest run \
   src/projectSetup.test.ts src/publish.test.ts src/assetUrls.test.ts
 
 3 test files passed
@@ -586,7 +586,7 @@ bundle, unknown-prefix relocation, no-build smoke, or deployed CDN behavior.
 
 ## Product boundary
 
-This capability fits Blendlink only under these constraints:
+This capability fits SceneToWeb only under these constraints:
 
 - no cloud dependency;
 - no proprietary application engine;

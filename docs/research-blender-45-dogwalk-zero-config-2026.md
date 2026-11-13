@@ -32,14 +32,14 @@ Needle 1.4.2, is not a visually valid result:
 5. Blender compositor, world response, DOF, and Eevee screen-space lighting do
    not become ordinary glTF state.
 
-Blendlink does **not** silently publish that floor. The untouched Final planner
+SceneToWeb does **not** silently publish that floor. The untouched Final planner
 exits 1 with 22 named `material.used-needs-bake` errors. The actual Final
 compile exits 1 even earlier because animated/driven `CAM-Camera` data would
 need `KHR_animation_pointer`, which the standard Three integration does not
 bind. Both checks leave the source bytes unchanged.
 
 The most valuable new compiler direction is an authored-still transport policy:
-when the render range intentionally collapses to one frame, Blendlink should be
+when the render range intentionally collapses to one frame, SceneToWeb should be
 able to transport that evaluated camera and pose without deleting separately
 authored actions. This remains a **Prototype**, because current-pose export with
 retained clips has not yet passed action-playback differentials.
@@ -192,7 +192,7 @@ Those proxies are not the visible defect in this camera.
 
 The source proxy material is nevertheless nonportable: its Principled Alpha is
 linked from an Attribute node and uses DITHERED rendering, while stock glTF
-emits a BLEND material with constant factor alpha 1. Blendlink correctly names
+emits a BLEND material with constant factor alpha 1. SceneToWeb correctly names
 that material as `material.used-needs-bake`.
 
 A 25-pixel browser raycast sample of near-black pixels instead identifies:
@@ -221,7 +221,7 @@ lighting, or color response. This is a **Prototype**, not physical-GPU
 performance evidence and not a recommendation to maximize every texture
 unconditionally.
 
-## Untouched Blendlink result
+## Untouched SceneToWeb result
 
 The Final planner command exits 1, returns `plan: null`, and reports 22
 material errors, all code `material.used-needs-bake`. The errors name exact
@@ -260,7 +260,7 @@ retention is verified; action playback equivalence is not.
 ### C. Infer a narrow authored-still policy, preserve actions, and prove them
 
 Recommended for the next differential. A scene with a deliberately collapsed
-render range is strong Blender-authored intent for one visible frame. Blendlink
+render range is strong Blender-authored intent for one visible frame. SceneToWeb
 can select current camera/current pose for that presentation while retaining
 actions as developer-accessible clips. Before shipping:
 
@@ -273,16 +273,16 @@ actions as developer-accessible clips. Before shipping:
 5. expose the inferred decision in diagnostics rather than silently changing
    exporter semantics.
 
-This fits Blendlink's product boundary: Blender owns presentation intent;
-Blendlink compiles it; the website still owns when developer-facing clips play.
+This fits SceneToWeb's product boundary: Blender owns presentation intent;
+SceneToWeb compiles it; the website still owns when developer-facing clips play.
 
 ## Capability register
 
-| ID | Needle baseline | Blendlink status | Relation | Evidence |
+| ID | Needle baseline | SceneToWeb status | Relation | Evidence |
 | --- | --- | --- | --- | --- |
-| `NDL-DOG-001` | Needle 1.4.2 delegates current-frame/rest-pose defaults to stock glTF | Current Blendlink compile refuses this source before emitting the misleading floor | **Improvement**, **Shipped diagnostic** | plan/compile evidence above, 2026-07-25 |
+| `NDL-DOG-001` | Needle 1.4.2 delegates current-frame/rest-pose defaults to stock glTF | Current SceneToWeb compile refuses this source before emitting the misleading floor | **Improvement**, **Shipped diagnostic** | plan/compile evidence above, 2026-07-25 |
 | `NDL-DOG-002` | No current-frame/current-pose override in the audited Needle export call | Narrow authored-still inference is designed but not shipped | **Improvement candidate**, **Prototype** | four-way frame/pose GLB and browser differential |
-| `NDL-DOG-003` | Stock path emits incomplete stylized group response | Blendlink names 22 used materials and blocks | **Improvement**, **Shipped diagnostic** | untouched Final planner, exit 1 |
+| `NDL-DOG-003` | Stock path emits incomplete stylized group response | SceneToWeb names 22 used materials and blocks | **Improvement**, **Shipped diagnostic** | untouched Final planner, exit 1 |
 | `NDL-DOG-004` | Coherent Needle runtime visual result not executed | No visual parity claim | **Gap / Pending** | stock-core floor only |
 | `NDL-DOG-005` | Needle texture anisotropy behavior not audited for this scene | Three 1→16 control changes oblique sampling | **Unaudited**, **Prototype** | paired browser evidence; physical GPU pending |
 
@@ -341,6 +341,6 @@ node run_blendlink_compile.mjs
 Pop-Location
 ```
 
-The compile command needs normal Blendlink publication-lease access under the
+The compile command needs normal SceneToWeb publication-lease access under the
 user cache. Browser runs use Chrome 150/WebGL2 through SwiftShader and are
 correctness evidence, not physical-GPU timing evidence.

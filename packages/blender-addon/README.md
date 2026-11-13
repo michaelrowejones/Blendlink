@@ -1,6 +1,6 @@
-# Blendlink — Blender companion addon
+# SceneToWeb — Blender companion addon
 
-Artist workspace for [blendlink](../../README.md). **Set Up Blendlink Scene**
+Artist workspace for [SceneToWeb](../../README.md). **Set Up SceneToWeb Scene**
 creates a scene-owned Web Presentation with Hybrid/Realtime/Fully Baked modes,
 the undeletable Main atlas, selected-object atlas exceptions, preview/final
 quality, lighting states, a Website Camera, Responsive Frames,
@@ -37,12 +37,12 @@ The sidebar is a compact, state-driven publish loop. It presents one best next
 step—scene setup, saving, preview, or opening the current website—plus **Check
 Atlas Fit** and **Publish Website**. Blender never guesses or changes an artist's
 repository. Preview Studio may install only its own disposable cached viewer;
-connecting a production site remains a deliberate `npx blendlink connect` action
+connecting a production site remains a deliberate `npx scenetoweb connect` action
 run from that website folder. **More Tools** keeps **Open Website Folder** and
 the build/server logs close to that loop. Canonical intent is stored once in
 native Scene, World, Object, and Material data. Component cards in the sidebar
 and Properties contexts edit the same Scene-owned collection rather than
-maintaining duplicate settings. **Blendlink Web Object** keeps
+maintaining duplicate settings. **SceneToWeb Web Object** keeps
 Automatic/Realtime/Baked visible as a
 three-way choice, shows truthful editable-selection counts, and explains the
 effective result. Atlas and Web Checks failures are wrapped into
@@ -85,11 +85,11 @@ targets.
 
 The website binds its own canvas through the generated scene's named
 `websiteSurfaces` interface and remains responsible for drawing, hover/focus,
-input, route, DOM, accessibility, and analytics. Blendlink owns semantic
+input, route, DOM, accessibility, and analytics. SceneToWeb owns semantic
 binding, Three material isolation, demand-frame invalidation, conditional
 restoration, and wrapper disposal. Website Surface is not a baked lighting
 state; named Lighting/Appearance transitions continue through `setState()`.
-Rigid Body and Collider shortcuts route to Blendlink's existing canonical
+Rigid Body and Collider shortcuts route to SceneToWeb's existing canonical
 object controls rather than creating duplicate physics state. The initial
 library is extensible through website adapters; it does not claim every Needle
 component, and multiplayer behavior is intentionally excluded.
@@ -118,13 +118,13 @@ Appearance when the complete viewport look is the intended deliverable.
 
 The Optimization panel also owns the artistic publishing outcome: optional
 Meshopt geometry and KTX2 Auto GPU textures. In Material Properties,
-**Blendlink Web Material** first reports the active material as **Exact glTF**,
+**SceneToWeb Web Material** first reports the active material as **Exact glTF**,
 **Approximated**, or **Needs Bake**. Supported Principled BSDF inputs and KHR
 material extensions travel through Blender's stock glTF exporter. The panel
 names procedural textures, shader mixing, bump-only detail, and other active
 graph features that cannot publish faithfully as editable glTF; it never
 silently promises a procedural graph will survive. When an artist selects an
-intrinsic Color/Value output as **Website Color**, Blendlink automatically
+intrinsic Color/Value output as **Website Color**, SceneToWeb automatically
 preserves whether that field belongs to a lit BSDF response or a genuinely
 unlit Background/Emission response. Nested portable Principled/Diffuse paths
 are analyzed. Eevee-only Shader-to-RGB/AO convergence, Translucent and other
@@ -145,7 +145,7 @@ Material-less meshes are normalized only in the exported GLB to Blender's
 neutral default dielectric, avoiding glTF's implicit white metallic fallback
 without creating a material in the `.blend` or touching authored bindings.
 
-Animation and Blendlink Web World panels add portable startup, loop, speed,
+Animation and SceneToWeb Web World panels add portable startup, loop, speed,
 tone-mapping, exposure, page/background, and native distance-fog ownership
 intent. Simple clip autoplay remains the default. **Website NLA Sequence** is
 an opt-in slim layer over one real Blender NLA track: artists keep using the NLA
@@ -153,7 +153,7 @@ Editor for strip order, trim, scale/speed, repeat, reverse, Replace/Add,
 blend-in/out, weight, easing, extrapolation, and mute. During export,
 reversible staging makes every sequence-referenced Action discoverable to
 Blender's stock exporter without filtering other scene-discoverable Actions.
-Blendlink blocks overlapping, stale, transition/meta, animated-time/influence,
+SceneToWeb blocks overlapping, stale, transition/meta, animated-time/influence,
 or Blender-only blend intent
 instead of approximating it. **Website Camera & Frames** adds explicit Preserve/Fit Scene/Fit Target
 framing; the generated installer never moves a camera or attaches browser
@@ -165,7 +165,7 @@ The collapsed **Website Ownership** panel applies that ownership language across
 the entire handoff: camera, playback, tone mapping, background, image lighting,
 realtime shadows, optimization, filesystem integration, and generated assets.
 It always names exactly one owner and why. Blender-version warnings are loaded
-from a bounded data registry shared with `blendlink doctor`; an entry is invalid
+from a bounded data registry shared with `scenetoweb doctor`; an entry is invalid
 without a concrete action and public primary evidence.
 
 HDR Environment publishes a selected packed or linked `.hdr`/`.exr` without
@@ -174,14 +174,14 @@ backgrounds. KTX2 Auto may add a decoded-radiance-verified packed-float
 derivative, but the exact source remains mandatory and runtime fallback-safe.
 Realtime Shadows offers consequence-first Fast/Balanced/Soft/
 Crisp presets and a collapsed Custom budget; generated Three adapters apply
-both policies without making Blendlink an engine. A native Blender Light with
+both policies without making SceneToWeb an engine. A native Blender Light with
 **Shadows** off is carried through a namespaced node-extra opt-out despite
-glTF's missing light-shadow field; an explicit Blendlink value wins.
+glTF's missing light-shadow field; an explicit SceneToWeb value wins.
 Point, Spot, and Sun lights publish through the stock glTF `COMPAT` conversion,
 preventing Blender `SPEC` mode's 683x photometric multiplication from changing
 the authored look. Export is limited to the active Scene and respects the
 active View Layer, multi-path nested collection visibility, and reachable
-collection-instance sources. **Blendlink Web Light** in Light Data Properties uses that
+collection-instance sources. **SceneToWeb Web Light** in Light Data Properties uses that
 same canonical policy to show **Exact Realtime Light**, **Realtime · Web
 Approximation**, **Bake-only Light**, or **Not Published**; authored
 energy/exposure; website intensity and Three.js power when predictable and
@@ -205,7 +205,7 @@ shadowless, direct-only, and limited to live Standard/Physical PBR receivers;
 it continues geometric falloff rather than reproducing Eevee's finite Light
 Threshold/Custom Distance fade, and grazing angles/highlights can differ
 because Eevee and Three do not use identical LTC horizon/facing evaluation.
-Blendlink also refuses to layer the realtime light over a Lighting atlas until
+SceneToWeb also refuses to layer the realtime light over a Lighting atlas until
 per-light bake-exclusion evidence can rule out double illumination. None of
 these paths claims Blender image parity.
 Routed Cycles node groups and Light Falloff ownership stay explicit
@@ -230,7 +230,7 @@ It also provides:
   `-noimp` exclusion, and typed anchor empties (`SOCKET_` / `HOTSPOT_` /
   `AUDIO_`) parented to the active object. Every operator is one undo step
   and adjustable in the F9 redo panel.
-- **Web Checks** — the same lint blendlink's parser runs, live in the sidebar:
+- **Web Checks** — the same lint SceneToWeb's parser runs, live in the sidebar:
   near-miss tokens (`-collonly`), LOD gaps, anchors with geometry, and
   Blender's `.001` duplicate numbering that silently hides a suffix tag
   (with a one-click fix that moves the number into the base name). Incomplete
@@ -246,13 +246,14 @@ It also provides:
   `KHR_animation_pointer`.
 - **Website preview + build status** — whether the saved `.blend` and the exact
   published GLB, generated module, atlases, and environment match every hash
-  in the last manifest (discovery walks up to `blendlink.config.mjs`; asset
+  in the last manifest (discovery walks up to `scenetoweb.config.mjs` or legacy
+  `blendlink.config.mjs`; asset
   URLs resolve only through exact project/static paths, never basename
   guesses). Referenced files are checked at their recorded paths too, so an
   edited image, IES, or OSL input cannot leave an unchanged `.blend` looking
   current; volatile sequences and UDIM sets always require a rebuild. The
-  buttons save the file and run `npx blendlink publish`, connected-site
-  `npx blendlink preview`, or private `npx blendlink preview --blend ...` as a
+  buttons save the file and run `npx scenetoweb publish`, connected-site
+  `npx scenetoweb preview`, or private `npx scenetoweb preview --blend ...` as a
   background subprocess — Blender stays fully usable, a progress bar tracks the
   `##blendlink` progress lines the pipeline emits, and failures surface an
   open-log button. Preview remains active after its first successful compile;
@@ -271,7 +272,7 @@ It also provides:
   opened or projected onto the scene. The same panel reports
   approximate per-object texels and the last dependency-aware build's reused
   versus rebuilt state/light-group × atlas jobs.
-- **Viewport overlay** — draws what blendlink sees: collider proxies as green
+- **Viewport overlay** — draws what SceneToWeb sees: collider proxies as green
   wireframes, sockets as RGB axes, hotspots and audio anchors as labeled
   crosses, selected component radii, the active reflection influence, actual
   Spot cones, six-face Point shadow cost, and a truthful non-geometric Sun far-
@@ -289,7 +290,7 @@ It also provides:
   Blender never presents its own pixels as website evidence. See
   [the workflow](../../docs/VISUAL_REFERENCE_WORKFLOW.md).
 
-Find it in the 3D viewport sidebar (N) under the **Blendlink** tab. The tab
+Find it in the 3D viewport sidebar (N) under the **SceneToWeb** tab. The tab
 name is editable in the addon preferences.
 
 ## Install
@@ -304,7 +305,7 @@ Stage the package first, then build from the staged tree (Blender 4.2+):
 
 ```
 npm run build
-blender --command extension build --source-dir ../blendlink/dist/addon --output-filepath blendlink-addon.zip
+blender --command extension build --source-dir ../blendlink/dist/addon --output-filepath scenetoweb-addon.zip
 ```
 
 then Blender → Preferences → Get Extensions → Install from Disk, or headless:
@@ -345,3 +346,8 @@ version 3 terms in its `LICENSE`. The npm tarball is a mixed aggregate: its
 Node/compiler/runtime files are MIT, Blender-dependent files are
 GPL-3.0-or-later, and bundled Basis notices are Apache-2.0. See the npm
 artifact's `LICENSES.md` for the file-level map.
+
+SceneToWeb preserves the `blendlink_*` scene properties, component identifiers,
+and operator namespace used by existing scenes. New website projects use
+`scenetoweb.config.mjs` and the `scenetoweb` npm package; existing
+`blendlink.config.mjs`/`.js` projects and generated integrations remain discoverable.

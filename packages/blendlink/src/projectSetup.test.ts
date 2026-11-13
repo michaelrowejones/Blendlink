@@ -5,19 +5,32 @@ import { describe, expect, it } from 'vitest'
 import { setupWebsiteProject } from './projectSetup.js'
 
 function project(name: string): string {
-  return mkdtempSync(join(tmpdir(), `blendlink-setup-${name}-`))
+  return mkdtempSync(join(tmpdir(), `scenetoweb-setup-${name}-`))
 }
 
 describe('artist-first website setup', () => {
+  it('keeps an existing legacy config and its authored scene when connecting', async () => {
+    const root = project('legacy-config')
+    const legacy = join(root, 'blendlink.config.mjs')
+    const contents = "export default { scenes: [{ file: 'hero.blend', external: true }] }\n"
+    writeFileSync(legacy, contents)
+    const result = await setupWebsiteProject(root)
+    expect(result.config.configPath).toBe(legacy)
+    expect(result.config.created).toBe(false)
+    expect(readFileSync(legacy, 'utf8')).toBe(contents)
+    expect(existsSync(join(root, 'scenetoweb.config.mjs'))).toBe(false)
+    expect(existsSync(join(root, 'src', 'scenetoweb', 'HeroScene.ts'))).toBe(true)
+  })
+
   it('creates a working, inspectable Three/Vite starter when no website exists', async () => {
     const root = project('new')
     const result = await setupWebsiteProject(root)
     expect(result.stack).toBe('new-three-vite')
     expect(result.sceneName).toBe('sample')
     expect(existsSync(join(root, 'assets', 'sample.blend'))).toBe(true)
-    expect(existsSync(join(root, 'blendlink.config.mjs'))).toBe(true)
+    expect(existsSync(join(root, 'scenetoweb.config.mjs'))).toBe(true)
     const entry = readFileSync(join(root, 'src', 'main.ts'), 'utf8')
-    expect(entry).toContain("import { installSampleScene } from './blendlink/SampleScene'")
+    expect(entry).toContain("import { installSampleScene } from './scenetoweb/SampleScene'")
     expect(entry).toContain('await installSampleScene({')
     expect(entry).toContain('installed.update(deltaSeconds)')
     expect(entry).toContain('installed.render(deltaSeconds)')
@@ -25,16 +38,16 @@ describe('artist-first website setup', () => {
     expect(entry).not.toContain('renderer.render(world, installed.camera)')
     expect(entry.indexOf('installed.update(deltaSeconds)'))
       .toBeLessThan(entry.indexOf('installed.render(deltaSeconds)'))
-    const integration = readFileSync(join(root, 'src', 'blendlink', 'SampleScene.ts'), 'utf8')
+    const integration = readFileSync(join(root, 'src', 'scenetoweb', 'SampleScene.ts'), 'utf8')
     expect(integration).toContain("import { sample as compiledScene } from '../generated/sample.gen'")
     expect(integration).toContain("import { createBakedScene } from '../generated/sample.baked'")
     const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'))
-    expect(pkg.scripts['blendlink:connect']).toBe('blendlink connect')
-    expect(pkg.scripts['blendlink:preview']).toBe('blendlink preview')
-    expect(pkg.scripts['blendlink:publish']).toBe('blendlink publish')
+    expect(pkg.scripts['scenetoweb:connect']).toBe('scenetoweb connect')
+    expect(pkg.scripts['scenetoweb:preview']).toBe('scenetoweb preview')
+    expect(pkg.scripts['scenetoweb:publish']).toBe('scenetoweb publish')
     expect(pkg.dependencies.three).toBe('0.184.0')
     expect(pkg.devDependencies['@types/three']).toBe('^0.184.0')
-    expect(result.nextActions.join('\n')).toContain('Set Up Blendlink Scene')
+    expect(result.nextActions.join('\n')).toContain('Set Up SceneToWeb Scene')
   })
 
   it('attaches an existing R3F site without editing application source', async () => {
@@ -53,21 +66,21 @@ describe('artist-first website setup', () => {
     const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'))
     expect(pkg.scripts).toMatchObject({
       dev: 'vite',
-      'blendlink:connect': 'blendlink connect',
-      'blendlink:preview': 'blendlink preview',
-      'blendlink:publish': 'blendlink publish',
-      'blendlink:check': 'blendlink verify',
+      'scenetoweb:connect': 'scenetoweb connect',
+      'scenetoweb:preview': 'scenetoweb preview',
+      'scenetoweb:publish': 'scenetoweb publish',
+      'scenetoweb:check': 'scenetoweb verify',
     })
-    expect(pkg.dependencies.blendlink).toMatch(/^\^/)
+    expect(pkg.dependencies.scenetoweb).toMatch(/^\^/)
     expect(pkg.dependencies.three).toBe('0.184.0')
     expect(pkg.devDependencies['@types/three']).toBe('^0.184.0')
     expect(result.nextActions[0]).toContain('install the declared website dependencies')
     expect(result.changes.join('\n')).toContain('without editing application source')
-    const integration = join(root, 'src', 'blendlink', 'HeroScene.ts')
+    const integration = join(root, 'src', 'scenetoweb', 'HeroScene.ts')
     expect(existsSync(integration)).toBe(true)
     const component = readFileSync(integration, 'utf8')
     expect(component.startsWith("'use client'\n")).toBe(true)
-    expect(component).toContain("from 'blendlink/react-three-fiber'")
+    expect(component).toContain("from 'scenetoweb/react-three-fiber'")
     expect(component).toContain('createR3FCompiledScene')
     expect(component).toContain("createBakedScene")
     expect(component).toContain('export type HeroSceneProps = R3FCompiledSceneProps')
@@ -79,9 +92,9 @@ describe('artist-first website setup', () => {
     expect(component).not.toContain('value.dispose()')
     expect(result.nextActions.join('\n')).toContain('inside your existing R3F Canvas with <HeroScene />')
     expect(result.nextActions.join('\n')).toContain('initialized WebGPURenderer')
-    expect(result.nextActions.join('\n')).toContain('blendlink:publish')
+    expect(result.nextActions.join('\n')).toContain('scenetoweb:publish')
     expect(result.nextActions.findIndex((action) => action.includes('<HeroScene />')))
-      .toBeLessThan(result.nextActions.findIndex((action) => action.includes('blendlink:preview')))
+      .toBeLessThan(result.nextActions.findIndex((action) => action.includes('scenetoweb:preview')))
   })
 
   it('connects the exact Preview-selected blend instead of scanning the website', async () => {
@@ -97,16 +110,16 @@ describe('artist-first website setup', () => {
     const result = await setupWebsiteProject(root, { blendPath })
 
     expect(result.sceneName).toBe('ArtistHero')
-    const config = readFileSync(join(root, 'blendlink.config.mjs'), 'utf8')
+    const config = readFileSync(join(root, 'scenetoweb.config.mjs'), 'utf8')
     expect(config).toContain('Artist Hero.blend')
     expect(config).not.toContain('unrelated.blend')
-    expect(existsSync(join(root, 'src', 'blendlink', 'ArtistHeroScene.ts'))).toBe(true)
+    expect(existsSync(join(root, 'src', 'scenetoweb', 'ArtistHeroScene.ts'))).toBe(true)
   })
 
   it('does not rewrite an executable config to smuggle in another selected blend', async () => {
     const root = project('selected-existing-config')
     const selected = join(root, 'selected.blend')
-    const configPath = join(root, 'blendlink.config.mjs')
+    const configPath = join(root, 'scenetoweb.config.mjs')
     writeFileSync(join(root, 'package.json'), JSON.stringify({ dependencies: { three: '0.184.0' } }))
     writeFileSync(join(root, 'declared.blend'), 'declared')
     writeFileSync(selected, 'selected')
@@ -128,7 +141,7 @@ describe('artist-first website setup', () => {
     const result = await setupWebsiteProject(root)
 
     expect(result.stack).toBe('three')
-    const integration = join(root, 'src', 'blendlink', 'HeroScene.ts')
+    const integration = join(root, 'src', 'scenetoweb', 'HeroScene.ts')
     expect(existsSync(integration)).toBe(true)
     const source = readFileSync(integration, 'utf8')
     expect(source).toContain("import { hero as compiledScene } from '../generated/hero.gen'")
@@ -139,7 +152,7 @@ describe('artist-first website setup', () => {
     const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'))
     expect(pkg.devDependencies['@types/three']).toBe('^0.184.0')
     expect(result.nextActions.join('\n')).toContain(
-      'await installHeroScene({ renderer, scene }) from src/blendlink/HeroScene.ts',
+      'await installHeroScene({ renderer, scene }) from src/scenetoweb/HeroScene.ts',
     )
     expect(result.nextActions.join('\n')).toContain('existing WebGLRenderer or an initialized WebGPURenderer')
     expect(result.nextActions.join('\n')).toContain('installed.update(delta) and installed.render(delta)')
@@ -148,14 +161,14 @@ describe('artist-first website setup', () => {
   it('preserves conflicting package scripts and reports the exact ownership boundary', async () => {
     const root = project('script-owner')
     writeFileSync(join(root, 'package.json'), JSON.stringify({
-      scripts: { 'blendlink:publish': 'our-release-pipeline' },
-      dependencies: { three: '0.184.0', blendlink: 'workspace:*' },
+      scripts: { 'scenetoweb:publish': 'our-release-pipeline' },
+      dependencies: { three: '0.184.0', scenetoweb: 'workspace:*' },
     }))
     writeFileSync(join(root, 'scene.blend'), 'test fixture; discovery only')
     const result = await setupWebsiteProject(root)
     const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'))
-    expect(pkg.scripts['blendlink:publish']).toBe('our-release-pipeline')
-    expect(pkg.dependencies.blendlink).toBe('workspace:*')
+    expect(pkg.scripts['scenetoweb:publish']).toBe('our-release-pipeline')
+    expect(pkg.dependencies.scenetoweb).toBe('workspace:*')
     expect(result.warnings.join('\n')).toContain('did not overwrite it')
   })
 
@@ -168,8 +181,8 @@ describe('artist-first website setup', () => {
 
     const result = await setupWebsiteProject(root)
 
-    expect(existsSync(join(root, 'src', 'blendlink', 'WorkbenchScene.ts'))).toBe(true)
-    expect(existsSync(join(root, 'src', 'blendlink', 'WorkbenchSceneScene.ts'))).toBe(false)
+    expect(existsSync(join(root, 'src', 'scenetoweb', 'WorkbenchScene.ts'))).toBe(true)
+    expect(existsSync(join(root, 'src', 'scenetoweb', 'WorkbenchSceneScene.ts'))).toBe(false)
     expect(result.nextActions.join('\n')).toContain('<WorkbenchScene />')
   })
 
@@ -179,7 +192,7 @@ describe('artist-first website setup', () => {
       dependencies: { react: '^19.2.0', '@react-three/fiber': '^9.6.1' },
     }))
     writeFileSync(join(root, 'hero.blend'), 'test fixture; discovery only')
-    writeFileSync(join(root, 'blendlink.config.mjs'), `export default {
+    writeFileSync(join(root, 'scenetoweb.config.mjs'), `export default {
   genDir: 'app/scene-artifacts',
   outDir: 'static/scene-assets',
   scenes: [{ file: 'hero.blend', name: 'hero' }],
@@ -187,7 +200,7 @@ describe('artist-first website setup', () => {
 
     const result = await setupWebsiteProject(root)
 
-    const integration = readFileSync(join(root, 'src', 'blendlink', 'HeroScene.ts'), 'utf8')
+    const integration = readFileSync(join(root, 'src', 'scenetoweb', 'HeroScene.ts'), 'utf8')
     expect(integration).toContain("from '../../app/scene-artifacts/hero.gen'")
     expect(integration).toContain("from '../../app/scene-artifacts/hero.baked'")
     expect(existsSync(join(root, 'app', 'scene-artifacts'))).toBe(true)
@@ -198,7 +211,7 @@ describe('artist-first website setup', () => {
   it('uses a custom generated directory in a new-site starter', async () => {
     const root = project('new-custom-generated')
     writeFileSync(join(root, 'hero.blend'), 'test fixture; discovery only')
-    writeFileSync(join(root, 'blendlink.config.mjs'), `export default {
+    writeFileSync(join(root, 'scenetoweb.config.mjs'), `export default {
   genDir: 'app/scene-artifacts',
   outDir: 'static/scene-assets',
   scenes: [{ file: 'hero.blend', name: 'hero' }],
@@ -208,8 +221,8 @@ describe('artist-first website setup', () => {
 
     expect(result.stack).toBe('new-three-vite')
     const entry = readFileSync(join(root, 'src', 'main.ts'), 'utf8')
-    expect(entry).toContain("import { installHeroScene } from './blendlink/HeroScene'")
-    const integration = readFileSync(join(root, 'src', 'blendlink', 'HeroScene.ts'), 'utf8')
+    expect(entry).toContain("import { installHeroScene } from './scenetoweb/HeroScene'")
+    const integration = readFileSync(join(root, 'src', 'scenetoweb', 'HeroScene.ts'), 'utf8')
     expect(integration).toContain("from '../../app/scene-artifacts/hero.gen'")
     expect(integration).toContain("from '../../app/scene-artifacts/hero.baked'")
     expect(existsSync(join(root, 'app', 'scene-artifacts'))).toBe(true)
@@ -223,7 +236,7 @@ describe('artist-first website setup', () => {
     }))
     writeFileSync(join(root, 'hero.blend'), 'test fixture; discovery only')
     writeFileSync(join(root, 'gallery.blend'), 'test fixture; discovery only')
-    writeFileSync(join(root, 'blendlink.config.mjs'), `export default {
+    writeFileSync(join(root, 'scenetoweb.config.mjs'), `export default {
   scenes: [
     { file: 'hero.blend', name: 'hero' },
     { file: 'gallery.blend', name: 'gallery' },
@@ -232,8 +245,8 @@ describe('artist-first website setup', () => {
 
     const result = await setupWebsiteProject(root)
 
-    expect(existsSync(join(root, 'src', 'blendlink', 'HeroScene.ts'))).toBe(true)
-    expect(existsSync(join(root, 'src', 'blendlink', 'GalleryScene.ts'))).toBe(true)
+    expect(existsSync(join(root, 'src', 'scenetoweb', 'HeroScene.ts'))).toBe(true)
+    expect(existsSync(join(root, 'src', 'scenetoweb', 'GalleryScene.ts'))).toBe(true)
     expect(result.nextActions.join('\n')).toContain('<HeroScene />')
     expect(result.nextActions.join('\n')).toContain('<GalleryScene />')
   })
@@ -247,7 +260,7 @@ describe('artist-first website setup', () => {
     writeFileSync(join(root, 'package.json'), packageJson)
     writeFileSync(join(root, 'hero.blend'), 'test fixture; discovery only')
     writeFileSync(join(root, 'heroScene.blend'), 'test fixture; discovery only')
-    writeFileSync(join(root, 'blendlink.config.mjs'), `export default {
+    writeFileSync(join(root, 'scenetoweb.config.mjs'), `export default {
   scenes: [
     { file: 'hero.blend', name: 'hero' },
     { file: 'heroScene.blend', name: 'heroScene' },
@@ -258,14 +271,14 @@ describe('artist-first website setup', () => {
       /"hero" and "heroScene" both map to the website integration HeroScene\.ts/,
     )
     expect(readFileSync(join(root, 'package.json'), 'utf8')).toBe(packageJson)
-    expect(existsSync(join(root, 'src', 'blendlink'))).toBe(false)
+    expect(existsSync(join(root, 'src', 'scenetoweb'))).toBe(false)
   })
 
   it('recognizes its starter on rerun without creating a competing integration', async () => {
     const root = project('starter-rerun')
     await setupWebsiteProject(root)
     const entryPath = join(root, 'src', 'main.ts')
-    const integrationPath = join(root, 'src', 'blendlink', 'SampleScene.ts')
+    const integrationPath = join(root, 'src', 'scenetoweb', 'SampleScene.ts')
     const entry = readFileSync(entryPath, 'utf8')
     const integration = readFileSync(integrationPath, 'utf8')
 
@@ -273,16 +286,16 @@ describe('artist-first website setup', () => {
 
     expect(readFileSync(entryPath, 'utf8')).toBe(entry)
     expect(readFileSync(integrationPath, 'utf8')).toBe(integration)
-    expect(result.warnings.join('\n')).toContain('recognized the Blendlink starter')
+    expect(result.warnings.join('\n')).toContain('recognized the SceneToWeb starter')
     expect(result.changes.join('\n')).not.toContain('created user-owned Three.js scene integration')
-    expect(existsSync(join(root, 'src', 'blendlink', 'SampleSceneScene.ts'))).toBe(false)
+    expect(existsSync(join(root, 'src', 'scenetoweb', 'SampleSceneScene.ts'))).toBe(false)
   })
 
   it('refuses to guess a renderer for an unrelated existing website', async () => {
     const root = project('not-three')
     writeFileSync(join(root, 'package.json'), JSON.stringify({ dependencies: { react: '^19.0.0' } }))
     await expect(setupWebsiteProject(root)).rejects.toThrow(/does not declare `three`/)
-    expect(existsSync(join(root, 'blendlink.config.mjs'))).toBe(false)
+    expect(existsSync(join(root, 'scenetoweb.config.mjs'))).toBe(false)
   })
 
   it('rejects a known-incompatible Three release before mutating the website', async () => {
@@ -293,7 +306,7 @@ describe('artist-first website setup', () => {
     await expect(setupWebsiteProject(root)).rejects.toThrow(/source-audited Three 0\.184\.0/)
 
     expect(readFileSync(join(root, 'package.json'), 'utf8')).toBe(packageJson)
-    expect(existsSync(join(root, 'blendlink.config.mjs'))).toBe(false)
+    expect(existsSync(join(root, 'scenetoweb.config.mjs'))).toBe(false)
   })
 
   it('rejects an incompatible or incomplete React Three Fiber pair before mutation', async () => {
@@ -307,7 +320,7 @@ describe('artist-first website setup', () => {
       /@react-three\/fiber 9\.x.*React Three Fiber 9/i,
     )
     expect(readFileSync(join(oldRoot, 'package.json'), 'utf8')).toBe(oldPackage)
-    expect(existsSync(join(oldRoot, 'blendlink.config.mjs'))).toBe(false)
+    expect(existsSync(join(oldRoot, 'scenetoweb.config.mjs'))).toBe(false)
 
     const missingReactRoot = project('r3f-missing-react')
     const missingReactPackage = JSON.stringify({
@@ -319,7 +332,7 @@ describe('artist-first website setup', () => {
       /does not declare `react`.*React 19.*Fiber 9/i,
     )
     expect(readFileSync(join(missingReactRoot, 'package.json'), 'utf8')).toBe(missingReactPackage)
-    expect(existsSync(join(missingReactRoot, 'blendlink.config.mjs'))).toBe(false)
+    expect(existsSync(join(missingReactRoot, 'scenetoweb.config.mjs'))).toBe(false)
   })
 
   it('rejects Three releases newer than the post stack has been validated against', async () => {
@@ -330,7 +343,7 @@ describe('artist-first website setup', () => {
     await expect(setupWebsiteProject(root)).rejects.toThrow(/source-audited Three 0\.184\.0/i)
 
     expect(readFileSync(join(root, 'package.json'), 'utf8')).toBe(packageJson)
-    expect(existsSync(join(root, 'blendlink.config.mjs'))).toBe(false)
+    expect(existsSync(join(root, 'scenetoweb.config.mjs'))).toBe(false)
   })
 
   it('requires the exact audited Three runtime and refuses ranges or aliases', async () => {
@@ -367,10 +380,10 @@ describe('artist-first website setup', () => {
     const result = await setupWebsiteProject(root)
     expect(result.sceneName).toBe('scene')
     const entry = readFileSync(join(root, 'src', 'main.ts'), 'utf8')
-    expect(entry).toContain("import { installScene } from './blendlink/Scene'")
+    expect(entry).toContain("import { installScene } from './scenetoweb/Scene'")
     expect(entry).toContain('const world = new THREE.Scene()')
     expect(entry).not.toContain('const scene = new THREE.Scene()')
-    const integration = readFileSync(join(root, 'src', 'blendlink', 'Scene.ts'), 'utf8')
+    const integration = readFileSync(join(root, 'src', 'scenetoweb', 'Scene.ts'), 'utf8')
     expect(integration).toContain("import { scene as compiledScene } from '../generated/scene.gen'")
   })
 })

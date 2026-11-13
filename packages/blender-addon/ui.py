@@ -21,7 +21,7 @@ from . import (
     weblights,
 )
 
-_DEFAULT_CATEGORY = "Blendlink"
+_DEFAULT_CATEGORY = "SceneToWeb"
 _derived_previews = None
 _material_preview_token = None
 
@@ -96,7 +96,7 @@ def _export_setup(configured: bool, filepath: str, project_root: str | None) -> 
         {
             "key": "scene",
             "complete": bool(configured),
-            "label": "Blendlink scene is set up" if configured else "Set up this Blender scene",
+            "label": "SceneToWeb scene is set up" if configured else "Set up this Blender scene",
         },
         {
             "key": "save",
@@ -154,7 +154,7 @@ def _draw_export_setup(layout, context, project) -> bool:
     elif not filepath:
         _draw_wrapped(
             box,
-            "Saving establishes where Blendlink should look for the website project and generated output.",
+            "Saving establishes where SceneToWeb should look for the website project and generated output.",
         )
     elif complete:
         _draw_wrapped(box, str(root), icon="FILE_FOLDER")
@@ -195,13 +195,13 @@ def _draw_next_setup_step(layout, context, project) -> bool:
     if step["key"] == "scene":
         _draw_wrapped(
             box,
-            "Prepare this scene for web publishing. Blendlink creates Main and keeps the settings in this .blend.",
+            "Prepare this scene for web publishing. SceneToWeb creates Main and keeps the settings in this .blend.",
         )
-        action.operator("blendlink.setup_website_export", text="Set Up Blendlink Scene", icon="ADD")
+        action.operator("blendlink.setup_website_export", text="Set Up SceneToWeb Scene", icon="ADD")
     elif step["key"] == "save":
         _draw_wrapped(
             box,
-            "Save the .blend inside the website project so Blendlink can find its output and tools.",
+            "Save the .blend inside the website project so SceneToWeb can find its output and tools.",
         )
         action.operator("wm.save_as_mainfile", text="Save Scene…", icon="FILE_TICK")
     return False
@@ -503,7 +503,7 @@ class BLENDLINK_PT_web_light(_BlendlinkLightPanelMixin, bpy.types.Panel):
     """Explain the active Blender light's portable website consequence."""
 
     bl_idname = "BLENDLINK_PT_web_light"
-    bl_label = "Blendlink Web Light"
+    bl_label = "SceneToWeb Web Light"
     bl_order = 80
 
     @classmethod
@@ -541,7 +541,7 @@ class BLENDLINK_PT_web_light(_BlendlinkLightPanelMixin, bpy.types.Panel):
         if diagnostic is None:
             _draw_wrapped(
                 layout,
-                "Blendlink is checking render visibility and portable light controls.",
+                "SceneToWeb is checking render visibility and portable light controls.",
                 icon="INFO",
             )
             return
@@ -648,7 +648,7 @@ def _last_run_failed(preview_current: bool) -> tuple[bool, bool]:
 
 class BLENDLINK_PT_main(_BlendlinkPanelMixin, bpy.types.Panel):
     bl_idname = "BLENDLINK_PT_main"
-    bl_label = "Blendlink"
+    bl_label = "SceneToWeb"
 
     def draw(self, context):
         layout = self.layout
@@ -661,13 +661,13 @@ class BLENDLINK_PT_main(_BlendlinkPanelMixin, bpy.types.Panel):
             _draw_wrapped(recipe_error, project.recipe_error)
             _draw_wrapped(
                 recipe_error,
-                "Use a supported Bake Output or update the Blendlink version that authored this file.",
+                "Use a supported Bake Output or update the SceneToWeb version that authored this file.",
             )
         elif not project.configured and isinstance(
             context.scene.get(props.RECIPE_PROPERTY), str,
         ):
             loading = layout.box()
-            loading.label(text="Loading saved Blendlink settings…", icon="TIME")
+            loading.label(text="Loading saved SceneToWeb settings…", icon="TIME")
             return
         if not _draw_next_setup_step(layout, context, project):
             return
@@ -733,9 +733,9 @@ class BLENDLINK_PT_main(_BlendlinkPanelMixin, bpy.types.Panel):
             _draw_wrapped(
                 publish,
                 "No website is connected yet. Preview Website creates a private, reusable "
-                "Three.js studio without adding files beside this .blend. It needs Node.js, "
-                "and the first preview downloads the Blendlink tool from npm into a private "
-                "cache. Connect a website when you are ready to publish it.",
+                "studio for this scene. First use sets up its verified tools automatically; "
+                "no terminal or separate Node installation is needed. Export Website Folder "
+                "builds a complete site you can upload to a static host.",
                 icon="INFO",
             )
 
@@ -745,7 +745,7 @@ class BLENDLINK_PT_main(_BlendlinkPanelMixin, bpy.types.Panel):
             stale.label(text="Preview belongs to another Blender file", icon="INFO")
             _draw_wrapped(
                 stale,
-                "Preview Website will stop the previous Blendlink session and start "
+                "Preview Website will stop the previous SceneToWeb session and start "
                 "one for this saved file. An externally owned website server is never stopped.",
             )
             if previewrun.is_running():
@@ -856,10 +856,20 @@ class BLENDLINK_PT_main(_BlendlinkPanelMixin, bpy.types.Panel):
                 live.label(text="Watching this saved .blend for changes", icon="REC")
                 live.operator("blendlink.stop_preview", text="Stop", icon="X")
 
+        publish.operator("blendlink.export_website", text="Export Website Folder", icon="EXPORT")
+
+        publish.operator("blendlink.check_atlas_fit", text="Check Atlas Fit", icon="CHECKMARK")
+        measurement = _atlas_capacity_measurement()
+        if measurement:
+            if not measurement["current"]:
+                publish.label(text="Scene changed — check atlas fit again", icon="TIME")
+            elif measurement["plan"] is None:
+                publish.label(text="No baked atlases are needed for this scene", icon="INFO")
+            else:
+                publish.label(text="Final atlas measurement is current", icon="INFO")
+
         if root is not None:
             actions = publish.column(align=True) if _is_compact(context) else publish.row(align=True)
-            plan = actions.operator("blendlink.sync_now", text="Check Atlas Fit", icon="CHECKMARK")
-            plan.quality = "PLAN"
             final = actions.operator("blendlink.sync_now", text="Publish Website", icon="EXPORT")
             final.quality = "FINAL"
         else:
@@ -882,7 +892,7 @@ class BLENDLINK_PT_main(_BlendlinkPanelMixin, bpy.types.Panel):
             warning = layout.box()
             warning_header = warning.row(align=True)
             warning_header.alert = True
-            warning_header.label(text="Published files changed outside Blendlink", icon="ERROR")
+            warning_header.label(text="Published files changed outside SceneToWeb", icon="ERROR")
             _draw_wrapped(
                 warning,
                 "One or more website files are missing or no longer match the last build. "
@@ -893,19 +903,19 @@ class BLENDLINK_PT_main(_BlendlinkPanelMixin, bpy.types.Panel):
         if read_failure:
             # Its own box, with its own remedy. This used to be folded into
             # the published-asset integrity list, so a manifest written by a
-            # newer Blendlink accused the artist's website files of having
-            # been changed outside Blendlink.
+            # newer SceneToWeb accused the artist's website files of having
+            # been changed outside SceneToWeb.
             unreadable = layout.box()
             unreadable_header = unreadable.row(align=True)
             unreadable_header.alert = True
             unreadable_header.label(
-                text="Blendlink cannot read the last published result", icon="ERROR",
+                text="SceneToWeb cannot read the last published result", icon="ERROR",
             )
             _draw_wrapped(unreadable, read_failure)
             _draw_wrapped(
                 unreadable,
                 "Publish Website again to rewrite it. If it was written by a newer "
-                "Blendlink, update this add-on to match.",
+                "SceneToWeb, update this add-on to match.",
             )
         # Only genuine problems reach this box. A sibling scene's manifest is
         # an ordinary discovery outcome in a multi-scene website, and reporting
@@ -918,7 +928,7 @@ class BLENDLINK_PT_main(_BlendlinkPanelMixin, bpy.types.Panel):
             warning_header.label(text="Last published result was rejected", icon="ERROR")
             _draw_wrapped(
                 warning,
-                "Blendlink found website output it could not safely use. Publish Website again to "
+                "SceneToWeb found website output it could not safely use. Publish Website again to "
                 "replace it; technical details are in Blender's console.",
             )
 
@@ -960,7 +970,7 @@ class BLENDLINK_PT_main(_BlendlinkPanelMixin, bpy.types.Panel):
 
 class BLENDLINK_MT_workspace_tools(bpy.types.Menu):
     bl_idname = "BLENDLINK_MT_workspace_tools"
-    bl_label = "Blendlink Workspace Tools"
+    bl_label = "SceneToWeb Workspace Tools"
 
     def draw(self, context):
         layout = self.layout
@@ -1094,7 +1104,7 @@ class BLENDLINK_UL_reflection_probes(bpy.types.UIList):
 
 class BLENDLINK_PT_project(_BlendlinkScenePanelMixin, bpy.types.Panel):
     bl_idname = "BLENDLINK_PT_project"
-    bl_label = "Blendlink Scene"
+    bl_label = "SceneToWeb Scene"
     bl_order = 0
 
     @classmethod
@@ -1108,13 +1118,13 @@ class BLENDLINK_PT_project(_BlendlinkScenePanelMixin, bpy.types.Panel):
             if project.recipe_error:
                 error = layout.box()
                 error.alert = True
-                error.label(text="Saved Blendlink settings need attention", icon="ERROR")
+                error.label(text="Saved SceneToWeb settings need attention", icon="ERROR")
                 _draw_wrapped(error, project.recipe_error)
                 return
             if isinstance(context.scene.get(props.RECIPE_PROPERTY), str):
-                layout.label(text="Loading saved Blendlink settings…", icon="TIME")
+                layout.label(text="Loading saved SceneToWeb settings…", icon="TIME")
                 return
-            layout.label(text="This scene is not set up for Blendlink yet.", icon="INFO")
+            layout.label(text="This scene is not set up for SceneToWeb yet.", icon="INFO")
             layout.operator("blendlink.setup_website_export", icon="ADD")
             return
 
@@ -1142,7 +1152,7 @@ class BLENDLINK_PT_project(_BlendlinkScenePanelMixin, bpy.types.Panel):
             )
             _draw_wrapped(
                 preview,
-                "Save once, then Blendlink can open a private Three.js preview directly from here.",
+                "Save once, then SceneToWeb can open a private Three.js preview directly from here.",
                 icon="INFO",
             )
         elif syncrun.is_running():
@@ -1198,7 +1208,7 @@ class BLENDLINK_PT_project(_BlendlinkScenePanelMixin, bpy.types.Panel):
                 stale.label(text="Preview belongs to another Blender file", icon="INFO")
                 _draw_wrapped(
                     stale,
-                    "Preview Website safely replaces the previous Blendlink session. "
+                    "Preview Website safely replaces the previous SceneToWeb session. "
                     "An externally owned website server stays running.",
                 )
                 if previewrun.is_running():
@@ -1442,7 +1452,7 @@ class BLENDLINK_PT_playback(_BlendlinkScenePanelMixin, bpy.types.Panel):
                 )
             _draw_wrapped(
                 layout,
-                "Edit the timeline in Blender's NLA Editor. Blendlink publishes the "
+                "Edit the timeline in Blender's NLA Editor. SceneToWeb publishes the "
                 "selected track without creating a second animation state machine.",
                 icon="ACTION",
             )
@@ -1471,7 +1481,7 @@ class BLENDLINK_PT_playback(_BlendlinkScenePanelMixin, bpy.types.Panel):
 
 class BLENDLINK_PT_look(_BlendlinkWorldPanelMixin, bpy.types.Panel):
     bl_idname = "BLENDLINK_PT_look"
-    bl_label = "Blendlink Web World"
+    bl_label = "SceneToWeb Web World"
     bl_order = 0
 
     @classmethod
@@ -1623,7 +1633,7 @@ class BLENDLINK_PT_environment(_BlendlinkWorldPanelMixin, bpy.types.Panel):
         if project.background_mode != "APPLICATION":
             _draw_wrapped(
                 layout,
-                "The HDR backdrop is hidden because Blendlink Web World owns the background.",
+                "The HDR backdrop is hidden because SceneToWeb Web World owns the background.",
                 icon="INFO",
             )
 
@@ -1658,7 +1668,7 @@ class BLENDLINK_PT_reflection_probes(_BlendlinkScenePanelMixin, bpy.types.Panel)
                 box, "Select reflective meshes, then add a local probe.", icon="INFO",
             )
             _draw_wrapped(
-                box, "Blendlink centers its visible influence volume and assigns them.",
+                box, "SceneToWeb centers its visible influence volume and assigns them.",
             )
             return
 
@@ -1727,7 +1737,7 @@ class BLENDLINK_PT_reflection_probes(_BlendlinkScenePanelMixin, bpy.types.Panel)
             _draw_wrapped(
                 source_box,
                 "Offline probe panoramas use Cycles even when Eevee owns the scene look. "
-                "Blendlink rejects known Eevee-only Shader to RGB contributors; "
+                "SceneToWeb rejects known Eevee-only Shader to RGB contributors; "
                 "Custom Texture remains the exact artist-controlled fallback.",
                 icon="INFO",
             )
@@ -1967,8 +1977,23 @@ class BLENDLINK_PT_optimization(_BlendlinkScenePanelMixin, bpy.types.Panel):
             )
 
 
+def _atlas_capacity_measurement():
+    measurement = syncrun.atlas_plan_measurement()
+    return measurement if measurement and measurement["quality"] == "final" else None
+
+
+def _atlas_capacity_plan():
+    measurement = _atlas_capacity_measurement()
+    return (measurement["plan"] or {}) if measurement else (syncstatus.bake_plan() or {})
+
+
+def _atlas_capacity_is_current():
+    measurement = _atlas_capacity_measurement()
+    return measurement["current"] if measurement else syncstatus.status()[0] == "IN_SYNC"
+
+
 def _atlas_plan_result(atlas):
-    plan = syncstatus.bake_plan() or {}
+    plan = _atlas_capacity_plan()
     atlases = plan.get("atlases") or {}
     return (
         atlases.get(atlas.atlas_id)
@@ -2078,7 +2103,7 @@ def _draw_atlas_recipe(layout, project, context=None):
         "Main receives baked meshes by default. Select meshes before adding an atlas to give them a separate detail budget.",
         icon="INFO",
     )
-    plan = syncstatus.bake_plan() or {}
+    plan = _atlas_capacity_plan()
     _draw_active_atlas_gpu_estimate(layout, plan)
     layout.template_list(
         "BLENDLINK_UL_atlases", "", project, "atlases",
@@ -2178,10 +2203,9 @@ def _draw_atlas_recipe(layout, project, context=None):
         _draw_atlas_plan_evidence(
             result, atlas_name, evidence, context=context,
         )
-        if syncstatus.status()[0] != "IN_SYNC":
+        if not _atlas_capacity_is_current():
             result.label(text="From the last check · run again to refresh", icon="TIME")
-    check = layout.operator("blendlink.sync_now", text="Check Atlas Fit", icon="CHECKMARK")
-    check.quality = "PLAN"
+    layout.operator("blendlink.check_atlas_fit", text="Check Atlas Fit", icon="CHECKMARK")
 
 
 def _draw_bake_quality_recipe(layout, project):
@@ -2413,7 +2437,7 @@ def _role_heading(classification, selection_count: int) -> str:
 
 class BLENDLINK_PT_designation(_BlendlinkObjectPanelMixin, bpy.types.Panel):
     bl_idname = "BLENDLINK_PT_designation"
-    bl_label = "Blendlink Web Object"
+    bl_label = "SceneToWeb Web Object"
     bl_order = 0
 
     @classmethod
@@ -2433,7 +2457,7 @@ class BLENDLINK_PT_designation(_BlendlinkObjectPanelMixin, bpy.types.Panel):
         if obj not in getattr(context, "selected_editable_objects", ()):
             _draw_wrapped(
                 identity,
-                "This Properties editor is pinned to an object outside the editable selection. Select it before changing Blendlink settings.",
+                "This Properties editor is pinned to an object outside the editable selection. Select it before changing SceneToWeb settings.",
                 icon="PINNED",
             )
             select = identity.operator(
@@ -2597,8 +2621,114 @@ def prepare_active_material_previews(context=None) -> bool:
     return prepared
 
 
+def _draw_native_material_graph(layout, compilation):
+    """Show the cached compiler's native-node routes, with named refusals."""
+    box = layout.box()
+    automatic = bool((compilation.get("channels") or {}).get("automatic"))
+    channels = (compilation.get("channels") or {}).get("channels", ())
+    refused = [entry for entry in channels if entry.get("route") == "refused"]
+    needs_attention = compilation.get("outcome") == "blocked" or bool(refused)
+    box.alert = needs_attention
+    box.label(
+        text=("Native shader inputs need attention" if needs_attention else "Native shader graph · automatic")
+        if automatic else {
+            "lowered": "TSL Program needs attention" if needs_attention else "TSL Program ready to compile",
+            "blocked": "TSL Program needs attention",
+            "preserved": "TSL Program has no proven channel",
+        }.get(compilation.get("outcome"), "TSL Program"),
+        icon="ERROR" if needs_attention else "NODETREE",
+    )
+    _draw_wrapped(
+        box,
+        "SceneToWeb reads your existing Blender nodes. Supported channels translate "
+        "automatically; static fallback channels bake without rebuilding the graph."
+        if automatic else "SceneToWeb translates the supported channels of your existing Blender nodes. "
+        "Review untranslated channels below before publishing.",
+    )
+    for entry in channels:
+        route = entry.get("route")
+        if route == "program":
+            detail = "Live node translation"
+        elif route == "bake":
+            resolution = entry.get("resolution")
+            detail = "Texture bake" + (f" · {resolution}px" if isinstance(resolution, int) else "")
+        elif route in {"factor", "factor-over-carrier"}:
+            detail = "Portable material value"
+        elif route == "passthrough":
+            detail = "Portable material input"
+        else:
+            detail = "Unsupported · review before publishing"
+        _draw_wrapped(
+            box, f'{entry.get("channel", "?")}: {detail}',
+            icon="ERROR" if route == "refused" else "DOT",
+        )
+        if route == "refused":
+            reason = entry.get("tslIrRefusal") or "; ".join(entry.get("reasons") or ())
+            if reason:
+                _draw_wrapped(box, reason, icon="INFO")
+    for issue in compilation.get("issues", ()):
+        _draw_wrapped(box, issue.get("problem", "This material input needs attention."), icon="ERROR")
+        # Automatic translation has no explicit TSL intent to clear. Preserve
+        # useful authored-route remedies, but do not offer a nonexistent switch.
+        if (not automatic or issue.get("code") != "material.tsl-program-unproven") and issue.get("fix"):
+            _draw_wrapped(box, issue["fix"], icon="LIGHT")
+    if not automatic:
+        box.operator("blendlink.toggle_tsl_program", text="Disable TSL Program", icon="X")
+    _draw_wrapped(
+        box,
+        "Live node materials need the node renderer; it can use WebGPU or WebGL2. "
+        "Older website renderers use portable or baked materials, which can differ. "
+        "Supported graph translation does not guarantee identical Blender lighting or shading.",
+        icon="INFO",
+    )
+
+
+def _draw_appearance_material_capture(layout, result):
+    captured = set(result.get("appearanceBakeObjects") or ())
+    used = set(result.get("usedBy") or ())
+    if not captured or not used.issubset(captured):
+        return False
+    cycles = result.get("cyclesAppearance") or {}
+    blocked = cycles.get("status") == "blocked"
+    box = layout.box()
+    box.alert = blocked
+    box.label(
+        text="Appearance bake needs attention" if blocked else "Native shader surface · Appearance bake",
+        icon="ERROR" if blocked else "TEXTURE",
+    )
+    if blocked:
+        for blocker in cycles.get("blockers", ()):
+            _draw_wrapped(box, blocker, icon="ERROR")
+        _draw_wrapped(
+            box,
+            "The current Cycles Appearance route cannot evaluate this native graph. "
+            "Use a supported live route or a proven EEVEE materialization route "
+            "before publishing.",
+        )
+    else:
+        _draw_wrapped(
+            box,
+            "The scene's Appearance atlas captures this native Blender surface "
+            "into an image. No separate node graph or Material Bake switch is needed.",
+        )
+        _draw_wrapped(
+            box,
+            "Save changes to rebake. The website uses this static appearance "
+            "capture instead of a live shader-node graph.",
+            icon="INFO",
+        )
+    _draw_wrapped(box, "Appearance objects: " + ", ".join(sorted(captured)), icon="OBJECT_DATA")
+    return True
+
+
 def _draw_material_compatibility(layout, result):
     """Draw the cached, non-mutating stock glTF material contract."""
+    if _draw_appearance_material_capture(layout, result):
+        return
+    compilation = result.get("materialCompilation") or {}
+    if (compilation.get("channels") or {}).get("automatic") or compilation.get("intent") == "tslProgram":
+        _draw_native_material_graph(layout, compilation)
+        return
     status = result.get("status", "approximated")
     box = layout.box()
     box.alert = status == "needsBake"
@@ -2614,36 +2744,6 @@ def _draw_material_compatibility(layout, result):
     _draw_wrapped(box, result.get("summary", ""))
     for reason in result.get("reasons", [])[:4]:
         _draw_wrapped(box, reason, icon="DOT")
-    compilation = result.get("materialCompilation") or {}
-    if compilation.get("intent") == "tslProgram":
-        program_box = box.box()
-        program_box.alert = compilation.get("outcome") == "blocked"
-        program_box.label(
-            text={
-                "lowered": "TSL Program ready to compile",
-                "blocked": "TSL Program needs attention",
-                "preserved": "TSL Program has no proven channel",
-            }.get(compilation.get("outcome"), "TSL Program"),
-            icon={
-                "lowered": "CHECKMARK", "blocked": "ERROR",
-                "preserved": "INFO",
-            }.get(compilation.get("outcome"), "NODETREE"),
-        )
-        for entry in (compilation.get("channels") or {}).get("channels", ())[:8]:
-            route = entry.get("route")
-            detail = (
-                "translates to a program" if route == "program" else "refused"
-            )
-            _draw_wrapped(
-                program_box,
-                f'{entry.get("channel", "?")}: {detail}',
-                icon="DOT" if route == "program" else "ERROR",
-            )
-        program_box.operator(
-            "blendlink.toggle_tsl_program",
-            text="Disable TSL Program",
-            icon="X",
-        )
     if compilation.get("intent") == "materialBake":
         bake_box = box.box()
         bake_box.alert = compilation.get("outcome") == "blocked"
@@ -2741,6 +2841,8 @@ _TRANSPORT_PHRASES = {
 def _draw_web_material_source(layout, result):
     """Draw the compiler-owned selected-field contract from cached evidence."""
     compilation = result.get("materialCompilation") or {}
+    if compilation.get("intent") != "webColor":
+        compilation = {}
     outcome = compilation.get("outcome", "preserved")
     box = layout.box()
     box.alert = outcome == "blocked"
@@ -2749,10 +2851,17 @@ def _draw_web_material_source(layout, result):
         text={
             "lowered": "Website Color ready to compile",
             "blocked": "Website Color needs attention",
-        }.get(outcome, "Website Color (optional)"),
+        }.get(outcome, "Website Color override (optional)"),
         icon={"lowered": "CHECKMARK", "blocked": "ERROR"}.get(outcome, "NODE_MATERIAL"),
     )
     source = compilation.get("colorSource") or {}
+    if not compilation:
+        _draw_wrapped(
+            box,
+            "Most materials need no setup here. Use this optional override only "
+            "to publish one chosen Color or Alpha output instead of following "
+            "the native material surface.",
+        )
     if source:
         _draw_wrapped(
             box,
@@ -2805,7 +2914,7 @@ def _draw_web_material_source(layout, result):
 
 class BLENDLINK_PT_textures(_BlendlinkMaterialPanelMixin, bpy.types.Panel):
     bl_idname = "BLENDLINK_PT_textures"
-    bl_label = "Blendlink Web Material"
+    bl_label = "SceneToWeb Web Material"
     bl_order = 1
 
     @classmethod
@@ -2830,7 +2939,7 @@ class BLENDLINK_PT_textures(_BlendlinkMaterialPanelMixin, bpy.types.Panel):
             checking.label(text="Checking glTF material compatibility…", icon="TIME")
             _draw_wrapped(
                 checking,
-                "Blendlink checks only the active Surface branch; unused scratch nodes are ignored.",
+                "SceneToWeb checks only the active Surface branch; unused scratch nodes are ignored.",
             )
         images = _images_for_material(material)
         if not images:
@@ -2997,7 +3106,7 @@ def _effective_rendering(obj, project=None) -> tuple[str, str]:
     if analysis is None:
         return (
             "PENDING",
-            "Web-rendering analysis is pending. Blendlink is checking motion, "
+            "Web-rendering analysis is pending. SceneToWeb is checking motion, "
             "modifiers, and materials.",
         )
     if analysis.dynamic_reason:
@@ -3142,7 +3251,7 @@ def _draw_atlas_controls(layout, obj, context=None, *, selection=None, summaries
         )
         _draw_wrapped(
             result,
-            "Blendlink is checking motion, modifiers, and materials before "
+            "SceneToWeb is checking motion, modifiers, and materials before "
             "deciding which selected meshes can be baked.",
         )
         return
@@ -3811,7 +3920,7 @@ class BLENDLINK_PT_checks(_BlendlinkPanelMixin, bpy.types.Panel):
         elif detail.fixable_numbered:
             remedy = "Fix duplicate numbering so every tool reads the same semantic role."
         elif detail.object_name:
-            remedy = "Select the affected object and review its Blendlink Web Object settings."
+            remedy = "Select the affected object and review its SceneToWeb Web Object settings."
         else:
             remedy = "Correct the named scene setting, then refresh Web Checks."
         _draw_wrapped(box, remedy, icon="TOOL_SETTINGS")

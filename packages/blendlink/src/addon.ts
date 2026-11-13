@@ -65,7 +65,7 @@ export function fingerprintBlenderAddonTree(root: string): string {
 
 export function bundledBlenderAddonFingerprint(): string {
   if (!existsSync(ADDON_SOURCE)) {
-    throw new Error(`The bundled Blendlink addon is missing at ${ADDON_SOURCE}`)
+    throw new Error(`The bundled SceneToWeb addon is missing at ${ADDON_SOURCE}`)
   }
   return fingerprintBlenderAddonTree(ADDON_SOURCE)
 }
@@ -77,12 +77,12 @@ export function bundledBlenderAddonVersion(): string {
     text = readFileSync(manifestPath, 'utf8')
   } catch (error) {
     throw new Error(
-      `The bundled Blendlink addon manifest is missing at ${manifestPath}: ` +
+      `The bundled SceneToWeb addon manifest is missing at ${manifestPath}: ` +
         (error instanceof Error ? error.message : String(error)),
     )
   }
   const version = text.match(/^version\s*=\s*"([^"]+)"/m)?.[1]
-  if (!version) throw new Error(`The bundled Blendlink addon manifest has no valid version: ${manifestPath}`)
+  if (!version) throw new Error(`The bundled SceneToWeb addon manifest has no valid version: ${manifestPath}`)
   return version
 }
 
@@ -90,13 +90,13 @@ export function parseBlenderAddonStatus(output: string): BlenderAddonStatus {
   const line = output.split(/\r?\n/).filter(
     (entry) => entry.startsWith(ADDON_STATUS_PREFIX),
   ).at(-1)
-  if (!line) throw new Error('Blender did not emit the Blendlink addon-status sentinel')
+  if (!line) throw new Error('Blender did not emit the SceneToWeb addon-status sentinel')
   let value: unknown
   try {
     value = JSON.parse(line.slice(ADDON_STATUS_PREFIX.length))
   } catch (error) {
     throw new Error(
-      'Blender emitted malformed Blendlink addon status: ' +
+      'Blender emitted malformed SceneToWeb addon status: ' +
         (error instanceof Error ? error.message : String(error)),
     )
   }
@@ -110,7 +110,7 @@ export function parseBlenderAddonStatus(output: string): BlenderAddonStatus {
       (status.sceneEffectCount !== null && typeof status.sceneEffectCount !== 'number') ||
       (status.objectBehaviorCount !== null && typeof status.objectBehaviorCount !== 'number') ||
       (status.error !== undefined && status.error !== null && typeof status.error !== 'string')) {
-    throw new Error('Blender emitted an incomplete Blendlink addon status')
+    throw new Error('Blender emitted an incomplete SceneToWeb addon status')
   }
   return status as BlenderAddonStatus
 }
@@ -119,9 +119,9 @@ export function inspectBlenderAddon(executable: string): BlenderAddonStatus {
   const script = `
 import bpy, hashlib, json, runpy, tomllib
 from pathlib import Path
-module = "bl_ext.user_default.blendlink"
+module = "bl_ext.user_default.scenetoweb"
 repo = next((item for item in bpy.context.preferences.extensions.repos if item.module == "user_default"), None)
-root = Path(repo.directory) / "blendlink" if repo else None
+root = Path(repo.directory) / "scenetoweb" if repo else None
 manifest = root / "blender_manifest.toml" if root else None
 installed = bool(manifest and manifest.exists())
 version = None
@@ -187,7 +187,7 @@ print(${JSON.stringify(ADDON_STATUS_PREFIX)} + json.dumps({
   } catch (error) {
     const tail = output.trim().split(/\r?\n/).slice(-20).join('\n')
     throw new Error(
-      `Could not inspect the installed Blendlink addon` +
+      `Could not inspect the installed SceneToWeb addon` +
         `${result.status === null ? '' : ` (Blender exit ${result.status})`}: ` +
         `${error instanceof Error ? error.message : String(error)}` +
         `${tail ? `\n--- Blender output tail ---\n${tail}` : ''}`,
@@ -203,13 +203,13 @@ export function assertBlenderAddonInstallation(
   if (!status.error && status.installed && status.enabled &&
       status.version === expectedVersion && status.fingerprint === expectedFingerprint) return
   throw new Error(
-    `Blender did not verify the installed Blendlink ${expectedVersion} workspace: ` +
+    `Blender did not verify the installed SceneToWeb ${expectedVersion} workspace: ` +
       `installed=${status.installed}, enabled=${status.enabled}, ` +
       `version=${status.version ?? 'unknown'}, ` +
       `files=${status.fingerprint?.slice(0, 16) ?? 'unknown'}, ` +
       `expected files=${expectedFingerprint.slice(0, 16)}` +
       `${status.error ? `, inspection error=${status.error}` : ''}. ` +
-      'Run `blendlink addon install` again and inspect Blender extension permissions if it persists.',
+      'Run `scenetoweb addon install` again and inspect Blender extension permissions if it persists.',
   )
 }
 
@@ -221,16 +221,40 @@ export async function installBlenderAddon(
 ): Promise<{ blenderVersion: string; addonVersion: string }> {
   const blender = await discoverBlender(blenderPath)
   if (!existsSync(ADDON_SOURCE)) {
-    throw new Error('The bundled Blendlink addon is missing; reinstall the blendlink package')
+    throw new Error('The bundled SceneToWeb addon is missing; reinstall the scenetoweb package')
   }
-  const work = mkdtempSync(join(tmpdir(), 'blendlink-addon-'))
-  const archive = join(work, 'blendlink.zip')
+  const work = mkdtempSync(join(tmpdir(), 'scenetoweb-addon-'))
+  const archive = join(work, 'scenetoweb.zip')
+  const migrationState = join(work, 'legacy-addon-preferences.json')
+  let legacyMigrationStarted = false
   try {
     run(blender.executable, [
       '--command', 'extension', 'build',
       '--source-dir', ADDON_SOURCE,
       '--output-filepath', archive,
     ], 'build the Blender extension')
+    // Old saved scenes use the same RNA/operator identifiers. Disable the
+    // legacy extension before enabling this one so registration stays atomic.
+    // A partial preparation failure must also restore any captured state.
+    legacyMigrationStarted = true
+    run(blender.executable, [
+      '--background', '--python-exit-code', '1', '--python-expr', `
+import addon_utils, bpy, json
+from pathlib import Path
+legacy = []
+for item in list(bpy.context.preferences.addons):
+    if item.module == "blendlink" or item.module.startswith("bl_ext.") and item.module.endswith(".blendlink"):
+        preferences = item.preferences
+        legacy.append({"module": item.module, "preferences": {
+            key: getattr(preferences, key) for key in ("category", "overlay_xray", "preview_package")
+            if hasattr(preferences, key)
+        }})
+Path(${JSON.stringify(migrationState)}).write_text(json.dumps(legacy), encoding="utf8")
+for item in legacy:
+    addon_utils.disable(item["module"], default_set=True)
+bpy.ops.wm.save_userpref()
+`,
+    ], 'prepare the legacy Blender addon migration')
     run(blender.executable, [
       '--command', 'extension', 'install-file',
       '-r', 'user_default', '-e', archive,
@@ -239,7 +263,54 @@ export async function installBlenderAddon(
     const expectedFingerprint = bundledBlenderAddonFingerprint()
     const status = inspectBlenderAddon(blender.executable)
     assertBlenderAddonInstallation(status, expectedVersion, expectedFingerprint)
+    // A local checkout/archive must keep working before npm publication,
+    // including scenes outside that checkout. A normal registry installation
+    // uses its exact release through the private desktop runtime instead.
+    const packageRoot = dirname(fileURLToPath(new URL('../package.json', import.meta.url)))
+    const { resolvePreviewStudioBlendlinkDependency } = await import('./preview.js')
+    const dependency = resolvePreviewStudioBlendlinkDependency(packageRoot, expectedVersion)
+    const localPreviewPackage = dependency.startsWith('file:') ? packageRoot : ''
+    run(blender.executable, [
+      '--background', '--python-exit-code', '1', '--python-expr',
+      `
+import bpy, json
+from pathlib import Path
+p = bpy.context.preferences.addons["bl_ext.user_default.scenetoweb"].preferences
+legacy = json.loads(Path(${JSON.stringify(migrationState)}).read_text(encoding="utf8"))
+for item in legacy:
+    for key, value in item["preferences"].items():
+        if hasattr(p, key):
+            setattr(p, key, "SceneToWeb" if key == "category" and value == "Blendlink" else value)
+if not p.preview_package:
+    p.preview_package = ${JSON.stringify(localPreviewPackage)}
+bpy.ops.wm.save_userpref()
+`,
+    ], 'connect the matching desktop preview compiler')
     return { blenderVersion: blender.version, addonVersion: expectedVersion }
+  } catch (error) {
+    if (legacyMigrationStarted && existsSync(migrationState)) {
+      try {
+        run(blender.executable, [
+          '--background', '--python-exit-code', '1', '--python-expr', `
+import addon_utils, bpy, json
+from pathlib import Path
+if "bl_ext.user_default.scenetoweb" in bpy.context.preferences.addons:
+    addon_utils.disable("bl_ext.user_default.scenetoweb", default_set=True)
+for item in json.loads(Path(${JSON.stringify(migrationState)}).read_text(encoding="utf8")):
+    addon_utils.enable(item["module"], default_set=True)
+    preferences = bpy.context.preferences.addons[item["module"]].preferences
+    for key, value in item["preferences"].items():
+        if hasattr(preferences, key):
+            setattr(preferences, key, value)
+bpy.ops.wm.save_userpref()
+`,
+        ], 'restore the previous Blender addon after the failed installation')
+      } catch (rollbackError) {
+        throw new AggregateError([error, rollbackError],
+          'SceneToWeb installation failed and the previous addon could not be restored automatically.')
+      }
+    }
+    throw error
   } finally {
     rmSync(work, { recursive: true, force: true })
   }

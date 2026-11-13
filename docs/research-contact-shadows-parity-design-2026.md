@@ -4,7 +4,7 @@
 - Needle Blender add-on: `1.4.2`
 - Needle runtime: `@needle-tools/engine 5.1.7`
 - Needle Three fork: `@needle-tools/three 0.169.19`
-- Blendlink comparison target: package `0.8.0`, Three `0.184.0`
+- SceneToWeb comparison target: package `0.8.0`, Three `0.184.0`
 - Scope: Contact Shadows authoring, capture/blur algorithm, update policy,
   renderer ownership, disposal, context loss, and differential evidence
 - Production result: shipped as a Preview first-party component through
@@ -13,7 +13,7 @@
 
 ## Decision
 
-Blendlink should first match Needle's visible WebGL result, but it should not
+SceneToWeb should first match Needle's visible WebGL result, but it should not
 copy Needle's unconditional five auxiliary renders on every host frame.
 
 The recommended design is a deep package-owned `threeContactShadows` module
@@ -31,7 +31,7 @@ behind the existing portable-component seam:
 6. the application retains its route, Canvas, renderer, main render loop, and
    loading presentation; and
 7. Contact Shadows remains opt-in because silently stacking it over baked
-   grounding is outside Blendlink's product contract.
+   grounding is outside SceneToWeb's product contract.
 
 This gives a testable improvement without changing the matched visual
 algorithm:
@@ -39,15 +39,15 @@ algorithm:
 ```text
 unchanged static scene after the first refresh
 Needle default:    5 auxiliary renders per host frame
-Blendlink target:  0 auxiliary renders per later host frame
+SceneToWeb target:  0 auxiliary renders per later host frame
 ```
 
 That comparison is now browser-verified. The actual pinned Needle 5.1.7 class
-and Blendlink production module produced byte-identical settled `512 x 512`
+and SceneToWeb production module produced byte-identical settled `512 x 512`
 RGBA8 masks in Chromium: alpha MAE/RMSE/maximum error `0`, Pearson `1`, five
-top-level renders, and five observed GL draws each. Blendlink then performed
+top-level renders, and five observed GL draws each. SceneToWeb then performed
 zero auxiliary renders over 120 unchanged static frames, while Needle's
-default and Blendlink's explicit Continuous mode each performed five on every
+default and SceneToWeb's explicit Continuous mode each performed five on every
 observed frame. See
 [the differential record](research-contact-shadows-differential-browser-2026.md).
 
@@ -56,7 +56,7 @@ It is an important future adapter, not a drop-in replacement for the current
 website-owned `WebGLRenderer`: the official migration guide says node
 materials/TSL belong to `WebGPURenderer` (which can use WebGPU or its WebGL 2
 backend), while classic `WebGLRenderer` remains the recommended pure-WebGL
-renderer. Blendlink must not swap the application's renderer to claim parity.
+renderer. SceneToWeb must not swap the application's renderer to claim parity.
 
 ## Evidence boundary
 
@@ -169,7 +169,7 @@ class. The catalog defaults darkness/opacity to `1`, limits darkness to
 defaults darkness/opacity to `0.5`, `autoFit` to `false`, and the occluder to
 `false`.
 
-Blendlink should match the artist outcomes but publish one coherent contract;
+SceneToWeb should match the artist outcomes but publish one coherent contract;
 reproducing this disagreement would not be parity.
 
 ### Runtime is five auxiliary renders per update
@@ -208,7 +208,7 @@ scale as maximum shadow height. A `scene-content-changed` event marks the
 effect dirty and requests refit.
 
 The source explicitly says animated transform auto-refit is not reliable and
-is not implemented. Blendlink therefore does not need a per-frame bounding-box
+is not implemented. SceneToWeb therefore does not need a per-frame bounding-box
 scan to claim match, but its limitation and update policy must be loud.
 
 ### Renderer ownership is incomplete
@@ -313,7 +313,7 @@ For 600 host frames (ten seconds at 60 Hz):
 Design B is selected for the current WebGL adapter because it preserves
 application renderer ownership, can first match Needle pixels, and has an
 independently falsifiable idle-cost improvement. Design C should be a future
-adapter when Blendlink has a real WebGPURenderer caller and cross-renderer
+adapter when SceneToWeb has a real WebGPURenderer caller and cross-renderer
 fixtures; one hypothetical adapter is not a reason to introduce a renderer
 seam.
 
@@ -367,7 +367,7 @@ Contact-Shadows-only application method would make the generic component
 interface shallower.
 
 For arbitrary website-authored object animation, the truthful first contract
-is `continuous`. Compiler-known Blendlink animation can later select or
+is `continuous`. Compiler-known SceneToWeb animation can later select or
 recommend that policy automatically, but static must never claim to observe
 all vertex shader, skinning, morph, physics, or application mutations.
 
@@ -375,7 +375,7 @@ all vertex shader, skinning, morph, physics, or application mutations.
 
 Every refresh must capture and restore the exact observed values:
 
-| Owner | State | Needle 5.1.7 | Blendlink target |
+| Owner | State | Needle 5.1.7 | SceneToWeb target |
 | --- | --- | --- | --- |
 | Renderer | render target, cube face, mip level | target only | exact tuple |
 | Renderer | clear color and alpha | alpha only | exact color + alpha |
@@ -399,7 +399,7 @@ fallback to the wrong mask.
 
 Alpha-tested cutouts require their own evidence. Needle's scene-wide override
 material does not carry each source material's alpha map/test into the shared
-depth shader. Blendlink may initially match that limitation, but preserving
+depth shader. SceneToWeb may initially match that limitation, but preserving
 cutouts through cached per-source depth materials is a candidate Improvement,
 not something to claim from a generic depth override.
 
@@ -413,7 +413,7 @@ contract should therefore be precise:
 - disposal after a synchronous refresh releases all owned resources;
 - disposal is idempotent;
 - calls after disposal fail loudly through the existing runtime lifecycle;
-- Blendlink does not dispose or force-loss/restore the application renderer;
+- SceneToWeb does not dispose or force-loss/restore the application renderer;
 - no `AbortSignal` claim is made for GPU work or shader compilation.
 
 Three r184's `WebGLRenderer` handles `webglcontextlost` and reinitializes its
@@ -456,7 +456,7 @@ This proves control flow and ownership only.
 ### 2. `contact-shadows-differential` browser fixture
 
 Use the same GLB bytes, camera matrices, `800 x 800` viewport, DPR 1, color
-space, tone mapping, and exposure in Needle and Blendlink. Include:
+space, tone mapping, and exposure in Needle and SceneToWeb. Include:
 
 - opaque closed mesh;
 - thin open/backfacing mesh;
@@ -489,8 +489,8 @@ Instrument only the auxiliary module's renderer seam, not the application's
 whole renderer:
 
 - Needle default: observe five auxiliary renders for each host frame;
-- Blendlink continuous: observe the same five;
-- Blendlink static: observe five on the first frame and zero on the next 120
+- SceneToWeb continuous: observe the same five;
+- SceneToWeb static: observe five on the first frame and zero on the next 120
   unchanged host frames;
 - R3F demand mode settles after the first static refresh;
 - quality/resize/context restore requests exactly one new host frame; and
@@ -539,12 +539,12 @@ Implementation and evidence remain separate.
 | Capability ID | Comparison | Relation | Implementation | Evidence |
 | --- | --- | --- | --- | --- |
 | NDL-CS-001 | Blender-authored auto-fit, darkness, opacity, blur, below-ground occlusion, and backface policy | **Match** | **Shipped (Preview)** | Add-on schema/headless and focused runtime tests pass; the browser differential covers the manual-volume subset, while auto-fit/backface/below-ground pixel matrices remain Pending |
-| NDL-CS-002 | One top-down depth capture plus two separable blur rounds | **Match** | **Shipped (Preview)** | Actual pinned Needle 5.1.7 and Blendlink settled masks are byte-identical in the controlled Chromium fixture; both submit five draws |
-| NDL-CS-003 | Static idle policy versus Needle's default every-frame update | **Improvement** | **Shipped (Preview)** | Browser-verified: Blendlink Static `5` then `0/120`; Needle default and Blendlink Continuous `[5,5,5]` |
+| NDL-CS-002 | One top-down depth capture plus two separable blur rounds | **Match** | **Shipped (Preview)** | Actual pinned Needle 5.1.7 and SceneToWeb settled masks are byte-identical in the controlled Chromium fixture; both submit five draws |
+| NDL-CS-003 | Static idle policy versus Needle's default every-frame update | **Improvement** | **Shipped (Preview)** | Browser-verified: SceneToWeb Static `5` then `0/120`; Needle default and SceneToWeb Continuous `[5,5,5]` |
 | NDL-CS-004 | Exact state restoration on any auxiliary-pass failure | **Improvement** | **Shipped (Preview)** | Production injected-failure unit cases restore renderer/scene state at every pass; equivalent real-browser failure injection remains Pending |
-| NDL-CS-005 | Automatically enable Contact Shadows for every project | **Boundary** | **Shipped opt-in only** | Blendlink will not silently double-ground baked/AO/realtime scenes; an integrated conflict-warning matrix remains Pending |
-| NDL-CS-006 | Omit unused depth attachments | **Improvement** | **Shipped (Preview)** | Actual browser targets report Needle depth enabled and Blendlink depth/stencil disabled with identical settled pixels; this is allocation configuration, not a GPU-time claim |
-| NDL-CS-007 | TSL contact shadows on WebGPURenderer/WebGL 2 fallback | **Gap** | **Future adapter** | Official Three r184 source verified; no Blendlink WebGPURenderer fixture |
+| NDL-CS-005 | Automatically enable Contact Shadows for every project | **Boundary** | **Shipped opt-in only** | SceneToWeb will not silently double-ground baked/AO/realtime scenes; an integrated conflict-warning matrix remains Pending |
+| NDL-CS-006 | Omit unused depth attachments | **Improvement** | **Shipped (Preview)** | Actual browser targets report Needle depth enabled and SceneToWeb depth/stencil disabled with identical settled pixels; this is allocation configuration, not a GPU-time claim |
+| NDL-CS-007 | TSL contact shadows on WebGPURenderer/WebGL 2 fallback | **Gap** | **Future adapter** | Official Three r184 source verified; no SceneToWeb WebGPURenderer fixture |
 | NDL-CS-008 | Re-render static mask after WebGL context restoration | **Improvement** | **Shipped (Preview)** | Generation-aware production unit cases pass; `WEBGL_lose_context` browser pixels and repeated resource baselines remain Pending |
 
 ## Primary sources

@@ -6,7 +6,7 @@ import type { ThreeAudioReadiness } from './threeAudio.js'
 
 const NO_CONTROLS: InstalledThreeCompiledScene['components']['accessibleControls'] = Object.freeze([])
 
-/** Structurally compatible with the state reported by Blendlink's R3F
+/** Structurally compatible with the state reported by SceneToWeb's R3F
  * adapter, without making this application model depend on React or R3F. */
 export type CompiledSceneLoadState =
   | (ThreeSceneInstallationProgress & { attempt: number })

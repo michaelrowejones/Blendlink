@@ -17,7 +17,7 @@ import { verifyPackedBlendlinkLicenseContract } from './package-license-contract
 
 const PACKAGE_LICENSE = 'SEE LICENSE IN LICENSES.md'
 const ADDON_LICENSE = 'GPL-3.0-or-later'
-const FILE_LICENSES = Object.freeze(['MIT', 'GPL-3.0-or-later', 'Apache-2.0', 'CC0-1.0'])
+const FILE_LICENSES = Object.freeze(['MIT', 'GPL-3.0-or-later', 'Apache-2.0', 'BSD-3-Clause', 'CC0-1.0'])
 const FULL_SHA256 = /^[0-9a-f]{64}$/
 const FULL_COMMIT = /^[0-9a-f]{40}$/
 const VERSION = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/
@@ -190,8 +190,8 @@ export function verifyReleaseManifestContract(manifestValue, expected) {
   }
   const npm = object(byKind.get('npm'), 'npm artifact')
   const addon = object(byKind.get('blender-extension'), 'Blender artifact')
-  if (npm.filename !== `blendlink-${expected.version}.tgz`) fail(`npm artifact filename is not version-derived`)
-  if (addon.filename !== `blendlink-addon-${expected.version}.zip`) fail(`Blender artifact filename is not version-derived`)
+  if (npm.filename !== `scenetoweb-${expected.version}.tgz`) fail(`npm artifact filename is not version-derived`)
+  if (addon.filename !== `scenetoweb-addon-${expected.version}.zip`) fail(`Blender artifact filename is not version-derived`)
   if (npm.license !== PACKAGE_LICENSE || npm.licenseMap !== 'LICENSES.md' ||
       JSON.stringify(npm.fileLicenses) !== JSON.stringify(FILE_LICENSES)) {
     fail(`npm artifact license manifest is not the reviewed mixed-license contract`)
@@ -263,8 +263,8 @@ export function verifyRetainedReleaseDirectory({ directory, version, commit, rep
     extractAddonArchive(join(root, contract.addon.filename), addonRoot)
 
     const packageJson = readJson(join(npmRoot, 'package.json'), 'packed package manifest')
-    if (packageJson.name !== 'blendlink' || packageJson.version !== version) {
-      fail(`packed package identity must be blendlink@${version}`)
+    if (packageJson.name !== 'scenetoweb' || packageJson.version !== version) {
+      fail(`packed package identity must be scenetoweb@${version}`)
     }
     assertRepositoryUrl(packageJson.repository, repository, 'packed package repository')
     const packedLicense = verifyPackedBlendlinkLicenseContract(npmRoot)
@@ -278,7 +278,7 @@ export function verifyRetainedReleaseDirectory({ directory, version, commit, rep
     const npmAddonManifest = readFileSync(join(npmAddonRoot, 'blender_manifest.toml'), 'utf8')
     const addonManifest = readFileSync(join(addonRoot, 'blender_manifest.toml'), 'utf8')
     for (const [label, text] of [['npm add-on', npmAddonManifest], ['Blender archive', addonManifest]]) {
-      if (!/^id\s*=\s*"blendlink"/m.test(text) ||
+      if (!/^id\s*=\s*"scenetoweb"/m.test(text) ||
           !new RegExp(`^version\\s*=\\s*"${version.replaceAll('.', '\\.')}"`, 'm').test(text) ||
           !/^license\s*=\s*\["SPDX:GPL-3\.0-or-later"\]/m.test(text)) {
         fail(`${label} manifest identity, version, or license differs`)
@@ -300,13 +300,13 @@ export function verifyRetainedReleaseDirectory({ directory, version, commit, rep
 
 export function verifyRegistryContract({ metadata, downloadedArchive, retainedArchive, contract, repository }) {
   const registry = object(metadata, 'npm registry metadata')
-  if (registry.name !== 'blendlink' || registry.version !== contract.manifest.version) {
-    fail(`npm registry identity differs from blendlink@${contract.manifest.version}`)
+  if (registry.name !== 'scenetoweb' || registry.version !== contract.manifest.version) {
+    fail(`npm registry identity differs from scenetoweb@${contract.manifest.version}`)
   }
   assertRepositoryUrl(registry.repository, repository, 'npm registry repository')
   const dist = object(registry.dist, 'npm registry dist metadata')
   const expectedTarballUrl =
-    `https://registry.npmjs.org/blendlink/-/blendlink-${contract.manifest.version}.tgz`
+    `https://registry.npmjs.org/scenetoweb/-/scenetoweb-${contract.manifest.version}.tgz`
   if (dist.tarball !== expectedTarballUrl) fail(`npm registry tarball URL differs from ${expectedTarballUrl}`)
   if (dist.integrity !== contract.npm.integrity) fail(`npm registry SRI differs from retained manifest`)
   if (dist.shasum !== sha1(retainedArchive)) fail(`npm registry SHA-1 differs from retained tarball`)
@@ -316,7 +316,7 @@ export function verifyRegistryContract({ metadata, downloadedArchive, retainedAr
   }
   const attestations = object(dist.attestations, 'npm registry attestations')
   const expectedAttestationUrl =
-    `https://registry.npmjs.org/-/npm/v1/attestations/blendlink@${contract.manifest.version}`
+    `https://registry.npmjs.org/-/npm/v1/attestations/scenetoweb@${contract.manifest.version}`
   if (attestations.url !== expectedAttestationUrl ||
       attestations.provenance?.predicateType !== 'https://slsa.dev/provenance/v1') {
     fail(`npm registry metadata has no SLSA v1 provenance attestation`)
@@ -350,8 +350,8 @@ export function verifyGithubReleaseContract({
   if (state !== 'any' && state !== 'draft' && state !== 'published') fail(`invalid GitHub release state ${state}`)
   const root = resolve(directory)
   const expectedNames = [
-    `blendlink-${version}.tgz`,
-    `blendlink-addon-${version}.zip`,
+    `scenetoweb-${version}.tgz`,
+    `scenetoweb-addon-${version}.zip`,
     'release-manifest.json',
     'SHA256SUMS',
   ]

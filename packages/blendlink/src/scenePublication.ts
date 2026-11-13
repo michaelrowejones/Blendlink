@@ -302,7 +302,7 @@ export function sealScenePublication(
     } catch (error) {
       throw new Error(
         `Existing content-addressed scene directory is corrupt: ${directory}. ` +
-          'Blendlink will not overwrite an immutable graph in place. ' +
+          'SceneToWeb will not overwrite an immutable graph in place. ' +
           `Remove exactly that directory, then rerun the compile. ${
             error instanceof Error ? error.message : String(error)
           }`,
@@ -338,7 +338,7 @@ export function sealScenePublication(
       } catch (integrityError) {
         throw new Error(
           `A concurrent publisher created a corrupt content-addressed scene directory: ${directory}. ` +
-            'Blendlink will not overwrite an immutable graph in place. ' +
+            'SceneToWeb will not overwrite an immutable graph in place. ' +
             `Remove exactly that directory after other publishers stop, then rerun the compile. ${
               integrityError instanceof Error
                 ? integrityError.message

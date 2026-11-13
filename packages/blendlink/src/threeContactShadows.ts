@@ -14,7 +14,7 @@ export interface ThreeContactShadowValues {
   blur: number
   occludeBelowGround: boolean
   backfaceShadows: boolean
-  /** Static is Blendlink's artist-first default. It refreshes once and then
+  /** Static is SceneToWeb's artist-first default. It refreshes once and then
    * settles a demand Canvas; continuous matches Needle's per-frame policy. */
   updatePolicy: ThreeContactShadowUpdatePolicy
 }
@@ -32,7 +32,7 @@ export interface InstallThreeContactShadowsOptions {
   /** The compiled scene root is the auto-fit authority. This deliberately
    * avoids fitting to unrelated website helpers when the site shares a Scene. */
   root: THREE.Object3D
-  /** Needle expects Contact Shadows on an Empty/group. Blendlink keeps that
+  /** Needle expects Contact Shadows on an Empty/group. SceneToWeb keeps that
    * authoring model for manual placement and rejects a Mesh loudly. */
   anchor?: THREE.Object3D
   renderer: THREE.WebGLRenderer
@@ -117,12 +117,12 @@ function makeTarget(name: string): THREE.WebGLRenderTarget {
 function makeDepthMaterial(values: ThreeContactShadowValues): THREE.MeshDepthMaterial {
   if (!THREE.ShaderLib.depth.fragmentShader.includes(DEPTH_FRAGMENT_SEAM)) {
     throw new Error(
-      'Blendlink Contact Shadows could not find Three.js\' supported depth-shader seam. ' +
+      'SceneToWeb Contact Shadows could not find Three.js\' supported depth-shader seam. ' +
         'Use a supported Three release instead of publishing an unverified shadow mask.',
     )
   }
   const material = new THREE.MeshDepthMaterial()
-  material.name = 'Blendlink Contact Shadows Depth'
+  material.name = 'SceneToWeb Contact Shadows Depth'
   material.depthTest = false
   material.depthWrite = false
   material.blending = THREE.CustomBlending
@@ -134,7 +134,7 @@ function makeDepthMaterial(values: ThreeContactShadowValues): THREE.MeshDepthMat
   material.onBeforeCompile = (shader) => {
     if (!shader.fragmentShader.includes(DEPTH_FRAGMENT_SEAM)) {
       throw new Error(
-        'Blendlink Contact Shadows could not patch Three.js\' depth shader. ' +
+        'SceneToWeb Contact Shadows could not patch Three.js\' depth shader. ' +
           'Disable the component or use a supported Three release.',
       )
     }
@@ -154,7 +154,7 @@ function makeBlurMaterial(
 ): THREE.ShaderMaterial {
   const source = direction === 'horizontal' ? HorizontalBlurShader : VerticalBlurShader
   const material = new THREE.ShaderMaterial({
-    name: `Blendlink Contact Shadows ${direction === 'horizontal' ? 'Horizontal' : 'Vertical'} Blur`,
+    name: `SceneToWeb Contact Shadows ${direction === 'horizontal' ? 'Horizontal' : 'Vertical'} Blur`,
     uniforms: THREE.UniformsUtils.clone(source.uniforms),
     vertexShader: source.vertexShader,
     fragmentShader: source.fragmentShader,
@@ -381,14 +381,14 @@ function updateShadowCamera(
 function throwWithRestoreErrors(error: unknown, restoreErrors: readonly unknown[]): never {
   if (restoreErrors.length === 0) throw error
   throw new Error(
-    `Blendlink Contact Shadows failed: ${message(error)}. ` +
+    `SceneToWeb Contact Shadows failed: ${message(error)}. ` +
       `Renderer restoration also failed: ${restoreErrors.map(message).join('; ')}`,
     { cause: error },
   )
 }
 
 /** Install Needle-compatible planar contact shadows while preserving website
- * ownership of the Scene, renderer, Canvas, and render loop. Blendlink exceeds
+ * ownership of the Scene, renderer, Canvas, and render loop. SceneToWeb exceeds
  * the pinned implementation by using depthless targets, public traversal, an
  * exact transactional renderer restore, and a truthful static update policy. */
 export function installThreeContactShadows(
@@ -413,14 +413,14 @@ export function installThreeContactShadows(
     )
   }
 
-  const renderTarget = makeTarget('Blendlink Contact Shadows')
-  const blurTarget = makeTarget('Blendlink Contact Shadows Blur')
+  const renderTarget = makeTarget('SceneToWeb Contact Shadows')
+  const blurTarget = makeTarget('SceneToWeb Contact Shadows Blur')
   const planeGeometry = new THREE.PlaneGeometry(1, 1).rotateX(Math.PI / 2)
   const depthMaterial = makeDepthMaterial(values)
   const horizontalBlurMaterial = makeBlurMaterial('horizontal')
   const verticalBlurMaterial = makeBlurMaterial('vertical')
   const planeMaterial = new THREE.MeshBasicMaterial({
-    name: 'Blendlink Contact Shadows Plane',
+    name: 'SceneToWeb Contact Shadows Plane',
     map: renderTarget.texture,
     opacity: clamp(finite(values.opacity, 0.5), 0, 1),
     color: 0x000000,
@@ -429,29 +429,29 @@ export function installThreeContactShadows(
     side: THREE.FrontSide,
   })
   const occluderMaterial = new THREE.MeshBasicMaterial({
-    name: 'Blendlink Contact Shadows Occluder',
+    name: 'SceneToWeb Contact Shadows Occluder',
     depthWrite: true,
     stencilWrite: true,
     colorWrite: false,
     side: THREE.BackSide,
   })
   const shadowsRoot = new THREE.Group()
-  shadowsRoot.name = 'Blendlink Contact Shadows Root'
+  shadowsRoot.name = 'SceneToWeb Contact Shadows Root'
   shadowsRoot.userData.blendlink_internal = true
   shadowsRoot.userData.blendlink_contact_shadow = false
   const shadowGroup = new THREE.Group()
-  shadowGroup.name = 'Blendlink Contact Shadows Capture'
+  shadowGroup.name = 'SceneToWeb Contact Shadows Capture'
   shadowsRoot.add(shadowGroup)
 
   const plane = new THREE.Mesh(planeGeometry, planeMaterial)
-  plane.name = 'Blendlink Contact Shadows Plane'
+  plane.name = 'SceneToWeb Contact Shadows Plane'
   plane.scale.y = -1
   plane.renderOrder = 1
   plane.layers.mask = camera.layers.mask
   shadowsRoot.add(plane)
 
   const occluder = new THREE.Mesh(planeGeometry, occluderMaterial)
-  occluder.name = 'Blendlink Contact Shadows Occluder'
+  occluder.name = 'SceneToWeb Contact Shadows Occluder'
   occluder.position.y = -0.0001
   occluder.renderOrder = -100
   occluder.visible = values.occludeBelowGround
@@ -459,12 +459,12 @@ export function installThreeContactShadows(
   shadowsRoot.add(occluder)
 
   const blurPlane = new THREE.Mesh(planeGeometry, horizontalBlurMaterial)
-  blurPlane.name = 'Blendlink Contact Shadows Blur Plane'
+  blurPlane.name = 'SceneToWeb Contact Shadows Blur Plane'
   blurPlane.visible = false
   shadowGroup.add(blurPlane)
 
   const shadowCamera = new THREE.OrthographicCamera(-0.5, 0.5, 0.5, -0.5, 0, 1)
-  shadowCamera.name = 'Blendlink Contact Shadows Camera'
+  shadowCamera.name = 'SceneToWeb Contact Shadows Camera'
   shadowCamera.layers.enableAll()
   shadowCamera.rotation.x = Math.PI / 2
   shadowCamera.matrixWorldAutoUpdate = false
@@ -572,7 +572,7 @@ export function installThreeContactShadows(
     nextScene: THREE.Scene = scene,
     nextCamera: THREE.Camera = camera,
   ): void => {
-    if (disposed) throw new Error('These Blendlink Contact Shadows have been disposed.')
+    if (disposed) throw new Error('These SceneToWeb Contact Shadows have been disposed.')
     if (activated) return
     try {
       if (!nextScene?.isScene) {
@@ -637,7 +637,7 @@ export function installThreeContactShadows(
   }
 
   const refresh = (): boolean => {
-    if (disposed) throw new Error('These Blendlink Contact Shadows have been disposed.')
+    if (disposed) throw new Error('These SceneToWeb Contact Shadows have been disposed.')
     if (!activated) return false
     if (contextLost) return false
     if (values.updatePolicy === 'static' && !dirty) return false
@@ -706,7 +706,7 @@ export function installThreeContactShadows(
     if (operationError !== undefined) throwWithRestoreErrors(operationError, restoreErrors)
     if (restoreErrors.length > 0) {
       throw new Error(
-        `Blendlink Contact Shadows rendered, but renderer restoration failed: ` +
+        `SceneToWeb Contact Shadows rendered, but renderer restoration failed: ` +
           restoreErrors.map(message).join('; '),
       )
     }
@@ -757,7 +757,7 @@ export function installThreeContactShadows(
         (values.updatePolicy === 'continuous' || dirty)
     },
     requestRefresh() {
-      if (disposed) throw new Error('These Blendlink Contact Shadows have been disposed.')
+      if (disposed) throw new Error('These SceneToWeb Contact Shadows have been disposed.')
       dirty = true
       refreshRequestGeneration += 1
       suppressNextBeforeRender = false
@@ -770,7 +770,7 @@ export function installThreeContactShadows(
       const errors = disposeOwned()
       if (errors.length > 0) {
         throw new Error(
-          `Blendlink Contact Shadows cleanup failed: ${errors.map(message).join('; ')}`,
+          `SceneToWeb Contact Shadows cleanup failed: ${errors.map(message).join('; ')}`,
         )
       }
     },

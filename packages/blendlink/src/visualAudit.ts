@@ -86,7 +86,7 @@ export interface RunVisualReferenceAuditOptions {
   /** Capture the real website at the exact viewport/camera/state/frame in context. */
   captureBrowser(context: BrowserCaptureContext): Promise<Uint8Array>
   /** Optional explicit project tolerance. Without one, diffs are measured but
-   * never mislabeled passed/failed by an arbitrary Blendlink threshold. */
+   * never mislabeled passed/failed by an arbitrary SceneToWeb threshold. */
   acceptance?: VisualAuditAcceptance
   onProgress?(completed: number, total: number, comparison: VisualAuditComparison): unknown
 }
@@ -103,7 +103,7 @@ export interface VisualAuditReport {
 /**
  * Run the browser half of Blender's reference matrix through an explicit
  * website capture seam, produce real pixel diffs, and persist evidence after
- * every cell. No browser, dev server, or controls are injected by Blendlink.
+ * every cell. No browser, dev server, or controls are injected by SceneToWeb.
  */
 export async function runVisualReferenceAudit(
   manifestPath: string,
@@ -201,7 +201,7 @@ export async function runVisualReferenceAudit(
 
   if (failures.length) {
     throw new Error(
-      `Blendlink visual audit failed ${failures.length}/${matrix.comparisons.length} comparisons:\n` +
+      `SceneToWeb visual audit failed ${failures.length}/${matrix.comparisons.length} comparisons:\n` +
         failures.map((failure) => `- ${failure}`).join('\n'),
     )
   }

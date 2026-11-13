@@ -94,7 +94,7 @@ _last_component_action = None
 
 # Artist-facing discoverability and product-boundary copy. Kept as named
 # contracts so the headless suite catches a regression back to unlabeled +
-# buttons or wording that implies Blendlink ships a physics simulation.
+# buttons or wording that implies SceneToWeb ships a physics simulation.
 SCENE_CATALOG_ACTION_LABEL = "Browse Scene Effects"
 BEHAVIOR_CATALOG_ACTION_LABEL = "Browse Object Behaviors"
 SCENE_EMPTY_MESSAGE = "No scene effects yet. Browse the complete catalog above."
@@ -394,7 +394,7 @@ def _components_on_object(project, component_type: str, obj) -> list:
 
 def _validate_clipboard_payload(payload) -> dict:
     if not isinstance(payload, dict) or payload.get("clipboardVersion") != 1:
-        raise ValueError("Clipboard does not contain a Blendlink component v1 record")
+        raise ValueError("Clipboard does not contain a SceneToWeb component v1 record")
     component_type = payload.get("componentType")
     if not isinstance(component_type, str) or not re.fullmatch(
         r"[a-z][a-z0-9-]*(?:\.[a-z][a-z0-9-]*)+", component_type,
@@ -452,7 +452,7 @@ def _read_component_clipboard(context) -> tuple[dict | None, str]:
         # payload remains available for this process and test automation.
         clipboard = _component_clipboard_text
     if not clipboard.startswith(_CLIPBOARD_PREFIX):
-        return None, "Copy a Blendlink component first"
+        return None, "Copy a SceneToWeb component first"
     try:
         payload = json.loads(clipboard[len(_CLIPBOARD_PREFIX):])
         return _validate_clipboard_payload(payload), ""
@@ -592,7 +592,7 @@ def run_component_action(
     project = _project(context)
     result = ComponentActionResult(action=action)
     if project is None:
-        result.add("errors", "Scene", "not_configured", "Blendlink is not configured")
+        result.add("errors", "Scene", "not_configured", "SceneToWeb is not configured")
         _last_component_action = result
         return result
 
@@ -1418,7 +1418,7 @@ class BLENDLINK_OT_add_component(bpy.types.Operator):
     @classmethod
     def poll(cls, context):
         if not _configured(context):
-            cls.poll_message_set("Set up this scene for Blendlink first")
+            cls.poll_message_set("Set up this scene for SceneToWeb first")
             return False
         return True
 

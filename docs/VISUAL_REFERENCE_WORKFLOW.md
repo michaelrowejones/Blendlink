@@ -1,6 +1,6 @@
 # Responsive Frame and visual-reference workflow
 
-Blendlink treats a Blender render and a website screenshot as two different
+SceneToWeb treats a Blender render and a website screenshot as two different
 pieces of evidence. It never renders a Blender viewport image and calls that
 the Three.js result.
 
@@ -13,7 +13,7 @@ In **Website Camera & Frames → Responsive Preview & Visual Checks**:
    target, not a command that overrides the website's renderer.
 3. Press **Preview Selected Frame**.
 
-Blendlink switches to the designated Website Camera and applies the Responsive
+SceneToWeb switches to the designated Website Camera and applies the Responsive
 Frame's aspect at its backing-buffer dimensions. The viewport then
 shows:
 
@@ -37,13 +37,13 @@ cameras × lighting states × Responsive Frames × animation poses × Preview/Fi
 
 Choose the Website Camera or all render-visible scene cameras. Enter
 poses as `current`, `start`, `end`, individual frames, or inclusive stepped
-ranges such as `1,24,48` or `1-120x12`. Blendlink caps a plan at 128 unique
+ranges such as `1,24,48` or `1-120x12`. SceneToWeb caps a plan at 128 unique
 poses and an 8192-pixel backing-buffer edge so a typo cannot silently schedule
 thousands of enormous renders.
 
 Save the scene before either action so the compiler and reference capture use
 the same bytes; the plan records the same 16-character `.blend` SHA-256 prefix
-used by Blendlink's build manifest.
+used by SceneToWeb's build manifest.
 
 **Build Plan** writes `comparison-manifest.json` without rendering. **Capture
 Blender** writes one clean source render for each unique camera/state/
@@ -82,7 +82,7 @@ Browser cells remain `required` after Blender capture. Fill them from the real
 website through the exported `runVisualReferenceAudit()` seam:
 
 ```ts
-import { runVisualReferenceAudit } from 'blendlink'
+import { runVisualReferenceAudit } from 'scenetoweb'
 
 await runVisualReferenceAudit('blendlink-references/comparison-manifest.json', {
   prepareQuality: async (quality, buildCommand) => {
@@ -105,5 +105,5 @@ MAE, RMSE, maximum channel error, and changed-pixel ratio after every cell.
 Premultiplication ignores invisible RGB noise while alpha-only page-composition
 differences remain visible and measurable. Capture or
 dimension failures remain in the manifest and are thrown together at the end.
-Blendlink never launches a browser or executes `buildCommand` invisibly; those
+SceneToWeb never launches a browser or executes `buildCommand` invisibly; those
 structural choices stay in the website adapter.

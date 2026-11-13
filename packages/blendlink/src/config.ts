@@ -42,7 +42,7 @@ export interface SceneConfig {
   /**
    * Artifacts are owned by an external pipeline: `sync` never exports this
    * scene, but `verify` still drift-checks the manifest, GLB, and .blend.
-   * Stamp the manifest via `blendlink typegen <glb> --blend <file>`.
+   * Stamp the manifest via `scenetoweb typegen <glb> --blend <file>`.
    */
   external?: boolean
   /**
@@ -59,7 +59,7 @@ export interface SceneConfig {
    */
   inputs?: string[]
   /** Explicit website-owned recovery for an intentionally payload-free GLB.
-   * Blendlink still reports the collapse; verify accepts it only when the
+   * SceneToWeb still reports the collapse; verify accepts it only when the
    * application names the adapter and acknowledges that browser proof owns
    * the material result. */
   applicationMaterialAdapter?: ApplicationMaterialAdapterConfig
@@ -169,7 +169,9 @@ export interface ResolvedConfig {
   configSource?: ConfigSourceRevision
 }
 
-export function defineConfig(config: BlendlinkConfig): BlendlinkConfig {
+export type SceneToWebConfig = BlendlinkConfig
+
+export function defineConfig(config: SceneToWebConfig): BlendlinkConfig {
   return config
 }
 
@@ -204,9 +206,9 @@ function warnForLegacyArtSettings(config: BlendlinkConfig, root: string): void {
   if (uses.length === 0 || warnedLegacyArtSettings.has(key)) return
   warnedLegacyArtSettings.add(key)
   console.warn(
-    '! blendlink config: legacy `mode`/`bake` artistic settings are still honored ' +
+    '! scenetoweb config: legacy `mode`/`bake` artistic settings are still honored ' +
       `for ${uses.join(', ')}, but are deprecated. Migrate them to Blender > ` +
-      'Blendlink > Scene Publishing before removing the config fields.',
+      'SceneToWeb > Scene Publishing before removing the config fields.',
   )
 }
 
@@ -355,7 +357,7 @@ function validateConfig(config: BlendlinkConfig, root: string): void {
     }
   }
   if (problems.length > 0) {
-    throw new Error('blendlink config problems:\n  - ' + problems.join('\n  - '))
+    throw new Error('scenetoweb config problems:\n  - ' + problems.join('\n  - '))
   }
 }
 
@@ -464,7 +466,7 @@ export function configSourceRevisionProblem(
 ): string | undefined {
   if (!revision) return undefined
   if (!existsSync(revision.path)) {
-    return `Blendlink config ${revision.path} was removed or renamed since this project configuration was loaded.`
+    return `SceneToWeb config ${revision.path} was removed or renamed since this project configuration was loaded.`
   }
   let currentHash: string
   try {
@@ -472,13 +474,13 @@ export function configSourceRevisionProblem(
       .update(readFileSync(revision.path))
       .digest('hex')
   } catch (error) {
-    return `Blendlink config ${revision.path} could not be re-read after this project configuration was loaded: ${
+    return `SceneToWeb config ${revision.path} could not be re-read after this project configuration was loaded: ${
       error instanceof Error ? error.message : String(error)
     }`
   }
   return currentHash === revision.hash
     ? undefined
-    : `Blendlink config ${revision.path} changed since this project configuration was loaded.`
+    : `SceneToWeb config ${revision.path} changed since this project configuration was loaded.`
 }
 
 export function assertConfigSourceRevisionCurrent(
@@ -488,12 +490,21 @@ export function assertConfigSourceRevisionCurrent(
   if (!problem) return
   throw new Error(
     `${problem} The stale resolved settings were not published; rerun the command ` +
-      'so Blendlink loads the newest config revision.',
+      'so SceneToWeb loads the newest config revision.',
   )
 }
 
+export const CONFIG_FILE_NAMES = [
+  'scenetoweb.config.mjs', 'scenetoweb.config.js',
+  'blendlink.config.mjs', 'blendlink.config.js',
+] as const
+
+export function findConfigPath(root: string): string | undefined {
+  return CONFIG_FILE_NAMES.map((name) => join(root, name)).find((path) => existsSync(path))
+}
+
 export async function loadConfig(root: string): Promise<ResolvedConfig> {
-  for (const candidate of ['blendlink.config.mjs', 'blendlink.config.js']) {
+  for (const candidate of CONFIG_FILE_NAMES) {
     const path = join(root, candidate)
     if (!existsSync(path)) continue
     // Node caches ESM modules by URL for the life of the process. Watch mode
@@ -517,7 +528,7 @@ export async function loadConfig(root: string): Promise<ResolvedConfig> {
     }))
   }
   throw new Error(
-    'No blendlink.config.mjs found — run `blendlink init` to scaffold one ' +
+    'No scenetoweb.config.mjs found — run `scenetoweb init` to scaffold one ' +
       '(it finds your .blend files and writes the config for you).',
   )
 }

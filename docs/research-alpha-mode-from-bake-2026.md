@@ -207,7 +207,7 @@ The MASK handling - the `ShaderNodeMath` `ROUND` clip - exists only on the webCo
 `:4246-4250`. Making MASK reachable on the bake route means deciding whether the generated Blender
 material needs the same treatment; today there is nothing there to extend.
 
-**d. `alphaCutoff` does not exist anywhere in Blendlink.** `grep -rn 'alphaCutoff|alpha_cutoff|
+**d. `alphaCutoff` does not exist anywhere in SceneToWeb.** `grep -rn 'alphaCutoff|alpha_cutoff|
 alphaThreshold'` over `packages/blender-addon`, `packages/blendlink/blender` and
 `packages/blendlink/src` returns **zero** matches. glTF's default for MASK is 0.5, and the one
 place MASK exists (`ROUND` at `:4248`) also implies 0.5. So shipping MASK would ship an unstated,
@@ -498,7 +498,7 @@ Named so they are not mistaken for answered:
   covered-texel min / max / partialFraction before any constant is written into the decision.
 - **Covered-only versus whole-image binarity.** Decides whether ellie's population is OPAQUE or
   MASK, and therefore how much of section 9's MASK work is actually needed.
-- **The `alphaCutoff` question.** If MASK ships, glTF defaults the cutoff to 0.5 and Blendlink
+- **The `alphaCutoff` question.** If MASK ships, glTF defaults the cutoff to 0.5 and SceneToWeb
   publishes nothing. Whether 0.5 matches the baked plane's real threshold is unmeasured.
 - **Which refusal ellie actually trips.** The scale-40 claim is dead (section 3). The mechanism is
   refusal-agnostic so the defect stands, but the trigger is unknown and must not be cited as

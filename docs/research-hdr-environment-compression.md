@@ -1,7 +1,7 @@
 # HDR environment compression decision
 
 Audited 2026-07-19 against official Khronos and Three.js documentation and
-source. This note answers a narrow product question: can Blendlink reduce HDR
+source. This note answers a narrow product question: can SceneToWeb reduce HDR
 environment transfer/GPU cost locally without making the artist's lighting
 less trustworthy or binding the output to a proprietary service?
 
@@ -12,9 +12,9 @@ Ship a conservative two-asset contract:
 1. The authored Radiance HDR or OpenEXR remains published byte-for-byte and is
    always the runtime fallback.
 2. When the artist enables KTX2 Auto and the local Khronos tool is available,
-   Blendlink attempts a standard KTX2 derivative using
+   SceneToWeb attempts a standard KTX2 derivative using
    `B10G11R11_UFLOAT_PACK32` plus Zstd.
-3. Blendlink extracts that exact KTX2 back to EXR and compares scene-linear
+3. SceneToWeb extracts that exact KTX2 back to EXR and compares scene-linear
    pixels decoded by Blender. The derivative is only entered in the manifest
    if it passes scale-independent energy, highlight, maximum-error, and
    log-luminance gates. Negative or non-finite radiance is not representable
@@ -44,11 +44,11 @@ for the radiance gate. [KTX `create`](https://github.khronos.org/KTX-Software/kt
 Three.js added R11G11B10 and Zstd KTX2 support in r180, and the current
 `KTX2Loader` source maps `VK_FORMAT_B10G11R11_UFLOAT_PACK32` directly to the
 corresponding Three packed-float texture type. This is an ordinary KTX2 load,
-not a Blendlink runtime format. [Three r180 release](https://github.com/mrdoob/three.js/releases/tag/r180)
+not a SceneToWeb runtime format. [Three r180 release](https://github.com/mrdoob/three.js/releases/tag/r180)
 [KTX2Loader r184 source](https://github.com/mrdoob/three.js/blob/r184/examples/jsm/loaders/KTX2Loader.js)
 
 The same loader source gives non-Basis raw DataTextures nearest filtering by
-default. Blendlink therefore sets both filters to the caller's
+default. SceneToWeb therefore sets both filters to the caller's
 `THREE.LinearFilter` and marks the texture for upload before using the
 derivative. If that constant is not supplied, it reports the missing
 prerequisite and keeps the source path; passing the pixel gate is not enough if
@@ -80,7 +80,7 @@ on every device. The packed-float path has one predictable 32-bit GPU shape.
 
 Three can export a render target such as a PMREM to KTX2, and its PMREM is a
 special CubeUV layout. This is promising because it can remove runtime
-prefilter work. But producing it requires a real Three renderer, and Blendlink
+prefilter work. But producing it requires a real Three renderer, and SceneToWeb
 does not currently own a browser/GPU build stage. Adding one solely for this
 optimization would increase setup fragility and renderer-version coupling.
 [KTX2Exporter](https://threejs.org/docs/pages/KTX2Exporter.html)

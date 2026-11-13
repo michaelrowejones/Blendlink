@@ -2,7 +2,7 @@
 """Evidence-gated Blender-version warnings shared by the addon UI.
 
 The JSON beside this module is intentionally data, not Python behavior. Empty
-is a valid state: Blendlink only warns when a bounded failure has public primary
+is a valid state: SceneToWeb only warns when a bounded failure has public primary
 evidence and a practical artist action.
 """
 from __future__ import annotations

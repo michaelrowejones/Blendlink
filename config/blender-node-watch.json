@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "repository": "https://github.com/blender/blender.git",
+  "baseline": {
+    "commit": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+    "tree": "e05e50cc9d58ca09b36a8ed9352c489092436fe1",
+    "version": [5, 3, 0],
+    "catalog": "docs/node-coverage/blender-5.3.0.json"
+  },
+  "portsDirectory": "node-ports"
+}

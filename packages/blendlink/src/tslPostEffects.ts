@@ -1,5 +1,5 @@
 /**
- * Blendlink-owned TSL display effects for the WebGPU post pipeline
+ * SceneToWeb-owned TSL display effects for the WebGPU post pipeline
  * (Phase 4 Track B). Each factory mirrors the math of the shipped pmndrs
  * GLSL effect in threeComponents.ts — the WGPU-NODE-001 fixture harness
  * measures every one of them against that shipped control, so changes here
@@ -371,3 +371,16 @@ export function blendlinkGeometryAwarePixelation(
     return vec4(pixelColor.rgb.mul(float(1).sub(edge.mul(0.82))), pixelColor.a)
   })()
 }
+
+// Canonical SceneToWeb names; legacy exports remain compatible.
+export const sceneToWebVignette = blendlinkVignette
+export const sceneToWebRadialChromaticAberration = blendlinkRadialChromaticAberration
+export const sceneToWebTiltShift = blendlinkTiltShift
+export const sceneToWebAnisotropicKuwahara = blendlinkAnisotropicKuwahara
+export const sceneToWebGeometryAwarePixelation = blendlinkGeometryAwarePixelation
+export type SceneToWebVignetteOptions = BlendlinkVignetteOptions
+export type SceneToWebRadialChromaticAberrationOptions = BlendlinkRadialChromaticAberrationOptions
+export type SceneToWebTiltShiftOptions = BlendlinkTiltShiftOptions
+export type SceneToWebKuwaharaOptions = BlendlinkKuwaharaOptions
+export type SceneToWebGeometryAwarePixelationOptions = BlendlinkGeometryAwarePixelationOptions
+export type SceneToWebGeometryAwarePixelationInputs = BlendlinkGeometryAwarePixelationInputs

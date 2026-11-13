@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs'
 import { createServer } from 'node:http'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
@@ -43,12 +43,12 @@ afterEach(() => {
 })
 
 function tempProject(name: string): string {
-  const root = mkdtempSync(join(tmpdir(), `blendlink-preview-${name}-`))
+  const root = mkdtempSync(join(tmpdir(), `scenetoweb-preview-${name}-`))
   temporaryProjects.push(root)
   return root
 }
 
-function blendlinkEvents(calls: readonly unknown[][]): Record<string, unknown>[] {
+function scenetowebEvents(calls: readonly unknown[][]): Record<string, unknown>[] {
   return calls.flatMap((call) => {
     const line = String(call[0] ?? '')
     if (!line.startsWith('##blendlink ')) return []
@@ -88,32 +88,32 @@ describe('website preview contract', () => {
     expect(plan.sessionId).toMatch(/^[a-f0-9]{16}$/)
   })
 
-  it('scaffolds a disposable Three/Vite/Blendlink Preview Studio without touching unknown workspaces', () => {
+  it('scaffolds a disposable Three/Vite/SceneToWeb Preview Studio without touching unknown workspaces', () => {
     const cacheRoot = tempProject('studio-scaffold-cache')
     const plan = planPreviewStudio(join(cacheRoot, 'artist-scene.blend'), { cacheRoot })
     const result = scaffoldPreviewStudio(plan)
 
     const packageJson = JSON.parse(readFileSync(join(plan.workspace, 'package.json'), 'utf8'))
-    const blendlinkPackageRoot = dirname(fileURLToPath(new URL('../package.json', import.meta.url)))
+    const scenetowebPackageRoot = dirname(fileURLToPath(new URL('../package.json', import.meta.url)))
     expect(packageJson.dependencies).toMatchObject({
-      blendlink: `file:${blendlinkPackageRoot.replace(/\\/g, '/')}`,
+      scenetoweb: `file:${scenetowebPackageRoot.replace(/\\/g, '/')}`,
       three: '0.184.0',
     })
-    expect(packageJson.devDependencies.vite).toBe('^7.0.0')
+    expect(packageJson.devDependencies.vite).toBe('7.3.8')
     expect(packageJson.scripts['preview:dev']).toContain('vite --host 127.0.0.1 --port 0')
     const entry = readFileSync(join(plan.workspace, 'src', 'main.ts'), 'utf8')
     expect(entry).toContain("import * as THREE from 'three'")
-    expect(entry).toContain("from 'blendlink/three'")
-    expect(entry).toContain('installed.update(deltaSeconds)')
-    expect(entry).toContain('installed.render(deltaSeconds)')
+    expect(entry).toContain("from 'scenetoweb/three'")
+    expect(entry).toContain('installed.update(')
+    expect(entry).toContain('installed.render(')
     expect(entry).toContain('useAuthoringPreview: true')
     expect(entry).toContain('cancelAnimationFrame(animationFrame)')
     expect(entry).toContain('compileAsync')
     expect(entry).toContain("phase: 'ready'")
     expect(entry).toContain('last good scene')
     expect(entry).not.toContain('renderer.render(world, installed.camera)')
-    expect(entry.indexOf('installed.update(deltaSeconds)'))
-      .toBeLessThan(entry.indexOf('installed.render(deltaSeconds)'))
+    expect(entry.indexOf('installed.update('))
+      .toBeLessThan(entry.indexOf('installed.render('))
     const indexPath = join(plan.workspace, 'index.html')
     const index = readFileSync(indexPath, 'utf8')
     expect(index).toContain(
@@ -127,7 +127,7 @@ describe('website preview contract', () => {
       `${PREVIEW_STUDIO_VITE_VERSION_MARKER} ${PREVIEW_STUDIO_HOST_VERSION}`,
     )
     expect(viteConfig).toContain("dedupe: ['three']")
-    expect(viteConfig).toContain('/__blendlink/preview-client')
+    expect(viteConfig).toContain('/__scenetoweb/preview-client')
     expect(viteConfig).toContain('handleHotUpdate')
     expect(readFileSync(join(plan.workspace, 'src', 'previewBaked.ts'), 'utf8'))
       .toContain('bindPreviewDescriptor')
@@ -135,12 +135,12 @@ describe('website preview contract', () => {
     expect(style).toContain(
       `${PREVIEW_STUDIO_STYLE_VERSION_MARKER} ${PREVIEW_STUDIO_HOST_VERSION} */`,
     )
-    expect(style).toContain('.toolbar button { display: block;')
-    expect(style).not.toContain('.toolbar button:not(#details) { display: none;')
-    expect(existsSync(join(plan.workspace, 'public', '.blendlink-preview-control.json'))).toBe(true)
-    expect(readFileSync(join(plan.workspace, 'blendlink.config.mjs'), 'utf8'))
+    // Actual control visibility, pointer reachability and 44px touch targets
+    // are checked by test:preview-ux across desktop and narrow viewports.
+    expect(existsSync(join(plan.workspace, 'public', '.scenetoweb-preview-control.json'))).toBe(true)
+    expect(readFileSync(join(plan.workspace, 'scenetoweb.config.mjs'), 'utf8'))
       .toContain('artist-scene.blend')
-    expect(existsSync(join(plan.workspace, 'public', '.blendlink-preview-studio.json'))).toBe(true)
+    expect(existsSync(join(plan.workspace, 'public', '.scenetoweb-preview-studio.json'))).toBe(true)
     expect(result.packageHash).toMatch(/^[a-f0-9]{16}$/)
 
     const entryPath = join(plan.workspace, 'src', 'main.ts')
@@ -212,21 +212,21 @@ describe('website preview contract', () => {
     // 0.8.0 preview caches were created before the package was published.
     // A retry from this checkout must migrate that managed dependency instead
     // of preserving the registry-only spec and failing with npm E404 again.
-    const blendlinkPackage = JSON.parse(
+    const scenetowebPackage = JSON.parse(
       readFileSync(new URL('../package.json', import.meta.url), 'utf8'),
     ) as { version: string }
-    packageJson.dependencies.blendlink = blendlinkPackage.version
+    packageJson.dependencies.scenetoweb = scenetowebPackage.version
     writeFileSync(join(plan.workspace, 'package.json'), JSON.stringify(packageJson, null, 2) + '\n')
     const migrated = scaffoldPreviewStudio(plan)
-    expect(JSON.parse(readFileSync(join(plan.workspace, 'package.json'), 'utf8')).dependencies.blendlink)
-      .toBe(`file:${blendlinkPackageRoot.replace(/\\/g, '/')}`)
+    expect(JSON.parse(readFileSync(join(plan.workspace, 'package.json'), 'utf8')).dependencies.scenetoweb)
+      .toBe(`file:${scenetowebPackageRoot.replace(/\\/g, '/')}`)
     expect(migrated.packageHash).toBe(result.packageHash)
 
     const customizedPackage = JSON.parse(readFileSync(join(plan.workspace, 'package.json'), 'utf8'))
-    customizedPackage.dependencies.blendlink = 'github:artist/custom-blendlink'
+    customizedPackage.dependencies.scenetoweb = 'github:artist/custom-scenetoweb'
     const customizedSource = JSON.stringify(customizedPackage, null, 2) + '\n'
     writeFileSync(join(plan.workspace, 'package.json'), customizedSource)
-    expect(() => scaffoldPreviewStudio(plan)).toThrow(/unrecognized Blendlink dependency/i)
+    expect(() => scaffoldPreviewStudio(plan)).toThrow(/unrecognized SceneToWeb dependency/i)
     expect(readFileSync(join(plan.workspace, 'package.json'), 'utf8')).toBe(customizedSource)
 
     const untouched = join(cacheRoot, 'unknown-workspace')
@@ -336,29 +336,29 @@ describe('website preview contract', () => {
   })
 
   it('uses the executing package for local origins and an exact version for registry installs', () => {
-    const checkoutRoot = join(tempProject('checkout-origin'), 'packages', 'blendlink')
+    const checkoutRoot = join(tempProject('checkout-origin'), 'packages', 'scenetoweb')
     mkdirSync(checkoutRoot, { recursive: true })
     expect(resolvePreviewStudioBlendlinkDependency(checkoutRoot, '0.8.0'))
-      .toBe(`file:${resolve(checkoutRoot).replace(/\\/g, '/')}`)
+      .toBe(`file:${realpathSync(checkoutRoot).replace(/\\/g, '/')}`)
 
-    const publishedInstall = join(tempProject('registry-origin'), 'node_modules', 'blendlink')
+    const publishedInstall = join(tempProject('registry-origin'), 'node_modules', 'scenetoweb')
     mkdirSync(publishedInstall, { recursive: true })
     expect(resolvePreviewStudioBlendlinkDependency(publishedInstall, '0.8.0')).toBe('0.8.0')
 
     const fileInstallRoot = tempProject('file-install-origin')
-    const fileInstall = join(fileInstallRoot, 'node_modules', 'blendlink')
+    const fileInstall = join(fileInstallRoot, 'node_modules', 'scenetoweb')
     mkdirSync(fileInstall, { recursive: true })
     writeFileSync(join(fileInstallRoot, 'package-lock.json'), JSON.stringify({
       lockfileVersion: 3,
       packages: {
-        'node_modules/blendlink': {
+        'node_modules/scenetoweb': {
           version: '0.8.0',
-          resolved: 'file:../blendlink-0.8.0.tgz',
+          resolved: 'file:../scenetoweb-0.8.0.tgz',
         },
       },
     }))
     expect(resolvePreviewStudioBlendlinkDependency(fileInstall, '0.8.0'))
-      .toBe(`file:${resolve(fileInstall).replace(/\\/g, '/')}`)
+      .toBe(`file:${realpathSync(fileInstall).replace(/\\/g, '/')}`)
   })
 
   it('installs Preview Studio dependencies only when the declared package changed or required runtime packages are absent', () => {
@@ -443,7 +443,7 @@ describe('website preview contract', () => {
     try {
       const config = resolveConfig({ scenes: [], website: { url } }, root)
       await expect(runWebsitePreview(config, { openBrowser: false })).resolves.toBe(0)
-      const ready = blendlinkEvents(log.mock.calls).find((event) => event.label === 'Preview ready')
+      const ready = scenetowebEvents(log.mock.calls).find((event) => event.label === 'Preview ready')
       expect(ready).toMatchObject({
         fraction: 1,
         previewUrl: url,
@@ -468,7 +468,7 @@ describe('website preview contract', () => {
     const root = tempProject('server')
     writeFileSync(join(root, 'server.mjs'), `
       import { createServer } from 'node:http'
-      const server = createServer((request, response) => response.end('blendlink preview'))
+      const server = createServer((request, response) => response.end('scenetoweb preview'))
       server.listen(0, '127.0.0.1', () => {
         const address = server.address()
         console.log('Local: http://127.0.0.1:' + address.port + '/')
@@ -485,7 +485,7 @@ describe('website preview contract', () => {
         openBrowser: false,
         startupTimeoutMs: 5_000,
       })).resolves.toBe(0)
-      const ready = blendlinkEvents(log.mock.calls).find((event) => event.label === 'Preview ready')
+      const ready = scenetowebEvents(log.mock.calls).find((event) => event.label === 'Preview ready')
       expect(ready).toMatchObject({
         fraction: 1,
         previewOwned: true,

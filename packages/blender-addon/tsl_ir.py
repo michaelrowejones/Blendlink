@@ -14,11 +14,48 @@ auditability first, optimization later.
 """
 from __future__ import annotations
 
+from contextlib import contextmanager
+from contextvars import ContextVar
+
 IR_MODEL = "blendlink-tsl-ir-v1"
 
+_evaluation_engine = ContextVar("blendlink_tsl_evaluation_engine", default=None)
+
+
+def _normalize_evaluation_engine(engine):
+    engine = str(engine)
+    return "EEVEE" if engine in {"EEVEE", "BLENDER_EEVEE", "BLENDER_EEVEE_NEXT"} else engine
+
+
+def get_evaluation_engine():
+    """Effective source engine, scoped to the selected material output."""
+    import bpy
+    engine = _evaluation_engine.get()
+    return _normalize_evaluation_engine(engine if engine is not None else bpy.context.scene.render.engine)
+
+
+@contextmanager
+def emission_context(*, tree=None, target=None, evaluation_engine=None):
+    """Explicit output targets win; an ALL output follows the source scene.
+
+    Reset on every exit so a refused channel, nested surface emission or a
+    later material cannot inherit another root's evaluation semantics.
+    """
+    if evaluation_engine is None and tree is not None and target is not None:
+        import bpy
+        output = _active_material_output(tree, target)
+        selected = str(getattr(output, "target", "ALL"))
+        evaluation_engine = selected if selected != "ALL" else bpy.context.scene.render.engine
+    engine = get_evaluation_engine() if evaluation_engine is None else _normalize_evaluation_engine(evaluation_engine)
+    token = _evaluation_engine.set(engine)
+    try:
+        yield engine
+    finally:
+        _evaluation_engine.reset(token)
+
 # Blender Math operations with proven differential cells.  The builder maps
-# DIVIDE/MODULO/POWER to Blender's safe-math wrappers.  ABSOLUTE, CEIL,
-# FRACT, ROUND, and SQRT are one-cell-each additions once celled.
+# DIVIDE/MODULO/POWER to Blender's safe-math wrappers; the full declared
+# scalar enum sweep is covered by native-node differential cells.
 _MATH_OPERATIONS = {
     "ADD", "SUBTRACT", "MULTIPLY", "DIVIDE", "MULTIPLY_ADD",
     "POWER", "MINIMUM", "MAXIMUM", "LESS_THAN", "GREATER_THAN",
@@ -42,14 +79,15 @@ _VECTOR_MATH_OPERATIONS = {
     "CROSS_PRODUCT", "DOT_PRODUCT", "DISTANCE", "LENGTH", "NORMALIZE",
     "ABSOLUTE", "MINIMUM", "MAXIMUM", "FLOOR", "CEIL", "FRACTION",
     "MODULO", "WRAP", "SNAP", "SINE", "COSINE", "TANGENT",
+    "PROJECT", "REFLECT", "REFRACT", "FACEFORWARD", "ROUND", "POWER", "SIGN",
 }
-# REFLECT / REFRACT / FACEFORWARD / PROJECT stay named refusals until a
-# geometric cell batch earns them.
+# ROUND/POWER/SIGN are available in newer native Blender versions; the
+# differential runner records actual native operation availability.
 _VECTOR_MATH_UNARY = {
     "NORMALIZE", "FLOOR", "CEIL", "FRACTION", "ABSOLUTE", "LENGTH",
-    "SINE", "COSINE", "TANGENT",
+    "SINE", "COSINE", "TANGENT", "ROUND", "SIGN",
 }
-_VECTOR_MATH_TERNARY = {"MULTIPLY_ADD", "WRAP"}
+_VECTOR_MATH_TERNARY = {"MULTIPLY_ADD", "WRAP", "FACEFORWARD"}
 _VECTOR_MATH_VALUE_OUTPUT = {"DOT_PRODUCT", "DISTANCE", "LENGTH"}
 
 _MIX_BLEND_TYPES = {
@@ -133,7 +171,43 @@ def object_random_number(name: str) -> float:
     ) / 0xFFFFFFFF
 
 
-def _noise_random_offset(seed, count):
+def _noise_gpu_renderer():
+    try:
+        import gpu
+        return gpu.platform.renderer_get() or ''
+    except Exception:
+        # A headless planning process can lack an initialized graphics
+        # context. Unidentified hardware never acquires a measured profile.
+        return ''
+
+
+def _noise_shader_offset_profile(engine, host_platform, architecture, gpu_backend, version, renderer=''):
+    """Measured shader-stage arithmetic, separate from MF eligibility.
+
+    Legacy Linux x64 Cycles and measured Linux x64 llvmpipe shaders round the hash conversion,
+    product and sum separately. Modern Cycles and Metal/ARM shader folding stay
+    separate from their MF-eligible constant path.
+    Concrete offsets ship in IR, so runtime behavior never guesses the host.
+    """
+    if engine == 'CYCLES' and version < (5, 0, 0) and host_platform.startswith('linux') and architecture.lower() in {'x86_64', 'amd64'}:
+        return 'cycles-legacy-linux-x64-f32'
+    if engine == 'EEVEE' and host_platform.startswith('linux') and architecture.lower() in {'x86_64', 'amd64'} \
+            and gpu_backend == 'OPENGL' and 'llvmpipe' in renderer.lower():
+        return 'eevee-llvmpipe-f32'
+    return None
+
+
+def _normalized_noise_source_profile(engine, host_platform, architecture, cycles_device='CPU'):
+    """Only measured fresh normalized source profiles; old IR stays separate."""
+    if engine == 'EEVEE':
+        return 'native-standard-f32'
+    if (engine == 'CYCLES' and cycles_device == 'CPU' and host_platform == 'darwin'
+            and architecture.lower() in {'arm64', 'aarch64'}):
+        return 'cycles-neon-fma'
+    return None
+
+
+def _noise_random_offset(seed, count, *, native_mf=False, native_float4=False, native_shader_f32=False, native_shader_fused=False):
     """noisetex.h random_floatN_offset for a constant seed.
 
     The scalar helper is NOT the vec2 hash with a zero lane:
@@ -143,12 +217,26 @@ def _noise_random_offset(seed, count):
     but WRONG offsets for 1D distortion and colour lanes, which decorrelates
     the field at ~9e-2 while everything else measures exact.
     """
-    if count == 1:
-        return [100.0 + _hash_float_to_float(seed) * 100.0]
-    return [
-        100.0 + _hash_float2_to_float(seed, float(index)) * 100.0
-        for index in range(count)
-    ]
+    hashes = ([_hash_float_to_float(seed)] if count == 1 else
+              [_hash_float2_to_float(seed, float(index)) for index in range(count)])
+    if native_shader_fused:
+        import struct
+        f32 = lambda value: struct.unpack('f', struct.pack('f', value))[0]
+        # Cycles NEON shader code rounds the uint quotient, then contracts
+        # 100*q+100. Its low-seed offsets differ from both legacy models.
+        return [f32(100 + f32(f32(round(value * 0xFFFFFFFF)) / f32(0xFFFFFFFF)) * 100)
+                for value in hashes]
+    if native_mf or native_float4 or native_shader_f32:
+        import struct
+        f32 = lambda value: struct.unpack('f', struct.pack('f', value))[0]
+        # The shared hash helpers retain the exact uint quotient in double.
+        # Recovering its integer is exact (<2^-20 rounding error), then model
+        # BLI's float conversion, multiply and addition separately. Material
+        # MF evaluation differs from the lower-dimensional shader's folded
+        # offset here; the native float4 path also uses separate operations.
+        return [f32(100 + f32(f32(f32(round(value * 0xFFFFFFFF)) / f32(0xFFFFFFFF)) * 100))
+                for value in hashes]
+    return [100.0 + value * 100.0 for value in hashes]
 
 
 def _fold_constant_scalar(expression):
@@ -344,6 +432,7 @@ def drain_approximations() -> list:
     return drained
 
 
+
 # Production opt-in (Phase 4 Track C): over-budget images emit texture_ref
 # ops resolved against published image assets instead of refusing. The
 # differential harness never sets this — its cells keep the byte-exact
@@ -455,45 +544,16 @@ def find_principled_root(tree, target="CYCLES"):
 
     The stack is the chain of group-instance nodes enclosing the Principled,
     outermost first — the context `emit_channel` needs to resolve channel
-    inputs fed through Group Input sockets.  Refuses ambiguity (several
-    shader roots, or one reachable through multiple instance paths) instead
-    of guessing.
+    inputs fed through Group Input sockets. The selected output's actual
+    shader-link path owns the instance context; unrelated output targets or
+    unused group instances cannot change which graph gets compiled.
     """
-    if target != "CYCLES":
-        node, _socket, stack = _active_surface_link(tree, target)
-        if node.bl_idname != "ShaderNodeBsdfPrincipled":
-            _refuse("no single Principled surface for " + target)
-        return node, stack
-    procedural = _import_procedural()
-
-    nodes = procedural.reachable_surface_nodes(tree)
-    root = procedural._single_principled_surface_root(nodes)
-    if root is None:
-        _refuse("no root-level single Principled surface")
-    if root.id_data.as_pointer() == tree.as_pointer():
-        return root, ()
-
-    paths = []
-
-    def locate(current, stack, seen):
-        pointer = current.as_pointer()
-        if pointer in seen:
-            return
-        seen = seen | {pointer}
-        for node in current.nodes:
-            if node.as_pointer() == root.as_pointer():
-                paths.append(stack)
-            nested = getattr(node, "node_tree", None)
-            if node.bl_idname == "ShaderNodeGroup" and nested is not None:
-                locate(nested, stack + (node,), seen)
-
-    locate(tree, (), frozenset())
-    if len(paths) != 1:
-        _refuse(
-            f"Principled surface reachable through {len(paths)} group "
-            "instance paths"
-        )
-    return root, paths[0]
+    if tree is None:
+        _refuse("material has no shader node tree")
+    node, _socket, stack = _active_surface_link(tree, target)
+    if node.bl_idname != "ShaderNodeBsdfPrincipled":
+        _refuse("no single Principled surface for " + target)
+    return node, stack
 
 
 _SURFACE_MODEL = "blendlink-tsl-surface-v1"
@@ -725,19 +785,20 @@ def _leaf_channels(leaf):
     _refuse(f"surface leaf {kind!r} has no channel projection")
 
 
-def _active_surface_link(tree, target):
-    """The material's Cycles-visible surface expression.
-
-    Cycles renders the output targeted at CYCLES when one exists, then
-    the ALL-target output — measured on 5.2 with an EEVEE/CYCLES output
-    pair (selecting by tree order compiled the branch Cycles never
-    renders). Returns the parsed closure expression; refuses by name."""
+def _active_material_output(tree, target):
+    """One shared selection for shader traversal and evaluation context."""
+    # The active flag is global, not one flag per renderer. Native Blender
+    # can select a unique engine-targeted output even when another engine's
+    # output carries that flag. Its read-only API is authoritative here.
+    native = getattr(tree, "get_output_node", None)
+    if callable(native):
+        return native(target)
     actives = [
         node for node in tree.nodes
         if node.bl_idname == "ShaderNodeOutputMaterial"
         and getattr(node, "is_active_output", True)
     ]
-    output = next(
+    return next(
         (node for node in actives
          if str(getattr(node, "target", "ALL")) == target),
         None,
@@ -746,6 +807,11 @@ def _active_surface_link(tree, target):
          if str(getattr(node, "target", "ALL")) == "ALL"),
         None,
     )
+
+
+def _active_surface_link(tree, target):
+    """Resolve the requested engine output, falling back to ALL by name."""
+    output = _active_material_output(tree, target)
     if output is None:
         _refuse("material has no " + target + "-visible active Material Output")
     resolved = _resolve_shader_link(output.inputs["Surface"], ())
@@ -843,7 +909,9 @@ def _channel_document(expression):
     encoded = _json.dumps(expression)
     if '"view_cos"' in encoded:
         document["viewDependent"] = True
-    if '"normal_map"' in encoded or '"normal_view"' in encoded:
+    if any(('"'+name+'"') in encoded for name in ('normal_map_native','normal_view_native','tangent_native','normal_map_tangent_native','bump_height_native')):
+        document['viewDependent'] = True
+    if any(('"'+name+'"') in encoded for name in ('normal_map','normal_view','normal_map_native','normal_view_native','tangent_native','normal_map_tangent_native','bump_height_native')):
         document["geometryDependent"] = True
     if '"ambient_occlusion"' in encoded:
         # Scene occlusion is not carried: the runtime evaluates the
@@ -857,11 +925,54 @@ def _channel_document(expression):
     return document
 
 
-def emit_normal_channel(socket, stack=()):
-    return _channel_document({"op": "normal_view", "input": emit_input(socket, stack, as_vector=True)})
+def emit_normal_channel(socket, stack=(), *, evaluation_engine=None):
+    if evaluation_engine is not None:
+        with emission_context(evaluation_engine=evaluation_engine):
+            return emit_normal_channel(socket, stack)
+    expression=emit_input(socket, stack, as_vector=True)
+    if __package__:
+        from . import normal_ir
+    else:
+        import normal_ir
+    normals=[];normal_ir.requirements(expression,normals)
+    if __package__:
+        from . import tangent_ir
+        from . import normal_map_tangent_ir
+    else:
+        import tangent_ir
+        import normal_map_tangent_ir
+    tangents=[];tangent_ir.requirements(expression,tangents)
+    tangent_maps=[];normal_map_tangent_ir.requirements(expression,tangent_maps)
+    if __package__:
+        from . import bump_ir, bump_height_ir
+    else:
+        import bump_ir, bump_height_ir
+    if (get_evaluation_engine() == 'EEVEE' and expression.get('op') == 'geometry_context'
+            and expression.get('output') == 'normal' and expression.get('sourceEngine') == 'EEVEE'):
+        return _channel_document({"op": "normal_view_native", "input": expression})
+    if expression.get('op')=='bump_height_native':
+        return _channel_document({"op": "normal_view_native", "input": expression})
+    # A derivative normal must stay direct; arbitrary downstream vector math is unproved.
+    height_requirements=[];bump_height_ir.requirements(expression,height_requirements)
+    if height_requirements:
+        _refuse('Bump Height normal channels currently require the direct native unit-normal output')
+    if bump_ir.contains(expression):
+        if not bump_ir.unit_normal(expression):
+            _refuse('No-height Bump normal channels need a direct verified unit-normal source; linked zero/nonunit or transformed vectors remain unproved')
+        return _channel_document({"op": "normal_view_native", "input": expression})
+    if (normals or tangents or tangent_maps) and expression.get('op') not in {'normal_map_native','tangent_native','normal_map_tangent_native'}:
+        _refuse('Native Normal Map normal channels currently require a direct unit-normal output; downstream vector normalization is not certified yet')
+    if normals or tangents or tangent_maps: return _channel_document({"op": "normal_view_native", "input": expression})
+    return _channel_document({"op": "normal_view", "input": expression})
 
 
 def emit_surface(tree, target="CYCLES"):
+    """Emit one selected surface without leaking its engine to another root."""
+    with emission_context(tree=tree, target=target):
+        return _emit_surface(tree, target)
+
+
+def _emit_surface(tree, target="CYCLES"):
     """Per-channel IR documents for a mixed surface expression.
 
     The documented projection model: a Mix Shader closure lerp becomes a
@@ -894,6 +1005,33 @@ def emit_surface(tree, target="CYCLES"):
     }
 
 
+
+def _fold_constant_vector(expression):
+    if not isinstance(expression, dict):
+        return None
+    if expression.get("op") == "const_vec3":
+        values = expression.get("value")
+        return [float(item) for item in values] if isinstance(values, list) and len(values) == 3 else None
+    if expression.get("op") == "combine":
+        values = [_fold_constant_scalar(expression.get(axis)) for axis in ("x", "y", "z")]
+        return values if all(item is not None for item in values) else None
+    if expression.get('op') == 'color_convert' and expression.get('mode') == 'RGB':
+        return _fold_constant_vector(expression.get('input'))
+    return None
+
+
+
+def _vector_provably_nonzero(expression):
+    import math
+    constant = _fold_constant_vector(expression)
+    if constant is not None:
+        return all(math.isfinite(item) for item in constant) and any(item != 0 for item in constant)
+    if isinstance(expression, dict) and expression.get("op") == "combine":
+        components = [_fold_constant_scalar(expression.get(axis)) for axis in ("x", "y", "z")]
+        return any(item is not None and math.isfinite(item) and item != 0 for item in components)
+    return False
+
+
 def _fold_vector_prescale(expression):
     """Conservative max-axis multiplier applied to a coordinate BEFORE
     a texture's Scale socket. Wooden_Bars multiplies Object coords by
@@ -911,12 +1049,40 @@ def _fold_vector_prescale(expression):
         if not isinstance(current, dict):
             break
         op = current.get("op")
+        if op == 'color_convert' and current.get('mode') == 'RGB':
+            current = current.get('input')
+            continue
         if op == "mapping":
-            factor *= max(
-                abs(float(v)) for v in current.get("scale", [1.0])
-            )
+            if current.get("vectorType") == "NORMAL" or any(key in current for key in ("locationNode", "rotationNode", "scaleNode")):
+                _refuse("Mapping NORMAL or varying transforms feeding a frequency-bounded texture have no proven coordinate-frequency bound")
+            scales = [abs(float(v)) for v in current.get("scale", [1.0])]
+            if current.get("vectorType") == "TEXTURE":
+                # Texture Mapping is the inverse transform. Safe divide
+                # collapses zero-scale axes, while a small nonzero scale
+                # increases frequency instead of reducing it.
+                scales = [1.0 / value if value != 0.0 else 0.0 for value in scales]
+            factor *= max(scales)
             current = current.get("input")
             continue
+        if op == "vector_transform":
+            if current.get("from") != current.get("to"):
+                _refuse("Vector Transform feeding a frequency-bounded texture needs an explicit scene-transform frequency bound")
+            current = current.get("input")
+            continue
+        if op == "vector_rotate":
+            center = current.get("centerNode")
+            varying = center is not None and _fold_constant_vector(center) is None
+            if current.get("rotationType") == "EULER_XYZ":
+                varying = varying or _fold_constant_vector(current.get("rotation")) is None
+            else:
+                varying = varying or _fold_constant_scalar(current.get("angle")) is None \
+                    or _fold_constant_vector(current.get("axis")) is None
+            if varying:
+                _refuse("Vector Rotate varying transforms feeding a frequency-bounded texture have no proven coordinate-frequency bound")
+            current = current.get("input")
+            continue
+        if op == "vector_math" and current.get("operation") in {"PROJECT", "REFLECT", "REFRACT", "FACEFORWARD", "ROUND", "POWER", "SIGN"}:
+            _refuse("Vector Math geometric/nonlinear transforms feeding a frequency-bounded texture have no proven coordinate-frequency bound")
         if op == "vector_scale":
             scale = current.get("scale")
             folded = _fold_constant_scalar(scale) if scale else None
@@ -1018,6 +1184,12 @@ def emit_input(socket, stack=(), *, as_vector=False):
     _require_static_tree(socket.node)
     source = _socket_source(socket)
     if source is None:
+        if socket.type in {"INT", "BOOLEAN"}:
+            if __package__:
+                from .utility_ir import typed_constant
+            else:
+                from utility_ir import typed_constant
+            return typed_constant(socket, _refuse)
         value = _constant_value(socket)
         if value is None:
             _refuse(f"socket {socket.name!r} has no usable constant")
@@ -1043,6 +1215,17 @@ def _convert_link(expression, from_socket, to_socket):
     average) refuses by name until a cell exists."""
     from_type = str(getattr(from_socket, "type", ""))
     to_type = str(getattr(to_socket, "type", ""))
+    if from_type != to_type and ({from_type, to_type} & {"INT", "BOOLEAN"}):
+        if __package__:
+            from .utility_ir import convert
+        else:
+            from utility_ir import convert
+        return convert(expression, from_type, to_type, _refuse)
+    if to_type == "VECTOR" and from_type == "VALUE":
+        # An explicit broadcast survives group boundaries and later vector
+        # component reads. Relying on arithmetic broadcasting alone can leave
+        # a Vector socket represented by one scalar expression.
+        return {"op": "combine", "x": expression, "y": expression, "z": expression}
     if to_type == "VALUE" and from_type == "RGBA":
         return {"op": "rgb_to_bw", "input": expression}
     if to_type == "VALUE" and from_type == "VECTOR":
@@ -1125,8 +1308,14 @@ def emit_output(node, from_socket, stack=()):
         )
 
     if idname == "ShaderNodeTexCoord":
+        if socket_name in {"Camera", "Normal", "Window", "Reflection"}:
+            if __package__:
+                from .geometry_ir import emit_geometry
+            else:
+                from geometry_ir import emit_geometry
+            return emit_geometry(node, from_socket, refuse=_refuse, engine=get_evaluation_engine())
         if socket_name == "UV":
-            return {"op": "uv"}
+            return {"op": "uv_active"}
         if socket_name == "Object":
             if getattr(node, "object", None) is not None:
                 _refuse(
@@ -1151,15 +1340,65 @@ def emit_output(node, from_socket, stack=()):
             f"Texture Coordinate {socket_name!r} has no TSL cell yet"
         )
 
+    if idname == "ShaderNodeCameraData":
+        if __package__:
+            from .camera_data_ir import emit_camera_data
+        else:
+            from camera_data_ir import emit_camera_data
+        return emit_camera_data(node, from_socket, engine=get_evaluation_engine(), refuse=_refuse)
+
+    if idname == "ShaderNodeNewGeometry":
+        if __package__:
+            from .geometry_ir import emit_geometry
+        else:
+            from geometry_ir import emit_geometry
+        return emit_geometry(node, from_socket, refuse=_refuse, engine=get_evaluation_engine())
+
     if idname == "ShaderNodeUVMap":
         uv_map = str(getattr(node, "uv_map", "") or "")
-        return {"op": "uv", **({"uvMap": uv_map} if uv_map else {})}
+        return {"op": "uv", "uvMap": uv_map} if uv_map else {"op": "uv_active"}
 
     if idname == "ShaderNodeRGB":
         return _vector(_constant_value(node.outputs["Color"]))
 
     if idname == "ShaderNodeValue":
         return _scalar(_constant_value(node.outputs["Value"]))
+
+    if idname == "ShaderNodeSqueeze":
+        if __package__:
+            from .squeeze_ir import emit_squeeze
+            from .procedural import _walk_channel_upstream
+        else:
+            from squeeze_ir import emit_squeeze
+            from procedural import _walk_channel_upstream
+        return emit_squeeze(node, from_socket, scalar=lambda socket: emit_input(socket, stack=stack),
+            refuse=_refuse, evaluation_engine=get_evaluation_engine(), stack=stack, walk=_walk_channel_upstream)
+
+    if idname == "ShaderNodeNormal":
+        if __package__:
+            from .normal_direction_ir import emit_normal_direction
+        else:
+            from normal_direction_ir import emit_normal_direction
+        return emit_normal_direction(node, from_socket, engine=get_evaluation_engine(),
+            emit_vector=lambda socket: emit_input(socket, stack=stack, as_vector=True), refuse=_refuse)
+
+    if idname == "FunctionNodeInputVector":
+        return _vector(list(node.vector))
+
+    if idname in {"FunctionNodeInputBool", "FunctionNodeInputInt", "FunctionNodeBooleanMath", "FunctionNodeIntegerMath"}:
+        if __package__:
+            from .utility_ir import emit_utility
+        else:
+            from utility_ir import emit_utility
+        return emit_utility(node, lambda socket: emit_input(socket, stack=stack), _refuse, get_evaluation_engine())
+
+    if idname == "FunctionNodeGetVectorComponent":
+        if __package__:
+            from .vector_component_ir import emit_vector_component
+        else:
+            from vector_component_ir import emit_vector_component
+        return emit_vector_component(node, from_socket,
+            lambda socket, as_vector=False: emit_input(socket, stack=stack, as_vector=as_vector), _refuse)
 
     if idname == "ShaderNodeSeparateXYZ":
         return {
@@ -1168,24 +1407,15 @@ def emit_output(node, from_socket, stack=()):
             "input": emit_input(node.inputs["Vector"], stack=stack, as_vector=True),
         }
 
-    if idname in {"ShaderNodeSeparateColor", "ShaderNodeSeparateRGB"}:
-        mode = str(getattr(node, "mode", "RGB")) \
-            if idname == "ShaderNodeSeparateColor" else "RGB"
-        if mode not in {"RGB", "HSV"}:
-            _refuse(f"Separate Color mode {mode!r} has no cell yet")
-        # HSV mode relabels the outputs; identifiers stay Red/Green/Blue.
-        channel = {
-            "Red": "x", "Green": "y", "Blue": "z",
-            "R": "x", "G": "y", "B": "z",
-        }[getattr(from_socket, "identifier", socket_name)]
-        inner = emit_input(node.inputs[0], stack=stack, as_vector=True)
-        if mode == "HSV":
-            inner = {"op": "rgb_to_hsv", "input": inner}
-        return {
-            "op": "separate",
-            "channel": channel,
-            "input": inner,
-        }
+    if idname in {"ShaderNodeSeparateColor", "ShaderNodeSeparateRGB", "ShaderNodeCombineColor", "ShaderNodeCombineRGB",
+                  "ShaderNodeSeparateHSV", "ShaderNodeCombineHSV"}:
+        if __package__:
+            from .color_ir import emit_color_conversion
+        else:
+            from color_ir import emit_color_conversion
+        return emit_color_conversion(node, from_socket,
+            emit_input=lambda socket, as_vector=False: emit_input(socket, stack=stack, as_vector=as_vector),
+            refuse=_refuse, evaluation_engine=get_evaluation_engine())
 
     if idname == "ShaderNodeCombineXYZ":
         return {
@@ -1194,21 +1424,6 @@ def emit_output(node, from_socket, stack=()):
             "y": emit_input(node.inputs["Y"], stack=stack),
             "z": emit_input(node.inputs["Z"], stack=stack),
         }
-
-    if idname in {"ShaderNodeCombineColor", "ShaderNodeCombineRGB"}:
-        mode = str(getattr(node, "mode", "RGB")) \
-            if idname == "ShaderNodeCombineColor" else "RGB"
-        if mode not in {"RGB", "HSV"}:
-            _refuse(f"Combine Color mode {mode!r} has no cell yet")
-        expression = {
-            "op": "combine",
-            "x": emit_input(node.inputs[0], stack=stack),
-            "y": emit_input(node.inputs[1], stack=stack),
-            "z": emit_input(node.inputs[2], stack=stack),
-        }
-        if mode == "HSV":
-            expression = {"op": "hsv_to_rgb", "input": expression}
-        return expression
 
     if idname == "ShaderNodeInvert":
         return {
@@ -1271,6 +1486,14 @@ def emit_output(node, from_socket, stack=()):
             expression["b"] = emit_input(node.inputs[1], stack=stack)
         if operation in _MATH_TERNARY:
             expression["c"] = emit_input(node.inputs[2], stack=stack)
+        if operation == "MODULO":
+            import bpy
+            try:
+                from .math_modulo_native_ir import qualify_modulo
+            except ImportError:
+                from math_modulo_native_ir import qualify_modulo
+            expression = qualify_modulo(expression, engine=get_evaluation_engine(),
+                backend=str(bpy.context.preferences.system.gpu_backend), version=bpy.app.version, refuse=_refuse)
         if getattr(node, "use_clamp", False):
             expression = {
                 "op": "clamp01", "input": expression,
@@ -1309,10 +1532,14 @@ def emit_output(node, from_socket, stack=()):
     if idname == "ShaderNodeObjectInfo":
         output_id = getattr(from_socket, "identifier", socket_name)
         if output_id != "Random":
-            # Location/Color/Alpha/Index/Material Index are all per-object
-            # uniforms too, but nothing in the corpus reaches them yet and a
-            # cell must exist first.
-            _refuse(f"Object Info output {socket_name!r} has no cell yet")
+            if __package__:
+                from . import tsl_object_info
+            else:
+                import tsl_object_info
+            output = tsl_object_info.OUTPUTS.get(output_id)
+            if output is None:
+                _refuse(f"Object Info output {socket_name!r} has no verified mapping")
+            return {"op": "object_info", "output": output}
         # A per-object constant, so it rides the proven attribute_object
         # seam: the exporter stamps OBJECT_RANDOM_PROPERTY on every exported
         # mesh object (export_scene.emit_gltf), GLTFLoader lands it in
@@ -1326,49 +1553,57 @@ def emit_output(node, from_socket, stack=()):
             "output": "fac",
         }
 
-    if idname == "ShaderNodeVectorRotate":
-        # One Rodrigues path serves every fixed-axis mode. Verbatim from
-        # `rotate_around_axis` in intern/cycles/util/math_float3.h, which
-        # takes the already-centred vector; the node subtracts Center before
-        # the call and adds it back after, and Cycles applies invert as
-        # `angle = node.invert ? -angle : angle`. X/Y/Z_AXIS are the same
-        # formula with a literal axis, so they ride the axis-angle cell
-        # rather than needing three more of their own.
-        rotation_type = str(getattr(node, "rotation_type", "AXIS_ANGLE"))
-        if rotation_type == "EULER_XYZ":
-            _refuse("Vector Rotate EULER_XYZ has no cell yet (needs a matrix)")
-        if bool(getattr(node, "invert", False)):
-            # One negated angle, but unexercised by the corpus and unproven
-            # by a cell, so it refuses rather than shipping on inspection.
-            _refuse("Vector Rotate with Invert has no cell yet")
-        center_socket = node.inputs["Center"]
-        if center_socket.is_linked:
-            _refuse("Vector Rotate with a linked Center has no cell yet")
-        axis_literal = {
-            "X_AXIS": [1.0, 0.0, 0.0],
-            "Y_AXIS": [0.0, 1.0, 0.0],
-            "Z_AXIS": [0.0, 0.0, 1.0],
-        }.get(rotation_type)
-        if axis_literal is not None:
-            axis = {"op": "const_vec3", "value": axis_literal}
+    if idname in {"ShaderNodeBlackbody", "ShaderNodeWavelength"}:
+        if __package__:
+            from .spectral_ir import emit_spectral
         else:
-            axis_socket = node.inputs["Axis"]
-            axis = emit_input(axis_socket, stack=stack, as_vector=True)
-        return {
-            "op": "vector_rotate",
+            from spectral_ir import emit_spectral
+        return emit_spectral(node, from_socket,
+                             emit_input=lambda socket: emit_input(socket, stack=stack), refuse=_refuse,
+                             evaluation_engine=get_evaluation_engine(),
+                             fold_scalar=_fold_constant_scalar)
+
+    if idname == "ShaderNodeVectorTransform":
+        if __package__:
+            from .vector_transform_ir import emit_vector_transform
+        else:
+            from vector_transform_ir import emit_vector_transform
+        return emit_vector_transform(node, from_socket,
+                                     emit_input=lambda socket: emit_input(socket, stack=stack, as_vector=True),
+                                     refuse=_refuse, engine=get_evaluation_engine())
+
+    if idname == "ShaderNodeVectorRotate":
+        rotation_type = str(getattr(node, "rotation_type", "AXIS_ANGLE"))
+        if rotation_type not in {"AXIS_ANGLE", "X_AXIS", "Y_AXIS", "Z_AXIS", "EULER_XYZ"}:
+            _refuse(f"Vector Rotate type {rotation_type!r} has no cell")
+        center_socket = node.inputs["Center"]
+        expression = {
+            "op": "vector_rotate", "rotationType": rotation_type,
+            "invert": bool(getattr(node, "invert", False)),
             "input": emit_input(node.inputs["Vector"], stack=stack, as_vector=True),
             "center": [float(item) for item in center_socket.default_value],
-            "axis": axis,
-            "angle": emit_input(node.inputs["Angle"], stack=stack),
-            # A literal axis is already unit-length, so the runtime skips the
-            # normalize and its zero-length guard.
-            "normalizeAxis": axis_literal is None,
         }
+        if _socket_source(center_socket) is not None:
+            expression["centerNode"] = emit_input(center_socket, stack=stack, as_vector=True)
+        if rotation_type == "EULER_XYZ":
+            expression["rotation"] = emit_input(node.inputs["Rotation"], stack=stack, as_vector=True)
+        else:
+            axis_literal = {"X_AXIS": [1.0, 0.0, 0.0], "Y_AXIS": [0.0, 1.0, 0.0],
+                            "Z_AXIS": [0.0, 0.0, 1.0]}.get(rotation_type)
+            expression["axis"] = {"op": "const_vec3", "value": axis_literal} if axis_literal is not None \
+                else emit_input(node.inputs["Axis"], stack=stack, as_vector=True)
+            expression["angle"] = emit_input(node.inputs["Angle"], stack=stack)
+            expression["normalizeAxis"] = axis_literal is None
+        return expression
 
     if idname == "ShaderNodeVectorMath":
         operation = str(node.operation)
         if operation not in _VECTOR_MATH_OPERATIONS:
             _refuse(f"Vector Math operation {operation!r} has no cell yet")
+        output_id = getattr(from_socket, "identifier", socket_name)
+        expected_output = "Value" if operation in _VECTOR_MATH_VALUE_OUTPUT else "Vector"
+        if output_id != expected_output:
+            _refuse(f"Vector Math {operation} inactive output {output_id!r}")
         if operation == "SCALE":
             return {
                 "op": "vector_scale",
@@ -1384,6 +1619,23 @@ def emit_output(node, from_socket, stack=()):
             expression["b"] = emit_input(node.inputs[1], stack=stack, as_vector=True)
         if operation in _VECTOR_MATH_TERNARY:
             expression["c"] = emit_input(node.inputs[2], stack=stack, as_vector=True)
+        if operation in {"REFLECT", "REFRACT"}:
+            import bpy
+            # Older Cycles normalizes zero unsafely, yielding nonfinite values.
+            # Do not imitate downstream render sanitization. 5.2+ uses the
+            # explicitly safe-zero native contract proved by its own cells.
+            safe_zero = bpy.app.version >= (5, 2, 0)
+            if not safe_zero and not _vector_provably_nonzero(expression["b"]):
+                _refuse("Vector Math " + operation + " before Blender 5.2 requires a provably nonzero normal; zero normalization has no finite native value")
+            expression["normalMode"] = "safe-zero" if safe_zero else "nonzero-required"
+        if operation == "POWER":
+            bases = _fold_constant_vector(expression["a"])
+            exponents = _fold_constant_vector(expression["b"])
+            if bases is not None and exponents is not None and any(
+                    base == 0.0 and exponent < 0.0 for base, exponent in zip(bases, exponents)):
+                _refuse("Vector Math POWER zero base with a negative exponent has no finite native value")
+        if operation == "REFRACT":
+            expression["ior"] = emit_input(node.inputs["Scale"], stack=stack)
         if operation in _VECTOR_MATH_VALUE_OUTPUT:
             # The node's scalar "Value" output is the linked one for these.
             expression["scalar"] = True
@@ -1391,34 +1643,69 @@ def emit_output(node, from_socket, stack=()):
 
     if idname == "ShaderNodeMapping":
         vector_type = str(getattr(node, "vector_type", "POINT"))
-        if vector_type not in {"POINT", "TEXTURE"}:
+        if vector_type not in {"POINT", "TEXTURE", "VECTOR", "NORMAL"}:
             _refuse(f"Mapping type {vector_type!r} has no cell yet")
-        for name in ("Location", "Rotation", "Scale"):
-            if node.inputs[name].is_linked:
-                _refuse(f"Mapping with linked {name} has no cell yet")
-        rotation = node.inputs["Rotation"].default_value
-        if abs(float(rotation[0])) > 1e-9 or abs(float(rotation[1])) > 1e-9:
-            _refuse("Mapping X/Y rotation has no cell yet (Z only)")
-        return {
-            "op": "mapping",
-            "vectorType": vector_type,
+        expression = {
+            "op": "mapping", "vectorType": vector_type,
             "input": emit_input(node.inputs["Vector"], stack=stack, as_vector=True),
-            "location": [
-                float(item) for item in node.inputs["Location"].default_value
-            ],
-            "rotation": [
-                float(item) for item in node.inputs["Rotation"].default_value
-            ],
-            "scale": [
-                float(item) for item in node.inputs["Scale"].default_value
-            ],
+            "location": [0.0, 0.0, 0.0],
         }
+        names = ("Rotation", "Scale") if vector_type in {"VECTOR", "NORMAL"} else ("Location", "Rotation", "Scale")
+        for name in names:
+            socket = node.inputs[name]
+            key = name.lower()
+            expression[key] = [float(item) for item in socket.default_value]
+            if _socket_source(socket) is not None:
+                linked = emit_input(socket, stack=stack, as_vector=True)
+                folded = _fold_constant_vector(linked)
+                if folded is not None:
+                    expression[key] = folded
+                else:
+                    expression[key + "Node"] = linked
+        return expression
 
     if idname == "ShaderNodeValToRGB":
+        if __package__:
+            from .ramps_ir import emit_context_ramp
+        else:
+            from ramps_ir import emit_context_ramp
+        contextual = emit_context_ramp(node, from_socket,
+            incoming=lambda: emit_input(node.inputs['Fac'], stack=stack),
+            refuse=_refuse, evaluation_engine=get_evaluation_engine())
+        if contextual is not None:
+            return contextual
         ramp = node.color_ramp
+        color_mode = str(getattr(ramp, "color_mode", "RGB"))
         interpolation = str(ramp.interpolation)
         if socket_name not in {"Color", "Alpha"}:
             _refuse(f"ColorRamp output {socket_name!r} unsupported")
+        if color_mode in {"HSV", "HSL"}:
+            hue_interpolation = str(ramp.hue_interpolation)
+            if hue_interpolation not in {"NEAR", "FAR", "CW", "CCW"}:
+                _refuse(f"ColorRamp hue direction {hue_interpolation!r} has no cell")
+            if interpolation not in {"LINEAR", "CONSTANT", "EASE", "B_SPLINE", "CARDINAL"}:
+                _refuse(f"ColorRamp interpolation {interpolation!r} has no cell")
+            # Cycles' colorramp_to_array exports RAMP_TABLE_SIZE+1=257
+            # samples of the native evaluator. Its shader uses a floor lookup
+            # for CONSTANT and linear lookup otherwise. This preserves the
+            # actual shader's sampling, rather than approximating its continuous
+            # evaluator with a denser but visibly different function at kinks.
+            samples = 257
+            values = [float(item) for index in range(samples)
+                      for item in ramp.evaluate(index / (samples - 1))]
+            lookup = "FLOOR" if interpolation == "CONSTANT" else "LINEAR"
+            return {
+                "op": "ramp_lut",
+                "channel": "alpha" if socket_name == "Alpha" else "rgb",
+                "samples": samples, "values": values, "lookup": lookup,
+                "sourceColorMode": color_mode,
+                "sourceHueInterpolation": hue_interpolation,
+                "sourceInterpolation": interpolation,
+                "sampling": {"method": "native-cycles-257-table", "lookup": lookup},
+                "input": emit_input(node.inputs["Fac"], stack=stack),
+            }
+        if color_mode != "RGB":
+            _refuse(f"ColorRamp color mode {color_mode!r} has no cell")
         if interpolation in _RAMP_INTERPOLATIONS:
             expression = {
                 "op": "color_ramp",
@@ -1436,9 +1723,9 @@ def emit_output(node, from_socket, stack=()):
                 expression = {"op": "ramp_alpha", "input": expression}
             return expression
         # B_SPLINE / CARDINAL / EASE: sample Blender's own evaluator into a
-        # LUT; the builder interpolates between exact texels.  257 samples
-        # bound the reconstruction error of any smooth colorband well below
-        # cell tolerance.
+        # LUT; the builder interpolates between exact texels. Existing RGB
+        # B_SPLINE/CARDINAL cells gate this fixed 257-sample route; no universal
+        # bound is inferred for arbitrarily narrow native stop intervals.
         samples = 257
         values = []
         for index in range(samples):
@@ -1487,6 +1774,17 @@ def emit_output(node, from_socket, stack=()):
             ),
         }
 
+    if idname == "ShaderNodeTexBrick":
+        if __package__:
+            from .brick_ir import emit_brick
+        else:
+            from brick_ir import emit_brick
+        return emit_brick(node, from_socket,
+                          emit_scalar=lambda socket: emit_input(socket, stack=stack),
+                          emit_vector=lambda socket: _texture_vector(socket, stack, node) if socket == node.inputs["Vector"]
+                          else emit_input(socket, stack=stack, as_vector=True),
+                          refuse=_refuse, fold_scalar=_fold_constant_scalar)
+
     if idname == "ShaderNodeTexChecker":
         # Blender 5.2 displays "Fac" as "Factor"; match the identifier.
         checker_output = getattr(from_socket, "identifier", socket_name)
@@ -1525,20 +1823,17 @@ def emit_output(node, from_socket, stack=()):
         }
 
     if idname == "ShaderNodeTexMagic":
-        magic_output = getattr(from_socket, "identifier", socket_name)
-        if magic_output not in {"Color", "Fac"}:
-            _refuse(f"Magic output {socket_name!r} has no cell yet")
-        return {
-            "op": "tex_magic",
-            "depth": int(node.turbulence_depth),
-            # Fac is the color average.
-            "output": "fac" if magic_output == "Fac" else "color",
-            "vector": _texture_vector(node.inputs["Vector"], stack, node),
-            "scale": emit_input(node.inputs["Scale"], stack=stack),
-            "distortion": emit_input(node.inputs["Distortion"], stack=stack),
-        }
+        if __package__:
+            from .magic_ir import emit_magic
+        else:
+            from magic_ir import emit_magic
+        return emit_magic(node, from_socket,
+            vector=lambda incoming: _texture_vector(incoming, stack, node),
+            scalar=lambda incoming: emit_input(incoming, stack=stack),
+            refuse=_refuse, evaluation_engine=get_evaluation_engine())
 
     if idname == "ShaderNodeTexWave":
+        import math
         if getattr(from_socket, "identifier", socket_name) not in {
             "Color", "Fac",
         }:
@@ -1547,25 +1842,35 @@ def emit_output(node, from_socket, stack=()):
         # unrolls octaves like the Noise mapping does.
         detail_socket = node.inputs["Detail"]
         roughness_socket = node.inputs["Detail Roughness"]
-        if node.inputs["Distortion"].is_linked:
-            _refuse("Wave with a linked Distortion has no cell yet")
-        distortion_value = float(node.inputs["Distortion"].default_value)
+        distortion_socket = node.inputs["Distortion"]
+        distortion_linked = distortion_socket.is_linked
+        distortion_value = float(distortion_socket.default_value)
         detail_value = 0.0
         roughness_value = 0.5
-        if distortion_value != 0.0:
+        roughness_expression = None
+        if distortion_linked or distortion_value != 0.0:
             if detail_socket.is_linked:
                 _refuse("Wave with a linked Detail has no cell yet")
             if roughness_socket.is_linked:
-                _refuse("Wave with a linked Detail Roughness has no cell yet")
+                if __package__:
+                    from .color_ir import _unit_bounded
+                else:
+                    from color_ir import _unit_bounded
+                roughness_expression = emit_input(roughness_socket, stack=stack)
+                if not _unit_bounded(roughness_expression):
+                    _refuse('Wave linked Detail Roughness needs a proven [0,1] input; use an authored Clamp for unbounded values')
             detail_value = float(detail_socket.default_value)
             roughness_value = float(roughness_socket.default_value)
-            if detail_value > 2.0:
+            if not all(math.isfinite(value) for value in [detail_value, roughness_value, distortion_value]):
+                _refuse('Wave fractal parameters must be finite')
+            if not 0.0 <= detail_value <= 2.0:
                 _refuse(
-                    f"Wave detail {detail_value:g} exceeds the proven "
-                    "range (<= 2); high-octave phase divergence measured"
+                    f"Wave detail {detail_value:g} is outside the proven "
+                    "range [0,2]; negative-detail semantics and high-octave phase divergence are not ported"
                 )
         return {
             "op": "tex_wave",
+            "precisionModel": "portable-f32-v1",
             "waveType": str(node.wave_type),
             "bandsDirection": str(node.bands_direction),
             "ringsDirection": str(node.rings_direction),
@@ -1573,8 +1878,10 @@ def emit_output(node, from_socket, stack=()):
             "vector": _texture_vector(node.inputs["Vector"], stack, node),
             "scale": emit_input(node.inputs["Scale"], stack=stack),
             "distortion": distortion_value,
+            **({"distortionNode": emit_input(distortion_socket, stack=stack)} if distortion_linked else {}),
             "detail": detail_value,
             "detailRoughness": roughness_value,
+            **({"detailRoughnessNode": roughness_expression} if roughness_expression is not None else {}),
             "detailScale": emit_input(
                 node.inputs["Detail Scale"], stack=stack,
             ),
@@ -1582,26 +1889,30 @@ def emit_output(node, from_socket, stack=()):
         }
 
     if idname == "ShaderNodeTexImage":
+        import bpy
         image = node.image
         if image is None:
             _refuse("Image Texture without an image")
+        if str(getattr(image, "source", "")) not in {"FILE", "GENERATED"}:
+            _refuse("Image Texture needs a static FILE or GENERATED image; media, tiles and viewer buffers need a separate transport")
+        animation = getattr(image, "animation_data", None)
+        if animation and (animation.action or len(animation.drivers) or len(animation.nla_tracks)):
+            _refuse("Image Texture datablock has animation or drivers; live image animation transport is required")
+        if get_evaluation_engine() == "EEVEE" and getattr(bpy.context.preferences.system, "gpu_backend", "OPENGL") not in {"METAL", "OPENGL"}:
+            _refuse("Native image sampling has no verified GPU backend model")
         image_output = getattr(from_socket, "identifier", socket_name)
         if image_output not in {"Color", "Alpha"}:
             _refuse(f"Image Texture output {socket_name!r} unsupported")
         interpolation = str(node.interpolation)
-        # Cubic is the cubic B-spline, tapped at ix-1..ix+2. Cycles'
-        # SET_CUBIC_SPLINE_WEIGHTS (intern/cycles/kernel/device/cpu/image.h)
-        # and three's own TextureBicubic w0..w3 are the same basis term for
-        # term, which is what makes this mappable at all. 'Smart' is an
-        # EEVEE-only mip heuristic that Cycles resolves to cubic, so it stays
-        # refused until something needs it and a cell can pin which of the two
-        # the oracle actually ran.
-        if interpolation not in {"Linear", "Closest", "Cubic"}:
-            _refuse(
-                f"Image interpolation {interpolation!r} has no cell yet"
-            )
+        # Native Image Texture routes Smart to the same cubic B-spline
+        # sampler. Canonicalize its authored selector only after accepting
+        # the actual native menu; external cubic transport remains refused.
+        if interpolation not in {"Linear", "Closest", "Cubic", "Smart"}:
+            _refuse(f"Image interpolation {interpolation!r} has no cell yet")
+        if interpolation == "Smart":
+            interpolation = "Cubic"
         extension = str(node.extension)
-        if extension not in {"REPEAT", "EXTEND"}:
+        if extension not in {"REPEAT", "EXTEND", "MIRROR", "CLIP"}:
             _refuse(f"Image extension {extension!r} has no cell yet")
         projection = str(node.projection)
         if projection not in {"FLAT", "BOX"}:
@@ -1631,6 +1942,10 @@ def emit_output(node, from_socket, stack=()):
                     f"Image {width}x{height} exceeds the embedded-IR bound "
                     "(128x128); the texture transport carries it"
                 )
+            if interpolation == "Cubic":
+                _refuse("Image Cubic interpolation with the texture transport has no proven cubic sampler (embedded Cubic only)")
+            if extension not in {"REPEAT", "EXTEND"}:
+                _refuse("Image Mirror/Clip extension with the texture transport has no verified sampler (embedded images only)")
             if projection == "BOX":
                 _refuse(
                     "Image BOX projection with the texture transport has "
@@ -1646,7 +1961,7 @@ def emit_output(node, from_socket, stack=()):
                     node.inputs["Vector"], stack=stack, as_vector=True,
                 )
             else:
-                reference_vector = {"op": "uv"}
+                reference_vector = {"op": "uv_active"}
             # Hardware sampling against the published source bytes; the
             # sRGB decode and alpha association follow the browser's image
             # pipeline (named fidelity note vs the byte-exact embedded
@@ -1654,6 +1969,7 @@ def emit_output(node, from_socket, stack=()):
             # runtime configures one texture per distinct triple.
             return {
                 "op": "texture_ref",
+                "sourceEngine": get_evaluation_engine(),
                 "ref": {
                     "image": str(image.name),
                     "interpolation": interpolation,
@@ -1678,6 +1994,17 @@ def emit_output(node, from_socket, stack=()):
                 "Float-buffer sRGB image has no cell yet "
                 "(association order unmeasured)"
             )
+        if get_evaluation_engine() == "EEVEE" and bool(getattr(image, "is_float", False)) and colorspace in {"Non-Color", "Raw"}:
+            # The native GPU image upload treats float buffers as associated
+            # storage even for data images, then unassociates each texel. The
+            # data-color node clears alpha without reversing that conversion.
+            # Zero-alpha pixels retain their authored RGB, as native controls
+            # explicitly verify; dividing them would destroy valid data.
+            for index in range(0, len(pixels), 4):
+                alpha = pixels[index + 3]
+                if alpha not in {0.0, 1.0}:
+                    for channel in range(3):
+                        pixels[index + channel] /= alpha
         if colorspace == "sRGB":
             # Measured against baked ground truth: Cycles associates
             # alpha at load IN BYTE sRGB SPACE with integer floor
@@ -1697,6 +2024,19 @@ def emit_output(node, from_socket, stack=()):
                     pixels[index + channel] = _srgb_to_linear(
                         associated_byte / 255,
                     )
+        gpu_half_image = get_evaluation_engine() == "EEVEE" and bool(getattr(image, "is_float", False)) and bool(getattr(image, "use_half_precision", False))
+        if gpu_half_image:
+            import numpy as np
+            source = np.asarray(pixels, dtype=np.float32)
+            if not np.isfinite(source).all() or np.any(np.abs(source) > 65504):
+                _refuse("Image half-float upload exceeds its finite range; disable Half Precision on the source image")
+            # Native image uploads use GPU float-to-half conversion. This path
+            # remains truncating on Metal even after color-band uploads moved
+            # to CPU nearest-even conversion in Blender5.0.
+            half = source.astype(np.float16)
+            away = np.abs(half.astype(np.float32)) > np.abs(source)
+            half = np.where(away, np.nextafter(half, np.float16(0)), half)
+            pixels = half.astype(np.float32).tolist()
         vector_socket = node.inputs["Vector"]
         if vector_socket.is_linked:
             vector_expression = emit_input(
@@ -1704,15 +2044,20 @@ def emit_output(node, from_socket, stack=()):
             )
         else:
             # Unlinked Vector on Image Texture means the active UV map.
-            vector_expression = {"op": "uv"}
+            vector_expression = {"op": "uv_active"}
         import math as _math
         embedded = [float(value) for value in pixels]
-        if not all(_math.isfinite(value) for value in embedded):
+        if not all(_math.isfinite(value) and abs(value) <= 3.4028234663852886e38 for value in embedded):
             # NaN/Inf pixels would serialize as non-standard JSON tokens
             # downstream (allow_nan defaults on) and poison the document.
-            _refuse("image contains non-finite pixel values")
+            _refuse("image contains pixel values outside finite float32 transport")
         return {
             "op": "tex_image",
+            "sourceEngine": get_evaluation_engine(),
+            "sourceImageStorage": "rgba16f" if gpu_half_image else "rgba32f" if bool(getattr(image, "is_float", False)) else "rgba8",
+            "sourceImageUploadRounding": "toward-zero" if gpu_half_image else "none",
+            **({"nativeGpuBackend": getattr(bpy.context.preferences.system, "gpu_backend", "OPENGL")}
+               if get_evaluation_engine() == "EEVEE" else {}),
             "width": width,
             "height": height,
             "pixels": embedded,
@@ -1762,7 +2107,7 @@ def emit_output(node, from_socket, stack=()):
             # coordinate ops.
             if isinstance(item, dict):
                 if item.get("op") in {
-                    "uv", "generated", "object_coords",
+                    "uv", "uv_active", "generated", "object_coords",
                     "vertex_color", "view_cos",
                 }:
                     return True
@@ -1897,44 +2242,41 @@ def emit_output(node, from_socket, stack=()):
                 expression["smoothness"] = smoothness
         return expression
 
-    if idname == "ShaderNodeRGBCurve":
-        # Cycles itself bakes RGB Curves into a sampled table
-        # (curvemapping_color_to_array with the composite C curve applied
-        # before each channel curve) — the LUT route IS the faithful port.
-        if socket_name != "Color":
-            _refuse(f"RGB Curves output {socket_name!r} unsupported")
-        mapping = node.mapping
-        if not bool(getattr(mapping, "use_clip", True)):
-            _refuse("RGB Curves without clipping has no cell yet")
-        if (abs(float(mapping.clip_min_x)) > 1e-6
-                or abs(float(mapping.clip_max_x) - 1.0) > 1e-6):
-            _refuse("RGB Curves with a non-unit X range has no cell yet")
-        mapping.initialize()
-        curves = mapping.curves
-        samples = 257
-        values = []
-        for index in range(samples):
-            position = index / (samples - 1)
-            composite = mapping.evaluate(curves[3], position)
-            values.extend((
-                float(mapping.evaluate(curves[0], composite)),
-                float(mapping.evaluate(curves[1], composite)),
-                float(mapping.evaluate(curves[2], composite)),
-                1.0,
-            ))
-        return {
-            "op": "curve_rgb",
-            "samples": samples,
-            "values": values,
-            "factor": _scalar_input(node.inputs["Fac"], stack),
-            "input": emit_input(
-                node.inputs["Color"], stack=stack, as_vector=True,
-            ),
-        }
+    if idname in {"ShaderNodeFloatCurve", "ShaderNodeVectorCurve", "ShaderNodeRGBCurve"}:
+        if __package__:
+            from .curves_ir import emit_curve
+        else:
+            from curves_ir import emit_curve
+        return emit_curve(node, from_socket,
+                          emit_input=lambda socket, as_vector=False: emit_input(socket, stack=stack, as_vector=as_vector),
+                          refuse=_refuse, evaluation_engine=get_evaluation_engine())
 
     if idname in {"ShaderNodeMix", "ShaderNodeMixRGB"}:
         if idname == "ShaderNodeMix":
-            if str(getattr(node, "data_type", "")) != "RGBA":
+            data_type = str(getattr(node, "data_type", ""))
+            if data_type in {"FLOAT", "VECTOR"}:
+                is_vector = data_type == "VECTOR"
+                suffix = "Vector" if is_vector else "Float"
+                if str(getattr(from_socket, "identifier", "")) != f"Result_{suffix}":
+                    _refuse(f"Mix {data_type} inactive output has no cell")
+                factor_mode = str(getattr(node, "factor_mode", "UNIFORM"))
+                if factor_mode not in {"UNIFORM", "NON_UNIFORM"}:
+                    _refuse(f"Mix factor mode {factor_mode!r} has no cell yet")
+                factor_id = "Factor_Vector" if is_vector and factor_mode == "NON_UNIFORM" \
+                    else "Factor_Float"
+                sockets = {item.identifier: item for item in node.inputs}
+                factor = emit_input(sockets[factor_id], stack=stack,
+                                    as_vector=factor_id == "Factor_Vector")
+                if bool(getattr(node, "clamp_factor", True)):
+                    factor = {"op": "clamp01", "input": factor}
+                # Native Float/Vector Mix ignores the color-only blend and
+                # result-clamp properties. No color-space conversion applies.
+                return _lerp_scalar(
+                    emit_input(sockets[f"A_{suffix}"], stack=stack, as_vector=is_vector),
+                    emit_input(sockets[f"B_{suffix}"], stack=stack, as_vector=is_vector),
+                    factor,
+                )
+            if data_type != "RGBA":
                 _refuse(f"Mix data type {node.data_type!r} has no cell yet")
             blend = str(getattr(node, "blend_type", "MIX"))
             factor = next(
@@ -1969,16 +2311,17 @@ def emit_output(node, from_socket, stack=()):
         }
 
     if idname == "ShaderNodeTexNoise":
+        import math
+        import bpy
         # Blender 5.2 displays the output as "Factor"; the identifier stays
         # "Fac" across versions.
         noise_output = getattr(from_socket, "identifier", socket_name)
         if noise_output not in {"Fac", "Color"}:
             _refuse(f"Noise output {socket_name!r} has no cell yet")
         noise_type = str(getattr(node, "noise_type", "FBM"))
-        if noise_type != "FBM":
+        if noise_type not in {"FBM", "MULTIFRACTAL", "HETERO_TERRAIN", "HYBRID_MULTIFRACTAL", "RIDGED_MULTIFRACTAL"}:
             _refuse(f"Noise type {noise_type!r} has no cell yet")
-        if not bool(getattr(node, "normalize", True)):
-            _refuse("Unnormalized noise has no cell yet")
+        normalize_output = noise_type == 'FBM' and bool(getattr(node, "normalize", True))
         dimensions = str(getattr(node, "noise_dimensions", "3D"))
         # 1D shipped 2026-07-30, second attempt. The first failed at 1.79e-1
         # because hashUint1's all-literal b/c seeds CONST-FOLDED in WGSL, and a
@@ -1986,13 +2329,14 @@ def emit_output(node, from_socket, stack=()):
         # wrap -- the shader never built and the harness read back the previous
         # render. Two .toVar() calls fix it; the stage-by-stage GPU-vs-CPU
         # bisection that found it is run-debug1d.mjs in the differential
-        # harness, and the gated noise-1d cells hold the claim. 4D still
-        # refuses: it needs grad4 and the 16-tap quad_mix, not just a hash.
+        # harness. 4D uses the separately proved grad4/16-tap quad_mix port.
         if dimensions not in {"1D", "2D", "3D", "4D"}:
             _refuse(
                 f"Noise dimensions {dimensions!r} has no cell yet"
             )
+        roughness_expression = None
         def _folded_noise_scalar(name, default):
+            nonlocal roughness_expression
             # Same contract as Scale below: a linked value that folds to a
             # constant through group walls (the ellie paint corpus drives
             # Detail/Roughness through value + Clamp plumbing) is boundable
@@ -2004,7 +2348,23 @@ def emit_output(node, from_socket, stack=()):
                 return float(socket.default_value)
             expression = emit_input(socket, stack=stack)
             folded = _fold_constant_scalar(expression)
+            if folded is not None:
+                if __package__:
+                    from .noise_varying_ir import float32_safe_noise_scalar
+                else:
+                    from noise_varying_ir import float32_safe_noise_scalar
+                if not float32_safe_noise_scalar(expression):
+                    _refuse(f'Noise linked {name} requires literal float32/Clamp inputs; arithmetic folding needs source baking')
             if folded is None:
+                if name == 'Roughness':
+                    if __package__:
+                        from .noise_varying_ir import unit_roughness
+                    else:
+                        from noise_varying_ir import unit_roughness
+                    if not unit_roughness(expression):
+                        _refuse('Noise linked Roughness needs a proven [0,1] input; use an authored Clamp for unbounded values')
+                    roughness_expression = expression
+                    return 1.0  # Independent conservative amplitude bound.
                 _refuse(
                     f"Noise with a non-constant {name} has no cell yet "
                     f"(source op {expression.get('op')!r})"
@@ -2017,6 +2377,35 @@ def emit_output(node, from_socket, stack=()):
         detail_value = _folded_noise_scalar("Detail", 0.0)
         roughness_value = _folded_noise_scalar("Roughness", 0.5)
         lacunarity_value = _folded_noise_scalar("Lacunarity", 2.0)
+        native_varying = normalize_output and roughness_expression is not None and get_evaluation_engine() == 'EEVEE'
+        if native_varying and bpy.context.preferences.system.gpu_backend not in {'METAL','OPENGL'}:
+            _refuse('Native varying Noise has no verified EEVEE GPU backend profile')
+        normalized_native = normalize_output and (roughness_expression is None or native_varying)
+        precise_fractal = not normalize_output or roughness_expression is not None or normalized_native
+        if roughness_expression is not None and detail_value > 2:
+            _refuse('Noise varying Roughness requires static Detail <= 2 in the proven domain')
+        offset_value = _folded_noise_scalar('Offset', 0) if noise_type in {'HETERO_TERRAIN', 'HYBRID_MULTIFRACTAL', 'RIDGED_MULTIFRACTAL'} else 0
+        gain_value = _folded_noise_scalar('Gain', 1) if noise_type in {'HYBRID_MULTIFRACTAL', 'RIDGED_MULTIFRACTAL'} else 1
+        amplitude_bound = None
+        if noise_type != 'FBM':
+            if __package__:
+                from .noise_fractal_ir import fractal_amplitude_bound
+            else:
+                from noise_fractal_ir import fractal_amplitude_bound
+            try: amplitude_bound = fractal_amplitude_bound(noise_type, detail_value, roughness_value, offset_value, gain_value)
+            except ValueError as error: _refuse(str(error))
+        if precise_fractal and (
+                not all(math.isfinite(value) for value in [detail_value, roughness_value, lacunarity_value])
+                or abs(lacunarity_value) > 2):
+            _refuse('Unnormalized Noise needs finite static controls and |Lacunarity| <= 2 in the proven domain')
+        if roughness_value > 1.0:
+            # Native Noise clamps negative roughness to zero, but does not
+            # upper-clamp a linked value. The current normalized kernel's
+            # [0,1] amplitude model must not silently replace values above1.
+            _refuse(
+                f"Noise Roughness {roughness_value:g} exceeds the proven range "
+                "(<= 1); native linked roughness is not upper-clamped"
+            )
         if detail_value > _NOISE_DETAIL_BOUND + 1e-9:
             # Cells: `noise-detail4`, `noise-detail6`. Measured 2026-07-30,
             # maxAbs against a 0.01 gate: detail 4 1.94e-4, detail 6 2.49e-4 --
@@ -2040,6 +2429,15 @@ def emit_output(node, from_socket, stack=()):
                 "Noise with a non-constant Scale has no bounded cell yet "
                 f"(source op {scale_expression.get('op')!r})"
             )
+        if node.inputs['Scale'].is_linked:
+            if __package__:
+                from .noise_varying_ir import float32_safe_noise_scalar
+            else:
+                from noise_varying_ir import float32_safe_noise_scalar
+            if not float32_safe_noise_scalar(scale_expression):
+                _refuse('Noise linked Scale requires literal float32/Clamp inputs; arithmetic folding needs source baking')
+        if precise_fractal and not math.isfinite(folded_scale):
+            _refuse('Unnormalized Noise requires a finite static Scale')
         scale_expression = {"op": "const_float", "value": folded_scale}
         input_expression = (
             emit_input(node.inputs["W"], stack=stack)
@@ -2050,9 +2448,26 @@ def emit_output(node, from_socket, stack=()):
             else _fold_vector_prescale(input_expression)
         )
         scale_magnitude = abs(float(scale_expression["value"])) * prescale
+        # Keep explicitly measured legacy high-scale approximations separate
+        # from the versioned native normalized capability.
+        if normalized_native and not native_varying and scale_magnitude > _NOISE_SCALE_BOUND + 1e-9:
+            normalized_native = False
+            precise_fractal = False
+        normalized_source_profile = None
+        if normalized_native:
+            import platform
+            import sys
+            normalized_source_profile = _normalized_noise_source_profile(
+                get_evaluation_engine(), sys.platform, platform.machine(),
+                getattr(getattr(bpy.context.scene, 'cycles', None), 'device', 'CPU'))
+            if normalized_source_profile is None:
+                _refuse('Normalized Noise has no verified live source precision profile for '
+                        + get_evaluation_engine() + ' on ' + sys.platform + '/' + platform.machine()
+                        + '; use source baking for this Cycles profile')
         approximate_bound = _NOISE_SCALE_APPROXIMATE_BOUNDS.get(dimensions)
         if (
             scale_magnitude > _NOISE_SCALE_BOUND + 1e-9
+            and not precise_fractal
             and approximate_bound is not None
             and scale_magnitude <= approximate_bound + 1e-9
         ):
@@ -2063,7 +2478,7 @@ def emit_output(node, from_socket, stack=()):
                 "2D": "tsl.noise-2d-scale-above-exact",
                 "3D": "tsl.noise-3d-scale-above-exact",
             }[dimensions])
-        elif abs(float(scale_expression["value"])) > _NOISE_SCALE_BOUND + 1e-9:
+        elif scale_magnitude > _NOISE_SCALE_BOUND + 1e-9:
             # Sub-texel sample-position differences between the two
             # rasterizers (~3e-5 in UV) multiply by the scale. Measured
             # 2026-07-30, maxAbs against a 0.01 gate: scale 16 7.2e-4,
@@ -2086,6 +2501,7 @@ def emit_output(node, from_socket, stack=()):
             )
         expression = {
             "op": "noise",
+            "normalize": normalize_output,
             "output": "fac" if noise_output == "Fac" else "color",
             # 1D must be carried explicitly: an "else 3" fallthrough silently
             # sends the scalar W into mx_noise_float, whose
@@ -2109,6 +2525,43 @@ def emit_output(node, from_socket, stack=()):
                 if dimensions == "4D" else {}
             ),
         }
+        native_mf = False
+        shader_offset_profile = None
+        native_shader_fused = False
+        if not normalize_output:
+            expression.update({"op": "noise_fractal"})
+            expression['noiseType'] = noise_type
+            if amplitude_bound is not None:
+                expression.update(offset=offset_value, gain=gain_value, amplitudeBound=amplitude_bound)
+        if normalized_native:
+            expression.update({"op": "noise_normalized", 'noiseType': 'FBM'})
+        if native_varying:
+            expression.update({"op": "noise_varying_native", 'sourceEngine': 'EEVEE', 'nativeGpuBackend': bpy.context.preferences.system.gpu_backend, 'noiseType': 'FBM', 'roughnessNode': roughness_expression})
+        elif roughness_expression is not None:
+            expression.update({"op": "noise_varying", 'noiseType': noise_type, 'roughnessNode': roughness_expression})
+        if precise_fractal and bpy.app.version >= (5, 0, 0):
+            if __package__:
+                from .shader_domains import native_shader_input_evaluation
+            else:
+                from shader_domains import native_shader_input_evaluation
+            stage = native_shader_input_evaluation(expression)
+            if stage == 'opaque':
+                _refuse('Unnormalized Noise has unverified native constant-evaluation eligibility')
+            native_mf = stage == 'constant'
+        if precise_fractal:
+            import platform
+            import sys
+            source_engine = get_evaluation_engine()
+            gpu_backend = bpy.context.preferences.system.gpu_backend
+            shader_offset_profile = _noise_shader_offset_profile(
+                source_engine, sys.platform, platform.machine(), gpu_backend, bpy.app.version,
+                _noise_gpu_renderer() if source_engine == 'EEVEE' and gpu_backend == 'OPENGL' else '')
+            native_shader_fused = normalized_native and not native_mf and normalized_source_profile == 'cycles-neon-fma'
+            if normalized_native:
+                expression['perlinModel'] = 'cycles-neon-fma' if native_shader_fused else 'mf-periodic-f32' if native_mf else 'eevee-metal-periodic-f32' if gpu_backend == 'METAL' else normalized_source_profile
+            expression['evaluationModel'] = 'shader-mf' if native_mf else 'shader'
+            expression['offsetModel'] = ('cycles-neon-fma' if native_shader_fused else 'float4-f32' if dimensions == '4D' else 'mf-f32' if native_mf
+                                         else shader_offset_profile or 'shader-folded')
         # Distortion perturbs the SCALED coordinate before any octave runs,
         # by a single signed Perlin octave per component sampled at the low
         # hash-derived offsets. noisetex.h and
@@ -2124,9 +2577,11 @@ def emit_output(node, from_socket, stack=()):
         distortion_value = 0.0
         if distortion_socket is not None:
             if distortion_socket.is_linked:
-                folded = _fold_constant_scalar(
-                    emit_input(distortion_socket, stack=stack)
-                )
+                distortion_expression = emit_input(distortion_socket, stack=stack)
+                if precise_fractal and distortion_expression.get('op') != 'const_float':
+                    _refuse('Native normalized live Roughness requires literal float32 Distortion; linked arithmetic needs source baking'
+                            if native_varying else 'Native Noise requires literal float32 Distortion; linked arithmetic needs source baking')
+                folded = _fold_constant_scalar(distortion_expression)
                 if folded is None:
                     _refuse(
                         "Noise with a non-constant Distortion has no bounded "
@@ -2135,7 +2590,35 @@ def emit_output(node, from_socket, stack=()):
                 distortion_value = folded
             else:
                 distortion_value = float(distortion_socket.default_value)
-        if abs(distortion_value) > 1e-9:
+        if precise_fractal and (not math.isfinite(distortion_value) or abs(distortion_value) > 1):
+            _refuse('Unnormalized Noise Distortion exceeds its proven finite [-1,1] domain')
+        if native_varying and distortion_value != 0:
+            if __package__:
+                from .noise_varying_ir import native_distortion_mf_inputs, portable_noise_constant_arithmetic, NATIVE_MF_NOISE_INPUT_MESSAGE, NATIVE_SHADER_NOISE_INPUT_MESSAGE
+            else:
+                from noise_varying_ir import native_distortion_mf_inputs, portable_noise_constant_arithmetic, NATIVE_MF_NOISE_INPUT_MESSAGE, NATIVE_SHADER_NOISE_INPUT_MESSAGE
+            mf_coordinates = False
+            if native_mf and gpu_backend == 'METAL' and not native_distortion_mf_inputs(expression):
+                if __package__:
+                    from .noise_mf_coordinates import canonicalize_mf_coordinates
+                else:
+                    from noise_mf_coordinates import canonicalize_mf_coordinates
+                canonical = canonicalize_mf_coordinates(expression)
+                if canonical is not None and native_distortion_mf_inputs(canonical):
+                    expression = canonical
+                    mf_coordinates = True
+            mf_distortion = native_mf and native_distortion_mf_inputs(expression)
+            if native_mf and not mf_distortion:
+                _refuse(NATIVE_MF_NOISE_INPUT_MESSAGE)
+            if not native_mf and not portable_noise_constant_arithmetic(expression):
+                _refuse(NATIVE_SHADER_NOISE_INPUT_MESSAGE)
+            if gpu_backend != 'METAL' or not (mf_distortion or dimensions == '1D' and not native_mf):
+                _refuse('Native normalized live Roughness nonzero Distortion requires verified Metal 1D shader or native MF inputs; use source baking')
+            expression['distortionModel'] = ('native-mf-f32-coordinates-v1' if mf_coordinates else 'native-mf-f32-v1') if mf_distortion else 'metal-1d-fma-f32-v1'
+        if native_shader_fused and dimensions in {'3D', '4D'} and (detail_value > 1 or distortion_value != 0):
+            _refuse('Normalized Noise Cycles SIMD 3D/4D above Detail1 or with Distortion needs source baking; '
+                    'the software renderer cannot reliably compile this workload')
+        if distortion_value != 0 if native_varying else abs(distortion_value) > 1e-9:
             # Lane count follows the dimension. The old "2 if 2D else 3" was
             # the same silent fallthrough that broke 1D dimensions: it would
             # emit three offsets for a 1D or 4D noise and the runtime would
@@ -2144,7 +2627,10 @@ def emit_output(node, from_socket, stack=()):
             count = {"1D": 1, "2D": 2, "4D": 4}.get(dimensions, 3)
             expression["distortion"] = distortion_value
             expression["distortionOffsets"] = [
-                _noise_random_offset(float(seed), count)
+                _noise_random_offset(float(seed), count, native_mf=native_mf,
+                                     native_float4=precise_fractal and count == 4,
+                                     native_shader_f32=shader_offset_profile is not None,
+                                     native_shader_fused=native_shader_fused)
                 for seed in range(count)
             ]
         if noise_output == "Color":
@@ -2160,13 +2646,59 @@ def emit_output(node, from_socket, stack=()):
             count = {"1D": 1, "2D": 2, "4D": 4}.get(dimensions, 3)
             seeds = (float(count), float(count + 1))
             expression["colorOffsets"] = [
-                _noise_random_offset(seed, count) for seed in seeds
+                _noise_random_offset(seed, count, native_mf=native_mf,
+                                     native_float4=precise_fractal and count == 4,
+                                     native_shader_f32=shader_offset_profile is not None,
+                                     native_shader_fused=native_shader_fused) for seed in seeds
             ]
-        return expression
+        if precise_fractal and get_evaluation_engine() == 'EEVEE':
+            if __package__:
+                from .noise_static_inputs import require_shader_constant_inputs
+            else:
+                from noise_static_inputs import require_shader_constant_inputs
+            require_shader_constant_inputs(expression, _refuse)
+        if __package__:
+            from .noise_field_ir import qualify_nearest_field
+        else:
+            from noise_field_ir import qualify_nearest_field
+        return qualify_nearest_field(expression, node=node)
+
+    if idname == "ShaderNodeBump":
+        if __package__:
+            from .bump_ir import emit as emit_bump
+            from .bump_height_ir import emit as emit_bump_height
+        else:
+            from bump_ir import emit as emit_bump
+            from bump_height_ir import emit as emit_bump_height
+        if node.inputs['Height'].is_linked:
+            return emit_bump_height(node,emit_scalar=lambda socket:emit_input(socket,stack=stack),
+                emit_vector=lambda socket:emit_input(socket,stack=stack,as_vector=True),refuse=_refuse,engine=get_evaluation_engine())
+        return emit_bump(node, emit_vector=lambda socket: emit_input(socket, stack=stack, as_vector=True),
+                            refuse=_refuse, engine=get_evaluation_engine())
+
+    if idname == "ShaderNodeTangent":
+        if __package__:
+            from .tangent_ir import emit_tangent
+        else:
+            from tangent_ir import emit_tangent
+        return emit_tangent(node,engine=get_evaluation_engine(),refuse=_refuse)
 
     if idname == "ShaderNodeNormalMap":
+        if node.space=='TANGENT' and get_evaluation_engine()=='EEVEE':
+            if __package__:
+                from .normal_map_tangent_ir import emit as emit_tangent_map
+            else:
+                from normal_map_tangent_ir import emit as emit_tangent_map
+            return emit_tangent_map(node,emit_vector=lambda socket:emit_input(socket,stack=stack,as_vector=True),
+                emit_scalar=lambda socket:emit_input(socket,stack=stack),refuse=_refuse,engine=get_evaluation_engine())
         if node.space != 'TANGENT':
-            _refuse('Normal Map currently supports Tangent space')
+            if __package__:
+                from .normal_ir import emit_normal_map
+            else:
+                from normal_ir import emit_normal_map
+            return emit_normal_map(node, emit_vector=lambda socket:emit_input(socket, stack=stack, as_vector=True),
+                                   emit_scalar=lambda socket:emit_input(socket, stack=stack),
+                                   refuse=_refuse, engine=get_evaluation_engine())
         if node.uv_map:
             _refuse('Normal Map with a named tangent UV basis is not supported yet')
         convention = str(getattr(node, 'convention', 'OPENGL'))
@@ -2260,44 +2792,83 @@ def emit_output(node, from_socket, stack=()):
         _refuse(f"Attribute output {socket_name!r} has no cell yet")
 
     if idname == "ShaderNodeMapRange":
-        if str(getattr(node, "data_type", "FLOAT")) != "FLOAT":
+        data_type = str(getattr(node, "data_type", "FLOAT"))
+        if data_type not in {"FLOAT", "FLOAT_VECTOR"}:
             _refuse(f"Map Range data type {node.data_type!r} has no cell yet")
+        is_vector = data_type == "FLOAT_VECTOR"
+        expected_output = "Vector" if is_vector else "Result"
+        if str(getattr(from_socket, "identifier", socket_name)) != expected_output:
+            _refuse(f"Map Range {data_type} inactive output has no cell")
         interpolation = str(getattr(node, "interpolation_type", "LINEAR"))
-        if interpolation not in {"LINEAR", "SMOOTHSTEP", "SMOOTHERSTEP"}:
+        if interpolation not in {"LINEAR", "STEPPED", "SMOOTHSTEP", "SMOOTHERSTEP"}:
             _refuse(
                 f"Map Range interpolation {interpolation!r} has no cell yet"
             )
-        return {
+        sockets = {item.identifier: item for item in node.inputs}
+        keys = {
+            "value": "Vector", "fromMin": "From_Min_FLOAT3", "fromMax": "From_Max_FLOAT3",
+            "toMin": "To_Min_FLOAT3", "toMax": "To_Max_FLOAT3", "steps": "Steps_FLOAT3",
+        } if is_vector else {
+            "value": "Value", "fromMin": "From Min", "fromMax": "From Max",
+            "toMin": "To Min", "toMax": "To Max", "steps": "Steps",
+        }
+        expression = {
             "op": "map_range",
+            "dataType": data_type,
             "interpolation": interpolation,
             "clamp": bool(getattr(node, "clamp", True)),
-            "value": emit_input(node.inputs["Value"], stack=stack),
-            "fromMin": emit_input(node.inputs["From Min"], stack=stack),
-            "fromMax": emit_input(node.inputs["From Max"], stack=stack),
-            "toMin": emit_input(node.inputs["To Min"], stack=stack),
-            "toMax": emit_input(node.inputs["To Max"], stack=stack),
+            **{key: emit_input(sockets[keys[key]], stack=stack, as_vector=is_vector)
+               for key in ("value", "fromMin", "fromMax", "toMin", "toMax")},
         }
+        if interpolation == "STEPPED":
+            # Negative vector steps differ between Cycles and EEVEE. Admit
+            # only finite nonnegative static values until that context has
+            # an explicit engine contract; dynamic Steps keeps its bake route.
+            import math
+            steps = emit_input(sockets[keys["steps"]], stack=stack, as_vector=is_vector)
+            if not is_vector:
+                values = [_fold_constant_scalar(steps)]
+            elif steps.get("op") == "const_vec3":
+                values = steps.get("value", [])
+            elif steps.get("op") == "combine":
+                values = [_fold_constant_scalar(steps.get(axis)) for axis in ("x", "y", "z")]
+            else:
+                values = []
+            if len(values) != (3 if is_vector else 1) or any(value is None for value in values):
+                _refuse("Map Range STEPPED with dynamic Steps has no bounded cell yet")
+            if any(not math.isfinite(value) or value < 0 for value in values):
+                _refuse("Map Range STEPPED requires finite nonnegative Steps")
+            expression["steps"] = {"op": "const_vec3", "value": [float(value) for value in values]} \
+                if is_vector else {"op": "const_float", "value": float(values[0])}
+        return expression
 
     if idname == "ShaderNodeClamp":
-        if str(getattr(node, "clamp_type", "MINMAX")) != "MINMAX":
-            _refuse(f"Clamp type {node.clamp_type!r} has no cell yet")
-        return {
-            "op": "clamp_minmax",
-            "value": emit_input(node.inputs["Value"], stack=stack),
-            "min": emit_input(node.inputs["Min"], stack=stack),
-            "max": emit_input(node.inputs["Max"], stack=stack),
-        }
+        mode = str(getattr(node, "clamp_type", "MINMAX"))
+        if mode not in {"MINMAX", "RANGE"}:
+            _refuse(f"Clamp type {mode!r} has no native model")
+        low = emit_input(node.inputs["Min"], stack=stack)
+        high = emit_input(node.inputs["Max"], stack=stack)
+        # Range orders either authored or live bounds. Min Max deliberately
+        # retains their order: reversed bounds collapse to the Max input.
+        if mode == "RANGE":
+            low, high = ({"op": "math", "operation": "MINIMUM", "a": low, "b": high},
+                         {"op": "math", "operation": "MAXIMUM", "a": low, "b": high})
+        return {"op": "clamp_minmax", "value": emit_input(node.inputs["Value"], stack=stack),
+                "min": low, "max": high}
 
     _refuse(f"{idname} has no proven TSL mapping")
 
 
-def emit_channel(socket, stack=()) -> dict:
+def emit_channel(socket, stack=(), *, evaluation_engine=None) -> dict:
     """Complete IR document for one channel input socket.
 
     ``stack`` is the group-instance chain enclosing the socket's node
     (from ``find_principled_root``), so channels fed through Group Input
     sockets resolve against the right instance.
     """
+    if evaluation_engine is not None:
+        with emission_context(evaluation_engine=evaluation_engine):
+            return emit_channel(socket, stack)
     _require_static_tree(socket.node)
     source = _socket_source(socket)
     if source is None:

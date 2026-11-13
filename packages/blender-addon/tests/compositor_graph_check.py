@@ -10,12 +10,19 @@ import compositor_graph
 
 scene = bpy.context.scene
 scene.render.use_compositing = True
-tree = bpy.data.node_groups.new("Graph structure", "CompositorNodeTree")
-tree.interface.new_socket(name="Image", in_out="OUTPUT", socket_type="NodeSocketColor")
-scene.compositing_node_group = tree
-sink = tree.nodes.new("NodeGroupOutput")
+modern = hasattr(scene, "compositing_node_group")
+if modern:
+    tree = bpy.data.node_groups.new("Graph structure", "CompositorNodeTree")
+    tree.interface.new_socket(name="Image", in_out="OUTPUT", socket_type="NodeSocketColor")
+    scene.compositing_node_group = tree
+    sink = tree.nodes.new("NodeGroupOutput")
+else:
+    scene.use_nodes = True
+    tree = scene.node_tree
+    tree.nodes.clear()
+    sink = tree.nodes.new("CompositorNodeComposite")
 source = tree.nodes.new("CompositorNodeRLayers")
-mix = tree.nodes.new("ShaderNodeMixRGB")
+mix = tree.nodes.new("ShaderNodeMixRGB" if modern else "CompositorNodeMixRGB")
 tree.links.new(source.outputs["Image"], mix.inputs[1])
 tree.links.new(source.outputs["Image"], mix.inputs[2])
 tree.links.new(mix.outputs[0], sink.inputs[0])
@@ -37,10 +44,10 @@ group.interface.new_socket(name="Image", in_out="OUTPUT", socket_type="NodeSocke
 incoming = group.nodes.new("NodeGroupInput")
 outgoing = group.nodes.new("NodeGroupOutput")
 reroute = group.nodes.new("NodeReroute")
-gamma = group.nodes.new("ShaderNodeGamma")
+gamma = group.nodes.new("ShaderNodeGamma" if modern else "CompositorNodeGamma")
 gamma.mute = True
 group.links.new(incoming.outputs[0], reroute.inputs[0])
-group.links.new(reroute.outputs[0], gamma.inputs["Color"])
+group.links.new(reroute.outputs[0], gamma.inputs[0])
 group.links.new(gamma.outputs[0], outgoing.inputs[0])
 instance = tree.nodes.new("CompositorNodeGroup")
 instance.node_tree = group

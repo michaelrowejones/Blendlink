@@ -23,7 +23,7 @@ authored glTF camera onto the retained Splash geometry and reproduce the
 - sky semantic gate: pass; and
 - building-pattern semantic gate: pass.
 
-The same command compares the actual Needle browser result. Current Blendlink
+The same command compares the actual Needle browser result. Current SceneToWeb
 has MAE `0.191306` and fails all three complete semantic gates. The bounded
 Needle result has MAE `0.296973` and also fails all three. The projector is
 therefore a **Prototype improvement** for this exact camera result, not a
@@ -34,7 +34,7 @@ projected frame by MAE `0.180574` and visibly tears or stretches the captured
 appearance. The contract must be named **fixed-camera appearance proxy**, not
 portable material, light transport, or Eevee shader translation.
 
-![Eevee, current Blendlink, actual Needle, authored projector, backdrop-only control, offset projector, and application plate](../experiments/eevee-fixed-camera-transport-prototype/output/overview.png)
+![Eevee, current SceneToWeb, actual Needle, authored projector, backdrop-only control, offset projector, and application plate](../experiments/eevee-fixed-camera-transport-prototype/output/overview.png)
 
 The overview SHA-256 is
 `bafb80a5506c766bd6eae3625d38adb0cc9204733ca4ebe5ac66842e1e93369f`.
@@ -94,7 +94,7 @@ The command starts a private local server and captures:
 4. the two depth-probe controls;
 5. raw glTF;
 6. an application-owned image plate; and
-7. the retained current Blendlink and actual Needle pixels.
+7. the retained current SceneToWeb and actual Needle pixels.
 
 The machine-readable evidence is
 [`output/evidence.json`](../experiments/eevee-fixed-camera-transport-prototype/output/evidence.json).
@@ -248,7 +248,7 @@ decides whether and where to render it.
   behind it unless a separate depth representation is introduced.
 
 **Decision:** keep as the exact reference/fallback and let the application own
-presentation. Do not market it as Blendlink scene parity.
+presentation. Do not market it as SceneToWeb scene parity.
 
 ### Design B — fixed-camera geometry projector
 
@@ -260,7 +260,7 @@ projector = authoredProjection * inverse(authoredCameraWorld)
 projectedUv = perspectiveDivide(projector * objectWorldPosition)
 ```
 
-The application still owns its Canvas and loop. Blendlink would own a
+The application still owns its Canvas and loop. SceneToWeb would own a
 transactional material lease that validates invariants and restores the
 application materials on disposal.
 
@@ -447,14 +447,14 @@ It must independently turn red when:
 7. the texture is tone-mapped twice; or
 8. disposal fails to restore the application material.
 
-Only after that fixture passes should Blendlink consider a production module.
+Only after that fixture passes should SceneToWeb consider a production module.
 The Splash result alone is strong pixel evidence but too forgiving because its
 sky geometry covers the full viewport.
 
 ## Surface-scoped package module follow-up
 
 Capability `NDL-MAT-009` remains **No analogue / Prototype Improvement**.
-Blendlink now has an internal package-owned Three module at
+SceneToWeb now has an internal package-owned Three module at
 [`threeFixedCameraAppearance.ts`](../packages/blendlink/src/threeFixedCameraAppearance.ts),
 but it is deliberately not exported from the package and is not called by the
 compiled-scene installer.
@@ -468,7 +468,7 @@ the caller's texture.
 
 ### Existing production audit
 
-Blendlink's existing `fixedCameraAppearance` setting is not this transport. It
+SceneToWeb's existing `fixedCameraAppearance` setting is not this transport. It
 is an internal bake-policy fact derived only when the recipe has one fixed,
 authored active camera and all atlases are Appearance. It:
 
@@ -636,9 +636,9 @@ evidence are intentionally separate.
 | `SPL-NDL-FCAM-002` | Depth-tested fixed-camera Eevee color proxy on retained geometry | **Improvement** candidate over the actual Needle Splash result | **Prototype** | **Browser verified 2026-07-24**: projector MAE `0.000001`; all three gates pass; 335 meshes retained; center depth probe passes. Needle actual MAE `0.296973` and all complete gates fail. Offset-camera negative control changes by MAE `0.180574` |
 | `SPL-NDL-FCAM-003` | Truthful per-surface/object semantics for a projected beauty frame | **Gap** | **Future** | **Red/limiting control verified 2026-07-24**: one backdrop mesh also matches the complete frame, proving that color equality cannot attest surface/object ownership |
 | `SPL-NDL-FCAM-004` | Preserve missing flowerpot/lamp identity, depth, picking, animation, and components | **Gap** | **Future / separate workstream** | Visible-pixel preservation is verified through the beauty proxy; structural root cause and exact object completeness are **Pending** |
-| `SPL-NDL-FCAM-005` | Camera-independent explicit receiver lightmapping | **Match** in architecture with Needle's explicit lightmap route | Blendlink and Needle subsets **Shipped** | Exact same-receiver, equal-resolution Needle-versus-Blendlink bake remains **Pending**; the actual Splash Needle run had zero lightmapped receivers |
+| `SPL-NDL-FCAM-005` | Camera-independent explicit receiver lightmapping | **Match** in architecture with Needle's explicit lightmap route | SceneToWeb and Needle subsets **Shipped** | Exact same-receiver, equal-resolution Needle-versus-SceneToWeb bake remains **Pending**; the actual Splash Needle run had zero lightmapped receivers |
 
-No row upgrades Blendlink's current production Splash scene to parity. The
+No row upgrades SceneToWeb's current production Splash scene to parity. The
 surface-scoped package module and its focused Chromium differential now exist,
 but the capability remains Prototype until compiler capture/attestation,
 loading and lifecycle work, asset-graph integration, and the production Splash

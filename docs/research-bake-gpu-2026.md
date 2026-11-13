@@ -1,4 +1,4 @@
-# Blendlink bake GPU and phase audit (2026-07-21)
+# SceneToWeb bake GPU and phase audit (2026-07-21)
 
 Status: evidence-backed audit; targeted GPU discovery and writable OptiX cache
 ownership are implemented, unit-verified, and exact-package dogfooded at 4K.
@@ -6,13 +6,13 @@ Per-phase execution evidence remains a design recommendation.
 
 ## Question
 
-Which parts of Blendlink's atlas build actually run on the GPU, why does the
+Which parts of SceneToWeb's atlas build actually run on the GPU, why does the
 current diagnostic name an RTX 5080 twice, and what is the smallest truthful
 instrumentation and optimization step?
 
 ## Executive finding
 
-The current `execution.deviceClass: "gpu"` evidence means that Blendlink asked
+The current `execution.deviceClass: "gpu"` evidence means that SceneToWeb asked
 Cycles to run bake operators on a selected GPU backend. It does **not** mean the
 whole atlas pipeline is GPU work. Geometry evaluation, UV packing, proxy
 construction, dependency hashing, image-buffer inspection, normalization,
@@ -24,7 +24,7 @@ The denoise phase is mixed and must not be labelled CPU by assumption. In the
 installed Blender 5.2.0 LTS build, a newly created scene defaults to compositor
 `GPU` and denoise device `AUTO`; the active OptiX RTX 5080 reports OIDN GPU
 support. Therefore the present compositor Denoise node can run OIDN on the GPU
-on this machine. Blendlink does not explicitly select or record that device,
+on this machine. SceneToWeb does not explicitly select or record that device,
 and Blender's GPU option permits a CPU fallback, so the current manifest cannot
 prove which denoise device completed a particular job.
 
@@ -46,12 +46,12 @@ AMD Ryzen 7 9850X3D 8-Core Processor | CPU | CPU
 NVIDIA GeForce RTX 5080 | OPTIX | CUDA_NVIDIA GeForce RTX 5080_0000:01:00_OptiX
 ```
 
-This is why Blendlink logs the RTX 5080 twice: it prints every non-CPU entry,
+This is why SceneToWeb logs the RTX 5080 twice: it prints every non-CPU entry,
 not only entries whose `type` equals the selected backend. CUDA and OptiX are
 two logical Cycles devices for one physical NVIDIA card. A probe that enabled
 both logical entries while leaving `compute_device_type = "OPTIX"` reported
 `get_num_gpu_devices() == 1`, confirming that Cycles filters execution to the
-active backend even though Blendlink's diagnostic does not.
+active backend even though SceneToWeb's diagnostic does not.
 
 The installed Cycles source makes three relevant contracts explicit:
 
@@ -76,7 +76,7 @@ cycles.preferences.has_oidn_gpu_devices() = True
 Blender documents `AUTO` as using the compositor's device, and `GPU` as using
 the GPU when available with CPU fallback.
 
-## Current Blendlink phase graph
+## Current SceneToWeb phase graph
 
 | Phase | Current implementation | Device truth |
 | --- | --- | --- |
@@ -116,7 +116,7 @@ attempted existed. On this machine that produced a harmless duplicate
 diagnostic because both CUDA and OptiX exist. On a different machine it could
 claim an attempted backend based on a device belonging to another backend.
 
-Blendlink now applies the smallest safe correction:
+SceneToWeb now applies the smallest safe correction:
 
 1. Attempt backends in policy order (`OPTIX`, `CUDA`, `HIP`, `ONEAPI`,
    `METAL`; unavailable enum values remain caught).
@@ -167,10 +167,10 @@ does not create an equivalent in-memory cache. Sources:
 [OptiX device-context cache API](https://raytracing-docs.nvidia.com/optix9/api/group__optix__host__api__device__context.html) and
 [OptiX 8.1 Programming Guide](https://raytracing-docs.nvidia.com/optix8/guide/optix_guide.241022.A4.pdf).
 
-Blendlink now provisions and write-probes a stable package-owned cache before
+SceneToWeb now provisions and write-probes a stable package-owned cache before
 spawning Blender. Precedence is:
 
-1. `BLENDLINK_OPTIX_CACHE_PATH`, for a Blendlink-specific explicit override;
+1. `BLENDLINK_OPTIX_CACHE_PATH`, for a SceneToWeb-specific explicit override;
 2. the standard `OPTIX_CACHE_PATH`, preserving an application/build-agent
    choice;
 3. `<os temporary directory>/blendlink-optix-cache`.
@@ -299,11 +299,11 @@ durable evidence share one source. Exact GPU names stay local-console-only.
 
 ## Sources
 
-- Blendlink `packages/blendlink/blender/export_scene.py`: device selection,
+- SceneToWeb `packages/blendlink/blender/export_scene.py`: device selection,
   Cycles bake calls, run orchestration, and current timing boundaries.
-- Blendlink `packages/blendlink/blender/bakelib.py`: progress, save, denoise,
+- SceneToWeb `packages/blendlink/blender/bakelib.py`: progress, save, denoise,
   pixel processing, delivery tiers, UV packing, and proxy mechanics.
-- Blendlink `packages/blendlink/src/invoke.ts`: process-level timing and
+- SceneToWeb `packages/blendlink/src/invoke.ts`: process-level timing and
   published execution types.
 - Installed Blender 5.2 Cycles source, `scripts/addons_core/cycles/properties.py`,
   especially `get_device_list`, `get_devices_for_type`, `refresh_devices`,

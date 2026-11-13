@@ -36,10 +36,10 @@ const addonManifestText = readFileSync(
 const addonVersion = addonManifestText.match(/^version\s*=\s*"([^"]+)"/m)?.[1]
 const addonId = addonManifestText.match(/^id\s*=\s*"([^"]+)"/m)?.[1]
 const semver = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/
-if (addonId !== 'blendlink' || !semver.test(packageVersion) ||
+if (addonId !== 'scenetoweb' || !semver.test(packageVersion) ||
     !addonVersion || !semver.test(addonVersion) || addonVersion !== packageVersion) {
   throw new Error(
-    `Blendlink release identity mismatch: npm ${String(packageVersion)}, ` +
+    `SceneToWeb release identity mismatch: npm ${String(packageVersion)}, ` +
       `Blender addon ${String(addonId)}@${String(addonVersion)}`,
   )
 }
@@ -92,6 +92,11 @@ const addonSource = join(root, '..', 'blender-addon')
 const addonOut = join(root, 'dist', 'addon')
 rmSync(addonOut, { recursive: true, force: true })
 mkdirSync(addonOut, { recursive: true })
+// The extension is a separate carrier from npm. Keep the Apache coefficient
+// table attribution/license with it as well as with the browser runtime.
+copyFileSync(join(root, 'assets', 'blender-spectral-NOTICE.txt'), join(addonOut, 'spectral-NOTICE.txt'))
+copyFileSync(join(root, 'assets', 'blender-spectral-apache-2.0.txt'), join(addonOut, 'spectral-LICENSE.txt'))
+copyFileSync(join(root, 'assets', 'blender-noise-bsd-3-clause.txt'), join(addonOut, 'noise-LICENSE.txt'))
 for (const entry of readdirSync(addonSource)) {
   // Every .py and every .json: the addon's evidence registries are data its
   // own modules read at import time, so naming them one by one shipped an

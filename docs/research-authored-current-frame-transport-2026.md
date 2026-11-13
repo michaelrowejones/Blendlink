@@ -5,7 +5,7 @@ Last differential pass: **2026-07-25**
 
 ## Decision summary
 
-Blendlink should not globally switch its animation export to either
+SceneToWeb should not globally switch its animation export to either
 `export_rest_position_armature=false` or Blender's `SCENE` mode yet.
 
 The smallest high-confidence production direction is a package-owned,
@@ -116,7 +116,7 @@ The exact fixture result is a shared baseline gap, not positive parity:
 - it has no channel for `ConstrainedCube` or `DrivenCube`;
 - at frame 20 its maximum portable error is `4.0`.
 
-Blendlink should improve on this by refusing unsupported evaluated animation
+SceneToWeb should improve on this by refusing unsupported evaluated animation
 instead of publishing a healthy-looking partial clip set.
 
 ## Differential fixture
@@ -190,7 +190,7 @@ library.
 C keeps a conventional rest bind and achieves exact evaluated motion. It is
 the cleanest representation when the artist intends one authored timeline.
 However, the website would have to start and seek the generated scene clip
-just to obtain the initial pose. Blendlink would also have replaced multiple
+just to obtain the initial pose. SceneToWeb would also have replaced multiple
 named Actions with one sequence. That is truthful only as an explicit
 whole-scene playback policy.
 
@@ -208,7 +208,7 @@ that an installed scene has a package-owned idle pose; they do not load a
 second GLB, match hierarchies, or seek a hidden full animation.
 
 D is intentionally narrow. The fixture proves it cannot make an Action include
-motion that Blender did not put in that Action. Blendlink must either:
+motion that Blender did not put in that Action. SceneToWeb must either:
 
 - refuse that animated dependency with the affected object/constraint/driver
   names; or

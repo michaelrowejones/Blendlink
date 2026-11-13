@@ -4,7 +4,7 @@ Research date: 2026-07-24
 
 ## Decision
 
-Yes: Blendlink should test a wider spectrum of scenes. The present visual
+Yes: SceneToWeb should test a wider spectrum of scenes. The present visual
 dogfood is intentionally difficult, but it is biased toward two families:
 large static dioramas and stylized Eevee splash art. Adding more splash files
 without a capability matrix would increase runtime without telling us which
@@ -40,7 +40,7 @@ animation.
 
 It is not a visual-parity oracle. A valid GLB can still omit Grease Pencil or
 Hair Curves, flatten a Shader-to-RGB material to a plain factor, lose
-compositing, or carry geometry while erasing the authored look. Blendlink's
+compositing, or carry geometry while erasing the authored look. SceneToWeb's
 job begins where “stock export completed” stops: classify the complete
 renderable dependency graph, compile the portable representation, attest the
 artifact, and refuse artistic collapse loudly.
@@ -78,7 +78,7 @@ future interface such as:
 run corpus { tier, scene ids, baseline } -> evidence report
 ```
 
-Acquisition, Blender inspection, Blendlink planning, Needle export, generated
+Acquisition, Blender inspection, SceneToWeb planning, Needle export, generated
 website harnesses, browser capture, image/object comparison, artifact
 attestation, and cleanup stay inside the implementation. Scene entries declare
 facts and expectations; they do not grow their own orchestration scripts.
@@ -139,7 +139,7 @@ explicit compatibility pair. Blender can emit extensions that a particular
 Three revision does not consume. The generated lane must therefore enumerate
 the exporter’s actual extension set and fail loudly when a required extension
 has no runtime path; a successful stock export is not sufficient evidence of a
-renderable Blendlink artifact.
+renderable SceneToWeb artifact.
 
 ## Tiered source-scene corpus
 
@@ -205,10 +205,10 @@ can be more important to the release contract than a 400 MiB screenshot.
   materials, three images, one packed image, two Geometry Nodes modifiers,
   five particle systems, 20 Shader-to-RGB nodes, four cameras, and seven
   actions.
-- Current Blendlink procedural audit sees the two Geometry Nodes objects as
+- Current SceneToWeb procedural audit sees the two Geometry Nodes objects as
   realizable. The completed zero-config run then proved that three
   render-visible legacy `HAIR/PATH` systems in the exact export scope configure
-  93,000 parent particles that stock glTF does not transport. Blendlink now
+  93,000 parent particles that stock glTF does not transport. SceneToWeb now
   blocks them before export. A retained pre-fix sidecar also exposed 19 used
   `needsBake` materials behind a misleading `plan: null`; the planner now
   blocks that state unless a named application adapter accepts a loud warning.
@@ -267,14 +267,14 @@ peak memory justify nightly use.
   paths and all 24 referenced images with auto-execution disabled, while still
   exposing two missing linked IDs, seven registered scripts, restricted driver
   evaluations, and five render-visible POLY Curve objects whose evaluated
-  `to_mesh()` result is `None`. The previous Blendlink 5.1 plan surfaced the
+  `to_mesh()` result is `None`. The previous SceneToWeb 5.1 plan surfaced the
   latter as an internal `AttributeError`. A generated linked-`POLY`
   differential now passes on Blender 5.1.2 and 5.2.0 LTS, and the untouched
   bundle rerun names `GEO-electrical_wire.blue` / `NurbsPath.014` plus its
-  source library and remedies. Blendlink never substitutes raw spline points
+  source library and remedies. SceneToWeb never substitutes raw spline points
   for missing evaluated geometry.
 - Blender 5.2.0 LTS reproducibly crashes in its native library-override read
-  path before Blendlink Python can run. Blendlink reports abnormal exit code
+  path before SceneToWeb Python can run. SceneToWeb reports abnormal exit code
   11 and the access-violation tail and never silently retries 5.1. This is a
   verified platform boundary, not a known-issue-registry entry: no public
   primary issue for the exact crash has been pinned.
@@ -339,7 +339,7 @@ with these phases:
    nonzero Canvas size, nonblank render, WebGL context, no page/console/request
    errors, and declared CSP/decoder-worker expectations.
 6. **Three-way visual evidence:** render Blender's selected engine at the
-   authored camera/frame, the pinned Needle cell, and Blendlink. Require
+   authored camera/frame, the pinned Needle cell, and SceneToWeb. Require
    object-ID completeness and semantic masks in addition to full-frame
    MAE/RMSE. Full-frame error alone can hide a missing lamp or plant.
 7. **Performance/determinism:** record compile time, peak memory, transfer/GPU
@@ -356,7 +356,7 @@ object completeness.
 Every behavior-level conclusion remains a three-column result:
 
 ```text
-Blender source truth | pinned Needle result | Blendlink result
+Blender source truth | pinned Needle result | SceneToWeb result
 ```
 
 Before a scene can support a Match/Improvement claim:
@@ -374,7 +374,7 @@ Before a scene can support a Match/Improvement claim:
 The current coherent named cell is `splash-official-preview`: Needle add-on
 1.4.2, Engine 5.1.4, Vite 8.0.3, and its pinned browser evidence. It proves one
 official Preview path, not Needle production compression. Where Needle also
-silently drops a renderable, Blendlink's early named refusal can be recorded as
+silently drops a renderable, SceneToWeb's early named refusal can be recorded as
 an Improvement only after a differential fixture independently fails the two
 outcomes.
 
@@ -406,7 +406,7 @@ outcomes.
 
 This order broadens capability coverage while the active Splash 4.0 work
 continues. It does not postpone current object/material fixes, and it avoids
-turning Blendlink into a pile of demo-specific configuration.
+turning SceneToWeb into a pile of demo-specific configuration.
 
 ## Evidence status
 
@@ -428,7 +428,7 @@ turning Blendlink into a pile of demo-specific configuration.
   behavior, eleven Three-built-in material extensions, and two independently
   failing unsupported animation-extension cells.
 - **Verified Blender 5.2 exporter matrix:** broad core/KHR material structure,
-  Three r184 construction, byte-identical Blendlink/Needle-equivalent stock
+  Three r184 construction, byte-identical SceneToWeb/Needle-equivalent stock
   output, exact alpha-clip grammar controls, and an independently failing
   procedural Noise control. See
   [`research-blender-52-exporter-cells-2026.md`](research-blender-52-exporter-cells-2026.md).
@@ -441,7 +441,7 @@ turning Blendlink into a pile of demo-specific configuration.
 - **Verified DOGWALK production stress:** immutable-source read-only inventory,
   22-material zero-config refusal, driven camera-data compile refusal,
   Needle-equivalent stock structural floor, and current-frame/current-pose
-  browser controls. A publishable Blendlink artifact, exact license, full
+  browser controls. A publishable SceneToWeb artifact, exact license, full
   three-way material/lighting/compositor visual evidence, physical-GPU
   performance, and repeat-run determinism remain pending.
 - **Verified TrapX private material regression:** immutable source identity,

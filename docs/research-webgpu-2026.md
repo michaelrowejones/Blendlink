@@ -1,10 +1,10 @@
-# WebGPU and Blendlink
+# WebGPU and SceneToWeb
 
 Research date: 2026-07-21
 
 ## Executive recommendation
 
-**Keep Three.js `WebGLRenderer` as Blendlink's production default. Begin a
+**Keep Three.js `WebGLRenderer` as SceneToWeb's production default. Begin a
 separate, explicitly experimental `WebGPURenderer`/TSL adapter, but do not expose
 WebGPU as an artist-facing render-mode checkbox until it has full visual and
 component parity.**
@@ -15,7 +15,7 @@ its WebGPU/TSL stack. But Three still calls `WebGPURenderer` experimental and
 warns that some applications will have missing features or perform better with
 `WebGLRenderer`. More importantly, Three's WebGPU renderer does not run the
 legacy `EffectComposer`, `ShaderMaterial`, `RawShaderMaterial`, or
-`onBeforeCompile` paths. Those are not incidental limitations for Blendlink:
+`onBeforeCompile` paths. Those are not incidental limitations for SceneToWeb:
 the current component pipeline is built on `postprocessing`, N8AO, GLSL custom
 effects, and an `onBeforeCompile` baked-appearance path.
 [Three WebGPURenderer guide](https://threejs.org/manual/en/webgpurenderer)
@@ -112,15 +112,15 @@ Three's feature set. R3F makes the integration possible; it does not remove the
 Three or post-processing compatibility work.
 [R3F Canvas WebGPU guidance](https://github.com/pmndrs/react-three-fiber/blob/master/docs/API/canvas.mdx#webgpu)
 
-## Direct consequences for Blendlink's component stack
+## Direct consequences for SceneToWeb's component stack
 
-Blendlink's current production installer deliberately requires a
+SceneToWeb's current production installer deliberately requires a
 `WebGLRenderer`, and its baked appearance modifies materials with
 `onBeforeCompile`. The component pipeline types its renderer as
 `WebGLRenderer` and constructs a `postprocessing` `EffectComposer`.
-[Blendlink Three runtime](../packages/blendlink/src/threeRuntime.ts)
-[Blendlink baked appearance](../packages/blendlink/src/bakedRecipe.ts)
-[Blendlink component pipeline](../packages/blendlink/src/threeComponents.ts)
+[SceneToWeb Three runtime](../packages/blendlink/src/threeRuntime.ts)
+[SceneToWeb baked appearance](../packages/blendlink/src/bakedRecipe.ts)
+[SceneToWeb component pipeline](../packages/blendlink/src/threeComponents.ts)
 
 The external libraries reinforce that boundary:
 
@@ -130,18 +130,18 @@ The external libraries reinforce that boundary:
   [EffectComposer source](https://github.com/pmndrs/postprocessing/blob/main/src/core/EffectComposer.js)
 - N8AO explicitly says it is not compatible with WebGPU yet.
   [N8AO WebGPU status](https://github.com/N8python/n8ao#webgpu)
-- Blendlink's Kuwahara effect is a custom GLSL `postprocessing.Effect`, so it
+- SceneToWeb's Kuwahara effect is a custom GLSL `postprocessing.Effect`, so it
   would require a TSL rewrite rather than automatic translation.
-  [Blendlink Kuwahara source](../packages/blendlink/src/threeComponents.ts)
+  [SceneToWeb Kuwahara source](../packages/blendlink/src/threeComponents.ts)
 
-| Blendlink area | Current WebGL path | WebGPU/TSL implication |
+| SceneToWeb area | Current WebGL path | WebGPU/TSL implication |
 | --- | --- | --- |
 | Bloom, Vignette, Chromatic Aberration, DoF | pmndrs effects | Rebuild with official TSL nodes and prove parameter/pixel parity |
 | Ambient Occlusion | N8AO | N8AO cannot carry over; evaluate Three GTAO + denoise as a separate adapter |
 | Kuwahara | custom GLSL pmndrs effect | Rewrite the algorithm in TSL and build image/performance tests |
 | Outline, Pixelation, Sharpen, Tilt Shift, LUT grading | pmndrs/custom WebGL path | Port effect-by-effect; availability of a similarly named node is not proof of equivalent semantics |
 | Baked appearance/light groups | `onBeforeCompile` shader patching | Redesign as TSL/node material behavior before WebGPU can render the authored contract |
-| glTF PBR scene content | ordinary Three materials/loaders | Mostly promising, but must be verified against Blendlink's actual material, texture, light, probe, animation, and alpha fixtures |
+| glTF PBR scene content | ordinary Three materials/loaders | Mostly promising, but must be verified against SceneToWeb's actual material, texture, light, probe, animation, and alpha fixtures |
 
 The WebGL2 fallback is still useful after these effects are written in TSL: one
 TSL adapter could target both WebGPU and the new renderer's WebGL2 backend. It
@@ -190,15 +190,15 @@ WebGPU should become an artist-visible Preview option only after:
   disposal produce explicit recoverable behavior rather than a grey canvas.
 
 Promotion to the default should require a measured win on representative
-Blendlink scenes, not merely API availability. Until then, WebGPU belongs on the
+SceneToWeb scenes, not merely API availability. Until then, WebGPU belongs on the
 roadmap as a serious parallel adapter—not as a feature-parity checkbox and not
 as a dependency of the current component-quality pass.
 
 ## Bottom line
 
-WebGPU is the future-facing foundation Blendlink should prepare for. Three's TSL
+WebGPU is the future-facing foundation SceneToWeb should prepare for. Three's TSL
 model is especially attractive because the same authored shader graph can
-target WebGPU and the new renderer's WebGL2 backend. But the present Blendlink
+target WebGPU and the new renderer's WebGL2 backend. But the present SceneToWeb
 runtime is intentionally and deeply WebGL-specific, while Three's renderer is
 still experimental and the two core post libraries do not carry over.
 

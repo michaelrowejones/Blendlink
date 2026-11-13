@@ -1,4 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
+# blendlink-headless-sentinel: BLENDLINK_OVERLAY_GPU_CHECK_COMPLETE
 """Validate overlay shader names, uniforms, and batch formats offscreen.
 
 Requires Blender 5.2+ (gpu.init() in background mode).
@@ -11,7 +12,8 @@ from pathlib import Path
 import bpy
 
 if bpy.app.version < (5, 2, 0):
-    print("SKIP: gpu.init() needs Blender 5.2+; overlay must be checked in the GUI")
+    print("BLENDLINK_OVERLAY_GPU_UNAVAILABLE: gpu.init() needs Blender 5.2+; overlay must be checked in the GUI")
+    print("BLENDLINK_OVERLAY_GPU_CHECK_COMPLETE unavailable")
     raise SystemExit(0)
 
 import gpu  # noqa: E402
@@ -57,3 +59,4 @@ with offscreen.bind():
         ).draw(screen)
 offscreen.free()
 print("BLENDLINK_OVERLAY_GPU_OK")
+print("BLENDLINK_OVERLAY_GPU_CHECK_COMPLETE drawn")

@@ -17,12 +17,12 @@ manifests once meant silent misreads).
   Internal compile verifies every entry's exact path/type/bytes/hash before an
   unchanged-scene skip and during `verify`; symbolic-linked entries, noncanonical order,
   malformed metadata, a wrong scene root, and incomplete KTX2 runtime fail
-  loudly. Generic external `typegen` may omit this field because Blendlink does
+  loudly. Generic external `typegen` may omit this field because SceneToWeb does
   not own or discover that pipeline's complete companion closure.
   For an internally compiled scene, `runtimeAssetPublication` is the matching
   additive activation record:
   `{ algorithm: "sha256", bundlePath, scenePath, immutable: true }`.
-  Blendlink seals the exact graph beneath
+  SceneToWeb seals the exact graph beneath
   `<scene-output>/<scene-name>/<full-graph-sha256>/`, verifies it again, and
   only then transactionally switches the generated manifest/module. Every
   compiler-owned generated URL points into that directory. Byte-identical
@@ -31,7 +31,7 @@ manifests once meant silent misreads).
 
   The stable files beside the configured GLB are a pre-1.0 compatibility
   mirror. They are verified and repaired by compilation but are **not**
-  immutable-cache eligible. Old graph directories are retained; Blendlink does
+  immutable-cache eligible. Old graph directories are retained; SceneToWeb does
   not currently guess a cleanup/retention policy. A corrupt existing hash
   directory is never overwritten in place: the error names the exact directory
   an owner must remove before retrying.
@@ -47,7 +47,7 @@ manifests once meant silent misreads).
   A graph fingerprint is exact identity evidence, not a promise that an
   external exporter is byte-deterministic. When `--force` rebuilds a scene
   whose declared inputs and preceding artifacts were otherwise current,
-  Blendlink compares the old and new graphs after atomic publication. A changed
+  SceneToWeb compares the old and new graphs after atomic publication. A changed
   fingerprint emits a loud warning with added, removed, or changed runtime
   paths and states that the new hashes are exact even though the toolchain did
   not reproduce the prior cache key. Ordinary no-op compilation skips that
@@ -57,12 +57,12 @@ manifests once meant silent misreads).
   observed. Blender 5.2 applied exports containing enabled Bevel modifiers and
   UVs are currently warned because microscopic evaluated-UV differences can
   alter glTF split-vertex/accessor counts and exact GLB hashes while evaluated
-  topology and rendered triangles stay stable. Blendlink does not round
+  topology and rendered triangles stay stable. SceneToWeb does not round
   artist-authored or baked-atlas UV bytes to force a matching hash. Visual
   stability must be recorded separately; it never weakens graph verification.
 
 - `hash` — content hash of the GLB; cache-busting key and drift signal.
-- `configSourceHash` — full SHA-256 identity of the loaded Blendlink config
+- `configSourceHash` — full SHA-256 identity of the loaded SceneToWeb config
   revision for configured compilation. Publication rechecks that revision
   before activation, and `verify` rejects generated artifacts from another
   revision. Generic external typegen may omit it only when no configured
@@ -77,9 +77,9 @@ manifests once meant silent misreads).
   `sourceBlendLocalPathKey`; neither the absolute path nor its basename is
   written to the manifest or generated TypeScript comment.
 - `sourceBlendLocalPathKey` — optional SHA-256 key for the exact source path in
-  Blendlink's private per-user provenance cache. The cache lives outside the
+  SceneToWeb's private per-user provenance cache. The cache lives outside the
   project and publication graph
-  (`%LOCALAPPDATA%/Blendlink/Cache/local-provenance-v1/` on Windows,
+  (`%LOCALAPPDATA%/SceneToWeb/Cache/local-provenance-v1/` on Windows,
   `~/Library/Caches/blendlink/local-provenance-v1/` on macOS, or
   `$XDG_CACHE_HOME/blendlink/local-provenance-v1/` on Linux). Its
   schema-v1 records are written atomically with owner-only mode where the
@@ -133,7 +133,7 @@ manifests once meant silent misreads).
   IDs, returns one `update` / `fit` / `reset` / `dispose` handle, and calls the
   website's `createControls()` only for Orbit/Free intent.
 - A controls constructor that eagerly changes the camera cannot replace the
-  first frame: Blendlink restores the authored transform before returning.
+  first frame: SceneToWeb restores the authored transform before returning.
   In the lower-level seam, the factory receives the exact world-space target
   and owns the concrete Three `OrbitControls`, `MapControls`, R3F, or
   project-specific adapter.
@@ -201,7 +201,7 @@ also expose `openComponentUrl` for a site router/policy and
 `componentAudioLoader` for application-owned credentials, caching, or CDN
 behavior. `loadComponentLut` may return an authenticated/application-cached,
 application-owned `Data3DTexture`; without it, `.cube` and `.3dl` URLs use the
-lazy official Three loaders and Blendlink owns the result. `onWarning` receives
+lazy official Three loaders and SceneToWeb owns the result. `onWarning` receives
 capability and scene-cost fallbacks. The installed handle owns its listeners,
 mixers, audio nodes,
 temporary per-occluder material clones and assignments, and post-processing
@@ -217,7 +217,7 @@ application-facing view of authored click behaviors. Each control provides a
 stable component ID, semantic `role` (`link` or `button`), artist-authored or
 fallback `label`, optional validated `href` and `linkTarget`, `activate()`, and
 `setFocused()`.
-Blendlink owns one canvas listener set and one nearest-target raycast across all
+SceneToWeb owns one canvas listener set and one nearest-target raycast across all
 first-party interactions; overlapping components on the same object compose.
 The application remains responsible for rendering native anchors/buttons,
 focus-visible styling, routing, analytics, and any page-level input policy.
@@ -244,7 +244,7 @@ authoring intent round-trips without becoming an enabled publish blocker.
 
 The installed Three scene and ready-only R3F handle expose
 `websiteSurfaces.bindCanvas(name, canvas)`. The returned binding's `changed()`
-marks Blendlink's sRGB `CanvasTexture` dirty and requests one demand frame.
+marks SceneToWeb's sRGB `CanvasTexture` dirty and requests one demand frame.
 The live texture uses glTF-oriented `flipY = false`, Clamp-to-Edge S/T, Linear
 min/mag filters, anisotropy `1`, and `generateMipmaps = false`, matching the
 inspected Needle receiver's orientation and Three's dynamic `VideoTexture`
@@ -253,10 +253,10 @@ texture transform and full UV0 rather than inheriting the fallback texture's
 `KHR_texture_transform`. For `display`, the authored fallback texture object
 and tint remain preserved while unbound; tint is neutralized only while live
 pixels own the map slot. Idempotent `dispose()` conditionally restores both map
-and tint while Blendlink still owns them, then releases its wrapper. Scene
+and tint while SceneToWeb still owns them, then releases its wrapper. Scene
 disposal releases remaining bindings.
 The website retains the canvas, pixels, input, DOM, route, accessibility, and
-analytics; Blendlink owns semantic target lookup, material isolation,
+analytics; SceneToWeb owns semantic target lookup, material isolation,
 invalidation, restoration, and wrapper disposal. This is independent from
 baked `setState()` and never turns hover labels into content-addressed atlas
 states. V1 refuses material-slot targeting inside an otherwise baked multi-
@@ -272,7 +272,7 @@ claim. `InstalledThreeComponents.postprocessingOrder` reports the resolved
 semantic order. Runtime quality changes resolution/sample policy without
 rewriting authored intensity, radius, focus, or style values. Disposal clears
 temporary selection layers and restores tone mapping and renderer auto-clear
-only while Blendlink's installed values still own them.
+only while SceneToWeb's installed values still own them.
 
 For spatial `blendlink.audio-source`, `minDistance` means full volume within
 that radius and `maxDistance` means silent at and beyond that radius;
@@ -302,7 +302,7 @@ reinterpret Blender shader graphs.
 - Standard exports and **Bake Lighting** meshes use Blender's stock glTF
   exporter with materials enabled. Supported Principled BSDF inputs, image
   textures, and KHR material extensions therefore follow the capabilities of
-  the installed supported Blender exporter. Blendlink does not maintain a
+  the installed supported Blender exporter. SceneToWeb does not maintain a
   separate Principled translator or ship Blender node graphs to the browser.
 - Material Properties classifies each material's active Surface branch as
   **Exact glTF**, **Approximated**, or **Needs Bake**. Exact means the authored
@@ -338,7 +338,7 @@ reinterpret Blender shader graphs.
   complete Blender Surface graph, exact Shader-to-RGB/AO shading, authored
   shadow appearance, view transform, grain, or compositor was reproduced. A
   marked non-Mesh/Curve binding or a material binding created only by evaluated
-  Geometry Nodes blocks loudly; Blendlink does not guess ownership or freeze
+  Geometry Nodes blocks loudly; SceneToWeb does not guess ownership or freeze
   it onto an unrelated source object.
 - Direct image compilation accepts only clean static FILE images (packed or
   externally readable), exact sRGB/Straight interpretation, Flat/Linear/Repeat
@@ -350,7 +350,7 @@ reinterpret Blender shader graphs.
 - A selected intrinsic Color/Value socket that has no direct portable
   representation may instead compile through a transaction-private Cycles
   Emission/Emit bake to an ordinary opaque PNG `baseColorTexture`. The
-  selected socket is the contract: Blendlink does not bake the downstream
+  selected socket is the contract: SceneToWeb does not bake the downstream
   Surface, Shader-to-RGB lighting, AO, shadows, view transform, or compositor.
   Camera/view-dependent and scene-dependent graphs therefore block before
   mutation. The private Mesh/material/image/UV state is discarded after the
@@ -446,7 +446,7 @@ reinterpret Blender shader graphs.
   place so the last good browser scene remains valid.
 - A glTF primitive with no material binding would otherwise receive glTF's
   implicit white metallic material, which does not match Blender's neutral
-  material-less surface. After stock export, Blendlink assigns only those
+  material-less surface. After stock export, SceneToWeb assigns only those
   unbound primitives one shared explicit default material: linear base color
   `[0.8, 0.8, 0.8, 1]`, metallic `0`, roughness `0.5`, and double-sided. The
   generated material is marked `blendlink_generated="blender-default-material"`;
@@ -551,7 +551,7 @@ PNG output continues to use its separately owned compositor stage.
   missing, or duplicate names block before any visibility is mutated. Additive
   Light Groups require identical collection visibility across states because a
   globally reused layer cannot carry correct bounce/shadows for two different
-  geometries. Blendlink blocks that unsafe combination and tells the artist to
+  geometries. SceneToWeb blocks that unsafe combination and tells the artist to
   use full states instead.
 - Automatic Realtime meshes include transform/parent animation,
   morphs, deformers, particles, nested glass/volume/view-dependent shader
@@ -561,7 +561,7 @@ PNG output continues to use its separately owned compositor stage.
   the addon, Fidelity panel, and build warnings name what motion/view behavior
   will be frozen.
 - Material, light, camera, and World property animation is not a core glTF
-  animation contract. Blendlink blocks it before publication rather than
+  animation contract. SceneToWeb blocks it before publication rather than
   silently dropping `KHR_animation_pointer`; animate those values in website
   code, or explicitly mark a baked mesh when freezing its material is the
   intended result.
@@ -585,7 +585,7 @@ PNG output continues to use its separately owned compositor stage.
   prefers exact WebP, falls back through the
   same-resolution PNG and then the canonical PNG, and pre-uploads a late
   promotion when a renderer has been supplied. Sync and
-  verify never overwrite an older editable recipe; `blendlink recipe update <scene>` stores
+  verify never overwrite an older editable recipe; `scenetoweb recipe update <scene>` stores
   its exact bytes in a deterministic backup before replacing the template, and
   Lighting publication is blocked until that explicit migration succeeds.
 - Template v7 also gives loader-owned inactive state and light-group textures a
@@ -660,14 +660,14 @@ PNG output continues to use its separately owned compositor stage.
   decoded world-space `maxBoundsError`, and additive `passes` evidence for
   exact animation-key resampling, bit-identical welding, safe de-duplication,
   constrained pruning, and every refused optional pass. Older schema-v3
-  manifests may omit `passes`. Blendlink decodes and inspects the candidate
+  manifests may omit `passes`. SceneToWeb decodes and inspects the candidate
   before atomically replacing the GLB; scene count, rendered vertex counts,
   stable node/animation identity, authored extras, and rendered `TEXCOORD`
   values must survive. Position quantization is withheld when its corrective
   transform would replace an authored attachment or insert a child node.
 - A Meshopt GLB requires the official decoder. `requiresMeshopt` records
   required `EXT_meshopt_compression` evidence directly from the decoded GLB,
-  including generic external assets that have no Blendlink `optimization`
+  including generic external assets that have no SceneToWeb `optimization`
   report. `loadCompiledScene()`, `configureCompiledSceneLoader()`, and the
   one-call installer configure the decoder on Three.js `GLTFLoader` and fail
   loudly when a supplied loader cannot accept one.
@@ -687,7 +687,7 @@ PNG output continues to use its separately owned compositor stage.
   PSNR/channel/normal error, verified mip count, worst mip PSNR, alpha-coverage
   drift, and mip normal error. A nonconforming texture remains in its original
   uncompressed format and warns loudly; the compression stage never resizes it.
-  Blendlink uses the official local Khronos tools to encode, validates every output with
+  SceneToWeb uses the official local Khronos tools to encode, validates every output with
   `ktx validate --gltf-basisu`, decodes every generated level with
   `ktx extract`, and refuses output below its codec, alpha, or normal fidelity
   gates before atomically replacing the GLB. Preview and Final use this
@@ -717,7 +717,7 @@ PNG output continues to use its separately owned compositor stage.
   supplied loader remains application-owned. The lower-level
   `loadCompiledScene(..., { ktx2Loader })` contract still requires an already
   configured shared loader.
-- Generic `blendlink typegen` inspects the decoded GLB and transactionally
+- Generic `scenetoweb typegen` inspects the decoded GLB and transactionally
   publishes the same complete attributed Basis runtime beside the local GLB
   whenever `KHR_texture_basisu` is required. If deployment relocates the GLB,
   the application must mirror that sibling directory at the descriptor URL or
@@ -727,7 +727,7 @@ PNG output continues to use its separately owned compositor stage.
 
 - `recipe.playback` is scene-owned and records `start` (`manual`, `first`,
   `named`, or `all`), `loop` (`once`, `repeat`, or `pingpong`), `speed`, and an
-  exact `clip` when named. The safe default is `manual`; Blendlink does not
+  exact `clip` when named. The safe default is `manual`; SceneToWeb does not
   guess that every exported action should start together.
 - The generated module exposes `playback`. `startCompiledScenePlayback()`
   resolves the authored clips against the loaded GLB, configures a supplied
@@ -788,7 +788,7 @@ presentation recipe:
   tools surface it only when source World ownership is needed.
 
 Nothing consumes this evidence implicitly. The high-level Three WebGL installer
-must receive `useAuthoringPreview: true`; Blendlink's private Preview Studio opts
+must receive `useAuthoringPreview: true`; SceneToWeb's private Preview Studio opts
 in, while ordinary generated website integrations do not. Even when enabled,
 the preview fills only fields that the published recipe leaves
 application-owned. Explicit Website Look, environment, and shadow ownership
@@ -832,7 +832,7 @@ values remain authoritative and all preview changes are restored on disposal.
 ## HDR environment and shadow contract
 
 - Realtime Point, Spot, and Sun lights publish through Blender's stock glTF
-  exporter and `KHR_lights_punctual`. Blendlink owns light export, complete
+  exporter and `KHR_lights_punctual`. SceneToWeb owns light export, complete
   Blender render visibility, active-Scene and active-View-Layer scope, and the
   exporter's current or legacy lighting-mode option. It requires `COMPAT`,
   matching Needle's artist-look choice and
@@ -846,7 +846,7 @@ values remain authoritative and all preview changes are restored on disposal.
   instances despite a source object's Render toggle, so a fully hidden in-scope
   source is temporarily unlinked from its exact source collections as well.
   Every flag and membership is restored. Portable glTF has no Area-light type,
-  so Blendlink represents its proven Three-specific subset as the versioned
+  so SceneToWeb represents its proven Three-specific subset as the versioned
   `blendlink_rect_area_light` extra on the ordinary finalized light-object
   node; it never invents a `KHR_lights_punctual` type.
 - Missing `blendlink_area_light_mode` metadata selects **Automatic** only for a
@@ -879,7 +879,7 @@ values remain authoritative and all preview changes are restored on disposal.
   only through a Collection Instance, or when the final GLB does not contain
   exactly one unambiguous node for it. An explicit Three choice makes either
   condition a blocking export error. This preserves the safe source scene
-  without claiming that Blendlink proved the composed transform.
+  without claiming that SceneToWeb proved the composed transform.
 - The resulting realtime light is deliberately narrower than Eevee or Cycles:
   it is one-sided, shadowless, direct-only, and affects Three
   `MeshStandardMaterial`/`MeshPhysicalMaterial` receivers. It does not reproduce
@@ -1027,7 +1027,7 @@ values remain authoritative and all preview changes are restored on disposal.
 - Custom Texture accepts one exact 2:1 HDR, EXR, PNG, JPEG, or WebP source from
   32×16 through the portable 8192×4096 ceiling.
   HDR/EXR is linear; LDR follows the Blender image color-space declaration.
-  Blendlink copies linked or packed source bytes rather than resaving them, so
+  SceneToWeb copies linked or packed source bytes rather than resaving them, so
   artist detail is not silently requantized. It does not currently compress
   reflection sources or prepublish PMREM mip chains.
 - Mesh extras use `blendlink_reflection_probe` = the probe helper's stable
@@ -1071,7 +1071,7 @@ values remain authoritative and all preview changes are restored on disposal.
   not copy. Reflection disposal unregisters before baked disposal; a clone
   adopted by a later application owner keeps every baked/PMREM resource it
   still references. Older editable recipes fail with the explicit
-  `blendlink recipe update <scene>` migration instead of silently freezing an
+  `scenetoweb recipe update <scene>` migration instead of silently freezing an
   assigned mesh on the default state.
 - Unused probes do not allocate or capture a texture and are returned in the
   runtime report. Stale assignments, missing helpers/anchors, missing textures,
@@ -1089,7 +1089,7 @@ In `<scene>.manifest.json`, `sceneDiagnostics` is the compiler's complete
 portable evidence, not a collection of advisory booleans. The manifest keeps
 the complete procedural snapshot evidence—including every frame of an
 exhaustive audit—and the material, camera, LOD, and instancing audit details
-used by Blendlink's tooling.
+used by SceneToWeb's tooling.
 
 The generated `<scene>.gen.ts` binding deliberately does not copy that full
 tooling record into application JavaScript. It exposes the independent,
@@ -1108,7 +1108,7 @@ An explicit `null` also disables the legacy fallback. If the new property is
 absent, a current runtime may still project
 `lod.chains` and `instances.groups` from an older generated binding's full
 `sceneDiagnostics`. New bindings omit that deprecated field. Upgrade the
-Blendlink package and regenerate bindings together; an older runtime does not
+SceneToWeb package and regenerate bindings together; an older runtime does not
 understand the new versioned property.
 
 The full manifest evidence includes:
@@ -1122,7 +1122,7 @@ The full manifest evidence includes:
   `createVector3: () => new THREE.Vector3()` and call `update()` after camera
   movement. This implements the same distance outcome as
   [Three LOD](https://threejs.org/docs/pages/LOD.html) while preserving stable
-  Blendlink object bindings.
+  SceneToWeb object bindings.
 - `instances.groups[]` identifies Blender objects that share one mesh data block.
   Every member retains its stable ID. `drawCallsSeparate` states the estimated current
   consequence; `drawCallsInstanced` and `drawCallsSaved` state the potential
@@ -1130,7 +1130,7 @@ The full manifest evidence includes:
   material, animation, and evaluated-geometry constraints. Shared glTF mesh data
   saves payload/VRAM but is not itself GPU instancing. `gpuBatches[]` separately
   inventories extension batches actually present in the GLB, including count,
-  primitive draws, and instance semantics. Blendlink does not auto-merge stable
+  primitive draws, and instance semantics. SceneToWeb does not auto-merge stable
   objects because [`EXT_mesh_gpu_instancing`](https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Vendor/EXT_mesh_gpu_instancing/README.md)
   has no standard individual-instance animation/material contract and batching
   changes hierarchy and culling behavior. `applyCompiledSceneInstances()` is
@@ -1155,7 +1155,7 @@ The full manifest evidence includes:
   its reasons and source-object usage; and an independent
   `cyclesAppearance` compatibility result. In particular, Shader to RGB is
   EEVEE-only: it can require materialization while also being impossible for
-  Blendlink's current Cycles Appearance route to evaluate. The summary counts
+  SceneToWeb's current Cycles Appearance route to evaluate. The summary counts
   include `cyclesAppearanceBlocked`. This field is additive schema-v3 evidence
   and may be absent on an older schema-v3 manifest. Export-scope analysis uses
   the same active View Layer, collection/selection, and render-visibility gates
@@ -1202,7 +1202,7 @@ The full manifest evidence includes:
   Texture object, factor drift, sampler/texCoord drift, or material/TextureInfo
   extensions outside the proof.
 - Three's `GLTFLoader` may clone that one glTF Texture once per material slot
-  when `texCoord > 0`. Before prewarm, the standard Blendlink Three installer
+  when `texCoord > 0`. Before prewarm, the standard SceneToWeb Three installer
   recognizes only the attested
   `blendlink.lit.selected-field-static-shade-floor` generated-material rule,
   proves the loaded Base Color and Emission textures share one decoded source
@@ -1262,7 +1262,7 @@ The full manifest evidence includes:
   Triangle digests are sorted in 65,536-record runs and merged from one owned
   temporary directory, so large receivers do not require retaining every
   triangle digest in memory. The ordinary cryptographic multiset hash preserves
-  multiplicity; Blendlink does not substitute a collision-weaker XOR or sum.
+  multiplicity; SceneToWeb does not substitute a collision-weaker XOR or sum.
   Reordering triangles or vertices and welding identical attribute rows can
   preserve the proof, while moving material ownership, changing winding,
   changing a POSITION/UV corner association, or changing triangle
@@ -1277,7 +1277,7 @@ The full manifest evidence includes:
   geometry-associated UV proof against the fully transformed Document after
   resize, KTX2, and optional Meshopt. It also refuses leaked compiler-private
   semantics. This proves that the emitted selected-field payload survived
-  Blendlink's optimizer transaction. It does **not** prove a Blender
+  SceneToWeb's optimizer transaction. It does **not** prove a Blender
   source-loop identity, GPU upload, shader sampling, or browser pixels; those
   require their own source/Blender/browser fixtures.
 
@@ -1288,7 +1288,7 @@ geometry-accessor subset, counts embedded image bytes, attributes rendered
 triangles and decoded geometry bytes to default-scene nodes and meshes with
 separate dominance rankings, and
 inspects the raw material JSON without turning omitted glTF defaults into
-authored values. `blendlink perf` uses this evidence only when explicitly run;
+authored values. `scenetoweb perf` uses this evidence only when explicitly run;
 save-driven Preview does not repeatedly parse a large finished artifact.
 
 The same staged audit refuses publication when the exact final default scene
@@ -1297,7 +1297,7 @@ mesh definitions reachable only from another library scene do not satisfy the
 gate; visible point and line primitives do, so triangle count is not used as a
 proxy. The audit runs after collection/export filtering, evaluated modifiers,
 and optimizers but before atomic publication. Intentional helper or asset-
-library `.blend` files remain available to `blendlink plan` without being
+library `.blend` files remain available to `scenetoweb plan` without being
 misrepresented as publishable website scenes.
 
 Final verification blocks the narrow complete-collapse condition: every used
@@ -1325,7 +1325,7 @@ The optional runtime adapter applies these portable node extras when present:
 - `blendlink_reflection_probe` → rename-stable local reflection-probe
   assignment consumed by `applyCompiledSceneReflectionProbes()`.
 
-Missing shadow extras mean “application default” in production; Blendlink does
+Missing shadow extras mean “application default” in production; SceneToWeb does
 not silently enable renderer shadow maps or choose light-level shadow budgets.
 The one exception is the explicitly opted-in private authoring preview described
 above, which may default otherwise-untagged render meshes while it owns the
@@ -1374,7 +1374,7 @@ failure restores every selected mesh; an operator failure never leaves a
 partially materialized selection, a silently suffixed layer, or deleted artist
 pins and generic mesh attributes.
 
-Before either a plan or a final bake can proceed, Blendlink expands authored
+Before either a plan or a final bake can proceed, SceneToWeb expands authored
 pins to Blender's complete locked islands and validates the staged UV geometry.
 Pinned coordinates must be finite and inside the 0..1 bake square; every
 triangulated face must retain positive UV area. Positive-area intersections

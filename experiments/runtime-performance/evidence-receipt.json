@@ -1,0 +1,625 @@
+{
+  "schemaVersion": 1,
+  "kind": "blendlink-runtime-benchmark-evidence-v1",
+  "correctnessQualification": false,
+  "performanceQualification": false,
+  "observations": [
+    {
+      "id": "initial-metal-screen",
+      "report": "artifacts/runtime-perf-screen-metal/results.json",
+      "sha256": "7a2381a50b6385e817c88eff1062720f1ab77125c382b67cfc5b3b1a1cf43a4a",
+      "provenance": {
+        "path": "artifacts/runtime-perf-screen-metal/provenance.json",
+        "sha256": "aeb2cbeec4f8bbb940cbb76f2b503f49d8dd8d0f5b3589a6eabf98c1f96dff3b"
+      },
+      "producerSourceCommit": "ad813ba7d398da77076f155cc04e172f3b60fc8d",
+      "sourceCommitLimit": "Harness files were uncommitted during capture; exact tested bytes are frozen/pinned in each report harness directory. No claim that this later receipt commit was executed.",
+      "status": "measured",
+      "rows": 4,
+      "profile": "metal",
+      "comparisonIdentity": {
+        "profile": "metal",
+        "platform": "darwin",
+        "architecture": "arm64",
+        "cpuModel": "Apple M5 Pro",
+        "hostOpaqueId": "6bb95d94b26394e75d19afeb81ba6cd704e005a9815f669b98b16b37324da6ee",
+        "browserVersion": "158.0.8127.18",
+        "threeVersion": "0.184.0",
+        "threeSourceDigest": "bde67d375a393bd846e5b3d5c2abe446c0a23ed794f097979558de6378b160ae",
+        "harnessDigest": "6eed14930d17df6112fe7087e90011629a3f5c9b817fc43a5b48661a993bdfd9",
+        "artifactsDigest": "7383b6db6d1674fffd11c070c11666def45c6f747309ba75ffe3e2f2d472e158",
+        "config": {
+          "width": 320,
+          "height": 180,
+          "dpr": 1,
+          "warmupFrames": 5,
+          "measuredFrames": 30,
+          "repeats": 1,
+          "gpuSamples": 3,
+          "animation": "paused",
+          "fixedDeltaSeconds": 0.016666666666666666,
+          "camera": "authored-or-fit-static",
+          "antialias": false,
+          "variants": [
+            "carrier",
+            "program"
+          ],
+          "lighting": "authored manifest; otherwise imported lights or deterministic hemisphere+directional rig",
+          "gpuTimingPolicy": "separate-serial-query-pass-after-uninstrumented-RAF-window",
+          "loadPolicy": "fresh-page-HTTP-cache-disabled; OS/browser-driver-shader-cache-state-unknown",
+          "browserLaunch": {
+            "headless": true,
+            "requestedArgs": [],
+            "nodeVersion": "24.22.3",
+            "osRelease": "25.5.0",
+            "viteVersion": "8.3.8",
+            "playwrightVersion": "1.65.0",
+            "requestedChannel": "chromium"
+          }
+        }
+      },
+      "caseRuns": [
+        {
+          "caseId": "micro-production-uv",
+          "variant": "carrier",
+          "backend": "webgpu",
+          "repeat": 0,
+          "scope": "production-builder-micro",
+          "cpuSamples": 30,
+          "p50Ms": 0.3999999761581421,
+          "p95Ms": 0.5,
+          "gpuAvailable": false,
+          "gpuSamples": 0,
+          "gpuUnavailableReason": "Multi-call app frame: public Three timestamp resolver does not establish whole-app GPU duration",
+          "drawCoverage": null,
+          "sourceRestored": true,
+          "screenshot": {
+            "path": "artifacts/runtime-perf-screen-metal/0-webgpu-carrier.png",
+            "sha256": "56298454a3e00ec6e18a4c55d8e20505287b0a1f77be0bf53e79f294abcaf749",
+            "nonUniform": true
+          }
+        },
+        {
+          "caseId": "micro-production-uv",
+          "variant": "program",
+          "backend": "webgpu",
+          "repeat": 0,
+          "scope": "production-builder-micro",
+          "cpuSamples": 30,
+          "p50Ms": 0.30000001192092896,
+          "p95Ms": 0.5,
+          "gpuAvailable": false,
+          "gpuSamples": 0,
+          "gpuUnavailableReason": "Multi-call app frame: public Three timestamp resolver does not establish whole-app GPU duration",
+          "drawCoverage": null,
+          "sourceRestored": true,
+          "screenshot": {
+            "path": "artifacts/runtime-perf-screen-metal/0-webgpu-program.png",
+            "sha256": "1c364afc881053686ae62e9901ebeb54b65e7c7bc23b2cca4a4c14fa55c12d6b",
+            "nonUniform": true
+          }
+        },
+        {
+          "caseId": "micro-production-uv",
+          "variant": "carrier",
+          "backend": "webgl2",
+          "repeat": 0,
+          "scope": "production-builder-micro",
+          "cpuSamples": 30,
+          "p50Ms": 0.20000004768371582,
+          "p95Ms": 0.5,
+          "gpuAvailable": true,
+          "gpuSamples": 3,
+          "gpuUnavailableReason": null,
+          "drawCoverage": null,
+          "sourceRestored": true,
+          "screenshot": {
+            "path": "artifacts/runtime-perf-screen-metal/0-webgl2-carrier.png",
+            "sha256": "56298454a3e00ec6e18a4c55d8e20505287b0a1f77be0bf53e79f294abcaf749",
+            "nonUniform": true
+          }
+        },
+        {
+          "caseId": "micro-production-uv",
+          "variant": "program",
+          "backend": "webgl2",
+          "repeat": 0,
+          "scope": "production-builder-micro",
+          "cpuSamples": 30,
+          "p50Ms": 0.20000004768371582,
+          "p95Ms": 0.5,
+          "gpuAvailable": true,
+          "gpuSamples": 3,
+          "gpuUnavailableReason": null,
+          "drawCoverage": null,
+          "sourceRestored": true,
+          "screenshot": {
+            "path": "artifacts/runtime-perf-screen-metal/0-webgl2-program.png",
+            "sha256": "1c364afc881053686ae62e9901ebeb54b65e7c7bc23b2cca4a4c14fa55c12d6b",
+            "nonUniform": true
+          }
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "final-radial-stock",
+      "report": "artifacts/runtime-perf-radial-stock-final/results.json",
+      "sha256": "0b507e2dfa64967673184b8a57f82f35f69e4c2d6a191a2f93df220101024008",
+      "provenance": {
+        "path": "artifacts/runtime-perf-radial-stock-final/provenance.json",
+        "sha256": "5b380d3d9fe782987193e6a556f832efa3adf751636ac4012f93b83c08b999e7"
+      },
+      "producerSourceCommit": "ad813ba7d398da77076f155cc04e172f3b60fc8d",
+      "sourceCommitLimit": "Harness files were uncommitted during capture; exact tested bytes are frozen/pinned in each report harness directory. No claim that this later receipt commit was executed.",
+      "status": "measured",
+      "rows": 2,
+      "profile": "metal",
+      "comparisonIdentity": {
+        "profile": "metal",
+        "platform": "darwin",
+        "architecture": "arm64",
+        "cpuModel": "Apple M5 Pro",
+        "hostOpaqueId": "6bb95d94b26394e75d19afeb81ba6cd704e005a9815f669b98b16b37324da6ee",
+        "browserVersion": "158.0.8127.18",
+        "threeVersion": "0.184.0",
+        "threeSourceDigest": "bde67d375a393bd846e5b3d5c2abe446c0a23ed794f097979558de6378b160ae",
+        "harnessDigest": "42ddc18ce07033cf2aec6fb87f42bbb37d52f1c353b811e68caaa07a3e840507",
+        "artifactsDigest": "20553a58efd5a7eff55ea27bd68c8ce806295bc5b5a95812d9b17e922bec9646",
+        "config": {
+          "width": 320,
+          "height": 180,
+          "dpr": 1,
+          "warmupFrames": 5,
+          "measuredFrames": 30,
+          "repeats": 1,
+          "gpuSamples": 3,
+          "animation": "paused",
+          "fixedDeltaSeconds": 0.016666666666666666,
+          "camera": "authored-or-fit-static",
+          "antialias": false,
+          "variants": [
+            "carrier"
+          ],
+          "lighting": "authored manifest; otherwise imported lights or deterministic hemisphere+directional rig",
+          "gpuTimingPolicy": "separate-serial-query-pass-after-uninstrumented-RAF-window",
+          "loadPolicy": "fresh-page-HTTP-cache-disabled; OS/browser-driver-shader-cache-state-unknown",
+          "browserLaunch": {
+            "headless": true,
+            "requestedArgs": [],
+            "nodeVersion": "24.22.3",
+            "osRelease": "25.5.0",
+            "viteVersion": "8.3.8",
+            "playwrightVersion": "1.65.0",
+            "requestedChannel": "chromium"
+          }
+        }
+      },
+      "caseRuns": [
+        {
+          "caseId": "radial-stock-control",
+          "variant": "carrier",
+          "backend": "webgpu",
+          "repeat": 0,
+          "scope": "stock-geometry-control-no-port-coverage",
+          "cpuSamples": 30,
+          "p50Ms": 0.40000003576278687,
+          "p95Ms": 0.5,
+          "gpuAvailable": false,
+          "gpuSamples": 0,
+          "gpuUnavailableReason": "Multi-call app frame: public Three timestamp resolver does not establish whole-app GPU duration",
+          "drawCoverage": {
+            "validationFrames": 1,
+            "programMeshBindings": 0,
+            "drawnProgramMeshes": 0,
+            "drawnProgramMaterials": 0,
+            "method": "untimed onBeforeRender with installed NodeMaterial argument identity; wrappers removed before warmup/measurement"
+          },
+          "sourceRestored": true,
+          "screenshot": {
+            "path": "artifacts/runtime-perf-radial-stock-final/0-webgpu-carrier.png",
+            "sha256": "b2bc32d386e0e9e906b664a7fa33c8cc1b6063ce6ef7da23e6b371fb367c2bfe",
+            "nonUniform": true
+          }
+        },
+        {
+          "caseId": "radial-stock-control",
+          "variant": "carrier",
+          "backend": "webgl2",
+          "repeat": 0,
+          "scope": "stock-geometry-control-no-port-coverage",
+          "cpuSamples": 30,
+          "p50Ms": 0.30000001192092896,
+          "p95Ms": 0.5,
+          "gpuAvailable": true,
+          "gpuSamples": 3,
+          "gpuUnavailableReason": null,
+          "drawCoverage": {
+            "validationFrames": 1,
+            "programMeshBindings": 0,
+            "drawnProgramMeshes": 0,
+            "drawnProgramMaterials": 0,
+            "method": "untimed onBeforeRender with installed NodeMaterial argument identity; wrappers removed before warmup/measurement"
+          },
+          "sourceRestored": true,
+          "screenshot": {
+            "path": "artifacts/runtime-perf-radial-stock-final/0-webgl2-carrier.png",
+            "sha256": "84d1ded259f4bb0fb2f83c1950179a83da94df2a5508b37c59e86366aabe0439",
+            "nonUniform": true
+          }
+        }
+      ],
+      "errors": []
+    },
+    {
+      "id": "final-micro-baseline",
+      "report": "artifacts/runtime-perf-micro-baseline-final/results.json",
+      "sha256": "eef556828b2767ddfcbcd77eec268b432df8d98082d9f5bfdb087f9aad7c8127",
+      "provenance": {
+        "path": "artifacts/runtime-perf-micro-baseline-final/provenance.json",
+        "sha256": "c984a3a415cfaadb43a450eaeb37aa95b58328564bc89c91299a054c271c0d32"
+      },
+      "producerSourceCommit": "ad813ba7d398da77076f155cc04e172f3b60fc8d",
+      "sourceCommitLimit": "Harness files were uncommitted during capture; exact tested bytes are frozen/pinned in each report harness directory. No claim that this later receipt commit was executed.",
+      "status": "measured",
+      "rows": 12,
+      "profile": "metal",
+      "comparisonIdentity": {
+        "profile": "metal",
+        "platform": "darwin",
+        "architecture": "arm64",
+        "cpuModel": "Apple M5 Pro",
+        "hostOpaqueId": "6bb95d94b26394e75d19afeb81ba6cd704e005a9815f669b98b16b37324da6ee",
+        "browserVersion": "158.0.8127.18",
+        "threeVersion": "0.184.0",
+        "threeSourceDigest": "bde67d375a393bd846e5b3d5c2abe446c0a23ed794f097979558de6378b160ae",
+        "harnessDigest": "42ddc18ce07033cf2aec6fb87f42bbb37d52f1c353b811e68caaa07a3e840507",
+        "artifactsDigest": "7383b6db6d1674fffd11c070c11666def45c6f747309ba75ffe3e2f2d472e158",
+        "config": {
+          "width": 320,
+          "height": 180,
+          "dpr": 1,
+          "warmupFrames": 30,
+          "measuredFrames": 60,
+          "repeats": 3,
+          "gpuSamples": 30,
+          "animation": "paused",
+          "fixedDeltaSeconds": 0.016666666666666666,
+          "camera": "authored-or-fit-static",
+          "antialias": false,
+          "variants": [
+            "carrier",
+            "program"
+          ],
+          "lighting": "authored manifest; otherwise imported lights or deterministic hemisphere+directional rig",
+          "gpuTimingPolicy": "separate-serial-query-pass-after-uninstrumented-RAF-window",
+          "loadPolicy": "fresh-page-HTTP-cache-disabled; OS/browser-driver-shader-cache-state-unknown",
+          "browserLaunch": {
+            "headless": true,
+            "requestedArgs": [],
+            "nodeVersion": "24.22.3",
+            "osRelease": "25.5.0",
+            "viteVersion": "8.3.8",
+            "playwrightVersion": "1.65.0",
+            "requestedChannel": "chromium"
+          }
+        }
+      },
+      "caseRuns": [
+        {
+          "caseId": "micro-production-uv",
+          "variant": "carrier",
+          "backend": "webgpu",
+          "repeat": 0,
+          "scope": "production-builder-micro",
+          "cpuSamples": 60,
+          "p50Ms": 0.30000001192092896,
+          "p95Ms": 0.5,
+          "gpuAvailable": false,
+          "gpuSamples": 0,
+          "gpuUnavailableReason": "Multi-call app frame: public Three timestamp resolver does not establish whole-app GPU duration",
+          "drawCoverage": {
+            "validationFrames": 1,
+            "programMeshBindings": 0,
+            "drawnProgramMeshes": 0,
+            "drawnProgramMaterials": 0,
+            "method": "untimed onBeforeRender with installed NodeMaterial argument identity; wrappers removed before warmup/measurement"
+          },
+          "sourceRestored": true,
+          "screenshot": {
+            "path": "artifacts/runtime-perf-micro-baseline-final/0-webgpu-carrier.png",
+            "sha256": "56298454a3e00ec6e18a4c55d8e20505287b0a1f77be0bf53e79f294abcaf749",
+            "nonUniform": true
+          }
+        },
+        {
+          "caseId": "micro-production-uv",
+          "variant": "program",
+          "backend": "webgpu",
+          "repeat": 0,
+          "scope": "production-builder-micro",
+          "cpuSamples": 60,
+          "p50Ms": 0.3999999761581421,
+          "p95Ms": 0.5,
+          "gpuAvailable": false,
+          "gpuSamples": 0,
+          "gpuUnavailableReason": "Multi-call app frame: public Three timestamp resolver does not establish whole-app GPU duration",
+          "drawCoverage": {
+            "validationFrames": 1,
+            "programMeshBindings": 1,
+            "drawnProgramMeshes": 1,
+            "drawnProgramMaterials": 1,
+            "method": "untimed onBeforeRender with installed NodeMaterial argument identity; wrappers removed before warmup/measurement"
+          },
+          "sourceRestored": true,
+          "screenshot": {
+            "path": "artifacts/runtime-perf-micro-baseline-final/0-webgpu-program.png",
+            "sha256": "1c364afc881053686ae62e9901ebeb54b65e7c7bc23b2cca4a4c14fa55c12d6b",
+            "nonUniform": true
+          }
+        },
+        {
+          "caseId": "micro-production-uv",
+          "variant": "carrier",
+          "backend": "webgl2",
+          "repeat": 0,
+          "scope": "production-builder-micro",
+          "cpuSamples": 60,
+          "p50Ms": 0.30000001192092896,
+          "p95Ms": 0.3999999761581421,
+          "gpuAvailable": true,
+          "gpuSamples": 30,
+          "gpuUnavailableReason": null,
+          "drawCoverage": {
+            "validationFrames": 1,
+            "programMeshBindings": 0,
+            "drawnProgramMeshes": 0,
+            "drawnProgramMaterials": 0,
+            "method": "untimed onBeforeRender with installed NodeMaterial argument identity; wrappers removed before warmup/measurement"
+          },
+          "sourceRestored": true,
+          "screenshot": {
+            "path": "artifacts/runtime-perf-micro-baseline-final/0-webgl2-carrier.png",
+            "sha256": "56298454a3e00ec6e18a4c55d8e20505287b0a1f77be0bf53e79f294abcaf749",
+            "nonUniform": true
+          }
+        },
+        {
+          "caseId": "micro-production-uv",
+          "variant": "program",
+          "backend": "webgl2",
+          "repeat": 0,
+          "scope": "production-builder-micro",
+          "cpuSamples": 60,
+          "p50Ms": 0.30000001192092896,
+          "p95Ms": 0.40000003576278687,
+          "gpuAvailable": true,
+          "gpuSamples": 30,
+          "gpuUnavailableReason": null,
+          "drawCoverage": {
+            "validationFrames": 1,
+            "programMeshBindings": 1,
+            "drawnProgramMeshes": 1,
+            "drawnProgramMaterials": 1,
+            "method": "untimed onBeforeRender with installed NodeMaterial argument identity; wrappers removed before warmup/measurement"
+          },
+          "sourceRestored": true,
+          "screenshot": {
+            "path": "artifacts/runtime-perf-micro-baseline-final/0-webgl2-program.png",
+            "sha256": "1c364afc881053686ae62e9901ebeb54b65e7c7bc23b2cca4a4c14fa55c12d6b",
+            "nonUniform": true
+          }
+        },
+        {
+          "caseId": "micro-production-uv",
+          "variant": "program",
+          "backend": "webgpu",
+          "repeat": 1,
+          "scope": "production-builder-micro",
+          "cpuSamples": 60,
+          "p50Ms": 0.30000001192092896,
+          "p95Ms": 0.5,
+          "gpuAvailable": false,
+          "gpuSamples": 0,
+          "gpuUnavailableReason": "Multi-call app frame: public Three timestamp resolver does not establish whole-app GPU duration",
+          "drawCoverage": {
+            "validationFrames": 1,
+            "programMeshBindings": 1,
+            "drawnProgramMeshes": 1,
+            "drawnProgramMaterials": 1,
+            "method": "untimed onBeforeRender with installed NodeMaterial argument identity; wrappers removed before warmup/measurement"
+          },
+          "sourceRestored": true,
+          "screenshot": {
+            "path": "artifacts/runtime-perf-micro-baseline-final/1-webgpu-program.png",
+            "sha256": "1c364afc881053686ae62e9901ebeb54b65e7c7bc23b2cca4a4c14fa55c12d6b",
+            "nonUniform": true
+          }
+        },
+        {
+          "caseId": "micro-production-uv",
+          "variant": "carrier",
+          "backend": "webgpu",
+          "repeat": 1,
+          "scope": "production-builder-micro",
+          "cpuSamples": 60,
+          "p50Ms": 0.30000001192092896,
+          "p95Ms": 0.5,
+          "gpuAvailable": false,
+          "gpuSamples": 0,
+          "gpuUnavailableReason": "Multi-call app frame: public Three timestamp resolver does not establish whole-app GPU duration",
+          "drawCoverage": {
+            "validationFrames": 1,
+            "programMeshBindings": 0,
+            "drawnProgramMeshes": 0,
+            "drawnProgramMaterials": 0,
+            "method": "untimed onBeforeRender with installed NodeMaterial argument identity; wrappers removed before warmup/measurement"
+          },
+          "sourceRestored": true,
+          "screenshot": {
+            "path": "artifacts/runtime-perf-micro-baseline-final/1-webgpu-carrier.png",
+            "sha256": "56298454a3e00ec6e18a4c55d8e20505287b0a1f77be0bf53e79f294abcaf749",
+            "nonUniform": true
+          }
+        },
+        {
+          "caseId": "micro-production-uv",
+          "variant": "program",
+          "backend": "webgl2",
+          "repeat": 1,
+          "scope": "production-builder-micro",
+          "cpuSamples": 60,
+          "p50Ms": 0.20000004768371582,
+          "p95Ms": 0.3999999761581421,
+          "gpuAvailable": true,
+          "gpuSamples": 30,
+          "gpuUnavailableReason": null,
+          "drawCoverage": {
+            "validationFrames": 1,
+            "programMeshBindings": 1,
+            "drawnProgramMeshes": 1,
+            "drawnProgramMaterials": 1,
+            "method": "untimed onBeforeRender with installed NodeMaterial argument identity; wrappers removed before warmup/measurement"
+          },
+          "sourceRestored": true,
+          "screenshot": {
+            "path": "artifacts/runtime-perf-micro-baseline-final/1-webgl2-program.png",
+            "sha256": "1c364afc881053686ae62e9901ebeb54b65e7c7bc23b2cca4a4c14fa55c12d6b",
+            "nonUniform": true
+          }
+        },
+        {
+          "caseId": "micro-production-uv",
+          "variant": "carrier",
+          "backend": "webgl2",
+          "repeat": 1,
+          "scope": "production-builder-micro",
+          "cpuSamples": 60,
+          "p50Ms": 0.30000001192092896,
+          "p95Ms": 0.5,
+          "gpuAvailable": true,
+          "gpuSamples": 30,
+          "gpuUnavailableReason": null,
+          "drawCoverage": {
+            "validationFrames": 1,
+            "programMeshBindings": 0,
+            "drawnProgramMeshes": 0,
+            "drawnProgramMaterials": 0,
+            "method": "untimed onBeforeRender with installed NodeMaterial argument identity; wrappers removed before warmup/measurement"
+          },
+          "sourceRestored": true,
+          "screenshot": {
+            "path": "artifacts/runtime-perf-micro-baseline-final/1-webgl2-carrier.png",
+            "sha256": "56298454a3e00ec6e18a4c55d8e20505287b0a1f77be0bf53e79f294abcaf749",
+            "nonUniform": true
+          }
+        },
+        {
+          "caseId": "micro-production-uv",
+          "variant": "carrier",
+          "backend": "webgpu",
+          "repeat": 2,
+          "scope": "production-builder-micro",
+          "cpuSamples": 60,
+          "p50Ms": 0.30000001192092896,
+          "p95Ms": 0.40000003576278687,
+          "gpuAvailable": false,
+          "gpuSamples": 0,
+          "gpuUnavailableReason": "Multi-call app frame: public Three timestamp resolver does not establish whole-app GPU duration",
+          "drawCoverage": {
+            "validationFrames": 1,
+            "programMeshBindings": 0,
+            "drawnProgramMeshes": 0,
+            "drawnProgramMaterials": 0,
+            "method": "untimed onBeforeRender with installed NodeMaterial argument identity; wrappers removed before warmup/measurement"
+          },
+          "sourceRestored": true,
+          "screenshot": {
+            "path": "artifacts/runtime-perf-micro-baseline-final/2-webgpu-carrier.png",
+            "sha256": "56298454a3e00ec6e18a4c55d8e20505287b0a1f77be0bf53e79f294abcaf749",
+            "nonUniform": true
+          }
+        },
+        {
+          "caseId": "micro-production-uv",
+          "variant": "program",
+          "backend": "webgpu",
+          "repeat": 2,
+          "scope": "production-builder-micro",
+          "cpuSamples": 60,
+          "p50Ms": 0.30000001192092896,
+          "p95Ms": 0.5,
+          "gpuAvailable": false,
+          "gpuSamples": 0,
+          "gpuUnavailableReason": "Multi-call app frame: public Three timestamp resolver does not establish whole-app GPU duration",
+          "drawCoverage": {
+            "validationFrames": 1,
+            "programMeshBindings": 1,
+            "drawnProgramMeshes": 1,
+            "drawnProgramMaterials": 1,
+            "method": "untimed onBeforeRender with installed NodeMaterial argument identity; wrappers removed before warmup/measurement"
+          },
+          "sourceRestored": true,
+          "screenshot": {
+            "path": "artifacts/runtime-perf-micro-baseline-final/2-webgpu-program.png",
+            "sha256": "1c364afc881053686ae62e9901ebeb54b65e7c7bc23b2cca4a4c14fa55c12d6b",
+            "nonUniform": true
+          }
+        },
+        {
+          "caseId": "micro-production-uv",
+          "variant": "carrier",
+          "backend": "webgl2",
+          "repeat": 2,
+          "scope": "production-builder-micro",
+          "cpuSamples": 60,
+          "p50Ms": 0.30000001192092896,
+          "p95Ms": 0.40000003576278687,
+          "gpuAvailable": true,
+          "gpuSamples": 30,
+          "gpuUnavailableReason": null,
+          "drawCoverage": {
+            "validationFrames": 1,
+            "programMeshBindings": 0,
+            "drawnProgramMeshes": 0,
+            "drawnProgramMaterials": 0,
+            "method": "untimed onBeforeRender with installed NodeMaterial argument identity; wrappers removed before warmup/measurement"
+          },
+          "sourceRestored": true,
+          "screenshot": {
+            "path": "artifacts/runtime-perf-micro-baseline-final/2-webgl2-carrier.png",
+            "sha256": "56298454a3e00ec6e18a4c55d8e20505287b0a1f77be0bf53e79f294abcaf749",
+            "nonUniform": true
+          }
+        },
+        {
+          "caseId": "micro-production-uv",
+          "variant": "program",
+          "backend": "webgl2",
+          "repeat": 2,
+          "scope": "production-builder-micro",
+          "cpuSamples": 60,
+          "p50Ms": 0.2999999523162842,
+          "p95Ms": 0.40000003576278687,
+          "gpuAvailable": true,
+          "gpuSamples": 30,
+          "gpuUnavailableReason": null,
+          "drawCoverage": {
+            "validationFrames": 1,
+            "programMeshBindings": 1,
+            "drawnProgramMeshes": 1,
+            "drawnProgramMaterials": 1,
+            "method": "untimed onBeforeRender with installed NodeMaterial argument identity; wrappers removed before warmup/measurement"
+          },
+          "sourceRestored": true,
+          "screenshot": {
+            "path": "artifacts/runtime-perf-micro-baseline-final/2-webgl2-program.png",
+            "sha256": "1c364afc881053686ae62e9901ebeb54b65e7c7bc23b2cca4a4c14fa55c12d6b",
+            "nonUniform": true
+          }
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

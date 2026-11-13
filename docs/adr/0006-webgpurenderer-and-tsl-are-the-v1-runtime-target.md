@@ -2,7 +2,7 @@
 
 Status: accepted on 2026-07-27
 
-Blendlink's generated integration currently targets Three's `WebGLRenderer`.
+SceneToWeb's generated integration currently targets Three's `WebGLRenderer`.
 Reaching materials that baking can never reproduce — view-dependent optics such
 as Fresnel, Layer Weight, and glass — requires evaluating the authored graph at
 runtime, and the only portable way to do that in Three is TSL node materials,
@@ -14,9 +14,9 @@ produces ordinary glTF and is not invalidated by the migration.
 
 **Dual-target both renderers.** Rejected. Two renderer paths with different
 material capabilities means one `.blend` has two different pixel results, and
-every gate that makes Blendlink credible — byte attestation, the Khronos
+every gate that makes SceneToWeb credible — byte attestation, the Khronos
 corpus, the Needle baseline, the Chromium component fixtures — would need forked
-expectations. Blendlink's differentiator is proving what the browser actually
+expectations. SceneToWeb's differentiator is proving what the browser actually
 sampled; doubling the evidence burden attacks exactly that.
 
 **Stay on `WebGLRenderer` permanently.** Rejected as a ceiling rather than a
@@ -27,7 +27,7 @@ and comparable scenes would stay permanently refused.
 
 `WebGPURenderer` provides a WebGL2 backend and falls back automatically, so
 migrating does not reduce end-user device support. What changes is the
-application's renderer construction — and Blendlink generates that integration.
+application's renderer construction — and SceneToWeb generates that integration.
 
 ## Consequences
 
@@ -49,14 +49,14 @@ application's renderer construction — and Blendlink generates that integration
   WebGL output, and the tuned effect-fusion semantics in
   `ThreePostPipelineService` do not transfer. The reshaped replacement plan —
   three's in-tree TSL display nodes cover 8 of the 11 effects; vignette,
-  tilt-shift, and kuwahara become small Blendlink-owned TSL nodes; N8AO→GTAO
+  tilt-shift, and kuwahara become small SceneToWeb-owned TSL nodes; N8AO→GTAO
   is a named look change requiring side-by-side evidence — is recorded in
   [research-wgpu-post-replacement-2026.md](../research-wgpu-post-replacement-2026.md).
 - The exact `three@0.184.0` pin is re-attested against a faster-moving surface
   than `WebGLRenderer` presented.
 - Every browser gate and visual baseline is re-established against the new
   renderer.
-- Material intent is compiled by a Blendlink-owned node compiler, not by
+- Material intent is compiled by a SceneToWeb-owned node compiler, not by
   Blender's MaterialX export (ADR 0005). Nothing enters that compiler without
   passing a per-node differential against Blender's own evaluation.
 - The Material bake remains correct and useful after the migration, because

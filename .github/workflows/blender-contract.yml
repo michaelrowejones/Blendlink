@@ -2,6 +2,12 @@ name: Release candidate contract
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - "packages/**"
+      - "scripts/**"
+      - "package*.json"
+      - ".github/workflows/**"
   push:
     tags:
       - "v*"
@@ -11,7 +17,8 @@ permissions:
 
 concurrency:
   group: release-candidate-${{ github.ref }}
-  cancel-in-progress: false
+  # New PR revisions supersede stale checks; tagged distribution keeps running.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   node-contract:
@@ -38,14 +45,22 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
 
+      - name: Cache checksum-pinned Blender archive
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+        with:
+          path: ${{ runner.temp }}/blender-5.2.0-linux-x64.tar.xz
+          key: blender-archive-${{ runner.os }}-${{ runner.arch }}-96f6c181a30f4950607839dc84d42a354b250d8a0231b098b59b7bc69c351c48
+
       - name: Download and verify exact Blender 5.2.0
         env:
           BLENDER_SHA256: "96f6c181a30f4950607839dc84d42a354b250d8a0231b098b59b7bc69c351c48"
         run: |
           archive="$RUNNER_TEMP/blender-5.2.0-linux-x64.tar.xz"
-          curl --fail --location --retry 3 \
-            "https://download.blender.org/release/Blender5.2/blender-5.2.0-linux-x64.tar.xz" \
-            --output "$archive"
+          if [ ! -f "$archive" ]; then
+            curl --fail --location --retry 5 --retry-all-errors --retry-delay 15 --retry-max-time 300 \
+              "https://download.blender.org/release/Blender5.2/blender-5.2.0-linux-x64.tar.xz" \
+              --output "$archive"
+          fi
           echo "$BLENDER_SHA256  $archive" | sha256sum --check --strict
           mkdir "$RUNNER_TEMP/blender"
           tar -xf "$archive" -C "$RUNNER_TEMP/blender" --strip-components=1
@@ -75,6 +90,11 @@ jobs:
       - name: Install locked dependencies
         run: npm ci
 
+      - name: Install software rendering libraries for headless Blender
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends libegl1 libgl1-mesa-dri libopengl0 mesa-utils
+
       - name: Run the complete portable release gate
         run: npm run test:full
 
@@ -82,19 +102,27 @@ jobs:
         run: git diff --check
 
   linux:
-    name: Linux x64 / Blender ${{ matrix.version }}
+    name: Linux x64 / Blender ${{ matrix.blender.version }} / ${{ matrix.suite }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 45
+    # The expanded compositor corpus took 68 minutes on Linux 5.2; allow host variance.
+    timeout-minutes: ${{ matrix.suite == 'compositor' && 90 || 75 }}
     strategy:
       fail-fast: false
       matrix:
-        include:
+        suite: [compositor, shaders, geometry, noise-fbm, noise-types]
+        blender:
           - version: "4.2.0"
             series: "4.2"
             sha256: "4f4fd7646af01f6fee9d420408318381a6e52571268eb7cf9cd5033bd9e7a359"
           - version: "5.2.0"
             series: "5.2"
             sha256: "96f6c181a30f4950607839dc84d42a354b250d8a0231b098b59b7bc69c351c48"
+        include:
+          - suite: noise-watchdog-diagnostic
+            blender:
+              version: "5.2.0"
+              series: "5.2"
+              sha256: "96f6c181a30f4950607839dc84d42a354b250d8a0231b098b59b7bc69c351c48"
 
     steps:
       - name: Check out the repository
@@ -109,16 +137,24 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
 
+      - name: Cache checksum-pinned Blender archive
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+        with:
+          path: ${{ runner.temp }}/blender-${{ matrix.blender.version }}-linux-x64.tar.xz
+          key: blender-archive-${{ runner.os }}-${{ runner.arch }}-${{ matrix.blender.sha256 }}
+
       - name: Download and verify exact Blender archive
         env:
-          BLENDER_VERSION: ${{ matrix.version }}
-          BLENDER_SERIES: ${{ matrix.series }}
-          BLENDER_SHA256: ${{ matrix.sha256 }}
+          BLENDER_VERSION: ${{ matrix.blender.version }}
+          BLENDER_SERIES: ${{ matrix.blender.series }}
+          BLENDER_SHA256: ${{ matrix.blender.sha256 }}
         run: |
           archive="$RUNNER_TEMP/blender-$BLENDER_VERSION-linux-x64.tar.xz"
-          curl --fail --location --retry 3 \
-            "https://download.blender.org/release/Blender$BLENDER_SERIES/blender-$BLENDER_VERSION-linux-x64.tar.xz" \
-            --output "$archive"
+          if [ ! -f "$archive" ]; then
+            curl --fail --location --retry 5 --retry-all-errors --retry-delay 15 --retry-max-time 300 \
+              "https://download.blender.org/release/Blender$BLENDER_SERIES/blender-$BLENDER_VERSION-linux-x64.tar.xz" \
+              --output "$archive"
+          fi
           echo "$BLENDER_SHA256  $archive" | sha256sum --check --strict
           mkdir "$RUNNER_TEMP/blender"
           tar -xf "$archive" -C "$RUNNER_TEMP/blender" --strip-components=1
@@ -127,8 +163,53 @@ jobs:
       - name: Install locked dependencies
         run: npm ci
 
-      - name: Run exact-version add-on and archive contract
-        run: npm run test:addon-headless
+      - name: Verify installed extension and managed desktop tools
+        run: npm run build && node scripts/test-addon-headless.mjs --desktop-smoke
+
+      - name: Install software rendering libraries for headless Blender
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends libegl1 libgl1-mesa-dri libopengl0 mesa-utils
+
+      - name: Install the version-matched node parity browser
+        run: npx --no-install playwright install --with-deps chromium
+
+      - name: Compare native node pixels with both built browser backends
+        if: matrix.suite != 'noise-watchdog-diagnostic'
+        run: xvfb-run --auto-servernum node scripts/test-node-parity.mjs --suite "${{ matrix.suite }}"
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+          DEBUG: ${{ startsWith(matrix.suite, 'noise-') && 'pw:browser' || '' }}
+
+      # This focused diagnostic changes no pixel budgets or production launch
+      # settings. The ordinary FBM shard above keeps Chromium's default watchdog.
+      - name: Diagnose expensive 4D software GPU termination
+        if: matrix.suite == 'noise-watchdog-diagnostic'
+        run: timeout 12m xvfb-run --auto-servernum node experiments/noise-fractal-differential/run.mjs --built --ids cycles-fbm-raw-4d-fac-image-4
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+          DEBUG: pw:browser
+          BLENDLINK_NOISE_EVIDENCE: artifacts/verification-native-node-gate/noise-watchdog-diagnostic
+          BLENDLINK_TEST_CHROMIUM_ARGS: '["--disable-gpu-watchdog"]'
+
+      - name: Retain native and browser node evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: native-node-parity-${{ matrix.blender.version }}-${{ matrix.suite }}
+          path: |
+            artifacts/verification-native-node-gate
+            artifacts/verification-mapping
+            artifacts/verification-mix-math
+            artifacts/verification-map-range
+            artifacts/verification-math-boundary
+            artifacts/verification-shader-math
+            artifacts/verification-hue-ramp
+            artifacts/verification-vectors
+            artifacts/verification-spectral-nodes
+            artifacts/verification-curve-nodes
+            artifacts/verification-brick
+          if-no-files-found: warn
 
       - name: Check patch whitespace
         run: git diff --check
@@ -185,8 +266,8 @@ jobs:
       - name: Install locked dependencies
         run: npm ci
 
-      - name: Run exact-version add-on and archive contract
-        run: npm run test:addon-headless
+      - name: Verify installed extension and managed desktop tools
+        run: npm run build && node scripts/test-addon-headless.mjs --desktop-smoke
 
       - name: Check patch whitespace
         run: git diff --check
@@ -224,14 +305,22 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
 
+      - name: Cache checksum-pinned Blender archive
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+        with:
+          path: ${{ runner.temp }}/blender-5.2.0-linux-x64.tar.xz
+          key: blender-archive-${{ runner.os }}-${{ runner.arch }}-96f6c181a30f4950607839dc84d42a354b250d8a0231b098b59b7bc69c351c48
+
       - name: Download and verify exact Blender 5.2.0
         env:
           BLENDER_SHA256: "96f6c181a30f4950607839dc84d42a354b250d8a0231b098b59b7bc69c351c48"
         run: |
           archive="$RUNNER_TEMP/blender-5.2.0-linux-x64.tar.xz"
-          curl --fail --location --retry 3 \
-            "https://download.blender.org/release/Blender5.2/blender-5.2.0-linux-x64.tar.xz" \
-            --output "$archive"
+          if [ ! -f "$archive" ]; then
+            curl --fail --location --retry 5 --retry-all-errors --retry-delay 15 --retry-max-time 300 \
+              "https://download.blender.org/release/Blender5.2/blender-5.2.0-linux-x64.tar.xz" \
+              --output "$archive"
+          fi
           echo "$BLENDER_SHA256  $archive" | sha256sum --check --strict
           mkdir "$RUNNER_TEMP/blender"
           tar -xf "$archive" -C "$RUNNER_TEMP/blender" --strip-components=1
@@ -275,8 +364,8 @@ jobs:
         uses: actions/attest@f7c74d28b9d84cb8768d0b8ca14a4bac6ef463e6 # v4.2.0
         with:
           subject-path: |
-            artifacts/release/${{ steps.identity.outputs.version }}/blendlink-${{ steps.identity.outputs.version }}.tgz
-            artifacts/release/${{ steps.identity.outputs.version }}/blendlink-addon-${{ steps.identity.outputs.version }}.zip
+            artifacts/release/${{ steps.identity.outputs.version }}/scenetoweb-${{ steps.identity.outputs.version }}.tgz
+            artifacts/release/${{ steps.identity.outputs.version }}/scenetoweb-addon-${{ steps.identity.outputs.version }}.zip
             artifacts/release/${{ steps.identity.outputs.version }}/release-manifest.json
             artifacts/release/${{ steps.identity.outputs.version }}/SHA256SUMS
 
@@ -284,7 +373,7 @@ jobs:
         id: retain
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: blendlink-release-candidate-${{ github.ref_name }}
+          name: scenetoweb-release-candidate-${{ github.ref_name }}
           path: artifacts/release/${{ steps.identity.outputs.version }}
           if-no-files-found: error
           retention-days: 30
@@ -298,7 +387,7 @@ jobs:
     timeout-minutes: 20
     environment:
       name: npm-production
-      url: https://www.npmjs.com/package/blendlink/v/${{ needs.release-candidate.outputs.version }}
+      url: https://www.npmjs.com/package/scenetoweb/v/${{ needs.release-candidate.outputs.version }}
     permissions:
       actions: read
       contents: read
@@ -348,7 +437,7 @@ jobs:
           service_digest="$(jq -r '.digest // ""' "$artifact_metadata")"
           service_digest="${service_digest#sha256:}"
           expired="$(jq -r '.expired // true' "$artifact_metadata")"
-          if [ "$service_name" != "blendlink-release-candidate-$GITHUB_REF_NAME" ] || \
+          if [ "$service_name" != "scenetoweb-release-candidate-$GITHUB_REF_NAME" ] || \
              [ "$service_sha" != "$GITHUB_SHA" ] || [ "$service_digest" != "$expected_digest" ] || \
              [ "$expired" != "false" ]; then
             echo "::error::Artifact service metadata does not identify this exact tag commit and digest."
@@ -380,8 +469,8 @@ jobs:
             --commit "$GITHUB_SHA" \
             --repository "$GITHUB_REPOSITORY"
           for file in \
-            "$release_directory/blendlink-$RELEASE_VERSION.tgz" \
-            "$release_directory/blendlink-addon-$RELEASE_VERSION.zip" \
+            "$release_directory/scenetoweb-$RELEASE_VERSION.tgz" \
+            "$release_directory/scenetoweb-addon-$RELEASE_VERSION.zip" \
             "$release_directory/release-manifest.json" \
             "$release_directory/SHA256SUMS"
           do
@@ -395,15 +484,15 @@ jobs:
 
       - name: Fail closed until trusted publishing is externally configured
         env:
-          TRUSTED_PUBLISHING_CONFIRMED: ${{ vars.BLENDLINK_NPM_TRUSTED_PUBLISHING }}
+          TRUSTED_PUBLISHING_CONFIRMED: ${{ vars.SCENETOWEB_NPM_TRUSTED_PUBLISHING }}
           REPOSITORY_VISIBILITY: ${{ github.event.repository.visibility }}
         run: |
           if [ "$TRUSTED_PUBLISHING_CONFIRMED" != "true" ]; then
-            echo "::error::Set environment variable BLENDLINK_NPM_TRUSTED_PUBLISHING=true only after npm binds blendlink to this repository, blender-contract.yml, npm-production, and npm publish."
+            echo "::error::Set environment variable SCENETOWEB_NPM_TRUSTED_PUBLISHING=true only after npm binds scenetoweb to this repository, blender-contract.yml, npm-production, and npm publish."
             exit 1
           fi
           if [ "$REPOSITORY_VISIBILITY" != "public" ]; then
-            echo "::error::npm provenance requires the Blendlink source repository to be public."
+            echo "::error::npm provenance requires the SceneToWeb source repository to be public."
             exit 1
           fi
           if [ -n "${NODE_AUTH_TOKEN:-}" ] || [ -n "${NPM_TOKEN:-}" ] || \
@@ -417,11 +506,11 @@ jobs:
           RELEASE_VERSION: ${{ needs.release-candidate.outputs.version }}
         run: |
           release_directory="artifacts/release/$RELEASE_VERSION"
-          retained_archive="$release_directory/blendlink-$RELEASE_VERSION.tgz"
+          retained_archive="$release_directory/scenetoweb-$RELEASE_VERSION.tgz"
           metadata="$RUNNER_TEMP/npm-version.json"
-          registry_archive="$RUNNER_TEMP/blendlink-$RELEASE_VERSION.registry.tgz"
-          version_url="https://registry.npmjs.org/blendlink/$RELEASE_VERSION"
-          tarball_url="https://registry.npmjs.org/blendlink/-/blendlink-$RELEASE_VERSION.tgz"
+          registry_archive="$RUNNER_TEMP/scenetoweb-$RELEASE_VERSION.registry.tgz"
+          version_url="https://registry.npmjs.org/scenetoweb/$RELEASE_VERSION"
+          tarball_url="https://registry.npmjs.org/scenetoweb/-/scenetoweb-$RELEASE_VERSION.tgz"
           if [[ "$RELEASE_VERSION" == *-* ]]; then
             dist_tag="beta"
           else
@@ -481,7 +570,7 @@ jobs:
 
           packument="$RUNNER_TEMP/npm-packument.json"
           curl --fail --location --retry 3 \
-            "https://registry.npmjs.org/blendlink" --output "$packument"
+            "https://registry.npmjs.org/scenetoweb" --output "$packument"
           PACKUMENT="$packument" DIST_TAG="$dist_tag" RELEASE_VERSION="$RELEASE_VERSION" \
             node --input-type=module -e "
               import { readFileSync } from 'node:fs';
@@ -497,14 +586,14 @@ jobs:
             cd "$signature_directory"
             npm init --yes >/dev/null
             npm install --package-lock-only --ignore-scripts --no-audit --no-fund \
-              "blendlink@$RELEASE_VERSION"
+              "scenetoweb@$RELEASE_VERSION"
             EXPECTED_VERSION="$RELEASE_VERSION" EXPECTED_INTEGRITY="$(jq -r '.dist.integrity' "$metadata")" \
               node --input-type=module -e "
                 import { readFileSync } from 'node:fs';
                 const lock = JSON.parse(readFileSync('package-lock.json', 'utf8'));
-                const entry = lock.packages?.['node_modules/blendlink'];
+                const entry = lock.packages?.['node_modules/scenetoweb'];
                 if (entry?.version !== process.env.EXPECTED_VERSION ||
-                    entry?.resolved !== 'https://registry.npmjs.org/blendlink/-/blendlink-' +
+                    entry?.resolved !== 'https://registry.npmjs.org/scenetoweb/-/scenetoweb-' +
                       process.env.EXPECTED_VERSION + '.tgz' ||
                     entry?.integrity !== process.env.EXPECTED_INTEGRITY) {
                   throw new Error('Signature-verification lock does not identify the exact registry artifact');
@@ -581,8 +670,8 @@ jobs:
           remote_commit="$(gh api "repos/$GITHUB_REPOSITORY/commits/$GITHUB_REF_NAME" --jq .sha)"
           test "$remote_commit" = "$GITHUB_SHA"
           for file in \
-            "$release_directory/blendlink-$RELEASE_VERSION.tgz" \
-            "$release_directory/blendlink-addon-$RELEASE_VERSION.zip" \
+            "$release_directory/scenetoweb-$RELEASE_VERSION.tgz" \
+            "$release_directory/scenetoweb-addon-$RELEASE_VERSION.zip" \
             "$release_directory/release-manifest.json" \
             "$release_directory/SHA256SUMS"
           do
@@ -600,11 +689,11 @@ jobs:
         run: |
           release_directory="artifacts/release/$RELEASE_VERSION"
           metadata="$RUNNER_TEMP/npm-version.json"
-          registry_archive="$RUNNER_TEMP/blendlink-$RELEASE_VERSION.registry.tgz"
+          registry_archive="$RUNNER_TEMP/scenetoweb-$RELEASE_VERSION.registry.tgz"
           curl --fail --location --retry 3 \
-            "https://registry.npmjs.org/blendlink/$RELEASE_VERSION" --output "$metadata"
+            "https://registry.npmjs.org/scenetoweb/$RELEASE_VERSION" --output "$metadata"
           curl --fail --location --retry 3 \
-            "https://registry.npmjs.org/blendlink/-/blendlink-$RELEASE_VERSION.tgz" \
+            "https://registry.npmjs.org/scenetoweb/-/scenetoweb-$RELEASE_VERSION.tgz" \
             --output "$registry_archive"
           node scripts/verify-retained-release.mjs registry \
             --directory "$release_directory" \
@@ -616,12 +705,12 @@ jobs:
 
       - name: Create, verify, and publish the immutable GitHub prerelease
         env:
-          IMMUTABLE_RELEASES_CONFIRMED: ${{ vars.BLENDLINK_IMMUTABLE_RELEASES }}
+          IMMUTABLE_RELEASES_CONFIRMED: ${{ vars.SCENETOWEB_IMMUTABLE_RELEASES }}
           RELEASE_VERSION: ${{ needs.release-candidate.outputs.version }}
           GH_TOKEN: ${{ github.token }}
         run: |
           if [ "$IMMUTABLE_RELEASES_CONFIRMED" != "true" ]; then
-            echo "::error::Enable immutable releases, then set github-release-production variable BLENDLINK_IMMUTABLE_RELEASES=true."
+            echo "::error::Enable immutable releases, then set github-release-production variable SCENETOWEB_IMMUTABLE_RELEASES=true."
             exit 1
           fi
           release_directory="artifacts/release/$RELEASE_VERSION"
@@ -638,13 +727,13 @@ jobs:
               exit "$release_status"
             fi
             gh release create "$GITHUB_REF_NAME" \
-              "$release_directory/blendlink-$RELEASE_VERSION.tgz" \
-              "$release_directory/blendlink-addon-$RELEASE_VERSION.zip" \
+              "$release_directory/scenetoweb-$RELEASE_VERSION.tgz" \
+              "$release_directory/scenetoweb-addon-$RELEASE_VERSION.zip" \
               "$release_directory/release-manifest.json" \
               "$release_directory/SHA256SUMS" \
               --verify-tag \
               --target "$GITHUB_SHA" \
-              --title "Blendlink $RELEASE_VERSION public beta" \
+              --title "SceneToWeb $RELEASE_VERSION public beta" \
               --generate-notes \
               --draft \
               --prerelease \

@@ -150,7 +150,7 @@ export interface RuntimePerformanceReport {
 export interface RuntimePerformanceMonitor {
   start(): void
   /**
-   * Call once per rendered frame. When `render` is supplied, Blendlink runs it
+   * Call once per rendered frame. When `render` is supplied, SceneToWeb runs it
    * exactly once and can surround eligible calls with a non-blocking GPU timer
    * query. Supplying an explicit timestamp avoids a second clock read when an
    * animation loop already has a requestAnimationFrame timestamp.

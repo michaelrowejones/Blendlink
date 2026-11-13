@@ -12,7 +12,7 @@ on Needle for the selected-field transport that Needle does not provide.
 
 ## Question
 
-Blendlink can privately evaluate a static, lighting-independent Color/Value
+SceneToWeb can privately evaluate a static, lighting-independent Color/Value
 socket and publish it as an ordinary base-color texture. The current generated
 carrier always declares `KHR_materials_unlit`. Does this preserve the artist's
 surface semantics when the selected field feeds an ordinary lit surface?
@@ -47,7 +47,7 @@ surface. [Blender glTF 2.0
 manual](https://docs.blender.org/manual/en/3.3/addons/import_export/scene_gltf2.html)
 
 Needle therefore preserves this surface distinction wherever Blender's stock
-exporter can represent the material. Blendlink's selected-field materializer
+exporter can represent the material. SceneToWeb's selected-field materializer
 has no direct Needle analogue, but its generated carrier should preserve the
 same distinction by default.
 
@@ -55,7 +55,7 @@ same distinction by default.
 
 The throwaway fixture is
 [`experiments/selected-field-lit-transport-differential`](../experiments/selected-field-lit-transport-differential/README.md).
-It uses Blender 5.2.0 LTS and Blendlink's canonical `bakelib.py` to evaluate a
+It uses Blender 5.2.0 LTS and SceneToWeb's canonical `bakelib.py` to evaluate a
 procedural red/blue intrinsic field into one 256×256 PNG. It then transports
 the exact same PNG bytes through:
 
@@ -161,7 +161,7 @@ surfaceResponse: auto | lit | unlit
 ```
 
 `auto` should be the artist-facing default. A single namespaced override on
-the existing Blendlink Web Color marker should be shown only when the active
+the existing SceneToWeb Web Color marker should be shown only when the active
 graph is ambiguous. The website should not need to know this setting.
 
 No manifest reshaping is necessary:
@@ -215,7 +215,7 @@ The prescribed carrier work now ships under `NDL-MAT-008`.
   the artist chooses the namespaced `LIT` or `UNLIT` override.
 - Lit carriers use ordinary core metallic-roughness glTF with metallic `0`
   and roughness `0.5`. Unlit carriers use `KHR_materials_unlit`. Neither path
-  requires a Blendlink-specific material decoder.
+  requires a SceneToWeb-specific material decoder.
 - Opaque, mask, and blend classifications are computed per primitive binding,
   shared materials split into attested variants when necessary, and the final
   GLB is re-read to verify alpha mode, PBR factors, extension use, selected

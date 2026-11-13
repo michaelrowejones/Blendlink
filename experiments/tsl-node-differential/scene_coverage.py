@@ -462,7 +462,8 @@ def main():
                                 "uv", "generated", "object_coords",
                                 "tex_image", "tex_checker", "tex_gradient",
                                 "tex_magic", "tex_wave", "tex_voronoi",
-                                "tex_white_noise", "noise", "vertex_color",
+                                "tex_white_noise", "noise", "noise_fractal", "noise_varying",
+                                "noise_normalized", "noise_varying_native", "vertex_color",
                             )
                         )
 

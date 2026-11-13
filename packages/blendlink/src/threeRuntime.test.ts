@@ -462,7 +462,7 @@ describe('official Three scene installation seam', () => {
     })
 
     try {
-      // When the application starts the URL first, Three coalesces Blendlink's
+      // When the application starts the URL first, Three coalesces SceneToWeb's
       // same-URL subscriber onto that request. Aborting the second/private
       // manager cannot stop work owned by the first manager.
       const applicationFirstManager = new THREE.LoadingManager()
@@ -480,7 +480,7 @@ describe('official Three scene installation seam', () => {
       expect((await applicationFirstSettlements).map((entry) => entry.status))
         .toEqual(['rejected', 'rejected'])
 
-      // The reverse is the dangerous ownership collision: when Blendlink's
+      // The reverse is the dangerous ownership collision: when SceneToWeb's
       // private request starts first, canceling it also rejects an application
       // consumer that Three attached to the same module-global URL entry.
       const privateFirstManager = new THREE.LoadingManager()
@@ -515,7 +515,7 @@ describe('official Three scene installation seam', () => {
         this.manager.itemEnd('/textures/missing-base-color.png')
         this.manager.itemEnd('/hero.glb')
         // GLTFLoader r184 catches external image failures and can still resolve
-        // with a null texture. Blendlink must treat the manager error as the
+        // with a null texture. SceneToWeb must treat the manager error as the
         // terminal fact rather than publishing a visibly incomplete scene.
         return await loader(root).loadAsync() as never
       },
@@ -807,7 +807,7 @@ describe('official Three scene installation seam', () => {
       },
     )
     expect(productionScene.background).toBe(productionBackground)
-    expect(productionScene.getObjectByName('Blendlink Preview World')).toBeUndefined()
+    expect(productionScene.getObjectByName('SceneToWeb Preview World')).toBeUndefined()
     production.dispose()
 
     const previewScene = new THREE.Scene()
@@ -831,7 +831,7 @@ describe('official Three scene installation seam', () => {
     expect(previewScene.background).toBe(environment)
     expect(environment).toBeInstanceOf(THREE.DataTexture)
     expect(environment).toMatchObject({
-      name: 'Blendlink Preview World',
+      name: 'SceneToWeb Preview World',
       mapping: THREE.EquirectangularReflectionMapping,
       colorSpace: THREE.LinearSRGBColorSpace,
       type: THREE.FloatType,
@@ -847,7 +847,7 @@ describe('official Three scene installation seam', () => {
     ])
     expect(previewScene.backgroundIntensity).toBe(1)
     expect(previewScene.environmentIntensity).toBe(1)
-    expect(previewScene.getObjectByName('Blendlink Preview World')).toBeUndefined()
+    expect(previewScene.getObjectByName('SceneToWeb Preview World')).toBeUndefined()
     expect(sceneDescriptor.authoringPreview?.world).toBe(world)
     const disposeEnvironment = vi.spyOn(environment, 'dispose')
 
@@ -856,7 +856,7 @@ describe('official Three scene installation seam', () => {
     expect(previewScene.environment).toBe(previousEnvironment)
     expect(previewScene.backgroundIntensity).toBe(1.75)
     expect(previewScene.environmentIntensity).toBe(0.625)
-    expect(previewScene.getObjectByName('Blendlink Preview World')).toBeUndefined()
+    expect(previewScene.getObjectByName('SceneToWeb Preview World')).toBeUndefined()
     expect(disposeEnvironment).toHaveBeenCalledOnce()
 
     preview.dispose()
@@ -897,7 +897,7 @@ describe('official Three scene installation seam', () => {
 
     expect((scene.background as THREE.Color).toArray()).toEqual([0.7, 0.6, 0.5])
     expect(scene.environment).toBeNull()
-    expect(scene.getObjectByName('Blendlink Preview World')).toBeUndefined()
+    expect(scene.getObjectByName('SceneToWeb Preview World')).toBeUndefined()
     installed.dispose()
   })
 
@@ -1018,7 +1018,7 @@ describe('official Three scene installation seam', () => {
     expect(Array.from(background.image.data.slice(0, 4))).toEqual([
       expect.closeTo(0.1), expect.closeTo(0.15), expect.closeTo(0.2), 1,
     ])
-    expect(scene.getObjectByName('Blendlink Preview World')).toBeUndefined()
+    expect(scene.getObjectByName('SceneToWeb Preview World')).toBeUndefined()
 
     const laterBackground = new THREE.Color(0xabcdef)
     scene.background = laterBackground
@@ -1061,7 +1061,7 @@ describe('official Three scene installation seam', () => {
 
     const texture = scene.background as THREE.DataTexture
     const disposeTexture = vi.spyOn(texture, 'dispose')
-    // The published image source prevented Blendlink from owning Environment,
+    // The published image source prevented SceneToWeb from owning Environment,
     // so this assignment is unambiguously a later application transfer.
     scene.environment = texture
     scene.background = new THREE.Color(0xabcdef)
@@ -1374,6 +1374,39 @@ describe('official Three scene installation seam', () => {
     installed.dispose()
   })
 
+  it.each(['live-only', 'portable-factor', 'portable-texture', 'roughness-only'] as const)(
+    'checks actual shipped Base Color evidence before legacy rendering: %s', async kind => {
+      const material = new THREE.MeshStandardMaterial()
+      material.name = 'Artist Checker'
+      material.userData.blendlink_source_material = 'Paint'
+      if (kind === 'portable-factor') material.color.setRGB(0.8, 0.2, 0.1)
+      if (kind === 'portable-texture') material.map = new THREE.Texture()
+      const root = new THREE.Group()
+      root.add(new THREE.Mesh(new THREE.BoxGeometry(), material))
+      const loadMaterialPrograms = vi.fn(async () => ({
+        schemaVersion: 1 as const, model: 'blendlink-material-programs-v1' as const,
+        materials: { Paint: { channels: { [kind === 'roughness-only' ? 'Roughness' : 'Base Color']: {
+          tslIr: { schemaVersion: 1 as const, model: 'blendlink-tsl-ir-v1' as const,
+            output: { op: 'const_vec3', value: [0.1, 0.8, 0.2] } },
+        } } } },
+      }))
+      const install = installThreeCompiledScene({
+        descriptor: descriptor({ materialPrograms: { url: '/scene.materials.json', bytes: 1, hash: 'x', materials: 1 } }),
+        renderer: renderer() as unknown as THREE.WebGLRenderer, scene: new THREE.Scene(),
+        loader: loader(root) as unknown as GLTFLoader, loadMaterialPrograms,
+      })
+      if (kind === 'live-only') {
+        await expect(install).rejects.toThrow(/Legacy WebGLRenderer.*Artist Checker.*WebGPURenderer/s)
+      } else {
+        const installed = await install
+        expect(installed.tslMaterials).toBeNull()
+        installed.dispose()
+      }
+      if (kind.startsWith('portable-')) expect(loadMaterialPrograms).not.toHaveBeenCalled()
+      else expect(loadMaterialPrograms).toHaveBeenCalledOnce()
+    },
+  )
+
   it('applies shipped material programs automatically on the WebGPU family', async () => {
     const webgpu = renderer() as ReturnType<typeof renderer> & {
       isWebGPURenderer?: boolean
@@ -1425,6 +1458,28 @@ describe('official Three scene installation seam', () => {
     // Disposal restores the loaded material on the mesh.
     const mesh = root.children[0] as THREE.Mesh
     expect(mesh.material).toBe(material)
+  })
+
+  it.each(['source', 'materials'] as const)('rebases directly fetched %s sidecars under a deployment subfolder', async kind => {
+    const webgpu = { ...renderer(), isWebGPURenderer: true, isWebGLRenderer: false, alpha: true }
+    const fetch = vi.fn(async () => new Response('missing', { status: 404 }))
+    vi.stubGlobal('fetch', fetch)
+    const pointer = { url: '/scene.json?v=hash', bytes: 1, hash: 'hash' }
+    try {
+      await expect(installLoadedThreeCompiledScene(
+        await loader(new THREE.Group()).loadAsync() as unknown as import('three/addons/loaders/GLTFLoader.js').GLTF,
+        {
+          descriptor: descriptor({
+            look: { toneMapping: 'application', exposure: 0, background: 'application' },
+            ...(kind === 'source' ? { sourcePresentation: pointer } : { materialPrograms: pointer }),
+          }),
+          renderer: webgpu as unknown as THREE.WebGLRenderer,
+          scene: new THREE.Scene(),
+          assetBaseUrl: '/nested/site/',
+        },
+      )).rejects.toThrow(/fetch failed.*404/i)
+      expect(fetch.mock.calls[0][0]).toBe('/nested/site/scene.json?v=hash')
+    } finally { vi.unstubAllGlobals() }
   })
 
   it('rejects renderer-like objects without a Three renderer identity', async () => {
@@ -1711,7 +1766,7 @@ describe('official Three scene installation seam', () => {
           setKTX2Loader() {},
           async loadAsync() { throw new Error('basis_transcoder.wasm returned 404') },
         } as unknown as import('three/addons/loaders/GLTFLoader.js').GLTFLoader,
-      })).rejects.toThrow(/"\/scenes\/blendlink-basis\/".*blendlink compile.*basis_transcoder\.wasm returned 404/)
+      })).rejects.toThrow(/"\/scenes\/blendlink-basis\/".*scenetoweb compile.*basis_transcoder\.wasm returned 404/)
       expect(dispose).toHaveBeenCalledOnce()
     } finally {
       dispose.mockRestore()

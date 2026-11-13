@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Blendlink has not published an npm package or approved Blender Extension yet.
+SceneToWeb has not published an npm package or approved Blender Extension yet.
 Until the first public release, security fixes are made on the current `main`
 development line only.
 
@@ -22,9 +22,9 @@ Please do not open a public issue containing vulnerability details.
 1. If the repository's Security page offers **Report a vulnerability**, use
    that private GitHub channel.
 2. Otherwise, email `michaelrowejones@gmail.com` with the subject
-   `Blendlink security report`.
+   `SceneToWeb security report`.
 
-Include the affected Blendlink, Node, Blender, Three.js, and browser versions;
+Include the affected SceneToWeb, Node, Blender, Three.js, and browser versions;
 the operating system; reproduction steps; impact; and any suggested mitigation.
 Remove private scene content, credentials, and personal data from the report.
 

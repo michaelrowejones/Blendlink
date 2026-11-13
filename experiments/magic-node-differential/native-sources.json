@@ -1,0 +1,56 @@
+[
+  {
+    "version": "4.2.0",
+    "url": "https://raw.githubusercontent.com/blender/blender/v4.2.0/intern/cycles/kernel/svm/magic.h",
+    "sha256": "49ab8d58f4a0e51a258d14ade4084af796a6abebe26ce944b4c7e488a76d5074",
+    "license": "SPDX-License-Identifier: Apache-2.0"
+  },
+  {
+    "version": "4.2.0",
+    "url": "https://raw.githubusercontent.com/blender/blender/v4.2.0/source/blender/nodes/shader/nodes/node_shader_tex_magic.cc",
+    "sha256": "1aee8abe2abdd55417b0354694eb6cae741f5e2cf3059a8acb903fab64dd62d1",
+    "license": "SPDX-License-Identifier: GPL-2.0-or-later"
+  },
+  {
+    "version": "4.2.0",
+    "url": "https://raw.githubusercontent.com/blender/blender/v4.2.0/source/blender/gpu/shaders/material/gpu_shader_material_tex_magic.glsl",
+    "sha256": "64b4783b5055a5d61af66efd499a5fcc49c978022221a34a507a2bce1c0bbd17",
+    "license": "SPDX-License-Identifier: GPL-2.0-or-later"
+  },
+  {
+    "version": "5.2.0",
+    "url": "https://raw.githubusercontent.com/blender/blender/v5.2.0/intern/cycles/kernel/svm/magic.h",
+    "sha256": "4a0b91861aeb29d21c806236c26d2c69772939e695e2a5a05cb88f6a8e42eaec",
+    "license": "SPDX-License-Identifier: Apache-2.0"
+  },
+  {
+    "version": "5.2.0",
+    "url": "https://raw.githubusercontent.com/blender/blender/v5.2.0/source/blender/nodes/shader/nodes/node_shader_tex_magic.cc",
+    "sha256": "0d6c22f177cb5c6fd5fbbf3e709c8c2e48df0257a51ed0f8a95328dcaa08aed6",
+    "license": "SPDX-License-Identifier: GPL-2.0-or-later"
+  },
+  {
+    "version": "5.2.0",
+    "url": "https://raw.githubusercontent.com/blender/blender/v5.2.0/source/blender/gpu/shaders/material/gpu_shader_material_tex_magic.glsl",
+    "sha256": "321af90c037ed387f09ac2de20642ac3e39cd325fbe18e26f328eb00e67c8b64",
+    "license": "SPDX-License-Identifier: GPL-2.0-or-later"
+  },
+  {
+    "version": "5.3.0",
+    "url": "https://raw.githubusercontent.com/blender/blender/v5.3.0/intern/cycles/kernel/svm/magic.h",
+    "sha256": "4a0b91861aeb29d21c806236c26d2c69772939e695e2a5a05cb88f6a8e42eaec",
+    "license": "SPDX-License-Identifier: Apache-2.0"
+  },
+  {
+    "version": "5.3.0",
+    "url": "https://raw.githubusercontent.com/blender/blender/v5.3.0/source/blender/nodes/shader/nodes/node_shader_tex_magic.cc",
+    "sha256": "188325af3e37a3cd9788f26c4ffa33fef9026ce3d6e6cd7a86657166309c4147",
+    "license": "SPDX-License-Identifier: GPL-2.0-or-later"
+  },
+  {
+    "version": "5.3.0",
+    "url": "https://raw.githubusercontent.com/blender/blender/v5.3.0/source/blender/gpu/shaders/material/gpu_shader_material_tex_magic.bsl.hh",
+    "sha256": "3b09fa9e338357765041710a7d94a92f0e8b6d323569a0e6b8ac55ae0b160142",
+    "license": "SPDX-License-Identifier: GPL-2.0-or-later"
+  }
+]

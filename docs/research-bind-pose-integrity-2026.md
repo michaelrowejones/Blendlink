@@ -80,7 +80,7 @@ shared *on purpose* so the geometry diagnostics cannot disagree about "small".
 **The frame the glb bakes is a named constant with the exporter cited.**
 `_EXPORTER_FROZEN_FRAME = 0` (`procedural.py:3020-3026`), because
 `io_scene_gltf2/blender/exp/export.py:28-29` calls `frame_set(0)` unless `gltf_current_frame` is
-set and Blendlink never sets it -- a frame a range starting at 1 never contains.
+set and SceneToWeb never sets it -- a frame a range starting at 1 never contains.
 
 **The codebase already treats `bone.matrix_local` as the rest matrix** and builds the runtime's
 skinning matrix from it: `_lowering_pose_matrices` (`procedural.py:4496-4507`) returns

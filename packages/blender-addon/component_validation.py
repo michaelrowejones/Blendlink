@@ -225,7 +225,7 @@ def validate_component(project, component, *, scene=None) -> tuple[ComponentIssu
     if int(getattr(component, "schema_version", 0)) != component_schema.COMPONENT_SCHEMA_VERSION:
         issues.append(_issue(
             component, "unsupported_schema",
-            f"Schema {getattr(component, 'schema_version', 0)} is not supported by this Blendlink version.",
+            f"Schema {getattr(component, 'schema_version', 0)} is not supported by this SceneToWeb version.",
         ))
     if not _TYPE_PATTERN.fullmatch(component_type):
         issues.append(_issue(

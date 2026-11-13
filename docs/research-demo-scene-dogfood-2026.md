@@ -4,14 +4,14 @@ Research and implementation date: 2026-07-22
 
 ## Outcome
 
-The two demos exposed different compiler jobs, and Blendlink now diagnoses them
+The two demos exposed different compiler jobs, and SceneToWeb now diagnoses them
 through one exact final-artifact seam rather than offering generic optimization
 advice:
 
 - Cube Diorama is a concentrated evaluated-geometry problem. One planar Floor
   mesh accounts for 99.5% of the source active-view-layer artifact. An explicit
   floor-only experiment, not an automatic compiler rewrite, reduces that real
-  Blendlink artifact from 61.66 MiB and 2,106,644 triangles to 4.00 MiB and
+  SceneToWeb artifact from 61.66 MiB and 2,106,644 triangles to 4.00 MiB and
   17,684 triangles. The current furnished derivative then deliberately enables
   the excluded Demo Assets collection and Meshopt, shipping 9.55 MiB and
   371,556 triangles. That fixes the dominant geometry problem but still exceeds
@@ -32,7 +32,7 @@ explicitly.
 ## Evidence status
 
 - **Implemented:** final-GLB identity/audit module, contributor attribution,
-  material-collapse classification, artifact-aware `blendlink perf`, grouped
+  material-collapse classification, artifact-aware `scenetoweb perf`, grouped
   material warnings, independent Cycles Appearance compatibility, Blender UI
   remedy correction, Final/verify collapse gate, export-scope-aware material
   diagnostics, an explicit application-owned material-adapter acknowledgement,
@@ -65,7 +65,7 @@ explicitly.
 
 | Input/artifact | Bytes | SHA-256 |
 | --- | ---: | --- |
-| Locally packed Blendlink 0.8.0 tarball | 1,039,495 | `AEDCC65DA7D527DECE05EDB14FC903C6B147BF5CE14089ECE94FEFA8AE0A2B89` |
+| Locally packed SceneToWeb 0.8.0 tarball | 1,039,495 | `AEDCC65DA7D527DECE05EDB14FC903C6B147BF5CE14089ECE94FEFA8AE0A2B89` |
 | Downloaded Cube Diorama `.blend` | 11,674,153 | `A9906942C7100612CDCBC086B31179C96D1125C034140B39A87B9FE9FE65AB7E` |
 | Retained Cube baseline GLB | 64,652,696 | `4BB8A27D91D2BB792A5DF1EF68B9B8A34797862948B0C7FE411D1FD57AFA1064` |
 | Cube furnished/tuned derivative `.blend` | 11,179,677 | `5408AAA2C1B0B3F67DC2591346A515A605F71A60117BF2C3E79E48912959A4A1` |
@@ -89,7 +89,7 @@ same evaluated topology and rendered-triangle counts but changed microscopic
 UV values on Bevel-modified meshes. The stock glTF exporter's split-vertex
 deduplication consequently produced different accessor counts, GLB lengths,
 and cache hashes. Fixing `PYTHONHASHSEED` and enabling shared accessors did not
-remove the drift. Blendlink deliberately does not round artist-authored or
+remove the drift. SceneToWeb deliberately does not round artist-authored or
 baked-atlas UVs to disguise it.
 
 Two loud diagnostics now cover that distinction:
@@ -153,7 +153,7 @@ size and rendered triangles. The tuned artifact maps 36 of 46 used materials
 to **Needs Bake**, covering 285,270 triangles. Only 4,574 of those triangles
 lack meaningful payload, and none of its used materials is blocked by the
 current Cycles Appearance evaluator. Its verification and triangle/draw/GPU
-budgets pass, while `blendlink perf --profile showcase --fail` exits nonzero
+budgets pass, while `scenetoweb perf --profile showcase --fail` exits nonzero
 solely for the 5 MiB GLB budget. This is a portability warning with exact
 coverage, not a visual-parity claim; the performance failure is a separate
 transfer consequence.
@@ -169,18 +169,18 @@ Cycles-authored image.
 
 ### Cube packed-consumer audit after the Needle differential
 
-Blendlink's source and packed tarball now replace the joined semantic bake
+SceneToWeb's source and packed tarball now replace the joined semantic bake
 proxy with the same behaviorally important approach used by the audited Needle
 1.4.2 add-on: real receiver objects remain separate, their real materials
 receive temporary bake targets, and Blender performs one native multi-object
 bake into a shared image. Focused headless fixtures independently prove that
 this preserves Object Attribute/Object Info context that the joined control
-loses. Blendlink retains its stronger transaction, dependency fingerprint,
+loses. SceneToWeb retains its stronger transaction, dependency fingerprint,
 artist-density, pinned-UV, and exact-gutter checks.
 
 The first 2026-07-22 Cube rebuild did **not** validate that code. Although the
 tarball bytes matched current `dist`, npm retained an older
-`node_modules/blendlink` because the local tarball path and package version had
+`node_modules/scenetoweb` because the local tarball path and package version had
 not changed. Explicit SHA-256 comparison caught the stale consumer only after
 the rebuild. Its 0.2841 occupancy, 541.2-second render, 8,578,676-byte GLB,
 production browser pass, and measured 0.0672021 MAE describe the older installed
@@ -211,7 +211,7 @@ The stale forced rebuild also emitted an exact-byte drift warning even though
 declared inputs were unchanged. Blender 5.2 evaluated Bevel UV floats can vary
 microscopically and change split vertices and cache identity. Its immediately
 following ordinary publish reused that older exact artifact and passed all
-post-build checks. Blendlink has a safe operational no-op cache for retained
+post-build checks. SceneToWeb has a safe operational no-op cache for retained
 artifacts, but does not claim forced Blender re-export byte reproducibility for
 this scene.
 
@@ -237,8 +237,8 @@ The new outcomes are intentionally distinct:
   `sceneDiagnostics.materials.records`;
 - the Blender material card reports Cycles Appearance as blocked and no longer
   offers that impossible remedy;
-- `blendlink perf` reports the complete material collapse alongside geometry;
-- `blendlink verify` fails with the affected triangle count, dominant family,
+- `scenetoweb perf` reports the complete material collapse alongside geometry;
+- `scenetoweb verify` fails with the affected triangle count, dominant family,
   and the 29 Cycles-blocked materials actually used by the artifact.
 
 The exact derivative is 39,659,276 bytes with 39,213,026 decoded accessor
@@ -258,7 +258,7 @@ can restore absent chroma.
 The first all-fields run exposed a Blender 5.2 multi-material exporter defect,
 not missing source data: a later slot selecting the same color layer could be
 mapped to an all-white `COLOR_0`, and exporting fewer color layers fixed only
-one affected slot. Blendlink now carries each selected layer through a private
+one affected slot. SceneToWeb now carries each selected layer through a private
 VEC4 attribute, atomically rewrites the generated primitive to ordinary
 `COLOR_0`, removes the private semantic, and attests the numeric range both
 before and after optimizer transforms. The final DPM and all-fields GLBs contain
@@ -343,7 +343,7 @@ could be justified only as opt-in temporary export state with Preview parity.
    through a private Emission proxy and Emit bake. Neither route claims
    Shader-to-RGB, AO, shadow, or compositor parity.
 5. A general EEVEE material engine or Blender-node-to-Three shader compiler is
-   rejected: either would make Blendlink own an engine and constrain the
+   rejected: either would make SceneToWeb own an engine and constrain the
    website renderer.
 
 An application that deliberately replaces the collapsed GLB materials may set
@@ -388,7 +388,7 @@ the installed Blender 5.2.39 exporter: its mesh gatherer converts
 Curve/Surface/Font and otherwise accepts Mesh/PointCloud, returning no mesh for
 Grease Pencil. [Official glTF node mesh gatherer](https://github.com/KhronosGroup/glTF-Blender-IO/blob/main/addons/io_scene_gltf2/blender/exp/nodes.py)
 
-Blendlink now inspects the exact selection, collection, active View Layer,
+SceneToWeb now inspects the exact selection, collection, active View Layer,
 render-visibility, visible-instance-source, and `-noimp` scope used by export.
 Both plan-only inspection and real Preview/Final compilation reject a scoped,
 nonempty `GREASEPENCIL` object before material mutation or glTF emission. The
@@ -411,7 +411,7 @@ that centerline result does not preserve fills, thickness, opacity, layering,
 depth order, or drawing animation. The supported remedies are to create and
 visually validate an artist-owned mesh or baked-still proxy and explicitly
 exclude the source, or keep the scene blocked until a dedicated adapter can
-prove those semantics. Blendlink is not becoming a Grease Pencil renderer.
+prove those semantics. SceneToWeb is not becoming a Grease Pencil renderer.
 
 ## Export-scope and production evidence
 
@@ -421,7 +421,7 @@ the source objects needed by visible collection instances. This was required by
 the Cube derivative: its intentionally excluded Demo Assets must not pollute
 the report, while enabling that collection must make those records appear.
 
-Both demo harnesses install the exact locally packed Blendlink tarball rather
+Both demo harnesses install the exact locally packed SceneToWeb tarball rather
 than resolving the published registry version. Their production builds pass.
 The retained browser gates cover Cube baseline/tuned plus Splash stock,
 DPM-only, and all-fields variants independently. These are retained-artifact

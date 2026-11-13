@@ -1,6 +1,7 @@
 import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { materialProgramsImageReferences } from './stagedPublication.js'
+import { readMaterialProgramImageBytes, type MaterialProgramImageBytes } from './compiledMaterialPrograms.js'
 import { createRequire } from 'node:module'
 import {
   existsSync, lstatSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, renameSync,
@@ -57,7 +58,7 @@ import {
 import { inspectRealtimePlanMaterialDiagnostics } from './planManifest.js'
 
 /** What the addon's build actions run; also shown to humans in the panel. */
-const DEFAULT_SYNC_HINT = 'npx blendlink compile'
+const DEFAULT_SYNC_HINT = 'npx scenetoweb compile'
 const KTX2_TRANSCODER_DIRECTORY = 'blendlink-basis'
 const KTX2_THREE_FILES = [
   'basis_transcoder.js',
@@ -93,7 +94,7 @@ function enforceRealtimeMaterialPublication(
       ...issue.reasons.map((reason) => `      ${reason}`),
     ])
     throw new Error(
-      `Blendlink Material Fidelity refused to publish ${scene.name}: ` +
+      `SceneToWeb Material Fidelity refused to publish ${scene.name}: ` +
         `${inspection.errors.length} used material` +
         `${inspection.errors.length === 1 ? '' : 's'} would lose authored surface behavior.\n` +
         `${details.join('\n')}\n` +
@@ -136,7 +137,7 @@ function artifactHashOf(path: string): string {
   return createHash('sha256').update(readFileSync(path)).digest('hex').slice(0, 16)
 }
 
-function publishedAssetPath(
+export function publishedAssetPath(
   scene: Pick<ResolvedScene, 'glbPath' | 'url'>,
   assetUrl: string,
   manifest?: Pick<
@@ -346,11 +347,11 @@ function bakedRecipeMigrationWarning(path: string, sceneName: string): string | 
   const status = inspectBakedRecipeTemplate(readFileSync(path, 'utf8'))
   if (status.kind === 'current') return null
   if (status.kind === 'future') {
-    return `generated recipe ${path} uses template v${status.version}, newer than this Blendlink ` +
-      `release supports (v${BAKED_RECIPE_TEMPLATE_VERSION}); install a matching newer Blendlink release`
+    return `generated recipe ${path} uses template v${status.version}, newer than this SceneToWeb ` +
+      `release supports (v${BAKED_RECIPE_TEMPLATE_VERSION}); install a matching newer SceneToWeb release`
   }
   return `generated recipe ${path} predates baked composition template v${BAKED_RECIPE_TEMPLATE_VERSION} ` +
-    `and was left untouched; run \`blendlink recipe update ${sceneName}\` to preserve its exact bytes at ` +
+    `and was left untouched; run \`scenetoweb recipe update ${sceneName}\` to preserve its exact bytes at ` +
     `${bakedRecipeBackupPath(path, status)} and install the current editable template`
 }
 
@@ -376,12 +377,12 @@ function assertLightingRecipeCurrent(
   const status = inspectBakedRecipeTemplate(readFileSync(path, 'utf8'))
   if (status.kind === 'current') return
   const action = status.kind === 'future'
-    ? 'Install the matching newer Blendlink release.'
-    : `Run \`blendlink recipe update ${sceneName}\` first; it will preserve the exact editable file at ${bakedRecipeBackupPath(path, status)}.`
+    ? 'Install the matching newer SceneToWeb release.'
+    : `Run \`scenetoweb recipe update ${sceneName}\` first; it will preserve the exact editable file at ${bakedRecipeBackupPath(path, status)}.`
   throw new Error(
     `Scene "${sceneName}" contains ${requirement}, but ${path} is not the supported ` +
       `baked recipe template v${BAKED_RECIPE_TEMPLATE_VERSION}. ${action} ` +
-      'Blendlink did not publish or preview the incomplete baked composition.',
+      'SceneToWeb did not publish or preview the incomplete baked composition.',
   )
 }
 
@@ -404,8 +405,8 @@ function ktx2TranscoderSources(): Array<{ filename: string; sourcePath: string }
       }
     } catch (error) {
       throw new Error(
-        `Blendlink cannot publish ${filename} for KTX2 runtime decoding. Install the Three.js peer ` +
-          'dependency with its examples/jsm/libs/basis assets intact, then run `blendlink compile` again. ' +
+        `SceneToWeb cannot publish ${filename} for KTX2 runtime decoding. Install the Three.js peer ` +
+          'dependency with its examples/jsm/libs/basis assets intact, then run `scenetoweb compile` again. ' +
           `${error instanceof Error ? error.message : String(error)}`,
       )
     }
@@ -418,8 +419,8 @@ function ktx2TranscoderSources(): Array<{ filename: string; sourcePath: string }
   )
   if (!existsSync(licensePath)) {
     throw new Error(
-      `Blendlink's bundled Basis Universal Apache-2.0 license is missing from ${licensePath}. ` +
-        'Reinstall Blendlink before publishing KTX2 runtime assets.',
+      `SceneToWeb's bundled Basis Universal Apache-2.0 license is missing from ${licensePath}. ` +
+        'Reinstall SceneToWeb before publishing KTX2 runtime assets.',
     )
   }
   sources.push({ filename: 'LICENSE', sourcePath: licensePath })
@@ -626,7 +627,7 @@ export function externalDependencyWarnings(
       `${missingUnboundMaterials.length} unused Blender image reference` +
         `${missingUnboundMaterials.length === 1 ? ' is' : 's are'} missing: ` +
         `${preview(missingUnboundMaterials)}. ` +
-        'Blendlink proved these images are referenced only by material graphs outside the ' +
+        'SceneToWeb proved these images are referenced only by material graphs outside the ' +
         'exported render-visible object scope, so they cannot affect this build. Purge the ' +
         'unused data, or relink it before assigning those materials to exported objects.',
     )
@@ -758,7 +759,7 @@ function syncExternalScene(
       durationMs: Date.now() - started,
       warnings: [
         ...(recipeWarning ? [recipeWarning] : []),
-        'external scene is out of date but has no `build` command — run your pipeline, then `blendlink typegen <glb> --blend <file>` (or add `build` to the scene config so sync can do it)',
+        'external scene is out of date but has no `build` command — run your pipeline, then `scenetoweb typegen <glb> --blend <file>` (or add `build` to the scene config so sync can do it)',
       ],
     }
   }
@@ -781,7 +782,7 @@ function syncExternalScene(
   const freshBlendHash = existsSync(scene.blendPath) ? blendBytesHashOf(scene.blendPath) : null
   if (!rebuilt || rebuilt.blendBytesHash !== freshBlendHash) {
     warnings.push(
-      'build command finished but the manifest is not stamped with the current .blend — make sure it ends with `blendlink typegen <glb> --blend <file>`',
+      'build command finished but the manifest is not stamped with the current .blend — make sure it ends with `scenetoweb typegen <glb> --blend <file>`',
     )
   } else {
     // Stamp the build command (for the addon's "run this"), the duration
@@ -842,7 +843,7 @@ export function pythonPipelineSignature(
     }
     return digest.digest('hex').slice(0, 16)
   }
-  throw new Error('Blendlink Python pipeline assets are missing; run the package build again')
+  throw new Error('SceneToWeb Python pipeline assets are missing; run the package build again')
 }
 
 /** Hash the deterministic compiler stages that can change published bytes or
@@ -862,7 +863,7 @@ function compilerPipelineSignature(): string {
     const path = ['js', 'ts']
       .map((extension) => join(moduleDirectory, `${name}.${extension}`))
       .find((candidate) => existsSync(candidate))
-    if (!path) throw new Error(`Blendlink compiler module ${name} is missing; run the package build again`)
+    if (!path) throw new Error(`SceneToWeb compiler module ${name} is missing; run the package build again`)
     digest.update(readFileSync(path))
   }
   return digest.digest('hex').slice(0, 16)
@@ -875,7 +876,7 @@ function sourceHash(
 ): string {
   const configDigest = createHash('sha256')
   let configFiles = 0
-  for (const name of ['blendlink.config.mjs', 'blendlink.config.js']) {
+  for (const name of ['scenetoweb.config.mjs', 'scenetoweb.config.js', 'blendlink.config.mjs', 'blendlink.config.js']) {
     const path = join(scene.root, name)
     if (!existsSync(path)) continue
     configDigest.update(name).update(readFileSync(path))
@@ -1243,7 +1244,7 @@ async function syncSceneWithPublicationLease(
   // separate plan-only Blender pass would double evaluation cost and could
   // inspect a different saved revision. Realtime material loss must fail
   // before optimization or publication, while an explicit application
-  // adapter retains the same visible acknowledgement as `blendlink plan`.
+  // adapter retains the same visible acknowledgement as `scenetoweb plan`.
   const realtimeMaterialWarnings = enforceRealtimeMaterialPublication(
     scene,
     exported.sidecar.diagnostics,
@@ -1254,7 +1255,7 @@ async function syncSceneWithPublicationLease(
     const parsed = parseSceneRecipe(exported.recipe)
     if (!parsed.recipe) {
       throw new Error(
-        'The Blendlink Web Presentation stored in the .blend is invalid:\n  - ' +
+        'The SceneToWeb Web Presentation stored in the .blend is invalid:\n  - ' +
         parsed.diagnostics.map((entry) => `${entry.path}: ${entry.message}`).join('\n  - '),
       )
     }
@@ -1324,7 +1325,7 @@ async function syncSceneWithPublicationLease(
   }
   const texturePolicies = (exported.sidecar.textures ?? [])
     .filter((texture) => texture.maxSize !== undefined)
-    .map((texture) => ({ name: texture.name, maxSize: texture.maxSize! }))
+    .map((texture) => ({ name: texture.name, aliases: texture.aliases, maxSize: texture.maxSize! }))
   if (texturePolicies.length > 0) {
     emitProgress(0.74, `enforcing ${texturePolicies.length} texture size limit(s)`)
     const { resizeTextures } = await import('./optimizer.js')
@@ -1334,7 +1335,7 @@ async function syncSceneWithPublicationLease(
   }
   const textureCompressionPolicies = (exported.sidecar.textures ?? [])
     .filter((texture) => texture.compression !== undefined)
-    .map((texture) => ({ name: texture.name, override: texture.compression! }))
+    .map((texture) => ({ name: texture.name, aliases: texture.aliases, override: texture.compression! }))
   if (sceneRecipe?.optimization.textures === 'ktx2' || textureCompressionPolicies.some((policy) => policy.override !== 'none')) {
     emitProgress(0.77, `compressing realtime material textures for the GPU`)
     const { compressTexturesKtx2 } = await import('./textureCompression.js')
@@ -1584,9 +1585,14 @@ async function syncSceneWithPublicationLease(
   // optimizers can all turn an apparently non-empty .blend into an empty
   // default glTF scene. Plan-only inspection intentionally never reaches this
   // publication gate, so helper and asset-library files remain inspectable.
+  const programsForAudit = exported.materialPrograms ? readFileSync(exported.materialPrograms.path) : null
   await auditCompiledSceneArtifact({
     manifest,
     glbBytes: readFileSync(buildGlbPath),
+    ...(programsForAudit && exported.materialPrograms ? {
+      materialProgramsBytes: programsForAudit,
+      materialProgramImageBytes: readMaterialProgramImageBytes(programsForAudit, exported.materialPrograms.path),
+    } : {}),
   })
   const sealed = sealScenePublication({
     sourceDirectory: stageDirectory,
@@ -1633,7 +1639,7 @@ async function syncSceneWithPublicationLease(
   const currentSourceHash = sourceHash(scene, settings, blender.version)
   if (currentSourceHash !== hash) {
     throw new Error(
-      `Blendlink refused to publish ${scene.name} because its source or declared compiler input ` +
+      `SceneToWeb refused to publish ${scene.name} because its source or declared compiler input ` +
         'changed while the scene was compiling. The completed candidate belongs to an older ' +
         'revision and was discarded; save-driven Preview will compile the newest revision, or ' +
         'rerun the command.',
@@ -1670,9 +1676,9 @@ async function syncSceneWithPublicationLease(
   }
   if (!sceneRecipe) {
     warnings.unshift(
-      'No Blendlink scene recipe is saved in this .blend. Supported Blender presentation settings ' +
+      'No SceneToWeb scene recipe is saved in this .blend. Supported Blender presentation settings ' +
         'provide the initial view. For responsive framing and explicit website ownership, run Set Up ' +
-        'Blendlink Scene, choose the Website Camera, save, then rebuild.',
+        'SceneToWeb Scene, choose the Website Camera, save, then rebuild.',
     )
   }
   // The public manifest deliberately replaces outside-project locations with
@@ -1685,7 +1691,7 @@ async function syncSceneWithPublicationLease(
     warnings.push(`excluded by -noimp: ${exported.excluded.join(', ')}`)
   }
   if (manifest.draft) {
-    warnings.push('preview-quality bake — run `blendlink compile` before committing')
+    warnings.push('preview-quality bake — run `scenetoweb compile` before committing')
   }
   if (exported.incrementalBake) {
     const result = exported.incrementalBake
@@ -1945,7 +1951,7 @@ async function verifyScenesWithPublicationLease(
       issues.push({
         scene: scene.name,
         problem: `missing generated manifest (${scene.manifestPath})`,
-        fix: 'Run `blendlink compile` and commit the generated files.',
+        fix: 'Run `scenetoweb compile` and commit the generated files.',
       })
       continue
     }
@@ -1955,7 +1961,7 @@ async function verifyScenesWithPublicationLease(
       issues.push({
         scene: scene.name,
         problem: `missing generated module (${scene.modulePath})`,
-        fix: 'Run `blendlink compile` and commit the generated files.',
+        fix: 'Run `scenetoweb compile` and commit the generated files.',
       })
       continue
     }
@@ -1970,9 +1976,9 @@ async function verifyScenesWithPublicationLease(
       issues.push({
         scene: scene.name,
         problem:
-          'the Blendlink config revision does not match the published artifacts',
+          'the SceneToWeb config revision does not match the published artifacts',
         fix:
-          'Run `blendlink compile` so Final uses the current paths, quality, and integration settings.',
+          'Run `scenetoweb compile` so Final uses the current paths, quality, and integration settings.',
       })
       continue
     }
@@ -1989,7 +1995,7 @@ async function verifyScenesWithPublicationLease(
         problem:
           `runtime asset publication integrity failed: ${publicationProblem}`,
         fix:
-          'Run `blendlink compile` and commit the complete graph-addressed scene directory with its generated module.',
+          'Run `scenetoweb compile` and commit the complete graph-addressed scene directory with its generated module.',
       })
       continue
     }
@@ -2011,7 +2017,7 @@ async function verifyScenesWithPublicationLease(
           problem:
             `runtime asset publication URL is ${manifest.url}; expected ${expectedUrl}`,
           fix:
-            'Run `blendlink compile`; the generated descriptor must point at its exact graph directory.',
+            'Run `scenetoweb compile`; the generated descriptor must point at its exact graph directory.',
         })
         continue
       }
@@ -2022,8 +2028,8 @@ async function verifyScenesWithPublicationLease(
         scene: scene.name,
         problem: `missing generated recipe (${recipePath})`,
         fix: scene.external
-          ? 'Re-run `blendlink typegen`; the recipe is written once and remains yours to edit.'
-          : 'Run `blendlink compile` and commit the generated recipe.',
+          ? 'Re-run `scenetoweb typegen`; the recipe is written once and remains yours to edit.'
+          : 'Run `scenetoweb compile` and commit the generated recipe.',
       })
       continue
     }
@@ -2035,8 +2041,8 @@ async function verifyScenesWithPublicationLease(
           ? `generated recipe template v${recipeStatus.version} is newer than supported v${BAKED_RECIPE_TEMPLATE_VERSION}`
           : `generated recipe predates baked composition template v${BAKED_RECIPE_TEMPLATE_VERSION}`,
         fix: recipeStatus.kind === 'future'
-          ? 'Install the matching newer Blendlink release; the artist-owned recipe was not changed.'
-          : `Run \`blendlink recipe update ${scene.name}\`; the exact current file will be preserved at ${bakedRecipeBackupPath(recipePath, recipeStatus)}.`,
+          ? 'Install the matching newer SceneToWeb release; the artist-owned recipe was not changed.'
+          : `Run \`scenetoweb recipe update ${scene.name}\`; the exact current file will be preserved at ${bakedRecipeBackupPath(recipePath, recipeStatus)}.`,
       })
       continue
     }
@@ -2044,7 +2050,7 @@ async function verifyScenesWithPublicationLease(
       issues.push({
         scene: scene.name,
         problem: 'generated module bytes do not match the manifest',
-        fix: 'Run `blendlink compile` and commit the generated module + manifest together.',
+        fix: 'Run `scenetoweb compile` and commit the generated module + manifest together.',
       })
       continue
     }
@@ -2052,7 +2058,7 @@ async function verifyScenesWithPublicationLease(
       issues.push({
         scene: scene.name,
         problem: 'an unpacked Blender dependency changed after the last sync',
-        fix: 'Run `blendlink compile`; linked images/libraries/caches are compiler inputs too.',
+        fix: 'Run `scenetoweb compile`; linked images/libraries/caches are compiler inputs too.',
       })
       continue
     }
@@ -2069,7 +2075,7 @@ async function verifyScenesWithPublicationLease(
           problem: `KTX2 runtime transcoder integrity failed: ${problem}`,
           fix: scene.external
             ? 'Install the Three.js peer dependency, rerun the external build/typegen pipeline, and commit the complete blendlink-basis directory beside the GLB.'
-            : 'Install the Three.js peer dependency, run `blendlink compile`, and commit the complete blendlink-basis directory beside the GLB.',
+            : 'Install the Three.js peer dependency, run `scenetoweb compile`, and commit the complete blendlink-basis directory beside the GLB.',
         })
         continue
       }
@@ -2084,7 +2090,7 @@ async function verifyScenesWithPublicationLease(
         issues.push({
           scene: scene.name,
           problem: `published HDR environment URL is outside the scene publication directory: ${manifest.environment.url}`,
-          fix: 'Run `blendlink compile`; compiler-owned asset URLs must stay relative to the generated GLB.',
+          fix: 'Run `scenetoweb compile`; compiler-owned asset URLs must stay relative to the generated GLB.',
         })
         continue
       }
@@ -2092,7 +2098,7 @@ async function verifyScenesWithPublicationLease(
         issues.push({
           scene: scene.name,
           problem: `published HDR environment is missing from ${environmentPath}`,
-          fix: 'Run `blendlink compile` and commit the generated environment asset.',
+          fix: 'Run `scenetoweb compile` and commit the generated environment asset.',
         })
         continue
       }
@@ -2102,7 +2108,7 @@ async function verifyScenesWithPublicationLease(
         issues.push({
           scene: scene.name,
           problem: 'published HDR environment bytes do not match the manifest',
-          fix: 'Run `blendlink compile` and commit source + artifacts together.',
+          fix: 'Run `scenetoweb compile` and commit source + artifacts together.',
         })
         continue
       }
@@ -2116,7 +2122,7 @@ async function verifyScenesWithPublicationLease(
           issues.push({
             scene: scene.name,
             problem: `optimized environment URL is outside the scene publication directory: ${manifest.environment.optimized.url}`,
-            fix: 'Run `blendlink compile`; compiler-owned asset URLs must stay relative to the generated GLB.',
+            fix: 'Run `scenetoweb compile`; compiler-owned asset URLs must stay relative to the generated GLB.',
           })
           continue
         }
@@ -2124,7 +2130,7 @@ async function verifyScenesWithPublicationLease(
           issues.push({
             scene: scene.name,
             problem: `verified KTX2 environment is missing from ${optimizedPath}`,
-            fix: 'Run `blendlink compile` and commit both the source and optimized environment assets.',
+            fix: 'Run `scenetoweb compile` and commit both the source and optimized environment assets.',
           })
           continue
         }
@@ -2137,7 +2143,7 @@ async function verifyScenesWithPublicationLease(
           issues.push({
             scene: scene.name,
             problem: 'verified KTX2 environment bytes do not match the manifest',
-            fix: 'Run `blendlink compile` and commit source + optimized artifacts together.',
+            fix: 'Run `scenetoweb compile` and commit source + optimized artifacts together.',
           })
           continue
         }
@@ -2148,10 +2154,12 @@ async function verifyScenesWithPublicationLease(
       const path = publishedAssetPath(scene, asset.url, manifest)
       const payload = path && existsSync(path) ? readFileSync(path) : null
       if (!payload || payload.byteLength !== asset.bytes || createHash('sha256').update(payload).digest('hex').slice(0, 16) !== asset.hash) {
-        issues.push({ scene: scene.name, problem: 'Source presentation asset is missing or differs from the manifest.', fix: 'Run `blendlink compile` and commit the presentation.json asset with its manifest.' })
+        issues.push({ scene: scene.name, problem: 'Source presentation asset is missing or differs from the manifest.', fix: 'Run `scenetoweb compile` and commit the presentation.json asset with its manifest.' })
         continue
       }
     }
+    let materialProgramsBytes: Uint8Array | undefined
+    let materialProgramImageBytes: MaterialProgramImageBytes | undefined
     if (manifest.materialPrograms) {
       const programsPath = publishedAssetPath(
         scene,
@@ -2162,7 +2170,7 @@ async function verifyScenesWithPublicationLease(
         issues.push({
           scene: scene.name,
           problem: `material programs URL is outside the scene publication directory: ${manifest.materialPrograms.url}`,
-          fix: 'Run `blendlink compile`; compiler-owned asset URLs must stay relative to the generated GLB.',
+          fix: 'Run `scenetoweb compile`; compiler-owned asset URLs must stay relative to the generated GLB.',
         })
         continue
       }
@@ -2170,7 +2178,7 @@ async function verifyScenesWithPublicationLease(
         issues.push({
           scene: scene.name,
           problem: `material programs sidecar is missing from ${programsPath}`,
-          fix: 'Run `blendlink compile` and commit the generated materials.json asset.',
+          fix: 'Run `scenetoweb compile` and commit the generated materials.json asset.',
         })
         continue
       }
@@ -2183,10 +2191,11 @@ async function verifyScenesWithPublicationLease(
         issues.push({
           scene: scene.name,
           problem: 'material programs sidecar bytes do not match the manifest',
-          fix: 'Run `blendlink compile` and commit source + artifacts together.',
+          fix: 'Run `scenetoweb compile` and commit source + artifacts together.',
         })
         continue
       }
+      materialProgramsBytes = programsBytes
       // The runtime resolves every texture_ref image BY BASENAME against
       // the sidecar URL, so each reference must exist beside the
       // published sidecar. Publication and verification read those
@@ -2199,7 +2208,16 @@ async function verifyScenesWithPublicationLease(
         issues.push({
           scene: scene.name,
           problem: `material programs sidecar references ${missingImage}, which is not published beside it`,
-          fix: 'Run `blendlink compile` and commit source + artifacts together.',
+          fix: 'Run `scenetoweb compile` and commit source + artifacts together.',
+        })
+        continue
+      }
+      try {
+        materialProgramImageBytes = readMaterialProgramImageBytes(programsBytes, programsPath)
+      } catch (error) {
+        issues.push({ scene: scene.name,
+          problem: `material program image companions could not be read: ${error instanceof Error ? error.message : String(error)}`,
+          fix: 'Run `scenetoweb compile` and commit the material sidecar and its exact image companions together.',
         })
         continue
       }
@@ -2224,7 +2242,7 @@ async function verifyScenesWithPublicationLease(
       issues.push({
         scene: scene.name,
         problem: `reflection probe asset integrity failed: ${reflectionProbeFailure}`,
-        fix: 'Run `blendlink compile` and commit every generated reflection texture with its manifest.',
+        fix: 'Run `scenetoweb compile` and commit every generated reflection texture with its manifest.',
       })
       continue
     }
@@ -2255,7 +2273,7 @@ async function verifyScenesWithPublicationLease(
       issues.push({
         scene: scene.name,
         problem: `texture variant integrity failed: ${textureVariantFailure}`,
-        fix: 'Run `blendlink compile` and commit every generated PNG/WebP resolution tier with its manifest.',
+        fix: 'Run `scenetoweb compile` and commit every generated PNG/WebP resolution tier with its manifest.',
       })
       continue
     }
@@ -2302,7 +2320,7 @@ async function verifyScenesWithPublicationLease(
       issues.push({
         scene: scene.name,
         problem: `baked atlas integrity failed: ${bakedArtifactFailure}`,
-        fix: 'Run `blendlink compile` and commit every generated state/light-group atlas with its manifest.',
+        fix: 'Run `scenetoweb compile` and commit every generated state/light-group atlas with its manifest.',
       })
       continue
     }
@@ -2310,7 +2328,7 @@ async function verifyScenesWithPublicationLease(
       issues.push({
         scene: scene.name,
         problem: 'Preview-quality artifacts are committed instead of a Final build',
-        fix: 'Run `blendlink compile` and commit the regenerated Final files.',
+        fix: 'Run `scenetoweb compile` and commit the regenerated Final files.',
       })
       continue
     }
@@ -2321,7 +2339,7 @@ async function verifyScenesWithPublicationLease(
           scene: scene.name,
           problem: 'a declared input file (e.g. the pipeline config) changed after the last sync',
           fix: scene.build
-            ? `Run \`${scene.build}\` (or \`blendlink compile\`) and commit.`
+            ? `Run \`${scene.build}\` (or \`scenetoweb compile\`) and commit.`
             : 'Re-run your export pipeline and commit.',
         })
         continue
@@ -2331,7 +2349,7 @@ async function verifyScenesWithPublicationLease(
       issues.push({
         scene: scene.name,
         problem: `GLB missing from ${scene.glbPath} but listed in the manifest`,
-        fix: 'This file should be committed — check .gitignore for *.glb, or run `blendlink compile`.',
+        fix: 'This file should be committed — check .gitignore for *.glb, or run `scenetoweb compile`.',
       })
       continue
     }
@@ -2344,11 +2362,11 @@ async function verifyScenesWithPublicationLease(
       issues.push({
         scene: scene.name,
         problem: 'GLB on disk does not match the manifest hash',
-        fix: 'Run `blendlink compile` and commit source + artifacts together.',
+        fix: 'Run `scenetoweb compile` and commit source + artifacts together.',
       })
     } else {
       try {
-        const audit = await auditCompiledSceneArtifact({ manifest, glbBytes })
+        const audit = await auditCompiledSceneArtifact({ manifest, glbBytes, materialProgramsBytes, materialProgramImageBytes })
         const collapseIssue = materialCollapseVerificationIssue(scene, audit)
         if (collapseIssue) issues.push(collapseIssue)
         issues.push(...glbConformanceVerificationIssues(scene, audit))
@@ -2356,7 +2374,7 @@ async function verifyScenesWithPublicationLease(
         issues.push({
           scene: scene.name,
           problem: `compiled GLB quality audit failed: ${error instanceof Error ? error.message : String(error)}`,
-          fix: 'Run `blendlink compile`; if the rebuilt artifact still fails, report the exact audit error.',
+          fix: 'Run `scenetoweb compile`; if the rebuilt artifact still fails, report the exact audit error.',
         })
       }
     }
@@ -2382,7 +2400,7 @@ async function verifyScenesWithPublicationLease(
             problem: `runtime asset graph integrity failed: ${problem}`,
             fix: scene.external
               ? 'Re-run the external build/typegen pipeline and commit its complete runtime asset graph.'
-              : 'Run `blendlink compile` and commit every generated runtime asset with its manifest.',
+              : 'Run `scenetoweb compile` and commit every generated runtime asset with its manifest.',
           })
           continue
         }
@@ -2404,7 +2422,7 @@ async function verifyScenesWithPublicationLease(
               problem:
                 `stable compatibility asset graph integrity failed: ${compatibilityProblem}`,
               fix:
-                'Run `blendlink compile`; the generated descriptor remains graph-addressed while Blendlink repairs the pre-1.0 stable compatibility files.',
+                'Run `scenetoweb compile`; the generated descriptor remains graph-addressed while SceneToWeb repairs the pre-1.0 stable compatibility files.',
             })
             continue
           }
@@ -2413,7 +2431,7 @@ async function verifyScenesWithPublicationLease(
         issues.push({
           scene: scene.name,
           problem: 'generated manifest is missing the complete runtime asset graph',
-          fix: 'Run `blendlink compile` and commit every generated runtime asset with its manifest.',
+          fix: 'Run `scenetoweb compile` and commit every generated runtime asset with its manifest.',
         })
         continue
       }
@@ -2431,8 +2449,8 @@ async function verifyScenesWithPublicationLease(
           scene: scene.name,
           problem: `${scene.blendPath} changed after the last sync`,
           fix: scene.external
-            ? 'Re-run your export pipeline, then `blendlink typegen <glb> --blend <file>`, and commit.'
-            : 'Run `blendlink compile` (requires Blender) and commit the regenerated artifacts.',
+            ? 'Re-run your export pipeline, then `scenetoweb typegen <glb> --blend <file>`, and commit.'
+            : 'Run `scenetoweb compile` (requires Blender) and commit the regenerated artifacts.',
         })
       }
     }

@@ -2,13 +2,13 @@
 
 Date: 2026-07-25
 Capability: `NDL-TEX-001`
-Decision: **Match / Boundary Improvement / Shipped** for Blendlink-owned glTF resources;
+Decision: **Match / Boundary Improvement / Shipped** for SceneToWeb-owned glTF resources;
 application-owned cached resources remain explicit.
 
 ## Question
 
 DOGWALK exposed strong ground-texture moiré under stock Three r184. This audit
-asks what exact sampling policy Needle applies, whether Blendlink can improve
+asks what exact sampling policy Needle applies, whether SceneToWeb can improve
 the result without taking ownership of application caches, and what the public
 interface should be.
 
@@ -38,9 +38,9 @@ The exact distinction is:
 - selected MaterialX environment/pre-filter targets: renderer maximum;
 - progressive texture replacements: preserve the source value.
 
-## Blendlink and Three r184 baseline
+## SceneToWeb and Three r184 baseline
 
-Blendlink installs Three `0.184.0`. Its stock `src/textures/Texture.js`
+SceneToWeb installs Three `0.184.0`. Its stock `src/textures/Texture.js`
 SHA-256 is
 `ab2b297f91c58c69a95849ef8d1d3a9b7c0e7d2c3a574964b0ffd90b107452c6`
 and keeps `Texture.DEFAULT_ANISOTROPY = 1`. Its stock `GLTFLoader.js`
@@ -87,7 +87,7 @@ This is selected because it is deep and ownership-aligned:
 - already-loaded R3F/application cache seams default to `"authored"`;
 - cached callers can explicitly request `"renderer-max"` or a finite number;
 - overlapping leases use the highest active request, and the last lease
-  restores the prior value only while the texture still contains Blendlink's
+  restores the prior value only while the texture still contains SceneToWeb's
   installed value;
 - a developer/application mutation during the lease wins and is never
   overwritten during cleanup.
@@ -106,13 +106,13 @@ exposes the resolved `textureSampling` report.
 
 ### Verified implementation and ownership
 
-- `npm.cmd test --workspace blendlink -- src/threeTextureSampling.test.ts`
+- `npm.cmd test --workspace scenetoweb -- src/threeTextureSampling.test.ts`
   passes 4 focused cases covering eligibility, idempotent restore, overlapping
   shared-cache leases, application override, and authored no-op.
-- `npm.cmd test --workspace blendlink -- src/threeRuntime.test.ts -t
+- `npm.cmd test --workspace scenetoweb -- src/threeRuntime.test.ts -t
   "already-loaded cache|Needle-matching cache|loads, applies authored"` passes
   the private-default, cache-default, and explicit-numeric installer seams.
-- `npm.cmd run build --workspace blendlink` passes on TypeScript 5.9.2 /
+- `npm.cmd run build --workspace scenetoweb` passes on TypeScript 5.9.2 /
   Three 0.184.0.
 - `node experiments/texture-sampling-browser/run.mjs` passes in Chromium
   `150.0.7871.182` / Three r184 / WebGL2 SwiftShader with maximum `16`. It
@@ -141,7 +141,7 @@ state directly rather than through the then-unshipped module.
 ## Honest boundary
 
 `NDL-TEX-001` is **Match / Boundary Improvement / Shipped**: zero-configuration
-owned resources match Needle's `4`, while Blendlink adds an ownership-safe
+owned resources match Needle's `4`, while SceneToWeb adds an ownership-safe
 cache seam, inspectable report, and explicit renderer-maximum escape hatch.
 The larger ceiling (`16` instead of Needle's `4`) is measurable, and the
 DOGWALK differential is useful Prototype visual evidence, but it is not proof

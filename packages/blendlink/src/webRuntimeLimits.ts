@@ -43,10 +43,10 @@ function registryPath(): string {
   const found = candidates.find((candidate) => existsSync(candidate))
   if (!found) {
     throw new Error(
-      'Blendlink cannot read its web runtime limits. Looked in: ' +
+      'SceneToWeb cannot read its web runtime limits. Looked in: ' +
         candidates.join(', ') +
         '. This file carries the ceilings that make skinning and UV binding ' +
-        'refusals possible; without it Blendlink would publish scenes it ' +
+        'refusals possible; without it SceneToWeb would publish scenes it ' +
         'knows cannot render.',
     )
   }

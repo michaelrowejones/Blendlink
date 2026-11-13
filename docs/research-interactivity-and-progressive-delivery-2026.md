@@ -3,12 +3,12 @@
 **Date:** 2026-07-21
 **Last verified:** 2026-07-23
 **Status:** researched, implemented in a bounded first slice, and dogfood-verified
-**Scope:** Blendlink's current Three/R3F object interactions, interaction-triggered
+**Scope:** SceneToWeb's current Three/R3F object interactions, interaction-triggered
 resources, semantic controls, audio policy, and application-owned routing.
 
 ## Executive decision
 
-Blendlink should deepen its existing component runtime rather than add a second
+SceneToWeb should deepen its existing component runtime rather than add a second
 public behavior framework. The recommended module has one installation entry
 point and returns one application-facing handle:
 
@@ -49,7 +49,7 @@ resource promotion, rollback, and cleanup. That deletion test is strong.
 
 The most important product rule is also the simplest: a raycast is not an
 accessible control, and a fetched texture is not a GPU-ready first frame.
-Blendlink should represent both distinctions truthfully.
+SceneToWeb should represent both distinctions truthfully.
 
 ## Method and version of reality
 
@@ -62,7 +62,7 @@ used by the dogfood site:
 - React Three Fiber `9.6.1`
 - Drei `10.7.7`
 
-The inspected Blendlink implementation is primarily:
+The inspected SceneToWeb implementation is primarily:
 
 - `packages/blendlink/src/componentRuntime.ts`
 - `packages/blendlink/src/threeComponents.ts`
@@ -74,7 +74,7 @@ The inspected dogfood implementation is primarily:
 
 - `MichaelRoweJonesSite/src/components/workbench/ObjectHitLayer.tsx`
 - `MichaelRoweJonesSite/src/components/workbench/WorkbenchPoster.tsx`
-- `MichaelRoweJonesSite/src/blendlink/ComponentLabScene.ts`
+- `MichaelRoweJonesSite/src/scenetoweb/ComponentLabScene.ts`
 
 Claims about package behavior below were checked against installed source, not
 inferred from package names. Browser-standard claims use W3C/WHATWG sources.
@@ -188,7 +188,7 @@ Canvas input:
 
 This is the correct ownership model. The weakness is duplication: target
 identity, projection, drag suppression, activation, focus/hover coupling, and
-route intent are currently composed manually in the application. Blendlink
+route intent are currently composed manually in the application. SceneToWeb
 should supply stable semantic descriptions and a dispatcher, while leaving the
 actual DOM and route policy in the site.
 
@@ -203,7 +203,7 @@ are the primary sources.
 No general analytics sink was found in the audited dogfood path. The code
 proves route-policy ownership and an intent seam, not end-to-end analytics.
 Analytics should be exercised when a real application adapter exists rather
-than simulated inside Blendlink.
+than simulated inside SceneToWeb.
 
 ## Platform constraints the interface must encode
 
@@ -218,7 +218,7 @@ browser may own; when the browser takes over a gesture it can issue
 semantics. [Pointer Events Level 3](https://www.w3.org/TR/pointerevents3/)
 defines all of these contracts.
 
-Consequences for Blendlink:
+Consequences for SceneToWeb:
 
 - activation is an up/click outcome, not an irreversible pointer-down side
   effect;
@@ -264,7 +264,7 @@ interface SceneInteractionControl {
 ```
 
 An Open Link control must have a real label. Object name is useful diagnostic
-context but is not a safe production fallback for an accessible name. Blendlink
+context but is not a safe production fallback for an accessible name. SceneToWeb
 should add an accessible-label authoring field only through the existing
 additive schema discipline, permit an application override keyed by stable
 component ID, and make Publish fail loudly when a production interactive
@@ -300,7 +300,7 @@ type AudioActivationState =
 ```
 
 `blocked` is recoverable from the next trusted activation. If context resume
-fails, Blendlink reports component ID, source URL, context state, and recovery
+fails, SceneToWeb reports component ID, source URL, context state, and recovery
 direction. It must not silently mark Three's `isPlaying` as audible success.
 
 ## Recommended deep interface
@@ -388,7 +388,7 @@ or loading UI.
   scene after replacement or disposal.
 - Package-owned resources are abortable only to the extent their underlying
   loaders support abort. Application-owned loaders/managers/caches are never
-  aborted, cleared, or disposed by Blendlink.
+  aborted, cleared, or disposed by SceneToWeb.
 - `initTexture` and `compileAsync` are renderer-specific preparation steps for
   known resources. They are not a universal GPU-ready barrier.
 - Interaction-triggered baked-state changes delegate to the existing
@@ -409,7 +409,7 @@ or loading UI.
   is not reused forever.
 - Dispatch after disposal returns `ignored/disposed`; it never performs a late
   intent or scene mutation.
-- If application `perform` throws, Blendlink reports one contextual failure and
+- If application `perform` throws, SceneToWeb reports one contextual failure and
   does not fall back to global navigation. A fallback could double-navigate or
   bypass application policy.
 - Disposal is idempotent, generation-gates every late continuation,
@@ -439,7 +439,7 @@ Using the codebase-design dependency categories:
 | component validation, target planning, generations, ordering, result state | in-process | keep inside the deep module; test through its interface |
 | Three scene, camera, mixer, raycaster, texture preparation | in-process | renderer implementation detail; no public port solely for tests |
 | R3F input manager and Vanilla canvas input | in-process, two real adapters | one private `SceneInputAdapter` seam is justified because both production adapters exist |
-| application DOM controls | in-process application adapter | consumes `controls` and calls `dispatch`; Blendlink does not insert markup |
+| application DOM controls | in-process application adapter | consumes `controls` and calls `dispatch`; SceneToWeb does not insert markup |
 | application router plus analytics policy | in-process application adapter | one `perform(intent)` seam; Preview and dogfood application are two real adapters |
 | package-owned fetch/load/decode | true external browser APIs | private loader adapter; browser integration tests plus controllable test adapter |
 | application-owned loader/cache | external supplied adapter | borrow only; never abort/dispose; seam already real because package-owned and app-owned paths exist |
@@ -506,7 +506,7 @@ Costs:
 - artists can author an interaction that the application accidentally never
   installs;
 - route and input flexibility are purchased by leaking engine lifecycle
-  complexity, contrary to Blendlink's promise.
+  complexity, contrary to SceneToWeb's promise.
 
 Design A has greater **Depth**, **leverage**, and **locality**. Design B should
 remain an internal decomposition technique, not the default product interface.
@@ -573,7 +573,7 @@ remain an internal decomposition technique, not the default product interface.
 
 ## Conclusion
 
-Blendlink does not need a broad visual-scripting runtime or a package-owned DOM
+SceneToWeb does not need a broad visual-scripting runtime or a package-owned DOM
 layer. It needs one deep interactivity module that turns artist-authored
 components into validated targets, semantic controls, progressively prepared
 effects, and atomic outcomes. R3F and Vanilla are renderer adapters; native DOM
@@ -604,7 +604,7 @@ Implemented in this pass:
 - baked-atlas quality promotion now prepares the complete active set before one
   synchronous commit. The embedded bootstrap remains the complete first paint.
 
-Verified: the aggregate Blendlink gate passed 360 unit/contract tests (two
+Verified: the aggregate SceneToWeb gate passed 360 unit/contract tests (two
 explicitly skipped unit cases are exercised by the required real-tool gate),
 real Khronos KTX/HDR tools, workspace and packed Vanilla/R3F consumers, package
 contents, headless plus isolated-archive Blender add-on checks, and two-state
@@ -696,7 +696,7 @@ clock-ownership problem. Its 12-effect SwiftShader lab produced ordinary
 `0.4–0.8s` frames; a click action received `0.829s` and then `0.427s`, completing
 the `1.041667s` LoopOnce clip before the application sampler observed it. Pinned
 Needle Engine 5.1.7 `engine_time.ts` caps global delta at `0.1s`, and
-`engine_context.ts` passes that value to the composer. Blendlink matches the
+`engine_context.ts` passes that value to the composer. SceneToWeb matches the
 stability bound at the narrower R3F ownership seam: newly active package work
 starts at zero and later package update/composer deltas cap at 100 ms, while the
 website's R3F clock and explicit low-level playback updates stay exact. The

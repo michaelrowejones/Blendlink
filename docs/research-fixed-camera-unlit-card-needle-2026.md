@@ -1,4 +1,4 @@
-# Fixed-camera unlit cards: Blender, Needle, and Blendlink, 2026
+# Fixed-camera unlit cards: Blender, Needle, and SceneToWeb, 2026
 
 Status: **implemented and verified** for the exact generated-card grammar in
 the package fixture and production MichaelRoweJones dogfood. This record does
@@ -8,11 +8,11 @@ Stable capability ID: `NDL-MAT-013`.
 
 ## Question
 
-Blendlink's own `capture_fixed_camera_card()` primitive compiles a fixed-camera
+SceneToWeb's own `capture_fixed_camera_card()` primitive compiles a fixed-camera
 Eevee capture to one RGBA image and one quad. The MichaelRoweJones Final publish
 was refused because Material Fidelity classified that generated material as
 `needsBake`. The investigation asked whether this was a real fidelity loss, a
-Needle/stock-export limitation, or a Blendlink diagnostic false positive.
+Needle/stock-export limitation, or a SceneToWeb diagnostic false positive.
 
 ## Exact inspected sources
 
@@ -61,7 +61,7 @@ for another bake or an application material adapter.
 Needle does not preserve the graph's non-camera-ray shadow intent by default.
 Its renderer metadata defaults shadow casting to On, and the runtime applies
 that Boolean. A blended `MeshBasicMaterial` with no alpha test can therefore
-cast a solid card shadow. Blendlink's generated card already set Blender
+cast a solid card shadow. SceneToWeb's generated card already set Blender
 `visible_shadow=false`, but core glTF did not carry it.
 
 ## Designs compared
@@ -69,7 +69,7 @@ cast a solid card shadow. Blendlink's generated card already set Blender
 | Design | Result |
 | --- | --- |
 | Require a site adapter, explicit Website Color, or a second bake | Rejected. It asks a developer or artist to acknowledge a loss that the stock exporter does not have and risks rewriting already-correct RGBA bytes. |
-| Import Blender's private `detect_shadeless_material()` | Rejected. It couples Blendlink planning/UI to a private module and wider grammar whose strength, alpha-source, and secondary-ray losses are not all acceptable. |
+| Import Blender's private `detect_shadeless_material()` | Rejected. It couples SceneToWeb planning/UI to a private module and wider grammar whose strength, alpha-source, and secondary-ray losses are not all acceptable. |
 | Match a strict generated-card subset and attest the final GLB | Chosen. It is name-independent, revision-gated, accepts the exact package-authored representation, and keeps independent near-misses loud. |
 
 ## Implemented contract
@@ -95,7 +95,7 @@ source and differential are pinned.
 `bakelib.capture_fixed_camera_card()` now authors
 `blendlink_cast_shadow=false` in addition to native `visible_shadow=false`.
 That is a scoped **Improvement** over Needle's default for this compiler-owned
-card. Blendlink does not infer no-cast intent for arbitrary artist objects.
+card. SceneToWeb does not infer no-cast intent for arbitrary artist objects.
 
 ## Evidence
 

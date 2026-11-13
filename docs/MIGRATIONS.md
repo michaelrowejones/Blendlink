@@ -1,7 +1,30 @@
 # Migrations
 
-Blendlink is pre-1.0. There are no migrations from a published release yet.
+SceneToWeb is pre-1.0. There are no migrations from a published release yet.
 This document is the required home for every future compatibility change.
+
+## Blendlink to SceneToWeb (unreleased)
+
+New projects use the `scenetoweb` npm package and CLI, the **SceneToWeb** Blender
+extension, and `scenetoweb.config.mjs`. Install the matching local SceneToWeb
+archive while the package remains unpublished. Change website imports from
+`blendlink` or `blendlink/<subpath>` to `scenetoweb` or `scenetoweb/<subpath>`,
+and declare the new dependency in the website's package manifest. Existing
+integration source files can keep their location; new integrations are created
+in `src/scenetoweb/`.
+
+The CLI installer disables an enabled legacy extension before registering the
+new extension, preserves custom preferences, and restores the old enablement
+if installation fails. The default sidebar category changes to SceneToWeb;
+custom categories remain unchanged. Saved `.blend` metadata and compiled
+contracts retain their existing identifiers. Existing `blendlink.config.mjs`
+and `.js` files still load; a canonical config takes precedence when both exist.
+The legacy `blendlink` executable, `BlendlinkConfig`, `createUseBlendlink` and
+`loaded.blendlink` remain compatibility aliases. Prefer `SceneToWebConfig`,
+`createUseSceneToWeb` and `loaded.scenetoweb` in new code.
+
+The GitHub repository slug and physical `packages/blendlink/` directory remain
+unchanged. No public package or website is published by the rename.
 
 ## Compatibility surfaces
 
@@ -9,7 +32,7 @@ A migration note is required when a release changes any of these public
 interfaces:
 
 - CLI commands, flags, exit behavior, or output consumed by automation;
-- `blendlink.config.*` keys or defaults;
+- `scenetoweb.config.*` keys or defaults;
 - npm exports, TypeScript types, Three.js/R3F installation behavior, loading
   state, or error behavior;
 - generated binding names or shapes;
@@ -48,7 +71,7 @@ For each breaking or action-requiring release, add a newest-first section:
 ```
 
 The entry must distinguish generated files that may be regenerated from artist
-or application files that must be preserved. It must state whether Blendlink
+or application files that must be preserved. It must state whether SceneToWeb
 creates a backup, whether the operation is idempotent, how to verify success,
 and how to recover. Do not tell users to delete or reset their worktree as a
 migration strategy.
@@ -63,11 +86,11 @@ local/file-linked development installs.
 ### Local development: Node 22.15 is the minimum Node 22 release
 
 File-linked development consumers on Node 22.12 through 22.14 must upgrade to
-Node 22.15 or newer on the Node 22 line, or use Node 24. Blendlink reads the
+Node 22.15 or newer on the Node 22 line, or use Node 24. SceneToWeb reads the
 saved Blender version before export so it can refuse newer-file data loss;
 Blender's optional file compression uses Zstandard, whose required built-in
 Node API first exists in Node 22.15. No `.blend`, generated scene, manifest, or
-website migration is required. Run `node --version` and `blendlink doctor`
+website migration is required. Run `node --version` and `scenetoweb doctor`
 after upgrading. Rollback means using the previous local development commit;
 there is no published 0.9.0 package to downgrade.
 
@@ -80,10 +103,10 @@ optional React or React Three Fiber peers merely to evaluate `blendlink`.
 
 ```ts
 // Before
-import { createUseBlendlink } from 'blendlink'
+import { createUseBlendlink } from 'scenetoweb'
 
 // After
-import { createUseBlendlink } from 'blendlink/react'
+import { createUseBlendlink } from 'scenetoweb/react'
 ```
 
 No generated scene, manifest, `.blend`, or asset migration is required. The
@@ -98,14 +121,14 @@ Local consumers whose generated manifest or TypeScript comment still contains
 an absolute `.blend` or linked-dependency path should regenerate it with the
 matching current compiler. Project-owned paths become slash-normalized
 project-relative locators. Paths outside the project become basename-free
-opaque labels whose exact value is available only to Blendlink's per-user
+opaque labels whose exact value is available only to SceneToWeb's per-user
 local cache; that cache is intentionally not copied into source control or a
 deployment.
 
 Custom automation must stop treating `sourceBlend` or every external
 dependency `path` as an absolute filesystem path. These are provenance and
 drift fields, not runtime asset URLs; use the configured scene source through
-Blendlink's compiler/sync commands. Missing private cache state is repaired by
+SceneToWeb's compiler/sync commands. Missing private cache state is repaired by
 running a local sync, not by committing a cache record. No `.blend`, website
 source, or runtime asset needs mutation. To roll back a local experiment,
 restore the matching older package and generated artifacts together.
@@ -117,14 +140,14 @@ publication-rename fix have broken published artifacts: their
 `<scene>.materials.json` pins staging image basenames (`out.glb.tex.*`)
 that publication renamed on disk, so every `texture_ref` program image
 404s at scene install and the runtime's byte/hash verification refuses
-the scene. `blendlink verify` on current versions also reports the
+the scene. `scenetoweb verify` on current versions also reports the
 unresolvable references at publish time.
 
 Recompile each affected scene with the current compiler (a forced
 compile/sync/publish); generated artifacts are compiler-owned and fully
 regenerable, and publication now rewrites the sidecar's image references
 to the published basenames and re-pins its bytes and hash. Verify by
-running `blendlink verify` and loading the scene — the install succeeds
+running `scenetoweb verify` and loading the scene — the install succeeds
 and the programs apply. To roll back a local experiment, restore the
 prior matched package and its generated artifacts together. Scenes whose
 sidecar carries no images (all program textures embedded in IR) were
@@ -132,7 +155,7 @@ never affected.
 
 ### Local development: Three.js support is pinned to r184
 
-Source-development websites that previously used Blendlink's provisional
+Source-development websites that previously used SceneToWeb's provisional
 `>=0.180.0 <0.186.0` peer range must resolve the executable runtime to exact
 `three@0.184.0`. A declaration-only `@types/three` patch may remain within
 `>=0.184.0 <0.185.0`; those bytes do not implement loader extensions. The
@@ -143,13 +166,13 @@ could silently change loader extension or animation behavior.
 Update both peers together, reinstall, regenerate the scene bindings, and run
 the website's production build plus browser smoke. Application routes, Canvas
 ownership, and authored `.blend` files do not change. To roll back a local
-experiment, restore the prior matched Blendlink/Three/generated-artifact set;
-do not mix an older Blendlink runtime with newly generated bindings.
+experiment, restore the prior matched SceneToWeb/Three/generated-artifact set;
+do not mix an older SceneToWeb runtime with newly generated bindings.
 
 ### Local development: runtime diagnostics v1
 
 File-linked and source-development installs that already generated scene
-bindings must update the Blendlink package and regenerate those bindings as
+bindings must update the SceneToWeb package and regenerate those bindings as
 one change. New `<scene>.gen.ts` files expose the browser-safe
 `runtimeDiagnostics` v1 projection (`lodChains` and `instanceGroups`) instead
 of embedding the manifest's complete `sceneDiagnostics` record. The exhaustive
@@ -160,12 +183,12 @@ A current runtime can still consume an older binding through its deprecated
 full-`sceneDiagnostics` fallback. The reverse is not supported: an older
 runtime does not know the new `runtimeDiagnostics` property and can therefore
 miss LOD or optional instancing behavior. Install the matching package first,
-then run `blendlink compile <scene> --force` for every generated scene and commit
+then run `scenetoweb compile <scene> --force` for every generated scene and commit
 the generated module and manifest together.
 
 If both contracts are supplied, the current versioned property is
 authoritative. An unsupported version or malformed v1 array fails with an
-instruction to update the runtime and regenerate; Blendlink does not hide the
+instruction to update the runtime and regenerate; SceneToWeb does not hide the
 mismatch by reading legacy evidence. The operation rewrites generated
 compiler-owned artifacts only and is safe to repeat. Artist `.blend` files and
 application-owned adapters are not migration targets; preserve them normally
@@ -181,7 +204,7 @@ bake-only. Missing metadata now means **Automatic** for Area lights only; Point,
 Spot, and Sun retain their existing punctual-light behavior. Automatic emits a
 versioned Three `RectAreaLight` node extra only for the engine-proven static
 Square/Rectangle subset. Otherwise it keeps the source bake-only and records a
-named source-policy or finalized-artifact reason. Blendlink does not write an
+named source-policy or finalized-artifact reason. SceneToWeb does not write an
 Automatic property into the artist's `.blend`; choosing Automatic in the UI
 removes it.
 

@@ -12,11 +12,11 @@ What do the exact installed React Three Fiber, Drei, Three, and Needle
 implementations guarantee about loading, cancellation, cache ownership, and
 React Strict Mode? In particular, is a private `THREE.LoadingManager` an
 independent cancellation boundary, and would adopting `useGLTF`/`useLoader`
-make Blendlink's lifecycle safer?
+make SceneToWeb's lifecycle safer?
 
 ## Exact installed baseline
 
-The Blendlink checkout contains:
+The SceneToWeb checkout contains:
 
 - React `19.0.0`;
 - `@react-three/fiber` `9.6.1`;
@@ -25,7 +25,7 @@ The Blendlink checkout contains:
 
 The MichaelRoweJonesSite checkout contains React `19.2.4`, R3F `9.6.1`, Drei
 `10.7.7`, Three `0.184.0`, and `three-stdlib` `2.36.1`. Drei's installed
-`useGLTF` imports its `GLTFLoader` from `three-stdlib`, while Blendlink imports
+`useGLTF` imports its `GLTFLoader` from `three-stdlib`, while SceneToWeb imports
 the r184 loader from `three/addons`.
 
 The pinned Needle experiment contains `@needle-tools/engine` `5.1.7`. Its own
@@ -105,17 +105,17 @@ This is independent of `THREE.Cache`, which is disabled by default. The
 in-flight table is always active; the optional persistent cache is a separate
 URL-only mechanism. Source: `node_modules/three/src/loaders/Cache.js:7-61`.
 
-Therefore the truthful Blendlink guarantee is narrower than "all requests
+Therefore the truthful SceneToWeb guarantee is narrower than "all requests
 using the private manager abort":
 
-> Blendlink requests that actually initiate an abort-aware r184 loader request
+> SceneToWeb requests that actually initiate an abort-aware r184 loader request
 > are aborted with the private manager when `AbortSignal.any()` is supported.
 > Same-URL work already initiated by a different Three loader/manager, HTML
 > image loads, and post-download decode/GPU work are not independently owned by
 > that manager.
 
-The reverse collision matters too: if Blendlink initiates the shared request
-first, canceling Blendlink can also fail an application consumer that Three
+The reverse collision matters too: if SceneToWeb initiates the shared request
+first, canceling SceneToWeb can also fail an application consumer that Three
 coalesced behind it. A private manager is still an improvement over Needle's
 default manager, but it is not process-wide isolation.
 
@@ -137,7 +137,7 @@ missing texture. Source:
 `three-stdlib` loader used by Drei has the same behavior at
 `C:/Users/micha/Documents/GitHub/MichaelRoweJonesSite/node_modules/three-stdlib/loaders/GLTFLoader.js:1765-1792`.
 
-That means a private Blendlink install must not infer "complete dependency
+That means a private SceneToWeb install must not infer "complete dependency
 graph" only from GLTF promise resolution. Compiler artifact verification is
 the first line of defense; the private manager's error channel and a production
 browser request gate must also make a missing companion terminal. A focused
@@ -151,7 +151,7 @@ clears queued resolvers without rejecting their promises, so disposal during a
 job can strand the awaiting promise. Sources:
 `node_modules/three/examples/jsm/loaders/KTX2Loader.js:279-327, 359-411,
 455-503` and `node_modules/three/examples/jsm/utils/WorkerPool.js:122-165`.
-Blendlink's CSP-specific terminal-failure workaround is therefore justified;
+SceneToWeb's CSP-specific terminal-failure workaround is therefore justified;
 it must not be generalized into a claim that all worker cancellation settles.
 
 ## Finding 3: R3F's cache prevents duplicate loads by sharing ownership
@@ -236,7 +236,7 @@ effect and unmounts it in a passive-effect cleanup. Source:
 mounted application-level `ReactDOM.createRoot(...).render(<StrictMode><Canvas
 ... /></StrictMode>)` fixture can establish the real behavior.
 
-Blendlink's current `slot.tail` generation serialization remains a prudent
+SceneToWeb's current `slot.tail` generation serialization remains a prudent
 defense for actual unmount/remount, retry, and future R3F behavior, but the test
 must model those events rather than assume the imperative R3F root supplies
 Strict Effects.
@@ -273,7 +273,7 @@ Needle also:
 Sources: Needle `src/engine/engine_loaders.ts:220-236, 249-331` and
 `src/engine/engine_addressables.ts:291-330, 337-380`.
 
-Blendlink's private r184 manager, loud rollback, and nonpublication of canceled
+SceneToWeb's private r184 manager, loud rollback, and nonpublication of canceled
 generations are measured improvements over this Needle baseline. The
 cross-manager FileLoader collision and worker/decode limits above must remain
 part of the claim.
@@ -285,15 +285,15 @@ part of the claim.
 This naturally suspends and deduplicates same-key render retries, but it shares
 one mutable loader/result, omits manager/decoder/header policy from the cache
 key, and has no lease, abort, or disposal ownership. That conflicts with
-Blendlink's per-attempt URL policy, transactional scene mutation, and loud
+SceneToWeb's per-attempt URL policy, transactional scene mutation, and loud
 cleanup contract.
 
 ### Design B: retain package-owned install attempts and generation gates
 
-This is the current direction. It gives Blendlink one deep module for URL
+This is the current direction. It gives SceneToWeb one deep module for URL
 policy, progress, loud error handling, cancellation requests, preparation,
 commit, and reverse cleanup. It also keeps application-owned loaders explicitly
-outside Blendlink's cancellation/cache ownership. Its limits are that Three's
+outside SceneToWeb's cancellation/cache ownership. Its limits are that Three's
 module-global in-flight dedup can cross the boundary, and repeated attempts do
 not share immutable work unless `slot.tail` prevents overlap.
 
@@ -305,7 +305,7 @@ generation. It would avoid R3F's shared mutable GLTF while deduplicating network
 work. It is not a small change: external GLTF buffers/images and decoder workers
 still need explicit ownership, and a renderer is required for true preparation.
 
-**Decision:** keep Design B. It is a better match for Blendlink's product
+**Decision:** keep Design B. It is a better match for SceneToWeb's product
 boundary and is already stronger than Needle. Do not replace it with
 `useGLTF`. Prototype Design C only after the differential gates below exist.
 
@@ -317,7 +317,7 @@ boundary and is already stronger than Needle. Do not replace it with
    canceling the first rejects the coalesced second consumer. Keep it as a
    truthfulness regression against Three upgrades.
 2. **Missing external texture test.** Serve a valid `.gltf`/`.bin` with one
-   failing external image. Assert that package-owned Blendlink installation
+   failing external image. Assert that package-owned SceneToWeb installation
    reaches Failed, never Ready, even though stock GLTFLoader converts the image
    rejection to `null`.
 3. **Application-level Strict Mode test.** Mount the actual `<Canvas>` through a
@@ -330,7 +330,7 @@ boundary and is already stronger than Needle. Do not replace it with
    a KTX2 worker job that never replies to expose a blocked `slot.tail`.
 5. **R3F cache-policy fixture.** Preload a URL with decoder/header extension A,
    then read the same URL with extension B. Prove B is not invoked. This is a
-   guardrail explaining why generated Blendlink bindings must not silently move
+   guardrail explaining why generated SceneToWeb bindings must not silently move
    to `useGLTF`.
 6. **Browser cancellation matrix.** For GLB, external buffer, image fallback,
    ImageBitmap, HDR/EXR, KTX2 bytes, Basis JS/WASM, KTX worker, Meshopt, audio,
@@ -341,7 +341,7 @@ boundary and is already stronger than Needle. Do not replace it with
 ## Commands executed
 
 ```text
-npm.cmd run test --workspace blendlink -- reactThreeFiber.test.ts threeRuntime.test.ts
+npm.cmd run test --workspace scenetoweb -- reactThreeFiber.test.ts threeRuntime.test.ts
 ```
 
 Initial result: 41/42 exposed the invalid imperative-root Strict Effects

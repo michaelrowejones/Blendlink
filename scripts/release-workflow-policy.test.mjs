@@ -12,6 +12,32 @@ function job(name, nextName) {
   return workflow.slice(start, end)
 }
 
+test('pull requests run platform checks while distribution stays tag-only', () => {
+  assert.match(workflow, /\n  pull_request:\n/)
+  assert.match(job('full-contract', 'linux'), /run: npm run test:full/)
+  assert.match(job('linux', 'windows'), /test-addon-headless\.mjs --desktop-smoke/)
+  assert.match(job('windows', 'release-candidate'), /test-addon-headless\.mjs --desktop-smoke/)
+  for (const [name, next] of [
+    ['release-candidate', 'publish-npm'],
+    ['publish-npm', 'publish-github-release'],
+    ['publish-github-release', undefined],
+  ]) {
+    assert.match(job(name, next), /if: \$\{\{ startsWith\(github\.ref, 'refs\/tags\/v'\) \}\}/)
+  }
+})
+
+test('new PR revisions can supersede stale checks without cancelling tagged distribution', () => {
+  assert.match(workflow, /concurrency:\n  group: release-candidate-\$\{\{ github\.ref \}\}\n(?:  #[^\n]*\n)?  cancel-in-progress: \$\{\{ github\.event_name == 'pull_request' \}\}/)
+})
+
+test('only the compositor shard gets expanded-corpus timeout headroom', () => {
+  const linux = job('linux', 'windows')
+  const timeouts = [...linux.matchAll(/^    timeout-minutes: (.+)$/gm)].map(match => match[1])
+  assert.deepEqual(timeouts, ["${{ matrix.suite == 'compositor' && 90 || 75 }}"])
+  assert.match(linux, /suite: \[compositor, shaders, geometry, noise-fbm, noise-types\]/)
+  assert.match(linux, /suite: noise-watchdog-diagnostic/)
+})
+
 test('release candidate attests and retains one exact carrier', () => {
   const candidate = job('release-candidate', 'publish-npm')
   assert.match(candidate, /verify-retained-release\.mjs retained/)
@@ -35,7 +61,7 @@ test('npm publisher uses OIDC and only the retained tarball', () => {
   assert.match(publisher, /--provenance/)
   assert.match(publisher, /verify-retained-release\.mjs registry/)
   assert.match(publisher, /npm audit signatures/)
-  assert.match(publisher, /BLENDLINK_NPM_TRUSTED_PUBLISHING/)
+  assert.match(publisher, /SCENETOWEB_NPM_TRUSTED_PUBLISHING/)
   assert.doesNotMatch(publisher, /npm pack/)
   assert.doesNotMatch(publisher, /NODE_AUTH_TOKEN:\s*\$\{\{\s*secrets\./)
   assert.doesNotMatch(publisher, /--force|--ignore-scripts=false/)
@@ -51,12 +77,12 @@ test('GitHub publisher attaches only the same four files and refuses mutation', 
   assert.match(publisher, /gh release create "\$GITHUB_REF_NAME"/)
   assert.match(publisher, /--verify-tag/)
   assert.match(publisher, /--draft/)
-  assert.match(publisher, /BLENDLINK_IMMUTABLE_RELEASES/)
+  assert.match(publisher, /SCENETOWEB_IMMUTABLE_RELEASES/)
   assert.match(publisher, /verify-retained-release\.mjs github/)
   assert.doesNotMatch(publisher, /--clobber|gh release upload/)
   for (const filename of [
-    'blendlink-$RELEASE_VERSION.tgz',
-    'blendlink-addon-$RELEASE_VERSION.zip',
+    'scenetoweb-$RELEASE_VERSION.tgz',
+    'scenetoweb-addon-$RELEASE_VERSION.zip',
     'release-manifest.json',
     'SHA256SUMS',
   ]) {

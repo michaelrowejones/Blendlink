@@ -74,7 +74,7 @@ export interface ExportSettings {
   /** Select the scene-owned Preview profile. Config-driven legacy scenes
    * retain the historical draft transform in the Node sync layer. */
   draft?: boolean
-  /** Internal: this compile feeds Blendlink's private authoring viewer, so
+  /** Internal: this compile feeds SceneToWeb's private authoring viewer, so
    * Blender-side authoring approximation warnings should be surfaced. */
   authoringPreview?: boolean
   /** Internal, conservative atlas-job cache supplied by sync. Public callers
@@ -285,6 +285,7 @@ export interface BlendSidecar {
   }>
   textures: Array<{
     name: string
+    aliases?: string[]
     width: number
     height: number
     colorSpace: string
@@ -490,7 +491,7 @@ let optixCacheProbeSequence = 0
  * OptiX normally chooses its own per-user directory. In restricted build
  * agents that directory can exist but be unwritable; Cycles then recompiles
  * kernels for every native multi-object bake receiver. Keep an explicit user
- * choice, otherwise use Blendlink's stable directory under the same temporary
+ * choice, otherwise use SceneToWeb's stable directory under the same temporary
  * root that already holds the export transaction.
  */
 export function blenderProcessEnvironment(
@@ -520,7 +521,7 @@ export function blenderProcessEnvironment(
     }
     const detail = error instanceof Error ? error.message : String(error)
     throw new BlendExportError(
-      `Blendlink could not provision a writable local OptiX cache at ${cachePath}. ` +
+      `SceneToWeb could not provision a writable local OptiX cache at ${cachePath}. ` +
         'A missing cache can make Cycles compile kernels once per bake receiver. ' +
         'Set BLENDLINK_OPTIX_CACHE_PATH to a writable local directory and retry.',
       { exitCode: null, stderrTail: detail },
@@ -629,7 +630,7 @@ export async function exportBlend(options: {
         `${options.blendPath} was saved by Blender ${fileMajor}.${fileMinor}, ` +
           `newer than the discovered ${blender.version}. Opening it risks data ` +
           `loss. Install a matching Blender, or override with ` +
-          `\`blendlink compile --allow-newer\` (API: allowNewerFile).`,
+          `\`scenetoweb compile --allow-newer\` (API: allowNewerFile).`,
         { exitCode: null, stderrTail: '' },
       )
     }

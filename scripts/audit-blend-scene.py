@@ -4,7 +4,7 @@ Run with:
   blender --background --factory-startup scene.blend --python scripts/audit-blend-scene.py
 
 The script never saves or mutates the source file. It is intentionally useful
-before Blendlink owns a recipe for a third-party scene.
+before SceneToWeb owns a recipe for a third-party scene.
 """
 
 from __future__ import annotations

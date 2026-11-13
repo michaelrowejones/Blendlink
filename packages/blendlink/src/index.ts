@@ -1,5 +1,6 @@
 export { defineConfig, defineScene, loadConfig, resolveConfig } from './config.js'
 export type {
+  SceneToWebConfig,
   BlendlinkConfig,
   ApplicationMaterialAdapterConfig,
   SceneConfig,

@@ -11,7 +11,7 @@ from pathlib import Path
 
 import bpy
 
-zip_path = Path(__file__).resolve().parents[1] / "blendlink-addon.zip"
+zip_path = Path(__file__).resolve().parents[1] / "scenetoweb-addon.zip"
 if not zip_path.exists():
     raise SystemExit(f"build the zip first: {zip_path}")
 
@@ -19,7 +19,7 @@ bpy.ops.extensions.package_install_files(
     filepath=str(zip_path), repo="user_default", enable_on_install=True,
 )
 
-module_name = "bl_ext.user_default.blendlink"
+module_name = "bl_ext.user_default.scenetoweb"
 if module_name not in sys.modules:
     raise SystemExit(f"{module_name} not imported after install")
 
@@ -28,7 +28,7 @@ if addon is None:
     raise SystemExit("addon not enabled in preferences")
 if addon.preferences is None:
     raise SystemExit("AddonPreferences did not register (bl_idname mismatch?)")
-if addon.preferences.category != "Blendlink":
+if addon.preferences.category != "SceneToWeb":
     raise SystemExit(f"unexpected default category: {addon.preferences.category}")
 
 # Operators registered through the real package path?

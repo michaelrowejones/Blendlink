@@ -257,7 +257,7 @@ def _require_scene_object(
     if stable_identity and not _can_reference_with_identity(obj):
         raise ValueError(
             f"{label} {obj.name!r} is linked but has no persistent web identity. "
-            "Open its source .blend with Blendlink enabled and save it once"
+            "Open its source .blend with SceneToWeb enabled and save it once"
         )
 
 
@@ -521,7 +521,7 @@ class BlendlinkComponentSettings(bpy.types.PropertyGroup):
     target_name: bpy.props.StringProperty(options={"HIDDEN"})
     expanded: bpy.props.BoolProperty(default=False, options={"SKIP_SAVE"})
     # Unknown third-party component values remain round-trippable even when
-    # this Blendlink install has no Blender editor or website adapter for them.
+    # this SceneToWeb install has no Blender editor or website adapter for them.
     raw_values: bpy.props.StringProperty(default="{}", options={"HIDDEN"})
 
     bloom_mode: bpy.props.EnumProperty(
@@ -1422,7 +1422,7 @@ def _stable_id(obj) -> str:
         if not getattr(obj, "is_editable", True):
             raise ValueError(
                 f"Linked object {obj.name!r} has no persistent web identity. "
-                "Open its source .blend with Blendlink enabled and save it once"
+                "Open its source .blend with SceneToWeb enabled and save it once"
             )
         current = str(uuid.uuid4())
         try:
@@ -1665,7 +1665,7 @@ def _validate_website_surface_target(obj, name: str) -> None:
     if not bool(obj.get("blendlink_dynamic", False)):
         raise ValueError(
             f"Website Surface {name!r} on {obj.name!r} must be Realtime; "
-            "choose Realtime in Blendlink's Object controls"
+            "choose Realtime in SceneToWeb's Object controls"
         )
     if len(obj.data.materials) != 1 or obj.data.materials[0] is None:
         raise ValueError(
@@ -1822,7 +1822,7 @@ def bake_output_ui(value: str) -> dict:
         "headline": f"Unknown Bake Output {value!r}",
         "icon": "ERROR",
         "consequence": (
-            "This atlas was authored by a newer Blendlink. Update the add-on "
+            "This atlas was authored by a newer SceneToWeb. Update the add-on "
             "before publishing, or choose a Bake Output this version knows."
         ),
         "phrase": f"an unknown Bake Output ({value})",
@@ -1836,9 +1836,9 @@ def _recipe_bake_output(atlas_name: str, value: str) -> str:
     except KeyError:
         raise ValueError(
             f"Atlas {atlas_name!r} has Bake Output {value!r}, which this "
-            f"Blendlink build cannot publish; choose one of "
+            f"SceneToWeb build cannot publish; choose one of "
             f"{', '.join(sorted(_BAKE_OUTPUT_RECIPE_VALUES))}, or install the "
-            f"Blendlink version that added it"
+            f"SceneToWeb version that added it"
         ) from None
 
 
@@ -2854,7 +2854,7 @@ def load_legacy_recipe(scene) -> bool:
 
     This deliberately replaces already-configured RNA when the embedded JSON
     differs. The JSON is the portable source of truth; otherwise an external
-    migration or a newer Blendlink install can be silently overwritten by
+    migration or a newer SceneToWeb install can be silently overwritten by
     stale native controls on the next save.
     """
     global _loading_recipe

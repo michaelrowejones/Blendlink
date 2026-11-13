@@ -131,7 +131,7 @@ export function createBrowserSmokeEvidence(options: {
     assertHealthy() {
       if (issues.length === 0) return
       throw new Error(
-        `Blendlink production browser evidence failed:\n${issues.map((issue) => `- [${issue.code}] ${issue.message}`).join('\n')}`,
+        `SceneToWeb production browser evidence failed:\n${issues.map((issue) => `- [${issue.code}] ${issue.message}`).join('\n')}`,
       )
     },
   }

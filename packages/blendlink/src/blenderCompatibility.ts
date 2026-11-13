@@ -14,7 +14,7 @@ function bundledAddonManifestPath(): string {
   const path = candidates.find(existsSync)
   if (!path) {
     throw new Error(
-      `The bundled Blendlink addon manifest is missing (checked ${candidates.join(', ')})`,
+      `The bundled SceneToWeb addon manifest is missing (checked ${candidates.join(', ')})`,
     )
   }
   return path
@@ -58,7 +58,7 @@ export function minimumSupportedBlenderVersion(): BlenderVersion {
   const value = manifest.match(/^blender_version_min\s*=\s*"([^"]+)"/m)?.[1]
   if (!value) {
     throw new Error(
-      `The bundled Blendlink addon manifest has no blender_version_min: ${path}`,
+      `The bundled SceneToWeb addon manifest has no blender_version_min: ${path}`,
     )
   }
   return parseBlenderVersion(value, 'blender_version_min')

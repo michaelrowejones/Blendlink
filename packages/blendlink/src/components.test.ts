@@ -316,7 +316,7 @@ describe('portable components', () => {
 
   it('enforces the same lowercase namespaced component type as Blender', () => {
     const result = parsePortableComponents([{
-      id: 'mixed-case', type: 'Blendlink.Bloom', schemaVersion: 1, enabled: true,
+      id: 'mixed-case', type: 'SceneToWeb.Bloom', schemaVersion: 1, enabled: true,
       target: SCENE_COMPONENT_TARGET, values: {},
     }])
     expect(result.components).toEqual([])

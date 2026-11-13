@@ -6,16 +6,16 @@
 - Relation: **Boundary / Improvement candidate**
 - Implementation: **Shipped** for Blender authoring/compiler validation and
   the standard Three/WebGL and R3F adapters
-- Evidence: **Verified focused package, real-Blender, aggregate Blendlink
+- Evidence: **Verified focused package, real-Blender, aggregate SceneToWeb
   release gate, and clean production dogfood publication**; npm/GitHub
   publication and hosted CDN/device matrices remain **Pending**
 
 ## Decision
 
-Blendlink now provides a narrow **Website Surface** capability: the artist
+SceneToWeb now provides a narrow **Website Surface** capability: the artist
 chooses and positions a screen-shaped mesh in Blender, while the website binds
 an application-owned canvas to that semantic surface and decides which pixels
-to draw. Blendlink owns the Three texture/material mutation, frame
+to draw. SceneToWeb owns the Three texture/material mutation, frame
 invalidation, rollback, and disposal behind one small interface. It must not
 own hover state, route state, DOM, analytics, or the pixel-producing UI.
 
@@ -24,7 +24,7 @@ single-material mesh with ordinary 0..1 UVs**. It must refuse an Appearance-
 baked multi-material object or a material-slot target loudly. This constraint
 is narrower than the eventual ideal, but it keeps ownership truthful:
 
-- Blendlink's current component target is an object identified by a stable ID,
+- SceneToWeb's current component target is an object identified by a stable ID,
   not a primitive or material slot;
 - Automatic/Realtime/Baked classification is object-scoped;
 - an Appearance bake replaces every material slot on a baked object with its
@@ -89,19 +89,19 @@ receiver-adjacent aspect adjustment changes object scale. Therefore the loud
 zero-area UV refusal below is a scoped **Improvement** over this exact receiver,
 not a claim about every Needle package.
 
-Items 1-6 are source observations. No current Blendlink gate executes this
+Items 1-6 are source observations. No current SceneToWeb gate executes this
 5.1.7 class for a same-surface browser differential, so they are not browser
 or leak measurements.
 
 Needle's useful baseline is the receiver technique: author a mesh, clone its
 material, place live pixels in a texture, and keep media behavior behind a
-component. Blendlink should retain that depth while changing the ownership at
-the product seam. A Blendlink website already owns its DOM, navigation,
+component. SceneToWeb should retain that depth while changing the ownership at
+the product seam. A SceneToWeb website already owns its DOM, navigation,
 loading presentation, and interaction state, so forcing those pixels through
 an engine-owned video URL or trigger graph would work against the product
 promise.
 
-## Current Blendlink ownership that constrains the design
+## Current SceneToWeb ownership that constrains the design
 
 The existing [portable component contract](MANIFEST.md#portable-component-contract)
 already provides rename-stable object targets and transactional Three adapter
@@ -128,7 +128,7 @@ handle would merely expose that complexity to each caller.
 
 | Design | Result | Reason |
 | --- | --- | --- |
-| Reuse baked `setState(name)` for `idle` / `code` / `about` | Rejected | It conflates content-addressed Blender states with ephemeral website UI, invites network/decode work for hover, and makes Blender or Blendlink own application state. |
+| Reuse baked `setState(name)` for `idle` / `code` / `about` | Rejected | It conflates content-addressed Blender states with ephemeral website UI, invites network/decode work for hover, and makes Blender or SceneToWeb own application state. |
 | Give the site a raw node/material and let it install `CanvasTexture` | Rejected | The interface is shallow: each caller must understand material sharing, atlas UVs, color space, invalidation, Strict Mode, rollback, and disposal. |
 | Target one material slot inside an otherwise baked multi-material object | Deferred | It needs a stable primitive/material-slot identity, mixed baked/realtime UV ownership, compiler attestation, and a schema decision. Needle 5.1.7 does not provide a proven multi-material baseline. |
 | Dedicated Realtime one-material mesh plus a semantic Website Surface binding | Selected and shipped for WebGL | It preserves artist control of geometry/fallback appearance and application control of pixels while keeping renderer/lifecycle complexity package-owned. It fails loudly before publication and has a small browser-facing interface. |
@@ -202,7 +202,7 @@ publish blocker.
 
 The artist owns mesh placement, UVs, fallback material, and the semantic name.
 The website owns canvas resolution, drawing, hover/focus/route state,
-accessibility, and analytics. Blendlink owns only the transport and renderer
+accessibility, and analytics. SceneToWeb owns only the transport and renderer
 lifecycle. A future Video Surface may build on the same internal receiver seam,
 but video playback, autoplay policy, audio, source/CORS, poster, crop, and
 visibility pause are a separate interface and remain a parity gap.
@@ -221,15 +221,15 @@ zero-area-validation and canvas-orientation bytes.
 
 | Layer | Exact gate | Verified claim |
 | --- | --- | --- |
-| Portable schema + Three module + installed Components | `npm test --workspace blendlink -- src/components.test.ts src/threeWebsiteSurfaces.test.ts src/threeComponents.test.ts` — **3 files, 64 tests passed** on 2026-07-26 | Semantic-name validation; shared-source-material isolation; explicit no-mipmap dynamic texture policy; authored fallback map/tint preservation and live-tint neutralization; demand invalidation without a continuous-frame claim; conditional restoration; finite, bounded, full-square UV0 refusal; duplicate/unknown/zero-size/multi-material refusal; scene teardown; installed-scene exposure |
-| Focused Website Surface runtime | `npm.cmd test --workspace blendlink -- src/threeWebsiteSurfaces.test.ts` — **1 file, 5 tests passed** on 2026-07-26 | CPU-side `CanvasTexture.flipY = false` contract matching the inspected Needle/glTF source paths; indexed full-bounds collinear UV0 refusal using public BufferGeometry topology; dynamic sampler/mipmap invariants; fallback restoration; and the map-less `USE_MAP` regression. Presented-pixel orientation is established separately by the production-browser row below |
+| Portable schema + Three module + installed Components | `npm test --workspace scenetoweb -- src/components.test.ts src/threeWebsiteSurfaces.test.ts src/threeComponents.test.ts` — **3 files, 64 tests passed** on 2026-07-26 | Semantic-name validation; shared-source-material isolation; explicit no-mipmap dynamic texture policy; authored fallback map/tint preservation and live-tint neutralization; demand invalidation without a continuous-frame claim; conditional restoration; finite, bounded, full-square UV0 refusal; duplicate/unknown/zero-size/multi-material refusal; scene teardown; installed-scene exposure |
+| Focused Website Surface runtime | `npm.cmd test --workspace scenetoweb -- src/threeWebsiteSurfaces.test.ts` — **1 file, 5 tests passed** on 2026-07-26 | CPU-side `CanvasTexture.flipY = false` contract matching the inspected Needle/glTF source paths; indexed full-bounds collinear UV0 refusal using public BufferGeometry topology; dynamic sampler/mipmap invariants; fallback restoration; and the map-less `USE_MAP` regression. Presented-pixel orientation is established separately by the production-browser row below |
 | Focused zero-area Blender differential | Blender **5.2** `--background --factory-startup --python-exit-code 1 --python-expr $code` — printed `WEBSITE_SURFACE_UV_AREA_FOCUSED_CHECK_PASSED` on 2026-07-26 | Add-on diagnostics, enabled serialization, and the independent exporter all reject a full-bounds collinear plane with the same repair contract; disabled records remain non-blocking, serializable, and compiler-skipped |
 | Registered add-on + exporter regression | From `packages/blender-addon`: `& 'C:\Program Files\Blender Foundation\Blender 5.2\blender.exe' --background --factory-startup --python-exit-code 1 --python tests\run_headless.py` — exit `0`, printed `BLENDLINK_ADDON_TESTS_PASSED` on 2026-07-26 | The retained collinear add-on/serializer fixture and independently repeated exporter fixture pass inside the complete registered-add-on regression suite |
-| Package build | `npm.cmd run build --workspace blendlink` — exit `0` on 2026-07-26 | TypeScript compiled and current Blender/add-on distribution assets were copied |
+| Package build | `npm.cmd run build --workspace scenetoweb` — exit `0` on 2026-07-26 | TypeScript compiled and current Blender/add-on distribution assets were copied |
 | Add-on schema/discoverability | `python packages\blender-addon\tests\component_schema_check.py` — passed on 2026-07-25 | `blendlink.website-surface`, defaults, field bindings, and `application pixels` search discoverability stay aligned |
 | Focused real Blender UV differential | Blender **5.2** `--background --factory-startup --python-exit-code 1 --python-expr $code` against the Website Surface assertions retained in `packages/blender-addon/tests/run_headless.py` — printed `WEBSITE_SURFACE_UV_FOCUSED_CHECK_PASSED` on 2026-07-26 | Enabled authoring validation, add-on serialization, and the independent exporter agree on finite, bounded, full-square UV0; collapsed, cropped, out-of-range, and non-finite fixtures fail independently, while disabled draft records still round-trip |
 | Blender Python syntax | `& 'C:\Program Files\Blender Foundation\Blender 5.2\blender.exe' --background --factory-startup --python-exit-code 1 --python-expr "import ast; from pathlib import Path; files=[Path(r'packages/blender-addon/component_validation.py'),Path(r'packages/blender-addon/props.py'),Path(r'packages/blender-addon/tests/run_headless.py'),Path(r'packages/blendlink/blender/export_scene.py')]; [ast.parse(p.read_text(encoding='utf8'), filename=str(p)) for p in files]; print('WEBSITE_SURFACE_UV_SYNTAX_OK')"` — printed `WEBSITE_SURFACE_UV_SYNTAX_OK` on 2026-07-26 | All four changed Blender-side Python files parse under the release Blender runtime |
-| Current aggregate Blendlink release gate | `npm run test:full` — exit `0` on 2026-07-26 | The current Website Surface bytes passed build, the unit/release contracts, required real Blender 5.2 and Khronos KTX tooling, packed Vanilla and R3F consumer builds, add-on headless/archive verification, and baked appearance/lighting e2e |
+| Current aggregate SceneToWeb release gate | `npm run test:full` — exit `0` on 2026-07-26 | The current Website Surface bytes passed build, the unit/release contracts, required real Blender 5.2 and Khronos KTX tooling, packed Vanilla and R3F consumer builds, add-on headless/archive verification, and baked appearance/lighting e2e |
 | Production dependency audit | `npm run audit:production` — passed on 2026-07-26 | The reviewed workaround for `GHSA-f88m-g3jw-g9cj` remained the only named advisory policy |
 | Local release-artifact rehearsal | `npm run release:artifacts -- --allow-dirty` — passed on 2026-07-26 | Wrote `artifacts/release/0.8.0/release-manifest.json`; this was a local, unpublished dirty-worktree rehearsal, not a clean release or registry publication |
 | Production Next/Chromium hover/focus dogfood | From the configured site smoke in `npm run blendlink:publish -- workbenchDogfood`: `artist-authored monitor surface follows website hover and keyboard focus` passed on 2026-07-26 | The artist-authored `monitor-screen` is present; website hover selects code/Blender pixels; the stable monitor-inner ROI—not the surrounding hero—changes by more than `5%` of pixels; keyboard focus selects document/code states; console/page failures remain empty |
@@ -243,7 +243,7 @@ The browser gate used the site's Next **16.2.6** production integration.
 The dogfood keeps render-loop ownership at the application seam. The site uses
 `always` while its own transitions or compositor introduction are active,
 settles to `demand`, and uses `never` while the persistent stage is hidden.
-Blendlink's R3F adapter continues to requeue demand frames only while the
+SceneToWeb's R3F adapter continues to requeue demand frames only while the
 installed scene's package-owned animation, controls, LOD, or Components
 truthfully report `requiresContinuousFrames`. Website Surface itself acquires no
 continuous-frame lease: initial binding and each `changed()` call request one
@@ -255,7 +255,7 @@ not a package claim that every application must use that policy.
 
 The exact Needle 5.1.7 source comparison establishes a product **Boundary**
 and identifies cleanup/multi-material Improvement candidates. No gate yet
-executes Needle and Blendlink against the same scalar/multi-material receiver,
+executes Needle and SceneToWeb against the same scalar/multi-material receiver,
 so the relation remains **Improvement candidate**, not verified Improvement.
 
 ### Pending current run

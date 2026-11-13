@@ -14,13 +14,13 @@ import { describe, expect, it } from 'vitest'
  * vocabulary, and exists because those parsers drifted three ways once.
  *
  * Scope is deliberately the VOCABULARY, not the numbers: per-op numeric
- * fidelity is measured by experiments/tsl-node-differential against
- * Cycles, and that proof is not duplicated here.
+ * fidelity has separate native gates, using EEVEE for new live shading
+ * ports, and that proof is not duplicated here.
  */
 const here = dirname(fileURLToPath(import.meta.url))
 const fixture = JSON.parse(
   readFileSync(join(here, '..', 'conformance', 'tsl-ir-ops.json'), 'utf8'),
-) as { ops: string[] }
+) as { ops: string[], legacyBuilderOps?: string[] }
 
 /** The builder expresses its vocabulary as the case labels of one switch,
  * so the vocabulary is read from the source it is expressed in. A regex
@@ -36,12 +36,16 @@ describe('TSL IR op vocabulary conformance', () => {
     expect(fixture.ops.length).toBeGreaterThan(30)
     expect([...fixture.ops].sort()).toEqual(fixture.ops)
     expect(new Set(fixture.ops).size).toBe(fixture.ops.length)
+    const legacy = fixture.legacyBuilderOps ?? []
+    expect([...legacy].sort()).toEqual(legacy)
+    expect(new Set(legacy).size).toBe(legacy.length)
+    expect(legacy.filter(op => fixture.ops.includes(op))).toEqual([])
   })
 
   it('builds exactly the declared ops — no more, no fewer', () => {
     const built = builderOps()
     expect(built.size).toBeGreaterThan(30)
-    const declared = new Set(fixture.ops)
+    const declared = new Set([...fixture.ops, ...(fixture.legacyBuilderOps ?? [])])
     const missing = [...declared].filter((op) => !built.has(op)).sort()
     const extra = [...built].filter((op) => !declared.has(op)).sort()
     expect({ missing, extra }).toEqual({ missing: [], extra: [] })

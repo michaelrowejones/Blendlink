@@ -32,3 +32,22 @@ CONTEXT.md
 /e2e*.txt
 /compile_*.manifest.json
 /NUL
+
+# Reproducible upstream node-watch inputs and generated port work packets.
+/artifacts/node-pipeline/
+/artifacts/upstream-source-watch/
+/artifacts/blender-node-watch/
+/artifacts/upstream/
+
+/artifacts/node-ports/
+
+# Local browser performance captures include model copies and runtime snapshots.
+/artifacts/runtime-perf-*/
+
+# SceneToWeb canonical cache and interrupted verification workspaces.
+.scenetoweb-cache/
+.scenetoweb-consumer-*/
+.scenetoweb-examples-*/
+
+# Regenerable Float to Integer native/browser captures and runtime snapshots.
+/artifacts/float-to-int/

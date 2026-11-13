@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "kind": "official-real-scene-performance-corpus-v1",
+  "assetsRedistributed": false,
+  "checksumAuthority": "Locally computed SHA256 pins of official HTTPS downloads; Blender does not publish checksum companions for these demo files. Cube extracted SHA independently matches the earlier retained corpus inventory.",
+  "licensePage": "https://www.blender.org/download/demo-files/",
+  "scenes": [
+    {
+      "id": "mandelbrot-grow",
+      "fileName": "mandelbrot_grow.blend",
+      "url": "https://download.blender.org/demo/eevee/mandelbrot_grow.blend",
+      "bytes": 112589,
+      "sha256": "08b1928c3b8c6c2ed120a470cdc08277a706e624c8133e72bc2f0e0c6c4255f9",
+      "license": "CC0-1.0",
+      "author": "Shahzod Boyhonov (Specoolar)",
+      "licenseEvidence": "Embedded README identifies author and CC0; official demo page lists CC0.",
+      "minimumAuthoredVersion": "5.0",
+      "role": "Real animated shader Repeat Zone; low geometry cost and live normal/animation refusal."
+    },
+    {
+      "id": "radial-tiling",
+      "fileName": "radial_tiling_texture.blend",
+      "url": "https://download.blender.org/demo/rendering/radial_tiling_texture.blend",
+      "bytes": 445915,
+      "sha256": "bfc3cea66963e84c4468e8fac6b0313ef72265cafa5df36cf0f03d21479d1e3c",
+      "license": "CC0-1.0",
+      "author": "Johannes Kollmer",
+      "licenseEvidence": "Embedded README credits Johannes Kollmer and CC0 Public Domain; it credits the Poly Haven CC0 cobblestone texture. Official demo page lists CC0.",
+      "minimumAuthoredVersion": "5.0",
+      "role": "Real Radial Tiling/group material workflow; no authored camera, four triangles."
+    },
+    {
+      "id": "cube-diorama",
+      "fileName": "cube_diorama.blend",
+      "url": "https://download.blender.org/demo/bundles/bundles-3.0/asset-demo-bundle-3.0-cube-diorama.zip",
+      "bytes": 11606058,
+      "sha256": "b76732089f6e41d3543a986875963eb13742dde4f68021974f25564b727dde6a",
+      "archiveEntry": "cube_diorama/cube_diorama.blend",
+      "extractedBytes": 11674153,
+      "extractedSha256": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e",
+      "license": "CC0-1.0",
+      "author": "Blender 3.0 Asset Browser demo contributors",
+      "licenseEvidence": "Embedded README states CC-0; original official asset-demo bundle.",
+      "minimumAuthoredVersion": "3.0",
+      "role": "Original Cycles-authored geometry/material demo; Simple Subdivision hotspot and bake-path comparison. Not the repository showcase derivative."
+    }
+  ]
+}

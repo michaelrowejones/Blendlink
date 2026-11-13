@@ -1,14 +1,16 @@
 // MTLX-TSL-001 TSL side: cells render through the PRODUCTION pipeline —
 // the IR emitted by tsl_ir.py from the real Blender graphs, built into TSL
-// by the packaged tslNodeRecipe module. A cell therefore proves the exact
-// compiler mapping, not a lookalike. Only diagnostic cells without an IR
+// by the packaged tslNodeRecipe module. Explicit legacy-ir cells instead
+// consume fixed old documents and establish serialized compatibility only.
+// Fresh cells prove the compiler mapping, not a lookalike. Diagnostic cells without an IR
 // route (Voronoi, until the Cycles hash is ported) keep hand-written TSL.
 // No canvas, no tone map, no sRGB anywhere — the byte-exact constant
 // calibration cell proves it.
 import * as THREE from 'three'
 import { WebGPURenderer, MeshBasicNodeMaterial } from 'three/webgpu'
 import { mx_worley_noise_float, normalize, uv, vec3 } from 'three/tsl'
-import { buildTslColorNode } from '@blendlink-tsl-recipe'
+import * as recipe from '@blendlink-tsl-recipe'
+const { buildTslColorNode, createTslBuildResources, validateTslMagicCoordinates } = recipe
 
 // The view-dependent cell camera contract, mirrored from reference.py:
 // camera at (0, 0, 2) looking down -Z at the quad spanning [-1, 1]^2 at
@@ -29,7 +31,7 @@ const HANDWRITTEN_CELLS = {
 
 const state = {
   ready: false, renderer: null, scene: null, camera: null,
-  mesh: null, target: null, error: null,
+  mesh: null, target: null, resources: null, error: null, deviceLoss: null, gpu: null,
 }
 
 async function init() {
@@ -38,7 +40,8 @@ async function init() {
     canvas.width = SIZE
     canvas.height = SIZE
     document.body.appendChild(canvas)
-    const renderer = new WebGPURenderer({ canvas, antialias: false })
+    const renderer = new WebGPURenderer({ canvas, antialias: false,
+      forceWebGL: new URLSearchParams(location.search).get('backend') === 'webgl2' })
     renderer.setPixelRatio(1)
     renderer.setSize(SIZE, SIZE, false)
     renderer.toneMapping = THREE.NoToneMapping
@@ -46,6 +49,15 @@ async function init() {
     // read back as the sentinel, never as the previous cell's pixels.
     renderer.setClearColor(new THREE.Color(1.0, 0.0, 1.0), 1.0)
     await renderer.init()
+    const adapter = renderer.backend?.device?.adapterInfo
+    if (adapter) state.gpu = { api: 'WebGPU', vendor: adapter.vendor, architecture: adapter.architecture,
+      device: adapter.device, description: adapter.description }
+    else if (renderer.backend?.gl) {
+      const gl = renderer.backend.gl, info = gl.getExtension('WEBGL_debug_renderer_info')
+      state.gpu = { api: 'WebGL2', vendor: gl.getParameter(info?.UNMASKED_VENDOR_WEBGL ?? gl.VENDOR),
+        renderer: gl.getParameter(info?.UNMASKED_RENDERER_WEBGL ?? gl.RENDERER) }
+    }
+    renderer.backend?.device?.lost.then(info => { state.deviceLoss = { reason: info.reason, message: info.message } })
     const scene = new THREE.Scene()
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1)
     const mesh = new THREE.Mesh(
@@ -73,6 +85,7 @@ async function init() {
 
 window.__tslDiffInit = init
 window.__tslDiffReady = () => state.ready
+window.__tslDiffEnvironment = () => ({ memory: { ...state.renderer?.info.memory }, deviceLoss: state.deviceLoss, gpu: state.gpu })
 
 function ensureQuadVertexColors() {
   // Mirror the reference proxy's corner colors: linear in UV, so any
@@ -93,6 +106,9 @@ window.__tslDiffRun = async (
   cellId, pipeline, irPath, analyticCamera, analyticLight, objectAttributes,
 ) => {
   if (state.error) return { ok: false, error: state.error }
+  let pendingResources = null
+  let noisePreparation = null
+  let preparationStatistics = null
   try {
     let colorNode
     if (pipeline === 'handwritten') {
@@ -115,7 +131,15 @@ window.__tslDiffRun = async (
       if (JSON.stringify(document).includes('"vertex_color"')) {
         ensureQuadVertexColors()
       }
+      noisePreparation = recipe.prepareTslNoiseFields ? await recipe.prepareTslNoiseFields(document) : null
+      preparationStatistics = noisePreparation?.statistics ?? null
+      pendingResources = createTslBuildResources()
       colorNode = buildTslColorNode(document, {
+        resources: pendingResources,
+        validateMagicCoordinates: expression => validateTslMagicCoordinates(expression,state.mesh,{activeUvChannel:0,generatedTexspace:{location:[0,0,0],size:[1,1,1]}}),
+        preparedNoiseFields: noisePreparation,
+        // Native tile fixtures explicitly author their active-render map on UV0.
+        activeUvChannel: 0,
         ...(analyticCamera ? { viewCos: analyticViewCos() } : {}),
         // The light-contract override: a sun of the cell's declared
         // effective irradiance (the EEVEE reference measures the same
@@ -151,6 +175,9 @@ window.__tslDiffRun = async (
     const material = new MeshBasicNodeMaterial()
     material.colorNode = colorNode
     state.mesh.material.dispose()
+    state.resources?.dispose()
+    state.resources = pendingResources
+    pendingResources = null
     state.mesh.material = material
     state.renderer.setRenderTarget(state.target)
     // Truthfulness, in two parts. Clear in an OWN submit first, so a
@@ -188,11 +215,14 @@ window.__tslDiffRun = async (
       size: SIZE,
       components: pixels.length / (SIZE * SIZE),
       base64: btoa(binary),
+      noisePreparation: preparationStatistics,
+      preparedFieldTables: preparationStatistics?.tableStatistics ?? [],
     }
   } catch (error) {
+    pendingResources?.dispose()
     return {
       ok: false,
       error: `${error?.name ?? 'Error'}: ${error?.message ?? error}`,
     }
-  }
+  } finally { noisePreparation?.dispose() }
 }

@@ -20,10 +20,12 @@ import {
 } from './compiledSceneConformance.js'
 import type { MaterialPortabilityDiagnostic } from './sceneDiagnostics.js'
 import type { SceneManifest } from './typegen.js'
+import { validatedBaseColorProgramMaterials, type MaterialProgramImageBytes, type MaterialProgramPrimitiveData } from './compiledMaterialPrograms.js'
 
 type RawRecord = Record<string, unknown>
 
 interface RawGltf {
+  meshes?: unknown
   scene?: unknown
   bufferViews?: unknown
   images?: unknown
@@ -141,7 +143,7 @@ export interface CompiledSceneAudit {
   materialPortability: CompiledMaterialPortabilityCoverage
   materialPayloadCollapse: MaterialPayloadCollapseEvidence
   /**
-   * Whether the finished artifact fits the runtime Blendlink claims to
+   * Whether the finished artifact fits the runtime SceneToWeb claims to
    * support. Evidence only: this audit runs on the Preview path too, and
    * refusing there would take away the loop an artist needs to fix it. `sync`
    * turns these into blocking verify issues at publication.
@@ -152,6 +154,10 @@ export interface CompiledSceneAudit {
 export interface AuditCompiledSceneArtifactInput {
   manifest: SceneManifest
   glbBytes: Uint8Array
+  /** Exact shipped sidecar bytes; the audit validates the manifest pin itself. */
+  materialProgramsBytes?: Uint8Array
+  /** Exact external images beside the sidecar, keyed by published basename. */
+  materialProgramImageBytes?: MaterialProgramImageBytes
 }
 
 /**
@@ -196,6 +202,27 @@ export async function auditCompiledSceneArtifact(
     .readBinary(glbBytes)
   const root = document.getRoot()
   const meshes = root.listMeshes()
+  const rawMeshes=rawArray(raw.meshes,'meshes')
+  if(rawMeshes.length!==meshes.length)throw new Error('Compiled scene mesh evidence drifted while decoding.')
+  const geometryData=new Map<string,MaterialProgramPrimitiveData>()
+  meshes.forEach((mesh,index)=>{
+    if(rawArray(rawMeshes[index]!.primitives,'mesh primitives').length!==mesh.listPrimitives().length)
+      throw new Error('Compiled scene primitive evidence drifted while decoding.')
+    mesh.listPrimitives().forEach((primitive,part)=>{
+    const position=primitive.getAttribute('POSITION')?.getArray(),normal=primitive.getAttribute('NORMAL')?.getArray(),indices=primitive.getIndices()?.getArray()
+    const tangent=primitive.getAttribute('TANGENT')?.getArray(),uvs=new Map<string,Float32Array>()
+    primitive.listSemantics().forEach(semantic=>{
+      const values=primitive.getAttribute(semantic)?.getArray()
+      if(/^TEXCOORD_\d+$/.test(semantic)&&values instanceof Float32Array)uvs.set(semantic,values)
+    })
+    geometryData.set(`${index}:${part}`,{position:position instanceof Float32Array?position:null,normal:normal instanceof Float32Array?normal:null,
+      tangent:tangent instanceof Float32Array?tangent:null,uvs,
+      indices:indices instanceof Uint8Array||indices instanceof Uint16Array||indices instanceof Uint32Array?indices:null})
+    })
+  })
+  const baseColorPrograms = await validatedBaseColorProgramMaterials(
+    raw as unknown as Record<string, unknown>, manifest, input.materialProgramsBytes, input.materialProgramImageBytes,geometryData,
+  )
   const materials = root.listMaterials()
   const rawMaterials = rawArray(raw.materials, 'materials')
   if (rawMaterials.length !== materials.length) {
@@ -314,7 +341,7 @@ export async function auditCompiledSceneArtifact(
       'Cameras, lights, Worlds, and helper/library data do not create visible Three.js geometry. ' +
       'Make at least one mesh with non-empty evaluated geometry render-visible in the exported ' +
       'Scene or Collection (and not excluded by -noimp), then rebuild. If this .blend is ' +
-      'intentionally a helper or asset library, inspect it with `blendlink plan` instead of publishing it.',
+      'intentionally a helper or asset library, inspect it with `scenetoweb plan` instead of publishing it.',
     )
   }
 
@@ -369,6 +396,7 @@ export async function auditCompiledSceneArtifact(
     materialPayloadCollapse,
     conformance: inspectCompiledSceneConformance({
       gltf: raw as unknown as Record<string, unknown>,
+      validatedBaseColorProgramMaterials: baseColorPrograms,
       materialRenderedTriangles: bindingCounters.map(
         (counter) => counter.renderedTriangles,
       ),

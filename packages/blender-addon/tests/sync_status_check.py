@@ -18,7 +18,7 @@ args = sys.argv[sys.argv.index("--") + 1:]
 project = Path(args[0])
 blend = project / (args[1] if len(args) > 1 else "vocab.blend")
 
-module_name = "bl_ext.user_default.blendlink"
+module_name = "bl_ext.user_default.scenetoweb"
 bpy.ops.wm.open_mainfile(filepath=str(blend))
 if module_name not in sys.modules:
     raise SystemExit(f"{module_name} not loaded — is the extension installed and enabled?")

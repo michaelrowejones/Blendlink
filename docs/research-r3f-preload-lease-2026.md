@@ -5,7 +5,7 @@ Status: **Prototype**; no production interface is claimed
 
 ## Decision
 
-Do not put a complete Blendlink scene preparation directly into a module-level
+Do not put a complete SceneToWeb scene preparation directly into a module-level
 Client React Suspense cache.
 
 A complete candidate is renderer-bound, reflects one application Scene's
@@ -113,10 +113,10 @@ non-manager work or loaders without that support.
 `loading[url]` table. A later same-URL caller appends callbacks to the first
 request rather than creating a request with its own manager signal. Aborting
 the later manager cannot truthfully claim ownership of that shared fetch.
-This supports Blendlink's existing distinction:
+This supports SceneToWeb's existing distinction:
 
 - a package-created private manager may be asked to abort its attempt;
-- an application-owned manager must never be aborted by Blendlink; and
+- an application-owned manager must never be aborted by SceneToWeb; and
 - all cancellation claims still need generation gating and late-result
   disposal.
 
@@ -132,7 +132,7 @@ mutable instance. `unload()` destroys that instance and raw bytes. The inspected
 source explicitly leaves both aborting a resource and preventing disposal while
 resources remain in use as TODOs.
 
-Blendlink should match the useful separation between byte prefetch and scene
+SceneToWeb should match the useful separation between byte prefetch and scene
 instantiation, while improving cancellation, ownership, and reference
 lifetime rather than reproducing those TODOs.
 

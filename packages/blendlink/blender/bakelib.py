@@ -38,24 +38,49 @@ from pathlib import Path
 import bpy
 from mathutils import Vector
 
-# Sibling modules in this directory, following the same convention as
-# export_scene.py: bakelib is loaded both as a Blender-side import and
-# directly by path from headless test modules, so it puts its own
-# directory on the path rather than assuming a caller did.
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from uvgeometry import (  # noqa: E402
-    _RECEIVER_RECTANGLE_EPSILON,
-    _RECEIVER_RECTANGLE_ORDERINGS,
-    _RECEIVER_RECTANGLE_SCORINGS,
-    _maxrects_receiver_attempt,
-    _ordered_receiver_rectangles,
-    _prune_receiver_free_rectangles,
-    _receiver_rectangle_contains,
-    _receiver_rectangles_intersect,
-    _uv_bounds_tuple_distance,
-    allocate_receiver_rectangles,
-    nearby_uv_bounds_pairs,
-)
+# Installed extensions must keep helpers in their own package namespace:
+# Blender replaces that namespace on reinstall, but deliberately leaves bare
+# modules alone. Source addon tests load this file under their package name
+# from the canonical sibling directory; ordinary exporter processes use the
+# historical bare import path.
+if __package__:
+    import importlib
+    import importlib.util
+    _uvgeometry_name = __package__ + ".uvgeometry"
+    try:
+        _uvgeometry = importlib.import_module(_uvgeometry_name)
+    except ModuleNotFoundError as error:
+        if error.name != _uvgeometry_name:
+            raise
+        _uvgeometry_path = Path(__file__).with_name("uvgeometry.py")
+        _uvgeometry_spec = importlib.util.spec_from_file_location(_uvgeometry_name, _uvgeometry_path)
+        _uvgeometry = importlib.util.module_from_spec(_uvgeometry_spec)
+        sys.modules[_uvgeometry_name] = _uvgeometry
+        try:
+            _uvgeometry_spec.loader.exec_module(_uvgeometry)
+        except Exception:
+            sys.modules.pop(_uvgeometry_name, None)
+            raise
+else:
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import uvgeometry as _uvgeometry
+
+for _uvgeometry_export in (
+    "_RECEIVER_RECTANGLE_EPSILON",
+    "_RECEIVER_RECTANGLE_ORDERINGS",
+    "_RECEIVER_RECTANGLE_SCORINGS",
+    "_maxrects_receiver_attempt",
+    "_ordered_receiver_rectangles",
+    "_prune_receiver_free_rectangles",
+    "_receiver_rectangle_contains",
+    "_receiver_rectangles_intersect",
+    "_uv_bounds_tuple_distance",
+    "allocate_receiver_rectangles",
+    "nearby_uv_bounds_pairs",
+):
+    globals()[_uvgeometry_export] = getattr(_uvgeometry, _uvgeometry_export)
+del _uvgeometry_export
+
 
 
 def capture_fixed_camera_card(
@@ -314,7 +339,7 @@ def _fixed_camera_card_mesh(
     card.data.materials.append(material)
     # The camera-ray branch intentionally makes the captured source invisible
     # to non-camera rays. Core glTF cannot express that object-level contract,
-    # so carry it through Blendlink's namespaced runtime flag as well as the
+    # so carry it through SceneToWeb's namespaced runtime flag as well as the
     # native Blender visibility channel. This prevents a transparent unlit
     # card from casting a solid rectangular website shadow.
     card.visible_shadow = False
@@ -355,7 +380,7 @@ def ensure_shader_node_tree(owner):
         tree = getattr(owner, "node_tree", None)
     except (AttributeError, ReferenceError, RuntimeError, TypeError) as error:
         raise RuntimeError(
-            f"Blendlink could not read the shader node tree for "
+            f"SceneToWeb could not read the shader node tree for "
             f"{owner_type} {owner_name!r}: {type(error).__name__}: {error}"
         ) from error
     if tree is not None:
@@ -365,19 +390,19 @@ def ensure_shader_node_tree(owner):
         owner.use_nodes = True
     except (AttributeError, ReferenceError, RuntimeError, TypeError) as error:
         raise RuntimeError(
-            f"Blendlink could not enable shader nodes for "
+            f"SceneToWeb could not enable shader nodes for "
             f"{owner_type} {owner_name!r}: {type(error).__name__}: {error}"
         ) from error
     try:
         tree = getattr(owner, "node_tree", None)
     except (AttributeError, ReferenceError, RuntimeError, TypeError) as error:
         raise RuntimeError(
-            f"Blendlink enabled shader nodes for {owner_type} {owner_name!r} "
+            f"SceneToWeb enabled shader nodes for {owner_type} {owner_name!r} "
             f"but could not read its node tree: {type(error).__name__}: {error}"
         ) from error
     if tree is None:
         raise RuntimeError(
-            f"Blendlink enabled shader nodes for {owner_type} {owner_name!r}, "
+            f"SceneToWeb enabled shader nodes for {owner_type} {owner_name!r}, "
             "but Blender did not create a node tree"
         )
     return tree
@@ -402,7 +427,7 @@ def active_shader_node_tree(owner):
         tree = getattr(owner, "node_tree", None)
     except (AttributeError, ReferenceError, RuntimeError, TypeError) as error:
         raise RuntimeError(
-            f"Blendlink could not read the shader node tree for "
+            f"SceneToWeb could not read the shader node tree for "
             f"{owner_type} {owner_name!r}: {type(error).__name__}: {error}"
         ) from error
     if tree is None:
@@ -412,7 +437,7 @@ def active_shader_node_tree(owner):
             enabled = bool(getattr(owner, "use_nodes", False))
         except (AttributeError, ReferenceError, RuntimeError, TypeError) as error:
             raise RuntimeError(
-                f"Blendlink could not read legacy shader-node state for "
+                f"SceneToWeb could not read legacy shader-node state for "
                 f"{owner_type} {owner_name!r}: {type(error).__name__}: {error}"
             ) from error
         if not enabled:
@@ -428,7 +453,7 @@ def file_sha256(path: str, length: int = 16) -> str:
     """Content identity for one published bake artifact.
 
     Dependency hashes answer whether pixels *should* change; this separately
-    proves the prior file still contains the bytes Blendlink published.
+    proves the prior file still contains the bytes SceneToWeb published.
     """
     digest = hashlib.sha256()
     with open(path, "rb") as handle:
@@ -794,6 +819,11 @@ def _fingerprint_object_contributor(
         digest, obj, depsgraph, visited, *, include_atlas=False,
         evaluated=False, matrix_world=None, source_raw=False) -> None:
     """Hash one Cycles contributor using the same contract in/out of instances."""
+    # Blender4.2 lazily installs an empty IDPropertyGroup on this first read.
+    # Resolve it before sampling obj.items(), so the first and subsequent
+    # fingerprints see the same registered property container. Its actual
+    # Cycles settings and all custom properties still participate below.
+    cycles = getattr(obj, "cycles", None)
     transform = matrix_world if matrix_world is not None else obj.matrix_world
     transform_values = transform if isinstance(transform, tuple) else tuple(
         value for row in transform for value in row
@@ -820,7 +850,6 @@ def _fingerprint_object_contributor(
             if key not in {"_RNA_UI", "blendlink_id"}
         )),
     ))
-    cycles = getattr(obj, "cycles", None)
     if cycles is not None:
         _fingerprint_rna_scalars(digest, cycles)
     linking = getattr(obj, "light_linking", None)
@@ -1133,7 +1162,7 @@ def fingerprint_reflection_probe_dependencies(
         if not isinstance(object_id, str) or not object_id:
             raise ValueError(
                 "reflection probe receiver exclusion needs stable blendlink_id values; "
-                "run Set Up Blendlink Scene and save before baking"
+                "run Set Up SceneToWeb Scene and save before baking"
             )
         excluded_ids.append(object_id)
     if len(excluded_ids) != len(set(excluded_ids)):
@@ -1146,7 +1175,7 @@ def fingerprint_reflection_probe_dependencies(
         resolution,
         samples,
         tuple(sorted(excluded_ids)),
-        # Blendlink defines resolution as cubemap-face detail and therefore
+        # SceneToWeb defines resolution as cubemap-face detail and therefore
         # writes a 4R x 2R equirectangular source. Needle defines its field as
         # panorama width, so its smaller output is a distinct contract rather
         # than a violation of its own UI promise.
@@ -1738,7 +1767,7 @@ def save_denoised(image, path: str, albedo=None, normal=None) -> None:
     The stage scene is EMPTY (renders instantly under Workbench) and its
     compositor output becomes the written file, through the same Standard
     view + dither contract. Runs after margin dilation, sidestepping the
-    bake-time-denoise margin-darkening bug (blender#94573). Blendlink supplies
+    bake-time-denoise margin-darkening bug (blender#94573). SceneToWeb supplies
     the valid albedo guide only: Blender's encoded object-space NORMAL bake is
     not a truthful OIDN common-space guide and is intentionally not connected.
     """
@@ -1835,7 +1864,7 @@ def image_signal_coverage(
     if int(covered.sum()) == 0:
         raise RuntimeError(
             f"{label}: constant-white Cycles EMIT mask produced no covered RGB "
-            "signal; Blendlink refused to publish an empty material texture. "
+            "signal; SceneToWeb refused to publish an empty material texture. "
             "Check the bake target, selected objects, and UV layer"
         )
     return covered
@@ -1853,7 +1882,7 @@ def require_image_coverage(image, label: str):
     if int(covered.sum()) == 0:
         raise RuntimeError(
             f"{label}: Cycles produced no baked coverage for a populated "
-            "atlas proxy; Blendlink refused to publish an empty atlas. "
+            "atlas proxy; SceneToWeb refused to publish an empty atlas. "
             "Check the bake target, atlas UVs, and evaluated mesh"
         )
     return covered
@@ -1975,7 +2004,7 @@ def normalize_light_image(image, covered=None) -> float:
 
 def flatten_saved_background(
         path: str, covered, label: str = "", log=print,
-        source_peak: float | None = None) -> None:
+        source_peak: float | None = None, source_resolution=None) -> None:
     """Rewrite the saved atlas's background to ONE constant byte value.
 
     Mip level N keeps only 1/2^N of the authored island padding, so deep
@@ -2011,7 +2040,7 @@ def flatten_saved_background(
                 raise RuntimeError(
                     f"{tag}: saved atlas lost its visible RGB signal "
                     f"(source peak {source_peak:.6g}, saved peak {saved_peak:.6g}); "
-                    "Blendlink refused to publish a valid-but-black PNG"
+                    "SceneToWeb refused to publish a valid-but-black PNG"
                 )
         if covered.all():
             log(f"blendlink: background fill skipped for {tag} — alpha reports full coverage")
@@ -2032,6 +2061,12 @@ def flatten_saved_background(
             rgba[:, :, :3] = mean
         rgba[:, :, 3] = 1.0
         image.pixels.foreach_set(pixels)
+        if source_resolution is not None:
+            # A PNG reload rounds physical resolution through integer pHYs.
+            # Preserve the original live image's metadata through this private
+            # pixel edit, rather than introducing a different EXIF resolution
+            # from a later native glTF channel re-encode (Blender4.2).
+            image.resolution = source_resolution
         image.filepath_raw = path
         image.file_format = "PNG"
         image.save()
@@ -2248,7 +2283,8 @@ def save_resolved(
                 save_dithered(target, path)
         else:
             save_dithered(target, path)
-        flatten_saved_background(path, covered, source_peak=source_peak)
+        flatten_saved_background(path, covered, source_peak=source_peak,
+                                 source_resolution=tuple(image.resolution))
         return publish_delivery_variants(
             path, covered,
             delivery_variant_sizes(final_size) if delivery_sizes is None else delivery_sizes,
@@ -2441,7 +2477,7 @@ def plan_material_texture_resolution(
     """Zero-config screen-density policy for one private material texture.
 
     Needle 1.4.2 exposes a manual fixed 128..8192 choice (default 1024) and
-    relative object allocation, but does not prove screen density. Blendlink
+    relative object allocation, but does not prove screen density. SceneToWeb
     instead measures the receiver's clipped authored-camera pixel footprint,
     then compares it with the packed UV texel area. This handles camera-inside
     backgrounds without treating an enormous hidden world surface as visible
@@ -2533,7 +2569,7 @@ def plan_material_texture_resolution(
             **measurement,
             "densityThreshold": 0.95,
             "warning": (
-                "No valid Blender camera sees this receiver; Blendlink "
+                "No valid Blender camera sees this receiver; SceneToWeb "
                 f"uses Needle's 1024px default bounded to {fallback}px. Add an "
                 "authored Blender camera/composition to enable automatic "
                 "projected-coverage sizing."
@@ -2609,8 +2645,29 @@ def _material_texture_source_uv(obj):
     )
 
 
+_VERIFIED_UV_PIN_STORAGE_VERSIONS = {(4, 2, 0), (5, 2, 0), (5, 3, 0)}
+
+
 def _uv_layer_pin_mask(layer) -> list[bool]:
     """Read UV pins without the deprecated per-loop reverse lookup."""
+    mesh = getattr(layer, "id_data", None)
+    attributes = getattr(mesh, "attributes", None)
+    if attributes is not None and tuple(bpy.app.version[:3]) in _VERIFIED_UV_PIN_STORAGE_VERSIONS:
+        # Blender 4.2 reports one pin entry per corner even when storage is
+        # absent. Iterating that collection/foreach_get allocates it. Use the
+        # native BKE_uv_map_pin_name_get storage name without a writable RNA
+        # accessor so inspection cannot change a mesh or its bake identity.
+        attribute = attributes.get(".pn." + layer.name)
+        if attribute is None:
+            return [False] * len(layer.data)
+        if attribute.data_type != "BOOLEAN" or attribute.domain != "CORNER" \
+                or len(attribute.data) != len(layer.data):
+            raise RuntimeError(f"UV layer {layer.name!r} has invalid pin storage")
+        values = [False] * len(attribute.data)
+        attribute.data.foreach_get("value", values)
+        return values
+    # Other native versions keep the authoritative public collection path;
+    # never infer absent pins from an unmeasured private attribute name.
     modern_pins = getattr(layer, "pin", None)
     if modern_pins is not None:
         pin_count = len(modern_pins)
@@ -2624,13 +2681,56 @@ def _uv_layer_pin_mask(layer) -> list[bool]:
         values = [False] * pin_count
         modern_pins.foreach_get("value", values)
         return values
-    # Blendlink requires Blender 4.2+, where ``MeshUVLoopLayer.pin`` exists.
+    # SceneToWeb requires Blender 4.2+, where ``MeshUVLoopLayer.pin`` exists.
     # Keep the fallback for controlled tests and unusually patched builds.
     return [bool(loop.pin_uv) for loop in layer.data]
 
 
 def _uv_layer_has_pins(layer) -> bool:
     return any(_uv_layer_pin_mask(layer))
+
+
+def set_uv_layer_pin_mask(layer, values):
+    """Write pins without retaining UV references across attribute creation.
+
+    The optional pin attribute can be absent. Creating it through pin_uv
+    reallocates CustomData storage on Blender 4.2, invalidating an active
+    layer.data iterator (and sometimes the layer RNA pointer itself).
+    Return the reacquired layer so callers never retain that stale pointer.
+    """
+    values = [bool(value) for value in values]
+    if len(values) != len(layer.data):
+        raise RuntimeError("UV pin mask must match the mesh corner count")
+    mesh, name = layer.id_data, layer.name
+    attributes = getattr(mesh, "attributes", None)
+    if attributes is not None and tuple(bpy.app.version[:3]) in _VERIFIED_UV_PIN_STORAGE_VERSIONS:
+        attribute = attributes.get(".pn." + name)
+        if attribute is None:
+            if not any(values):
+                return layer
+            attribute = attributes.new(name=".pn." + name, type="BOOLEAN", domain="CORNER")
+        if attribute.data_type != "BOOLEAN" or attribute.domain != "CORNER" \
+                or len(attribute.data) != len(values):
+            raise RuntimeError(f"UV layer {name!r} has invalid pin storage")
+        attribute.data.foreach_set("value", values)
+        return mesh.uv_layers[name]
+    pins = getattr(layer, "pin", None)
+    if pins is not None:
+        if not len(pins):
+            if not any(values):
+                return layer  # An absent pin attribute already means unpinned.
+            layer.data[0].pin_uv = True
+            layer = mesh.uv_layers[name]
+            pins = layer.pin
+        if len(pins) != len(values):
+            raise RuntimeError("UV pin storage must match the mesh corner count")
+        pins.foreach_set("value", values)
+        return layer
+    # Controlled/patched builds without the modern collection: reacquire
+    # after every write, rather than retaining a collection iterator.
+    for index, value in enumerate(values):
+        mesh.uv_layers[name].data[index].pin_uv = value
+    return mesh.uv_layers[name]
 
 
 def _copy_private_material_uv(obj, source_name: str, target_name: str) -> None:
@@ -2896,7 +2996,7 @@ def prepare_material_texture_uv(
                     f"{AUTHORED_UV} layout{attempted_label}: "
                     f"{_format_private_uv_issues(pinned)}. "
                     "Repair/unpin that layout or remove the authored atlas layer "
-                    "to let Blendlink pack a private one"
+                    "to let SceneToWeb pack a private one"
                 )
             try:
                 repairs, final_held = pack_with_evaluated_uv_repair(
@@ -3162,7 +3262,7 @@ def stage_atlas_layers(objs, uv_name: str = ATLAS_UV,
             else _atlas_seed_layer(obj, log)
         )
         values = [loop.uv.copy() for loop in source.data]
-        pins = [loop.pin_uv for loop in source.data] if authored is not None else None
+        pins = _uv_layer_pin_mask(source) if authored is not None else [False] * len(values)
         previous = mesh.uv_layers.get(uv_name)
         if previous is not None and previous != source:
             mesh.uv_layers.remove(previous)
@@ -3172,9 +3272,9 @@ def stage_atlas_layers(objs, uv_name: str = ATLAS_UV,
                 f"{obj.name}: could not add the {uv_name} UV layer "
                 "(Blender's 8-layer limit) — remove unused UV maps"
             )
+        layer = set_uv_layer_pin_mask(layer, pins)
         for index, loop in enumerate(layer.data):
             loop.uv = values[index]
-            loop.pin_uv = bool(pins[index]) if pins is not None else False
         mesh.uv_layers.active = layer
         if authored is not None:
             authored_names.append(obj.name)
@@ -4591,7 +4691,7 @@ def repair_evaluated_atlas_uvs(
         raise RuntimeError(
             f"evaluated geometry produced non-zero surface triangles with "
             f"zero-area {uv_name} UVs on pinned atlas layout(s): {details}. "
-            "Blendlink will not alter pinned artist UVs; apply/update the "
+            "SceneToWeb will not alter pinned artist UVs; apply/update the "
             "modifier UVs or unpin the authored atlas layout"
         )
 
@@ -5997,9 +6097,10 @@ def apply_packed_uv_evidence(scene_objects, evidence: dict,
                 raise RuntimeError(
                     f"{target['obj'].name}: loop count changed while loading atlas UVs"
                 )
+            layer = set_uv_layer_pin_mask(layer, [False] * len(values))
+            target["layer"] = layer
             for loop, (x, y) in zip(layer.data, values):
                 loop.uv = (x, y)
-                loop.pin_uv = False
             target["mesh"].uv_layers.active = layer
             applied.append(target["obj"].name)
     except Exception as error:
@@ -6009,9 +6110,10 @@ def apply_packed_uv_evidence(scene_objects, evidence: dict,
             if snapshot is None:
                 continue
             try:
-                for loop, (uv, pinned) in zip(target["layer"].data, snapshot):
+                layer = set_uv_layer_pin_mask(target["layer"], [pinned for _, pinned in snapshot])
+                target["layer"] = layer
+                for loop, (uv, _) in zip(layer.data, snapshot):
                     loop.uv = uv
-                    loop.pin_uv = pinned
             except Exception as rollback_error:
                 rollback_errors.append(
                     f"{target['obj'].name}: {type(rollback_error).__name__}: {rollback_error}"
@@ -6099,6 +6201,32 @@ def average(objs) -> None:
         bpy.ops.uv.average_islands_scale()
 
 
+@contextlib.contextmanager
+def _linked_uv_selection_context():
+    """Blender4.2's linked UV operator dereferences its SpaceImage context."""
+    if bpy.app.version[:2] != (4, 2) or getattr(bpy.context.space_data, "type", None) == "IMAGE_EDITOR":
+        yield
+        return
+    window = bpy.context.window
+    if window is None or window.screen is None or not window.screen.areas:
+        raise RuntimeError("Blender4.2 linked UV selection requires a window with a UV editor context")
+    area = next((item for item in window.screen.areas if item.type == "IMAGE_EDITOR"), None)
+    if area is None:
+        area = next((item for item in window.screen.areas if item.type == "VIEW_3D"), window.screen.areas[0])
+    prior_type, prior_ui = area.type, area.ui_type
+    try:
+        area.type = "IMAGE_EDITOR"
+        area.ui_type = "UV"
+        region = next((item for item in area.regions if item.type == "WINDOW"), None)
+        if region is None:
+            raise RuntimeError("Blender4.2 linked UV selection has no UV editor window region")
+        with bpy.context.temp_override(window=window, area=area, region=region):
+            yield
+    finally:
+        area.type = prior_type
+        area.ui_type = prior_ui
+
+
 def average_unpinned(objs, uv_name: str) -> dict:
     """Equalize px/m across islands EXCEPT pinned ones — a pinned island is
     an authored placement whose scale must survive untouched.
@@ -6117,12 +6245,20 @@ def average_unpinned(objs, uv_name: str) -> dict:
     packable = [obj for obj in objs if len(obj.data.polygons) > 0]
     if not packable:
         return {}
+    # Nothing needs a linked-selection expansion when every loop is free.
+    # Besides avoiding redundant operators, this keeps the no-pin path away
+    # from legacy Blender's background select_linked context crash.
+    layers = [obj.data.uv_layers.get(uv_name) for obj in packable]
+    if all(layer is not None for layer in layers) and not any(_uv_layer_has_pins(layer) for layer in layers):
+        average(packable)
+        return {}
     # The uv.select_* ops below act on UV selection, not mesh selection,
     # so this needs sync OFF and establishes its own UV selection.
     with scoped_uv_edit(packable, sync=False, select_uvs=False):
         bpy.ops.uv.select_all(action="DESELECT")
         bpy.ops.uv.select_pinned()
-        bpy.ops.uv.select_linked()
+        with _linked_uv_selection_context():
+            bpy.ops.uv.select_linked()
         bpy.ops.uv.pin(clear=False)
         bpy.ops.uv.select_all(action="INVERT")
         bpy.ops.uv.average_islands_scale()
@@ -6245,9 +6381,9 @@ def _pack_receiver_groups_mutating(
     multi-object gap belongs between receivers because separate bake writes can
     overwrite one another. Charging that gap to every chart reduces a complex
     scene to a tiny fraction of its atlas. Inside one receiver, retain
-    Blendlink's previously validated ``bake margin + 4px`` chart gap (stronger
+    SceneToWeb's previously validated ``bake margin + 4px`` chart gap (stronger
     than Needle's ``margin + 1px``); the deterministic outer rectangle pass
-    then keeps receiver ownership intact while preserving Blendlink's
+    then keeps receiver ownership intact while preserving SceneToWeb's
     precomputed UV-area ratios (surface density, camera weighting, and artist
     texel weight).
 
@@ -6711,7 +6847,7 @@ def _minimum_footprint_rescue_and_repack(
                 detail += f", and {len(pinned) - 8} more"
             raise RuntimeError(
                 f"{obj.name}: final atlas packing collapsed pinned polygon(s) "
-                f"{detail} below float32 UV precision. Blendlink will not move "
+                f"{detail} below float32 UV precision. SceneToWeb will not move "
                 "artist-owned pins; enlarge those UV islands, increase atlas "
                 "Resolution, reduce Padding, or unpin them"
             )
@@ -7173,7 +7309,7 @@ def bake_objects_to_image(
             + ", ".join(sorted(missing_uv))
         )
     if bake_type not in {"COMBINED", "DIFFUSE", "EMIT", "NORMAL"}:
-        raise ValueError(f"unsupported Blendlink bake pass {bake_type!r}")
+        raise ValueError(f"unsupported SceneToWeb bake pass {bake_type!r}")
     if int(margin_px) < 0:
         raise ValueError(f"bake margin cannot be negative: {margin_px}")
     if image is None or min(tuple(getattr(image, "size", (0, 0)))) <= 0:
@@ -7213,7 +7349,7 @@ def bake_objects_to_image(
             node.select = False
         target = nodes.new("ShaderNodeTexImage")
         target.name = "BLENDLINK_BAKE_TARGET"
-        target.label = "Blendlink temporary bake target"
+        target.label = "SceneToWeb temporary bake target"
         target.image = image
         target.select = True
         nodes.active = target
@@ -7229,7 +7365,7 @@ def bake_objects_to_image(
     try:
         # Viewport-only visibility and selection locks do not change Blender's
         # render result, but they prevent bpy.ops.object.bake from selecting an
-        # otherwise valid receiver. Needle omits those objects; Blendlink keeps
+        # otherwise valid receiver. Needle omits those objects; SceneToWeb keeps
         # render truth by temporarily exposing them and restoring the exact
         # artist interaction state after both success and failure.
         scene_collections = [bpy.context.scene.collection]
@@ -8006,7 +8142,10 @@ def _realize_geometry_node_group(source, kind: str, profile_sides: int):
         geometry = realize.outputs[0]
     tree.links.new(geometry, to_mesh.inputs["Curve"])
     tree.links.new(circle.outputs["Curve"], to_mesh.inputs["Profile Curve"])
-    tree.links.new(radius.outputs["Attribute"], to_mesh.inputs["Scale"])
+    if to_mesh.inputs.get("Scale") is not None:
+        tree.links.new(radius.outputs["Attribute"], to_mesh.inputs["Scale"])
+    # Native4.2 Curve to Mesh applies the curve's radius attribute internally;
+    # modern Blender exposes Scale and needs the explicit radius field above.
     tree.links.new(to_mesh.outputs["Mesh"], group_out.inputs["Geometry"])
     return tree
 
@@ -8506,7 +8645,7 @@ def freeze_evaluated_meshes(objs, log=print) -> list:
             for item in context_risks
         )
         raise RuntimeError(
-            "Blendlink cannot bake unrealized Geometry Nodes instances whose "
+            "SceneToWeb cannot bake unrealized Geometry Nodes instances whose "
             "materials use Object Info Random: realization would collapse "
             f"per-instance shader identity on {details}. Add an authored "
             "Realize Instances node if that collapse is intentional, or keep "

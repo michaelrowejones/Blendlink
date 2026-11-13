@@ -7,6 +7,7 @@ import { ALL_EXTENSIONS, KHRTextureBasisu } from '@gltf-transform/extensions'
 import { getTextureColorSpace, listTextureSlots } from '@gltf-transform/functions'
 import { MeshoptDecoder, MeshoptEncoder } from 'meshoptimizer'
 import sharp from './sharpSecurity.js'
+import type { Metadata } from 'sharp'
 import {
   verifiedMaterialCompilationImageTextures,
   type MaterialCompilationEvidence,
@@ -17,6 +18,7 @@ export type TextureCompressionOverride = 'none' | TextureCodec
 
 export interface TextureCompressionPolicy {
   name: string
+  aliases?: readonly string[]
   override?: TextureCompressionOverride
 }
 
@@ -190,7 +192,8 @@ export async function compressTexturesKtx2(
   const document = await io.readBinary(new Uint8Array(originalGlb))
   const textures = document.getRoot().listTextures()
   const policies = new Map(
-    (options.policies ?? []).map((policy) => [textureKey(policy.name), policy.override]),
+    (options.policies ?? []).flatMap((policy) => [policy.name, ...(policy.aliases ?? [])]
+      .map(name => [textureKey(name), policy.override] as const)),
   )
   const matchedPolicies = new Set<string>()
   const protectedCompilationTextures = new Set(
@@ -248,7 +251,7 @@ export async function compressTexturesKtx2(
       skipped.push({ name, reason: 'already KTX2' })
       continue
     }
-    let metadata: sharp.Metadata
+    let metadata: Metadata
     try {
       metadata = await sharp(image).metadata()
     } catch (error) {
@@ -300,7 +303,7 @@ export async function compressTexturesKtx2(
   }
 
   for (const policy of options.policies ?? []) {
-    if (policy.override !== 'none' && !matchedPolicies.has(textureKey(policy.name))) {
+    if (policy.override !== 'none' && ![policy.name, ...(policy.aliases ?? [])].some(name => matchedPolicies.has(textureKey(name)))) {
       warnings.push(
         `Texture compression override for "${policy.name}" did not match an exported material image; ` +
           'the image was not compressed.',
@@ -583,7 +586,7 @@ function resolveKtxTool(explicit?: string): KtxTool {
   if (tool) return tool
   throw new Error(
     'GPU Texture Compression is enabled, but the free Khronos KTX tools were not found. ' +
-      `Install KTX-Software from ${KTX_SOFTWARE_URL}, restart Blender, then run \`blendlink doctor\`. ` +
+      `Install KTX-Software from ${KTX_SOFTWARE_URL}, restart Blender, then run \`scenetoweb doctor\`. ` +
       'A custom executable may be set with BLENDLINK_KTX_PATH.',
   )
 }

@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "kind": "blendlink-node-port-pipeline-verification-v1",
+  "hostedObserver": {
+    "status": "passed",
+    "testedCommit": "786dd12d20cc4ee358cf2b6717d0e684c8fd7f9c",
+    "run": 43455281578,
+    "artifact": 14054140961,
+    "archiveSha256": "22e036622a5d9c2980bb3c960b1e0f554fca3ad4554b7e96252acbcc3cdee26f",
+    "nativeVersion": [
+      5,
+      4,
+      0
+    ],
+    "nativeBuild": "2e131281d777",
+    "sourceCommit": "2e131281d7777b0b41b3a4a5b53105a5efe239db",
+    "workItems": 167,
+    "packets": 167,
+    "scaffolds": 166,
+    "sourceFiles": 5153,
+    "actualShaderTypes": 145,
+    "actualCompositorTypes": 192,
+    "allStepsPassed": 203,
+    "productionCredit": false,
+    "productionCases": 0,
+    "watchReportSha256": "71bb3d7453baefe37a26197b398e441981b1f67b7a04c698ec486213c3f5b42f",
+    "queueSha256": "29dcf2ac9e24d13d18ae9ea748507940d17430b25d9127153a4801e9e7e8dde3",
+    "recomputedQueueDigest": "fd1eb041030286258a64bb6dd28b98820a46bf46a4da31780b7caf8f7b43bc6a"
+  },
+  "scope": "Upstream source/schema observation and work-packet generation only; no native/browser numerical verification or support promotion for Blender 5.4.",
+  "auditSha256": "dd357243dd2e3d20d8ab0997d9e93ec71c30341c50905f201575f84ceb1257aa",
+  "sourceArtifact": "artifacts/verification-hosted-node-watch-43455281578/receipt",
+  "localFocusedNativeVersions": [
+    "4.2.0",
+    "5.2.0",
+    "5.3.0"
+  ],
+  "localFocusedNumericCredit": 0,
+  "oneCommandAdapter": "Squeeze; other adapters require implementation and independent review",
+  "toolingTests": {
+    "nodePassed": 72,
+    "pythonPassed": 3
+  },
+  "hermeticOneCommandProofs": [
+    {
+      "sourceCommit": "351baa02c8b641c92d9d6d98d0aa40efa71acbfc",
+      "retainedReport": "/tmp/blendlink-node-port-hermetic-runner/artifacts/verification-hermetic-node-port-mac52/report.json",
+      "reportSha256": "e6cb40332e6a4b8e3f93e62c6ed74498c05a8f5a7cf8255d76e40e795dd38ff8",
+      "status": "qualified",
+      "exitCode": 0,
+      "productionCases": 25,
+      "caseRuns": 208,
+      "rgbComparisons": 638976,
+      "maximumOutsideNativeInterval": 0,
+      "inputDigest": "107cefdf8659d9b763c08de2a663c1f76ba3080d44535d635126d25ef2cdf1ab",
+      "evidenceKey": "ec6587188bdeb2d628ea4c909254bb6759f12841ffafd492d6209a31fe152363",
+      "workspaceStable": true,
+      "nativeLauncherDisposed": true,
+      "archivedProofFilesVerified": 34,
+      "pythonInvocations": 29,
+      "finalInvocations": 26,
+      "distinctFinalSources": 26,
+      "allOwnedPrefixesDisposed": true
+    },
+    {
+      "sourceCommit": "351baa02c8b641c92d9d6d98d0aa40efa71acbfc",
+      "retainedReport": "/tmp/blendlink-node-port-hermetic-runner/artifacts/verification-hermetic-node-port-na42/report.json",
+      "reportSha256": "e6c1bc55cee55ed5c099ec9957d3a716bb86156313598e52cd9e2e735811280a",
+      "status": "not-applicable",
+      "exitCode": 2,
+      "productionCases": 0,
+      "caseRuns": 0,
+      "rgbComparisons": null,
+      "maximumOutsideNativeInterval": null,
+      "inputDigest": "107cefdf8659d9b763c08de2a663c1f76ba3080d44535d635126d25ef2cdf1ab",
+      "evidenceKey": "259b6221bbb9d7ee01ac7b1e9e79d3c94e4d0612848b511c33679d0837ea7ab7",
+      "workspaceStable": true,
+      "nativeLauncherDisposed": true,
+      "archivedProofFilesVerified": 7,
+      "pythonInvocations": 3,
+      "finalInvocations": 0,
+      "distinctFinalSources": 0,
+      "allOwnedPrefixesDisposed": true
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-# Blendlink scene visual-effects audit
+# SceneToWeb scene visual-effects audit
 
 Research date: 2026-07-21
 
@@ -6,7 +6,7 @@ Research date: 2026-07-21
 
 This is a source-level audit of the eleven scene effects. It is deliberately
 not a claim that any effect works in Blender, Preview, or a published site.
-The audit inspected Blendlink's current implementation and the exact packages
+The audit inspected SceneToWeb's current implementation and the exact packages
 installed in this worktree:
 
 - `three@0.184.0`;
@@ -16,7 +16,7 @@ installed in this worktree:
 - `react@19.0.0`.
 
 The installed versions satisfy their declared peer ranges. The principal
-Blendlink sources are `packages/blendlink/src/components.ts` and
+SceneToWeb sources are `packages/blendlink/src/components.ts` and
 `packages/blendlink/src/threeComponents.ts`. Tests currently establish object
 construction, ordering, selected cleanup, and policy transitions using a fake
 renderer. They do **not** compile the shaders, render reference frames, measure
@@ -38,8 +38,8 @@ cannot establish:
 
 | Evidence | Installed source |
 | --- | --- |
-| Blendlink effect construction, phases, quality, and shaders | `packages/blendlink/src/threeComponents.ts:373-1491` |
-| Blendlink public fields/defaults/support badges | `packages/blendlink/src/components.ts:111-381` |
+| SceneToWeb effect construction, phases, quality, and shaders | `packages/blendlink/src/threeComponents.ts:373-1491` |
+| SceneToWeb public fields/defaults/support badges | `packages/blendlink/src/components.ts:111-381` |
 | pmndrs SRC ignores opacity; SCREEN with black is identity | `node_modules/postprocessing/build/postprocessing.js:2446-2576` ([upstream blend sources](https://github.com/pmndrs/postprocessing/tree/v6.39.3/src/effects/blending/glsl)) |
 | pmndrs effect color-space integration and attribute sorting | `node_modules/postprocessing/build/postprocessing.js:15430-15645` ([upstream EffectPass](https://github.com/pmndrs/postprocessing/blob/v6.39.3/src/passes/EffectPass.js)) |
 | Bloom threshold/MIP allocation and full-input MIP sizing | `node_modules/postprocessing/build/postprocessing.js:4038-4175,4198-4477` ([upstream BloomEffect](https://github.com/pmndrs/postprocessing/blob/v6.39.3/src/effects/BloomEffect.js)) |
@@ -63,11 +63,11 @@ without rendered acceptance evidence.
 | --- | --- | --- | --- | --- |
 | P0 | Outline | The artist defaults are black/dark, but `OutlineEffect` is left at its default `SCREEN` blend. Screen with black is the destination unchanged. pmndrs explicitly says to use `ALPHA` for dark outlines. | Source-proven broken default | Pass `blendFunction: BlendFunction.ALPHA`; add visible/hidden-edge screenshots before restoring Production. |
 | P0 | Color Grade | `intensity` is assigned to blend opacity while `LUT3DEffect` keeps `SRC`. In installed pmndrs, the SRC blend function returns the source and ignores opacity, so every Intensity value renders identically. | Source-proven ineffective field | Construct with `BlendFunction.NORMAL` (or an explicit shader mix), then verify 0/0.5/1 against identity and channel-swap LUTs. |
-| P0 | Ambient Occlusion | Blendlink's contract says tint tuples are linear RGB. N8AO converts `configuration.color` from sRGB to linear during every render, so a non-black Blendlink tint is decoded a second time. | Source-proven wrong field semantics | Convert the Blendlink linear color to sRGB before assigning the N8AO configuration, or adapt N8AO behind a clearly named linear-color seam. |
+| P0 | Ambient Occlusion | SceneToWeb's contract says tint tuples are linear RGB. N8AO converts `configuration.color` from sRGB to linear during every render, so a non-black SceneToWeb tint is decoded a second time. | Source-proven wrong field semantics | Convert the SceneToWeb linear color to sRGB before assigning the N8AO configuration, or adapt N8AO behind a clearly named linear-color seam. |
 | P0 | Bloom | With an unsigned-byte/LDR target, color has already been tone-mapped/clamped to at most 1. The default threshold is 1 and pmndrs masks with `smoothstep(threshold, threshold+smoothing, luminance)`, so ordinary default LDR content contributes no bloom. The warning calls this a compatible fallback but does not say the default can be empty. | Source-proven default/fallback mismatch | Prefer a restrained sub-1 default for new records and issue an actionable LDR warning when threshold is at least 1; verify HDR and forced-LDR fixtures. |
 | P1 | N8AO cleanup | `N8AOPostPass` has no own `dispose()` in 1.10.2. Its inherited pmndrs `Pass.dispose()` shallowly disposes direct render targets/materials/textures/passes, but N8AO's `FullScreenTriangle` wrappers are none of those. Their shader materials are therefore not demonstrably released. | Source-proven ownership gap; actual driver retention unmeasured | Add a pinned adapter cleanup test using renderer program/texture counts. Prefer an upstream disposal fix or a versioned wrapper over undocumented property poking. |
-| P1 | Kuwahara | The single full-resolution shader estimates orientation from four immediate luma samples and evaluates four sparse sectors. The cited anisotropic method uses a smoothed structure tensor and eight polynomial sectors; the multi-scale paper adds a low-pass pyramid. Blendlink copy says “multi-stage” and says quality may lower working resolution, but the implementation is one stage and quality changes only sample count/radius. | Source-proven description mismatch; visual quality unverified | Keep Experimental/Preview; correct the copy immediately. Promotion requires a multi-pass implementation or evidence that the approximation meets explicit visual, temporal, and device budgets. |
-| P1 | Pixelation | The color-only pmndrs path transforms UV before sampling, so RGBA is pixelated together. Blendlink's geometry-aware path samples block RGB but returns the original per-pixel alpha, producing a high-resolution alpha silhouette around block RGB. R3F resize observes logical size, not `viewport.dpr`, so a DPR-only change may retain stale granularity. | Source-supported defect paths; browser reproduction required | Sample block alpha in the geometry path and key R3F resize to DPR as well as size; assert exact CSS-pixel blocks at DPR 1/2/3. |
+| P1 | Kuwahara | The single full-resolution shader estimates orientation from four immediate luma samples and evaluates four sparse sectors. The cited anisotropic method uses a smoothed structure tensor and eight polynomial sectors; the multi-scale paper adds a low-pass pyramid. SceneToWeb copy says “multi-stage” and says quality may lower working resolution, but the implementation is one stage and quality changes only sample count/radius. | Source-proven description mismatch; visual quality unverified | Keep Experimental/Preview; correct the copy immediately. Promotion requires a multi-pass implementation or evidence that the approximation meets explicit visual, temporal, and device budgets. |
+| P1 | Pixelation | The color-only pmndrs path transforms UV before sampling, so RGBA is pixelated together. SceneToWeb's geometry-aware path samples block RGB but returns the original per-pixel alpha, producing a high-resolution alpha silhouette around block RGB. R3F resize observes logical size, not `viewport.dpr`, so a DPR-only change may retain stale granularity. | Source-supported defect paths; browser reproduction required | Sample block alpha in the geometry path and key R3F resize to DPR as well as size; assert exact CSS-pixel blocks at DPR 1/2/3. |
 | P1 | Tilt Shift | Authored `quality: high` is immediately capped by the runtime's hard-coded initial Balanced policy. No production caller selects High. Thus choosing High is indistinguishable from Balanced in the ordinary workflow. | Source-proven workflow mismatch | Make initial runtime quality explicit in the install API/descriptor and visible in diagnostics, or remove High from authoring until a host can select it. |
 | P1 | Stack semantics | Effects are sorted by broad phase and then component ID; pmndrs also sorts effects within a fused pass by resource attributes. There is no artist-authored stack order, and “post-ldr” contains multiple different color-space expectations. | Source-proven fixed ordering; correctness unverified | Publish one documented fixed semantic order and test it, or add a validated authored-order contract. Do not describe alphabetical IDs as semantic order. |
 | P2 | Depth of Field | The installed pmndrs implementation supports world-unit distance, a moving target, perspective/orthographic camera data, near/far bokeh, and resize. Transparent surfaces remain a declared depth limitation; camera motion, focus accuracy, and edge artifacts have no rendered evidence. | Plausible, unverified | Keep Preview until the depth-ladder and moving-target oracles pass. |
@@ -92,7 +92,7 @@ HDR portion of the chain.
 The installed `EffectPass` converts between Linear-sRGB and sRGB when an
 effect declares a different input color space and encodes output when rendering
 to screen. This matters for `LUT3DEffect`, whose installed default input color
-space is sRGB, while custom Blendlink effects default to Linear-sRGB.
+space is sRGB, while custom SceneToWeb effects default to Linear-sRGB.
 [LUT3DEffect reference](https://pmndrs.github.io/postprocessing/public/docs/class/src/effects/LUT3DEffect.js~LUT3DEffect.html)
 [Three color-management guide](https://threejs.org/manual/en/color-management.html)
 
@@ -116,7 +116,7 @@ is preferred when later stages require linear HDR data.
 [Three color management](https://threejs.org/manual/en/color-management.html)
 [WebGLRenderer output and buffer types](https://threejs.org/docs/pages/WebGLRenderer.html)
 
-Blendlink's HDR order is currently:
+SceneToWeb's HDR order is currently:
 
 1. scene color/depth;
 2. pass effects such as AO;
@@ -154,7 +154,7 @@ Current tier behavior is:
 
 pmndrs' mipmap Bloom performs one luminance pass, a downsample at every MIP,
 and an upsample for all but the smallest level before final composition. Its
-MIP count is therefore a meaningful cost knob; Blendlink's additional
+MIP count is therefore a meaningful cost knob; SceneToWeb's additional
 `effect.resolution.scale` assignment is not.
 [BloomEffect reference](https://pmndrs.github.io/postprocessing/public/docs/class/src/effects/BloomEffect.js~BloomEffect.html)
 [MipmapBlurPass reference](https://pmndrs.github.io/postprocessing/public/docs/class/src/passes/MipmapBlurPass.js~MipmapBlurPass.html)
@@ -247,7 +247,7 @@ white noise.
 
 Compare the approximation against the official FidelityFX CAS reference on the
 same input before strengthening the product name. CAS is an adaptive sharpener
-with an optional scaling path; Blendlink currently implements only a small
+with an optional scaling path; SceneToWeb currently implements only a small
 fixed-footprint approximation.
 [AMD FidelityFX CAS](https://gpuopen.com/fidelityfx-cas/)
 
@@ -321,7 +321,7 @@ Use a 2x2x2 identity LUT, a deterministic channel-permutation LUT, and malformed
   bounded interpolation tolerance between them.
 - Query/hash URLs must select the correct loader; failures must name the URL,
   extension, and loader/CORS cause.
-- Loading and disposal must respect application-owned versus Blendlink-owned
+- Loading and disposal must respect application-owned versus SceneToWeb-owned
   textures.
 
 Installed pmndrs declares `LUT3DEffect` input as sRGB by default and says
@@ -399,7 +399,7 @@ collecting a frame containing multiple passes.
 [WebGLRenderer `info`](https://threejs.org/docs/pages/WebGLRenderer.html#info)
 
 The repository's `runtimePerformance` timer-query seam can collect part of
-this evidence, but it must surround the entire Blendlink render and be paired
+this evidence, but it must surround the entire SceneToWeb render and be paired
 with effect identity, resolution, quality, physical GPU/browser/driver, and
 render-target accounting. A median from an unknown GPU is not a product tier.
 
@@ -421,13 +421,13 @@ their own alpha and visual validation; future TSL work remains separate.
 
 Use Three's `RenderPixelatedPass`, official output pass, and other official
 WebGL examples where available, while implementing the missing effects and one
-Blendlink-owned graph.
+SceneToWeb-owned graph.
 
 Advantages: fewer third-party semantic surprises and closer alignment with
 Three's examples. Costs: no single official WebGL implementation covers all
 eleven effects; Bloom, selective masks, LUTs, DoF, effect fusion, and AO would
 still require mixed dependencies or substantial new engine code. This expands
-Blendlink toward an engine and duplicates mature pmndrs machinery.
+SceneToWeb toward an engine and duplicates mature pmndrs machinery.
 
 ### Recommendation
 
@@ -496,7 +496,7 @@ promoting any effect to visually verified:
 | --- | --- | --- |
 | Outline | Explicit `BlendFunction.ALPHA`, so authored dark edges are not a `SCREEN` identity | Installed object property test; rendered dark/light/X-Ray matrix pending |
 | Color Grade | Explicit `BlendFunction.NORMAL`, making blend opacity interpolate input and LUT output | Installed object property, opacity, tetrahedral-mode, and ownership tests; rendered LUT/color-space matrix pending |
-| Ambient Occlusion | Linear Blendlink tint is converted to the sRGB-facing N8AO 1.10.2 configuration boundary | Installed N8AO configuration test; nonblack rendered tint matrix pending |
+| Ambient Occlusion | Linear SceneToWeb tint is converted to the sRGB-facing N8AO 1.10.2 configuration boundary | Installed N8AO configuration test; nonblack rendered tint matrix pending |
 | Bloom | New-record threshold is `0.8`; LDR warning explains that thresholds at/above `1` cannot select ordinary clamped highlights; quality changes only MIP count | Runtime warning/default/MIP API tests; rendered HDR/LDR matrix pending |
 | Pixelation | Geometry-aware block output samples alpha from the same block UV as RGB | Installed shader-source assertion; transparent-canvas render pending |
 | Kuwahara | Catalog and ledger now describe an experimental single-pass approximation and admit that quality changes sample count and filter radius | Metadata/schema tests; all visual and performance evidence remains pending |

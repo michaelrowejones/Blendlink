@@ -26,7 +26,7 @@ result = with_compiled_materials(
 ```
 
 `plan_materials` is the shared, mutation-free interface used by the add-on's
-Fidelity UI, `blendlink plan`, Preview, and Final. `with_compiled_materials`
+Fidelity UI, `scenetoweb plan`, Preview, and Final. `with_compiled_materials`
 revalidates that plan, installs only private export/bake material copies, runs
 the existing export continuation exactly once, verifies the emitted material
 payload, and restores everything in `finally`.
@@ -46,7 +46,7 @@ The module has exactly three outcomes for every used material binding:
 
 This is a compiler pass, not a new runtime material system. The website still
 owns Three.js, its Canvas, lighting, route, post-processing, and deployment.
-The final product remains ordinary glTF/GLB plus Blendlink's existing owned
+The final product remains ordinary glTF/GLB plus SceneToWeb's existing owned
 companions. Khronos defines glTF as a runtime-neutral delivery format, and its
 ratified `KHR_materials_unlit` model consumes only base color, alpha, and vertex
 color while ignoring lighting. [glTF 2.0 specification][gltf-spec]
@@ -73,7 +73,7 @@ socket validation, alpha policy, private-copy ownership, stale-plan detection,
 bake ordering, cleanup, and final payload verification. That deletion test is
 why this is a deep module.
 
-The **seam** belongs immediately inside Blender, after Blendlink has computed
+The **seam** belongs immediately inside Blender, after SceneToWeb has computed
 the real export scope and before any material bake or stock glTF export. It
 must span planning through emission; putting the seam only around graph
 inspection or only around `bpy.ops.object.bake` would leave the correctness
@@ -190,7 +190,7 @@ The installed Blender 5.2 exporter first tries its shadeless detector, then
 gathers PBR channels. Its `gather_color_info` recognizes a deliberately small
 expression: constant factor multiplied by a color attribute and/or texture.
 Its unlit detector recognizes a color socket, optional camera-ray trick, and
-optional Transparent mix. Blendlink should target those exact installed
+optional Transparent mix. SceneToWeb should target those exact installed
 patterns rather than maintain a second glTF material serializer.
 [official exporter material gatherer][exporter-materials]
 [official exporter unlit detector][exporter-unlit]
@@ -238,7 +238,7 @@ marked socket and reports its dependencies separately from the active Surface
 graph.
 
 For the first implementation, selected-socket materialization requires an
-existing Blendlink Appearance atlas. That gives it an already sized, packed,
+existing SceneToWeb Appearance atlas. That gives it an already sized, packed,
 validated, delivery-aware UV target and avoids adding another resolution or
 asset schema. Realtime-only scenes receive a direct fix: choose Hybrid and an
 Appearance atlas, simplify to a stock material, or keep an application-owned
@@ -319,7 +319,7 @@ Errors should be typed internally but rendered as direct artist fixes:
 | Cycles blocker | `Bush.006: selected Base Color reaches Shader to RGB, which EEVEE alone can evaluate. Select an upstream color socket.` |
 | Alpha unresolved | `Outline: the Surface mixes Transparent BSDF but no portable or selected Website Alpha exists.` |
 | No bake target | `Sky: selected-socket materialization needs a Hybrid Appearance atlas with valid UVs.` |
-| Binding ambiguity | `DPM: active vertex color resolves differently across users; Blendlink will fork these bindings` (evidence), or refuse if a binding has no valid layer. |
+| Binding ambiguity | `DPM: active vertex color resolves differently across users; SceneToWeb will fork these bindings` (evidence), or refuse if a binding has no valid layer. |
 | Stale plan | `Material graph/UV evidence changed after planning; run Preview/Publish again.` |
 | Execution failure | Include the material, object/atlas, bake stage, and Blender stderr tail. |
 | Payload mismatch | `Compiled unlit material exported without KHR_materials_unlit/base color; exporter 5.2.39 did not recognize the generated graph.` |
@@ -396,7 +396,7 @@ Using the codebase-design dependency categories:
   `with_compiled_materials`; no adapter is needed.
 - **Local-substitutable:** Blender node evaluation, Cycles Emit, Image Texture
   targets, stock glTF export, and file output. The stand-in is an actual
-  headless Blender process with tiny generated `.blend` fixtures. Blendlink
+  headless Blender process with tiny generated `.blend` fixtures. SceneToWeb
   already has this harness. Keep this seam internal; exposing a `BakePort`
   would be hypothetical because there is only one production implementation.
 - **In-process continuation:** the current exporter body passed as `emit`.
@@ -593,7 +593,7 @@ Inspected locally:
   - `search_node_tree.py`: `0C037D078DB37DA3B6D65054206A9F55D19FA5F8CA6542F5ADD614230C39F7E9`;
 - Three npm `0.184.0`; its `GLTFLoader` declares
   `KHR_materials_unlit` support and returns `MeshBasicMaterial` for it;
-- Blendlink package `0.8.0` in this workspace.
+- SceneToWeb package `0.8.0` in this workspace.
 
 The read-only Splash probe also established:
 

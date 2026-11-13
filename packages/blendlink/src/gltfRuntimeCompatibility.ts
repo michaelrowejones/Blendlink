@@ -57,12 +57,12 @@ const THREE_R184_PACKAGE_REQUIRED_EXTENSIONS = new Set([
 
 /**
  * Exact package-owned profile verified against Three r184. KTX2 and the EXT
- * Meshopt name are included because generated Blendlink descriptors configure
+ * Meshopt name are included because generated SceneToWeb descriptors configure
  * those decoders. Draco and KHR_meshopt_compression remain loud gaps.
  */
 export const BLENDLINK_THREE_R184_COMPILED_PROFILE: GltfRuntimeCapabilityProfile =
   Object.freeze({
-    id: 'Blendlink Three r184 compiled runtime',
+    id: 'SceneToWeb Three r184 compiled runtime',
     supportedRequiredExtensions: THREE_R184_PACKAGE_REQUIRED_EXTENSIONS,
     // No ceilings on the compile-time profile. The joint ceiling belongs to
     // the node-material renderers and is applied where the renderer is known;
@@ -220,7 +220,7 @@ export function loadedThreeRuntimeProfile(
 } {
   if (!isRecord(parser) || !isRecord(parser.json)) {
     throw new Error(
-      'Loaded Three glTF has no inspectable parser JSON; Blendlink cannot prove runtime compatibility.',
+      'Loaded Three glTF has no inspectable parser JSON; SceneToWeb cannot prove runtime compatibility.',
     )
   }
   const plugins = optionalRecord(parser.plugins, 'loaded Three parser plugins')
