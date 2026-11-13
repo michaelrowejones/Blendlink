@@ -17,7 +17,8 @@ import { collectBumpHeights, validateBumpHeightBinding } from './tslBumpHeight.j
  * WebGL-only applications never bundle the node system.
  */
 import * as THREE from 'three'
-import { trackMaterialDrawOrientation } from './tslMaterialDrawOrientation.js'
+import { collectMagicTextures, createMagicCoordinateProof, validateMagicCoordinates, type MagicCoordinateProof } from './tslMagicBounds.js'
+import { trackMaterialDrawCallback, trackMaterialDrawOrientation } from './tslMaterialDrawOrientation.js'
 import { MeshStandardNodeMaterial, MeshPhysicalNodeMaterial } from 'three/webgpu'
 import { uniform } from 'three/tsl'
 import { collectVectorTransformRequirements, validateVectorTransformBinding, type VectorTransformRequirement } from './tslVectorTransform.js'
@@ -408,9 +409,12 @@ export async function installTslMaterials(
   const normalMapContexts = new Map<string,TslIrExpression[]>()
   const tangentContexts=new Map<string,TslIrExpression[]>()
   const tangentMapContexts=new Map<string,TslIrExpression[]>()
+  const magicContexts=new Map<string,TslIrExpression[]>()
   const activeUvPrograms = new Set<string>()
   for(const [name,program] of Object.entries(programs.materials)){
     if (requiresActiveUv(program.channels)) activeUvPrograms.add(name)
+    const magics:TslIrExpression[]=[];collectMagicTextures(program.channels,magics)
+    if(magics.length)magicContexts.set(name,magics)
     const outputs=new Set<GeometryContextOutput>();collectGeometryContextOutputs(program.channels,outputs)
     if(outputs.size)geometryContexts.set(name,outputs)
     const normalMaps:TslIrExpression[]=[];collectNormalMapRequirements(program.channels,normalMaps)
@@ -427,6 +431,7 @@ export async function installTslMaterials(
     original: THREE.Material
     clone: MeshStandardNodeMaterial
     release?: (transferred: boolean) => void
+    magic?: { proofs:MagicCoordinateProof[]; options:ReturnType<typeof buildOptionsFor> }
   }
   const installed: InstalledSwap[] = []
   // Geometry-only programs can share clones when their runtime extras agree.
@@ -586,6 +591,19 @@ export async function installTslMaterials(
             skipped.push({material:source,reason:`mesh "${mesh.name}" tangent Normal Map refused: ${error.message}; its carrier stays`});return
           }
         }
+        const magics=magicContexts.get(source)
+        // The installed UV nodes bind channels once. Later metadata edits
+        // cannot redirect the range validator away from those actual inputs.
+        const magicExtras=extras?.uvChannels?{...extras,uvChannels:{...extras.uvChannels}}:extras
+        const magicOptions=magics?buildOptionsFor(magicExtras,undefined,source,programTextures?.resolver):undefined
+        let magicProofs:MagicCoordinateProof[]|undefined
+        if(magics&&magicOptions){
+          try{
+            for(const entry of magics)validateMagicCoordinates(entry,mesh,magicOptions)
+            magicProofs=magics.map(createMagicCoordinateProof)
+          }
+          catch(error){if(!(error instanceof TslIrError))throw error;skipped.push({material:source,reason:`mesh "${mesh.name}" Magic Texture refused: ${error.message}; its carrier stays`});return}
+        }
         const normalMapBasis = !mesh.geometry.hasAttribute('uv') ? 'missing'
           : mesh.geometry.hasAttribute('tangent') ? 'attribute' : 'derivative'
         const variantKey = `${material.uuid} ${normalMapBasis} ${JSON.stringify(extras ?? null)} ${needed?.length || info?.size || objectTransform ? owner.uuid : ''}`
@@ -602,7 +620,7 @@ export async function installTslMaterials(
               { ...buildOptionsFor(
                 extras, resources, source, programTextures?.resolver,
                 objectAttribute,
-              ), preparedNoiseFields: preparation, normalMapBasis, ...(info ? { objectInfo: createObjectInfoResolver(
+              ), preparedNoiseFields: preparation, validateMagicCoordinates:expression=>validateMagicCoordinates(expression,mesh,magicOptions??{}), normalMapBasis, ...(info ? { objectInfo: createObjectInfoResolver(
                 owner.userData?.blendlink_tsl_object, material.userData?.blendlink_tsl_material,
               ) } : {}) },
             )
@@ -634,6 +652,7 @@ export async function installTslMaterials(
           original: material,
           clone: variant.clone,
           ...(release ? { release } : {}),
+          ...(magicProofs&&magicOptions?{magic:{proofs:magicProofs,options:magicOptions}}:{}),
         })
         aborted()
         if (Array.isArray(mesh.material)) {
@@ -650,8 +669,22 @@ export async function installTslMaterials(
       if (!materials) drawMaterials.set(mesh, materials = new Set())
       materials.add(clone)
     }
-    for (const [mesh, materials] of drawMaterials)
+    for (const [mesh, materials] of drawMaterials) {
       releaseDrawCallbacks.push(trackMaterialDrawOrientation(mesh, materials))
+      const contexts=new Map(installed.filter(item=>item.mesh===mesh&&item.magic).map(item=>[item.clone,item.magic!]))
+      const firstDraw=new Set(contexts.keys())
+      if(contexts.size)releaseDrawCallbacks.push(trackMaterialDrawCallback(mesh,new Set(contexts.keys()),function(...args){
+        const context=contexts.get(args[4] as MeshStandardNodeMaterial)
+        if(context){
+          let refresh=firstDraw.has(args[4] as MeshStandardNodeMaterial)
+          for(const proof of context.proofs){
+            proof.validate(mesh,context.options,refresh,args[3])
+            if(proof.requiresAttributes)refresh=false
+          }
+          firstDraw.delete(args[4] as MeshStandardNodeMaterial)
+        }
+      }))
+    }
   } catch (error) {
     rollback()
     throw error

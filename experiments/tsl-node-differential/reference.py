@@ -1233,6 +1233,37 @@ def build_tex_magic_fac(tree, emission):
     tree.links.new(fac, emission.inputs["Color"])
 
 
+def legacy_magic_document(material, cell):
+    """Freeze old tex_magic data, never bypass the fresh source producer.
+
+    These two compatibility cells predate the EEVEE-native opcode. Check their
+    actual graph parameters and the current Cycles refusal before returning a
+    fixed legacy document for the unchanged serialized renderer.
+    """
+    expected = {'tex-magic': 'color', 'tex-magic-fac': 'fac'}
+    assert cell['id'] in expected and cell.get('scope') == 'legacy-serialized-runtime-only'
+    tree = material.node_tree
+    magic = next(node for node in tree.nodes if node.bl_idname == 'ShaderNodeTexMagic')
+    assert magic.turbulence_depth == 2 and magic.inputs['Scale'].default_value == 3
+    assert magic.inputs['Distortion'].default_value == 1.2000000476837158
+    coordinate = magic.inputs['Vector'].links[0].from_socket
+    assert coordinate.node.bl_idname == 'ShaderNodeTexCoord' and coordinate.identifier == 'UV'
+    emission = next(node for node in tree.nodes if node.bl_idname == 'ShaderNodeEmission')
+    source = emission.inputs['Color'].links[0].from_socket
+    assert source.node == magic and source.identifier == ('Fac' if expected[cell['id']] == 'fac' else 'Color')
+    try:
+        tsl_ir.emit_channel(emission.inputs['Color'], evaluation_engine='CYCLES')
+    except tsl_ir.TslIrRefusal as error:
+        reason = str(error)
+        assert reason == 'Magic Texture native live translation requires EEVEE; use source baking for Cycles', reason
+    else:
+        raise AssertionError('Legacy compatibility must not masquerade as a fresh Cycles live port')
+    return {'schemaVersion': 1, 'model': 'blendlink-tsl-ir-v1', 'output': {
+        'op': 'tex_magic', 'depth': 2, 'output': expected[cell['id']], 'vector': {'op': 'uv'},
+        'scale': {'op': 'const_float', 'value': 3},
+        'distortion': {'op': 'const_float', 'value': 1.2000000476837158}}}, reason
+
+
 def _test_image(name, *, float_buffer, colorspace):
     existing = bpy.data.images.get(name)
     if existing is not None:
@@ -2701,6 +2732,7 @@ def main():
         bpy.context.scene.render.engine = ('BLENDER_EEVEE' if 'BLENDER_EEVEE' in engines else 'BLENDER_EEVEE_NEXT') if 'eeveeLight' in cell or cell.get('nativeEngine') == 'EEVEE' else 'CYCLES'
         cell_id = cell["id"]
         pipeline = cell.get("pipeline", "ir")
+        fresh_source_refusal = None
         builder = BUILDERS.get(cell_id)
         if builder is None and "vectorTransform" in cell:
             builder = make_vector_transform_builder(cell["vectorTransform"])
@@ -2808,6 +2840,10 @@ def main():
                 ir_path.write_text(
                     json.dumps(document, indent=2) + "\n", encoding="utf8",
                 )
+            elif pipeline == 'legacy-ir':
+                document, fresh_source_refusal = legacy_magic_document(material, cell)
+                ir_path = ir_output / f'{cell_id}.json'
+                ir_path.write_text(json.dumps(document, indent=2) + '\n', encoding='utf8')
             elif pipeline == "ir":
                 # The production emitter walks the SAME graph Cycles bakes;
                 # a refusal here is a harness bug, not a soft skip.
@@ -2854,6 +2890,7 @@ def main():
         manifest["cells"][cell_id] = {
             "path": path.name,
             "pipeline": pipeline,
+            **({'scope': 'legacy-serialized-runtime-only', 'freshSourceRefusal': fresh_source_refusal} if fresh_source_refusal else {}),
             **({"ir": f"ir/{cell_id}.json"} if ir_path is not None else {}),
             "shape": list(pixels.shape),
             "rgbMin": list(result["rgbMin"]),

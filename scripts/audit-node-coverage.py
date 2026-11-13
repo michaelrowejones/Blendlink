@@ -28,6 +28,60 @@ SOURCE_FILES = (
     "packages/blendlink/src/threeRuntime.ts",
 )
 
+# Native get_channel_index()/compute_limit_channels() select exactly one color
+# space's key and (only for Single) limit. RNA leaves all ten menus enabled.
+# This is an audit projection, never a compiler/runtime support declaration.
+CHANNEL_MATTE_SEMANTIC_MODEL = "channel-matte-active-selectors-v1"
+CHANNEL_MATTE_SOURCES = (
+    {"revision": "v5.2.0", "path": "source/blender/nodes/composite/nodes/node_composite_channel_key.cc",
+     "sha256": "d06c0cd1b787d1b29b2251863004497f40213e9e27997457b35518187994d68e"},
+    {"revision": "02f0899d78e3", "path": "source/blender/nodes/composite/nodes/node_composite_channel_key.cc",
+     "sha256": "f1ad1a04060bb10739944ae5349185c7b7d078c4fa07cfb55c96cc1f2a9967df"},
+)
+CHANNEL_MATTE_MENUS = {
+    "Color Space": ("RGB", "HSV", "YUV", "YCbCr"), "Limit Method": ("Max", "Single"),
+    **{space + " " + role + " Channel": channels
+       for space, channels in (("RGB", ("R", "G", "B")), ("HSV", ("H", "S", "V")),
+                               ("YUV", ("Y", "U", "V")), ("YCbCr", ("Y", "Cb", "Cr")))
+       for role in ("Key", "Limit")},
+}
+
+
+def channel_matte_semantic_scope(identifier, version, inputs, outputs, menus, booleans=()):
+    """Return a proven active-selector projection, or None for generic audit.
+
+    Inspect the complete schema/options before pruning anything. Unknown native
+    versions, states, classes, availability, menus or semantic booleans retain
+    generic exploration and its normal completeness/budget requirements.
+    """
+    if identifier != "CompositorNodeChannelMatte" or tuple(version) not in {(5, 2, 0), (5, 3, 0)} or booleans:
+        return None
+    expected_inputs = {
+        "Image": ("RGBA", "NodeSocketColor"), "Minimum": ("VALUE", "NodeSocketFloatFactor"),
+        "Maximum": ("VALUE", "NodeSocketFloatFactor"),
+        **{name: ("MENU", "NodeSocketMenu") for name in CHANNEL_MATTE_MENUS},
+    }
+    expected_outputs = {"Image": ("RGBA", "NodeSocketColor"), "Matte": ("VALUE", "NodeSocketFloat")}
+    for sockets, expected in ((inputs, expected_inputs), (outputs, expected_outputs)):
+        if len(sockets) != len(expected) or {item.get("identifier") for item in sockets} != set(expected):
+            return None
+        if any((item.get("type"), item.get("socketClass")) != expected[item["identifier"]]
+               or not item.get("enabled") or item.get("unavailable", True) for item in sockets):
+            return None
+    if set(menus) != {"inputs:" + name for name in CHANNEL_MATTE_MENUS}:
+        return None
+    settings = {item["identifier"]: item.get("default") for item in inputs}
+    for name, choices in CHANNEL_MATTE_MENUS.items():
+        options = menus["inputs:" + name]
+        if not isinstance(options, (tuple, list, set)) or set(options) != set(choices) or settings[name] not in choices:
+            return None
+    space, method = settings["Color Space"], settings["Limit Method"]
+    active = {"inputs:Color Space", "inputs:Limit Method", "inputs:" + space + " Key Channel"}
+    if method == "Single":
+        active.add("inputs:" + space + " Limit Channel")
+    return {"model": CHANNEL_MATTE_SEMANTIC_MODEL, "activeSelectors": sorted(active),
+            "skippedSelectors": sorted(set(menus) - active)}
+
 
 def encoded(value):
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
@@ -42,7 +96,8 @@ def write_json(path, value):
     path.write_text(json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf8")
 
 
-def native_catalog(*, enum_state_budget=2048, enum_transition_budget=100000, enumeration_budgets=None):
+def native_catalog(*, enum_state_budget=2048, enum_transition_budget=100000, enumeration_budgets=None,
+                   _node_factory=None):
     import bpy
     base_properties = set(bpy.types.Node.bl_rna.properties.keys())
     editor_properties = {"select", "hide", "show_options", "show_preview", "show_texture", "use_custom_color", "mute"}
@@ -56,7 +111,12 @@ def native_catalog(*, enum_state_budget=2048, enum_transition_budget=100000, enu
         except (TypeError, ValueError):
             return {"rnaType": type(value).__name__, "name": getattr(value, "name", None)}
 
-    def schema(node, *, state=False):
+    def new_node(tree, identifier):
+        # The native regression injects different inactive defaults through a
+        # real RNA factory. Ordinary inventory always uses untouched defaults.
+        return _node_factory(tree, identifier) if _node_factory else tree.nodes.new(identifier)
+
+    def socket_records(node):
         result = {}
         for direction in ("inputs", "outputs"):
             result[direction] = [{
@@ -64,9 +124,19 @@ def native_catalog(*, enum_state_budget=2048, enum_transition_budget=100000, enu
                 "type": socket.type, "socketClass": socket.bl_idname,
                 "enabled": bool(getattr(socket, "enabled", True)),
                 "unavailable": bool(getattr(socket, "is_unavailable", False)),
-                **({"default": clean(socket.default_value)} if hasattr(socket, "default_value")
-                   and (not state or (socket.enabled and not getattr(socket, "is_unavailable", False))) else {}),
+                **({"default": clean(socket.default_value)} if hasattr(socket, "default_value") else {}),
             } for socket in getattr(node, direction)]
+        return result
+
+    def schema(node, *, state=False, semantic=None):
+        result = socket_records(node)
+        skipped = set(semantic["skippedSelectors"]) if semantic else set()
+        for direction, sockets in result.items():
+            for socket in sockets:
+                if state and (not socket["enabled"] or socket["unavailable"]
+                              or direction == "inputs" and socket["type"] == "MENU"
+                              and "inputs:" + socket["identifier"] in skipped):
+                    socket.pop("default", None)
         key = digest(result)[:20]
         if key in schemas and schemas[key] != result:
             raise RuntimeError("Socket-schema hash collision")
@@ -168,6 +238,16 @@ def native_catalog(*, enum_state_budget=2048, enum_transition_budget=100000, enu
                           and (prefix or prop.identifier not in base_properties | editor_properties))
         return sorted(result)
 
+    def semantic_scope(node, menus, bools):
+        records = socket_records(node)
+        return channel_matte_semantic_scope(node.bl_idname, bpy.app.version, records["inputs"], records["outputs"],
+                                            {path: values for path, (values, _) in menus.items()}, bools)
+
+    def state_schema(node):
+        if node.bl_idname != "CompositorNodeChannelMatte":
+            return schema(node, state=True)
+        return schema(node, state=True, semantic=semantic_scope(node, enum_candidates(node), boolean_paths(node)))
+
     def explore_enum_states(tree, identifier, record):
         budget = (enumeration_budgets or {}).get(domain + ":" + identifier, {})
         state_budget = min(enum_state_budget, budget.get("states", enum_state_budget))
@@ -178,15 +258,19 @@ def native_catalog(*, enum_state_budget=2048, enum_transition_budget=100000, enu
         transitions = 0
         failures = []
         budget_exhausted = False
+        semantic_states, fallback_states, skipped, active_sets = 0, 0, set(), set()
         while pending:
             history = pending.pop(0)
-            probe = tree.nodes.new(identifier)
+            probe = new_node(tree, identifier)
             try:
                 for path, value in history:
                     target, key = owner(probe, path)
                     setattr(target, key, value)
                 menus = enum_candidates(probe)
                 bools = boolean_paths(probe)
+                semantic = semantic_scope(probe, menus, bools) if identifier == "CompositorNodeChannelMatte" else None
+                if semantic:
+                    menus = {path: choices for path, choices in menus.items() if path in semantic["activeSelectors"]}
                 settings = {}
                 for path in sorted(set(menus) | set(bools)):
                     target, key = owner(probe, path)
@@ -198,7 +282,14 @@ def native_catalog(*, enum_state_budget=2048, enum_transition_budget=100000, enu
                     budget_exhausted = True
                     break
                 seen.add(state_key)
-                states.append({"settings": settings, "socketSchema": schema(probe, state=True)})
+                states.append({"settings": settings, "socketSchema": schema(probe, state=True, semantic=semantic),
+                               **({"activeSelectors": semantic["activeSelectors"]} if semantic else {})})
+                if semantic:
+                    semantic_states += 1
+                    skipped.update(semantic["skippedSelectors"])
+                    active_sets.add(tuple(semantic["activeSelectors"]))
+                else:
+                    fallback_states += 1
                 for path, (values, source) in menus.items():
                     observed = record["enums"].setdefault(path, {"source": source, "available": {}, "rejectedRnaValues": {}})
                     if not values and source == "native-empty-menu-validation": observed["emptyNativeMenu"] = True
@@ -208,14 +299,14 @@ def native_catalog(*, enum_state_budget=2048, enum_transition_budget=100000, enu
                             budget_exhausted = True
                             break
                         transitions += 1
-                        candidate = tree.nodes.new(identifier)
+                        candidate = new_node(tree, identifier)
                         try:
                             for old_path, old_value in history:
                                 target, key = owner(candidate, old_path)
                                 setattr(target, key, old_value)
                             target, key = owner(candidate, path)
                             setattr(target, key, value)
-                            observed["available"].setdefault(value, {"socketSchema": schema(candidate, state=True), "assignmentFromSettings": dict(settings)})
+                            observed["available"].setdefault(value, {"socketSchema": state_schema(candidate), "assignmentFromSettings": dict(settings)})
                             observed["rejectedRnaValues"].pop(value, None)
                             observed.pop("optionsUnavailable", None)
                             # Skip no-op transitions without creating an
@@ -251,6 +342,13 @@ def native_catalog(*, enum_state_budget=2048, enum_transition_budget=100000, enu
             "failures": sorted(set(failures)),
             "scope": "Reachable enum, active MENU socket and semantic writable node/color-ramp/mapping boolean states in the first creatable context; editor flags and structural mute do not multiply menu states. Other context defaults recorded separately. Inactive socket menu cross-products, numeric/socket-boolean values, authored group interfaces, ID bindings and point handles are not enumerated. All states are counted/digested; representative states cover distinct socket schemas.",
         }
+        if semantic_states:
+            record["enumStateExploration"]["semanticScope"] = {
+                "model": CHANNEL_MATTE_SEMANTIC_MODEL, "sources": list(CHANNEL_MATTE_SOURCES),
+                "rule": "Only the selected color-space Key menu, plus its Limit menu for Single, affects native output; Color Space and Limit Method always remain active. Only proven inactive MENU defaults are omitted from state schemas; raw context/default schemas remain unchanged.",
+                "appliedStates": semantic_states, "genericFallbackStates": fallback_states,
+                "skippedSelectors": sorted(skipped), "activeSelectorSets": [list(value) for value in sorted(active_sets)],
+            }
 
     candidates = []
     for name in dir(bpy.types):
@@ -282,7 +380,7 @@ def native_catalog(*, enum_state_budget=2048, enum_transition_budget=100000, enu
                 for identifier in candidates:
                     cls = getattr(bpy.types, identifier)
                     try:
-                        node = tree.nodes.new(identifier)
+                        node = new_node(tree, identifier)
                     except (RuntimeError, TypeError, ValueError) as error:
                         unavailable.append({"id": identifier, "context": context_name, "reason": str(error)})
                         continue
@@ -496,6 +594,46 @@ def render_markdown(reports, capabilities, unreviewed):
 
 
 def self_test():
+    import copy
+    def record(name, kind, cls, default=None):
+        return {"identifier": name, "type": kind, "socketClass": cls, "enabled": True,
+                "unavailable": False, "default": default}
+    inputs = [record("Image", "RGBA", "NodeSocketColor"),
+              record("Minimum", "VALUE", "NodeSocketFloatFactor"), record("Maximum", "VALUE", "NodeSocketFloatFactor")]
+    inputs += [record(name, "MENU", "NodeSocketMenu", choices[0]) for name, choices in CHANNEL_MATTE_MENUS.items()]
+    outputs = [record("Image", "RGBA", "NodeSocketColor"), record("Matte", "VALUE", "NodeSocketFloat")]
+    menus = {"inputs:" + name: list(values) for name, values in CHANNEL_MATTE_MENUS.items()}
+    def scope(given=inputs, result=outputs, choices=menus, version=(5, 3, 0), identifier="CompositorNodeChannelMatte", bools=()):
+        return channel_matte_semantic_scope(identifier, version, given, result, choices, bools)
+    for version in [(5, 2, 0), (5, 3, 0)]:
+        for space in ["RGB", "HSV", "YUV", "YCbCr"]:
+            for method in ["Max", "Single"]:
+                given = copy.deepcopy(inputs)
+                for item in given:
+                    if item["identifier"] == "Color Space": item["default"] = space
+                    if item["identifier"] == "Limit Method": item["default"] = method
+                projected = scope(given, version=version)
+                expected = {"inputs:Color Space", "inputs:Limit Method", "inputs:" + space + " Key Channel"}
+                if method == "Single": expected.add("inputs:" + space + " Limit Channel")
+                assert set(projected["activeSelectors"]) == expected
+                assert set(projected["skippedSelectors"]) == set(menus) - expected
+                assert projected["model"] == CHANNEL_MATTE_SEMANTIC_MODEL
+    for kwargs in [{"version": (4, 2, 0)}, {"version": (5, 4, 0)}, {"version": (5, 2, 1)},
+                   {"version": (5, 3, 1)}, {"identifier": "FutureNode"},
+                   {"bools": ("new_semantic_switch",)}, {"given": inputs[:-1]}, {"result": outputs[:-1]}]:
+        assert scope(**kwargs) is None, kwargs
+    for field, value in [("type", "INT"), ("socketClass", "FutureMenu"), ("enabled", False),
+                         ("unavailable", True), ("default", "Unknown Space")]:
+        given = copy.deepcopy(inputs)
+        next(item for item in given if item["identifier"] == "Color Space")[field] = value
+        assert scope(given) is None, (field, value)
+    given = copy.deepcopy(inputs)
+    next(item for item in given if item["identifier"] == "Limit Method")["default"] = "Average"
+    assert scope(given) is None
+    for name in CHANNEL_MATTE_MENUS:
+        choices = copy.deepcopy(menus); choices["inputs:" + name].append("NEW_MODE")
+        assert scope(choices=choices) is None, name
+    assert scope(choices={key: value for key, value in menus.items() if key != "inputs:RGB Key Channel"}) is None
     baseline = {"shader": {"ShaderNodeMath": {"operation": ["ADD"]}}}
     changed = {"shader": {"ShaderNodeMath": {"operation": ["ADD", "NEW_MODE"]}, "ShaderNodeFuture": {}}}
     failures = baseline_changes(changed, baseline)

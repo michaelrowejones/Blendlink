@@ -921,6 +921,7 @@ _CHANNEL_NEUTRAL_NODES = {
     "ShaderNodeMixRGB", "ShaderNodeValToRGB", "ShaderNodeRGB",
     "ShaderNodeValue", "ShaderNodeSeparateColor", "ShaderNodeSeparateRGB",
     "ShaderNodeSeparateXYZ", "ShaderNodeCombineColor", "ShaderNodeCombineRGB",
+    "ShaderNodeSeparateHSV", "ShaderNodeCombineHSV",
     "ShaderNodeCombineXYZ", "ShaderNodeInvert", "ShaderNodeHueSaturation",
     "ShaderNodeBrightContrast", "ShaderNodeGamma", "ShaderNodeClamp",
     "ShaderNodeMapRange", "ShaderNodeRGBCurve", "ShaderNodeVectorCurve",

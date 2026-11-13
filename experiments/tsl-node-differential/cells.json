@@ -1826,6 +1826,8 @@
     },
     {
       "id": "tex-magic",
+      "pipeline": "legacy-ir",
+      "scope": "legacy-serialized-runtime-only",
       "gate": true,
       "tolerance": {
         "meanAbs": 0.001,
@@ -1833,7 +1835,7 @@
         "maxAbs": 0.01
       },
       "failureClass": "deterministic texture (Magic trig cascade)",
-      "notes": "Depth 2 (default), scale 3, distortion 1.2: the fixed sin/cos cascade with the final 2*distortion shrink. Chained transcendentals share the trig tolerance class.",
+      "notes": "Legacy serialized tex_magic compatibility only: depth 2, scale 3, distortion 1.2. The current producer explicitly refuses fresh Cycles live translation. This old numerical budget and fixed IR do not establish a fresh source port; EEVEE tex_magic_native has its own strict differential gate.",
       "claim": "exact"
     },
     {
@@ -2564,6 +2566,8 @@
     },
     {
       "id": "tex-magic-fac",
+      "pipeline": "legacy-ir",
+      "scope": "legacy-serialized-runtime-only",
       "gate": true,
       "tolerance": {
         "meanAbs": 0.001,
@@ -2571,7 +2575,7 @@
         "maxAbs": 0.01
       },
       "failureClass": "deterministic texture (Magic Fac)",
-      "notes": "Magic's Fac output is the color average; the mapping also carries the upstream fmod(p*scale, 2pi) wrap Cycles applies before the cascade.",
+      "notes": "Legacy serialized tex_magic Factor compatibility only, including the existing color-average and fmod(p*scale,2pi) behavior. The current producer explicitly refuses fresh Cycles live translation; this fixed legacy document does not count as source-port evidence.",
       "claim": "exact"
     },
     {

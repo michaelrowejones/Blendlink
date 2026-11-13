@@ -1,6 +1,6 @@
 import { BufferGeometry, Camera, Material, Matrix4, Mesh, Scene } from 'three'
 import { expect, it, vi } from 'vitest'
-import { trackMaterialDrawOrientation } from './tslMaterialDrawOrientation.js'
+import { trackMaterialDrawCallback, trackMaterialDrawOrientation } from './tslMaterialDrawOrientation.js'
 
 function draw(mesh: Mesh, material: Material, webgpu = true, group: unknown = null): void {
   mesh.onBeforeRender(
@@ -111,4 +111,16 @@ it('preserves later user callbacks and unwraps disposed managed callbacks during
   const fourth = trackMaterialDrawOrientation(mesh, new Set([material]))
   fourth()
   expect(mesh.onBeforeRender).toBe(replacement)
+})
+
+it('shares lease cleanup with per-material validation and never invokes a released validator',()=>{
+  const material=new Material(),portable=new Material(),mesh=new Mesh(),user=vi.fn(),validate=vi.fn()
+  mesh.onBeforeRender=user
+  const orientation=trackMaterialDrawOrientation(mesh,new Set([material]))
+  const guard=trackMaterialDrawCallback(mesh,new Set([material]),validate)
+  draw(mesh,portable);expect(validate).not.toHaveBeenCalled()
+  draw(mesh,material);expect(validate).toHaveBeenCalledTimes(1)
+  orientation();guard()
+  expect(mesh.onBeforeRender).toBe(user)
+  draw(mesh,material);expect(validate).toHaveBeenCalledTimes(1)
 })

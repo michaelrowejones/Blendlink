@@ -1,4 +1,4 @@
-Blendlink spectral color, color conversion, image sampling, integer utility, Noise/Wave, Brick, packed-normal, normal-map and UV tangent mathematics and tables
+Blendlink spectral color, color conversion, image sampling, integer utility, Noise/Wave/Magic, Brick, packed-normal, normal-map and UV tangent mathematics and tables
 
 Copyright 2011-2026 Blender Foundation
 Copyright 2026 Blendlink contributors
@@ -10,6 +10,7 @@ https://github.com/blender/blender/blob/v5.3.0/intern/cycles/kernel/svm/brick.h
 https://github.com/blender/blender/blob/v5.3.0/intern/cycles/util/color.h
 https://github.com/blender/blender/blob/v5.3.0/intern/cycles/kernel/svm/integer_math.h
 https://github.com/blender/blender/blob/v5.3.0/intern/cycles/kernel/svm/wave.h
+https://github.com/blender/blender/blob/v5.2.0/intern/cycles/kernel/svm/magic.h
 https://github.com/blender/blender/blob/v5.3.0/intern/cycles/kernel/svm/fractal_noise.h
 https://github.com/blender/blender/blob/v5.3.0/intern/cycles/kernel/util/image.h
 https://github.com/blender/blender/blob/v4.2.0/intern/cycles/kernel/device/cpu/image.h
@@ -19,7 +20,7 @@ https://github.com/blender/blender/blob/v4.2.0/intern/cycles/kernel/geom/object.
 
 Blendlink modifications: Three.js expression construction, explicit source
 engine evaluation models, serialized working-space matrices, resource ownership,
-native RGB/HSV/HSL conversion, signed 32-bit integer utility operations, native image wrap/clip/nearest and cubic sampling, Wave live distortion/roughness and Noise signed FBM and four bounded fractal recurrences with native constant/shader offset precision, recursive coordinates and finite amplitude bounds, integer Brick noise and mortar calculations, per-vertex octahedral normal storage/interpolation models, engine-specific Object/World normal-map functions, and browser/native differential
+native RGB/HSV/HSL conversion, signed 32-bit integer utility operations, native image wrap/clip/nearest and cubic sampling, Wave live distortion/roughness and Noise signed FBM and four bounded fractal recurrences with native constant/shader offset precision, recursive coordinates and finite amplitude bounds, integer Brick noise and mortar calculations, stage-qualified native EEVEE Magic cascades, per-vertex octahedral normal storage/interpolation models, engine-specific Object/World normal-map functions, and browser/native differential
 checks. Native EEVEE sampler behavior is modeled
 separately from the Cycles analytical functions.
 

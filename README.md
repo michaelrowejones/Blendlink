@@ -34,6 +34,10 @@ EEVEE is the reference for live node fidelity where applicable. Cycles scenes
 generally use material or appearance baking to preserve their authored look.
 Existing live Cycles ports retain their documented limits.
 
+Older Blender files retain explicit compatibility paths: the
+[legacy shader HSV proof](experiments/legacy-shader-hsv/README.md) covers actual
+4.2 EEVEE nodes and Blender's own upgrade to modern Color nodes in 5.2/5.3.
+
 ## Start in Blender
 
 With a matching extension ZIP supplied by the maintainer, use **Preferences →

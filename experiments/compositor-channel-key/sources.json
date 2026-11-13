@@ -1,0 +1,50 @@
+[
+  {
+    "revision": "v4.2.0",
+    "path": "source/blender/nodes/composite/nodes/node_composite_channel_matte.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/v4.2.0/source/blender/nodes/composite/nodes/node_composite_channel_matte.cc",
+    "sha256": "eff425b6dd45f8c3d2c35eda5728ef308fa58874d9a6ae9c9f2d4115f3c1ca59"
+  },
+  {
+    "revision": "v4.2.0",
+    "path": "source/blender/compositor/operations/COM_ChannelMatteOperation.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/v4.2.0/source/blender/compositor/operations/COM_ChannelMatteOperation.cc",
+    "sha256": "aaeffc3380b3995acf9b0bcd6aa1b8f0d02c3842279275987cccea7736d9488d"
+  },
+  {
+    "revision": "v4.2.0",
+    "path": "source/blender/compositor/nodes/COM_ChannelMatteNode.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/v4.2.0/source/blender/compositor/nodes/COM_ChannelMatteNode.cc",
+    "sha256": "c1c6f93b939c6527fc19deeeecf2aa4a97180e9fb46b8c7ccc17fb8db9982daa"
+  },
+  {
+    "revision": "v4.2.0",
+    "path": "source/blender/compositor/realtime_compositor/shaders/library/gpu_shader_compositor_channel_matte.glsl",
+    "url": "https://raw.githubusercontent.com/blender/blender/v4.2.0/source/blender/compositor/realtime_compositor/shaders/library/gpu_shader_compositor_channel_matte.glsl",
+    "sha256": "e6b7d75c5bd02003af12b3a9eb6331290ede88bee8f675639d1580ed5c50ff09"
+  },
+  {
+    "revision": "v5.2.0",
+    "path": "source/blender/nodes/composite/nodes/node_composite_channel_key.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/v5.2.0/source/blender/nodes/composite/nodes/node_composite_channel_key.cc",
+    "sha256": "d06c0cd1b787d1b29b2251863004497f40213e9e27997457b35518187994d68e"
+  },
+  {
+    "revision": "v5.2.0",
+    "path": "source/blender/compositor/shaders/library/gpu_shader_compositor_channel_matte.glsl",
+    "url": "https://raw.githubusercontent.com/blender/blender/v5.2.0/source/blender/compositor/shaders/library/gpu_shader_compositor_channel_matte.glsl",
+    "sha256": "5d4ddcd2fcb1c3952a33f6875bbbdbb3a7b288aab59e184f188fba09559254e0"
+  },
+  {
+    "revision": "02f0899d78e3",
+    "path": "source/blender/nodes/composite/nodes/node_composite_channel_key.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/nodes/composite/nodes/node_composite_channel_key.cc",
+    "sha256": "f1ad1a04060bb10739944ae5349185c7b7d078c4fa07cfb55c96cc1f2a9967df"
+  },
+  {
+    "revision": "02f0899d78e3",
+    "path": "source/blender/compositor/shaders/library/gpu_shader_compositor_channel_matte.glsl",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e3/source/blender/compositor/shaders/library/gpu_shader_compositor_channel_matte.glsl",
+    "sha256": "8f8c158aa6d69739a574c88323b53e7ac09e3490873df595db321d961da630dd"
+  }
+]

@@ -3326,11 +3326,24 @@ def _plan_tsl_program(
         from . import tangent_ir
         from . import normal_map_tangent_ir
         from . import bump_height_ir
+        from . import magic_bounds
     else:
         import geometry_ir
         import tangent_ir
         import normal_map_tangent_ir
         import bump_height_ir
+        import magic_bounds
+    for entry in channels:
+        magic_requirements=[];magic_bounds.requirements(entry.get('tslIr'),magic_requirements)
+        if not magic_requirements:continue
+        try:
+            for obj,_slot in raw_bindings:
+                for requirement in magic_requirements:magic_bounds.validate_owner(obj,requirement)
+        except ValueError as error:
+            for key in ('tslIr','tslIrHash','tslIrBytes','tslIrApproximations'):entry.pop(key,None)
+            entry['tslIrRefusal']=str(error)
+            object_info_issues.append(MaterialIssue('material.magic-coordinate-domain-unproven',material.name,str(error),
+                'Reduce Scale, use bounded static mesh coordinates, or choose source baking; the authored graph remains in Blender.',object_names))
     tangent_uv_choices = {}
     for entry in channels:
         outputs = set()

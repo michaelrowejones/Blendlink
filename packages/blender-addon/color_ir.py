@@ -76,12 +76,22 @@ def _f32(value):
 
 
 def emit_color_conversion(node, socket, *, emit_input, refuse, evaluation_engine):
-    mode = str(getattr(node, 'mode', 'RGB'))
+    legacy_hsv = node.bl_idname in {'ShaderNodeSeparateHSV', 'ShaderNodeCombineHSV'}
+    if legacy_hsv:
+        # These actual classes are registered in 4.2, then removed by Blender.
+        # Their EEVEE callbacks call the same rgb_to_hsv/hsv_to_rgb helpers as
+        # modern Color HSV; Cycles constant folding is a separate evaluator.
+        if tuple(bpy.app.version) != (4, 2, 0):
+            refuse('Legacy shader HSV requires the measured Blender 4.2.0 source version')
+        if evaluation_engine != 'EEVEE':
+            refuse('Legacy shader HSV live translation is qualified for EEVEE only; bake Cycles materials')
+    mode = 'HSV' if legacy_hsv else str(getattr(node, 'mode', 'RGB'))
     if mode not in {'RGB', 'HSV', 'HSL'}: refuse('Separate/Combine Color mode has no native model: ' + mode)
     if evaluation_engine not in {'CYCLES', 'EEVEE'}:
         refuse('Separate/Combine Color requires a Cycles or EEVEE source evaluation engine')
-    separate = node.bl_idname in {'ShaderNodeSeparateColor', 'ShaderNodeSeparateRGB'}
-    channel = {'Red': 'x', 'Green': 'y', 'Blue': 'z', 'R': 'x', 'G': 'y', 'B': 'z'}.get(socket.identifier)
+    separate = node.bl_idname in {'ShaderNodeSeparateColor', 'ShaderNodeSeparateRGB', 'ShaderNodeSeparateHSV'}
+    channel = {'Red': 'x', 'Green': 'y', 'Blue': 'z', 'R': 'x', 'G': 'y', 'B': 'z',
+               'H': 'x', 'S': 'y', 'V': 'z'}.get(socket.identifier)
     if separate:
         if channel is None: refuse('Separate Color has no native scalar output ' + socket.identifier)
         incoming = emit_input(node.inputs[0], as_vector=True)

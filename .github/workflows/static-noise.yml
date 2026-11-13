@@ -8,6 +8,8 @@ on:
       - 'experiments/noise-fractal-differential/**'
       - 'experiments/static-noise-fbm/**'
       - 'experiments/native-compositor-differential/**'
+      - 'experiments/magic-node-differential/**'
+      - 'experiments/legacy-shader-hsv/**'
       - 'scripts/lib/**'
       - 'package*.json'
   push:
@@ -43,7 +45,7 @@ jobs:
           BLENDER_SHA256: '96f6c181a30f4950607839dc84d42a354b250d8a0231b098b59b7bc69c351c48'
         run: |
           archive="$RUNNER_TEMP/blender-5.2.0-linux-x64.tar.xz"
-          curl --fail --location --retry 3 --retry-all-errors --retry-max-time 300 \
+          curl --fail --location --retry 5 --retry-all-errors --retry-delay 15 --retry-max-time 300 \
             'https://download.blender.org/release/Blender5.2/blender-5.2.0-linux-x64.tar.xz' \
             --output "$archive"
           echo "$BLENDER_SHA256  $archive" | sha256sum --check --strict
@@ -188,6 +190,127 @@ jobs:
           path: artifacts/verification-static-noise-ci
           if-no-files-found: warn
 
+  native-legacy-hsv:
+    name: Native legacy HSV / EEVEE OpenGL / Blender 4.2.0 / Linux SwiftShader
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Check out the exact candidate
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Use Node 24
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Download and verify Blender 4.2.0
+        env:
+          BLENDER_SHA256: '4f4fd7646af01f6fee9d420408318381a6e52571268eb7cf9cd5033bd9e7a359'
+        run: |
+          archive="$RUNNER_TEMP/blender-4.2.0-linux-x64.tar.xz"
+          curl --fail --location --retry 5 --retry-all-errors --retry-delay 15 --retry-max-time 300 \
+            'https://download.blender.org/release/Blender4.2/blender-4.2.0-linux-x64.tar.xz' \
+            --output "$archive"
+          echo "$BLENDER_SHA256  $archive" | sha256sum --check --strict
+          mkdir "$RUNNER_TEMP/blender"
+          tar -xf "$archive" -C "$RUNNER_TEMP/blender" --strip-components=1
+          "$RUNNER_TEMP/blender/blender" --version
+          echo "BLENDLINK_BLENDER=$RUNNER_TEMP/blender/blender" >> "$GITHUB_ENV"
+
+      - name: Install locked tools and software rendering libraries
+        run: |
+          npm ci
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends libegl1 libgl1-mesa-dri libopengl0 mesa-utils
+          npx --no-install playwright install --with-deps chromium
+          npm run build
+
+      - name: Verify actual legacy source sockets and isolated extension emission
+        env:
+          BLENDLINK_HSV_PACKAGED_ADDON: ${{ github.workspace }}/packages/blendlink/dist/addon
+        run: |
+          "$BLENDLINK_BLENDER" --background --factory-startup --python-exit-code 1 \
+            --python packages/blender-addon/tests/legacy_shader_hsv_check.py
+
+      # No retained reference reuse, physical-browser channel or watchdog
+      # override: this must earn the actual OpenGL source profile independently
+      # of the local Metal results, with the same calibration/kernel budgets.
+      - name: Generate native EEVEE references and compare both browser backends
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+          BLENDLINK_HSV_EVIDENCE: artifacts/verification-legacy-hsv-linux42
+          BLENDLINK_TEST_CHROMIUM_ARGS: '[]'
+        run: env -u BLENDLINK_TEST_CHROMIUM_CHANNEL xvfb-run --auto-servernum node experiments/legacy-shader-hsv/run.mjs --built
+
+      - name: Retain source profile, native pixels, calibration and browser evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: legacy-hsv-opengl-linux-4.2
+          path: artifacts/verification-legacy-hsv-linux42
+          if-no-files-found: warn
+
+  native-magic:
+    name: Native EEVEE Magic / OpenGL / Blender 5.2.0 / Linux SwiftShader
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Check out the exact candidate
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Use Node 24
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Download and verify Blender 5.2.0
+        env:
+          BLENDER_SHA256: '96f6c181a30f4950607839dc84d42a354b250d8a0231b098b59b7bc69c351c48'
+        run: |
+          archive="$RUNNER_TEMP/blender-5.2.0-linux-x64.tar.xz"
+          curl --fail --location --retry 5 --retry-all-errors --retry-delay 15 --retry-max-time 300 \
+            'https://download.blender.org/release/Blender5.2/blender-5.2.0-linux-x64.tar.xz' \
+            --output "$archive"
+          echo "$BLENDER_SHA256  $archive" | sha256sum --check --strict
+          mkdir "$RUNNER_TEMP/blender"
+          tar -xf "$archive" -C "$RUNNER_TEMP/blender" --strip-components=1
+          "$RUNNER_TEMP/blender/blender" --version
+          echo "BLENDLINK_BLENDER=$RUNNER_TEMP/blender/blender" >> "$GITHUB_ENV"
+
+      - name: Install locked tools and software rendering libraries
+        run: |
+          npm ci
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends libegl1 libgl1-mesa-dri libopengl0 mesa-utils
+          npx --no-install playwright install --with-deps chromium
+          npm run build
+
+      # No retained reference reuse, physical-browser channel or watchdog
+      # override: this must earn the actual OpenGL source profile independently
+      # of the local Metal results, with the same calibration/kernel budgets.
+      - name: Generate native EEVEE references and compare both browser backends
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+          BLENDLINK_MAGIC_EVIDENCE: artifacts/verification-magic-linux52
+          BLENDLINK_TEST_CHROMIUM_ARGS: '[]'
+        run: env -u BLENDLINK_TEST_CHROMIUM_CHANNEL xvfb-run --auto-servernum node experiments/magic-node-differential/run.mjs --built
+
+      - name: Retain source profile, native pixels, calibration and browser evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: magic-opengl-linux-5.2
+          path: artifacts/verification-magic-linux52
+          if-no-files-found: warn
+
   native-compositor:
     name: Native ${{ matrix.family }} / ${{ matrix.source_device }} / Blender ${{ matrix.blender_version || '5.2.0' }} / Linux SwiftShader
     runs-on: ubuntu-24.04
@@ -195,7 +318,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        family: [Luminance Key, Difference Key, Color Spill, Color Key, Color Key GPU subset, Chroma Key, Image, Composite Output, Crop, Crop Resize]
+        family: [Luminance Key, Difference Key, Distance Key, Distance Key legacy, Channel Key, Channel Key source profile, Color Spill, Color Key, Color Key GPU subset, Chroma Key, Image, Composite Output, Crop, Crop Resize, Pixelate, Split, Split source profile, Split legacy, Map Value, Map Value source profile, Map Value modern absence]
         source_device: [CPU, GPU]
         exclude:
           - family: Color Key
@@ -204,9 +327,27 @@ jobs:
             source_device: CPU
           - family: Chroma Key
             source_device: GPU
+          - family: Distance Key
+            source_device: GPU
+          - family: Distance Key legacy
+            source_device: GPU
+          - family: Channel Key
+            source_device: GPU
+          - family: Channel Key source profile
+            source_device: CPU
           - family: Image
             source_device: GPU
           - family: Crop Resize
+            source_device: GPU
+          - family: Split
+            source_device: GPU
+          - family: Split source profile
+            source_device: CPU
+          - family: Map Value
+            source_device: GPU
+          - family: Map Value source profile
+            source_device: CPU
+          - family: Map Value modern absence
             source_device: GPU
         include:
           - family: Luminance Key
@@ -219,6 +360,29 @@ jobs:
             device_variable: BLENDLINK_COMPOSITOR_DIFFERENCE_KEY_DEVICE
             reference_variable: BLENDLINK_COMPOSITOR_DIFFERENCE_KEY_REFERENCES
             evidence: difference
+          - family: Distance Key
+            fixture: compositor_distance_key_check.py
+            device_variable: BLENDLINK_COMPOSITOR_DISTANCE_KEY_DEVICE
+            reference_variable: BLENDLINK_COMPOSITOR_DISTANCE_KEY_REFERENCES
+            evidence: distance
+          - family: Distance Key legacy
+            fixture: compositor_distance_key_check.py
+            device_variable: BLENDLINK_COMPOSITOR_DISTANCE_KEY_DEVICE
+            reference_variable: BLENDLINK_COMPOSITOR_DISTANCE_KEY_REFERENCES
+            evidence: distance-legacy
+            blender_version: '4.2.0'
+            blender_series: '4.2'
+            blender_sha256: '4f4fd7646af01f6fee9d420408318381a6e52571268eb7cf9cd5033bd9e7a359'
+          - family: Channel Key
+            fixture: compositor_channel_key_check.py
+            device_variable: BLENDLINK_COMPOSITOR_CHANNEL_KEY_DEVICE
+            reference_variable: BLENDLINK_COMPOSITOR_CHANNEL_KEY_REFERENCES
+            evidence: channel-key
+          - family: Channel Key source profile
+            fixture: compositor_channel_key_check.py
+            device_variable: BLENDLINK_COMPOSITOR_CHANNEL_KEY_DEVICE
+            reference_variable: BLENDLINK_COMPOSITOR_CHANNEL_KEY_REFERENCES
+            evidence: channel-key
           - family: Color Spill
             fixture: compositor_spill_check.py
             device_variable: BLENDLINK_COMPOSITOR_SPILL_DEVICE
@@ -249,6 +413,53 @@ jobs:
             device_variable: BLENDLINK_COMPOSITOR_CROP_RESIZE_DEVICE
             reference_variable: BLENDLINK_COMPOSITOR_CROP_RESIZE_REFERENCES
             evidence: crop-resize
+          - family: Pixelate
+            fixture: compositor_pixelate_check.py
+            device_variable: BLENDLINK_COMPOSITOR_PIXELATE_DEVICE
+            reference_variable: BLENDLINK_COMPOSITOR_PIXELATE_REFERENCES
+            evidence: pixelate
+          - family: Split
+            fixture: compositor_split_check.py
+            device_variable: BLENDLINK_COMPOSITOR_SPLIT_DEVICE
+            reference_variable: BLENDLINK_COMPOSITOR_SPLIT_REFERENCES
+            evidence: split
+          - family: Split source profile
+            fixture: compositor_split_check.py
+            device_variable: BLENDLINK_COMPOSITOR_SPLIT_DEVICE
+            reference_variable: BLENDLINK_COMPOSITOR_SPLIT_REFERENCES
+            evidence: split-source-profile
+          - family: Split legacy
+            fixture: compositor_split_check.py
+            device_variable: BLENDLINK_COMPOSITOR_SPLIT_DEVICE
+            reference_variable: BLENDLINK_COMPOSITOR_SPLIT_REFERENCES
+            evidence: split-legacy
+            blender_version: '4.2.0'
+            blender_series: '4.2'
+            blender_sha256: '4f4fd7646af01f6fee9d420408318381a6e52571268eb7cf9cd5033bd9e7a359'
+          - family: Map Value
+            fixture: compositor_map_value_check.py
+            device_variable: BLENDLINK_COMPOSITOR_MAP_VALUE_DEVICE
+            reference_variable: BLENDLINK_COMPOSITOR_MAP_VALUE_REFERENCES
+            evidence: map-value
+            profile_expected: qualified
+            blender_version: '4.2.0'
+            blender_series: '4.2'
+            blender_sha256: '4f4fd7646af01f6fee9d420408318381a6e52571268eb7cf9cd5033bd9e7a359'
+          - family: Map Value source profile
+            fixture: compositor_map_value_check.py
+            device_variable: BLENDLINK_COMPOSITOR_MAP_VALUE_DEVICE
+            reference_variable: BLENDLINK_COMPOSITOR_MAP_VALUE_REFERENCES
+            evidence: map-value-source-profile
+            profile_expected: source-profile-refused
+            blender_version: '4.2.0'
+            blender_series: '4.2'
+            blender_sha256: '4f4fd7646af01f6fee9d420408318381a6e52571268eb7cf9cd5033bd9e7a359'
+          - family: Map Value modern absence
+            fixture: compositor_map_value_check.py
+            device_variable: BLENDLINK_COMPOSITOR_MAP_VALUE_DEVICE
+            reference_variable: BLENDLINK_COMPOSITOR_MAP_VALUE_REFERENCES
+            evidence: map-value-native-absent
+            profile_expected: native-node-absent
           - family: Image
             fixture: compositor_image_check.py
             device_variable: BLENDLINK_COMPOSITOR_IMAGE_DEVICE
@@ -282,7 +493,7 @@ jobs:
           BLENDER_SHA256: ${{ matrix.blender_sha256 || '96f6c181a30f4950607839dc84d42a354b250d8a0231b098b59b7bc69c351c48' }}
         run: |
           archive="$RUNNER_TEMP/blender-$BLENDER_VERSION-linux-x64.tar.xz"
-          curl --fail --location --retry 3 --retry-all-errors --retry-max-time 300 \
+          curl --fail --location --retry 5 --retry-all-errors --retry-delay 15 --retry-max-time 300 \
             "https://download.blender.org/release/Blender$BLENDER_SERIES/blender-$BLENDER_VERSION-linux-x64.tar.xz" \
             --output "$archive"
           echo "$BLENDER_SHA256  $archive" | sha256sum --check --strict
@@ -309,14 +520,63 @@ jobs:
           REFERENCE_VARIABLE: ${{ matrix.reference_variable }}
           FIXTURE: ${{ matrix.fixture }}
           EVIDENCE: artifacts/verification-compositor-canary/${{ matrix.evidence }}
+          SOURCE_PROFILE_EXPECTED: ${{ matrix.profile_expected }}
         run: |
           env "$DEVICE_VARIABLE=$SOURCE_DEVICE" \
             "$REFERENCE_VARIABLE=$PWD/$EVIDENCE-$SOURCE_DEVICE" \
             xvfb-run --auto-servernum "$BLENDLINK_BLENDER" \
               --background --factory-startup --python-exit-code 1 \
               --python "packages/blender-addon/tests/$FIXTURE"
+          if [ "$FIXTURE" = "compositor_channel_key_check.py" ]; then
+            node scripts/check-channel-profile.mjs "$EVIDENCE-$SOURCE_DEVICE"
+          fi
+          if [ "$FIXTURE" = "compositor_split_check.py" ]; then
+            node scripts/check-split-profile.mjs "$EVIDENCE-$SOURCE_DEVICE"
+          fi
+          if [ "$FIXTURE" = "compositor_map_value_check.py" ]; then
+            node scripts/check-map-value-profile.mjs --current-sources --expect "$SOURCE_PROFILE_EXPECTED" "$EVIDENCE-$SOURCE_DEVICE"
+            if [ "$SOURCE_PROFILE_EXPECTED" = "native-node-absent" ]; then
+              echo "Native Map Value is absent; zero numerical/browser cases are claimed."
+              exit 0
+            fi
+          fi
+          additional_references=()
+          if [ "$FIXTURE" = "compositor_distance_key_check.py" ]; then
+            for controls in zero amplified; do
+              falloff=0
+              alpha=2
+              if [ "$controls" = "amplified" ]; then falloff=.125; alpha=1e20; fi
+              BLENDLINK_DISTANCE_ZERO_REFERENCES="$PWD/$EVIDENCE-$controls" \
+                BLENDLINK_DISTANCE_ZERO_FALLOFF="$falloff" BLENDLINK_DISTANCE_ZERO_ALPHA="$alpha" \
+                xvfb-run --auto-servernum "$BLENDLINK_BLENDER" \
+                  --background --factory-startup --python-exit-code 1 \
+                  --python experiments/compositor-distance-key-differential/native_zero_distance.py
+              additional_references+=("$EVIDENCE-$controls")
+            done
+          fi
           xvfb-run --auto-servernum node experiments/native-compositor-differential/run.mjs --built \
-            --out "$EVIDENCE-browser" "$EVIDENCE-$SOURCE_DEVICE"
+            --out "$EVIDENCE-browser" "$EVIDENCE-$SOURCE_DEVICE" "${additional_references[@]}"
+
+      - name: Qualify CPU Distance arithmetic independently
+        if: always() && steps.build.outcome == 'success' && matrix.family == 'Distance Key' && matrix.source_device == 'CPU'
+        timeout-minutes: 5
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+          BLENDLINK_DISTANCE_EXPECTED_NATIVE: '5.2.0'
+          EVIDENCE: artifacts/verification-compositor-canary/distance-primitives-CPU
+        run: |
+          BLENDLINK_DISTANCE_SQRT_REFERENCES="$PWD/$EVIDENCE/sqrt" \
+            xvfb-run --auto-servernum "$BLENDLINK_BLENDER" \
+              --background --factory-startup --python-exit-code 1 -t 1 \
+              --python experiments/compositor-distance-key-differential/native_sqrt.py
+          BLENDLINK_DISTANCE_RATIO_REFERENCES="$PWD/$EVIDENCE/ratio" \
+            xvfb-run --auto-servernum "$BLENDLINK_BLENDER" \
+              --background --factory-startup --python-exit-code 1 -t 1 \
+              --python experiments/compositor-distance-key-differential/native_ratio.py
+          # Independent primitive proof snapshots production TS helper source.
+          # The preceding family comparison separately verifies built JS graphs.
+          xvfb-run --auto-servernum node experiments/compositor-distance-key-differential/sqrt-run.mjs \
+            "$EVIDENCE/sqrt" "$EVIDENCE/ratio" --out "$EVIDENCE/browser"
 
       - name: Retain native inputs, pixels and browser failures
         if: always()

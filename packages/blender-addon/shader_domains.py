@@ -31,6 +31,12 @@ def native_shader_input_evaluation(expression, *, cycles=False):
     if not isinstance(expression, dict) or "op" not in expression:
         return "opaque"
     operation = expression["op"]
+    if operation == 'tex_magic_native':
+        if expression.get('model')!='eevee-magic-f32-v1' or expression.get('sourceEngine')!='EEVEE':return 'opaque'
+        if expression.get('evaluationModel')=='shader':return 'shader'
+        if expression.get('evaluationModel')!='mf':return 'opaque'
+        values=[native_shader_input_evaluation(expression.get(key)) for key in ['vector','scale','distortion']]
+        return 'constant' if all(value=='constant' for value in values) else 'opaque'
     if operation == "color_convert":
         # Shader Separate/Combine Color has a Cycles constant folder, but
         # no material multi-function registration in EEVEE.

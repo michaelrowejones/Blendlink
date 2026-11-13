@@ -1382,7 +1382,8 @@ def emit_output(node, from_socket, stack=()):
             "input": emit_input(node.inputs["Vector"], stack=stack, as_vector=True),
         }
 
-    if idname in {"ShaderNodeSeparateColor", "ShaderNodeSeparateRGB", "ShaderNodeCombineColor", "ShaderNodeCombineRGB"}:
+    if idname in {"ShaderNodeSeparateColor", "ShaderNodeSeparateRGB", "ShaderNodeCombineColor", "ShaderNodeCombineRGB",
+                  "ShaderNodeSeparateHSV", "ShaderNodeCombineHSV"}:
         if __package__:
             from .color_ir import emit_color_conversion
         else:
@@ -1797,18 +1798,14 @@ def emit_output(node, from_socket, stack=()):
         }
 
     if idname == "ShaderNodeTexMagic":
-        magic_output = getattr(from_socket, "identifier", socket_name)
-        if magic_output not in {"Color", "Fac"}:
-            _refuse(f"Magic output {socket_name!r} has no cell yet")
-        return {
-            "op": "tex_magic",
-            "depth": int(node.turbulence_depth),
-            # Fac is the color average.
-            "output": "fac" if magic_output == "Fac" else "color",
-            "vector": _texture_vector(node.inputs["Vector"], stack, node),
-            "scale": emit_input(node.inputs["Scale"], stack=stack),
-            "distortion": emit_input(node.inputs["Distortion"], stack=stack),
-        }
+        if __package__:
+            from .magic_ir import emit_magic
+        else:
+            from magic_ir import emit_magic
+        return emit_magic(node, from_socket,
+            vector=lambda incoming: _texture_vector(incoming, stack, node),
+            scalar=lambda incoming: emit_input(incoming, stack=stack),
+            refuse=_refuse, evaluation_engine=get_evaluation_engine())
 
     if idname == "ShaderNodeTexWave":
         import math

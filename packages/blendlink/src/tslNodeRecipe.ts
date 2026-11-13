@@ -1,5 +1,7 @@
+export { validateMagicCoordinates as validateTslMagicCoordinates } from './tslMagicBounds.js'
 export { prepareTslNoiseFields } from './tslNoiseFields.js'
 import { preparedNoiseField, NOISE_FIELD_PREPARATION_MESSAGE, type PreparedTslNoiseFields } from './tslNoiseFields.js'
+import { buildTslMagicNode } from './tslMagicNodes.js'
 import { buildNativeMathModulo } from './tslMathModuloNative.js'
 import { buildTslBumpHeight } from './tslBumpHeight.js'
 import { nativeBumpInput, isNativeUnitNormal } from './tslBumpPassthrough.js'
@@ -276,6 +278,8 @@ const tslNormalLocal = (
 const tslNormalWorld = normalWorld as unknown as TslExpression
 
 export interface BuildTslOptions {
+  /** Actual-owner callback for fresh bounded Magic fields; no payload range annotation grants this certificate. */
+  validateMagicCoordinates?: (expression: TslIrExpression) => void
   /** Geometry contract for tangent-space normal programs. */
   normalMapBasis?: 'attribute' | 'derivative' | 'missing'
   /** Harness override: an analytic view cosine (dot(N, V)) computed from
@@ -659,6 +663,7 @@ function build(expression: TslIrExpression): TslExpression {
       const curveFactor = expression.factor as TslIrExpression | undefined
       if (typeof factorOp === 'string' && (vectorProducers.has(factorOp)
         || (factorOp === 'tex_checker' && curveFactor?.output !== 'fac')
+        || (factorOp === 'tex_magic_native' && curveFactor?.output !== 'fac')
         || (factorOp === 'curve_native' && curveFactor?.kind !== 'float')
         || (['noise', 'noise_fractal', 'noise_normalized', 'noise_varying', 'noise_varying_native'].includes(factorOp) && curveFactor?.output === 'color'))) {
         fail(
@@ -1206,6 +1211,8 @@ function build(expression: TslIrExpression): TslExpression {
       // Cycles saturates the gradient before both outputs.
       return tslClamp(result, 0.0, 1.0)
     }
+    case 'tex_magic_native':
+      return buildTslMagicNode(expression, build, fail, activeOptions)
     case 'tex_magic': {
       // Cycles svm_magic: the fixed trig cascade, unrolled to the node's
       // depth; the final shrink by 2*distortion is skipped when the

@@ -50,7 +50,7 @@ jobs:
           BLENDER_SHA256: "96f6c181a30f4950607839dc84d42a354b250d8a0231b098b59b7bc69c351c48"
         run: |
           archive="$RUNNER_TEMP/blender-5.2.0-linux-x64.tar.xz"
-          curl --fail --location --retry 3 --retry-all-errors --retry-max-time 300 \
+          curl --fail --location --retry 5 --retry-all-errors --retry-delay 15 --retry-max-time 300 \
             "https://download.blender.org/release/Blender5.2/blender-5.2.0-linux-x64.tar.xz" \
             --output "$archive"
           echo "$BLENDER_SHA256  $archive" | sha256sum --check --strict
@@ -135,7 +135,7 @@ jobs:
           BLENDER_SHA256: ${{ matrix.blender.sha256 }}
         run: |
           archive="$RUNNER_TEMP/blender-$BLENDER_VERSION-linux-x64.tar.xz"
-          curl --fail --location --retry 3 --retry-all-errors --retry-max-time 300 \
+          curl --fail --location --retry 5 --retry-all-errors --retry-delay 15 --retry-max-time 300 \
             "https://download.blender.org/release/Blender$BLENDER_SERIES/blender-$BLENDER_VERSION-linux-x64.tar.xz" \
             --output "$archive"
           echo "$BLENDER_SHA256  $archive" | sha256sum --check --strict
@@ -293,7 +293,7 @@ jobs:
           BLENDER_SHA256: "96f6c181a30f4950607839dc84d42a354b250d8a0231b098b59b7bc69c351c48"
         run: |
           archive="$RUNNER_TEMP/blender-5.2.0-linux-x64.tar.xz"
-          curl --fail --location --retry 3 --retry-all-errors --retry-max-time 300 \
+          curl --fail --location --retry 5 --retry-all-errors --retry-delay 15 --retry-max-time 300 \
             "https://download.blender.org/release/Blender5.2/blender-5.2.0-linux-x64.tar.xz" \
             --output "$archive"
           echo "$BLENDER_SHA256  $archive" | sha256sum --check --strict

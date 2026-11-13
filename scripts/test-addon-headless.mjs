@@ -22,6 +22,7 @@ const installedNodeFamilies = [
   ['ShaderNodeObjectInfo', 'object_info'], ['ShaderNodeCombineColor', 'color_convert'],
   ['ShaderNodeClamp', 'clamp_minmax'], ['ShaderNodeValToRGB', 'ramp_lut'],
   ['ShaderNodeVectorTransform', 'vector_transform'], ['ShaderNodeTexWave', 'tex_wave'],
+  ['ShaderNodeTexMagic', 'tex_magic_native'],
   ['ShaderNodeTexNoise', 'noise_fractal'], ['ShaderNodeTexNoise', 'noise_normalized'], ['ShaderNodeTexNoise', 'noise_varying_native'], ['ShaderNodeNormalMap', 'normal_map_native'],
   ['ShaderNodeNormalMap', 'normal_map_tangent_native'], ['ShaderNodeNormalMap', 'noise_normalized'],
   ['ShaderNodeBump', 'bump_passthrough_native'],
@@ -31,7 +32,9 @@ const installedNodeFamilies = [
   ['ShaderNodeTexCoord', 'uv_active'],
 ]
 const installedCompositorFamilies = ['CompositorNodeSetAlpha', 'CompositorNodePremulKey',
-  'CompositorNodeFilter', 'CompositorNodeNormal', 'CompositorNodeLumaMatte', 'CompositorNodeDiffMatte', 'CompositorNodeCrop']
+  'CompositorNodeFilter', 'CompositorNodeNormal', 'CompositorNodeLumaMatte', 'CompositorNodeDiffMatte',
+  'CompositorNodeColorSpill', 'CompositorNodeColorMatte', 'CompositorNodeChromaMatte', 'CompositorNodeCrop',
+  'CompositorNodePixelate', 'CompositorNodeDistanceMatte', 'CompositorNodeChannelMatte', 'CompositorNodeSplit']
 
 // Human labels for discovered modules. A missing label degrades the console
 // line to a derived one; it can never make a suite silently not run, which
@@ -50,6 +53,7 @@ const SUITE_LABELS = new Map([
   ['material_channel_bake_check.py', 'isolated channel-bake primitives contract'],
   ['material_bake_check.py', 'per-channel Material bake contract'],
   ['material_tsl_ir_check.py', 'per-channel TSL IR evidence contract'],
+  ['legacy_shader_hsv_check.py', 'actual legacy HSV availability and source admission'],
   ['automatic_material_translation_check.py', 'automatic live material and static channel export'],
   ['compositor_graph_check.py', 'connected compositor graph structure and animation refusals'],
   ['evaluated_geometry_check.py', 'budgeted evaluated-geometry realization contract'],
@@ -280,6 +284,8 @@ owner.data.materials.append(material)
 tree = material.node_tree
 root = next(node for node in tree.nodes if node.bl_idname == "ShaderNodeBsdfPrincipled")
 families = ${JSON.stringify(installedNodeFamilies)}
+if bpy.app.version[:3] == (4, 2, 0):
+    families.extend([(name, "color_convert") for name in ("ShaderNodeCombineHSV", "ShaderNodeSeparateHSV")])
 # These shared utility classes are absent in4.2 shader trees. Probe creation,
 # rather than assuming an RNA class can be used in this tree context.
 for utility in ("FunctionNodeInputBool", "FunctionNodeInputInt", "FunctionNodeInputVector"):
@@ -298,7 +304,7 @@ for node_type, expected in families:
     if node_type == "ShaderNodeCombineColor": node.mode = "HSL"
     if node_type == "ShaderNodeNormalMap": node.space = "TANGENT" if expected in {"normal_map_tangent_native", "noise_normalized"} else "WORLD"
     previous_engine = bpy.context.scene.render.engine
-    if node_type in {"ShaderNodeTangent", "ShaderNodeBump"} or (node_type == "ShaderNodeNormalMap" and expected in {"normal_map_tangent_native", "noise_normalized"}):
+    if node_type in {"ShaderNodeTangent", "ShaderNodeBump", "ShaderNodeTexMagic", "ShaderNodeCombineHSV", "ShaderNodeSeparateHSV"} or (node_type == "ShaderNodeNormalMap" and expected in {"normal_map_tangent_native", "noise_normalized"}):
         if node_type == "ShaderNodeTangent": node.direction_type = "UV_MAP"
         engines = {item.identifier for item in bpy.context.scene.render.bl_rna.properties["engine"].enum_items}
         bpy.context.scene.render.engine = "BLENDER_EEVEE" if "BLENDER_EEVEE" in engines else "BLENDER_EEVEE_NEXT"
@@ -427,6 +433,53 @@ try:
         assert "image-crop" in {op["kind"] for op in resized_program["ops"]}, resized_program
         crop.inputs["Alpha Crop"].default_value = True
     assert before == (len(compositor_tree.nodes), len(compositor_tree.links), len(bpy.data.node_groups))
+    pixelate = compositor_tree.nodes.new("CompositorNodePixelate")
+    compositor_tree.links.new(crop.outputs[0], pixelate.inputs["Color"])
+    compositor_tree.links.new(pixelate.outputs[0], sink.inputs[0])
+    pixelate_program = compositor_module.extract(compositor_scene)
+    assert pixelate_program["status"] == "extracted", pixelate_program
+    assert "pixelate" in {op["kind"] for op in pixelate_program["ops"]}, pixelate_program
+    distance_key = compositor_tree.nodes.new("CompositorNodeDistanceMatte")
+    compositor_tree.links.new(pixelate.outputs[0], distance_key.inputs["Image"])
+    compositor_tree.links.new(distance_key.outputs["Image"], sink.inputs[0])
+    distance_program = compositor_module.extract(compositor_scene)
+    assert distance_program["status"] == "extracted", distance_program
+    assert "distance-key" in {op["kind"] for op in distance_program["ops"]}, distance_program
+    channel_key = compositor_tree.nodes.new("CompositorNodeChannelMatte")
+    if modern_compositor:
+        channel_key.inputs["Minimum"].default_value = 0
+        channel_key.inputs["Maximum"].default_value = .5
+    else:
+        channel_key.limit_min, channel_key.limit_max = 0, .5
+    compositor_tree.links.new(distance_key.outputs["Image"], channel_key.inputs["Image"])
+    compositor_tree.links.new(channel_key.outputs["Image"], sink.inputs[0])
+    channel_program = compositor_module.extract(compositor_scene)
+    assert channel_program["status"] == "extracted", channel_program
+    assert "channel-key" in {op["kind"] for op in channel_program["ops"]}, channel_program
+    split = compositor_tree.nodes.new("CompositorNodeSplit")
+    compositor_tree.links.new(channel_key.outputs["Image"], split.inputs["Image"])
+    compositor_tree.links.new(split.outputs["Image"], sink.inputs[0])
+    split_program = compositor_module.extract(compositor_scene)
+    assert split_program["status"] == "extracted", split_program
+    assert "image-split" in {op["kind"] for op in split_program["ops"]}, split_program
+    if bpy.app.version[:3] == (4, 2, 0):
+        mapping = compositor_tree.nodes.new("CompositorNodeMapValue")
+        mapping.inputs["Value"].default_value = .25
+        mapping.offset[0], mapping.size[0] = .125, 2
+        final_alpha = compositor_tree.nodes.new("CompositorNodeSetAlpha")
+        compositor_tree.links.new(split.outputs["Image"], final_alpha.inputs["Image"])
+        compositor_tree.links.new(mapping.outputs["Value"], final_alpha.inputs["Alpha"])
+        compositor_tree.links.new(final_alpha.outputs[0], sink.inputs[0])
+        mapped_program = compositor_module.extract(compositor_scene)
+        assert mapped_program["status"] == "extracted", mapped_program
+        assert "map-value" in {op["kind"] for op in mapped_program["ops"]}, mapped_program
+    else:
+        try:
+            compositor_tree.nodes.new("CompositorNodeMapValue")
+        except RuntimeError:
+            pass
+        else:
+            raise AssertionError("Review newly creatable Map Value before claiming its installed capability")
 finally:
     bpy.data.scenes.remove(compositor_scene)
     if modern_compositor and compositor_tree is not None: bpy.data.node_groups.remove(compositor_tree)
@@ -463,7 +516,8 @@ print("##blendlink-addon-install " + json.dumps({
   const requiredCapabilities = installedNodeFamilies.map(([name, op]) => name + '#' + op)
   const validCapabilities = Array.isArray(capabilities) && new Set(capabilities).size === capabilities.length &&
     requiredCapabilities.every(capability => capabilities.includes(capability))
-  const optional = ['FunctionNodeInputBool', 'FunctionNodeInputInt', 'FunctionNodeInputVector']
+  const optional = ['FunctionNodeInputBool', 'FunctionNodeInputInt', 'FunctionNodeInputVector',
+    'ShaderNodeCombineHSV', 'ShaderNodeSeparateHSV']
   const validNodeFamilies = Array.isArray(tested) && tested.length === status.nodeFamilies &&
     new Set(tested).size === tested.length && required.every(name => tested.includes(name)) &&
     tested.every(name => required.includes(name) || optional.includes(name))

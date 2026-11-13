@@ -511,14 +511,13 @@
                 "socketSchema": "f0849f55ccb9c7b17cf2"
               }
             ],
-            "reviewedIncompleteScope": "Unsupported node: modern native schema exposes all nine color-space/key/limit MENU controls as enabled, creating a large selector cross-product. Bounded enum exploration is deliberately incomplete; observed mode union is a lower bound. No live implementation is claimed.",
             "scope": "Reachable enum, active MENU socket and semantic writable node/color-ramp/mapping boolean states in the first creatable context; editor flags and structural mute do not multiply menu states. Other context defaults recorded separately. Inactive socket menu cross-products, numeric/socket-boolean values, authored group interfaces, ID bindings and point handles are not enumerated. All states are counted/digested; representative states cover distinct socket schemas.",
-            "stateBudget": 16,
-            "stateCount": 16,
-            "stateDigest": "04593e96afcf95bb3e05e8800c19757e709d39cb63b85491e0784064b7a33f52",
-            "status": "incomplete",
-            "transitionBudget": 2048,
-            "transitions": 250
+            "stateBudget": 2048,
+            "stateCount": 72,
+            "stateDigest": "b8cdbda77eb0ddaa5299f952af5584a3534d96cab32e2d8586af10eff5df992e",
+            "status": "complete",
+            "transitionBudget": 100000,
+            "transitions": 1152
           },
           "enums": {
             "color_space": {

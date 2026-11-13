@@ -73,6 +73,12 @@ Lift/Gamma/Gain controls through a different color model than modern socket-base
 Color Balance. Legacy compositor rounding also differs at negative half values.
 The exporter records these distinctions for the browser runtime.
 
+The current HDR audit has reproduced amplified CPU Difference Key and Luminance
+Key Image-output errors with authored alpha `2^60`. Their ordinary-value
+comparisons do not certify this boundary; corrections remain under native
+differential test. These are partial ports, and complete node parity remains
+unfinished.
+
 ## How a port earns support
 
 The native inventory creates the nodes in isolated Blender processes and
@@ -106,6 +112,15 @@ These are node semantics, separate from render-target quantization. The
 checks native 4.2, 5.2 and 5.3 graphs on both browser backends, including linked
 inputs, endpoints, and constant procedural inputs. Unknown native folding
 semantics refuse instead of silently choosing a different color function.
+
+Legacy shader Combine HSV and Separate HSV are live on EEVEE 4.2.0 only.
+They expose H/S/V components without an Alpha socket. Blender 5.2/5.3 removes
+these classes and upgrades an actual older file to modern Color nodes in HSV
+mode; that migration is verified separately from numeric support. Cycles uses
+baking. The [legacy HSV experiment](../experiments/legacy-shader-hsv/README.md)
+records native Metal and four browser API checks, independent carrier
+calibration, and saved-file migration evidence. Fresh native OpenGL qualification
+remains pending; Metal measurements do not qualify another native backend.
 
 Run `npm run test:node-parity` with Blender and the version-matched Playwright
 Chromium installed to regenerate native CPU references and compare the built

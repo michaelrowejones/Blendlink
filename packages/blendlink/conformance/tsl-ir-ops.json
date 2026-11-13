@@ -53,6 +53,7 @@
     "tex_gradient",
     "tex_image",
     "tex_magic",
+    "tex_magic_native",
     "tex_voronoi",
     "tex_wave",
     "tex_white_noise",

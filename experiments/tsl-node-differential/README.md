@@ -196,11 +196,20 @@ compiler gained, each family behind its own cells:
 - **Color utilities**: Invert, Gamma, Bright/Contrast, RGB→BW,
   Hue/Saturation, Separate/Combine HSV.
 - **Deterministic textures**: Checker (byte-exact), Gradient (all seven
-  types), Magic (trig cascade), Wave (all types/profiles + distortion
+  types), legacy serialized Magic (compatibility only), Wave (all types/profiles + distortion
   through the ported fractal).
 - **The hash family**: White Noise byte-exact through the ported Jenkins
   lookup3 on raw float bits, and Voronoi F1 (2D/3D, Distance + Color) at
   3e-5 through Blender's own `hash_pcg3d_i`.
+
+The two `tex-magic` / `tex-magic-fac` cells now have explicit
+`legacy-ir` / `legacy-serialized-runtime-only` scope. They keep fixed old
+`tex_magic` documents, the original native graphs, and the historical budgets.
+Reference generation verifies the current producer's named Cycles refusal;
+reused references without that record are rejected. These compatibility cells
+do not establish a fresh Cycles source port. Fresh EEVEE Magic qualification is
+the separate [native Magic gate](../magic-node-differential/README.md), with its
+own calibrated raw-unit precision budget and version/profile limits.
 
 The straggler batch (Noise Color, Voronoi SMOOTH_F1, Magic Fac) added
 four more measured lessons:

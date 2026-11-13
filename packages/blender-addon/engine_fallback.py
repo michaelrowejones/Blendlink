@@ -5,9 +5,11 @@ _ENGINE_SENSITIVE = {
     "ShaderNodeBlackbody", "ShaderNodeWavelength",
     "ShaderNodeFloatCurve", "ShaderNodeVectorCurve", "ShaderNodeRGBCurve",
     "ShaderNodeValToRGB", "ShaderNodeSeparateColor", "ShaderNodeCombineColor",
+    "ShaderNodeSeparateHSV", "ShaderNodeCombineHSV",
     "ShaderNodeRGBToBW",
     "ShaderNodeTexImage",
     "ShaderNodeTexNoise",
+    "ShaderNodeTexMagic",
     "ShaderNodeVectorTransform",
     "ShaderNodeNormalMap", "ShaderNodeNormal", "ShaderNodeBump", "ShaderNodeTangent",
 }

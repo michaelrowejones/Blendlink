@@ -21,7 +21,7 @@ def _scalar_structure(expression):
     if operation in {'noise', 'noise_fractal', 'noise_normalized', 'noise_varying', 'noise_varying_native', 'tex_white_noise'}:
         return expression.get('output') != 'color'
     if operation in {'tex_image', 'texture_ref'}: return expression.get('output') == 'alpha'
-    if operation == 'tex_checker': return expression.get('output') == 'fac'
+    if operation in {'tex_checker','tex_magic_native'}: return expression.get('output') == 'fac'
     if operation == 'ramp_lut': return expression.get('channel') == 'alpha'
     return False
 

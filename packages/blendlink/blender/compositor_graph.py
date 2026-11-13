@@ -47,15 +47,22 @@ native_gpu_profile = _sibling("compositor_gpu").native_gpu_profile
 whitepoint_properties = _sibling("compositor_whitepoint").whitepoint_properties
 normalize_blur = _sibling("compositor_blur").normalize_blur
 normalize_filter = _sibling("compositor_filter").normalize_filter
+normalize_pixelate = _sibling("compositor_pixelate").normalize_pixelate
+validate_pixelate_domains = _sibling("compositor_pixelate").validate_pixelate_domains
 normalize_normal = _sibling("compositor_normal").normalize_normal
 normalize_alpha_conversion = _sibling("compositor_alpha_conversion").normalize_alpha_conversion
 normalize_luminance_key = _sibling("compositor_luminance_key").normalize_luminance_key
 normalize_difference_key = _sibling("compositor_difference_key").normalize_difference_key
+normalize_distance_key = _sibling("compositor_distance_key").normalize_distance_key
 normalize_chroma_key = _sibling("compositor_chroma_key").normalize_chroma_key
+normalize_channel_key = _sibling("compositor_channel_key").normalize_channel_key
+normalize_map_value = _sibling("compositor_map_value").normalize_map_value
 normalize_spill = _sibling("compositor_spill").normalize_spill
 normalize_color_key = _sibling("compositor_color_key").normalize_color_key
 normalize_static_image = _sibling("compositor_image").normalize_image
 normalize_crop = _sibling("compositor_crop").normalize_crop
+normalize_split = _sibling("compositor_split").normalize_split
+validate_split_domains = _sibling("compositor_split").validate_split_domains
 validate_crop_domains = _sibling("compositor_crop").validate_crop_domains
 validate_static_image_graph = _sibling("compositor_image").validate_image_graph
 
@@ -81,7 +88,10 @@ TYPES = {
     "CompositorNodePremulKey": "convert-alpha",
     "CompositorNodeLumaMatte": "luminance-key",
     "CompositorNodeDiffMatte": "difference-key",
+    "CompositorNodeDistanceMatte": "distance-key",
     "CompositorNodeChromaMatte": "chroma-key",
+    "CompositorNodeChannelMatte": "channel-key",
+    "CompositorNodeMapValue": "map-value",
     "CompositorNodeColorSpill": "color-spill",
     "CompositorNodeColorMatte": "color-key",
     "CompositorNodeExposure": "exposure",
@@ -122,12 +132,14 @@ TYPES = {
     "CompositorNodeScale": "image-affine",
     "CompositorNodeFlip": "flip",
     "CompositorNodeFilter": "filter",
+    "CompositorNodePixelate": "pixelate",
     "CompositorNodeNormal": "normal-direction",
     "CompositorNodeSwitch": "switch",
     "CompositorNodeGlare": "glare",
     "CompositorNodeRLayers": "render-pass",
     "CompositorNodeImage": "image-input",
     "CompositorNodeCrop": "alpha-crop",
+    "CompositorNodeSplit": "image-split",
 }
 PROPERTIES = (
     "operation",
@@ -420,9 +432,15 @@ def extract(scene):
                 if node.bl_idname == "CompositorNodeImage":
                     normalize_static_image(node, socket, op, scene, result, static_image_cache,
                         lambda incoming, message: fail("unsupported-static-image", path, node, incoming, message))
+                elif node.bl_idname == "CompositorNodePixelate":
+                    normalize_pixelate(node, op, scene, lambda incoming: input_value(incoming, ctx),
+                        lambda incoming, message: fail("unsupported-pixelate-domain", path, node, incoming, message))
                 elif node.bl_idname == "CompositorNodeCrop":
                     normalize_crop(node, op, scene, lambda incoming: input_value(incoming, ctx),
                         lambda incoming, message: fail("unsupported-crop-domain", path, node, incoming, message))
+                elif node.bl_idname == "CompositorNodeSplit":
+                    normalize_split(node, socket, op, scene, lambda incoming: input_value(incoming, ctx), is_single_value,
+                        lambda incoming, message: fail("unsupported-split-domain", path, node, incoming, message))
                 elif node.bl_idname in ("ShaderNodeMath", "CompositorNodeMath"):
                     for incoming in node.inputs:
                         if not incoming.enabled or getattr(incoming, "is_unavailable", False):
@@ -450,6 +468,9 @@ def extract(scene):
                                         "CompositorNodeColorCorrection", "CompositorNodePosterize"):
                     normalize_color_operation(node, op, lambda incoming: input_value(incoming, ctx),
                                               getattr(scene.render, "compositor_device", "CPU"))
+                elif node.bl_idname == "CompositorNodeMapValue":
+                    normalize_map_value(node, socket, op, lambda incoming: input_value(incoming, ctx),
+                        lambda incoming, message: fail("unsupported-map-value", path, node, incoming, message), result["ops"])
                 elif node.bl_idname in ("ShaderNodeMapRange", "CompositorNodeMapRange"):
                     vector = getattr(node, "data_type", "FLOAT") == "FLOAT_VECTOR"
                     interpolation = getattr(node, "interpolation_type", "LINEAR")
@@ -598,6 +619,10 @@ def extract(scene):
                     normalize_difference_key(node, socket, op, scene, lambda incoming: input_value(incoming, ctx),
                         _sibling("compositor_math").numeric_socket_bounds,
                         lambda incoming, message: fail("unsupported-difference-key", path, node, incoming, message))
+                elif node.bl_idname == "CompositorNodeDistanceMatte":
+                    normalize_distance_key(node, socket, op, scene, lambda incoming: input_value(incoming, ctx),
+                        is_single_value,
+                        lambda incoming, message: fail("unsupported-distance-key", path, node, incoming, message))
                 elif node.bl_idname == "CompositorNodeColorMatte":
                     normalize_color_key(node, socket, op, lambda incoming: input_value(incoming, ctx),
                         _sibling("compositor_math").numeric_socket_bounds,
@@ -606,6 +631,9 @@ def extract(scene):
                     normalize_chroma_key(node, socket, op, scene, lambda incoming: input_value(incoming, ctx),
                         _sibling("compositor_math").numeric_socket_bounds,
                         lambda incoming, message: fail("unsupported-chroma-key", path, node, incoming, message))
+                elif node.bl_idname == "CompositorNodeChannelMatte":
+                    normalize_channel_key(node, socket, op, scene, lambda incoming: input_value(incoming, ctx), result["ops"],
+                        lambda incoming, message: fail("unsupported-channel-key", path, node, incoming, message))
                 elif node.bl_idname == "CompositorNodeColorSpill":
                     normalize_spill(node, op, lambda incoming: input_value(incoming, ctx),
                         lambda incoming, message: fail("unsupported-color-spill", path, node, incoming, message))
@@ -850,6 +878,18 @@ def extract(scene):
         if not modern and not sink.use_alpha:
             result["outputAlpha"] = "legacy-composite-opaque-v1"
         result["output"] = input_value(terminal, ctx)
+        split_conflict = validate_split_domains(result)
+        if split_conflict:
+            op, message = split_conflict
+            result["diagnostics"].append({"code": "unsupported-split-domain", "path": op["source"]["path"],
+                "node": op["source"]["node"], "socket": op["source"]["output"], "message": message})
+            raise Unsupported()
+        pixelate_conflict = validate_pixelate_domains(result)
+        if pixelate_conflict:
+            op, message = pixelate_conflict
+            result["diagnostics"].append({"code": "unsupported-pixelate-domain", "path": op["source"]["path"],
+                "node": op["source"]["node"], "socket": op["source"]["output"], "message": message})
+            raise Unsupported()
         crop_conflict = validate_crop_domains(result, single_values)
         if crop_conflict:
             op, message = crop_conflict

@@ -1,7 +1,8 @@
 // MTLX-TSL-001 TSL side: cells render through the PRODUCTION pipeline —
 // the IR emitted by tsl_ir.py from the real Blender graphs, built into TSL
-// by the packaged tslNodeRecipe module. A cell therefore proves the exact
-// compiler mapping, not a lookalike. Only diagnostic cells without an IR
+// by the packaged tslNodeRecipe module. Explicit legacy-ir cells instead
+// consume fixed old documents and establish serialized compatibility only.
+// Fresh cells prove the compiler mapping, not a lookalike. Diagnostic cells without an IR
 // route (Voronoi, until the Cycles hash is ported) keep hand-written TSL.
 // No canvas, no tone map, no sRGB anywhere — the byte-exact constant
 // calibration cell proves it.
@@ -9,7 +10,7 @@ import * as THREE from 'three'
 import { WebGPURenderer, MeshBasicNodeMaterial } from 'three/webgpu'
 import { mx_worley_noise_float, normalize, uv, vec3 } from 'three/tsl'
 import * as recipe from '@blendlink-tsl-recipe'
-const { buildTslColorNode, createTslBuildResources } = recipe
+const { buildTslColorNode, createTslBuildResources, validateTslMagicCoordinates } = recipe
 
 // The view-dependent cell camera contract, mirrored from reference.py:
 // camera at (0, 0, 2) looking down -Z at the quad spanning [-1, 1]^2 at
@@ -135,6 +136,7 @@ window.__tslDiffRun = async (
       pendingResources = createTslBuildResources()
       colorNode = buildTslColorNode(document, {
         resources: pendingResources,
+        validateMagicCoordinates: expression => validateTslMagicCoordinates(expression,state.mesh,{activeUvChannel:0,generatedTexspace:{location:[0,0,0],size:[1,1,1]}}),
         preparedNoiseFields: noisePreparation,
         // Native tile fixtures explicitly author their active-render map on UV0.
         activeUvChannel: 0,

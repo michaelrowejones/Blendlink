@@ -549,6 +549,96 @@
         "remainingLimits": "Unknown native GPU backends and whole-scene lighting are not blanket parity claims."
       }
     },
+    "shader:ShaderNodeCombineHSV": {
+      "category": "partial",
+      "limits": "Actual legacy H/S/V combiner, EEVEE 4.2.0 only, with no Alpha socket. Uses the qualified native Color HSV helper through existing color_convert; existing runtime math is unchanged. Both legacy classes are absent in 5.2.0/5.3.0; actual saved-file migration upgrades them to modern Color HSV and preserves authored defaults/links. Fresh Cycles uses baking, and unknown source versions refuse. Automatic EEVEE-to-Cycles fallback cannot infer evaluator equivalence. Native Metal passes the 50-case shared corpus (46 bit-identical legacy/modern conversions) on physical/software WebGPU/WebGL2; OpenGL source qualification remains pending actual hosted evidence. Four independent carrier/input controls and a calibrated residual preserve the raw 6e-6 kernel budget; there is no arbitrary graph/threshold amplification claim.",
+      "runtimePath": "packages/blendlink/src/tslColorConversion.ts",
+      "runtimeOps": [
+        "color_convert"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/color_ir.py",
+          "anchor": "def emit_color_conversion"
+        },
+        {
+          "path": "packages/blender-addon/tests/legacy_shader_hsv_check.py"
+        },
+        {
+          "path": "experiments/legacy-shader-hsv/README.md"
+        },
+        {
+          "path": "experiments/legacy-shader-hsv/reference.py"
+        },
+        {
+          "path": "experiments/legacy-shader-hsv/migration.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "verification": {
+        "nativeNumericVersions": [
+          "4.2.0"
+        ],
+        "actualMigrationVersions": [
+          "5.2.0",
+          "5.3.0"
+        ],
+        "nativeSourceBackend": "METAL",
+        "sharedCorpusCases": 50,
+        "legacyModernBitIdenticalConversions": 46,
+        "builtBrowserReadbacks": 200,
+        "maximumRawConversionError": 3.814697265625e-06,
+        "rawKernelBudget": 6e-06,
+        "independentCarrierAllowance": "(2^-10/1024 + 2^-22) / .125",
+        "scope": "Shared legacy HSV conversion corpus, not a per-node percentage; modern class absence and file migration are separate source/schema proofs."
+      }
+    },
+    "shader:ShaderNodeSeparateHSV": {
+      "category": "partial",
+      "limits": "Actual legacy H/S/V separator, EEVEE 4.2.0 only, with no Alpha socket. Uses the qualified native Color HSV helper through existing color_convert; existing runtime math is unchanged. Both legacy classes are absent in 5.2.0/5.3.0; actual saved-file migration upgrades them to modern Color HSV and preserves authored defaults/links. Fresh Cycles uses baking, and unknown source versions refuse. Automatic EEVEE-to-Cycles fallback cannot infer evaluator equivalence. Native Metal passes the 50-case shared corpus (46 bit-identical legacy/modern conversions) on physical/software WebGPU/WebGL2; OpenGL source qualification remains pending actual hosted evidence. Four independent carrier/input controls and a calibrated residual preserve the raw 6e-6 kernel budget; there is no arbitrary graph/threshold amplification claim.",
+      "runtimePath": "packages/blendlink/src/tslColorConversion.ts",
+      "runtimeOps": [
+        "color_convert"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blender-addon/color_ir.py",
+          "anchor": "def emit_color_conversion"
+        },
+        {
+          "path": "packages/blender-addon/tests/legacy_shader_hsv_check.py"
+        },
+        {
+          "path": "experiments/legacy-shader-hsv/README.md"
+        },
+        {
+          "path": "experiments/legacy-shader-hsv/reference.py"
+        },
+        {
+          "path": "experiments/legacy-shader-hsv/migration.py"
+        }
+      ],
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "verification": {
+        "nativeNumericVersions": [
+          "4.2.0"
+        ],
+        "actualMigrationVersions": [
+          "5.2.0",
+          "5.3.0"
+        ],
+        "nativeSourceBackend": "METAL",
+        "sharedCorpusCases": 50,
+        "legacyModernBitIdenticalConversions": 46,
+        "builtBrowserReadbacks": 200,
+        "maximumRawConversionError": 3.814697265625e-06,
+        "rawKernelBudget": 6e-06,
+        "independentCarrierAllowance": "(2^-10/1024 + 2^-22) / .125",
+        "scope": "Shared legacy HSV conversion corpus, not a per-node percentage; modern class absence and file migration are separate source/schema proofs."
+      }
+    },
     "shader:ShaderNodeCombineRGB": {
       "category": "supported",
       "limits": "Legacy RGB component combiner.",
@@ -1042,23 +1132,34 @@
     },
     "shader:ShaderNodeTexMagic": {
       "category": "partial",
-      "limits": "Color/Factor with native turbulence depth; numerical tolerances and upstream coordinate bounds apply.",
-      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "limits": "Fresh EEVEE tex_magic_native on verified Blender 4.2.0/5.2.0/5.3.0: Color/Factor, depths 0..10, static or independently clamped scalar Scale with |Scale| <=8, and Distortion zero, [.25,1] or [-.5,-.25]. Exact constant Float32 plumbing only; modern MF additionally requires exact constant coordinates within magnitude 16. Shader coordinates require actual static mesh/UV/texspace or qualified opaque nearest Non-Color/Raw float-image evidence and scaled magnitude <=32. Shader-coordinate Mapping/MINMAX Clamp, deformation, instancing, animated mesh data, unknown source versions/backends and unqualified controls refuse. No raw Magic unit-range claim; an authored Clamp can restore bounds. Metal-source 4.2.0/5.2.0/5.3.0 passes 2,464 built physical/software WebGPU/WebGL2 readbacks at unchanged raw 2e-5 kernel budget plus independently calibrated residual quantization. Actual Final exports/visitors and packaged ZIP imports pass all three versions. OpenGL source precision remains pending fresh hosted qualification; Metal evidence does not qualify it. Fresh Cycles uses baking; old serialized tex_magic retains its legacy behavior. Unknown EEVEE domains cannot silently switch to a Cycles bake.",
+      "runtimePath": "packages/blendlink/src/tslMagicNodes.ts",
       "runtimeOps": [
-        "tex_magic"
+        "tex_magic_native"
       ],
       "modes": {},
       "evidence": [
         {
-          "path": "packages/blender-addon/tsl_ir.py",
-          "anchor": "def emit_output"
+          "path": "packages/blender-addon/magic_ir.py",
+          "anchor": "def emit_magic"
         },
         {
-          "path": "packages/blendlink/src/tslNodeRecipe.ts",
-          "anchor": "case 'tex_magic':"
+          "path": "packages/blender-addon/magic_bounds.py",
+          "anchor": "def validate_owner"
         },
         {
-          "path": "experiments/tsl-node-differential/cells.json"
+          "path": "packages/blendlink/src/tslMagicNodes.ts",
+          "anchor": "export function buildTslMagicNode"
+        },
+        {
+          "path": "packages/blendlink/src/tslMagicBounds.ts",
+          "anchor": "export function createMagicCoordinateProof"
+        },
+        {
+          "path": "packages/blender-addon/tests/magic_translation_check.py"
+        },
+        {
+          "path": "experiments/magic-node-differential/README.md"
         }
       ],
       "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
@@ -1582,7 +1683,19 @@
           "pixelPayloadExcluded": true,
           "originalKernelAndImageVectorRetained": true,
           "localHighLevelLifecycleCases": 14,
-          "freshHostedTiming": "pending",
+          "freshHostedTiming": {
+            "commit": "98ff98aff6013889ac2d0755f3f209b7868c1707",
+            "run": 43366540747,
+            "job": 131692158271,
+            "artifact": 14011127158,
+            "lifecycleCases": 14,
+            "maximumSliceMilliseconds": 11,
+            "maximumRafGapMilliseconds": 16.80000000000109,
+            "maximumCancellationMilliseconds": 20.400000000023283,
+            "longTasks": 0,
+            "originalAssertionsUnchanged": true,
+            "allNativeCanaryJobsPassed": 16
+          },
           "priorHostedLongTasksMilliseconds": [
             68,
             70
@@ -6871,6 +6984,419 @@
         "installedReinstallToolsExportOffline52": true,
         "modernCpuResizeCases": 138
       }
+    },
+    "compositor:CompositorNodePixelate": {
+      "category": "partial",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "pixelate"
+      ],
+      "limits": "Measured Blender 4.2/5.2/5.3 CPU/GPU block means with fixed integer Size 1..16, including partial edge blocks, original signed/HDR RGBA and alpha averaging. Legacy pixel_size and modern Size sockets normalize separately. Size1 and actual single values pass through without allocating Pixelate targets. Reduced Float32 block targets make total sampling work linear in input pixels. Actual unshifted render extents 1..8192 are independently validated on resize/DPR changes, with source mismatch refusal/recovery. Groups, Exposure/Posterize, Blur before/after, cascades and actual EEVEE Render Layers are measured; owned targets restore MRT/clear/viewport/scissor state and dispose fully. Linked Size, render borders, Half precision, scalar/vector conversions, static Images and transformed/resized input windows remain refused. Native GPU qualification is Metal; fresh hosted OpenGL proof remains pending. This is not complete renderer identity at every downstream threshold.",
+      "renderer": "WebGPURenderer with WebGPU or WebGL2 backend",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_pixelate.py"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorPixelate.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorPixelate.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_pixelate_check.py"
+        },
+        {
+          "path": "experiments/compositor-pixelate-differential/README.md"
+        }
+      ],
+      "verification": {
+        "nativeVersions": [
+          "4.2.0",
+          "5.2.0",
+          "5.3.0"
+        ],
+        "nativeBackend": "METAL",
+        "nativeCpuGpuCases": 276,
+        "builtGraphChecks": 1104,
+        "maximumAbsoluteError": 7.152557373046875e-07,
+        "maximumPasses": 7,
+        "remainingTexturesAfterDisposal": 0,
+        "sourcePreserved": true,
+        "freshHostedOpenGl": "pending"
+      }
+    },
+    "compositor:CompositorNodeSplit": {
+      "category": "partial",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "image-split"
+      ],
+      "modes": {
+        "axis": {
+          "partial": ["X", "Y"]
+        }
+      },
+      "limits": "Real Image-output Split on measured Blender 4.2/5.2/5.3. Legacy X/Y fixed integer percentage 0..100 preserves separate CPU truncated versus GPU Float32 boundaries, including odd extents. Modern fixed Position in [0,1] and Rotation within one full turn preserve the native default diagonal and producing CPU sinf/cosf coefficients with staged Float32 projection. Nonzero Position/normal components below 2^-50 refuse. CPU source profiles and measured modern Metal GPU profiles are distinct; non-Metal modern GPU sources retain an independently validated hashed native Image refusal plus an input-only control, never numerical Split coverage. Matching finite unshifted canvases within 1..8192, signed/HDR RGBA, alpha, groups, scalar-to-color input, Blur/Flip/Exposure composition, actual EEVEE Render Layers and existing CPU static Image contracts are measured. Constant-only, unequal/mixed/shifted/resized windows, linked modern controls, render borders, Half precision and unmeasured Blender versions remain refused. No previous opcode changes meaning.",
+      "renderer": "WebGPURenderer with WebGPU or WebGL2 backend",
+      "evidence": [
+        {"path": "packages/blendlink/blender/compositor_split.py"},
+        {"path": "packages/blendlink/blender/compositor_graph.py", "anchor": "normalize_split(node, socket"},
+        {"path": "packages/blendlink/src/tslCompositorSplit.ts"},
+        {"path": "packages/blendlink/src/tslCompositorSplit.test.ts"},
+        {"path": "packages/blender-addon/tests/compositor_split_check.py"},
+        {"path": "experiments/compositor-split-differential/README.md"},
+        {"path": "scripts/lib/split-source-profile.mjs"},
+        {"path": "scripts/split-source-profile.test.mjs"}
+      ],
+      "verification": {
+        "nativeVersions": ["4.2.0", "5.2.0", "5.3.0"],
+        "nativeBackend": "METAL",
+        "nativeCpuGpuCases": 594,
+        "builtGraphChecks": 1188,
+        "maximumAbsoluteError": 3.5762786865234375e-7,
+        "directSelectionBitMismatches": 0,
+        "maximumPasses": 5,
+        "remainingTexturesAfterDisposal": 0,
+        "sourcePreserved": true,
+        "modernGpuNonMetal": "source-profile-refused; numericalSplitCases=0; independentControls=1",
+        "freshHostedCpuAndLegacyGpu": "pending"
+      }
+    },
+    "compositor:CompositorNodeDistanceMatte": {
+      "category": "partial",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "distance-key"
+      ],
+      "limits": "CPU-source RGB Euclidean Distance Key on exact measured Blender 4.2.0/5.2.0/5.3.0. Preserves strict legacy versus modern boundaries, original signed/HDR RGBA, ignored Key alpha, exact CPU square root and a Distance-only correctly rounded ratio. Fixed Tolerance/Falloff in [0,1], Falloff zero or >=1/64, positive Tolerance >=2^-50; modern zero Tolerance refuses and legacy zero Tolerance permits only zero Falloff. The latter bypasses the metric. Tiny squared-distance FTZ otherwise amplifies under HDR alpha; no epsilon or wider tolerance is used. Exact integer sqrt and bounded nonnegative ratio are distinct from shared division, generic Math and Noise behavior. Source and runtime evaluator/shape guards retain actual modern GPU single-value CPU folding only. GPU fields and YCC remain refused; no CPU/browser proof counts as native GPU-field qualification. Groups, real EEVEE inputs, both-field thresholds, power-of-two HDR alpha, repeated resize/DPR, unchanged caller state and cleanup are measured. Input nodes, output kind and fixed settings are snapshotted before deferred construction. Local physical Metal and software SwiftShader/LLVM both browser APIs are independently recorded; fresh hosted CPU qualification of this correction remains pending.",
+      "renderer": "WebGPURenderer with WebGPU or WebGL2 backend",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_distance_key.py"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorDistanceKey.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorDistanceKey.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_distance_key_check.py"
+        },
+        {
+          "path": "experiments/compositor-distance-key-differential/README.md"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorCpuSqrt.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorCpuDistanceRatio.ts"
+        },
+        {
+          "path": "experiments/compositor-distance-key-differential/native_sqrt.py"
+        },
+        {
+          "path": "experiments/compositor-distance-key-differential/native_ratio.py"
+        },
+        {
+          "path": "scripts/distance-arithmetic-policy.test.mjs"
+        }
+      ],
+      "verification": {
+        "nativeVersions": [
+          "4.2.0",
+          "5.2.0",
+          "5.3.0"
+        ],
+        "nativeCases": 146,
+        "numericalDistancePrograms": 134,
+        "independentControls": 12,
+        "modernGpuConstantCpuFoldCases": 4,
+        "nativeGpuFieldCases": 0,
+        "adapterApiProfiles": [
+          "physical Metal WebGPU",
+          "physical ANGLE Metal WebGL2",
+          "software SwiftShader/LLVM WebGPU",
+          "software SwiftShader/LLVM WebGL2"
+        ],
+        "builtGraphChecks": 584,
+        "maximumAbsoluteError": 0,
+        "maximumPasses": 1,
+        "maximumFragmentSourceBytes": 9453,
+        "shaderSourceGateBytes": 16000,
+        "remainingTexturesAfterDisposal": 0,
+        "sourcePreserved": true,
+        "freshHostedCpu": "pending",
+        "zeroToleranceAudit": {
+          "modernZeroToleranceRefused": true,
+          "legacyZeroTolerancePositiveFalloffRefused": true,
+          "legacyZeroZeroBypassRetained": true,
+          "physicalUpstreamFtzImageAlphaCounterexample": 43.36808776855469
+        },
+        "independentArithmetic": {
+          "nativePrimitiveValues": 98304,
+          "mathematicalBitControls": 73,
+          "adapterApiProfiles": 4,
+          "totalPrimitiveReadbacks": 393508,
+          "float32BitMismatches": 0,
+          "runtimeProof": "immutable production TypeScript helper source; separate from built Distance graph proof",
+          "nativeSourceEvaluator": "CPU",
+          "sharedDivisionChanged": false,
+          "hdrAlphaOldDivisionCounterexample": 549755813888,
+          "freshHosted52": "pending"
+        }
+      },
+      "modes": {
+        "channel": {
+          "partial": [
+            "RGB"
+          ],
+          "unsupported": [
+            "YCC"
+          ]
+        },
+        "inputs:Color Space": {
+          "partial": [
+            "RGB"
+          ],
+          "unsupported": [
+            "YCC"
+          ]
+        }
+      }
+    },
+    "compositor:CompositorNodeChannelMatte": {
+      "category": "partial",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "channel-key"
+      ],
+      "modes": {
+        "color_space": {
+          "partial": [
+            "RGB"
+          ],
+          "unsupported": [
+            "HSV",
+            "YUV",
+            "YCC"
+          ]
+        },
+        "matte_channel": {
+          "partial": [
+            "R",
+            "G",
+            "B"
+          ]
+        },
+        "limit_method": {
+          "partial": [
+            "MAX",
+            "SINGLE"
+          ]
+        },
+        "limit_channel": {
+          "partial": [
+            "R",
+            "G",
+            "B"
+          ]
+        },
+        "inputs:Color Space": {
+          "partial": [
+            "RGB"
+          ],
+          "unsupported": [
+            "HSV",
+            "YUV",
+            "YCbCr"
+          ]
+        },
+        "inputs:RGB Key Channel": {
+          "partial": [
+            "R",
+            "G",
+            "B"
+          ]
+        },
+        "inputs:RGB Limit Channel": {
+          "partial": [
+            "R",
+            "G",
+            "B"
+          ]
+        },
+        "inputs:Limit Method": {
+          "partial": [
+            "Max",
+            "Single"
+          ]
+        },
+        "inputs:HSV Key Channel": {
+          "unsupported": [
+            "H",
+            "S",
+            "V"
+          ]
+        },
+        "inputs:HSV Limit Channel": {
+          "unsupported": [
+            "H",
+            "S",
+            "V"
+          ]
+        },
+        "inputs:YUV Key Channel": {
+          "unsupported": [
+            "Y",
+            "U",
+            "V"
+          ]
+        },
+        "inputs:YUV Limit Channel": {
+          "unsupported": [
+            "Y",
+            "U",
+            "V"
+          ]
+        },
+        "inputs:YCbCr Key Channel": {
+          "unsupported": [
+            "Y",
+            "Cb",
+            "Cr"
+          ]
+        },
+        "inputs:YCbCr Limit Channel": {
+          "unsupported": [
+            "Y",
+            "Cb",
+            "Cr"
+          ]
+        }
+      },
+      "limits": "RGB Channel Key with R/G/B key channels and MAX/SINGLE limit methods. Fixed ordered Minimum/Maximum in [0,1] with power-of-two Float32 span [1/64,1]; Value and constant group literals are independently verified. Preserves strict endpoints, native alpha cap and whole-RGBA Image multiplication, including signed/HDR alpha. CPU source compositing and measured Metal GPU source profiles are distinct; modern CPU-folded single values retain CPU staging, with separately measured linked-Minimum behavior on 5.2 Metal. Non-Metal GPU sources record two native hashed refusals and an independent control, never numerical Channel Key coverage. HSV/YUV/YCbCr, other/collapsed/reversed ramps, changing controls and unsupported image domains remain refused. Semantic menu enumeration covers all48 native active selector combinations on exact5.2.0/5.3.0, preserves the full52488-state observed menu union and raw defaults, and falls back to generic enumeration for unknown versions/schemas/options/states. No global completeness check is weakened.",
+      "renderer": "WebGPURenderer with WebGPU or WebGL2 backend",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_channel_key.py"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorChannelKey.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorChannelKey.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_channel_key_check.py"
+        },
+        {
+          "path": "experiments/compositor-channel-key/README.md"
+        },
+        {
+          "path": "experiments/channel-matte-audit/README.md"
+        },
+        {
+          "path": "experiments/channel-matte-audit/check_native.py"
+        }
+      ],
+      "verification": {
+        "nativeVersions": [
+          "4.2.0",
+          "5.2.0",
+          "5.3.0"
+        ],
+        "nativeCpuGpuCases": 1074,
+        "builtGraphChecks": 4296,
+        "maximumAbsoluteError": 2.384185791015625e-07,
+        "exactAlphaMaximumError": 0,
+        "freshHostedCpu": "pending",
+        "freshHostedGpuSourceProfile": "pending",
+        "semanticSelectorStates": 48,
+        "semanticTransitions": 540,
+        "fullCartesianControlStates": 52488,
+        "fullCartesianControlSeconds": 390.65,
+        "fullCartesianControlBytes": 250305660,
+        "semanticCatalogSeconds": 11.93,
+        "semanticCatalogBytes": 4939662
+      }
+    },
+    "compositor:CompositorNodeMapValue": {
+      "category": "partial",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "map-value"
+      ],
+      "limits": "Legacy Blender 4.2.0 scalar Map Value only; actual root/group creation is absent in 5.2.0/5.3.0, not a modern Map Range alias. Offset adds before Size; strict Minimum then Maximum preserves reversed/collapsed bounds, with Maximum winning. Fixed one-component controls retain native [-1000,1000], normal Float32/zero values and inactive-limit semantics. Fresh finite-normal-or-zero-v1 certification independently derives actual literal/Value/group defaults or upstream Math Minimum/Maximum field bounds wholly away from zero; bounded RGB means and same-device ancestor mappings are rechecked. Every mean/add/multiply stage must remain finite and normal-or-zero; field cancellation uses a conservative quantum/Size proof or a stronger interval bound. Raw unbounded Render Layers, unsafe underflow/overflow and unqualified upstream scalar conversions refuse; no compiler-inserted clamp or tolerance widening. Legacy CPU mean is staged sum then correctly rounded /3; measured Metal GPU uses Float32 reciprocal multiplication and requires Offset zero for implicit color/vector means. Scalar GPU inputs retain nonzero Offset. Other GPU backends retain a native-rendered pinned refusal and an independent input-only control, never numerical Map Value coverage. Groups, fixed vector defaults, signed/HDR values, alpha replacement and cascades are measured. Generic image-domain restrictions remain separate; fixed-Image caching is not enabled.",
+      "renderer": "WebGPURenderer with WebGPU or WebGL2; source Blender 4.2.0 CPU or measured Metal GPU only",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_map_value.py"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_map_value_domain.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorMapValue.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorMapValueDomain.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorMapValueDomain.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_map_value_check.py"
+        },
+        {
+          "path": "experiments/compositor-map-value/README.md"
+        },
+        {
+          "path": "scripts/lib/map-value-profile.mjs"
+        },
+        {
+          "path": "scripts/map-value-profile.test.mjs"
+        }
+      ],
+      "verification": {
+        "nativeVersions": [
+          "4.2.0"
+        ],
+        "nativeAbsentVersions": [
+          "5.2.0",
+          "5.3.0"
+        ],
+        "nativeCpuScenes": 82,
+        "nativeMetalGpuScenes": 62,
+        "numericalMapValueScenes": 142,
+        "independentControls": 2,
+        "builtGraphChecks": 576,
+        "maximumAbsoluteError": 0,
+        "exactAlphaMaximumError": 0,
+        "retainedNativeRefusals": 26,
+        "browserAdapters": [
+          "Apple M5 Pro Metal",
+          "LLVM SwiftShader"
+        ],
+        "sourcePreservedDuringExtraction": true,
+        "copiedPackageQualifiedProbe": true,
+        "nativePythonSourceHashes": 4,
+        "modernAbsentProtocol": "blendlink-map-value-native-absence-v1",
+        "unqualifiedGpuProtocol": "blendlink-map-value-gpu-source-profile-v1",
+        "freshHostedCpu": "pending",
+        "freshHostedGpuSourceProfile": "pending",
+        "freshHostedModernAbsence": "pending"
+      }
     }
   },
   "knownUnsupported": [
@@ -6880,7 +7406,6 @@
     "compositor:CompositorNodeBokehBlur",
     "compositor:CompositorNodeBokehImage",
     "compositor:CompositorNodeBoxMask",
-    "compositor:CompositorNodeChannelMatte",
     "compositor:CompositorNodeCombineXYZ",
     "compositor:CompositorNodeConvertColorSpace",
     "compositor:CompositorNodeConvertToDisplay",
@@ -6894,7 +7419,6 @@
     "compositor:CompositorNodeDespeckle",
     "compositor:CompositorNodeDilateErode",
     "compositor:CompositorNodeDisplace",
-    "compositor:CompositorNodeDistanceMatte",
     "compositor:CompositorNodeDoubleEdgeMask",
     "compositor:CompositorNodeEllipseMask",
     "compositor:CompositorNodeIDMask",
@@ -6907,20 +7431,17 @@
     "compositor:CompositorNodeLensdist",
     "compositor:CompositorNodeLevels",
     "compositor:CompositorNodeMapUV",
-    "compositor:CompositorNodeMapValue",
     "compositor:CompositorNodeMask",
     "compositor:CompositorNodeMaskToSDF",
     "compositor:CompositorNodeMovieClip",
     "compositor:CompositorNodeMovieDistortion",
     "compositor:CompositorNodeNormalize",
     "compositor:CompositorNodeOutputFile",
-    "compositor:CompositorNodePixelate",
     "compositor:CompositorNodePlaneTrackDeform",
     "compositor:CompositorNodeRelativeToPixel",
     "compositor:CompositorNodeSceneTime",
     "compositor:CompositorNodeSeparateXYZ",
     "compositor:CompositorNodeSequencerStripInfo",
-    "compositor:CompositorNodeSplit",
     "compositor:CompositorNodeStabilize",
     "compositor:CompositorNodeStringToImage",
     "compositor:CompositorNodeSunBeams",
@@ -7051,7 +7572,6 @@
     "shader:ShaderNodeBsdfToon",
     "shader:ShaderNodeBsdfTranslucent",
     "shader:ShaderNodeCameraData",
-    "shader:ShaderNodeCombineHSV",
     "shader:ShaderNodeDisplacement",
     "shader:ShaderNodeEeveeSpecular",
     "shader:ShaderNodeHairInfo",
@@ -7072,7 +7592,6 @@
     "shader:ShaderNodeRadialTiling",
     "shader:ShaderNodeRaycast",
     "shader:ShaderNodeScript",
-    "shader:ShaderNodeSeparateHSV",
     "shader:ShaderNodeShadowRaycast",
     "shader:ShaderNodeSqueeze",
     "shader:ShaderNodeSubsurfaceScattering",
@@ -7117,17 +7636,12 @@
     }
   ],
   "nativeEnumerationLimitations": {
-    "compositor:CompositorNodeConvertColorSpace": "Unsupported node: native color-space and interop-ID menus have a large selector cross-product. Bounded enum exploration is deliberately incomplete; observed mode union is a lower bound. No live implementation is claimed.",
-    "compositor:CompositorNodeChannelMatte": "Unsupported node: modern native schema exposes all nine color-space/key/limit MENU controls as enabled, creating a large selector cross-product. Bounded enum exploration is deliberately incomplete; observed mode union is a lower bound. No live implementation is claimed."
+    "compositor:CompositorNodeConvertColorSpace": "Unsupported node: native color-space and interop-ID menus have a large selector cross-product. Bounded enum exploration is deliberately incomplete; observed mode union is a lower bound. No live implementation is claimed."
   },
   "nativeEnumerationBudgets": {
     "compositor:CompositorNodeConvertColorSpace": {
       "states": 16,
       "transitions": 8192
-    },
-    "compositor:CompositorNodeChannelMatte": {
-      "states": 16,
-      "transitions": 2048
     }
   }
 }

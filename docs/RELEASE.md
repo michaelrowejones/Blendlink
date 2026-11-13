@@ -8,8 +8,9 @@ installable artifacts from one tagged source revision:
 2. the GPL-3.0-or-later Blender Extension ZIP.
 
 The npm package metadata uses `SEE LICENSE IN LICENSES.md`; its ordinary
-Node/compiler/runtime files are MIT, its Blender-dependent Python/add-on files
-are GPL-3.0-or-later, its Basis notices are Apache-2.0, and the bundled
+Node/compiler/runtime files are MIT, its marked Cycles-derived numerical
+modules (including native Magic) and Basis notices are Apache-2.0, its
+Blender-dependent Python/add-on files are GPL-3.0-or-later, and the bundled
 `n8ao-webgpu` runtime is CC0-1.0 with its original license and notices. Version equality
 does not merge the artifacts' distribution systems or erase those file-level
 licenses.
@@ -37,16 +38,20 @@ this audit did not recheck remote repository settings or registry ownership.
   inspection, portrait framing, nonblank PNG capture, keyboard focus, load
   retry, failed-save recovery, and standalone export in a hosting subfolder.
   The standalone fixture passes in Playwright Chromium/Firefox/WebKit on
-  macOS and hosted Linux. [Preview UX run 43144004793](https://github.com/michaelrowejones/Blendlink/actions/runs/43144004793)
-  on commit `b66b635` passed the complete flow and retained screenshots/report.
+  macOS and hosted Linux. [Preview UX run 43366540752](https://github.com/michaelrowejones/Blendlink/actions/runs/43366540752)
+  on commit `98ff98a` passed the complete flow and retained screenshots/report.
   Linux uses Xvfb and software rendering; this does not certify physical GPUs.
 - The Node contract has hosted passes for exact Node 22.15.0, latest Node 22,
-  and Node 24. [Release contract run 43143849609](https://github.com/michaelrowejones/Blendlink/actions/runs/43143849609)
-  on commit `1ad1c78` passed those checks, the full Blender 5.2.0/KTX 4.4.2
+  and Node 24. [Release contract run 43366541099](https://github.com/michaelrowejones/Blendlink/actions/runs/43366541099)
+  on commit `98ff98a` passed those checks, the full Blender 5.2.0/KTX 4.4.2
   release suite, and all four Linux/Windows Blender 4.2.0/5.2.0 desktop checks.
-  The full gate passed 812 unit tests (four optional skips), 16 required real
-  codec assertions, all 41 discovered Blender suites, packed consumers and
-  baked appearance/lighting/material end-to-end checks.
+  Its latest attempt passed every required job after retrying an archive
+  download failure. The full gate includes real codecs, discovered Blender
+  suites, packed consumers and baked appearance/lighting/material end-to-end
+  checks. [Native canaries run 43366540747](https://github.com/michaelrowejones/Blendlink/actions/runs/43366540747)
+  also passed all sixteen jobs, including the bounded asynchronous Noise
+  install/cancel/reapply lifecycle. These results certify that checkpoint;
+  later node ports require their own combined and hosted qualification.
 - Exact Blender 4.2.0/5.2.0 Linux/Windows archive acquisition and checksums have
   now run successfully on hosted workers. macOS arm64 retains local CPU-only
   evidence; its hosted prototype and an application-owned reusable browser

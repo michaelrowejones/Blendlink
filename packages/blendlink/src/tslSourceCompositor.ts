@@ -1,13 +1,18 @@
 import { buildCompositorColorKey } from './tslCompositorColorKey.js'
+import { buildCompositorChannelKey } from './tslCompositorChannelKey.js'
+import { buildCompositorMapValue } from './tslCompositorMapValue.js'
 import { buildCompositorChromaKey } from './tslCompositorChromaKey.js'
 import { buildCompositorFilter } from './tslCompositorFilter.js'
+import { buildCompositorPixelate } from './tslCompositorPixelate.js'
 import { MAX_STATIC_PROGRAM_PIXELS, assertPreparedStaticCompositorImages, staticCompositorTexture, staticImageCacheEligible, type PreparedStaticCompositorImages, type StaticCompositorWindow } from './tslCompositorStaticImage.js'
 import { buildCompositorFlip } from './tslCompositorSpatial.js'
+import { buildCompositorSplit } from './tslCompositorSplit.js'
 import { buildCompositorCrop } from './tslCompositorCrop.js'
 import { buildResizedCompositorCrop } from './tslCompositorCropResize.js'
 import { buildCompositorAlphaConversion } from './tslCompositorAlphaConversion.js'
 import { buildCompositorLuminanceKey } from './tslCompositorLuminanceKey.js'
 import { buildCompositorDifferenceKey } from './tslCompositorDifferenceKey.js'
+import { buildCompositorDistanceKey } from './tslCompositorDistanceKey.js'
 import { buildCompositorSpill } from './tslCompositorSpill.js'
 import * as TSL from 'three/tsl'
 import { DataTexture, FloatType, RGBAFormat } from 'three'
@@ -498,7 +503,7 @@ export function buildSourceCompositor(
     const cacheImages = staticImageCacheEligible(program)
     let imagePixels = 0
     const origins = new Map<string, CompositorImageOrigin | null>()
-    const usesImageDomains = program.ops.some(op => op.kind === 'translate' || op.kind === 'image-affine' || op.kind === 'image-input' || op.kind === 'alpha-crop' || op.kind === 'image-crop')
+    const usesImageDomains = program.ops.some(op => op.kind === 'translate' || op.kind === 'image-affine' || op.kind === 'image-input' || op.kind === 'alpha-crop' || op.kind === 'image-crop' || op.kind === 'image-split' || op.kind === 'pixelate' && op.properties.pixelate_size !== 1)
     if (program.ops.some(op => op.kind === 'image-input') && program.ops.some(op => op.kind === 'render-pass'))
       throw new SourceCompositorUnsupported('Static Image and Render Layers currently need separate canvas-domain realization')
     if (program.ops.some(op => op.kind === 'image-affine') && program.ops.some(op => op.kind === 'translate'
@@ -566,7 +571,7 @@ export function buildSourceCompositor(
           domainFail('Inputs with different resized Crop windows require native cross-domain realization')
       }
       if (incoming.some(input => input.domain?.staticWindow)
-        && ['translate', 'image-affine', 'blur', 'filter', 'flip', 'glare'].includes(op.kind))
+        && ['translate', 'image-affine', 'blur', 'filter', 'flip', 'glare', 'pixelate'].includes(op.kind))
         domainFail('Static Image neighborhood/transform consumers require native finite-window processing; only pointwise consumers are qualified')
       if (!['translate', 'image-affine'].includes(op.kind) && incoming.some(input => input.domain?.affineMatrix))
         domainFail('Intermediate affine image consumers require native resized data/display-window realization; this model supports terminal transform chains')
@@ -810,6 +815,12 @@ export function buildSourceCompositor(
               message => { throw new SourceCompositorUnsupported(message) })
             break
           }
+          case 'distance-key': {
+            const single = Object.values(op.inputs).every(incoming => isSingleValue(incoming.value))
+            node = buildCompositorDistanceKey(op, input, compositorEvaluationDevice(op, single),
+              message => { throw new SourceCompositorUnsupported(message) })
+            break
+          }
           case 'color-key': {
             const single = Object.values(op.inputs).every(incoming => isSingleValue(incoming.value))
             const device = compositorEvaluationDevice(op, single)
@@ -820,6 +831,12 @@ export function buildSourceCompositor(
           case 'chroma-key': {
             const single = Object.values(op.inputs).every(incoming => isSingleValue(incoming.value))
             node = buildCompositorChromaKey(op, input('Image'), compositorEvaluationDevice(op, single),
+              message => { throw new SourceCompositorUnsupported(message) })
+            break
+          }
+          case 'channel-key': {
+            const single = Object.values(op.inputs).every(incoming => isSingleValue(incoming.value))
+            node = buildCompositorChannelKey(op, input('Image'), compositorEvaluationDevice(op, single), program.ops,
               message => { throw new SourceCompositorUnsupported(message) })
             break
           }
@@ -838,6 +855,9 @@ export function buildSourceCompositor(
             node = input('Vector')[channel]
             break
           }
+          case 'map-value':
+            node = buildCompositorMapValue(op, value, program.ops, message => { throw new SourceCompositorUnsupported(message) })
+            break
           case 'normal-direction': {
             const direction = op.value
             if (op.properties.normal_model !== 'native-normal-direction-v1'
@@ -864,6 +884,10 @@ export function buildSourceCompositor(
               throw new SourceCompositorUnsupported('Switch requires its native fixed-choice model')
             node = input('Selected')
             break
+          case 'pixelate':
+            node = buildCompositorPixelate(op, input('Color'), isSingleValue(op.inputs.Color!.value), domain, resources,
+              message => { throw new SourceCompositorUnsupported(message) })
+            break
           case 'filter': {
             const image = input('Image'), factor = input('Fac'), single = isSingleValue(op.inputs.Image!.value)
             node = buildCompositorFilter(op, image, factor, single, resources,
@@ -874,6 +898,9 @@ export function buildSourceCompositor(
           case 'flip':
             node = buildCompositorFlip(op, input('Image'), isSingleValue(op.inputs.Image!.value), resources,
               message => { throw new SourceCompositorUnsupported(message) })
+            break
+          case 'image-split':
+            node = buildCompositorSplit(op, input, name => isSingleValue(op.inputs[name]!.value), domain, domainFail)
             break
           case 'alpha-crop':
             node = buildCompositorCrop(op, input('Image'), isSingleValue(op.inputs.Image!.value), domain, resources,
@@ -1197,7 +1224,7 @@ export function buildSourceCompositor(
       }
     }
     const output = value(program.output), domain = origin(program.output)
-    const transformSource = program.ops.find(op => op.kind === 'translate' || op.kind === 'image-affine' || op.kind === 'image-input' || op.kind === 'alpha-crop' || op.kind === 'image-crop')?.source
+    const transformSource = program.ops.find(op => op.kind === 'translate' || op.kind === 'image-affine' || op.kind === 'image-input' || op.kind === 'alpha-crop' || op.kind === 'image-crop' || op.kind === 'image-split' || op.kind === 'pixelate' && op.properties.pixelate_size !== 1)?.source
     const realized = usesImageDomains && domain ? realizeCompositorOrigin(output, domain, [0, 0], resources,
       message => { throw new SourceCompositorUnsupported(transformSource
         ? `${transformSource.path.join(' / ')} / ${transformSource.node} [${transformSource.output}]: ${message}` : message) }) : output

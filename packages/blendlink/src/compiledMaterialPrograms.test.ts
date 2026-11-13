@@ -189,6 +189,27 @@ async function auditReal(fixture: Awaited<ReturnType<typeof realPublication>>, p
 }
 
 describe('exact external image and per-object program evidence', () => {
+  it('certifies fresh Magic against decoded positions and UVs without requiring a normal attribute',async()=>{
+    const fixture=await realPublication([[.8,.35,.1]])
+    const io=new NodeIO(),document=await io.readBinary(fixture.glbBytes)
+    document.getRoot().listMeshes()[0]!.setExtras({blendlink_tsl_runtime:{objectSpace:'gltf-y-up',texspace:{location:[0,0,0],size:[1,1,1]}}})
+    const magic={op:'tex_magic_native',model:'eevee-magic-f32-v1',sourceEngine:'EEVEE',nativeGpuBackend:'METAL',evaluationModel:'shader',depth:2,output:'color',
+      vector:{op:'generated'},scale:{op:'const_float',value:5},distortion:{op:'const_float',value:1}}
+    fixture.sidecar.materials.Artist.channels['Base Color'].tslIr.output=magic as any
+    fixture.glbBytes=await io.writeBinary(document);repin(fixture)
+    expect((await auditReal(fixture)).conformance.issues).toEqual([])
+    magic.vector={op:'uv'};repin(fixture)
+    expect((await auditReal(fixture)).conformance.issues).toEqual([])
+    // A forged range tag cannot replace evidence from actual GLB texels.
+    Object.assign(magic.vector,{range:[0,1]})
+    document.getRoot().listMeshes()[0]!.listPrimitives()[0]!.getAttribute('TEXCOORD_0')!.setArray(new Float32Array([100,0,1,0,0,1]))
+    fixture.glbBytes=await io.writeBinary(document);repin(fixture)
+    expect((await auditReal(fixture)).conformance.issues.map(issue=>issue.code)).toContain(missing)
+    // Existing portable color must not hide an invalid other live channel.
+    document.getRoot().listMaterials()[0]!.setBaseColorFactor([.2,.3,.4,1])
+    fixture.glbBytes=await io.writeBinary(document);repin(fixture)
+    await expect(auditReal(fixture)).rejects.toThrow(/Magic Texture scaled coordinates/)
+  })
   it('audits real shared-mesh GLB nodes, pinned PNG bytes, and the same production resolvers used by the installer', async () => {
     const fixture = await realPublication()
     expect((await auditReal(fixture)).conformance.issues).toEqual([])

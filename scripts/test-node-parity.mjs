@@ -5,6 +5,9 @@ import { spawnSync } from 'node:child_process'
 import { existsSync, mkdirSync, readFileSync, writeFileSync, rmSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { readDifferenceProfileRefusal } from './lib/difference-profile-refusal.mjs'
+import { readChannelProfileRefusal } from './lib/channel-profile-refusal.mjs'
+import { readSplitSourceProfile } from './lib/split-source-profile.mjs'
+import { readMapValueSourceProfile, verifyMapValueCurrentSources } from './lib/map-value-profile.mjs'
 import { NODE_PARITY_SUITES, nodeParityPlan } from './lib/node-parity-plan.mjs'
 
 const plan = nodeParityPlan(process.argv.slice(2))
@@ -78,6 +81,8 @@ function recordAffineUnavailable(directory, family, device, rows) {
 const compositorFamilies = [
   ['image', 'compositor_image_check.py', 'BLENDLINK_COMPOSITOR_IMAGE_REFERENCES'],
   ['crop', 'compositor_crop_check.py', 'BLENDLINK_COMPOSITOR_CROP_REFERENCES'],
+  ['pixelate', 'compositor_pixelate_check.py', 'BLENDLINK_COMPOSITOR_PIXELATE_REFERENCES'],
+  ['split', 'compositor_split_check.py', 'BLENDLINK_COMPOSITOR_SPLIT_REFERENCES'],
   ['output-alpha', 'compositor_output_alpha_check.py', 'BLENDLINK_COMPOSITOR_OUTPUT_ALPHA_REFERENCES'],
   ['math', 'compositor_math_check.py', 'BLENDLINK_COMPOSITOR_MATH_REFERENCES'],
   ['blur', 'compositor_blur_check.py', 'BLENDLINK_COMPOSITOR_BLUR_REFERENCES'],
@@ -86,6 +91,9 @@ const compositorFamilies = [
   ['normal-direction', 'compositor_normal_direction_check.py', 'BLENDLINK_COMPOSITOR_NORMAL_REFERENCES'],
   ['luminance-key', 'compositor_luminance_key_check.py', 'BLENDLINK_COMPOSITOR_LUMINANCE_KEY_REFERENCES'],
   ['difference-key', 'compositor_difference_key_check.py', 'BLENDLINK_COMPOSITOR_DIFFERENCE_KEY_REFERENCES'],
+  ['distance-key', 'compositor_distance_key_check.py', 'BLENDLINK_COMPOSITOR_DISTANCE_KEY_REFERENCES'],
+  ['channel-key', 'compositor_channel_key_check.py', 'BLENDLINK_COMPOSITOR_CHANNEL_KEY_REFERENCES'],
+  ['map-value', 'compositor_map_value_check.py', 'BLENDLINK_COMPOSITOR_MAP_VALUE_REFERENCES'],
   ['color-spill', 'compositor_spill_check.py', 'BLENDLINK_COMPOSITOR_SPILL_REFERENCES'],
   ['color-key', 'compositor_color_key_check.py', 'BLENDLINK_COMPOSITOR_COLOR_KEY_REFERENCES'],
   ['chroma-key', 'compositor_chroma_key_check.py', 'BLENDLINK_COMPOSITOR_CHROMA_KEY_REFERENCES'],
@@ -134,7 +142,7 @@ if (plan.compositor) for (const [family, file, variable] of compositorFamilies) 
   mkdirSync(directory, { recursive: true })
   const complete = attempt('native-' + family, () => run('native-' + family, blender, ['--background', '--factory-startup', '--python-exit-code', '1',
     '--python', join(root, 'packages/blender-addon/tests', file)], {
-    [variable]: directory, BLENDLINK_COMPOSITOR_CROP_RESIZE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CROP_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_IMAGE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_OUTPUT_ALPHA_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CHROMA_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_COLOR_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_SPILL_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_DIFFERENCE_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_LUMINANCE_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CHANNEL_DEVICE: 'CPU',
+    [variable]: directory, BLENDLINK_COMPOSITOR_MAP_VALUE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_SPLIT_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CHANNEL_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_DISTANCE_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_PIXELATE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CROP_RESIZE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CROP_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_IMAGE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_OUTPUT_ALPHA_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CHROMA_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_COLOR_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_SPILL_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_DIFFERENCE_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_LUMINANCE_KEY_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_CHANNEL_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_POINTWISE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_ALPHA_CONVERSION_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_VECTOR_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_NORMAL_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_TRANSFORM_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_RESAMPLE_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_AFFINE_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_MIX_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_FLIP_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_FILTER_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_SWITCH_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_INTEROP_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_KERNEL_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_GAMMA_DEVICE: 'CPU', BLENDLINK_COMPOSITOR_BLUR_RELATIVE_DEVICE: 'CPU',
     BLENDLINK_COMPOSITOR_COLOR_DEVICE: 'CPU', BLENDLINK_SHARED_UTILITY_DEVICE: 'CPU',
@@ -144,6 +152,17 @@ if (plan.compositor) for (const [family, file, variable] of compositorFamilies) 
   if (complete) {
     const rows = JSON.parse(readFileSync(join(directory, 'index.json'), 'utf8'))
     if (family === 'affine' && recordAffineUnavailable(directory, family, 'CPU', rows)) continue
+    if (family === 'split') assert.equal(readSplitSourceProfile(directory, rows).status, 'qualified')
+    if (family === 'map-value') {
+      const qualification = readMapValueSourceProfile(directory, rows)
+      verifyMapValueCurrentSources(qualification, root)
+      if (qualification.status === 'native-node-absent') {
+        inapplicableFamilies.push({ family, device: 'CPU', directory, ...qualification })
+        console.log('BLENDLINK_MAP_VALUE_NATIVE_ABSENT device=CPU numericalMapValueCases=0')
+        continue
+      }
+      assert.equal(qualification.status, 'qualified'); assert.equal(qualification.device, 'CPU')
+    }
     assert.ok(rows.length > 0, `${family}: native CPU generator produced no cases`)
     references.push(directory)
     referenceSets.push({ family, device: 'CPU', directory, cases: rows.length })
@@ -154,6 +173,10 @@ if (!plan.compositor) {
   nativeCompositorGpu = { status: 'not-requested', reason: 'Explicit ' + plan.suite + ' suite' }
 } else if (capabilities.offlineGpuAvailable && capabilities.gpuParityVersionSupported) {
   const gpuFamilies = [
+    ['map-value-gpu-source-profile', 'compositor_map_value_check.py', 'BLENDLINK_COMPOSITOR_MAP_VALUE_REFERENCES', 'BLENDLINK_COMPOSITOR_MAP_VALUE_DEVICE'],
+    ['split-gpu-source-profile', 'compositor_split_check.py', 'BLENDLINK_COMPOSITOR_SPLIT_REFERENCES', 'BLENDLINK_COMPOSITOR_SPLIT_DEVICE'],
+    ['channel-key-gpu-source-profile', 'compositor_channel_key_check.py', 'BLENDLINK_COMPOSITOR_CHANNEL_KEY_REFERENCES', 'BLENDLINK_COMPOSITOR_CHANNEL_KEY_DEVICE'],
+    ['pixelate-gpu', 'compositor_pixelate_check.py', 'BLENDLINK_COMPOSITOR_PIXELATE_REFERENCES', 'BLENDLINK_COMPOSITOR_PIXELATE_DEVICE'],
     ['crop-gpu', 'compositor_crop_check.py', 'BLENDLINK_COMPOSITOR_CROP_REFERENCES', 'BLENDLINK_COMPOSITOR_CROP_DEVICE'],
     ['color-key-gpu-subset', 'compositor_color_key_gpu_subset_check.py', 'BLENDLINK_COMPOSITOR_COLOR_KEY_GPU_REFERENCES', 'BLENDLINK_COMPOSITOR_COLOR_KEY_DEVICE'],
     ['output-alpha-gpu', 'compositor_output_alpha_check.py', 'BLENDLINK_COMPOSITOR_OUTPUT_ALPHA_REFERENCES', 'BLENDLINK_COMPOSITOR_OUTPUT_ALPHA_DEVICE'],
@@ -199,6 +222,49 @@ if (!plan.compositor) {
       '--python', join(root, 'packages/blender-addon/tests', file)], { [variable]: directory, [deviceVariable]: 'GPU' })
     const rows = JSON.parse(readFileSync(join(directory, 'index.json'), 'utf8'))
     if (family === 'affine-gpu' && recordAffineUnavailable(directory, family, 'GPU', rows)) return
+    if (family === 'map-value-gpu-source-profile') {
+      const qualification = readMapValueSourceProfile(directory, rows)
+      verifyMapValueCurrentSources(qualification, root)
+      if (qualification.status === 'native-node-absent') {
+        inapplicableFamilies.push({ family, device: 'GPU', directory, ...qualification })
+        console.log('BLENDLINK_MAP_VALUE_NATIVE_ABSENT device=GPU numericalMapValueCases=0')
+        return
+      }
+      if (qualification.status === 'source-profile-refused') {
+        assert.match(nativeOutput, /BLENDLINK_COMPOSITOR_MAP_VALUE_SOURCE_PROFILE_REFUSED/)
+        assert.doesNotMatch(nativeOutput, /BLENDLINK_COMPOSITOR_MAP_VALUE_PASSED/)
+        inapplicableFamilies.push({ family, device: 'GPU', directory, ...qualification })
+        references.push(directory)
+        referenceSets.push({ family: 'map-value-gpu-independent-control', device: 'GPU', directory, cases: 1 })
+        return
+      }
+      assert.equal(qualification.status, 'qualified'); assert.equal(qualification.device, 'GPU')
+      assert.match(nativeOutput, /BLENDLINK_COMPOSITOR_MAP_VALUE_PASSED/)
+    }
+    if (family === 'split-gpu-source-profile') {
+      const qualification = readSplitSourceProfile(directory, rows)
+      if (qualification.status === 'source-profile-refused') {
+        assert.match(nativeOutput, /BLENDLINK_COMPOSITOR_SPLIT_SOURCE_PROFILE_REFUSED/)
+        assert.doesNotMatch(nativeOutput, /BLENDLINK_COMPOSITOR_SPLIT_PASSED/)
+        inapplicableFamilies.push({ family, device: 'GPU', directory, ...qualification })
+        references.push(directory)
+        referenceSets.push({ family: 'split-gpu-independent-control', device: 'GPU', directory, cases: 1 })
+        return
+      }
+      assert.match(nativeOutput, /BLENDLINK_COMPOSITOR_SPLIT_PASSED/)
+    }
+    if (family === 'channel-key-gpu-source-profile') {
+      const qualification = readChannelProfileRefusal(directory, rows)
+      if (qualification) {
+        assert.match(nativeOutput, /BLENDLINK_COMPOSITOR_CHANNEL_KEY_SOURCE_PROFILE_REFUSED/)
+        assert.doesNotMatch(nativeOutput, /BLENDLINK_COMPOSITOR_CHANNEL_KEY_PASSED/)
+        inapplicableFamilies.push({ family, device: 'GPU', directory, ...qualification })
+        references.push(directory)
+        referenceSets.push({ family: 'channel-key-gpu-independent-control', device: 'GPU', directory, cases: 1 })
+        return
+      }
+      assert.match(nativeOutput, /BLENDLINK_COMPOSITOR_CHANNEL_KEY_PASSED/)
+    }
     if (family === 'difference-key-gpu') {
       const qualification = readDifferenceProfileRefusal(directory, rows, profile => {
         assert.equal(typeof isMeasuredDifferenceRneProfile, 'function', 'Missing current Difference profile validator')
