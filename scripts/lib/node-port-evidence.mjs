@@ -4,6 +4,7 @@ import { readFile, realpath } from 'node:fs/promises'
 import { join, resolve, sep } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { nodePortHash, readSqueezeNodePortEvidence } from './node-port-contract.mjs'
+import {closedFamilyAdapter} from './node-port-family-evidence.mjs'
 
 const json = async path => JSON.parse(await readFile(path, 'utf8'))
 const literalPaths = ['literal53-cpu/qualification.json', 'literal53-cpu/final-proof.json',
@@ -53,6 +54,8 @@ async function readFloatToIntEvidence({ root, evidence, manifest, profile, compl
 }
 
 export const NODE_PORT_EVIDENCE_ADAPTERS = Object.freeze({
+  'compositor-white-noise-fixed-v1': closedFamilyAdapter('compositor-white-noise'),
+  'mono-switch-view-v1': closedFamilyAdapter('mono-switch-view'),
   'squeeze-v1': Object.freeze({ read: readSqueezeNodePortEvidence, nativeFinalPaths: ['references.json', 'final-proof.json'],
     finalSources: async evidence => (await json(join(evidence, 'references.json'))).cases.map(row => join(evidence, row.file)) }),
   'float-to-int-literal-v1': Object.freeze({ read: readFloatToIntEvidence, nativeFinalPaths: literalPaths,

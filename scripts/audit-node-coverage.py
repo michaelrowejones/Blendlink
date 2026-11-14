@@ -470,6 +470,114 @@ def mode_status(rule, value):
     return "unsupported"
 
 
+def verify_scene_presentation(key, entry):
+    """One reviewed non-opcode World route; never a generic scene bypass."""
+    route = entry["scenePresentation"]
+    approved = {"shader:ShaderNodeBackground": ("background", "BACKGROUND"),
+                "shader:ShaderNodeOutputWorld": ("output", "OUTPUT_WORLD")}
+    if (key not in approved or route.get("model") != "constant-world-background-v1"
+            or route.get("path") != "packages/blendlink/blender/export_scene.py"
+            or route.get("function") != "analyze_authoring_preview_world"
+            or entry.get("runtimePath") != "packages/blendlink/src/threeRuntime.ts"
+            or route.get("runtimeFunction") != "installAuthoringPreviewWorld"
+            or entry.get("runtimeOps")):
+        raise ValueError("unreviewed World class/model/compiler/runtime or invented opcode")
+    tree = ast.parse((ROOT / route["path"]).read_text(encoding="utf8"))
+    functions = [node for node in tree.body if isinstance(node, ast.FunctionDef)
+                 and node.name == route["function"]]
+    if len(functions) != 1:
+        raise ValueError("missing unique World classifier")
+    nodes = tuple(ast.walk(functions[0]))
+    def type_check(variable, value):
+        return any(isinstance(node, ast.Compare) and isinstance(node.left, ast.Attribute)
+                   and isinstance(node.left.value, ast.Name) and node.left.value.id == variable
+                   and node.left.attr == "type" and len(node.ops) == 1
+                   and isinstance(node.ops[0], ast.NotEq) and len(node.comparators) == 1
+                   and isinstance(node.comparators[0], ast.Constant)
+                   and node.comparators[0].value == value for node in nodes)
+    if not all(type_check(variable, value) for variable, value in approved.values()):
+        raise ValueError("missing actual Background/WorldOutput type constraints")
+    attrs = {(node.value.id, node.attr) for node in nodes
+             if isinstance(node, ast.Attribute) and isinstance(node.value, ast.Name)}
+    if not {("tree", "get_output_node"), ("volume", "is_linked"),
+            ("color_input", "is_linked"), ("strength_input", "is_linked")} <= attrs:
+        raise ValueError("missing native target/Volume/constant input constraints")
+    constants = {node.value for node in nodes if isinstance(node, ast.Constant)
+                 and isinstance(node.value, str)}
+    if not {"EEVEE", "CYCLES", "BLENDER_EEVEE", "Volume", "Color", "Strength"} <= constants:
+        raise ValueError("missing explicit World context/socket constraints")
+    runtime = (ROOT / entry["runtimePath"]).read_text(encoding="utf8")
+    if not re.search(r"\bfunction\s+" + re.escape(route["runtimeFunction"]) + r"\s*\(", runtime):
+        raise ValueError("missing actual World installer function")
+    expected = {"const stagingPreviewWorld = installAuthoringPreviewWorld(",
+                "livePreviewWorld = installAuthoringPreviewWorld("}
+    callers = route.get("callers")
+    if (not isinstance(callers, list) or len(callers) != len(expected)
+            or any(item.get("path") != entry["runtimePath"] for item in callers)
+            or {item.get("anchor") for item in callers} != expected
+            or any(anchor not in runtime for anchor in expected)):
+        raise ValueError("missing actual detached/live World installer callers")
+    return True
+
+
+def verify_recorded_static_string_forwarding(route):
+    """The reviewed compositor bridge retains and closes the full pure policy."""
+    if route.get('function') != 'evaluate_output' or route.get('nodeSet') != 'NODES':
+        raise ValueError('unreviewed static-string compiler entry point')
+    source = ROOT / 'packages/blendlink/blender/compositor_graph.py'
+    tree = ast.parse(source.read_text(encoding='utf8'))
+    extract = [node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == 'extract']
+    if len(extract) != 1:
+        raise ValueError('missing unique compositor extractor')
+    extract = extract[0]
+    helpers = [node for node in extract.body if isinstance(node, ast.FunctionDef) and node.name == 'static_string_value']
+    if len(helpers) != 1:
+        raise ValueError('missing unique recorded static-string helper')
+    helper = helpers[0]
+    same = lambda node, expression: node is not None and ast.unparse(node) == ast.unparse(ast.parse(expression, mode='eval').body)
+    def assigned(nodes, target, expression):
+        return any(isinstance(node, ast.Assign) and len(node.targets) == 1
+                   and same(node.targets[0], target) and same(node.value, expression) for node in nodes)
+    nodes = tuple(ast.walk(helper))
+    if (not assigned(nodes, 'stack', 'tuple(reversed(frames))')
+            or not assigned(nodes, 'record', 'static_strings.evaluate_input(socket, stack)')
+            or not any(isinstance(node, ast.Return) and same(node.value, 'record') for node in helper.body)):
+        raise ValueError('recorded helper must call and return the full static-string policy')
+    if not any(isinstance(node, ast.Call) and same(node.func, 'static_policy_reads.append')
+               and len(node.args) == 1 and isinstance(node.args[0], ast.Tuple)
+               and len(node.args[0].elts) == 6
+               and all(same(item, expression) for item, expression in zip(node.args[0].elts[:4], ["'string'", 'socket', 'stack', 'record']))
+               for node in nodes):
+        raise ValueError('recorded helper must retain the complete policy read')
+    if not assigned(extract.body, 'static_policy_reads', '[]'):
+        raise ValueError('missing extraction-owned policy collector')
+    callers = (node for statement in extract.body if statement is not helper for node in ast.walk(statement))
+    if not any(isinstance(node, ast.Call) and same(node.func, 'static_string_value') for node in callers):
+        raise ValueError('missing actual recorded-helper caller')
+    closing_nodes = (node for statement in extract.body if not isinstance(statement, (ast.FunctionDef, ast.AsyncFunctionDef)) for node in ast.walk(statement))
+    loops = [node for node in closing_nodes if isinstance(node, ast.For)
+             and same(node.iter, 'static_policy_reads')
+             and same(node.target, '(kind, socket, stack, expected, path, label)')]
+    if len(loops) != 1:
+        raise ValueError('missing unique final static-policy recheck')
+    loop = loops[0]
+    branches = [node for node in ast.walk(loop) if isinstance(node, ast.If) and same(node.test, "kind == 'string'")]
+    if len(branches) != 1 or not assigned(ast.walk(branches[0]), 'current', 'static_strings.evaluate_input(socket, stack)'):
+        raise ValueError('final recheck must call the real static-string policy')
+    if not any(isinstance(node, ast.If) and same(node.test, 'current != expected')
+               and any(isinstance(child, ast.Raise) for child in node.body) for node in ast.walk(loop)):
+        raise ValueError('final recheck must compare the full policy record')
+    if not any(isinstance(node, ast.Call) and same(node.func, 'fail') and node.args
+               and same(node.args[0], "'static-policy-source-changed'") for node in ast.walk(loop)):
+        raise ValueError('final policy changes must refuse extraction')
+    # The leaf function declared by metadata is reached through the real wrapper.
+    compiler = ast.parse((ROOT / route['path']).read_text(encoding='utf8'))
+    wrappers = [node for node in compiler.body if isinstance(node, ast.FunctionDef) and node.name == 'evaluate_input']
+    if len(wrappers) != 1 or not any(isinstance(node, ast.Return) and same(node.value, 'evaluate_output(socket, stack)') for node in wrappers[0].body):
+        raise ValueError('static-string input wrapper must forward to evaluate_output')
+    return True
+
+
 def verify_map(capabilities):
     failures = []
     for key, entry in capabilities["entries"].items():
@@ -502,13 +610,21 @@ def verify_map(capabilities):
                 callers = compile_time["callers"]
                 if not callers or any(not caller.get("anchor") or caller["anchor"] not in (ROOT / caller["path"]).read_text(encoding="utf8") for caller in callers):
                     raise ValueError("missing compiler forwarding caller")
+                if key.startswith('compositor:') and path == 'packages/blender-addon/static_strings.py':
+                    verify_recorded_static_string_forwarding(compile_time)
                 if not runtime_path.is_file():
                     raise ValueError("missing selected-expression runtime")
                 valid_compile_time = True
             except (KeyError, TypeError, ValueError, OSError) as error:
                 failures.append(key + ": invalid compile-time forwarding route: " + str(error))
+        valid_scene_presentation = False
+        if entry.get("scenePresentation") is not None:
+            try:
+                valid_scene_presentation = verify_scene_presentation(key, entry)
+            except (KeyError, TypeError, ValueError, OSError, AttributeError) as error:
+                failures.append(key + ": invalid scene-presentation route: " + str(error))
         categories = {entry["category"]} | {override.get("category", entry["category"]) for override in entry.get("versionOverrides", {}).values()}
-        if categories & {"supported", "partial"} and (not (runtime or valid_compile_time) or len(entry.get("evidence", [])) < 2):
+        if categories & {"supported", "partial"} and (not (runtime or valid_compile_time or valid_scene_presentation) or len(entry.get("evidence", [])) < 2):
             failures.append(key + ": live classification needs explicit compiler and runtime evidence")
     return failures
 

@@ -1303,3 +1303,40 @@ all 4,294,967,296 uint32 inputs in an exhaustive CPU experiment without
 changing rounding mode. This is mathematical/backend preparation, not a
 new shader, node or field qualification. Original failures and generated
 shader/source hashes remain under the field-research evidence.
+
+### Constant World background qualification and shared source guards, 2026-11-14
+
+The constant World background route closes in
+`artifacts/verification-next24r4-constant-world/qualified.json`. Five native
+graphs produce 15 reference frames, and seven actual saved Finals include
+Film Transparent and website-owned background controls. Across all four
+Metal/SwiftShader WebGPU/WebGL2 tuples, 180 linear/Final frame pairs and
+60 installation cycles compare 393,408 browser words. All declared bounds
+pass; general colors are not word-exact (maximum linear error
+0.00019532442092895508). Alpha, black and declared dyadic cases are exact.
+This qualifies visible constant backgrounds, without IBL, HDRI or full BSDF
+parity. The owned six-face constant cube avoids the upstream equirectangular
+background conversion's orphaned depth target. Each helper retains the
+existing 32 KiB environment source and adds 96 logical GPU bytes of cube
+pixels; physical allocation size is not claimed. Cleanup and application
+ownership controls pass. Failed transactions and diagnostic receipts remain
+separate. Background and World Output gain only Blender 5.3 partial support:
+46 supported, 133 partial, 139 unsupported and 14 structural contexts.
+
+Shared compositor group-interface checks now reject implicit field defaults
+that would otherwise be substituted with literals. Contributing interface
+and recorded selector/string policies are rechecked after source evaluation.
+Native no-render controls cover 27 admitted and 17 refused group cases;
+these are source-policy controls, not numerical or new-node credit. The
+fixed-input White Noise qualification remains separate from default-field
+research, and its stricter group-interface controls are retained.
+
+The White Noise and mono Switch View node-port manifests have each completed
+an actual stable end-to-end matrix. Their archived reports retain their own
+source snapshots and explicitly disable automatic support promotion. The
+pipeline now runs 155 Node checks and 11 Python audit checks. Current package
+validation passes 1,626 unit tests, 98 release-policy checks, and independent
+Vanilla/React Three Fiber consumer compilation from the 911-file tarball.
+Default-coordinate White Noise remains an isolated candidate pending review
+and full production qualification; experimental exact hashes do not grant
+field support.

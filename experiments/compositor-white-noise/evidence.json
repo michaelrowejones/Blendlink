@@ -86,6 +86,83 @@
       "group-default-negative-zero",
       "source-depth-budget"
     ],
+    "interfaceDefaultControls": [
+      {
+        "case": "vector-UNIFORM_IMAGE_COORDINATES",
+        "nativeAvailable": true,
+        "status": "unsupported"
+      },
+      {
+        "case": "vector-linked-override",
+        "nativeAvailable": true,
+        "status": "extracted"
+      },
+      {
+        "case": "vector-NORMALIZED_IMAGE_COORDINATES",
+        "nativeAvailable": false,
+        "setterRefusal": "bpy_struct: item.attr = val: enum \"NORMALIZED_IMAGE_COORDINATES\" not found in ('VALUE', 'UNIFORM_IMAGE_COORDINATES')"
+      },
+      {
+        "case": "vector-PIXEL_IMAGE_COORDINATES",
+        "nativeAvailable": false,
+        "setterRefusal": "bpy_struct: item.attr = val: enum \"PIXEL_IMAGE_COORDINATES\" not found in ('VALUE', 'UNIFORM_IMAGE_COORDINATES')"
+      },
+      {
+        "case": "vector-single-value",
+        "nativeAvailable": true,
+        "status": "extracted"
+      },
+      {
+        "case": "float-value-default",
+        "nativeAvailable": true,
+        "status": "extracted"
+      },
+      {
+        "case": "float-SCENE_FRAME",
+        "nativeAvailable": true,
+        "status": "unsupported"
+      },
+      {
+        "case": "float-SCENE_TIME",
+        "nativeAvailable": false,
+        "setterRefusal": "bpy_struct: item.attr = val: enum \"SCENE_TIME\" not found in ('VALUE', 'SCENE_FRAME')"
+      },
+      {
+        "case": "float-SCENE_SECONDS",
+        "nativeAvailable": false,
+        "setterRefusal": "bpy_struct: item.attr = val: enum \"SCENE_SECONDS\" not found in ('VALUE', 'SCENE_FRAME')"
+      },
+      {
+        "case": "unknown-default",
+        "privateSchemaBoundary": true,
+        "status": "unsupported"
+      },
+      {
+        "case": "unknown-structure",
+        "privateSchemaBoundary": true,
+        "status": "unsupported"
+      },
+      {
+        "case": "field-structure",
+        "privateSchemaBoundary": true,
+        "status": "unsupported"
+      },
+      {
+        "case": "identifier-mismatch",
+        "privateSchemaBoundary": true,
+        "status": "unsupported"
+      },
+      {
+        "case": "output-direction",
+        "privateSchemaBoundary": true,
+        "status": "unsupported"
+      },
+      {
+        "case": "type-mismatch",
+        "privateSchemaBoundary": true,
+        "status": "unsupported"
+      }
+    ],
     "renders": 0,
     "portCredit": 0,
     "status": "WHITE_NOISE_SOURCE_POLICY_PASSED",
@@ -100,19 +177,19 @@
   "sources": [
     {
       "native": {
-        "path": "artifacts/verification-next18-white-noise-union/cpu/qualification.json",
-        "sha256": "3dfc1769bc64b3abfb075e9d47c8fe57df1d7a1d695c4267be209acd03c473f0"
+        "path": "artifacts/verification-next22-group-guard-white-noise/cpu/qualification.json",
+        "sha256": "24bd390537e4568721d17e5dc8784a85c9c261786cadc35a4ca1cfa10e711adf"
       },
       "final": {
-        "path": "artifacts/verification-next18-white-noise-union/cpu/final-proof.json",
-        "sha256": "376251fc4b97850cb47de48513a8b38c8567f84b4bee8e4778939787998196b3"
+        "path": "artifacts/verification-next22-group-guard-white-noise/cpu/final-proof.json",
+        "sha256": "4895f4dbb5c8a0b333db8ae771d3c503273506c0b91bb9dfeba62f6bcf513912"
       },
       "sourceHashes": {
         "experiments/compositor-white-noise/reference.py": "26d25bbde0079e8fafffcc511762f2dd2a4abec2a66d948ac4eacfb9646eb7b0",
         "experiments/compositor-white-noise/policy.py": "f0410401744cce04a89f6292ab844e77be16f092cfdb8a65ce947547ebccac75",
         "experiments/compositor-white-noise/hash_reference.py": "a5ee6ce7100fa4793c31a01f365278d65b89a0e3b3535bcb3f0b5de28b319d92",
         "experiments/compositor-white-noise/cases.json": "c5abcde9c796c67c6e7db0c90e1f65c8f75eacb2de4e746dcf66785542bad281",
-        "packages/blender-addon/tests/compositor_white_noise_check.py": "77814f0dfbb23a53624d1bdeb9689a9c7137a5bccaf6b3cdad0632a77fdb6742",
+        "packages/blender-addon/tests/compositor_white_noise_check.py": "3a91485fb8b727008fb2f0ef642e95b6edbd3225d994f1eb6458046285a82e13",
         "packages/blender-addon/tests/compositor_reference.py": "d52af8d60fec4bbd6f1b977e12a0c913c6f599e0e401b0b962b2bf2b101b5a55",
         "packages/blendlink/blender/compositor_math.py": "fd2f9efc43f4b0bf1dfebbdc651190025c9e33ccf2ae3ab0baf653715dd00b78",
         "packages/blendlink/blender/preparation_cache.py": "e3518eaa9999a0d51a0b7a9dd9810c68843dedd0d3bc119af3534ea8ec2db28d",
@@ -132,7 +209,7 @@
         "packages/blendlink/blender/compositor_blur.py": "d86ffd87271a97563facacfedab6bcc3888ea0bff69926f12d32146736aff014",
         "packages/blendlink/blender/compositor_static_rotation.py": "76a1ec4405ec41cb860cdef619be234529dc561cb770b33dbf746a9160fa7373",
         "packages/blendlink/blender/compositor_luminance_key.py": "5391ac3ca522590a0bffa0a2ef3ca25c8be44d0218381fa9f3bc48ab14edb3cd",
-        "packages/blendlink/blender/compositor_white_noise.py": "659e290ccef6a622aa76d772e2fa0811b1357d230c2f91cfc964989b84fa2349",
+        "packages/blendlink/blender/compositor_white_noise.py": "71354ca02fd43cae9407d07f63fef3877667f69485b50d8daa29e3bb20161973",
         "packages/blendlink/blender/native_color_band.py": "23aa27b056846d42cdb96919da968d04f9e8e44d794ffa10c80871f786bfc8d4",
         "packages/blendlink/blender/compositor_integer_bits.py": "1ea63649a2ae0a3760b9b02fe3ed9441aaa0bdfaa35eeb1e2ec77802466a4f99",
         "packages/blendlink/blender/compositor_spill.py": "8a7774222b7f126bcc6a42f0a526d953b2fe858b4f47c7018cd741ee94f56269",
@@ -164,7 +241,7 @@
         "packages/blendlink/blender/compositor_blackbody.py": "9646898a1b0b9b9e1dbfe97adf73b3a463e624f49f68a7d786b3255bbdf42424",
         "packages/blendlink/blender/compositor_pixelate.py": "607f738a09fc75f15facb9cb0c261bfb72800663d5908826e5d105d980800b3d",
         "packages/blendlink/blender/compositor_vector_component.py": "8b29742404fa7d80d2bdc661363a052bc1a2680b3306a2a47b20d0d9e5bfe20c",
-        "packages/blendlink/blender/export_scene.py": "ae9db39ab0e94a2787411d91645c805aa493d069aaba40133278eae74802debb",
+        "packages/blendlink/blender/export_scene.py": "d746ba319cdf24915ea8f718104639b2d17075fff6da46cb503caf2c225c171f",
         "packages/blendlink/blender/compositor_utilities.py": "b92be3bb89c05d9a943a08298bb3114274cf67f14f985ba84e3f5dbc9eddc384",
         "packages/blendlink/blender/camera_axes.py": "18360ba667a42691b0dc66b4827108e6bdfad00fdb246d61e9838f3bef596ff2",
         "packages/blendlink/blender/bakelib.py": "51469367512aa77cf6da533499eebbdf035f54eb3247b5efecc7ec94b193ded3",
@@ -256,8 +333,8 @@
   ],
   "runs": [
     {
-      "path": "artifacts/verification-next18-white-noise-union/cpu/browser-raw-metal/report.json",
-      "sha256": "8e495acc36c398e1f38190d509b5d01bf8a41759a886f9fb7a3a58ef8b8c47a3",
+      "path": "artifacts/verification-next22-group-guard-white-noise/cpu/browser-raw-metal/report.json",
+      "sha256": "6578cf04fe779e3103c69c3c183c6dca832bd8963207332c8cb5536f36d75f84",
       "profile": "metal",
       "phase": "raw",
       "browserVersion": "158.0.8127.18",
@@ -285,8 +362,8 @@
       ]
     },
     {
-      "path": "artifacts/verification-next18-white-noise-union/cpu/browser-final-metal/report.json",
-      "sha256": "b77a0382395ba92564f4da510495c622d5b09cb17ed77a16d44e6da9938ca461",
+      "path": "artifacts/verification-next22-group-guard-white-noise/cpu/browser-final-metal/report.json",
+      "sha256": "8a949862d78670e7f6253bfa029856adc0de930f1b78e5414f272bc547ee29b9",
       "profile": "metal",
       "phase": "final",
       "browserVersion": "158.0.8127.18",
@@ -314,8 +391,8 @@
       ]
     },
     {
-      "path": "artifacts/verification-next18-white-noise-union/cpu/browser-raw-software/report.json",
-      "sha256": "841c4334492bebb24035febc45d2e1da2aeef0f8ccd00cd3922b19eee2874949",
+      "path": "artifacts/verification-next22-group-guard-white-noise/cpu/browser-raw-software/report.json",
+      "sha256": "216c8b25939a4190c4d725e78e161d2ad61b1bfb9e4e356297322de753a53330",
       "profile": "software",
       "phase": "raw",
       "browserVersion": "158.0.8127.18",
@@ -343,8 +420,8 @@
       ]
     },
     {
-      "path": "artifacts/verification-next18-white-noise-union/cpu/browser-final-software/report.json",
-      "sha256": "897051ccf5bf726fa06035e23d009d32685afdedb8f7131af0212c069140cc44",
+      "path": "artifacts/verification-next22-group-guard-white-noise/cpu/browser-final-software/report.json",
+      "sha256": "56b5bf03466486d161c510d31f48c55f6ebbf13845a0996f051808945cddf123",
       "profile": "software",
       "phase": "final",
       "browserVersion": "158.0.8127.18",
@@ -641,6 +718,6 @@
   "rawArtifacts": {
     "machineLocal": true,
     "ignored": true,
-    "path": "artifacts/verification-next18-white-noise-union"
+    "path": "artifacts/verification-next22-group-guard-white-noise"
   }
 }

@@ -1,0 +1,144 @@
+{
+  "schemaVersion": 1,
+  "id": "mono-switch-view",
+  "nativeNode": "CompositorNodeSwitchView",
+  "domain": "compositor",
+  "lifecycle": "production",
+  "scope": "Partial pinned Blender 5.3 macOS arm64 CPU mono Switch View selection: actual ordered input0; selected existing RGBA value/domain unchanged, inactive dependencies pruned; dynamic/multiview/unsupported selected paths refuse. Seven production graphs plus one independent calibration; no Image Info widening.",
+  "upstream": {
+    "direct": [
+      "source/blender/nodes/composite/nodes/node_composite_switch_view.cc"
+    ],
+    "shared": [
+      "source/blender/compositor/intern/node_tree_evaluator.cc",
+      "source/blender/compositor/intern/compile_state.cc",
+      "source/blender/compositor/intern/compile_state.hh",
+      "source/blender/compositor/intern/operation.cc",
+      "source/blender/compositor/intern/multi_function_procedure_operation.cc",
+      "source/blender/nodes/intern/node_multi_function.cc",
+      "source/blender/nodes/NOD_multi_function.hh",
+      "source/blender/makesrna/intern/rna_nodetree.cc",
+      "source/blender/nodes/NOD_static_types.h",
+      "source/blender/compositor/COM_context.hh",
+      "source/blender/compositor/intern/context.cc",
+      "source/blender/makesdna/DNA_scene_types.h"
+    ]
+  },
+  "inputs": {
+    "native": [
+      "packages/blender-addon/*.py",
+      "packages/blender-addon/*.json",
+      "packages/blendlink/blender/**/*.py",
+      "experiments/static-switch-family/*.py",
+      "packages/blender-addon/tests/compositor_reference.py",
+      "packages/blender-addon/tests/compositor_switch_view_check.py"
+    ],
+    "runtime": [
+      "packages/blendlink/src/**/*.ts"
+    ],
+    "sdk": [
+      "package.json",
+      "package-lock.json",
+      "packages/blendlink/package.json",
+      "packages/blendlink/tsconfig.json",
+      "packages/blendlink/scripts/*.mjs",
+      "scripts/test-node-port.mjs",
+      "scripts/run-node-port-family.mjs",
+      "scripts/lib/node-port-contract.mjs",
+      "scripts/lib/node-port-evidence.mjs",
+      "scripts/lib/node-port-family-evidence.mjs",
+      "scripts/lib/node-port-python.mjs",
+      "scripts/node-port-blender.mjs",
+      "scripts/lib/native-proof-archive.mjs",
+      "scripts/lib/runtime-provenance.mjs",
+      "scripts/lib/runtime-proof-archive.mjs",
+      "scripts/lib/runtime-compiler-trace.mjs",
+      "scripts/lib/runtime-transaction-snapshot.mjs",
+      "scripts/lib/browser-proof-contract.mjs"
+    ],
+    "tests": [
+      "experiments/static-switch-family/*.mjs",
+      "experiments/static-switch-family/*.ts",
+      "experiments/static-switch-family/*.js",
+      "experiments/static-switch-family/*.html",
+      "experiments/static-switch-family/*.json",
+      "scripts/lib/node-port-family-evidence.test.mjs",
+      "scripts/lib/node-port-contract.test.mjs",
+      "scripts/lib/node-port-python.*",
+      "scripts/lib/node-port-evidence*",
+      "scripts/lib/browser-proof-contract.test.mjs",
+      "node-ports/mono-switch-view.json"
+    ]
+  },
+  "commands": {
+    "build": [
+      {
+        "id": "clean",
+        "argv": [
+          "{node}",
+          "packages/blendlink/scripts/clean-dist.mjs"
+        ],
+        "timeoutMs": 60000
+      },
+      {
+        "id": "typescript",
+        "argv": [
+          "{node}",
+          "node_modules/typescript/bin/tsc",
+          "-p",
+          "packages/blendlink/tsconfig.json"
+        ],
+        "timeoutMs": 180000
+      },
+      {
+        "id": "assets",
+        "argv": [
+          "{node}",
+          "packages/blendlink/scripts/copy-assets.mjs"
+        ],
+        "timeoutMs": 60000
+      }
+    ],
+    "verify": {
+      "id": "suite",
+      "argv": [
+        "{node}",
+        "scripts/run-node-port-family.mjs",
+        "mono-switch-view",
+        "--evidence",
+        "{evidence}",
+        "--blender",
+        "{blender}"
+      ],
+      "timeoutMs": 1500000
+    }
+  },
+  "profiles": [
+    {
+      "id": "mac-53",
+      "hostPlatforms": [
+        "darwin"
+      ],
+      "blenderVersion": "5.3.0",
+      "blenderBuildHash": "02f0899d78e3",
+      "nativeSource": {
+        "profile": "darwin-arm64-53-mono-view-cpu-v1",
+        "backend": null,
+        "evaluator": "CPU-compositor"
+      },
+      "runs": [
+        {
+          "id": "matrix",
+          "adapter": "matrix",
+          "env": {}
+        }
+      ]
+    }
+  ],
+  "evidence": {
+    "adapter": "mono-switch-view-v1",
+    "productionCases": 7,
+    "calibrationCases": 1,
+    "refusedNativeCases": 0
+  }
+}

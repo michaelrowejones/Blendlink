@@ -2721,6 +2721,17 @@
             },
             {
               "path": "experiments/vertex-color-alpha/raster-ownership-counterexample.json"
+            },
+            {
+              "path": "packages/blendlink/src/tslOwnedVertexAlphaMaterial.ts",
+              "anchor": "export function createOwnedVertexAlphaMaterial("
+            },
+            {
+              "path": "packages/blendlink/src/tslVertexColorAlpha.ts",
+              "anchor": "export function matchVertexAlphaOpacity("
+            },
+            {
+              "path": "experiments/vertex-alpha-opacity-interoperability/evidence.json"
             }
           ],
           "verification": {
@@ -2859,6 +2870,17 @@
             },
             {
               "path": "experiments/attribute-alpha/evidence.json"
+            },
+            {
+              "path": "packages/blendlink/src/tslOwnedVertexAlphaMaterial.ts",
+              "anchor": "export function createOwnedVertexAlphaMaterial("
+            },
+            {
+              "path": "packages/blendlink/src/tslVertexColorAlpha.ts",
+              "anchor": "export function matchVertexAlphaOpacity("
+            },
+            {
+              "path": "experiments/vertex-alpha-opacity-interoperability/evidence.json"
             }
           ],
           "verification": {
@@ -12177,7 +12199,7 @@
         "callers": [
           {
             "path": "packages/blendlink/blender/compositor_graph.py",
-            "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))"
+            "anchor": "record = static_strings.evaluate_input(socket, stack)"
           }
         ]
       },
@@ -12188,7 +12210,7 @@
         },
         {
           "path": "packages/blendlink/blender/compositor_graph.py",
-          "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))"
+          "anchor": "record = static_strings.evaluate_input(socket, stack)"
         },
         {
           "path": "packages/blender-addon/static_string_case_data.json"
@@ -12261,7 +12283,7 @@
         "callers": [
           {
             "path": "packages/blendlink/blender/compositor_graph.py",
-            "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))"
+            "anchor": "record = static_strings.evaluate_input(socket, stack)"
           }
         ]
       },
@@ -12272,7 +12294,7 @@
         },
         {
           "path": "packages/blendlink/blender/compositor_graph.py",
-          "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))"
+          "anchor": "record = static_strings.evaluate_input(socket, stack)"
         },
         {
           "path": "packages/blender-addon/static_string_case_data.json"
@@ -12345,7 +12367,7 @@
         "callers": [
           {
             "path": "packages/blendlink/blender/compositor_graph.py",
-            "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))"
+            "anchor": "record = static_strings.evaluate_input(socket, stack)"
           }
         ]
       },
@@ -12356,7 +12378,7 @@
         },
         {
           "path": "packages/blendlink/blender/compositor_graph.py",
-          "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))"
+          "anchor": "record = static_strings.evaluate_input(socket, stack)"
         },
         {
           "path": "packages/blender-addon/static_string_case_data.json"
@@ -12429,7 +12451,7 @@
         "callers": [
           {
             "path": "packages/blendlink/blender/compositor_graph.py",
-            "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))"
+            "anchor": "record = static_strings.evaluate_input(socket, stack)"
           }
         ]
       },
@@ -12440,7 +12462,7 @@
         },
         {
           "path": "packages/blendlink/blender/compositor_graph.py",
-          "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))"
+          "anchor": "record = static_strings.evaluate_input(socket, stack)"
         },
         {
           "path": "packages/blender-addon/static_string_case_data.json"
@@ -12513,7 +12535,7 @@
         "callers": [
           {
             "path": "packages/blendlink/blender/compositor_graph.py",
-            "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))"
+            "anchor": "record = static_strings.evaluate_input(socket, stack)"
           }
         ]
       },
@@ -12524,7 +12546,7 @@
         },
         {
           "path": "packages/blendlink/blender/compositor_graph.py",
-          "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))"
+          "anchor": "record = static_strings.evaluate_input(socket, stack)"
         },
         {
           "path": "packages/blender-addon/static_string_case_data.json"
@@ -12597,7 +12619,7 @@
         "callers": [
           {
             "path": "packages/blendlink/blender/compositor_graph.py",
-            "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))"
+            "anchor": "record = static_strings.evaluate_input(socket, stack)"
           }
         ]
       },
@@ -12608,7 +12630,7 @@
         },
         {
           "path": "packages/blendlink/blender/compositor_graph.py",
-          "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))"
+          "anchor": "record = static_strings.evaluate_input(socket, stack)"
         },
         {
           "path": "packages/blender-addon/static_string_case_data.json"
@@ -12689,7 +12711,7 @@
         "callers": [
           {
             "path": "packages/blendlink/blender/compositor_graph.py",
-            "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))"
+            "anchor": "record = static_strings.evaluate_input(socket, stack)"
           }
         ]
       },
@@ -12700,7 +12722,7 @@
         },
         {
           "path": "packages/blendlink/blender/compositor_graph.py",
-          "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))"
+          "anchor": "record = static_strings.evaluate_input(socket, stack)"
         },
         {
           "path": "packages/blender-addon/static_string_case_data.json"
@@ -12773,7 +12795,7 @@
         "callers": [
           {
             "path": "packages/blendlink/blender/compositor_graph.py",
-            "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))"
+            "anchor": "record = static_strings.evaluate_input(socket, stack)"
           }
         ]
       },
@@ -12784,7 +12806,7 @@
         },
         {
           "path": "packages/blendlink/blender/compositor_graph.py",
-          "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))"
+          "anchor": "record = static_strings.evaluate_input(socket, stack)"
         },
         {
           "path": "packages/blender-addon/static_string_case_data.json"
@@ -12865,7 +12887,7 @@
         "callers": [
           {
             "path": "packages/blendlink/blender/compositor_graph.py",
-            "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))"
+            "anchor": "record = static_strings.evaluate_input(socket, stack)"
           }
         ]
       },
@@ -12876,7 +12898,7 @@
         },
         {
           "path": "packages/blendlink/blender/compositor_graph.py",
-          "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))"
+          "anchor": "record = static_strings.evaluate_input(socket, stack)"
         },
         {
           "path": "packages/blender-addon/static_string_case_data.json"
@@ -13929,7 +13951,7 @@
         "callers": [
           {
             "path": "packages/blendlink/blender/compositor_graph.py",
-            "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))"
+            "anchor": "record = static_strings.evaluate_input(socket, stack)"
           }
         ]
       },
@@ -13956,7 +13978,7 @@
         },
         {
           "path": "packages/blendlink/blender/compositor_graph.py",
-          "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))"
+          "anchor": "record = static_strings.evaluate_input(socket, stack)"
         },
         {
           "path": "experiments/static-string-family/numeric-contract.json"
@@ -14019,7 +14041,7 @@
         "callers": [
           {
             "path": "packages/blendlink/blender/compositor_graph.py",
-            "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))"
+            "anchor": "record = static_strings.evaluate_input(socket, stack)"
           }
         ]
       },
@@ -14047,7 +14069,7 @@
         },
         {
           "path": "packages/blendlink/blender/compositor_graph.py",
-          "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))"
+          "anchor": "record = static_strings.evaluate_input(socket, stack)"
         },
         {
           "path": "experiments/static-string-family/numeric-contract.json"
@@ -14110,7 +14132,7 @@
         "callers": [
           {
             "path": "packages/blendlink/blender/compositor_graph.py",
-            "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))"
+            "anchor": "record = static_strings.evaluate_input(socket, stack)"
           }
         ]
       },
@@ -14138,7 +14160,7 @@
         },
         {
           "path": "packages/blendlink/blender/compositor_graph.py",
-          "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))"
+          "anchor": "record = static_strings.evaluate_input(socket, stack)"
         },
         {
           "path": "experiments/static-string-family/numeric-contract.json"
@@ -16180,7 +16202,7 @@
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Blender 5.3.0 build 02f0899d78e3 macOS arm64 CPU compositor White Noise, 1D/2D/3D/4D Value and Color. Explicit fixed seeds only: raw positive zero or any finite normal Float32, classified in owned homogeneous native socket storage before Python scalar promotion. Native typed W defaults, linked Value, CombineXYZ, explicit instance-bound Float/Vector group defaults, reroutes and actual mute bypass copy routes; no native MF/hash evaluation during extraction. Vector must be explicitly linked because the native unlinked compositor input uses Uniform Image Coordinates, not zero; compositor default dimension is 2D. Source Float32 bits drive the same Jenkins uint32 hash family and channel seeds/permutations as the existing shader hash kernels, with distinct CPU-compositor admission. All measured RGBA output words, including alpha 1, are exact through actual saved Final publication, both actual APIs/profiles and physical resize. Bounds: 64 source nodes, 256 visits, 16 source hops and group ancestry depth 16. Owned raw-copy groups are removed in finally; source scene/frame/active-selected objects/ID ownership remain unchanged. Raw negative zero, subnormal/nonfinite seeds, implicit casts/coordinates, computed/field producers, animation/drivers/NLA, GPU-authored Blender, other versions/builds/hosts and EEVEE shader source equivalence remain unqualified. Independent native Image Info Dimensions 0x0 is a domain control only; Image Info single-value support is not promoted. Existing shader White Noise and its field approximation policies are unchanged. No port-owned texture/pass/readback; three actual Final apply/dispose cycles preserve source material/callback and exact renderer-cache ownership.",
+          "limits": "Blender 5.3.0 build 02f0899d78e3 macOS arm64 CPU compositor White Noise, 1D/2D/3D/4D Value and Color. Explicit fixed seeds emitted solely as compile-time literal constants; uniform/dynamic inputs are not admitted: raw positive zero or any finite normal Float32, classified in owned homogeneous native socket storage before Python scalar promotion. Native typed W defaults, linked Value, CombineXYZ, explicit instance-bound Float/Vector group defaults, reroutes and actual mute bypass copy routes. Unlinked group-instance inputs must match the actual native INPUT interface identifier/type, require default_input VALUE and structure AUTO/SINGLE, and stay within 256 interface items. Implicit Uniform coordinates and Scene Frame defaults refuse; explicit linked overrides remain qualified. These are copy routes only; no native MF/hash evaluation during extraction. Vector must be explicitly linked because the native unlinked compositor input uses Uniform Image Coordinates, not zero; compositor default dimension is 2D. Source Float32 bits drive the same Jenkins uint32 hash family and channel seeds/permutations as the existing shader hash kernels, with distinct CPU-compositor admission. All measured RGBA output words, including alpha 1, are exact through actual saved Final publication, both actual APIs/profiles and physical resize. Bounds: 64 source nodes, 256 visits, 16 source hops and group ancestry depth 16. Owned raw-copy groups are removed in finally; source scene/frame/active-selected objects/ID ownership remain unchanged. Raw negative zero, subnormal/nonfinite seeds, implicit casts/coordinates, computed/field producers, animation/drivers/NLA, GPU-authored Blender, other versions/builds/hosts and EEVEE shader source equivalence remain unqualified. Independent native Image Info Dimensions 0x0 is a domain control only; Image Info single-value support is not promoted. Existing shader White Noise and its field approximation policies are unchanged. No port-owned texture/pass/readback; three actual Final apply/dispose cycles preserve source material/callback and exact renderer-cache ownership.",
           "modes": {
             "noise_dimensions": {
               "supported": [
@@ -16275,7 +16297,18 @@
           "positiveControls": 18,
           "namedRefusals": 16,
           "rawStorageBeforePromotion": true,
-          "gpuInitializationCalls": 0
+          "gpuInitializationCalls": 0,
+          "interfaceDefaultControls": {
+            "total": 15,
+            "nativeValueOrLinkedPositives": 3,
+            "nativeImplicitDefaultsRefused": [
+              "UNIFORM_IMAGE_COORDINATES",
+              "SCENE_FRAME"
+            ],
+            "unavailableNativeChoices": 4,
+            "privateSchemaRefusals": 6,
+            "requires": "Actual INPUT interface by identifier/type, VALUE default, AUTO/SINGLE structure; linked overrides resolve their actual producers."
+          }
         },
         "nativeImageDomainControl": {
           "dimensions": [
@@ -16300,7 +16333,7 @@
           "credit": "Only a fully closed native/Saved Final/both-API/both-profile receipt can qualify this bounded compositor route. No EEVEE shader/field/implicit-coordinate credit."
         },
         "numericContractSha256": "d07bb248334552f3fb6e91ec19e26fcc8db4d30b39c5d70ddcf37183d78157dc",
-        "coverageScope": "Pinned Blender5.3 macOS arm64 CPU compositor White Noise. 1D\u20134D Value and Color, raw normal/+0 fixed source words, explicit typed Value/CombineXYZ/group/reroute/mute copy routes only. No implicit Uniform Image Coordinates, fields/computed seeds/casts, negative zero/subnormals/nonfinite source seeds or GPU-authored/EEVEE source credit.",
+        "coverageScope": "Pinned Blender5.3 macOS arm64 CPU compositor White Noise. 1D\u20134D Value and Color, raw normal/+0 fixed source words, explicit typed Value/CombineXYZ/group/reroute/mute copy routes only. No implicit Uniform Image Coordinates, fields/computed seeds/casts, negative zero/subnormals/nonfinite source seeds or GPU-authored/EEVEE source credit. Fixed sources become compile-time literals only. Unlinked native group interfaces require VALUE/AUTO-or-SINGLE; implicit coordinate/frame defaults refuse and linked overrides remain accepted.",
         "closedReader": {
           "runtimeFingerprint": "7b1700db87eb6a68335d7fb1eb5605e5d08bc4e45a2361cda9473783d1555472",
           "verifierSha256": "cb7a4eb613d380e4cee43aa61fb744c558b19652ac8fb6462c1213b4764c372d",
@@ -16309,11 +16342,13 @@
         },
         "sourceSnapshot": {
           "sourceInputs": 137,
-          "nativeQualificationSha256": "3dfc1769bc64b3abfb075e9d47c8fe57df1d7a1d695c4267be209acd03c473f0",
-          "finalProofSha256": "376251fc4b97850cb47de48513a8b38c8567f84b4bee8e4778939787998196b3",
+          "nativeQualificationSha256": "24bd390537e4568721d17e5dc8784a85c9c261786cadc35a4ca1cfa10e711adf",
+          "finalProofSha256": "4895f4dbb5c8a0b333db8ae771d3c503273506c0b91bb9dfeba62f6bcf513912",
           "evidence": "experiments/compositor-white-noise/evidence.json",
-          "evidenceSha256": "c72627821e02856c3821de3713e48fe57c929351e9a4b539e23373b973ac7c5f",
-          "limits": "This fresh union receipt closes only this bounded CPU compositor White Noise slice. Other ports retain their own source snapshots; no all-port freshness or shader-context promotion."
+          "evidenceSha256": "6bbb0f50f691549a4cfffa8cc84a16ea80a5cf628c2dfbef2c0c04e14eadee8d",
+          "limits": "Fresh post-interface-guard White Noise replay only, with unchanged44/12 numeric corpus and15 additional interface admission controls. No field/RNE/shader/Image Info promotion and no refresh of other ports; prior receipt remains byte-identical in history.",
+          "previousEvidence": "experiments/compositor-white-noise/history/next18-fixed-input-evidence.json",
+          "previousEvidenceSha256": "c72627821e02856c3821de3713e48fe57c929351e9a4b539e23373b973ac7c5f"
         }
       }
     },
@@ -16449,6 +16484,225 @@
           "category": "partial",
           "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor only. Current source Scene must explicitly use mono rendering and CPU evaluation; Scene and active source-tree actions/drivers/NLA refuse, including an animated use_multiview flag currently false. Native SwitchView RGBA Image output forwards actual ordered input0; never hardcodes left, guesses a hidden Scene ID, or selects an inactive branch. Enabled/available native RGBA socket schema and unique nonempty identifiers, at most64inputs and64selected nodes, are bounded; source context/schema/selected socket/link/default snapshots are rechecked after private evaluators. Existing mute bypass/group/reroute/recursive-cycle/selected dependency safeguards remain in force. Inactive SceneTime is not visited; selected unsupported producers still refuse. Exact selected literal/constant and field identity is preserved by normalizing to the existing selected expression; no synthetic image or new runtime opcode/kernel/pass/texture. Tested8x8 saved Final/raw browser words are exact on actual WebGPU/WebGL2 via WebGPURenderer, observed Apple Metal and SwiftShader. Selected static Image uses its existing byte-sRGB decoder/window contract; selected RenderLayers->ImageInfo uses its existing field/INT_VECTOR2->RGBA identity contract. The independent native0x0 single-domain observation does not admit single-value/static-image ImageInfo. Stereo/named-live/multiview, GPU-authored compositor, dynamic/animated view configuration, empty/stale/unknown schemas, other builds/hosts/versions and legacy WebGLRenderer are unqualified. This is fixed mono branch transport, not general scene compositing, live view selection, PBR/Cycles parity, global precision or whole-scene appearance qualification."
         }
+      }
+    },
+    "shader:ShaderNodeBackground": {
+      "category": "unsupported",
+      "limits": "No qualified route outside the explicit Blender5.3.0 version override.",
+      "runtimePath": "packages/blendlink/src/threeRuntime.ts",
+      "runtimeOps": [],
+      "modes": {},
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Pinned Blender5.3.0 build02f0899d78e3 macOS arm64 EEVEE direct static Background\u2192native engine-selected WorldOutput, through the existing authoringPreview/sourcePresentation default Final bridge. Unmuted direct Surface, unlinked finite nonnegative Color/Strength, no connected Volume; qualified source radiance[0,1]. Five unchanged sources include native .8 Background and .05 initialized-World defaults, dyadic RGB/strength, zero strength and nonhalf products. Native EEVEE Metal half-film EXR32 reference: predeclared RGB abs\u22642^-10, alpha1 exact, dyadic/black controls wordexact. Fifteen native frames, seven saved actual default Final sources, 180 browser frame pairs/60 install cycles/393408 words on actual WebGPU and WebGL2, Metal and SwiftShader; no contract violations. General RGB is bounded, not bitexact: linear85752/display9528 word differences, maxAbs .00019532442092895508/.0001220703125. Raw display/exposure0 only. Native target selection handles EEVEE/ALL precedence; source animation/drivers/effective NLA block Final/connected-site export, with private current-frame preview explicitly warned. Explicit website look/environment ownership, Film Transparent and source opt-out remain authoritative. Public uniform data-cube background prevents orphan conversion depths; per helper64\u00d732 Float32 environment source32768 CPU bytes and six1\u00d71 Float32 cube faces96 logical GPU texel bytes sharing that helper's source view. Actual default preparation uses detached and live helpers (120 cube uploads/60 cycles), not a total32KiB/96B install; physical GPU allocation bytes unmeasured. Measured preparation0draws, linear scene1draw, installed Final2draws; exact texture/host/blur/clear-alpha restoration. No new GPU opcode. No IBL, whole lighting, BSDF, HDRI, Volume, procedural/linked World, Cycles-render, AgX visual, legacy renderer, other versions/builds/hosts or animated playback credit."
+        }
+      },
+      "provenanceRoute": {
+        "model": "constant-world-background-v1",
+        "serialized": "authoringPreview.world and sourcePresentation on actual generated Final descriptor; original source World/Background/WorldOutput remain preserved in saved source.",
+        "numericalCredit": "Visible camera background only; direct linear scene and installed Raw display audited separately against native half-film references."
+      },
+      "renderer": "WebGPURenderer actual WebGPU/WebGL2; observed Apple Metal and SwiftShader. Legacy WebGLRenderer excluded.",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/export_scene.py",
+          "anchor": "def analyze_authoring_preview_world("
+        },
+        {
+          "path": "packages/blendlink/src/threeRuntime.ts",
+          "anchor": "function installAuthoringPreviewWorld("
+        },
+        {
+          "path": "packages/blender-addon/procedural.py",
+          "anchor": "def pointer_animation_issues("
+        },
+        {
+          "path": "packages/blender-addon/tests/world_background_check.py"
+        },
+        {
+          "path": "packages/blender-addon/tests/world_animation_policy_check.py"
+        },
+        {
+          "path": "experiments/constant-world-background/evidence.json"
+        },
+        {
+          "path": "experiments/constant-world-background/README.md"
+        },
+        {
+          "path": "experiments/constant-world-background/sources.json"
+        },
+        {
+          "path": "experiments/constant-world-background/verify.mjs"
+        }
+      ],
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "runtimeFingerprint": "9871f8a5df94711afdeb539a35eff16d417b1f2da033108494d686c41aee2dee",
+        "numericContract": {
+          "rgbAbsoluteMax": 0.0009765625,
+          "alphaOneExact": true,
+          "reference": "actual EEVEE Metal half-film material output stored in EXR32",
+          "radianceMinimum": 0,
+          "radianceMaximum": 1
+        },
+        "counts": {
+          "nativeGraphs": 5,
+          "nativeFrames": 15,
+          "nativeWords": 15880,
+          "nativeMaximumAbsoluteFromSource": 0.00019532442092895508,
+          "savedFinal": 7,
+          "visibleFinal": 5,
+          "authoredOwnershipControls": 2,
+          "browserFramePairs": 180,
+          "installationCycles": 60,
+          "ownershipCaseRuns": 12,
+          "browserWords": 393408,
+          "linearWordDifferences": 85752,
+          "finalWordDifferences": 9528,
+          "maximumAbsoluteLinearVsNative": 0.00019532442092895508,
+          "maximumAbsoluteRawDisplayVsNative": 0.0001220703125,
+          "contractViolations": 0
+        },
+        "receipt": "experiments/constant-world-background/evidence.json",
+        "sharedFamilyTotals": true,
+        "iblCredit": 0,
+        "wholeSceneLightingCredit": 0
+      },
+      "scenePresentation": {
+        "model": "constant-world-background-v1",
+        "path": "packages/blendlink/blender/export_scene.py",
+        "function": "analyze_authoring_preview_world",
+        "runtimeFunction": "installAuthoringPreviewWorld",
+        "callers": [
+          {
+            "path": "packages/blendlink/src/threeRuntime.ts",
+            "anchor": "const stagingPreviewWorld = installAuthoringPreviewWorld("
+          },
+          {
+            "path": "packages/blendlink/src/threeRuntime.ts",
+            "anchor": "livePreviewWorld = installAuthoringPreviewWorld("
+          }
+        ]
+      }
+    },
+    "shader:ShaderNodeOutputWorld": {
+      "category": "unsupported",
+      "limits": "No qualified route outside the explicit Blender5.3.0 version override.",
+      "runtimePath": "packages/blendlink/src/threeRuntime.ts",
+      "runtimeOps": [],
+      "modes": {},
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Pinned Blender5.3.0 build02f0899d78e3 macOS arm64 EEVEE direct static Background\u2192native engine-selected WorldOutput, through the existing authoringPreview/sourcePresentation default Final bridge. Unmuted direct Surface, unlinked finite nonnegative Color/Strength, no connected Volume; qualified source radiance[0,1]. Five unchanged sources include native .8 Background and .05 initialized-World defaults, dyadic RGB/strength, zero strength and nonhalf products. Native EEVEE Metal half-film EXR32 reference: predeclared RGB abs\u22642^-10, alpha1 exact, dyadic/black controls wordexact. Fifteen native frames, seven saved actual default Final sources, 180 browser frame pairs/60 install cycles/393408 words on actual WebGPU and WebGL2, Metal and SwiftShader; no contract violations. General RGB is bounded, not bitexact: linear85752/display9528 word differences, maxAbs .00019532442092895508/.0001220703125. Raw display/exposure0 only. Native target selection handles EEVEE/ALL precedence; source animation/drivers/effective NLA block Final/connected-site export, with private current-frame preview explicitly warned. Explicit website look/environment ownership, Film Transparent and source opt-out remain authoritative. Public uniform data-cube background prevents orphan conversion depths; per helper64\u00d732 Float32 environment source32768 CPU bytes and six1\u00d71 Float32 cube faces96 logical GPU texel bytes sharing that helper's source view. Actual default preparation uses detached and live helpers (120 cube uploads/60 cycles), not a total32KiB/96B install; physical GPU allocation bytes unmeasured. Measured preparation0draws, linear scene1draw, installed Final2draws; exact texture/host/blur/clear-alpha restoration. No new GPU opcode. No IBL, whole lighting, BSDF, HDRI, Volume, procedural/linked World, Cycles-render, AgX visual, legacy renderer, other versions/builds/hosts or animated playback credit.",
+          "modes": {
+            "target": {
+              "supported": [
+                "ALL",
+                "EEVEE"
+              ],
+              "unsupported": [
+                "CYCLES"
+              ]
+            }
+          }
+        }
+      },
+      "provenanceRoute": {
+        "model": "constant-world-background-v1",
+        "serialized": "authoringPreview.world and sourcePresentation on actual generated Final descriptor; original source World/Background/WorldOutput remain preserved in saved source.",
+        "numericalCredit": "Visible camera background only; direct linear scene and installed Raw display audited separately against native half-film references."
+      },
+      "renderer": "WebGPURenderer actual WebGPU/WebGL2; observed Apple Metal and SwiftShader. Legacy WebGLRenderer excluded.",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/export_scene.py",
+          "anchor": "def analyze_authoring_preview_world("
+        },
+        {
+          "path": "packages/blendlink/src/threeRuntime.ts",
+          "anchor": "function installAuthoringPreviewWorld("
+        },
+        {
+          "path": "packages/blender-addon/procedural.py",
+          "anchor": "def pointer_animation_issues("
+        },
+        {
+          "path": "packages/blender-addon/tests/world_background_check.py"
+        },
+        {
+          "path": "packages/blender-addon/tests/world_animation_policy_check.py"
+        },
+        {
+          "path": "experiments/constant-world-background/evidence.json"
+        },
+        {
+          "path": "experiments/constant-world-background/README.md"
+        },
+        {
+          "path": "experiments/constant-world-background/sources.json"
+        },
+        {
+          "path": "experiments/constant-world-background/verify.mjs"
+        }
+      ],
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "runtimeFingerprint": "9871f8a5df94711afdeb539a35eff16d417b1f2da033108494d686c41aee2dee",
+        "numericContract": {
+          "rgbAbsoluteMax": 0.0009765625,
+          "alphaOneExact": true,
+          "reference": "actual EEVEE Metal half-film material output stored in EXR32",
+          "radianceMinimum": 0,
+          "radianceMaximum": 1
+        },
+        "counts": {
+          "nativeGraphs": 5,
+          "nativeFrames": 15,
+          "nativeWords": 15880,
+          "nativeMaximumAbsoluteFromSource": 0.00019532442092895508,
+          "savedFinal": 7,
+          "visibleFinal": 5,
+          "authoredOwnershipControls": 2,
+          "browserFramePairs": 180,
+          "installationCycles": 60,
+          "ownershipCaseRuns": 12,
+          "browserWords": 393408,
+          "linearWordDifferences": 85752,
+          "finalWordDifferences": 9528,
+          "maximumAbsoluteLinearVsNative": 0.00019532442092895508,
+          "maximumAbsoluteRawDisplayVsNative": 0.0001220703125,
+          "contractViolations": 0
+        },
+        "receipt": "experiments/constant-world-background/evidence.json",
+        "sharedFamilyTotals": true,
+        "iblCredit": 0,
+        "wholeSceneLightingCredit": 0
+      },
+      "scenePresentation": {
+        "model": "constant-world-background-v1",
+        "path": "packages/blendlink/blender/export_scene.py",
+        "function": "analyze_authoring_preview_world",
+        "runtimeFunction": "installAuthoringPreviewWorld",
+        "callers": [
+          {
+            "path": "packages/blendlink/src/threeRuntime.ts",
+            "anchor": "const stagingPreviewWorld = installAuthoringPreviewWorld("
+          },
+          {
+            "path": "packages/blendlink/src/threeRuntime.ts",
+            "anchor": "livePreviewWorld = installAuthoringPreviewWorld("
+          }
+        ]
       }
     }
   },

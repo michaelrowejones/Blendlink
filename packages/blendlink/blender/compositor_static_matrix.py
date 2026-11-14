@@ -6,6 +6,10 @@ import struct
 import sys
 import uuid
 import bpy
+if __package__:
+    from . import compositor_group_defaults as group_defaults
+else:
+    import compositor_group_defaults as group_defaults
 
 MODEL = 'native-static-matrix-copy-cpu-53-v1'
 NODES = {'FunctionNodeCombineMatrix', 'FunctionNodeTransposeMatrix', 'FunctionNodeSeparateMatrix'}
@@ -114,8 +118,10 @@ class _Evaluator:
     @staticmethod
     def signature(node):
         nested=getattr(node,'node_tree',None)
+        try:interface=group_defaults.interface_signature(node)
+        except group_defaults.GroupDefaultUnsupported as error:raise StaticMatrixUnsupported(str(error)) from error
         return (node.bl_idname,node.name,node.id_data.as_pointer(),node.mute,
-                nested.as_pointer() if nested else None,getattr(node,'is_active_output',None),
+                nested.as_pointer() if nested else None,interface,getattr(node,'is_active_output',None),
                 tuple((socket.identifier,socket.type,socket.enabled,socket.is_unavailable,
                        tuple((link.from_node.as_pointer(),link.from_socket.identifier,link.is_valid,link.is_muted)for link in socket.links))for socket in node.inputs),
                 tuple((link.from_socket.identifier,link.to_socket.identifier)for link in node.internal_links))
@@ -188,6 +194,8 @@ class _Evaluator:
         if socket.type not in {'VALUE','MATRIX'}:
             raise StaticMatrixUnsupported('Static Matrix implicit/non-matrix typed conversion is unqualified')
         if not socket.is_output:
+            try:group_defaults.validate_input(socket)
+            except group_defaults.GroupDefaultUnsupported as error:raise StaticMatrixUnsupported(str(error)) from error
             links=[link for link in socket.links if link.is_valid and not link.is_muted]
             if len(links)>1:raise StaticMatrixUnsupported('Static Matrix has multiple live input links')
             if links:

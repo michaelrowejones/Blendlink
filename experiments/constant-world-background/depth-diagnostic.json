@@ -1,0 +1,160 @@
+{
+  "schemaVersion": 1,
+  "status": "DIAGNOSTIC_ONLY_WORLD_DEPTH_OWNERSHIP",
+  "qualificationCredit": 0,
+  "rawReport": {
+    "path": "artifacts/verification-world-depth-diagnostic/report.json",
+    "sha256": "b2daa2f43c465ccd59cb24b331f6b4f4857233b36ffdb81da9d11c472985a913"
+  },
+  "rawFixture": {
+    "path": "artifacts/verification-world-depth-diagnostic/fixture/browser.js",
+    "sha256": "2eb9f63a4ba9e394514342e392d4b11cdf7bc869c61f8c1ef50c4b16ba0138c9"
+  },
+  "sourceFinalReceipt": {
+    "path": "/Users/michaeljones/Documents/GitHub/Blendlink/artifacts/verification-next22r2-constant-world/final-proof.json",
+    "sha256": "92c12b317814de6c5929738273648cbe94aabccb99a7c969eb2d203e4649c204"
+  },
+  "runtime": "Immutable failedr2 runtime archive, separately instrumented only for ownership observation; not current qualified support",
+  "runs": [
+    {
+      "backend": "webgpu",
+      "gpu": {
+        "api": "WebGPU",
+        "vendor": "apple",
+        "architecture": "metal-3",
+        "description": "",
+        "device": ""
+      },
+      "cycles": [
+        {
+          "cycle": 0,
+          "depthCount": 2,
+          "renderTargetCount": 4,
+          "owners": [
+            2,
+            4
+          ],
+          "sourceHostRestored": true
+        },
+        {
+          "cycle": 1,
+          "depthCount": 4,
+          "renderTargetCount": 6,
+          "owners": [
+            2,
+            4,
+            6,
+            7
+          ],
+          "sourceHostRestored": true
+        },
+        {
+          "cycle": 2,
+          "depthCount": 6,
+          "renderTargetCount": 8,
+          "owners": [
+            2,
+            4,
+            6,
+            7,
+            9,
+            10
+          ],
+          "sourceHostRestored": true
+        }
+      ],
+      "allSourceWorldTexturesDisposed": true,
+      "sourceWorldTextureCount": 6,
+      "afterRendererDispose": {
+        "allMemoryCountersZero": true,
+        "trackedTexturesWithoutIndividualDestroyCallbacks": 7,
+        "ownerMapsCleared": true,
+        "explicitDeviceDestroyed": true
+      }
+    },
+    {
+      "backend": "webgl2",
+      "gpu": {
+        "api": "WebGL2",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+      },
+      "cycles": [
+        {
+          "cycle": 0,
+          "depthCount": 2,
+          "renderTargetCount": 4,
+          "owners": [
+            2,
+            4
+          ],
+          "sourceHostRestored": true
+        },
+        {
+          "cycle": 1,
+          "depthCount": 4,
+          "renderTargetCount": 6,
+          "owners": [
+            2,
+            4,
+            6,
+            7
+          ],
+          "sourceHostRestored": true
+        },
+        {
+          "cycle": 2,
+          "depthCount": 6,
+          "renderTargetCount": 8,
+          "owners": [
+            2,
+            4,
+            6,
+            7,
+            9,
+            10
+          ],
+          "sourceHostRestored": true
+        }
+      ],
+      "allSourceWorldTexturesDisposed": true,
+      "sourceWorldTextureCount": 6,
+      "afterRendererDispose": {
+        "allMemoryCountersZero": true,
+        "trackedTexturesWithoutIndividualDestroyCallbacks": 7,
+        "ownerMapsCleared": true,
+        "explicitDeviceDestroyed": false
+      }
+    }
+  ],
+  "rootCause": "CubeMapNode caches renderTarget.texture at line121; its source-dispose callback calls dispose on that CubeTexture, not its owner CubeRenderTarget. Color is destroyed while implicit owner depth is left live until broader renderer/device teardown. Growth is per installation, not a bounded renderer cache.",
+  "gpuMemoryLimits": "Two nominal32-bit32x32 depth surfaces add2048texels/installation (nominal8KiB before opaque GPU alignment). Physical driver allocation bytes were not measured. Zeroed renderer counters/cleared maps are distinct from per-texture destroy callbacks; no claim individual orphan resources were destroyed by renderer.dispose alone.",
+  "proposedFix": "Own direct public uniform data CubeTexture background; retain existing environment source. No shader arithmetic, vendor/prototype or private cache patch. Pending fresh full numeric/resource qualification.",
+  "threeSources": [
+    {
+      "path": "src/nodes/utils/CubeMapNode.js",
+      "sha256": "7210caed1b9ab9327a03b8b0ebe603e03c3124e2d278402ad996d9fb1bdfcb57"
+    },
+    {
+      "path": "src/renderers/common/Textures.js",
+      "sha256": "28faf9665bfdcbc063be31cd7725fa4e5d2d1ee822e890bbb6b6c204d88978a4"
+    },
+    {
+      "path": "src/renderers/common/CubeRenderTarget.js",
+      "sha256": "9db2979e0dce21ef42def6b0d2d5abda022e6a4e5952b0ebfee30a49202a6014"
+    },
+    {
+      "path": "src/renderers/webgpu/utils/WebGPUTextureUtils.js",
+      "sha256": "5f241b35187e26b1d1b56279330df466d55f62bdce4a53e0106835cacba06ce1"
+    },
+    {
+      "path": "src/renderers/webgl/WebGLTextures.js",
+      "sha256": "2508f0bb491c4d7121e76fc3a4fbcfb769b76d7e2ac8f2392f3c7957ce946e6c"
+    }
+  ],
+  "failedBootstrap": {
+    "path": "artifacts/verification-world-depth-diagnostic-bootstrap-failed/report.json",
+    "sha256": "00b5b2714dc4d0bb936c3963edc10923bec146860afba1ca1a401e4a3ed9867f",
+    "qualificationCredit": 0,
+    "reason": "Missing isolated worktree dependency symlink; failed before GPU code loaded."
+  }
+}

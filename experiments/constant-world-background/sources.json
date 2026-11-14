@@ -36,7 +36,7 @@
     },
     {
       "path": "packages/blendlink/src/threeRuntime.ts",
-      "sha256": "4ca05fb2b46239e30a434591c3ecfa42531b179c20e946828921a419e64db3b4"
+      "sha256": "888df8cf1d62dea3aadcfe9274edafd527b8c0af69ad85d344dff54e7173052f"
     },
     {
       "path": "packages/blendlink/src/runtime.ts",
@@ -73,6 +73,18 @@
       {
         "path": "src/renderers/common/CubeRenderTarget.js",
         "sha256": "9db2979e0dce21ef42def6b0d2d5abda022e6a4e5952b0ebfee30a49202a6014"
+      },
+      {
+        "path": "src/renderers/common/Textures.js",
+        "sha256": "28faf9665bfdcbc063be31cd7725fa4e5d2d1ee822e890bbb6b6c204d88978a4"
+      },
+      {
+        "path": "src/renderers/webgpu/utils/WebGPUTextureUtils.js",
+        "sha256": "5f241b35187e26b1d1b56279330df466d55f62bdce4a53e0106835cacba06ce1"
+      },
+      {
+        "path": "src/renderers/webgl/WebGLTextures.js",
+        "sha256": "2508f0bb491c4d7121e76fc3a4fbcfb769b76d7e2ac8f2392f3c7957ce946e6c"
       }
     ]
   }

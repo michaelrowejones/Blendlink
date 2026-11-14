@@ -9,6 +9,10 @@ import platform
 import struct
 import sys
 import bpy
+if __package__:
+    from . import compositor_group_defaults as group_defaults
+else:
+    import compositor_group_defaults as group_defaults
 
 MODEL = 'native-compositor-white-noise-fixed-cpu-53-v1'
 PROFILE = 'darwin-arm64-53-white-noise-cpu-v1'
@@ -37,6 +41,25 @@ def _static(node):
     animation = node.id_data.animation_data
     if animation and (animation.action or len(animation.drivers) or len(animation.nla_tracks)):
         raise WhiteNoiseUnsupported('White Noise fixed inputs refuse animation, drivers and NLA')
+
+
+def _group_default(socket):
+    """An unlinked group input can be an implicit image field, not its RNA value."""
+    node = socket.node
+    group = node.node_tree
+    if group is None or group.bl_idname != 'CompositorNodeTree':
+        raise WhiteNoiseUnsupported('White Noise fixed group default has no native compositor interface')
+    items = group.interface.items_tree
+    if len(items) > 256:
+        raise WhiteNoiseUnsupported('White Noise fixed group interface exceeds 256 items')
+    matches = [item for item in items if item.item_type == 'SOCKET' and item.in_out == 'INPUT'
+               and item.identifier == socket.identifier]
+    expected = {'VALUE': 'NodeSocketFloat', 'VECTOR': 'NodeSocketVector'}.get(socket.type)
+    if len(matches) != 1 or expected is None or matches[0].socket_type != expected:
+        raise WhiteNoiseUnsupported('White Noise fixed group default identifier/type does not match its native INPUT interface')
+    interface = matches[0]
+    if getattr(interface, 'default_input', None) != 'VALUE' or getattr(interface, 'structure_type', None) not in {'AUTO', 'SINGLE'}:
+        raise WhiteNoiseUnsupported('White Noise fixed group defaults require VALUE input and AUTO/SINGLE structure; implicit coordinates/frame/unknown structures are unqualified')
 
 
 def _raw(sockets, kind):
@@ -118,10 +141,16 @@ def fixed_inputs(sockets, stack=()):
         active.add(key)
         try:
             if not output:
+                try:group_defaults.validate_input(socket)
+                except group_defaults.GroupDefaultUnsupported as error:raise WhiteNoiseUnsupported("White Noise fixed group input: "+str(error)) from error
                 links = [link for link in socket.links if link.is_valid and not link.is_muted]
                 if len(links) > 1:
                     raise WhiteNoiseUnsupported('White Noise fixed inputs refuse multiple links')
-                return resolve(links[0].from_socket, kind, frames, True, depth+1) if links else leaf(socket, kind)
+                if links:
+                    return resolve(links[0].from_socket, kind, frames, True, depth+1)
+                if node.bl_idname == 'CompositorNodeGroup':
+                    _group_default(socket)
+                return leaf(socket, kind)
             if node.mute:
                 links = [link for link in node.internal_links if link.to_socket == socket]
                 if len(links) != 1:

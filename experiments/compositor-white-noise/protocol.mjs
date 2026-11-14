@@ -26,8 +26,22 @@ export function expectedRgbaWords(row){
  return [...seeds.map(unit),floatBits(1)]
 }
 export const policyRefusals=['raw-refusal-0x80000000','raw-refusal-0x1','raw-refusal-0x80000001','raw-refusal-0x7fffff','stored-nonfinite-0x7fc12345','combine-subnormal-0','combine-subnormal-1','combine-subnormal-2','implicit-coordinates','animated-source','computed-source','implicit-vector-cast','unqualified-gpu-authored-source','group-default-subnormal','group-default-negative-zero','source-depth-budget']
+export const interfaceDefaultControls=[
+ {case:'vector-UNIFORM_IMAGE_COORDINATES',nativeAvailable:true,status:'unsupported'},
+ {case:'vector-linked-override',nativeAvailable:true,status:'extracted'},
+ {case:'vector-NORMALIZED_IMAGE_COORDINATES',nativeAvailable:false},
+ {case:'vector-PIXEL_IMAGE_COORDINATES',nativeAvailable:false},
+ {case:'vector-single-value',nativeAvailable:true,status:'extracted'},
+ {case:'float-value-default',nativeAvailable:true,status:'extracted'},
+ {case:'float-SCENE_FRAME',nativeAvailable:true,status:'unsupported'},
+ {case:'float-SCENE_TIME',nativeAvailable:false},
+ {case:'float-SCENE_SECONDS',nativeAvailable:false},
+ ...['unknown-default','unknown-structure','field-structure','identifier-mismatch','output-direction','type-mismatch'].map(name=>({case:name,privateSchemaBoundary:true,status:'unsupported'}))
+]
 export function assertPolicy(value){
  assert.equal(value.status,'WHITE_NOISE_SOURCE_POLICY_PASSED');assert.equal(value.positiveControls.length,18);assert.deepEqual(value.namedRefusals,policyRefusals)
+ assert.deepEqual(value.interfaceDefaultControls.map(({setterRefusal,...row})=>row),interfaceDefaultControls)
+ for(const row of value.interfaceDefaultControls)if(row.nativeAvailable===false){assert.equal(typeof row.setterRefusal,'string');assert.match(row.setterRefusal,/not found/)}
  assert.equal(value.gpuInitializationCalls,0);assert.equal(value.renders,0);assert.equal(value.portCredit,0);return value
 }
 export function assertQualification(q){

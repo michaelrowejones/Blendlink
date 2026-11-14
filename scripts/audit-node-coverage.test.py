@@ -125,6 +125,42 @@ class RetainedCatalogTests(unittest.TestCase):
 
 
 class CompileTimeRouteTests(unittest.TestCase):
+    def test_recorded_compositor_string_route_proves_real_call_full_record_and_final_refusal(self):
+        previous = audit.ROOT
+        route = {'path': 'packages/blender-addon/static_strings.py', 'function': 'evaluate_output', 'nodeSet': 'NODES'}
+        graph_path = 'packages/blendlink/blender/compositor_graph.py'
+        graph = (previous / graph_path).read_text()
+        compiler = (previous / route['path']).read_text()
+        with tempfile.TemporaryDirectory() as temporary:
+            audit.ROOT = directory = Path(temporary)
+            try:
+                for path in [graph_path, route['path']]:
+                    (directory / path).parent.mkdir(parents=True, exist_ok=True)
+                (directory / graph_path).write_text(graph)
+                (directory / route['path']).write_text(compiler)
+                self.assertTrue(audit.verify_recorded_static_string_forwarding(route))
+                mutations = [
+                    ('record = static_strings.evaluate_input(socket, stack)', "record = {'value': 0}"),
+                    ("('string',socket,stack,record,", "('string',socket,stack,record['value'],"),
+                    ('        return record\n', "        return record['value']\n"),
+                    ('    static_policy_reads = []', '    unused_policy_reads = []'),
+                    ('current = static_strings.evaluate_input(socket, stack)', "current = {'value': 0}"),
+                    ('if current != expected:', "if current['value'] != expected['value']:"),
+                    ("fail('static-policy-source-changed',", "fail('unreviewed-policy',"),
+                ]
+                for before, after in mutations:
+                    self.assertIn(before, graph)
+                    (directory / graph_path).write_text(graph.replace(before, after, 1))
+                    with self.subTest(mutation=before), self.assertRaises(ValueError):
+                        audit.verify_recorded_static_string_forwarding(route)
+                (directory / graph_path).write_text(graph)
+                self.assertIn('return evaluate_output(socket, stack)', compiler)
+                (directory / route['path']).write_text(compiler.replace('return evaluate_output(socket, stack)', 'return {}', 1))
+                with self.assertRaisesRegex(ValueError, 'wrapper must forward'):
+                    audit.verify_recorded_static_string_forwarding(route)
+            finally:
+                audit.ROOT = previous
+
     def test_forwarding_route_requires_real_function_node_set_and_call_site(self):
         with tempfile.TemporaryDirectory() as temporary:
             previous = audit.ROOT
@@ -154,6 +190,64 @@ class CompileTimeRouteTests(unittest.TestCase):
     def test_partial_version_override_cannot_bypass_live_evidence_checks(self):
         entry = {'category': 'unsupported', 'versionOverrides': {'5.3.0': {'category': 'partial'}}, 'runtimeOps': []}
         self.assertTrue(any('live classification needs' in failure for failure in audit.verify_map({'entries': {'shader:Test': entry}})))
+
+
+class ScenePresentationRouteTests(unittest.TestCase):
+    def entry(self):
+        return {'category': 'unsupported', 'versionOverrides': {'5.3.0': {'category': 'partial'}},
+            'runtimeOps': [], 'runtimePath': 'packages/blendlink/src/threeRuntime.ts',
+            'evidence': [{'path': 'packages/blendlink/blender/export_scene.py'},
+                         {'path': 'packages/blendlink/src/threeRuntime.ts'}],
+            'scenePresentation': {'model': 'constant-world-background-v1',
+                'path': 'packages/blendlink/blender/export_scene.py',
+                'function': 'analyze_authoring_preview_world',
+                'runtimeFunction': 'installAuthoringPreviewWorld',
+                'callers': [{'path': 'packages/blendlink/src/threeRuntime.ts',
+                    'anchor': 'const stagingPreviewWorld = installAuthoringPreviewWorld('},
+                    {'path': 'packages/blendlink/src/threeRuntime.ts',
+                    'anchor': 'livePreviewWorld = installAuthoringPreviewWorld('}]}}
+
+    def test_only_reviewed_world_classes_model_and_real_routes_admit(self):
+        for key in ('shader:ShaderNodeBackground', 'shader:ShaderNodeOutputWorld'):
+            self.assertEqual(audit.verify_map({'entries': {key: self.entry()}}), [])
+        mutations = [lambda value: value['scenePresentation'].update(model='new-model'),
+            lambda value: value['scenePresentation'].update(function='collect_authoring_preview'),
+            lambda value: value['scenePresentation'].update(runtimeFunction='missing'),
+            lambda value: value['scenePresentation']['callers'].pop(),
+            lambda value: value['scenePresentation']['callers'][0].update(anchor='missing('),
+            lambda value: value.update(runtimeOps=['invented'])]
+        for mutate in mutations:
+            altered = self.entry(); mutate(altered)
+            self.assertTrue(any('invalid scene-presentation' in failure for failure in
+                audit.verify_map({'entries': {'shader:ShaderNodeBackground': altered}})))
+        for key in ('shader:ShaderNodeValue', 'compositor:ShaderNodeBackground'):
+            self.assertTrue(any('invalid scene-presentation' in failure for failure in
+                audit.verify_map({'entries': {key: self.entry()}})))
+
+    def test_ast_constraints_and_live_callers_cannot_be_replaced_by_comments(self):
+        original = audit.ROOT
+        source = 'packages/blendlink/blender/export_scene.py'
+        runtime = 'packages/blendlink/src/threeRuntime.ts'
+        contents = {name: (original / name).read_text() for name in (source, runtime)}
+        variants = [(source, 'background.type != "BACKGROUND"', 'background.type != "OTHER"'),
+            (source, 'output.type != "OUTPUT_WORLD"', 'output.type != "OTHER"'),
+            (source, 'tree.get_output_node(target)', 'tree.other_output_node(target)'),
+            (source, 'volume.is_linked', 'volume.other_linked'),
+            (source, 'color_input.is_linked', 'color_input.other_linked'),
+            (source, 'strength_input.is_linked', 'strength_input.other_linked'),
+            (runtime, 'const stagingPreviewWorld = installAuthoringPreviewWorld(',
+                      'const stagingPreviewWorld = missing(')]
+        with tempfile.TemporaryDirectory() as temporary:
+            audit.ROOT = directory = Path(temporary)
+            try:
+                for name, old, new in variants:
+                    for path, text in contents.items():
+                        target = directory / path; target.parent.mkdir(parents=True, exist_ok=True)
+                        target.write_text(text.replace(old, new) if path == name else text)
+                    failures = audit.verify_map({'entries': {'shader:ShaderNodeBackground': self.entry()}})
+                    self.assertTrue(any('invalid scene-presentation' in failure for failure in failures), (old, failures))
+            finally:
+                audit.ROOT = original
 
 
 if __name__ == '__main__':

@@ -1,0 +1,19 @@
+{
+  "status": "RESEARCH_ONLY_GROUP_IMPLICIT_DEFAULT_COUNTEREXAMPLES",
+  "portCredit": 0,
+  "nativeBuild": "02f0899d78e3",
+  "nativeCpuCounterexample": {
+    "artifact": "artifacts/verification-native-group-implicit-counterexample-r1/report.json",
+    "extent": [13, 9], "comparedWords": 468,
+    "fieldWordDifferences": 0, "formerLiteralWordDifferences": 348,
+    "gpuInitializationCalls": 0
+  },
+  "independentLeafProbe": {
+    "artifact": "artifacts/verification-generic-group-leaves-r1/report.json",
+    "invalidLiteralAdmissions": ["math-frame", "vector-uniform", "selector-frame", "matrix-frame", "quaternion-frame"],
+    "publicCrossContextInterfaceCopy": ["FIELD", "GRID", "DYNAMIC", "LIST"],
+    "copiedStructureRnaGetter": "empty enum (not AUTO/SINGLE)",
+    "renders": 0, "gpuInitializationCalls": 0
+  },
+  "limits": "Research only. Public cross-context interface copies expose unqualified structure. No field implementation, linked-domain equivalence or new node qualification is claimed."
+}

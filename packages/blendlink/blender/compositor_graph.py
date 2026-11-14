@@ -20,7 +20,7 @@ def _sibling(name):
         # A source extension can load this canonical file under its own package
         # name; installed extensions put all helpers directly beside it.
         source = Path(__file__).with_name(name + ".py")
-        if name in {"static_selection", "static_strings"} and not source.is_file():
+        if name in {"static_selection", "static_strings", "compositor_group_defaults_bridge"} and not source.is_file():
             # This shared policy is authored with the addon. Standalone source
             # probes only add the canonical Blender directory to sys.path;
             # packaged SDK/extension builds put the derived import closure
@@ -39,6 +39,8 @@ def _sibling(name):
         return module
 
 
+group_defaults = _sibling("compositor_group_defaults")
+_sibling("compositor_group_defaults_bridge")
 static_selection = _sibling("static_selection")
 static_strings = _sibling("static_strings")
 static_matrix = _sibling("compositor_static_matrix")
@@ -311,6 +313,8 @@ def extract(scene):
     static_euler_cache = {}
     source_nodes = {}
     view_selections = []
+    used_group_interfaces = {}
+    static_policy_reads = []
 
     def is_single_value(ref):
         return ref["kind"] == "constant" or (ref["kind"] == "ref" and ref["node"] in single_values) \
@@ -361,9 +365,11 @@ def extract(scene):
             frames.append(current['instance'])
             current = current['parent']
         try:
-            record = static_strings.evaluate_input(socket, tuple(reversed(frames)))
+            stack = tuple(reversed(frames))
+            record = static_strings.evaluate_input(socket, stack)
         except static_strings.StaticStringUnsupported as error:
             fail('unsupported-static-string', ctx['path'], socket.node, socket, str(error))
+        static_policy_reads.append(('string',socket,stack,record,tuple(ctx['path']),socket.node.name))
         public_record = {key: value for key, value in record.items() if key != 'value'}
         if isinstance(record['value'], str):
             import hashlib
@@ -374,8 +380,29 @@ def extract(scene):
         result.setdefault('compileTimeStrings', []).append(dict(public_record, path=list(ctx['path']), node=socket.node.name))
         return record
 
+    def observe_group_interface(node, socket, ctx):
+        try:
+            signature = group_defaults.interface_signature(node)
+            if signature is None:
+                return
+            key = node.as_pointer()
+            previous = used_group_interfaces.get(key)
+            if previous is not None and previous[1] != signature:
+                raise group_defaults.GroupDefaultUnsupported('Used compositor group interface changed during extraction')
+            used_group_interfaces[key] = (node, signature, tuple(ctx['path']), node.name)
+        except group_defaults.GroupDefaultUnsupported as error:
+            fail('group-interface-changed', ctx['path'], node, socket, str(error))
+
+    def selection_signature(selected):
+        return dict(selected,input=selected['input'].as_pointer() if selected['input'] is not None else None)
+
     def input_value(socket, ctx):
         require_static(socket.node, socket, ctx)
+        observe_group_interface(socket.node, socket, ctx)
+        try:
+            group_defaults.validate_input(socket)
+        except group_defaults.GroupDefaultUnsupported as error:
+            fail("unsupported-group-default", ctx["path"], socket.node, socket, str(error))
         links = [
             l for l in socket.links if l.is_valid and not getattr(l, "is_muted", False)
         ]
@@ -418,6 +445,8 @@ def extract(scene):
     def output_value(socket, ctx):
         node = socket.node
         require_static(node, socket, ctx)
+        # A memoized output still depends on its actual group's interface.
+        observe_group_interface(node, socket, ctx)
         path = ctx["path"]
         key = (path, node.as_pointer(), socket.identifier)
         if key in memo:
@@ -511,9 +540,11 @@ def extract(scene):
                     group_stack.append(current['instance'])
                     current = current['parent']
                 try:
-                    selected = static_selection.static_selection(node, socket, tuple(reversed(group_stack)))
+                    stack = tuple(reversed(group_stack))
+                    selected = static_selection.static_selection(node, socket, stack)
                 except static_selection.SelectionUnsupported as error:
                     fail('unsupported-static-selection', path, node, socket, str(error))
+                static_policy_reads.append(('selection',socket,stack,selection_signature(selected),tuple(path),node.name))
                 if selected['constant'] is not None:
                     ref = {'kind': 'constant', 'type': 'BOOLEAN', 'value': selected['constant']}
                 else:
@@ -1148,6 +1179,27 @@ def extract(scene):
                     raise view_selection.ViewSelectionUnsupported('Switch View source selection/context changed during extraction')
             except (view_selection.ViewSelectionUnsupported,ReferenceError,RuntimeError) as error:
                 fail('unsupported-view-selection',ctx['path'],node,socket,str(error))
+        # These pure bounded policies can consume contributing group inputs
+        # internally. Revisit them after unrelated private MF evaluation, without
+        # another native call or walking inactive branches. Compare complete
+        # policy records and selected socket identity, not coincident values.
+        for kind,socket,stack,expected,path,label in static_policy_reads:
+            try:
+                if kind == 'string':
+                    current = static_strings.evaluate_input(socket, stack)
+                else:
+                    current = selection_signature(static_selection.static_selection(socket.node, socket, stack))
+                if current != expected:
+                    raise ValueError('Used static '+kind+' source policy changed during extraction')
+            except (ValueError,ReferenceError,RuntimeError,RecursionError) as error:
+                fail('static-policy-source-changed',path,None,None,label+': '+str(error))
+        for node,signature,path,label in used_group_interfaces.values():
+            try:
+                if group_defaults.interface_signature(node) != signature:
+                    raise group_defaults.GroupDefaultUnsupported('Used compositor group interface changed during extraction')
+            except (group_defaults.GroupDefaultUnsupported,ReferenceError,RuntimeError) as error:
+                # The node itself may have been removed by an evaluation handler.
+                fail('group-interface-changed',path,None,None,label+': '+str(error))
         result["status"] = "extracted"
     except Unsupported:
         result["status"] = "unsupported"

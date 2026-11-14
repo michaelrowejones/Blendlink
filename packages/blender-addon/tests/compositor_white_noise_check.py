@@ -6,6 +6,7 @@ from pathlib import Path
 import json
 import struct
 import sys
+from types import SimpleNamespace
 import bpy
 ROOT=Path(__file__).resolve().parents[3]
 sys.path[:0]=[str(ROOT/'packages/blendlink/blender'),str(ROOT/'packages/blender-addon')]
@@ -90,9 +91,48 @@ assert observed[0]!=observed[1]
 instances[0].inputs.foreach_set('default_value',raw([1,word(.2),word(.3)]));tree.links.new(instances[0].outputs[0],sink.inputs[0]);check('group-default-subnormal',False)
 instances[0].inputs.foreach_set('default_value',raw([0x80000000,word(.2),word(.3)]));check('group-default-negative-zero',False)
 instances[0].inputs.foreach_set('default_value',raw([0,word(.2),word(.3)]));reroute=group.nodes.new('NodeReroute');group.links.new(source.outputs[incoming.identifier],reroute.inputs[0]);group.links.new(reroute.outputs[0],noise.inputs['Vector']);check('group-reroute')
+interface_controls=[]
+def interface_check(name,accepted):
+    before=ownership();program=compositor_graph.extract(scene);assert ownership()==before,name+' source ownership changed'
+    assert program['status']==('extracted'if accepted else'unsupported'),(name,program)
+    if not accepted:assert any(d['code']=='unsupported-white-noise'for d in program['diagnostics']),(name,program)
+    interface_controls.append({'case':name,'nativeAvailable':True,'status':program['status']})
+
+# Native RNA reports a broad enum union: actual assignment is the authority.
+# Uniform is available for compositor Vector; Normalized/Pixel are not native
+# implicit-default enum values in this build. Do not invent support/refusal credit.
+for mode in ['UNIFORM_IMAGE_COORDINATES','NORMALIZED_IMAGE_COORDINATES','PIXEL_IMAGE_COORDINATES']:
+    try:incoming.default_input=mode
+    except (TypeError,ValueError) as error:
+        interface_controls.append({'case':'vector-'+mode,'nativeAvailable':False,'setterRefusal':str(error)});continue
+    group.interface_update(bpy.context);interface_check('vector-'+mode,False)
+    if mode=='UNIFORM_IMAGE_COORDINATES':
+        override=tree.nodes.new('ShaderNodeCombineXYZ');override.inputs.foreach_set('default_value',raw([word(.25),word(.5),word(.75)]));tree.links.new(override.outputs[0],instances[0].inputs[incoming.identifier]);interface_check('vector-linked-override',True)
+        tree.links.remove(instances[0].inputs[incoming.identifier].links[0]);tree.nodes.remove(override)
+incoming.default_input='VALUE';incoming.structure_type='SINGLE';group.interface_update(bpy.context);interface_check('vector-single-value',True);incoming.structure_type='AUTO';group.interface_update(bpy.context)
+
+float_group=bpy.data.node_groups.new('Artist fixed W interface','CompositorNodeTree');float_input=float_group.interface.new_socket(name='W',in_out='INPUT',socket_type='NodeSocketFloat');float_group.interface.new_socket(name='Noise',in_out='OUTPUT',socket_type='NodeSocketColor')
+float_entry=float_group.nodes.new('NodeGroupInput');float_exit=float_group.nodes.new('NodeGroupOutput');float_noise=float_group.nodes.new('ShaderNodeTexWhiteNoise');float_noise.noise_dimensions='1D';float_group.links.new(float_entry.outputs[0],float_noise.inputs['W']);float_group.links.new(float_noise.outputs['Color'],float_exit.inputs[0]);float_instance=tree.nodes.new('CompositorNodeGroup');float_instance.node_tree=float_group;tree.links.new(float_instance.outputs[0],sink.inputs[0]);interface_check('float-value-default',True)
+for mode in ['SCENE_FRAME','SCENE_TIME','SCENE_SECONDS']:
+    try:float_input.default_input=mode
+    except (TypeError,ValueError) as error:
+        interface_controls.append({'case':'float-'+mode,'nativeAvailable':False,'setterRefusal':str(error)});continue
+    float_group.interface_update(bpy.context);interface_check('float-'+mode,False)
+float_input.default_input='VALUE';tree.links.new(instances[0].outputs[0],sink.inputs[0])
+
+# These impossible/corrupt native-schema boundaries cannot be authored by RNA;
+# isolate them explicitly instead of claiming native numerical cases.
+import compositor_white_noise as white_noise
+for name,patch in [('unknown-default',{'default_input':'UNKNOWN'}),('unknown-structure',{'structure_type':'UNKNOWN'}),('field-structure',{'structure_type':'FIELD'}),('identifier-mismatch',{'identifier':'Other'}),('output-direction',{'in_out':'OUTPUT'}),('type-mismatch',{'socket_type':'NodeSocketFloat'})]:
+    fields=dict(item_type='SOCKET',in_out='INPUT',identifier=incoming.identifier,socket_type='NodeSocketVector',default_input='VALUE',structure_type='AUTO');fields.update(patch)
+    fake=SimpleNamespace(node=SimpleNamespace(node_tree=SimpleNamespace(bl_idname='CompositorNodeTree',interface=SimpleNamespace(items_tree=[SimpleNamespace(**fields)]))),identifier=incoming.identifier,type='VECTOR')
+    try:white_noise._group_default(fake)
+    except white_noise.WhiteNoiseUnsupported as error:assert 'White Noise'in str(error)
+    else:raise AssertionError(name+' did not refuse')
+    interface_controls.append({'case':name,'privateSchemaBoundary':True,'status':'unsupported'})
 # Reachable source-hop budget, without constructing an unbounded graph.
 for _ in range(18):
     previous=noise.inputs['Vector'].links[0].from_socket;reroute=group.nodes.new('NodeReroute');group.links.new(previous,reroute.inputs[0]);group.links.new(reroute.outputs[0],noise.inputs['Vector'])
 check('source-depth-budget',False)
-packet={'positiveControls':positives,'namedRefusals':refusals,'renders':0,'portCredit':0}
+packet={'positiveControls':positives,'namedRefusals':refusals,'interfaceDefaultControls':interface_controls,'renders':0,'portCredit':0}
 print('BLENDLINK_COMPOSITOR_WHITE_NOISE_POLICY_PASSED '+json.dumps(packet))

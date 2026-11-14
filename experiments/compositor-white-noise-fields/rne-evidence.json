@@ -1,0 +1,194 @@
+{
+  "schemaVersion": 1,
+  "status": "RESEARCH_ONLY_CLOSED_CPU_RNE_AXIS_TABLE_PROTOTYPE",
+  "portCredit": 0,
+  "savedFinalCredit": 0,
+  "reportPath": "artifacts/verification-exact-axis-rne-prototype-r2/report.json",
+  "reportSha256": "f16d91b39623597cfd07ba173aab924d74e495e830752133d5fe4a594484c442",
+  "model": "experimental-native-cpu-u32-rne-v1",
+  "nativeInputReportSha256": "61fb5f19c877107fe99c3720f5979dabdf83acf946ee3259538371fe7b2be0ca",
+  "cpuExhaustiveLawSha256": "ed52586f2047c023677d1409436dd2738c5019fa982814c9477a1a11dfe3e413",
+  "originalProductionHashSourceSha256": "a76347d92394a994e500b66b65cfca0fd21e81426eaef47fce4ca7083a055901",
+  "experimentalHashSourceSha256": "3db201371d8df70df49fb9e99608f6acdcc1d536fbe6e53d8e3e8f028c9f3080",
+  "exportTransform": {
+    "appended": "\n// Research-only exports; function bodies and old shader callers remain byte-identical.\nexport { hashUint3, hashUint4 }\n",
+    "unchangedFunctionBodies": true
+  },
+  "fixturePins": {
+    "axis-table.mjs": "a05efa15d3300703adf305910283d1078e688424796e407ad8162109837fc941",
+    "rne-normalization.mjs": "1035595853ca1081f94531b34d459aa307bbad95db50e3158353ddef39fe598d",
+    "uint-cases.mjs": "76fdb0f2275ecf06a5d6feb9f850f32c7dd0c05cdceafd60d678171a19146191",
+    "uint-rne.js": "bce3b2398d8496cec2991c3cdcecda1633a504607abd19923abb748422cc1bc4",
+    "browser-rne.js": "b65a9892817e3452e1948a02f4ccbf12a42a2af79fde5518481a8d56255a808d"
+  },
+  "dynamicUintValues": 262144,
+  "fieldWords": 7917312,
+  "tuples": [
+    {
+      "profile": "software",
+      "backend": "webgpu",
+      "gpu": {
+        "api": "WebGPU",
+        "vendor": "google",
+        "architecture": "swiftshader",
+        "device": "",
+        "description": ""
+      },
+      "uintValues": 65536,
+      "rneWordDifferences": 0,
+      "oldWideCastWordDifferences": 4370,
+      "fieldCases": 48,
+      "fieldWords": 1979328,
+      "fieldWordDifferences": 0,
+      "lastStatistics": {
+        "uploads": 8,
+        "rebuilds": 8,
+        "validations": 190,
+        "disposals": 0,
+        "axisMilliseconds": 0.30000001192092896,
+        "bytes": 65536,
+        "key": "4:8192"
+      },
+      "maximumBytes": 65536,
+      "textureBindings": 1,
+      "unfilteredLoads": 2,
+      "drawCallsPerMeasuredFrame": [
+        1
+      ],
+      "mutationRefusals": [
+        "mismatched-target",
+        "owned-schema",
+        "owned-data-identity",
+        "owned-version"
+      ],
+      "cleanupCycles": 3,
+      "remainingTextures": 0,
+      "remainingRenderTargets": 0
+    },
+    {
+      "profile": "software",
+      "backend": "webgl2",
+      "gpu": {
+        "api": "WebGL2",
+        "vendor": "Google Inc. (Google)",
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+      },
+      "uintValues": 65536,
+      "rneWordDifferences": 0,
+      "oldWideCastWordDifferences": 4370,
+      "fieldCases": 48,
+      "fieldWords": 1979328,
+      "fieldWordDifferences": 0,
+      "lastStatistics": {
+        "uploads": 8,
+        "rebuilds": 8,
+        "validations": 190,
+        "disposals": 0,
+        "axisMilliseconds": 0.19999998807907104,
+        "bytes": 65536,
+        "key": "4:8192"
+      },
+      "maximumBytes": 65536,
+      "textureBindings": 1,
+      "unfilteredLoads": 2,
+      "drawCallsPerMeasuredFrame": [
+        1
+      ],
+      "mutationRefusals": [
+        "mismatched-target",
+        "owned-schema",
+        "owned-data-identity",
+        "owned-version"
+      ],
+      "cleanupCycles": 3,
+      "remainingTextures": 0,
+      "remainingRenderTargets": 0
+    },
+    {
+      "profile": "metal",
+      "backend": "webgpu",
+      "gpu": {
+        "api": "WebGPU",
+        "vendor": "apple",
+        "architecture": "metal-3",
+        "device": "",
+        "description": ""
+      },
+      "uintValues": 65536,
+      "rneWordDifferences": 0,
+      "oldWideCastWordDifferences": 0,
+      "fieldCases": 48,
+      "fieldWords": 1979328,
+      "fieldWordDifferences": 0,
+      "lastStatistics": {
+        "uploads": 8,
+        "rebuilds": 8,
+        "validations": 190,
+        "disposals": 0,
+        "axisMilliseconds": 0.30000001192092896,
+        "bytes": 65536,
+        "key": "4:8192"
+      },
+      "maximumBytes": 65536,
+      "textureBindings": 1,
+      "unfilteredLoads": 2,
+      "drawCallsPerMeasuredFrame": [
+        1
+      ],
+      "mutationRefusals": [
+        "mismatched-target",
+        "owned-schema",
+        "owned-data-identity",
+        "owned-version"
+      ],
+      "cleanupCycles": 3,
+      "remainingTextures": 0,
+      "remainingRenderTargets": 0
+    },
+    {
+      "profile": "metal",
+      "backend": "webgl2",
+      "gpu": {
+        "api": "WebGL2",
+        "vendor": "Google Inc. (Apple)",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+      },
+      "uintValues": 65536,
+      "rneWordDifferences": 0,
+      "oldWideCastWordDifferences": 0,
+      "fieldCases": 48,
+      "fieldWords": 1979328,
+      "fieldWordDifferences": 0,
+      "lastStatistics": {
+        "uploads": 8,
+        "rebuilds": 8,
+        "validations": 190,
+        "disposals": 0,
+        "axisMilliseconds": 0.3999999761581421,
+        "bytes": 65536,
+        "key": "4:8192"
+      },
+      "maximumBytes": 65536,
+      "textureBindings": 1,
+      "unfilteredLoads": 2,
+      "drawCallsPerMeasuredFrame": [
+        1
+      ],
+      "mutationRefusals": [
+        "mismatched-target",
+        "owned-schema",
+        "owned-data-identity",
+        "owned-version"
+      ],
+      "cleanupCycles": 3,
+      "remainingTextures": 0,
+      "remainingRenderTargets": 0
+    }
+  ],
+  "retainedFailedRneAttempt": {
+    "path": "artifacts/verification-exact-axis-rne-prototype-r1/report.json",
+    "sha256": "8b8602c8ae2e8cac7d2385a8208b863fe83884a795c695f836551f2e5bbd9823",
+    "reason": "SwiftShader WebGPU conversion+field passed; GLSL max(uint,uint) emitted float1.0 and failed compile. Equivalent typed uint select replaces only the legal half-shift zero guard."
+  },
+  "limits": "Experiment only; no SDK admission, actual saved Final publication, live field capability promotion or performance/FPS claim. Original shader normalization and existing fixed-input compositor source path stay unchanged. Native CPU source is pinned separately from actual target backend proofs."
+}

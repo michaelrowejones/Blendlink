@@ -10,7 +10,8 @@ runtime.
 
 The qualified slice admits 1D–4D Value and Color, exact stored normal Float32 or +0,
 explicit typed defaults/Value/CombineXYZ leaves and bound group/reroute/mute
-copy routes. No native MF/hash evaluation is used during extraction. Native
+copy routes. Every admitted seed becomes a compile-time literal constant;
+uniforms and dynamic inputs are not admitted. No native MF/hash evaluation is used during extraction. Native
 socket storage is copied into owned homogeneous socket groups before Python
 promotion; temporary IDs are removed in `finally`. A 64-node / 256-visit /
 16-hop source bound limits traversal. Native negative zero, subnormals,
@@ -19,12 +20,21 @@ GPU-authored compositor contexts refuse. Vector must be explicitly linked:
 the native compositor's unlinked default is Uniform Image Coordinates, not
 zero. Default dimension is 2D, unlike the shader's 3D.
 
+An unlinked group-instance input must match its actual native INPUT interface
+identifier/type, require `default_input=VALUE` and `structure_type=AUTO|SINGLE`,
+and belong to an interface with at most 256 items. Implicit Uniform-coordinate
+and Scene Frame defaults refuse; explicit linked overrides still resolve their
+actual producers. The fresh policy census checks 15 additional interface cases:
+three native value/linked positives, two native implicit-default refusals,
+four genuinely unavailable native choices and six corrupt-schema boundaries.
+The original 18 positives and 16 refusal controls remain unchanged.
+
 The fresh root union proof closed **44 actual CPU compositor graphs, 12 saved
 Final sources, 224 browser case runs and 14,336 primary Float32 words**, with
 **zero word differences and zero contract violations**, plus 48 physical resize
 frames, 144 Final apply/dispose cycles and 14 fresh actual Python prefixes.
 `evidence.json` is the exact closed receipt from
-`artifacts/verification-next18-white-noise-union/qualified.json`, with runtime
+`artifacts/verification-next22-group-guard-white-noise/qualified.json`, with runtime
 fingerprint `7b1700db87eb6a68335d7fb1eb5605e5d08bc4e45a2361cda9473783d1555472`.
 Only this source snapshot and bounded route are qualified; other ports retain
 their own receipts. Both dimensions
@@ -35,6 +45,10 @@ reference is never imported by production extraction. The gate declared in
 `numeric-contract.json` requires zero output word differences and exact alpha1.
 It is deliberately not a tolerance gate. The earlier native-only pilot in
 `pilot.json` remains research with zero Final/browser/port credit.
+The preceding next18 receipt is retained byte-for-byte at
+[`history/next18-fixed-input-evidence.json`](history/next18-fixed-input-evidence.json).
+This guard replay changes source admission and its verification snapshot;
+numeric counts, older versions, node categories and shader scope are unchanged.
 
 An independent native Image Info Dimensions control verifies that a fixed
 White Noise output has native 0×0 single-value domain; it does not qualify the

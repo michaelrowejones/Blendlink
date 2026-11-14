@@ -1,0 +1,388 @@
+{
+  "schemaVersion": 1,
+  "kind": "closed-manifest-pipeline-smokes-v1",
+  "status": "both-manifest-entrypoints-closed-pass",
+  "supportPromotion": false,
+  "newLiveNodeEntries": 0,
+  "freshAllPortsClaim": false,
+  "scope": "Actual fresh complete manifest-selected White Noise and mono Switch View transactions at their own recorded source/input/runtime snapshots. Later source changes are not qualified by these reports.",
+  "reports": [
+    {
+      "manifestId": "compositor-white-noise",
+      "nativeNode": "ShaderNodeTexWhiteNoise",
+      "domain": "compositor",
+      "profile": "mac-53",
+      "sourceCommit": "a8880ad0c83a049c17fb3703c3b19a611f943d6b",
+      "inputDigest": "6a38b7f5ff4f939529c3244905e1d678b832d27d8e8dde0ebe5c1da22f5e0db1",
+      "nativeInputDigest": "0548e283498bf2a4d36c6b8cadcdb1c1e360018b25559c4cebd1bb7665cee393",
+      "runtimeInputDigest": "eee01f0572f27b6989157f036b7a0bc8c83640bd143080a425ce9b972f206941",
+      "requestKey": "33bb618f3e9c6b66aba38dff69f6b630b8b4f333e83aa6957467dfcc982c0165",
+      "evidenceKey": "8207d8af27574777b0591f2ff0b40e83973ffd71c8c8a41a23dae69ac03fc2ec",
+      "status": "qualified",
+      "supportPromotion": false,
+      "productionCredit": true,
+      "workspaceStable": true,
+      "nativePythonOwnership": "family",
+      "productionCases": 44,
+      "calibrationCases": 0,
+      "nativeGraphs": 44,
+      "savedFinalScenes": 12,
+      "caseRuns": 224,
+      "productionCaseRuns": 224,
+      "primaryFloat32Words": 14336,
+      "productionFloat32Words": 14336,
+      "wordMismatches": 0,
+      "exitCode": 0,
+      "nativeIdentity": {
+        "path": "/Applications/Blender.app/Contents/MacOS/Blender",
+        "bytes": 210043328,
+        "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da",
+        "version": "5.3.0",
+        "buildHash": "02f0899d78e3"
+      },
+      "processIdentity": {
+        "nodeVersion": "24.22.1",
+        "platform": "darwin",
+        "architecture": "arm64"
+      },
+      "actualIdentity": {
+        "nativeVersion": [
+          5,
+          3,
+          0
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeSource": {
+          "profile": "darwin-arm64-53-white-noise-cpu-v1",
+          "backend": null,
+          "evaluator": "CPU-compositor"
+        },
+        "browsers": [
+          {
+            "path": "artifacts/verification-next23-manifest-white/cpu/browser-raw-metal/report.json",
+            "sha256": "8618b9558bb4e94fe9f5ac113d4075cf37452b9688241bac618bf3e8b2e7bd09",
+            "profile": "metal",
+            "phase": "raw",
+            "browserVersion": "158.0.8127.18",
+            "actualApis": [
+              {
+                "backend": "webgpu",
+                "gpu": {
+                  "api": "WebGPU",
+                  "vendor": "apple",
+                  "architecture": "metal-3",
+                  "device": "",
+                  "description": ""
+                },
+                "cases": 44
+              },
+              {
+                "backend": "webgl2",
+                "gpu": {
+                  "api": "WebGL2",
+                  "vendor": "Google Inc. (Apple)",
+                  "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+                },
+                "cases": 44
+              }
+            ]
+          },
+          {
+            "path": "artifacts/verification-next23-manifest-white/cpu/browser-final-metal/report.json",
+            "sha256": "cef5de55cfbd88a3869aee918a553733b55d9ef1b145d6c34e219cd108363ecd",
+            "profile": "metal",
+            "phase": "final",
+            "browserVersion": "158.0.8127.18",
+            "actualApis": [
+              {
+                "backend": "webgpu",
+                "gpu": {
+                  "api": "WebGPU",
+                  "vendor": "apple",
+                  "architecture": "metal-3",
+                  "device": "",
+                  "description": ""
+                },
+                "cases": 12
+              },
+              {
+                "backend": "webgl2",
+                "gpu": {
+                  "api": "WebGL2",
+                  "vendor": "Google Inc. (Apple)",
+                  "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+                },
+                "cases": 12
+              }
+            ]
+          },
+          {
+            "path": "artifacts/verification-next23-manifest-white/cpu/browser-raw-software/report.json",
+            "sha256": "fdb82bfe5dae26e4ed95c3fb1257b1e1aa00f93116039e117c8f9cae5011a108",
+            "profile": "software",
+            "phase": "raw",
+            "browserVersion": "158.0.8127.18",
+            "actualApis": [
+              {
+                "backend": "webgpu",
+                "gpu": {
+                  "api": "WebGPU",
+                  "vendor": "google",
+                  "architecture": "swiftshader",
+                  "device": "",
+                  "description": ""
+                },
+                "cases": 44
+              },
+              {
+                "backend": "webgl2",
+                "gpu": {
+                  "api": "WebGL2",
+                  "vendor": "Google Inc. (Google)",
+                  "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+                },
+                "cases": 44
+              }
+            ]
+          },
+          {
+            "path": "artifacts/verification-next23-manifest-white/cpu/browser-final-software/report.json",
+            "sha256": "76d0e49ba166cdcdb6fc501801f80b883d586f9ae1ff3eab8711d477445ceb92",
+            "profile": "software",
+            "phase": "final",
+            "browserVersion": "158.0.8127.18",
+            "actualApis": [
+              {
+                "backend": "webgpu",
+                "gpu": {
+                  "api": "WebGPU",
+                  "vendor": "google",
+                  "architecture": "swiftshader",
+                  "device": "",
+                  "description": ""
+                },
+                "cases": 12
+              },
+              {
+                "backend": "webgl2",
+                "gpu": {
+                  "api": "WebGL2",
+                  "vendor": "Google Inc. (Google)",
+                  "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+                },
+                "cases": 12
+              }
+            ]
+          }
+        ]
+      },
+      "nativePythonProof": {
+        "pythonInvocations": 14,
+        "finalInvocations": 12,
+        "uniqueCachePrefixes": 14,
+        "numericalCredit": 0
+      },
+      "report": {
+        "path": "artifacts/verification-next23-manifest-white/report.json",
+        "sha256": "ba342cea74c4d2156f2035dffed245887b1b75f2d8aedbc2eafb40be787501ad"
+      },
+      "independentClosedReceipt": {
+        "path": "artifacts/verification-next23-manifest-white/adapter-closed.json",
+        "sha256": "17c55f16347b07c82fac7f13a90000d9412df99c8c2530f6624fc4efa16955e5",
+        "status": "QUALIFIED_PARTIAL_COMPOSITOR_WHITE_NOISE",
+        "runtimeFingerprint": "7b1700db87eb6a68335d7fb1eb5605e5d08bc4e45a2361cda9473783d1555472"
+      },
+      "nativeFinalArtifactSources": 12,
+      "outerBrowserProbes": 0,
+      "cachePolicy": "record-only; no numerical proof is reused or skipped"
+    },
+    {
+      "manifestId": "mono-switch-view",
+      "nativeNode": "CompositorNodeSwitchView",
+      "domain": "compositor",
+      "profile": "mac-53",
+      "sourceCommit": "a8880ad0c83a049c17fb3703c3b19a611f943d6b",
+      "inputDigest": "1811256a8a293b5b6108f687feda3b5692edf954b4b7ccb71ae6ebec1b8cc02d",
+      "nativeInputDigest": "c7194d9614102a6d2e346ea321ae166e4dd009c294071e8125dce41f36b60d19",
+      "runtimeInputDigest": "e08808dfcd5b8db18b807737f775a70a774f7d15853c7475d7de485b6774d79e",
+      "requestKey": "99786f1611b0946f02edd26403002425985115699b4d2e5c2d282f88ea561e0b",
+      "evidenceKey": "23af09eaca6758062a2d9cc1fc0d0a7d5f39e9294b03215d56481d70995a9e00",
+      "status": "qualified",
+      "supportPromotion": false,
+      "productionCredit": true,
+      "workspaceStable": true,
+      "nativePythonOwnership": "family",
+      "productionCases": 7,
+      "calibrationCases": 1,
+      "nativeGraphs": 8,
+      "savedFinalScenes": 8,
+      "caseRuns": 64,
+      "productionCaseRuns": 56,
+      "primaryFloat32Words": 16384,
+      "productionFloat32Words": 14336,
+      "wordMismatches": 0,
+      "exitCode": 0,
+      "nativeIdentity": {
+        "path": "/Applications/Blender.app/Contents/MacOS/Blender",
+        "bytes": 210043328,
+        "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da",
+        "version": "5.3.0",
+        "buildHash": "02f0899d78e3"
+      },
+      "processIdentity": {
+        "nodeVersion": "24.22.1",
+        "platform": "darwin",
+        "architecture": "arm64"
+      },
+      "actualIdentity": {
+        "nativeVersion": [
+          5,
+          3,
+          0
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeSource": {
+          "profile": "darwin-arm64-53-mono-view-cpu-v1",
+          "backend": null,
+          "evaluator": "CPU-compositor"
+        },
+        "browsers": [
+          {
+            "profile": "metal",
+            "phase": "raw",
+            "reportSha256": "94b0f362348bda9bf546d4dbfa8b75eacfc83f7291cb99caf1dad1063c4c638e",
+            "caseRuns": 16,
+            "APIs": [
+              {
+                "backend": "webgpu",
+                "gpu": {
+                  "api": "WebGPU",
+                  "vendor": "apple",
+                  "architecture": "metal-3",
+                  "device": "",
+                  "description": ""
+                }
+              },
+              {
+                "backend": "webgl2",
+                "gpu": {
+                  "api": "WebGL2",
+                  "vendor": "Google Inc. (Apple)",
+                  "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+                }
+              }
+            ]
+          },
+          {
+            "profile": "metal",
+            "phase": "final",
+            "reportSha256": "cea44e2213f6c43cf2862953206223148e358e9c9adb4ccae98af3aa2aa7f781",
+            "caseRuns": 16,
+            "APIs": [
+              {
+                "backend": "webgpu",
+                "gpu": {
+                  "api": "WebGPU",
+                  "vendor": "apple",
+                  "architecture": "metal-3",
+                  "device": "",
+                  "description": ""
+                }
+              },
+              {
+                "backend": "webgl2",
+                "gpu": {
+                  "api": "WebGL2",
+                  "vendor": "Google Inc. (Apple)",
+                  "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+                }
+              }
+            ]
+          },
+          {
+            "profile": "software",
+            "phase": "raw",
+            "reportSha256": "2d3b156d787e263a448123d7c7abd8f614f40e793f12222b47073c0594f01ea7",
+            "caseRuns": 16,
+            "APIs": [
+              {
+                "backend": "webgpu",
+                "gpu": {
+                  "api": "WebGPU",
+                  "vendor": "google",
+                  "architecture": "swiftshader",
+                  "device": "",
+                  "description": ""
+                }
+              },
+              {
+                "backend": "webgl2",
+                "gpu": {
+                  "api": "WebGL2",
+                  "vendor": "Google Inc. (Google)",
+                  "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+                }
+              }
+            ]
+          },
+          {
+            "profile": "software",
+            "phase": "final",
+            "reportSha256": "fc4921bb13370d28d6e37dbe59bf4e5c1df47caeb9685dc4965bd6d63d8347b4",
+            "caseRuns": 16,
+            "APIs": [
+              {
+                "backend": "webgpu",
+                "gpu": {
+                  "api": "WebGPU",
+                  "vendor": "google",
+                  "architecture": "swiftshader",
+                  "device": "",
+                  "description": ""
+                }
+              },
+              {
+                "backend": "webgl2",
+                "gpu": {
+                  "api": "WebGL2",
+                  "vendor": "Google Inc. (Google)",
+                  "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "nativePythonProof": {
+        "pythonInvocations": 10,
+        "finalInvocations": 8,
+        "uniqueCachePrefixes": 10,
+        "numericalCredit": 0,
+        "sha256": "6359bb85de91af73665b21ee3edabca234dbeb50dc3bf4e647979b0b28324591"
+      },
+      "report": {
+        "path": "artifacts/verification-next23-manifest-view/report.json",
+        "sha256": "344bfc1c845860e904d75a7ede4be59a8976ffc13926a05594b9d12426e1033c"
+      },
+      "independentClosedReceipt": {
+        "path": "artifacts/verification-next23-manifest-view/adapter-closed.json",
+        "sha256": "a168a9264d68ad7568f54057d81c0aa5372d18048bedcc0df816bedb88f8ddf7",
+        "status": "qualified-mono-switch-view-slice",
+        "runtimeFingerprint": "7b1700db87eb6a68335d7fb1eb5605e5d08bc4e45a2361cda9473783d1555472"
+      },
+      "nativeFinalArtifactSources": 8,
+      "outerBrowserProbes": 0,
+      "cachePolicy": "record-only; no numerical proof is reused or skipped"
+    }
+  ],
+  "rawArtifacts": {
+    "machineLocal": true,
+    "ignored": true
+  },
+  "limitations": [
+    "No new node, context, version or platform coverage is introduced by registering a proof entrypoint.",
+    "Mono totals include one independent calibration; only seven native graphs and56 browser case-runs exercise Switch View.",
+    "Captured reports remain immutable and preserve their original productionCredit fields for their existing bounded family scope.",
+    "No unrelated port was rerun and no numerical proof is eligible for automatic reuse."
+  ]
+}

@@ -112,3 +112,34 @@ normalization from integer mantissa/remainder bits, casting at most 24 exact
 significant bits, then exact power-of-two scaling. Keep the old shader route
 unchanged. All failures and partial Metal successes remain research; no lookup
 prototype, dynamic field or replacement normalizer is admitted by this record.
+
+## Explicit CPU RNE experiment
+
+`rne-evidence.json` closes the experimental replacement normalizer and axis
+lookup on all four actual target tuples: **262,144 dynamic uint32 conversion
+values and 7,917,312 native field words, zero differences**. Each tuple checks
+65,536 input words covering every discarded-bit pattern in all nine rounding
+strata, exponent boundaries, tie/carry patterns and independent dense words.
+The separate retained CPU proof checks all 4,294,967,296 uint32 values against
+native C++ Float32 conversion/division, with zero mismatches. This is not an
+exhaustive GPU claim.
+
+The explicit law computes mantissa, remainder and round-to-nearest/ties-even
+carry using uint32 arithmetic. It converts at most 24 significant bits
+(including the exact 2^24 carry), then multiplies by an exact power-of-two
+scale. No dynamic wide unsigned cast, epsilon, output repair or input
+quantization remains. The shader's original normalization is unchanged.
+Existing integer hash bodies are reused from the prior frozen snapshot via
+append-only private exports; AST comparison verifies every function body is
+byte-identical. The first RNE attempt retained a GLSL typing failure from
+Three `max(uint,uint)` emitting float1.0; an equivalent uint select protects
+the shift-zero case without changing the law.
+
+All 48 native frames per tuple passed the same physical resize/DPR, one-build/
+upload per valid extent, repeated-draw reuse, one R32F binding/two unfiltered
+loads, maximum 64 KiB, four mutation refusals and three cleanup/reapply cycles.
+The old wide cast misrounded 4,370 dynamic calibration values on each software
+API; both Metal APIs matched the CPU conversion. Raw reports retain generated
+shaders and source inventories. These are prototype feasibility results:
+**zero SDK/field/Final credit**, pending reviewed native source admission and
+actual production pipeline/Final closure. No production source was modified.

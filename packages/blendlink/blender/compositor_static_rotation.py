@@ -50,6 +50,8 @@ class _Evaluator(shared._Evaluator):
         if socket.type not in {'VALUE','ROTATION'}:
             raise StaticRotationUnsupported('Static Quaternion implicit or non-Float/Rotation conversions remain unqualified')
         if not socket.is_output:
+            try:shared.group_defaults.validate_input(socket)
+            except shared.group_defaults.GroupDefaultUnsupported as error:raise StaticRotationUnsupported(str(error)) from error
             links=[link for link in socket.links if link.is_valid and not link.is_muted]
             if len(links)>1:raise StaticRotationUnsupported('Static Quaternion has multiple live input links')
             if links:

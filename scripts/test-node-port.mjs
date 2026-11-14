@@ -90,13 +90,21 @@ async function executePort(options) {
     const versionText = await readFile(identityStep.logPath, 'utf8'), version = versionText.match(/Blender\s+(\d+\.\d+\.\d+)/)?.[1], build = versionText.match(/build hash:\s*([a-f0-9]+)/i)?.[1] ?? null
     report.nativeIdentity.version = version ?? null; report.nativeIdentity.buildHash = build
     if (version !== profile.blenderVersion || profile.blenderBuildHash && build !== profile.blenderBuildHash) throw new Refused('Actual Blender version/build does not match the declared source profile')
-    launcher = await createNodePortBlenderLauncher({ blender: report.nativeIdentity.path, directory: join(evidence, 'native-python-active') })
-    for (const key of ['path', 'bytes', 'sha256']) assert.equal(launcher.identity.native[key], report.nativeIdentity[key])
-    report.nativeLauncherIdentity = launcher.identity
-    values.blender = launcher.executable
+    const familyOwned = adapter.nativeOwnership === 'family'
+    if (!familyOwned) {
+      launcher = await createNodePortBlenderLauncher({ blender: report.nativeIdentity.path, directory: join(evidence, 'native-python-active') })
+      for (const key of ['path', 'bytes', 'sha256']) assert.equal(launcher.identity.native[key], report.nativeIdentity[key])
+      report.nativeLauncherIdentity = launcher.identity
+      values.blender = launcher.executable
+    } else {
+      // These registered suites own their complete fresh guard/archive and both
+      // browser profiles. Never nest another launcher or run their matrix twice.
+      values.blender = report.nativeIdentity.path
+      report.nativePythonOwnership = 'family'
+    }
     report.inputDigest = inputs.inputDigest; report.nativeInputDigest = inputs.nativeInputDigest; report.runtimeInputDigest = inputs.runtimeInputDigest
     report.requestKey = nodePortHash(JSON.stringify({ inputs: inputs.inputDigest, manifest, profile, native: report.nativeIdentity,
-      catalog, node: { version: process.versions.node, binary: launcher.identity.node }, launcher: launcher.identity, actualDriver: null, browserIdentity: null }))
+      catalog, node: { version: process.versions.node, binary: launcher?.identity.node ?? await nodePortFileIdentity(process.execPath) }, launcher: launcher?.identity ?? null, actualDriver: null, browserIdentity: null }))
     const runStep = async command => {
       console.log('BLENDLINK_NODE_PORT_STEP ' + command.id)
       const result = await executeNodePortCommand({ ...command, env: { ...baseEnv, ...command.env }, cwd: root, logPath: join(evidence, 'step-' + command.id + '.log') })
@@ -107,7 +115,7 @@ async function executePort(options) {
     let firstNativeHash = null
     const completedRuns = []
     for (const run of profile.runs) {
-      if (profile.expectedStatus !== 'not-applicable') { report.browserProbes.push({ run: run.id, ...await browserIdentity(root, { ...manifest.commands.verify.env, ...run.env }) }); await save() }
+      if (!familyOwned && profile.expectedStatus !== 'not-applicable') { report.browserProbes.push({ run: run.id, ...await browserIdentity(root, { ...manifest.commands.verify.env, ...run.env }) }); await save() }
       await runStep(expandNodePortCommand(manifest.commands.verify, { ...values, run: run.id }, run))
       completedRuns.push(run)
       const suite = await json(join(evidence, 'suite-' + run.id + '.json'))
@@ -116,7 +124,8 @@ async function executePort(options) {
       if (firstNativeHash !== null && nativeHash !== firstNativeHash) throw new Error('Native/Final evidence changed between browser runs')
       firstNativeHash = nativeHash
     }
-    const result = await adapter.read({ root, evidence, manifest, profile, completedRuns })
+    const result = await adapter.read({ root, evidence, manifest, profile, completedRuns, nativeIdentity: report.nativeIdentity })
+    if (familyOwned && await nativeFinalEvidenceHash(adapter, evidence) !== firstNativeHash) throw new Error('Native/Final evidence changed during independent family closure')
     Object.assign(report, result)
     const finalInputs = await fingerprintNodePortInputs(root, manifest)
     report.workspaceStable = finalInputs.inputDigest === inputs.inputDigest
@@ -183,7 +192,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
   try {
     const result = await runNodePort(parseNodePortArguments(process.argv.slice(2)))
     const summary = Object.fromEntries(['manifestId', 'profile', 'status', 'exitCode', 'supportPromotion', 'productionCredit', 'reportPath',
-      'productionCases', 'nativeGraphs', 'savedFinalScenes', 'caseRuns', 'primaryFloat32Words', 'wordMismatches', 'rgbComparisons', 'maximumOutsideNativeInterval', 'workspaceStable', 'inputDigest', 'requestKey', 'evidenceKey', 'error',
+      'productionCases', 'calibrationCases', 'nativeGraphs', 'savedFinalScenes', 'caseRuns', 'productionCaseRuns', 'primaryFloat32Words', 'productionFloat32Words', 'wordMismatches', 'rgbComparisons', 'maximumOutsideNativeInterval', 'workspaceStable', 'inputDigest', 'requestKey', 'evidenceKey', 'error',
       ...(result.dryRun ? ['dryRun', 'runnable', 'unknownIdentities', 'nativeIdentity', 'commands'] : [])].filter(key => result[key] !== undefined).map(key => [key, result[key]]))
     console.log('BLENDLINK_NODE_PORT_RESULT ' + JSON.stringify(summary)); process.exitCode = result.exitCode
   }

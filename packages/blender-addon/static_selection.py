@@ -2,6 +2,11 @@
 """Blender 5.3 compile-time selection; only the selected branch is a dependency."""
 import bpy
 
+if __package__:
+    from .compositor_group_defaults_bridge import validate_input as _group_input, GroupDefaultUnsupported
+else:
+    from compositor_group_defaults_bridge import validate_input as _group_input, GroupDefaultUnsupported
+
 MODEL = 'native-static-selection-53-v1'
 NODES = {'GeometryNodeSwitch', 'GeometryNodeIndexSwitch', 'GeometryNodeMenuSwitch'}
 MENU_SOURCES = {'FunctionNodeInputMenu'}
@@ -98,6 +103,10 @@ def _literal(socket, stack, budget, seen=(), depth=0):
                 return selected['constant']
             return _literal(selected['input'], stack, budget, seen, depth + 1)
         raise SelectionUnsupported('Selector must be a fixed typed literal/group value or proven Boolean Math; fields and implicit conversions are unqualified')
+    try:
+        _group_input(socket)
+    except GroupDefaultUnsupported as error:
+        raise SelectionUnsupported(str(error)) from error
     links = [link for link in socket.links if link.is_valid and not getattr(link, 'is_muted', False)]
     if len(links) > 1:
         raise SelectionUnsupported('Selector has multiple live links')

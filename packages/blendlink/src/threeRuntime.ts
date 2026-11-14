@@ -726,13 +726,10 @@ function resolveAuthoringPreview(
   }
 }
 
-/** Install a constant Blender World only for Preview Studio ownership gaps.
- * The small scene-linear HDR equirectangular texture is shared by background
- * and environment. Unlike Scene.background=Color it passes through Three's
- * tone mapping/exposure path, and unlike AmbientLight it participates in the
- * PBR environment BRDF (including roughness-dependent specular). 64x32 keeps
- * the PMREM cube size at 16, Three's minimum supported LOD, while costing only
- * 32 KiB before the renderer creates its cached GPU derivatives. */
+/** Install constant source radiance in application-owned presentation gaps.
+ * Environment keeps the existing64x32 equirectangular source/IBL path. The
+ * visible background is an owned uniform data cube, avoiding an unnecessary
+ * equirectangular conversion and its renderer-owned depth attachments. */
 function installAuthoringPreviewWorld(
   scene: THREE.Scene,
   world: ResolvedAuthoringPreviewWorld | null,
@@ -749,6 +746,7 @@ function installAuthoringPreviewWorld(
   const previousEnvironment = scene.environment
   const previousBackgroundIntensity = scene.backgroundIntensity
   const previousEnvironmentIntensity = scene.environmentIntensity
+  const previousBackgroundBlurriness = scene.backgroundBlurriness
   const width = 64
   const height = 32
   const data = new Float32Array(width * height * 4)
@@ -776,21 +774,50 @@ function installAuthoringPreviewWorld(
   texture.generateMipmaps = false
   texture.needsUpdate = true
 
+  // Public Three uploaders support DataTexture cube faces on both backends.
+  // The six logical texels share the existing source buffer, not six new
+  // arrays. Background direction/blur cannot change uniform radiance.
+  const backgroundPixel = data.subarray(0, 4)
+  const faces = world.useBackground ? Array.from({ length: 6 }, () =>
+    new THREE.DataTexture(backgroundPixel, 1, 1, THREE.RGBAFormat, THREE.FloatType)) : []
+  const background = world.useBackground ? new THREE.CubeTexture(faces) : null
+  if (background) {
+    background.name = 'SceneToWeb Preview World Background'
+    background.type = THREE.FloatType
+    background.format = THREE.RGBAFormat
+    background.colorSpace = THREE.LinearSRGBColorSpace
+    background.magFilter = THREE.LinearFilter
+    background.minFilter = THREE.LinearFilter
+    background.generateMipmaps = false
+    background.needsUpdate = true
+    const disposeFaces = (): void => {
+      background.removeEventListener('dispose', disposeFaces)
+      for (const face of faces) face.dispose()
+    }
+    background.addEventListener('dispose', disposeFaces)
+  }
+
   try {
     if (world.useBackground) {
-      scene.background = texture
+      scene.background = background
       scene.backgroundIntensity = 1
+      // Preserve the host's blur when this ownership ends. Blurring a uniform
+      // source is redundant and must not trigger a PMREM for a1x1 data cube.
+      scene.backgroundBlurriness = 0
     }
     if (world.useLighting) {
       scene.environment = texture
       scene.environmentIntensity = 1
     }
   } catch (error) {
-    if (world.useBackground && scene.background === texture) {
+    if (world.useBackground && scene.background === background) {
       scene.background = previousBackground
     }
     if (world.useBackground && scene.backgroundIntensity === 1) {
       scene.backgroundIntensity = previousBackgroundIntensity
+    }
+    if (world.useBackground && scene.backgroundBlurriness === 0) {
+      scene.backgroundBlurriness = previousBackgroundBlurriness
     }
     if (world.useLighting && scene.environment === texture) {
       scene.environment = previousEnvironment
@@ -798,6 +825,7 @@ function installAuthoringPreviewWorld(
     if (world.useLighting && scene.environmentIntensity === 1) {
       scene.environmentIntensity = previousEnvironmentIntensity
     }
+    background?.dispose()
     texture.dispose()
     throw error
   }
@@ -810,19 +838,22 @@ function installAuthoringPreviewWorld(
       // Identity checks preserve a background or environment claimed by a later
       // application owner instead of restoring stale preview state over it.
       const ownsBackground = world.useBackground
-        && scene.background === texture
+        && scene.background === background
         && scene.backgroundIntensity === 1
+        && scene.backgroundBlurriness === 0
       const ownsEnvironment = world.useLighting
         && scene.environment === texture
         && scene.environmentIntensity === 1
       if (ownsBackground) {
         scene.background = previousBackground
         scene.backgroundIntensity = previousBackgroundIntensity
+        scene.backgroundBlurriness = previousBackgroundBlurriness
       }
       if (ownsEnvironment) {
         scene.environment = previousEnvironment
         scene.environmentIntensity = previousEnvironmentIntensity
       }
+      if (background && scene.background !== background && scene.environment !== background) background.dispose()
       if (scene.background !== texture && scene.environment !== texture) texture.dispose()
     },
   }

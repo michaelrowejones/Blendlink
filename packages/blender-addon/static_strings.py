@@ -11,6 +11,11 @@ from pathlib import Path
 
 import bpy
 
+if __package__:
+    from .compositor_group_defaults_bridge import validate_input as _group_input, GroupDefaultUnsupported
+else:
+    from compositor_group_defaults_bridge import validate_input as _group_input, GroupDefaultUnsupported
+
 MODEL = 'native-static-strings-53-v1'
 NODES = {'FunctionNodeInputString', 'FunctionNodeInputSpecialCharacters',
          'FunctionNodeReverseString', 'FunctionNodeTrimString', 'FunctionNodeSliceString',
@@ -122,6 +127,10 @@ def _evaluate(socket, stack, budget, seen, trace, depth=0):
     seen = seen + (key,)
     resolve = lambda incoming, frames=stack: _evaluate(incoming, frames, budget, seen, trace, depth + 1)
     if not socket.is_output:
+        try:
+            _group_input(socket)
+        except GroupDefaultUnsupported as error:
+            raise StaticStringUnsupported(str(error)) from error
         links = [link for link in socket.links if link.is_valid and not getattr(link, 'is_muted', False)]
         if len(links) > 1:
             raise StaticStringUnsupported('Static string has multiple live links')

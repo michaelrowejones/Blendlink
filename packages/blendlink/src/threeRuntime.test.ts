@@ -817,6 +817,7 @@ describe('official Three scene installation seam', () => {
     previewScene.environment = previousEnvironment
     previewScene.backgroundIntensity = 1.75
     previewScene.environmentIntensity = 0.625
+    previewScene.backgroundBlurriness = 0.375
     const preview = await installLoadedThreeCompiledScene(
       await loader(new THREE.Group()).loadAsync() as unknown as import('three/addons/loaders/GLTFLoader.js').GLTF,
       {
@@ -828,7 +829,23 @@ describe('official Three scene installation seam', () => {
     )
 
     const environment = previewScene.environment as THREE.DataTexture
-    expect(previewScene.background).toBe(environment)
+    const background = previewScene.background as THREE.CubeTexture
+    expect(background).toBeInstanceOf(THREE.CubeTexture)
+    expect(background).not.toBe(environment)
+    expect(background).toMatchObject({ name: 'SceneToWeb Preview World Background',
+      mapping: THREE.CubeReflectionMapping, type: THREE.FloatType, format: THREE.RGBAFormat,
+      colorSpace: THREE.LinearSRGBColorSpace, generateMipmaps: false,
+      minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter })
+    const faces = background.images as THREE.DataTexture[]
+    expect(faces).toHaveLength(6)
+    for (const face of faces) {
+      expect(face).toBeInstanceOf(THREE.DataTexture)
+      expect(face.image).toMatchObject({ width: 1, height: 1 })
+      expect(face.image.data).toBe(faces[0]!.image.data)
+      expect(face.image.data.buffer).toBe(environment.image.data.buffer)
+      expect(Array.from(face.image.data)).toEqual(Array.from(environment.image.data.slice(0, 4)))
+    }
+    expect(previewScene.backgroundBlurriness).toBe(0)
     expect(environment).toBeInstanceOf(THREE.DataTexture)
     expect(environment).toMatchObject({
       name: 'SceneToWeb Preview World',
@@ -850,6 +867,9 @@ describe('official Three scene installation seam', () => {
     expect(previewScene.getObjectByName('SceneToWeb Preview World')).toBeUndefined()
     expect(sceneDescriptor.authoringPreview?.world).toBe(world)
     const disposeEnvironment = vi.spyOn(environment, 'dispose')
+    const disposeBackground = vi.spyOn(background, 'dispose')
+    const disposeFaces = faces.map(face => vi.spyOn(face, 'dispose'))
+    const disposeBorrowedEnvironment = vi.spyOn(previousEnvironment, 'dispose')
 
     preview.dispose()
     expect(previewScene.background).toBe(previousBackground)
@@ -858,6 +878,10 @@ describe('official Three scene installation seam', () => {
     expect(previewScene.environmentIntensity).toBe(0.625)
     expect(previewScene.getObjectByName('SceneToWeb Preview World')).toBeUndefined()
     expect(disposeEnvironment).toHaveBeenCalledOnce()
+    expect(disposeBackground).toHaveBeenCalledOnce()
+    expect(disposeFaces.every(spy => spy.mock.calls.length === 1)).toBe(true)
+    expect(disposeBorrowedEnvironment).not.toHaveBeenCalled()
+    expect(previewScene.backgroundBlurriness).toBe(0.375)
 
     preview.dispose()
     expect(disposeEnvironment).toHaveBeenCalledOnce()
@@ -1012,10 +1036,10 @@ describe('official Three scene installation seam', () => {
       },
     )
 
-    const background = scene.background as THREE.DataTexture
-    expect(background).toBeInstanceOf(THREE.DataTexture)
-    expect(background.mapping).toBe(THREE.EquirectangularReflectionMapping)
-    expect(Array.from(background.image.data.slice(0, 4))).toEqual([
+    const background = scene.background as THREE.CubeTexture
+    expect(background).toBeInstanceOf(THREE.CubeTexture)
+    expect(background.mapping).toBe(THREE.CubeReflectionMapping)
+    expect(Array.from((background.images[0] as THREE.DataTexture).image.data)).toEqual([
       expect.closeTo(0.1), expect.closeTo(0.15), expect.closeTo(0.2), 1,
     ])
     expect(scene.getObjectByName('SceneToWeb Preview World')).toBeUndefined()
@@ -1059,8 +1083,9 @@ describe('official Three scene installation seam', () => {
       },
     )
 
-    const texture = scene.background as THREE.DataTexture
+    const texture = scene.background as THREE.CubeTexture
     const disposeTexture = vi.spyOn(texture, 'dispose')
+    const disposeFaces = (texture.images as THREE.DataTexture[]).map(face => vi.spyOn(face, 'dispose'))
     // The published image source prevented SceneToWeb from owning Environment,
     // so this assignment is unambiguously a later application transfer.
     scene.environment = texture
@@ -1069,6 +1094,27 @@ describe('official Three scene installation seam', () => {
 
     expect(scene.environment).toBe(texture)
     expect(disposeTexture).not.toHaveBeenCalled()
+    expect(disposeFaces.every(spy => spy.mock.calls.length === 0)).toBe(true)
+    texture.dispose()
+    expect(disposeFaces.every(spy => spy.mock.calls.length === 1)).toBe(true)
+  })
+
+  it('preserves a uniform background adopted by a later blur owner until that owner disposes it', async () => {
+    const scene = new THREE.Scene(), previous = new THREE.Color(0x123456)
+    scene.background = previous; scene.backgroundBlurriness = 0.5
+    const installed = await installLoadedThreeCompiledScene(
+      await loader(new THREE.Group()).loadAsync() as unknown as import('three/addons/loaders/GLTFLoader.js').GLTF,
+      { renderer: renderer() as unknown as THREE.WebGLRenderer, scene, useAuthoringPreview: true,
+        descriptor: descriptor({ look: { toneMapping: 'application', exposure: 0, background: 'application' }, authoringPreview: { look: { toneMapping: 'none', exposure: 0, sourceViewTransform: 'Raw', exact: true }, shadows: { enabled: false }, world: { color: [0.125,0.25,0.5], strength: 1, exact: true, source: 'background' } } }) },
+    )
+    const cube = scene.background as THREE.CubeTexture, disposeCube = vi.spyOn(cube, 'dispose')
+    const disposeFaces = (cube.images as THREE.DataTexture[]).map(face => vi.spyOn(face, 'dispose'))
+    expect(scene.backgroundBlurriness).toBe(0)
+    scene.backgroundBlurriness = 0.25
+    installed.dispose()
+    expect(scene.background).toBe(cube); expect(scene.backgroundBlurriness).toBe(0.25)
+    expect(disposeCube).not.toHaveBeenCalled(); expect(disposeFaces.every(spy => spy.mock.calls.length === 0)).toBe(true)
+    cube.dispose(); expect(disposeFaces.every(spy => spy.mock.calls.length === 1)).toBe(true)
   })
 
   it('uses the Blender authoring look only for an opted-in application-owned preview', async () => {
