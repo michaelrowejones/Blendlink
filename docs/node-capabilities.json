@@ -13432,6 +13432,154 @@
         "coverageScope": "Shared full-family totals, not per-entry counts. Target logical counts use authored native-class specs, excluding repeated Length/Find/decimal-formatter witnesses. Twelve static string classes per source context; compositor Compare controls are separate existing consumers.",
         "evidence": "experiments/static-string-family/evidence.json"
       }
+    },
+    "compositor:CompositorNodeBoxMask": {
+      "category": "unsupported",
+      "limits": "No admitted live route outside the explicitly qualified Blender5.3.0 build/platform CPU slice. Native availability alone does not establish numerical support.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "box-mask"
+      ],
+      "modes": {
+        "inputs:Operation": {
+          "supported": [
+            "Add",
+            "Subtract",
+            "Multiply",
+            "Not"
+          ]
+        }
+      },
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; observed Apple Metal and SwiftShader. Legacy WebGLRenderer has no live program installer.",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_box_mask.py"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorBoxMask.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorBoxMask.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_box_mask_check.py"
+        },
+        {
+          "path": "experiments/compositor-box-mask/README.md"
+        },
+        {
+          "path": "experiments/compositor-box-mask/cases.json"
+        },
+        {
+          "path": "experiments/compositor-box-mask/protocol.mjs"
+        },
+        {
+          "path": "experiments/compositor-box-mask/capture.mjs"
+        },
+        {
+          "path": "experiments/compositor-box-mask/export.test.ts"
+        },
+        {
+          "path": "experiments/compositor-box-mask/browser.js"
+        },
+        {
+          "path": "experiments/compositor-box-mask/run.mjs"
+        },
+        {
+          "path": "experiments/compositor-box-mask/verify.mjs"
+        },
+        {
+          "path": "experiments/compositor-box-mask/matrix.mjs"
+        },
+        {
+          "path": "experiments/compositor-box-mask/numeric-contract.json"
+        },
+        {
+          "path": "experiments/compositor-box-mask/sources.json"
+        },
+        {
+          "path": "experiments/compositor-box-mask/evidence.json"
+        }
+      ],
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeCompositorDevices": [
+          "CPU"
+        ],
+        "nativeNodeEvaluator": "CPU compositor parallel_for with Float32 arrays; actual native carrier scene uses Cycles CPU. No EEVEE material or native GPU evaluation credit.",
+        "nativePrecisionRequests": [
+          "FULL",
+          "AUTO"
+        ],
+        "nativeGraphs": 40,
+        "savedFinalScenes": 12,
+        "browserCaseRuns": 208,
+        "primaryFloat32Words": 98592,
+        "wordMismatches": 0,
+        "contractViolations": 0,
+        "resizeFrames": 96,
+        "lifecycleCycles": 144,
+        "uniqueActualPythonPrefixes": 13,
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "numericContract": {
+          "schemaVersion": 1,
+          "model": "cpu-f32-axis-integer-intervals-v1",
+          "sourceProfile": "darwin-arm64-53-box-mask-cpu-v1",
+          "source": "Pinned Blender5.3 CPU compositor Float32 arrays; FULL and AUTO requested precision recorded per case. No GPU-authored Blender claim.",
+          "output": "Exact Float32 words for all RGBA channels, including alpha1 and outside/strict-edge zeros. No tolerance or output repair.",
+          "literalBounds": "Position[-2,2], Size[0,2], Mask/Value[0,1], each component0 or abs>=2^-16; raw rotation+0; native scalar-copy raw-word fidelity.",
+          "physicalDomain": "Zero-offset full-frame context, square pixels, physical dimensions2..8192. No fields, animation, rotation, transformed/cropped domains.",
+          "cost": "One cached extent; O(W+H) CPU axis scan only on valid extent changes; shader integer texels/rectangle comparisons/selection; no mask texture/readback/additional pass."
+        },
+        "numericContractSha256": "0864e181cfa7c0fca87fa3034faa2a40a04eb26ad1ab4cf5b927b05cf6908559",
+        "coverageScope": "Pinned Blender5.3 CPU compositor only. Static literal unlinked axis-aligned Box Mask, native raw Float32 scalar copy; cached integer axis intervals and precomputed branch values. FULL/AUTO source requests recorded per case. Portable actual browser WebGPU/WebGL2 qualification on observed Metal and SwiftShader. No Blender GPU-authored, Ellipse, AA, animated/field/rotation or arbitrary transformed-domain claim.",
+        "closedReader": {
+          "runtimeFingerprint": "29a553a8c01a0541324fa23100e0ac2593dcfc66a85841a6dd58be46698a66dd",
+          "verifierSha256": "7de5c1e695d544d67b9abef6fb7c3c7f450b20daa445bfbdf61188d70f95756a",
+          "runtimeArchiveHelperSha256": "431b8a4e92a194d63a8db512aa84f3076c9951e083b873885d8115e0caf509ed",
+          "nativeArchiveHelperSha256": "3a2310c94ed3109230d3fa89dc1ac6ea5bed447155e98144a68d52dac568a3da"
+        },
+        "sourceSnapshot": {
+          "sourceInputs": 125,
+          "nativeQualificationSha256": "4c661947a0e865c43dcebe41a756144e53c2ece670d35dfde0511f6321cf86e0",
+          "finalProofSha256": "399161371048af4c718fe74d55eb414283c3b920e59eab3fd5a34f467a1484c4",
+          "evidence": "experiments/compositor-box-mask/evidence.json",
+          "limits": "This fresh transaction closes Box only. Other ports retain their own captured source snapshots; no all-other-ports freshness claim."
+        }
+      },
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor only. Static unlinked literal Position[-2,2], Size[0,2], Mask/Value[0,1], every component zero or abs>=2^-16, and raw Rotation positive zero. All four native Operation menu values Add/Subtract/Multiply/Not, including default geometry and exact empty masks. Position/Size use raw Float32 array reads; scalar sockets use native interface.from_socket copies into private homogeneous FLOAT storage, preserving signed-zero/subnormal detection without Python scalar promotion, source edits, FPU changes or init_socket. Negative zero, subnormals, nonfinite/out-of-bound values, links/fields, animation/drivers and rotated masks refuse. Zero-offset context full-frame domain with square pixels and physical extents2..8192; borders/crops and spatial/domain consumers including Flip refuse. One cached extent is updated atomically after validation; native ordered-F32 axes classify integer intervals in O(width+height), shader integer texels select precomputed inside/outside values. No shader epsilon, artist-input quantization, mask texture, new pass or per-frame readback. Result VarNode retains physical-extent validation on allzero/constant optimized graphs; invalid resize named-refuses and recovers. Scalar-to-RGBA alpha1 and strict-edge words require exact equality. Actual native reference is CPU compositor with a Cycles CPU carrier, not EEVEE shader/material or native GPU evaluation. Portable measured browser WebGPU and WebGL2 via WebGPURenderer on Apple Metal and SwiftShader. Legacy WebGLRenderer, other Blender versions/builds/hosts, arbitrary composed graphs, Ellipse, anti-aliasing and whole-scene appearance remain unqualified.",
+          "modes": {
+            "inputs:Operation": {
+              "supported": [
+                "Add",
+                "Subtract",
+                "Multiply",
+                "Not"
+              ]
+            }
+          }
+        }
+      }
     }
   },
   "knownUnsupported": [
@@ -13440,7 +13588,6 @@
     "compositor:CompositorNodeBlankImage",
     "compositor:CompositorNodeBokehBlur",
     "compositor:CompositorNodeBokehImage",
-    "compositor:CompositorNodeBoxMask",
     "compositor:CompositorNodeCombineXYZ",
     "compositor:CompositorNodeConvertColorSpace",
     "compositor:CompositorNodeConvertToDisplay",

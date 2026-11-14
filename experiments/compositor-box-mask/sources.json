@@ -1,0 +1,52 @@
+{
+  "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "sources": [
+    {
+      "path": "source/blender/nodes/composite/nodes/node_composite_box_mask.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/composite/nodes/node_composite_box_mask.cc",
+      "sha256": "e84884c137805bcb397fed5417f899dc216e42aaf94405f000173b9b6506af4a"
+    },
+    {
+      "path": "source/blender/compositor/shaders/compositor_box_mask.glsl",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/shaders/compositor_box_mask.glsl",
+      "sha256": "f7edf957abe4d3487d562fe3e46e13fe3893de6b22721c6bbc42277f08c3c271"
+    },
+    {
+      "path": "source/blender/compositor/shaders/infos/compositor_box_mask_infos.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/shaders/infos/compositor_box_mask_infos.hh",
+      "sha256": "e76077f0d7346024062f89bae1417a155498365c0387cbdccbc3afda735695a5"
+    },
+    {
+      "path": "source/blender/compositor/cached_resources/intern/cached_shader.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/cached_resources/intern/cached_shader.cc",
+      "sha256": "3395d39db8162d1893953f80f73d43abeec422c3795a390ae37cb326a95a4a85"
+    },
+    {
+      "path": "source/blender/compositor/intern/context.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/intern/context.cc",
+      "sha256": "6d04e0813242d4a3294205438a7157713a1dd5223b0fc4502daa01e6dadc4651"
+    },
+    {
+      "path": "source/blender/compositor/intern/result.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/intern/result.cc",
+      "sha256": "27de905cc233c273fad0bac8bf94252b59bb96e621ead0590297ff0ed556eed3"
+    },
+    {
+      "path": "source/blender/render/intern/compositor.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/render/intern/compositor.cc",
+      "sha256": "c08b32e40ac0c5a447ac2bfb659652b28998acbd6a2c314067383d0fc5363f80"
+    },
+    {
+      "path": "source/blender/blenlib/BLI_math_vector_types.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/BLI_math_vector_types.hh",
+      "sha256": "b11dd5e4fa77f1179956befdab71dc12d65120de878249f13b00e0643e6c4b39"
+    },
+    {
+      "path": "source/blender/blenlib/BLI_math_matrix_types.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/BLI_math_matrix_types.hh",
+      "sha256": "037699a3763bc3b62bd909e896ac59035257f84b270c97eb908b8225b1599351"
+    }
+  ],
+  "sourceStage": "Box CPU parallel_for with Float32 arrays. Runtime reproduces ordered-F32 scalar axis predicates as cached integer intervals; this is not a native GPU shader port. Nominal SFLOAT16 shader storage is rewritten by actual context precision and grants no blanket half-precision claim.",
+  "license": "Upstream node/kernel GPL-2.0-or-later; source files retained only as primary-source pins. No upstream shader body mechanically copied into MIT runtime."
+}

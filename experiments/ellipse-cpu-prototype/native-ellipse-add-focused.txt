@@ -1,0 +1,109 @@
+/Applications/Blender.app/Contents/MacOS/Blender:
+(__TEXT,__text) section
+__ZZN7blender10compositor12parallel_forIZNS_5nodes30node_composite_ellipse_mask_ccL12ellipse_maskILNS_15CMPNodeMaskTypeE0EEEvRKNS0_6ResultES8_RS6_RKNS0_6DomainERKNS_7VecBaseIfLi2EEESG_ffEUlNSD_IiLi2EEEE_EEvSH_RKT_ENKUlNS_10IndexRangeEE_clESM_:
+102536900:	fd 7b bf a9	stp	x29, x30, [sp, #-0x10]!
+102536904:	fd 03 00 91	mov	x29, sp
+102536908:	a2 0c 00 b4	cbz	x2, 0x102536a9c
+10253690c:	48 00 01 8b	add	x8, x2, x1
+102536910:	00 e4 00 2f	movi	d0, #0000000000000000
+102536914:	01 10 2e 1e	fmov	s1, #1.00000000
+102536918:	29 00 c0 d2	mov	x9, #0x100000000
+10253691c:	04 00 00 14	b	0x10253692c
+102536920:	21 04 00 91	add	x1, x1, #0x1
+102536924:	3f 00 08 eb	cmp	x1, x8
+102536928:	a0 0b 00 54	b.eq	0x102536a9c
+10253692c:	0a 00 40 f9	ldr	x10, [x0]
+102536930:	4a 01 80 b9	ldrsw	x10, [x10]
+102536934:	6a ff ff 34	cbz	w10, 0x102536920
+102536938:	0b 00 80 d2	mov	x11, #0x0
+10253693c:	0c 00 80 d2	mov	x12, #0x0
+102536940:	2d 7c 40 93	sxtw	x13, w1
+102536944:	33 00 00 14	b	0x102536a10
+102536948:	64 0c 40 f9	ldr	x4, [x3, #0x18]
+10253694c:	63 90 80 b9	ldrsw	x3, [x3, #0x90]
+102536950:	a3 7d 23 9b	smull	x3, w13, w3
+102536954:	84 08 03 8b	add	x4, x4, x3, lsl #2
+102536958:	63 fd 5e 93	asr	x3, x11, #30
+10253695c:	84 00 03 8b	add	x4, x4, x3
+102536960:	91 00 40 bd	ldr	s17, [x4]
+102536964:	82 01 02 0b	add	w2, w12, w2
+102536968:	52 00 22 1e	scvtf	s18, w2
+10253696c:	e2 05 00 51	sub	w2, w15, #0x1
+102536970:	53 00 22 1e	scvtf	s19, w2
+102536974:	52 1a 33 1e	fdiv	s18, s18, s19
+102536978:	47 3a 27 1e	fsub	s7, s18, s7
+10253697c:	f2 08 22 1e	fmul	s18, s7, s2
+102536980:	52 2a 20 1e	fadd	s18, s18, s0
+102536984:	31 02 0d 0b	add	w17, w17, w13
+102536988:	33 02 22 1e	scvtf	s19, w17
+10253698c:	11 06 00 51	sub	w17, w16, #0x1
+102536990:	34 02 22 1e	scvtf	s20, w17
+102536994:	73 1a 34 1e	fdiv	s19, s19, s20
+102536998:	14 02 22 1e	scvtf	s20, w16
+10253699c:	65 3a 25 1e	fsub	s5, s19, s5
+1025369a0:	f3 01 22 1e	scvtf	s19, w15
+1025369a4:	93 1a 33 1e	fdiv	s19, s20, s19
+1025369a8:	65 0a 25 1e	fmul	s5, s19, s5
+1025369ac:	b3 08 23 1e	fmul	s19, s5, s3
+1025369b0:	52 2a 33 1e	fadd	s18, s18, s19
+1025369b4:	46 1a 26 1e	fdiv	s6, s18, s6
+1025369b8:	c6 08 26 1e	fmul	s6, s6, s6
+1025369bc:	e3 08 23 1e	fmul	s3, s7, s3
+1025369c0:	03 38 23 1e	fsub	s3, s0, s3
+1025369c4:	42 08 25 1e	fmul	s2, s2, s5
+1025369c8:	42 28 23 1e	fadd	s2, s2, s3
+1025369cc:	42 18 24 1e	fdiv	s2, s2, s4
+1025369d0:	42 08 22 1e	fmul	s2, s2, s2
+1025369d4:	c2 28 22 1e	fadd	s2, s6, s2
+1025369d8:	42 c0 21 1e	fsqrt	s2, s2
+1025369dc:	00 22 31 1e	fcmp	s16, s17
+1025369e0:	40 44 21 1e	fccmp	s2, s1, #0x0, mi
+1025369e4:	22 4e 30 1e	fcsel	s2, s17, s16, mi
+1025369e8:	ce 1d 40 f9	ldr	x14, [x14, #0x38]
+1025369ec:	cf 0d 40 f9	ldr	x15, [x14, #0x18]
+1025369f0:	ce 91 80 b9	ldrsw	x14, [x14, #0x90]
+1025369f4:	ae 7d 2e 9b	smull	x14, w13, w14
+1025369f8:	ee 09 0e 8b	add	x14, x15, x14, lsl #2
+1025369fc:	c2 69 23 bc	str	s2, [x14, x3]
+102536a00:	8c 05 00 91	add	x12, x12, #0x1
+102536a04:	6b 01 09 8b	add	x11, x11, x9
+102536a08:	5f 01 0c eb	cmp	x10, x12
+102536a0c:	a0 f8 ff 54	b.eq	0x102536920
+102536a10:	0e 04 40 f9	ldr	x14, [x0, #0x8]
+102536a14:	d0 0d 40 a9	ldp	x16, x3, [x14]
+102536a18:	02 46 42 29	ldp	w2, w17, [x16, #0x10]
+102536a1c:	0f 42 41 29	ldp	w15, w16, [x16, #0x8]
+102536a20:	67 14 40 2d	ldp	s7, s5, [x3]
+102536a24:	c3 11 41 a9	ldp	x3, x4, [x14, #0x10]
+102536a28:	62 00 40 bd	ldr	s2, [x3]
+102536a2c:	83 00 40 bd	ldr	s3, [x4]
+102536a30:	c4 0d 42 a9	ldp	x4, x3, [x14, #0x20]
+102536a34:	86 10 40 2d	ldp	s6, s4, [x4]
+102536a38:	64 28 40 39	ldrb	w4, [x3, #0xa]
+102536a3c:	64 01 00 34	cbz	w4, 0x102536a68
+102536a40:	64 0c 40 f9	ldr	x4, [x3, #0x18]
+102536a44:	63 90 80 b9	ldrsw	x3, [x3, #0x90]
+102536a48:	a3 7d 23 9b	smull	x3, w13, w3
+102536a4c:	83 08 03 8b	add	x3, x4, x3, lsl #2
+102536a50:	63 78 8b 8b	add	x3, x3, x11, asr #30
+102536a54:	70 00 40 bd	ldr	s16, [x3]
+102536a58:	c3 19 40 f9	ldr	x3, [x14, #0x30]
+102536a5c:	64 28 40 39	ldrb	w4, [x3, #0xa]
+102536a60:	44 f7 ff 35	cbnz	w4, 0x102536948
+102536a64:	08 00 00 14	b	0x102536a84
+102536a68:	64 80 40 b9	ldr	w4, [x3, #0x80]
+102536a6c:	9f 04 00 71	cmp	w4, #0x1
+102536a70:	a1 01 00 54	b.ne	0x102536aa4
+102536a74:	70 0c 44 bc	ldr	s16, [x3, #0x40]!
+102536a78:	c3 19 40 f9	ldr	x3, [x14, #0x30]
+102536a7c:	64 28 40 39	ldrb	w4, [x3, #0xa]
+102536a80:	44 f6 ff 35	cbnz	w4, 0x102536948
+102536a84:	64 80 40 b9	ldr	w4, [x3, #0x80]
+102536a88:	9f 04 00 71	cmp	w4, #0x1
+102536a8c:	c1 00 00 54	b.ne	0x102536aa4
+102536a90:	64 00 01 91	add	x4, x3, #0x40
+102536a94:	63 fd 5e 93	asr	x3, x11, #30
+102536a98:	b2 ff ff 17	b	0x102536960
+102536a9c:	fd 7b c1 a8	ldp	x29, x30, [sp], #0x10
+102536aa0:	c0 03 5f d6	ret
+102536aa4:	43 65 6c 97	bl	__ZNSt3__126__throw_bad_variant_accessB8ne200100Ev

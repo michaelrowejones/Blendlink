@@ -726,3 +726,49 @@ fingerprint remains `fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c292
 This closes those two source lineages only. Earlier Width, compositor, legacy
 and unrelated node proofs retain their original captured snapshots; matching
 JavaScript fingerprints do not imply that every other port was freshly tested.
+
+## 2026-11-14 — CPU Box Mask with integer rectangle bounds
+
+The new partial Blender 5.3 compositor Box Mask slice covers all four native
+Operation menus with static unlinked parameters and Rotation raw+0. It retains
+native defaults and strict empty/boundary behavior. Position [-2,2], Size [0,2],
+Mask/Value [0,1], and zero-or-magnitude>=2^-16 bounds keep admitted F32 arithmetic
+normal. Negative-zero/subnormal/nonfinite values, fields/links, animation,
+rotation, borders/crops and spatial consumers including Flip remain named refusals.
+Only CPU source compositing is qualified; no Blender GPU, EEVEE shader/material,
+Ellipse, AA, other-version or arbitrary-composition claim is added.
+
+Public native `from_socket` copies recover scalar raw words through homogeneous
+FLOAT buffers without scalar-promotion loss, original-socket initialization,
+FPU changes or source edits. Both private groups are cleaned in `finally`.
+Repeated read-only ownership controls and raw-word controls precede actual CPU
+references. Historical failed getter probes and test-only initializer leaks stay
+research; the production reader never calls `init_socket`.
+
+The runtime caches one physical extent, scans two ordered-F32 axes in O(W+H),
+and uses integer shader texels/interval comparisons with precomputed branch
+values. No shader epsilon, input quantization, mask texture, added pass or
+per-frame readback is introduced. Cache updates are atomic after validation;
+a result VarNode preserves the guard even for optimized allzero/constant outputs.
+A separate Node 24.22.1/M5 Pro host measurement observed a 4K reclassification
+median near 0.009ms; this is not a browser/GPU/FPS or native-Blender speedup result.
+
+The [closed Box receipt](../experiments/compositor-box-mask/evidence.json) records
+40 actual CPU graphs,12 actual saved Final scenes,208 browser case-runs,
+98,592 exact Float32 words,96 physical resize/DPR frames and144 Final lifecycle
+cycles, with zero differences. Both actual WebGPU/WebGL2 APIs pass on observed
+Metal and SwiftShader. Allzero/constant/default invalid extents refuse and
+recover; source material/callback and actual independent baseline cache identities
+are restored. Scalar-to-RGBA alpha1 is exact. The actual native carrier is Cycles
+CPU; FULL/AUTO requests are recorded separately from CPU Float32 result storage.
+
+This fresh transaction closes 125 native source inputs and 13 actual Python
+prefixes at runtime fingerprint
+`29a553a8c01a0541324fa23100e0ac2593dcfc66a85841a6dd58be46698a66dd`.
+Native qualification hash is
+`4c661947a0e865c43dcebe41a756144e53c2ece670d35dfde0511f6321cf86e0`;
+Final proof hash is
+`399161371048af4c718fe74d55eb414283c3b920e59eab3fd5a34f467a1484c4`.
+Only Box's Blender 5.3 override changes classification. Older versions, shader
+and unrelated compositor entries/counts retain their prior state; this is not a
+claim that other ports were freshly recaptured. Root owns coverage regeneration.

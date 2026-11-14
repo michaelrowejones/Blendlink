@@ -78,6 +78,8 @@ normalize_procedural_texture = _sibling("compositor_procedural_texture").normali
 validate_texture_field_graph = _sibling("compositor_procedural_texture").validate_texture_field_graph
 normalize_relative_to_pixel = _sibling("compositor_relative_to_pixel").normalize_relative_to_pixel
 normalize_image_coordinates = _sibling("compositor_image_coordinates").normalize_image_coordinates
+normalize_box_mask = _sibling("compositor_box_mask").normalize_box_mask
+validate_box_mask_graph = _sibling("compositor_box_mask").validate_box_mask_graph
 normalize_image_info = _sibling("compositor_image_info").normalize_image_info
 validate_image_info_edge = _sibling("compositor_image_info").validate_image_info_edge
 normalize_float_coordinates = _sibling("compositor_float_coordinates").normalize_float_coordinates
@@ -99,6 +101,7 @@ TYPES = {
     "CompositorNodeRelativeToPixel": "relative-to-pixel",
     "CompositorNodeImageCoordinates": "image-coordinates",
     "CompositorNodeImageInfo": "image-info",
+    "CompositorNodeBoxMask": "box-mask",
     "FunctionNodeInputVector": "value",
     "ShaderNodeCombineXYZ": "combine-vector",
     "ShaderNodeSeparateXYZ": "separate-vector",
@@ -565,6 +568,9 @@ def extract(scene):
                 elif node.bl_idname == "CompositorNodeRelativeToPixel":
                     normalize_relative_to_pixel(node, socket, op, scene, lambda incoming: input_value(incoming, ctx), result["ops"],
                         lambda incoming, message: fail("unsupported-relative-to-pixel", path, node, incoming, message))
+                elif node.bl_idname == "CompositorNodeBoxMask":
+                    normalize_box_mask(node, socket, op, scene,
+                        lambda incoming, message: fail("unsupported-box-mask", path, node, incoming, message))
                 elif node.bl_idname == "CompositorNodeImageInfo":
                     normalize_image_info(node, socket, op, scene, lambda incoming: input_value(incoming, ctx), result["ops"],
                         lambda incoming, message: fail("unsupported-image-info", path, node, incoming, message))
@@ -933,7 +939,7 @@ def extract(scene):
                                 "value": input_value(incoming, ctx),
                             }
                 # Assign only after dependencies are emitted, yielding topological order.
-                single = op["kind"] == "image-info" or (op["kind"] not in {"render-pass", "image-input"} and not op["properties"].get("procedural_texture_coordinate_model") and all(is_single_value(incoming["value"]) for incoming in op["inputs"].values()))
+                single = op["kind"] == "image-info" or (op["kind"] not in {"render-pass", "image-input", "box-mask"} and not op["properties"].get("procedural_texture_coordinate_model") and all(is_single_value(incoming["value"]) for incoming in op["inputs"].values()))
                 if single and op["kind"] == "alpha-crop" and bpy.app.version < (4, 5, 0) and device == "CPU":
                     fail("unsupported-crop-domain", path, node, socket,
                          "Legacy CPU Crop requires a finite image input; constant-image canvas evaluation remains unqualified")
@@ -1000,6 +1006,11 @@ def extract(scene):
         if not modern and not sink.use_alpha:
             result["outputAlpha"] = "legacy-composite-opaque-v1"
         result["output"] = input_value(terminal, ctx)
+        box_conflict = validate_box_mask_graph(result)
+        if box_conflict:
+            op, message = box_conflict
+            result["diagnostics"].append({"code":"unsupported-box-mask", "path":op["source"]["path"], "node":op["source"]["node"], "socket":op["source"]["output"], "message":message})
+            raise Unsupported()
         texture_conflict = validate_texture_field_graph(result)
         if texture_conflict:
             op, message = texture_conflict

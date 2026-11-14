@@ -1,0 +1,158 @@
+{
+  "schemaVersion": 1,
+  "model": "blender-53-smaa-source-research-v1",
+  "role": "Research-only source comparison and proposed staged admission. No implementation, native/GPU numerical proof or support credit.",
+  "productionImplementation": false,
+  "supportCredit": 0,
+  "numericalQualificationCredit": 0,
+  "nativeRuns": 0,
+  "gpuRuns": 0,
+  "observedLocalThreeVersion": "0.184.0",
+  "observedRepositoryRevision": "fd2c1ee00643b33a33d565ba346b2617f6e56fdc",
+  "sources": [
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/nodes/composite/nodes/node_composite_anti_aliasing.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/composite/nodes/node_composite_anti_aliasing.cc",
+      "sha256": "878528db7abb09f353694631d37d4b66bcdfcb60916ad14b66467e5db02a2562",
+      "bytes": 3488
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/compositor/algorithms/COM_algorithm_smaa.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/algorithms/COM_algorithm_smaa.hh",
+      "sha256": "f1d1b23fd834c77654ce85a4d1cb391ca7e5d29bfbb03b3698d559580d1e4f77",
+      "bytes": 780
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/compositor/algorithms/intern/smaa.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/algorithms/intern/smaa.cc",
+      "sha256": "0f28ab064b1b7fcd40f20fd6b211dcdb361aff8e50257ccab44d38e7b061c848",
+      "bytes": 64677
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/compositor/shaders/compositor_smaa_edge_detection.glsl",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/shaders/compositor_smaa_edge_detection.glsl",
+      "sha256": "3da28aeacbefae0d0885bb7308bd66bec189c78e82a0bfd558a1a743840cef39",
+      "bytes": 818
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/compositor/shaders/compositor_smaa_blending_weight_calculation.glsl",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/shaders/compositor_smaa_blending_weight_calculation.glsl",
+      "sha256": "38093da9687e84bb55904015fc099224abc8fd945673a4bc0f704684a90863fe",
+      "bytes": 944
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/compositor/shaders/compositor_smaa_neighborhood_blending.glsl",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/shaders/compositor_smaa_neighborhood_blending.glsl",
+      "sha256": "6cb52659cdac8048e7e5f5bfc392762ebcd562b5651f7a4f12578497b84685f6",
+      "bytes": 833
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/gpu/shaders/common/gpu_shader_smaa_lib.glsl",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shaders/common/gpu_shader_smaa_lib.glsl",
+      "sha256": "f44f53adf8aceab14225522c51b26bcbc2aad49edd8904b6e31ce5bd5d0d4685",
+      "bytes": 54619
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/compositor/shaders/infos/compositor_smaa_infos.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/shaders/infos/compositor_smaa_infos.hh",
+      "sha256": "9eed7ba929fb40312f79482fc25dd431a5f53df0498184e6fb24c061322ce54d",
+      "bytes": 2596
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/compositor/cached_resources/COM_smaa_precomputed_textures.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/cached_resources/COM_smaa_precomputed_textures.hh",
+      "sha256": "cbab5454b05d559dcd9a92c2fa83c05ed1d60b2c9e5e0de8c2d561684bf3fb1e",
+      "bytes": 2101
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/compositor/cached_resources/intern/smaa_precomputed_textures.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/cached_resources/intern/smaa_precomputed_textures.cc",
+      "sha256": "0581ef0462e44677a790538b027f9db91c2bd98e91d005a3861da427c2aaf754",
+      "bytes": 4560
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/compositor/intern/context.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/intern/context.cc",
+      "sha256": "6d04e0813242d4a3294205438a7157713a1dd5223b0fc4502daa01e6dadc4651",
+      "bytes": 3094
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/compositor/intern/result.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/intern/result.cc",
+      "sha256": "27de905cc233c273fad0bac8bf94252b59bb96e621ead0590297ff0ed556eed3",
+      "bytes": 40402
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/compositor/cached_resources/intern/cached_shader.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/cached_resources/intern/cached_shader.cc",
+      "sha256": "3395d39db8162d1893953f80f73d43abeec422c3795a390ae37cb326a95a4a85",
+      "bytes": 2647
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/compositor/cached_resources/intern/ocio_color_space_conversion_shader.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/cached_resources/intern/ocio_color_space_conversion_shader.cc",
+      "sha256": "58bb723df15a19ab9b14a411ea81a6008a1a8bae2d3d2c2ced06eea4a033e558",
+      "bytes": 25321
+    },
+    {
+      "repository": "mrdoob/three.js",
+      "revision": "r184",
+      "path": "examples/jsm/tsl/display/SMAANode.js",
+      "url": "https://raw.githubusercontent.com/mrdoob/three.js/r184/examples/jsm/tsl/display/SMAANode.js",
+      "sha256": "24c3c15448e8f6b3bf9f980ce5187d1b4db0e2478828fbdecf14f89df904c132",
+      "bytes": 68023
+    },
+    {
+      "repository": "mrdoob/three.js",
+      "revision": "r184",
+      "path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/mrdoob/three.js/r184/LICENSE",
+      "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+      "bytes": 1081
+    },
+    {
+      "repository": "iryoku/smaa",
+      "revision": "v2.8",
+      "path": "SMAA.h",
+      "url": "https://raw.githubusercontent.com/iryoku/smaa/v2.8/SMAA.h",
+      "sha256": "a6e396730c1ddc7074d657168641cc6729ff3706b4a1f8fb3ba97e8f0d683eea",
+      "bytes": 51927
+    }
+  ],
+  "localFileObservations": [
+    {
+      "path": "node_modules/three/examples/jsm/tsl/display/SMAANode.js",
+      "sha256": "24c3c15448e8f6b3bf9f980ce5187d1b4db0e2478828fbdecf14f89df904c132",
+      "bytes": 68023
+    },
+    {
+      "path": "node_modules/three/LICENSE",
+      "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+      "bytes": 1081
+    },
+    {
+      "path": "packages/blendlink/src/tslSourceCompositor.ts",
+      "sha256": "4bf9d7e8f0861765778590a30d9519453cedfe9a36af08b01451422d67a089aa",
+      "bytes": 78705
+    },
+    {
+      "path": "packages/blendlink/src/threeWebgpuPostPipeline.ts",
+      "sha256": "4cd3b5f4f3348d1ad442dd657c6cea4a6ef4f68658f0c5847d4e28124b4a3c5d",
+      "bytes": 33628
+    }
+  ]
+}

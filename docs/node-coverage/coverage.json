@@ -1,5 +1,5 @@
 {
-  "capabilityMapSha256": "c6ff5b6c4305dd5d21fd3637c4b0f114d481260b9da77be4ea41484c28e92b40",
+  "capabilityMapSha256": "d5db21e78eed3d5850a81af8079ea84f1f382bc9751cc20dffa3c907f2a6fe57",
   "capabilityValidationFailures": [],
   "classificationRefresh": {
     "catalogSha256": {
@@ -12,7 +12,7 @@
     "nativeInventoryRefreshed": false,
     "reason": "Classification-only refresh against unchanged content-pinned full inventories; no native rediscovery or numerical qualification is performed."
   },
-  "generatedAt": "2026-11-14T06:26:28.249180+00:00",
+  "generatedAt": "2026-11-14T07:09:13.007503+00:00",
   "nativeAvailabilityChanges": [],
   "nativeCatalogSha256": {
     "docs/node-coverage/blender-4.2.0.json": "2f71cb192f6a62e0e343ba5fcb11a2d8e0c6f6af1e8ac663ec6c3350b016b151",
@@ -199,11 +199,68 @@
                   "SUBTRACT": "unsupported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_box_mask.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorBoxMask.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorBoxMask.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_box_mask_check.py"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/README.md"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/cases.json"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/capture.mjs"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/export.test.ts"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/browser.js"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/run.mjs"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/matrix.mjs"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/evidence.json"
+                }
+              ],
               "id": "CompositorNodeBoxMask",
               "label": "Box Mask",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "No admitted live route outside the explicitly qualified Blender5.3.0 build/platform CPU slice. Native availability alone does not establish numerical support.",
+              "runtimeOps": [
+                "box-mask"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -6353,11 +6410,68 @@
                   "Subtract": "unsupported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_box_mask.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorBoxMask.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorBoxMask.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_box_mask_check.py"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/README.md"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/cases.json"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/capture.mjs"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/export.test.ts"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/browser.js"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/run.mjs"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/matrix.mjs"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/evidence.json"
+                }
+              ],
               "id": "CompositorNodeBoxMask",
               "label": "Box Mask",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "No admitted live route outside the explicitly qualified Blender5.3.0 build/platform CPU slice. Native availability alone does not establish numerical support.",
+              "runtimeOps": [
+                "box-mask"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -14657,16 +14771,16 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 61,
+            "partial": 62,
             "structural": 7,
             "supported": 24,
-            "unsupported": 95
+            "unsupported": 94
           },
           "enumValueCounts": {
             "partial": 36,
             "structural": 3,
-            "supported": 279,
-            "unsupported": 614
+            "supported": 283,
+            "unsupported": 610
           },
           "nodes": [
             {
@@ -14807,21 +14921,78 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "inputs:Operation": {
-                  "Add": "unsupported",
-                  "Multiply": "unsupported",
-                  "Not": "unsupported",
-                  "Subtract": "unsupported"
+                  "Add": "supported",
+                  "Multiply": "supported",
+                  "Not": "supported",
+                  "Subtract": "supported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_box_mask.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorBoxMask.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorBoxMask.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_box_mask_check.py"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/README.md"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/cases.json"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/capture.mjs"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/export.test.ts"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/browser.js"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/run.mjs"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/matrix.mjs"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-box-mask/evidence.json"
+                }
+              ],
               "id": "CompositorNodeBoxMask",
               "label": "Box Mask",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor only. Static unlinked literal Position[-2,2], Size[0,2], Mask/Value[0,1], every component zero or abs>=2^-16, and raw Rotation positive zero. All four native Operation menu values Add/Subtract/Multiply/Not, including default geometry and exact empty masks. Position/Size use raw Float32 array reads; scalar sockets use native interface.from_socket copies into private homogeneous FLOAT storage, preserving signed-zero/subnormal detection without Python scalar promotion, source edits, FPU changes or init_socket. Negative zero, subnormals, nonfinite/out-of-bound values, links/fields, animation/drivers and rotated masks refuse. Zero-offset context full-frame domain with square pixels and physical extents2..8192; borders/crops and spatial/domain consumers including Flip refuse. One cached extent is updated atomically after validation; native ordered-F32 axes classify integer intervals in O(width+height), shader integer texels select precomputed inside/outside values. No shader epsilon, artist-input quantization, mask texture, new pass or per-frame readback. Result VarNode retains physical-extent validation on allzero/constant optimized graphs; invalid resize named-refuses and recovers. Scalar-to-RGBA alpha1 and strict-edge words require exact equality. Actual native reference is CPU compositor with a Cycles CPU carrier, not EEVEE shader/material or native GPU evaluation. Portable measured browser WebGPU and WebGL2 via WebGPURenderer on Apple Metal and SwiftShader. Legacy WebGLRenderer, other Blender versions/builds/hosts, arbitrary composed graphs, Ellipse, anti-aliasing and whole-scene appearance remain unqualified.",
+              "runtimeOps": [
+                "box-mask"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -24678,6 +24849,7 @@
     "packages/blendlink/blender/compositor_alpha_conversion.py": "990390afa0f4d021d616802c9425dc0ab2ec706ce49b72327a1d22b16cdeb0db",
     "packages/blendlink/blender/compositor_blackbody.py": "9646898a1b0b9b9e1dbfe97adf73b3a463e624f49f68a7d786b3255bbdf42424",
     "packages/blendlink/blender/compositor_blur.py": "d86ffd87271a97563facacfedab6bcc3888ea0bff69926f12d32146736aff014",
+    "packages/blendlink/blender/compositor_box_mask.py": "141cea7fdb1fe889983be6bcba9d98335244336921d41274262fc6e7b66196c6",
     "packages/blendlink/blender/compositor_channel_key.py": "a00e0f67b92ab817a401340c654758177eadc1b07d7a0ae92258b16760dc46dc",
     "packages/blendlink/blender/compositor_chroma_key.py": "d304626d3aba0ed4bd560a11134f627536bb9dfe3e01d608a40fe677759512e5",
     "packages/blendlink/blender/compositor_color.py": "7f2c441e1390c38537fd6e434c6963398a517492f00441e928f2c6708e8eea27",
@@ -24688,7 +24860,7 @@
     "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
     "packages/blendlink/blender/compositor_float_coordinates.py": "a300cbfb6e5ea06806e2fb9b9d7795cd2e3b91cb21ada43e4c128ac89d8f0cec",
     "packages/blendlink/blender/compositor_float_to_int.py": "6292f5a5904107b59591c282fcf9def24a5f98dc2ead0a92d950b6219226658d",
-    "packages/blendlink/blender/compositor_graph.py": "41fad5723ee5ac95576b87724be0346a564edc435432ff69fc75664af7087f32",
+    "packages/blendlink/blender/compositor_graph.py": "cb2dc888e29539ecab72ca126e4181b20aa1ed3d10d81aa11b0062eed9151949",
     "packages/blendlink/blender/compositor_image.py": "55ee3b7800002331c4e30042a7d5da18538267b58ff60c006e03ad238da9e012",
     "packages/blendlink/blender/compositor_image_coordinates.py": "4b796327c579e7c08ed487cce4758c899a1a11be648e93977c22a0536451054a",
     "packages/blendlink/blender/compositor_image_info.py": "92e3f2488f646b8f7f79de67940717c54bd3e4cfc69956090b31ebd9b0e64729",
@@ -24730,6 +24902,7 @@
     "packages/blendlink/src/tslCompositorAlphaConversion.ts": "54fde14082f2882a067055a84f2c3493b8c6fa19688df8ed68b4e0713ded9dba",
     "packages/blendlink/src/tslCompositorBlackbody.ts": "f3d156204aee2e81c055df785a209338e5f9f2b6b9b13f27184fc895f4811e33",
     "packages/blendlink/src/tslCompositorBlur.ts": "269ee8832695f28616f840d5a377fbbc0310ba3fa907c5bbb25ec9858636571a",
+    "packages/blendlink/src/tslCompositorBoxMask.ts": "46463b70f2e6525753bab3cb63d5d6089a2313cf2b0e26f41e563fbb83cc8ea3",
     "packages/blendlink/src/tslCompositorChannelKey.ts": "8b46848f5ec32dc99051c23fef97f0afedaa98fac1f0d8f2e566e727f7b53ffb",
     "packages/blendlink/src/tslCompositorChromaKey.ts": "f69481feb37448ad02f7873091a540eb18bf1564620489e2a0d7010fd0fc6875",
     "packages/blendlink/src/tslCompositorColor.ts": "03271dc260fa8a33abe9a7e54c5aa4639a607e429a3b91b0507bb25058098090",
@@ -24798,7 +24971,7 @@
     "packages/blendlink/src/tslRadialWidth.ts": "9ffc9e3a7e32b3d0676b2a90fffad64e2578cd30d160ddaf00278d2d9ff43719",
     "packages/blendlink/src/tslRepeat.ts": "4d7925f09220e54973155c6af8c41c98e3b32e141f5acbdc6d29741c701d9a93",
     "packages/blendlink/src/tslSharedUtilities.ts": "1f21b06a4d60a439b0549b7c6716c66945b4cce3cc00fc6e965acbe77c80d9b9",
-    "packages/blendlink/src/tslSourceCompositor.ts": "4bf9d7e8f0861765778590a30d9519453cedfe9a36af08b01451422d67a089aa",
+    "packages/blendlink/src/tslSourceCompositor.ts": "643cde1ffc4daec43c13e159b0a39320f551599166e83b8cb65eb51e35df6808",
     "packages/blendlink/src/tslSpectralNodes.ts": "10719a4f7ceef71f80a9b3492561c382cd0904de209e0e93f9f578b5af529bf2",
     "packages/blendlink/src/tslSqueeze.ts": "14a56aa219ca2bb2dace54d512e8b9cfda754ea83991a92a1c270a1122ea492b",
     "packages/blendlink/src/tslTangentNodes.ts": "fb7ad452300be3e96a9f01b4f82f9ce59cb8577cf68e056df994876321cffcc1",

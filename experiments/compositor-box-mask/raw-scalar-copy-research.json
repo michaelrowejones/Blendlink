@@ -1,0 +1,176 @@
+{
+  "schemaVersion": 1,
+  "status": "public-raw-scalar-copy-research-only",
+  "version": [
+    5,
+    3,
+    0
+  ],
+  "build": "02f0899d78e3",
+  "supportCredit": 0,
+  "nativeNumericalCredit": 0,
+  "finalCredit": 0,
+  "browserCredit": 0,
+  "result": "Public interface.from_socket plus homogeneous Float group inputs.foreach_get preserves stored F32 scalar words despite host promotion FTZ. Not yet incorporated into source admission.",
+  "reports": {
+    "report.json": {
+      "sha256": "96cccc76086dfcb1087913191e6db810fbb4ed8f18cb577515ea744ba4690516",
+      "observed": {
+        "schemaVersion": 1,
+        "status": "research-only",
+        "numericalCredit": 0,
+        "version": [
+          5,
+          3,
+          0
+        ],
+        "build": "02f0899d78e3",
+        "promotionDoubleWord": "0000000000000000",
+        "rows": [
+          {
+            "inputWords": [
+              0,
+              2147483648,
+              1
+            ],
+            "donorStoredWords": [
+              0,
+              2147483648,
+              1
+            ],
+            "copiedStoredWords": [
+              0,
+              2147483648,
+              1
+            ],
+            "exact": true
+          },
+          {
+            "inputWords": [
+              8388607,
+              2147483649,
+              2155872255
+            ],
+            "donorStoredWords": [
+              8388607,
+              2147483649,
+              2155872255
+            ],
+            "copiedStoredWords": [
+              8388607,
+              2147483649,
+              2155872255
+            ],
+            "exact": true
+          },
+          {
+            "inputWords": [
+              1048576000,
+              1056964608,
+              3212836864
+            ],
+            "donorStoredWords": [
+              1048576000,
+              1056964608,
+              3212836864
+            ],
+            "copiedStoredWords": [
+              1048576000,
+              1056964608,
+              3212836864
+            ],
+            "exact": true
+          }
+        ],
+        "fromSocketAvailable": [
+          true,
+          true,
+          true
+        ],
+        "allExact": true,
+        "ownershipRestored": true
+      }
+    },
+    "actual-box-report.json": {
+      "sha256": "9ffe1fa10563ab360ace81872392eb2f5d8d0a5c99cebbf0c702d2c092525dc8",
+      "observed": {
+        "schemaVersion": 1,
+        "status": "research-only",
+        "numericalCredit": 0,
+        "rows": [
+          {
+            "expectedWords": [
+              0,
+              2147483648,
+              1
+            ],
+            "actualBoxCopiedWords": [
+              0,
+              2147483648,
+              1
+            ],
+            "exact": true
+          },
+          {
+            "expectedWords": [
+              8388607,
+              2147483649,
+              2155872255
+            ],
+            "actualBoxCopiedWords": [
+              8388607,
+              2147483649,
+              2155872255
+            ],
+            "exact": true
+          },
+          {
+            "expectedWords": [
+              1048576000,
+              1056964608,
+              3212836864
+            ],
+            "actualBoxCopiedWords": [
+              1048576000,
+              1056964608,
+              3212836864
+            ],
+            "exact": true
+          }
+        ],
+        "initSocketAvailable": [
+          true,
+          true,
+          true
+        ],
+        "initSocketDoc": "NodeTreeInterfaceSocketFloat.init_socket(node, socket, data_path)\nInitialize a node socket instance",
+        "actualBoxOrdinaryWords": [
+          1048576000,
+          1061158912,
+          3204448256
+        ],
+        "actualBoxSocketClasses": [
+          "NodeSocketFloatFactor",
+          "NodeSocketFloatFactor",
+          "NodeSocketFloatAngle"
+        ],
+        "ownershipRestored": true
+      }
+    }
+  },
+  "repeatableScripts": {
+    "experiments/compositor-box-mask/raw-scalar-copy-probe.py": {
+      "sha256": "3683cbcba475e8d657476036602d2a4a604441c7869f0369e5fffb366c384101",
+      "note": "Path-independent archival script; original observations were captured before replacing the absolute output path."
+    },
+    "experiments/compositor-box-mask/raw-scalar-box-probe.py": {
+      "sha256": "b0e59de0c760b1d65b8341e002bc90851215f278273235ddf57d0d2547bf6314",
+      "note": "Path-independent archival script; original observations were captured before replacing the absolute output path."
+    }
+  },
+  "limits": [
+    "No allocator closure: repeated test-only init_socket on existing owned Box sockets emitted 9 tiny unfreed blocks; it is not needed by the proposed read-only source-copy path.",
+    "Node-group census restored in both probes; no claim of full native allocator/resource identity restoration.",
+    "No GPU initialization, FPU-state change, ctypes, DNA parsing, serialization or UI used."
+  ]
+}

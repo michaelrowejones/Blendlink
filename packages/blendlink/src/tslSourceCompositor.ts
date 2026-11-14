@@ -1,3 +1,4 @@
+import {buildCompositorBoxMask,validateBoxMaskGraph} from './tslCompositorBoxMask.js'
 import {buildCompositorBlackbody} from './tslCompositorBlackbody.js'
 import {buildCompositorRadialWidth} from './tslRadialWidth.js'
 import {buildCompositorVectorMath} from './tslCompositorVectorMath.js'
@@ -509,6 +510,7 @@ export function buildSourceCompositor(
     }
     if (program.outputAlpha !== undefined && program.outputAlpha !== 'legacy-composite-opaque-v1')
       throw new SourceCompositorUnsupported('Composite output has an unknown alpha model')
+    validateBoxMaskGraph(program, message => { throw new SourceCompositorUnsupported(message) })
     validateTextureFieldGraph(program, message => { throw new SourceCompositorUnsupported(message) })
     validateImageCoordinateGraph(program, message => { throw new SourceCompositorUnsupported(message) })
     const nodes = new Map<string, TslEffectNode>()
@@ -576,7 +578,7 @@ export function buildSourceCompositor(
     for (const op of program.ops) {
       const domainFail = (message: string): never => { throw new SourceCompositorUnsupported(
         `${op.source.path.join(' / ')} / ${op.source.node} [${op.source.output}]: ${message}`) }
-      const single = op.kind==='image-info'||(!['render-pass', 'image-input'].includes(op.kind) && !textureFieldKind(op) && Object.values(op.inputs).every(input => isSingleValue(input.value)))
+      const single = op.kind==='image-info'||(!['render-pass', 'image-input', 'box-mask'].includes(op.kind) && !textureFieldKind(op) && Object.values(op.inputs).every(input => isSingleValue(input.value)))
       const incoming = Object.entries(op.inputs).map(([name, input]) => ({ name, domain: origin(input.value) }))
       if (incoming.some(input => input.domain?.croppedWindow)
         && !['exposure', 'invert', 'posterize', 'alpha-over'].includes(op.kind))
@@ -654,6 +656,9 @@ export function buildSourceCompositor(
             break
           case 'utility-constant':
             node = sharedTypedConstant(op.type, op.value)
+            break
+          case 'box-mask':
+            node = buildCompositorBoxMask(op,program.ops,domainFail)
             break
           case 'image-info':
             node = buildCompositorImageInfo(op,program.ops,input('Image'),domainFail)

@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "model": "cpu-f32-axis-integer-intervals-v1",
+  "sourceProfile": "darwin-arm64-53-box-mask-cpu-v1",
+  "source": "Pinned Blender5.3 CPU compositor Float32 arrays; FULL and AUTO requested precision recorded per case. No GPU-authored Blender claim.",
+  "output": "Exact Float32 words for all RGBA channels, including alpha1 and outside/strict-edge zeros. No tolerance or output repair.",
+  "literalBounds": "Position[-2,2], Size[0,2], Mask/Value[0,1], each component0 or abs>=2^-16; raw rotation+0; native scalar-copy raw-word fidelity.",
+  "physicalDomain": "Zero-offset full-frame context, square pixels, physical dimensions2..8192. No fields, animation, rotation, transformed/cropped domains.",
+  "cost": "One cached extent; O(W+H) CPU axis scan only on valid extent changes; shader integer texels/rectangle comparisons/selection; no mask texture/readback/additional pass."
+}
