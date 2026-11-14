@@ -1,0 +1,137 @@
+{
+  "status": "CLOSED_SOFTWARE_HALF_PAYLOAD_BINARY_MIX_RESEARCH",
+  "scope": "Research only; current source uint law on actual SwiftShader decoded inputs. No production decoder/calibration/support/ScenePass/Final qualification change.",
+  "directory": "/private/tmp/scenetoweb-half-payload-research-next/artifacts/verification-half-payload-software-v1",
+  "closedSha256": "526ae156e3eb6565e4c7fdeb403ca6896ec123578261b995eaa9f2b553afc711",
+  "nativeRenders": 38,
+  "halfEncodingsPerChannel": 65536,
+  "rgbaChannels": 4,
+  "backgrounds": [
+    "RGBA0",
+    "RGBA1",
+    "dyadic"
+  ],
+  "factors": [
+    "literal0",
+    "literal1",
+    "varying-binary"
+  ],
+  "sides": [
+    "A",
+    "B"
+  ],
+  "browserCases": 36,
+  "comparedWords": 9437184,
+  "wordDifferences": 0,
+  "classDifferences": 0,
+  "nativeNaNPayloadWords": 294624,
+  "decoderObservations": [
+    {
+      "backend": "webgpu",
+      "gpu": {
+        "vendor": "google",
+        "architecture": "swiftshader",
+        "device": "",
+        "description": ""
+      },
+      "model": "half-payload-sign-signaling-preserved-v1",
+      "decodedSha256": "e0d32e350c4a57d927c9ad25d013fb8ee41be9bcb30f7fafa61d37c1f191fdcd",
+      "counts": {
+        "positive-zero": 4,
+        "finite": 253944,
+        "negative-zero": 4,
+        "positive-infinity": 4,
+        "signaling-nan": 4088,
+        "quiet-nan": 4096,
+        "negative-infinity": 4
+      },
+      "examples": [
+        {
+          "rawHalf": 31745,
+          "decodedF32": 2139103232
+        },
+        {
+          "rawHalf": 32255,
+          "decodedF32": 2143281152
+        },
+        {
+          "rawHalf": 32256,
+          "decodedF32": 2143289344
+        },
+        {
+          "rawHalf": 32767,
+          "decodedF32": 2147475456
+        },
+        {
+          "rawHalf": 64513,
+          "decodedF32": 4286586880
+        },
+        {
+          "rawHalf": 65023,
+          "decodedF32": 4290764800
+        },
+        {
+          "rawHalf": 65024,
+          "decodedF32": 4290772992
+        },
+        {
+          "rawHalf": 65535,
+          "decodedF32": 4294959104
+        }
+      ]
+    },
+    {
+      "backend": "webgl2",
+      "gpu": {
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+      },
+      "model": "half-payload-sign-signaling-preserved-v1",
+      "decodedSha256": "e0d32e350c4a57d927c9ad25d013fb8ee41be9bcb30f7fafa61d37c1f191fdcd",
+      "counts": {
+        "positive-zero": 4,
+        "finite": 253944,
+        "negative-zero": 4,
+        "positive-infinity": 4,
+        "signaling-nan": 4088,
+        "quiet-nan": 4096,
+        "negative-infinity": 4
+      },
+      "examples": [
+        {
+          "rawHalf": 31745,
+          "decodedF32": 2139103232
+        },
+        {
+          "rawHalf": 32255,
+          "decodedF32": 2143281152
+        },
+        {
+          "rawHalf": 32256,
+          "decodedF32": 2143289344
+        },
+        {
+          "rawHalf": 32767,
+          "decodedF32": 2147475456
+        },
+        {
+          "rawHalf": 64513,
+          "decodedF32": 4286586880
+        },
+        {
+          "rawHalf": 65023,
+          "decodedF32": 4290764800
+        },
+        {
+          "rawHalf": 65024,
+          "decodedF32": 4290772992
+        },
+        {
+          "rawHalf": 65535,
+          "decodedF32": 4294959104
+        }
+      ]
+    }
+  ],
+  "supportCredit": 0,
+  "finalCredit": 0
+}

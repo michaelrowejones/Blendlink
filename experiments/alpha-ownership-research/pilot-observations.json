@@ -1,0 +1,1454 @@
+{
+  "status": "CLOSED_RESEARCH_ALPHA_OWNERSHIP_GPU_PILOT",
+  "qualificationCredit": 0,
+  "sourceHashes": {
+    "experiments/alpha-ownership-research/probe.js": "18349c7ccc182ab86d3a6a26c498a154bcbaa2f324ec8e172335372e3d31ad6f",
+    "experiments/alpha-ownership-research/owned.ts": "746d7112d6e9879f84f785f86e96cdb1d98e1418f133bc84a90596b5a765fb57",
+    "experiments/alpha-ownership-research/index.html": "c4e07c5c3978e7fe264306242b35de68c83b20959d3f9f4acc0ce4269bcc357b",
+    "experiments/alpha-ownership-research/run.mjs": "24718f10de5fbcb545c9326d5bded8d319fcce28b33d46a327dd64eb2a27ef7c",
+    "packages/blendlink/src/tslMaterialRuntime.ts": "fa8f8f5910af0679a16d9c09fb1e525415a0626ed1c6084420f3b165287f82e6",
+    "packages/blendlink/src/tslMaterialProgram.ts": "a86c7f9ae3241c140e805e6bed726504e2530f5e59a062992331326b4746d5cc",
+    "packages/blendlink/src/tslNodeRecipe.ts": "7cbee6f80be5de5e11875ae1becd97350a035aa78ed8be9c06d78cf505b175bc",
+    "packages/blendlink/src/tslVertexColorAlpha.ts": "3e6dc69952d71bace1a82e1a913ed717822a153fd6327ae046079da07c294365",
+    "packages/blendlink/src/tslIrInspection.ts": "976cdc3ae2f8a9bfde73f466b912f7acef17223288dfd6b8f61acb311750e3c7"
+  },
+  "rows": [
+    {
+      "status": "RESEARCH_ALPHA_OWNERSHIP_GPU_PASSED",
+      "backend": "webgpu",
+      "gpu": {
+        "api": "WebGPU",
+        "vendor": "apple",
+        "architecture": "metal-3",
+        "description": ""
+      },
+      "rows": [
+        {
+          "case": "legacy-rgba",
+          "physical": false,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1020054733
+          ],
+          "firstWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1020054733
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "MeshStandardNodeMaterial8272714967884075"
+        },
+        {
+          "case": "owned-rgba",
+          "physical": false,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1036831949
+          ],
+          "firstWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1036831949
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaStandardV13639673301673599:owned-alpha-v1:0"
+        },
+        {
+          "case": "legacy-texture",
+          "physical": false,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1011666125
+          ],
+          "firstWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1011666125
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "MeshStandardNodeMaterial6692886516750632"
+        },
+        {
+          "case": "owned-texture",
+          "physical": false,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1036831949
+          ],
+          "firstWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1036831949
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaStandardV18359594512036859:owned-alpha-v1:0"
+        },
+        {
+          "case": "owned-combined",
+          "physical": false,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            1031798784,
+            1031798784,
+            1049624576,
+            1036831949
+          ],
+          "firstWords": [
+            1031798784,
+            1031798784,
+            1049624576,
+            1036831949
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaStandardV11651491166423814:owned-alpha-v1:0"
+        },
+        {
+          "case": "owned-complete",
+          "physical": false,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            1040187392,
+            1048576000,
+            1056964608,
+            1036831949
+          ],
+          "firstWords": [
+            1040187392,
+            1048576000,
+            1056964608,
+            1036831949
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaStandardV18449971564310259:owned-alpha-v1:1"
+        },
+        {
+          "case": "owned-alpha-test",
+          "physical": false,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "firstWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaStandardV16848778475864552:owned-alpha-v1:0"
+        },
+        {
+          "case": "owned-opaque",
+          "physical": false,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1065353216
+          ],
+          "firstWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1065353216
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaStandardV16245129289389040:owned-alpha-v1:0"
+        },
+        {
+          "case": "legacy-rgba",
+          "physical": false,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1034594987
+          ],
+          "firstWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1034594987
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "MeshStandardNodeMaterial7735302435645979"
+        },
+        {
+          "case": "owned-rgba",
+          "physical": false,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1051372203
+          ],
+          "firstWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1051372203
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaStandardV17820741020906792:owned-alpha-v1:0"
+        },
+        {
+          "case": "legacy-texture",
+          "physical": false,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1026206379
+          ],
+          "firstWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1026206379
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "MeshStandardNodeMaterial4321421008235470"
+        },
+        {
+          "case": "owned-texture",
+          "physical": false,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1051372203
+          ],
+          "firstWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1051372203
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaStandardV12398537958873763:owned-alpha-v1:0"
+        },
+        {
+          "case": "owned-combined",
+          "physical": false,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1031798784,
+            1031798784,
+            1049624576,
+            1051372203
+          ],
+          "firstWords": [
+            1031798784,
+            1031798784,
+            1049624576,
+            1051372203
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaStandardV13863461994611322:owned-alpha-v1:0"
+        },
+        {
+          "case": "owned-complete",
+          "physical": false,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1040187392,
+            1048576000,
+            1056964608,
+            1051372203
+          ],
+          "firstWords": [
+            1040187392,
+            1048576000,
+            1056964608,
+            1051372203
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaStandardV1400841054408276:owned-alpha-v1:1"
+        },
+        {
+          "case": "owned-alpha-test",
+          "physical": false,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1051372203
+          ],
+          "firstWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1051372203
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaStandardV11753520038851931:owned-alpha-v1:0"
+        },
+        {
+          "case": "owned-opaque",
+          "physical": false,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1065353216
+          ],
+          "firstWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1065353216
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaStandardV12439828812727081:owned-alpha-v1:0"
+        },
+        {
+          "case": "legacy-rgba",
+          "physical": true,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1020054733
+          ],
+          "firstWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1020054733
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "MeshPhysicalNodeMaterial7744053618550273"
+        },
+        {
+          "case": "owned-rgba",
+          "physical": true,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1036831949
+          ],
+          "firstWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1036831949
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaPhysicalV11215005349963821:owned-alpha-v1:0"
+        },
+        {
+          "case": "legacy-texture",
+          "physical": true,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1011666125
+          ],
+          "firstWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1011666125
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "MeshPhysicalNodeMaterial3065902450722296"
+        },
+        {
+          "case": "owned-texture",
+          "physical": true,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1036831949
+          ],
+          "firstWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1036831949
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaPhysicalV16715022316220453:owned-alpha-v1:0"
+        },
+        {
+          "case": "owned-combined",
+          "physical": true,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            1031798784,
+            1031798784,
+            1049624576,
+            1036831949
+          ],
+          "firstWords": [
+            1031798784,
+            1031798784,
+            1049624576,
+            1036831949
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaPhysicalV11156683294712377:owned-alpha-v1:0"
+        },
+        {
+          "case": "owned-complete",
+          "physical": true,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            1040187392,
+            1048576000,
+            1056964608,
+            1036831949
+          ],
+          "firstWords": [
+            1040187392,
+            1048576000,
+            1056964608,
+            1036831949
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaPhysicalV1218218041825264:owned-alpha-v1:1"
+        },
+        {
+          "case": "owned-alpha-test",
+          "physical": true,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "firstWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaPhysicalV11400891119359728:owned-alpha-v1:0"
+        },
+        {
+          "case": "owned-opaque",
+          "physical": true,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1065353216
+          ],
+          "firstWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1065353216
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaPhysicalV16624124769015081:owned-alpha-v1:0"
+        },
+        {
+          "case": "legacy-rgba",
+          "physical": true,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1034594987
+          ],
+          "firstWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1034594987
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "MeshPhysicalNodeMaterial75444022554808"
+        },
+        {
+          "case": "owned-rgba",
+          "physical": true,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1051372203
+          ],
+          "firstWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1051372203
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaPhysicalV12770450667210565:owned-alpha-v1:0"
+        },
+        {
+          "case": "legacy-texture",
+          "physical": true,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1026206379
+          ],
+          "firstWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1026206379
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "MeshPhysicalNodeMaterial978717149955616"
+        },
+        {
+          "case": "owned-texture",
+          "physical": true,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1051372203
+          ],
+          "firstWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1051372203
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaPhysicalV17457660492304421:owned-alpha-v1:0"
+        },
+        {
+          "case": "owned-combined",
+          "physical": true,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1031798784,
+            1031798784,
+            1049624576,
+            1051372203
+          ],
+          "firstWords": [
+            1031798784,
+            1031798784,
+            1049624576,
+            1051372203
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaPhysicalV12700664306222016:owned-alpha-v1:0"
+        },
+        {
+          "case": "owned-complete",
+          "physical": true,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1040187392,
+            1048576000,
+            1056964608,
+            1051372203
+          ],
+          "firstWords": [
+            1040187392,
+            1048576000,
+            1056964608,
+            1051372203
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaPhysicalV13463642317402907:owned-alpha-v1:1"
+        },
+        {
+          "case": "owned-alpha-test",
+          "physical": true,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1051372203
+          ],
+          "firstWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1051372203
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaPhysicalV11991543180821811:owned-alpha-v1:0"
+        },
+        {
+          "case": "owned-opaque",
+          "physical": true,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1065353216
+          ],
+          "firstWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1065353216
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaPhysicalV14918517582216963:owned-alpha-v1:0"
+        }
+      ],
+      "textureDisposalsBeforeOwnedCleanup": 0,
+      "qualificationCredit": 0,
+      "errors": []
+    },
+    {
+      "status": "RESEARCH_ALPHA_OWNERSHIP_GPU_PASSED",
+      "backend": "webgl2",
+      "gpu": {
+        "api": "WebGL2",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+      },
+      "rows": [
+        {
+          "case": "legacy-rgba",
+          "physical": false,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1020054733
+          ],
+          "firstWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1020054733
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "MeshStandardNodeMaterial8272714967884075"
+        },
+        {
+          "case": "owned-rgba",
+          "physical": false,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1036831949
+          ],
+          "firstWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1036831949
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaStandardV13639673301673599:owned-alpha-v1:0"
+        },
+        {
+          "case": "legacy-texture",
+          "physical": false,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1011666125
+          ],
+          "firstWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1011666125
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "MeshStandardNodeMaterial6692886516750632"
+        },
+        {
+          "case": "owned-texture",
+          "physical": false,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1036831949
+          ],
+          "firstWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1036831949
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaStandardV18128842303546006:owned-alpha-v1:0"
+        },
+        {
+          "case": "owned-combined",
+          "physical": false,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            1031798784,
+            1031798784,
+            1049624576,
+            1036831949
+          ],
+          "firstWords": [
+            1031798784,
+            1031798784,
+            1049624576,
+            1036831949
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaStandardV14416373970188966:owned-alpha-v1:0"
+        },
+        {
+          "case": "owned-complete",
+          "physical": false,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            1040187392,
+            1048576000,
+            1056964608,
+            1036831949
+          ],
+          "firstWords": [
+            1040187392,
+            1048576000,
+            1056964608,
+            1036831949
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaStandardV15458554819642269:owned-alpha-v1:1"
+        },
+        {
+          "case": "owned-alpha-test",
+          "physical": false,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "firstWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaStandardV14150117943813810:owned-alpha-v1:0"
+        },
+        {
+          "case": "owned-opaque",
+          "physical": false,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1065353216
+          ],
+          "firstWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1065353216
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaStandardV12708310341008684:owned-alpha-v1:0"
+        },
+        {
+          "case": "legacy-rgba",
+          "physical": false,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1034594987
+          ],
+          "firstWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1034594987
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "MeshStandardNodeMaterial520834106983432"
+        },
+        {
+          "case": "owned-rgba",
+          "physical": false,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1051372203
+          ],
+          "firstWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1051372203
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaStandardV12102647482194614:owned-alpha-v1:0"
+        },
+        {
+          "case": "legacy-texture",
+          "physical": false,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1026206379
+          ],
+          "firstWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1026206379
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "MeshStandardNodeMaterial665122408914237"
+        },
+        {
+          "case": "owned-texture",
+          "physical": false,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1051372203
+          ],
+          "firstWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1051372203
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaStandardV1404632701594614:owned-alpha-v1:0"
+        },
+        {
+          "case": "owned-combined",
+          "physical": false,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1031798784,
+            1031798784,
+            1049624576,
+            1051372203
+          ],
+          "firstWords": [
+            1031798784,
+            1031798784,
+            1049624576,
+            1051372203
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaStandardV15767528207072076:owned-alpha-v1:0"
+        },
+        {
+          "case": "owned-complete",
+          "physical": false,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1040187392,
+            1048576000,
+            1056964608,
+            1051372203
+          ],
+          "firstWords": [
+            1040187392,
+            1048576000,
+            1056964608,
+            1051372203
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaStandardV14685864121864264:owned-alpha-v1:1"
+        },
+        {
+          "case": "owned-alpha-test",
+          "physical": false,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1051372203
+          ],
+          "firstWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1051372203
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaStandardV16107112257781561:owned-alpha-v1:0"
+        },
+        {
+          "case": "owned-opaque",
+          "physical": false,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1065353216
+          ],
+          "firstWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1065353216
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaStandardV1996912461313456:owned-alpha-v1:0"
+        },
+        {
+          "case": "legacy-rgba",
+          "physical": true,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1020054733
+          ],
+          "firstWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1020054733
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "MeshPhysicalNodeMaterial2093003668935866"
+        },
+        {
+          "case": "owned-rgba",
+          "physical": true,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1036831949
+          ],
+          "firstWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1036831949
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaPhysicalV11212903283832797:owned-alpha-v1:0"
+        },
+        {
+          "case": "legacy-texture",
+          "physical": true,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1011666125
+          ],
+          "firstWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1011666125
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "MeshPhysicalNodeMaterial2409581654326583"
+        },
+        {
+          "case": "owned-texture",
+          "physical": true,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1036831949
+          ],
+          "firstWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1036831949
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaPhysicalV11151959850875968:owned-alpha-v1:0"
+        },
+        {
+          "case": "owned-combined",
+          "physical": true,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            1031798784,
+            1031798784,
+            1049624576,
+            1036831949
+          ],
+          "firstWords": [
+            1031798784,
+            1031798784,
+            1049624576,
+            1036831949
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaPhysicalV18485747298749172:owned-alpha-v1:0"
+        },
+        {
+          "case": "owned-complete",
+          "physical": true,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            1040187392,
+            1048576000,
+            1056964608,
+            1036831949
+          ],
+          "firstWords": [
+            1040187392,
+            1048576000,
+            1056964608,
+            1036831949
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaPhysicalV1515818402409181:owned-alpha-v1:1"
+        },
+        {
+          "case": "owned-alpha-test",
+          "physical": true,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "firstWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaPhysicalV14574504296147487:owned-alpha-v1:0"
+        },
+        {
+          "case": "owned-opaque",
+          "physical": true,
+          "scalarWord": 1036831949,
+          "expectedWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1065353216
+          ],
+          "firstWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1065353216
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaPhysicalV12554025710715677:owned-alpha-v1:0"
+        },
+        {
+          "case": "legacy-rgba",
+          "physical": true,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1034594987
+          ],
+          "firstWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1034594987
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "MeshPhysicalNodeMaterial4424590459817531"
+        },
+        {
+          "case": "owned-rgba",
+          "physical": true,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1051372203
+          ],
+          "firstWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1051372203
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaPhysicalV13339262529172075:owned-alpha-v1:0"
+        },
+        {
+          "case": "legacy-texture",
+          "physical": true,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1026206379
+          ],
+          "firstWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1026206379
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "MeshPhysicalNodeMaterial478147046894548"
+        },
+        {
+          "case": "owned-texture",
+          "physical": true,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1051372203
+          ],
+          "firstWords": [
+            1040187392,
+            1048576000,
+            1052770304,
+            1051372203
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaPhysicalV15843899443521924:owned-alpha-v1:0"
+        },
+        {
+          "case": "owned-combined",
+          "physical": true,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1031798784,
+            1031798784,
+            1049624576,
+            1051372203
+          ],
+          "firstWords": [
+            1031798784,
+            1031798784,
+            1049624576,
+            1051372203
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaPhysicalV18795187544677754:owned-alpha-v1:0"
+        },
+        {
+          "case": "owned-complete",
+          "physical": true,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1040187392,
+            1048576000,
+            1056964608,
+            1051372203
+          ],
+          "firstWords": [
+            1040187392,
+            1048576000,
+            1056964608,
+            1051372203
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaPhysicalV15821259349511805:owned-alpha-v1:1"
+        },
+        {
+          "case": "owned-alpha-test",
+          "physical": true,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1051372203
+          ],
+          "firstWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1051372203
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaPhysicalV11838464545288891:owned-alpha-v1:0"
+        },
+        {
+          "case": "owned-opaque",
+          "physical": true,
+          "scalarWord": 1051372203,
+          "expectedWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1065353216
+          ],
+          "firstWords": [
+            1048576000,
+            1040187392,
+            1052770304,
+            1065353216
+          ],
+          "words": 256,
+          "differences": 0,
+          "cloneRestored": true,
+          "sourceRestored": true,
+          "cacheKey": "SceneToWebResearchOwnedAlphaPhysicalV17187402633706945:owned-alpha-v1:0"
+        }
+      ],
+      "textureDisposalsBeforeOwnedCleanup": 0,
+      "qualificationCredit": 0,
+      "errors": []
+    }
+  ],
+  "browserVersion": "158.0.8127.18"
+}

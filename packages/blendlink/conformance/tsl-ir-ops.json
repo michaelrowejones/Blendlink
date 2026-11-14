@@ -74,6 +74,7 @@
     "vector_scale",
     "vector_transform",
     "vertex_color",
+    "vertex_color_alpha",
     "view_cos"
   ],
   "legacyBuilderOps": [

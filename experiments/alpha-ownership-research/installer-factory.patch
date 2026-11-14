@@ -1,0 +1,18 @@
+diff --git a/packages/blendlink/src/tslMaterialRuntime.ts b/packages/blendlink/src/tslMaterialRuntime.ts
+index 20db928..9d9f93a 100644
+--- a/packages/blendlink/src/tslMaterialRuntime.ts
++++ b/packages/blendlink/src/tslMaterialRuntime.ts
+@@ -136,11 +136,12 @@ const CLONE_IDENTITY_KEYS = new Set([
+ export function installProgramIntoMaterial(
+   source: THREE.Material,
+   nodes: Partial<Record<MaterialNodeSlot, unknown>>,
++  researchOwnedFactory?: (physical: boolean) => MeshStandardNodeMaterial,
+ ): MeshStandardNodeMaterial {
+   const physical = (source as THREE.MeshPhysicalMaterial).isMeshPhysicalMaterial
+     || Object.keys(nodes).some(key => ['clearcoatNode', 'clearcoatRoughnessNode',
+       'clearcoatNormalNode', 'transmissionNode', 'iorNode', 'sheenNode', 'sheenRoughnessNode'].includes(key))
+-  const clone = physical ? new MeshPhysicalNodeMaterial() : new MeshStandardNodeMaterial()
++  const clone = researchOwnedFactory ? researchOwnedFactory(Boolean(physical)) : physical ? new MeshPhysicalNodeMaterial() : new MeshStandardNodeMaterial()
+   // NodeMaterial.copy reads node slots off the source; copying from
+   // a plain shipped MeshStandardMaterial turns every null default
+   // (fragmentNode, vertexNode, mrtNode, ...) into UNDEFINED — and

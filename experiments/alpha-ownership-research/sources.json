@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "status": "SOURCE_DESIGN_ONLY",
+  "threeVersion": "0.184.0",
+  "sources": [
+    {
+      "path": "node_modules/three/package.json",
+      "resolvedPath": "/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/package.json",
+      "sha256": "8308e43d6d6dd4c636c2dfe2e724da07dcd9fe4349bba6afb56f2c5ba6625391",
+      "source": "installed pinned upstream Three package"
+    },
+    {
+      "path": "node_modules/three/src/materials/nodes/NodeMaterial.js",
+      "resolvedPath": "/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/src/materials/nodes/NodeMaterial.js",
+      "sha256": "f4ba7cbf3c79c62aee417867d4ff4cce7951135d2cede2cf922646b680ab80a1",
+      "source": "installed pinned upstream Three package"
+    },
+    {
+      "path": "node_modules/three/src/materials/nodes/MeshStandardNodeMaterial.js",
+      "resolvedPath": "/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/src/materials/nodes/MeshStandardNodeMaterial.js",
+      "sha256": "1cf74f3c80ef6773d077747171635538d44539ae30fc9a8022b30a28e85ebd5d",
+      "source": "installed pinned upstream Three package"
+    },
+    {
+      "path": "node_modules/three/src/materials/nodes/MeshPhysicalNodeMaterial.js",
+      "resolvedPath": "/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/src/materials/nodes/MeshPhysicalNodeMaterial.js",
+      "sha256": "a7308a7e94056708de87deafd657bf0226780b1a6604defab4c1b252a3a101a3",
+      "source": "installed pinned upstream Three package"
+    },
+    {
+      "path": "node_modules/three/src/nodes/accessors/MaterialNode.js",
+      "resolvedPath": "/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/src/nodes/accessors/MaterialNode.js",
+      "sha256": "83f0f589fd2c0d852bef6456d35942946df5b135bfdd652ea73c0eae81a65244",
+      "source": "installed pinned upstream Three package"
+    },
+    {
+      "path": "node_modules/three/src/nodes/accessors/VertexColorNode.js",
+      "resolvedPath": "/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/src/nodes/accessors/VertexColorNode.js",
+      "sha256": "cec5c59734dbd1af26d1416305a16233d1eba9f5915050816c5a19a667092a26",
+      "source": "installed pinned upstream Three package"
+    },
+    {
+      "path": "node_modules/three/src/nodes/core/NodeBuilder.js",
+      "resolvedPath": "/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/src/nodes/core/NodeBuilder.js",
+      "sha256": "72dcb2fa30f468721e63604db4ed99b1bd89ecbc0f66459f6f8efcc5357152ef",
+      "source": "installed pinned upstream Three package"
+    },
+    {
+      "path": "packages/blendlink/src/tslMaterialRuntime.ts",
+      "resolvedPath": "/Users/michaeljones/Documents/GitHub/Blendlink/packages/blendlink/src/tslMaterialRuntime.ts",
+      "sha256": "9679e842b11f2ee2d68f7b401c753471d08f3ab908c8b3b4b288033a0215f7a3",
+      "source": "current SDK inspection"
+    },
+    {
+      "path": "packages/blendlink/src/tslMaterialProgram.ts",
+      "resolvedPath": "/Users/michaeljones/Documents/GitHub/Blendlink/packages/blendlink/src/tslMaterialProgram.ts",
+      "sha256": "a86c7f9ae3241c140e805e6bed726504e2530f5e59a062992331326b4746d5cc",
+      "source": "current SDK inspection"
+    }
+  ],
+  "currentInitialGuard": {
+    "path": "/tmp/scenetoweb-vertex-color-alpha-next/packages/blendlink/src/tslVertexColorAlpha.ts",
+    "sha256": "5d03b850cab520ff95b3785a6e63408d2b15c664b7f50c669b2796d802cfb72c",
+    "scope": "WIP Alpha-channel VertexAlpha plus active COLOR_0 VEC4/vertexColors refuses; no assumption that this WIP file is published."
+  },
+  "credits": {
+    "sdk": 0,
+    "native": 0,
+    "GPU": 0,
+    "Final": 0,
+    "support": 0
+  }
+}

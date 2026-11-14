@@ -1,4 +1,4 @@
-import {ellipseSceneMixContract} from './tslCompositorEllipseSceneMix.js'
+import {sceneMaskMixContract,validateSceneMaskMixMarkers} from './tslCompositorEllipseSceneMix.js'
 import {prepareEllipseSceneDecoder,createEllipseSceneFrameBinding,disposeEllipseSceneFrameBinding,type EllipseSceneDecoder,type EllipseSceneFrameBinding} from './tslCompositorSceneFrame.js'
 import {validateEllipsePresentation} from './tslCompositorMaskDomains.js'
 /**
@@ -160,13 +160,14 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
       ? await import('n8ao-webgpu') as unknown as N8AOWebgpuModule
       : null
     const graph = options.sourcePresentation?.compositor
+    if(graph)validateSceneMaskMixMarkers(graph,message=>{throw new SourceCompositorUnsupported(message)})
     const preparedImages = graph?.ops.some(op => op.kind === 'image-input')
       ? await prepareStaticCompositorImages(graph, { signal: options.signal }) : undefined
     try {
       options.signal?.throwIfAborted()
       const pipeline = new ThreeWebgpuPostPipelineService(n8ao, options)
       pipeline.preparedImages = preparedImages
-      if(graph&&ellipseSceneMixContract(graph))pipeline.sceneDecoder=await prepareEllipseSceneDecoder(options.renderer,options.signal)
+      if(graph&&sceneMaskMixContract(graph))pipeline.sceneDecoder=await prepareEllipseSceneDecoder(options.renderer,options.signal)
       options.signal?.throwIfAborted()
       return pipeline
     } catch (error) { preparedImages?.dispose(); throw error }
@@ -223,7 +224,7 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
     validateEllipsePresentation(this.options.sourcePresentation, registrations.filter(entry => entry.phase === 'post-ldr').length, message => { throw new SourceCompositorUnsupported(message) }, registrations.filter(entry => entry.phase !== 'post-ldr').length)
     const scene = this.options.scene
     const camera = this.options.camera
-    const graph=this.options.sourcePresentation?.compositor,sceneMix=graph&&ellipseSceneMixContract(graph)
+    const graph=this.options.sourcePresentation?.compositor,sceneMix=graph&&sceneMaskMixContract(graph)
     const scenePass = pass(scene, camera, sceneMix?{samples:0}:undefined)
     const mrtTargets = this.plannedMrtTargets()
     if (mrtTargets) scenePass.setMRT(mrtTargets)

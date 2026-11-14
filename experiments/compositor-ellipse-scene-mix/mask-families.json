@@ -1,0 +1,32 @@
+{
+  "ellipse": {
+    "name": "ellipse",
+    "nativeClass": "CompositorNodeEllipseMask",
+    "kind": "ellipse-mask",
+    "prefix": "ellipse_mask_",
+    "caseFile": "cases.json",
+    "rowSamplers": 1,
+    "sourceStatus": "SAVED_ELLIPSE_SCENE_MIX_SOURCES",
+    "finalStatus": "PUBLISHED_ELLIPSE_SCENE_MIX",
+    "nativeStatus": "CAPTURED_ELLIPSE_SCENE_IMAGE_ORACLES",
+    "baselineStatus": "CAPTURED_ELLIPSE_SCENE_BASELINES",
+    "allBaselinesStatus": "CAPTURED_ALL_ELLIPSE_SCENE_BASELINES",
+    "compareStatus": "PASSED_ELLIPSE_SCENE_FINAL_PROOF",
+    "qualifiedStatus": "QUALIFIED_EXACT_LINEAR_ELLIPSE_SCENE_MIX"
+  },
+  "box": {
+    "name": "box",
+    "nativeClass": "CompositorNodeBoxMask",
+    "kind": "box-mask",
+    "prefix": "box_mask_",
+    "caseFile": "box-cases.json",
+    "rowSamplers": 0,
+    "sourceStatus": "SAVED_BOX_SCENE_MIX_SOURCES",
+    "finalStatus": "PUBLISHED_BOX_SCENE_MIX",
+    "nativeStatus": "CAPTURED_BOX_SCENE_IMAGE_ORACLES",
+    "baselineStatus": "CAPTURED_BOX_SCENE_BASELINES",
+    "allBaselinesStatus": "CAPTURED_ALL_BOX_SCENE_BASELINES",
+    "compareStatus": "PASSED_BOX_SCENE_FINAL_PROOF",
+    "qualifiedStatus": "QUALIFIED_EXACT_LINEAR_BOX_SCENE_MIX"
+  }
+}

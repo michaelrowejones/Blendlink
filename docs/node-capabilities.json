@@ -2668,7 +2668,106 @@
           "path": "experiments/tsl-node-differential/cells.json"
         }
       ],
-      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Color output and its earlier evidence remain unchanged. Additional Alpha field route only on pinned Blender 5.3.0 build 02f0899d78e3, macOS arm64 EEVEE with METAL preferences; Cycles/native OpenGL and other source builds remain unqualified. Present named FLOAT_COLOR POINT/CORNER layer, or native active-render color layer for an empty name (independent of editor-active). Source alpha words must be +0 or normal finite Float32 in [0,1], read/classified in bulk before Python conversion. BYTE_COLOR, signed-zero/subnormal/HDR/nonfinite alpha, missing/wrong-type layers, modifiers/deformation, shape keys, instances, clocks/animation, reserved carrier collisions and coincident same-winding triangles per source material refuse. At most 300000 source vertices/corners and four private layers per owned mesh. Exact private Float32 SCALAR transport and indexed source-corner associations are checked per actual owner/material, including decoded post-Meshopt output. The bounded initial optimizer fallback preserves asset-wide POSITION with a visible skipped-pass reason, limited to 1000000 unique position-accessor vertices (including morph streams); only declared Alpha scalars receive additional generic-quantization protection. Checked Alpha association work is limited to 3000000 rendered corners; existing COLOR/NORMAL/TEXCOORD policies are unchanged. Runtime requires actual count-matched non-normalized Float32 scalar storage and a complete primitive draw; attribute/position/index identity, upload version, schema, draw range and groups are guarded. New Alpha/opacity plus stock VEC4 COLOR_0 with nonunit/unknown physical alpha refuses before publication and before runtime mutation; the exact safe exception requires every actual COLOR_0 alpha to equal 1 and guards that carrier thereafter. General Color+Alpha opacity, transparent coverage, old RGB multiplication and whole-scene lighting/camera appearance are not qualified. Native EEVEE half-film RGB output is compared with a predeclared absolute 2^-10 gate, not called an exact Float32 field oracle; raw source-to-GLB transport is exact, and output alpha 1 is exact. Eight source field graphs/8 saved Final scenes cover constants/nonuniform fields, seams, groups/reroutes, shared owners/materials and preservation of the existing RGB route on both browser APIs with Metal and SwiftShader. All pixels and seam/edge bands are checked. A retained old-fixture raster counterexample selects different triangles at one near-edge pixel; fresh authored fixture geometry independently guarantees at least half a physical pixel of seam clearance at 32/64/96. This is no arbitrary raster-edge ownership guarantee, artist-scene rewrite or official-demo credit.",
+          "runtimeOps": [
+            "vertex_color",
+            "vertex_color_alpha"
+          ],
+          "evidence": [
+            {
+              "path": "packages/blender-addon/tsl_ir.py",
+              "anchor": "def emit_output"
+            },
+            {
+              "path": "packages/blendlink/src/tslNodeRecipe.ts",
+              "anchor": "case 'vertex_color':"
+            },
+            {
+              "path": "experiments/tsl-node-differential/cells.json"
+            },
+            {
+              "path": "packages/blender-addon/tsl_ir.py",
+              "anchor": "\"sourceProfile\": \"blender53-eevee-metal-float-color-alpha-v1\""
+            },
+            {
+              "path": "packages/blender-addon/vertex_color_alpha.py",
+              "anchor": "def install("
+            },
+            {
+              "path": "packages/blender-addon/material_compiler.py",
+              "anchor": "vertex_color_alpha.attest("
+            },
+            {
+              "path": "packages/blendlink/src/tslNodeRecipe.ts",
+              "anchor": "case 'vertex_color_alpha':"
+            },
+            {
+              "path": "packages/blendlink/src/tslVertexColorAlpha.ts",
+              "anchor": "export function vertexAlphaBinding("
+            },
+            {
+              "path": "packages/blendlink/src/vertexAlphaOptimization.ts",
+              "anchor": "export function captureVertexAlphaOptimization("
+            },
+            {
+              "path": "experiments/vertex-color-alpha/evidence.json"
+            },
+            {
+              "path": "experiments/vertex-color-alpha/fixture-geometry.json"
+            },
+            {
+              "path": "experiments/vertex-color-alpha/raster-ownership-counterexample.json"
+            }
+          ],
+          "verification": {
+            "family": "vertex-color-alpha",
+            "status": "QUALIFIED_PARTIAL_VERTEX_COLOR_ALPHA",
+            "scope": "Only the additional 5.3 Alpha field slice. Earlier Color coverage/verification and older versions are preserved; these corpus counts are not per-node percentages or arbitrary raster parity.",
+            "referenceStage": "actual EEVEE half-film material output, not an exact-F32 field oracle",
+            "nativeGraphs": 8,
+            "nativeFrames": 24,
+            "savedFinalScenes": 8,
+            "browserCaseRuns": 64,
+            "primaryFloat32Words": 1048576,
+            "rgbWordDifferences": 574488,
+            "exactAlphaMismatches": 0,
+            "contractViolations": 0,
+            "maximumAbsoluteRGB": 0.00048828125,
+            "resizeFrames": 192,
+            "lifecycleCycles": 192,
+            "uniqueActualPythonPrefixes": 10,
+            "numericContract": {
+              "rgbAbsoluteMax": 0.0009765625,
+              "alphaOneExact": true,
+              "allPixels": true,
+              "seamAndEdgeBands": true,
+              "reference": "actual EEVEE half-film material output, not an exact-F32 field oracle"
+            },
+            "sourceSnapshot": {
+              "nativeVersion": "5.3.0",
+              "nativeBuild": "02f0899d78e3",
+              "sourceBackend": "METAL",
+              "sourceHost": "macOS arm64",
+              "runtimeFingerprint": "c3b8082ffb0a2bd3308987ff8b4e1c0aac9be3fad55efb4bc5f4ac0616b795de",
+              "evidenceSha256": "d1e1e969e43291dd49fe041e2848b48401a8d36ab86539b5e841cc84c8964049",
+              "nativeQualificationSha256": "8b3f0ef49e4caaf053826fdab3839393f743fd98e983f62918eb2ed9675fe2d3",
+              "finalPublicationSha256": "c46a3213226a7a8c17dc9f777b2c0cc45d2a59380dc6d96027d95d07bfd8ca91",
+              "nativeSourceInputCount": 133
+            },
+            "evidence": "experiments/vertex-color-alpha/evidence.json",
+            "rawTransport": "Exact source raw Float32 alpha words to private SCALAR; exact indexed position/alpha associations before and after optimization, separate from raster interpolation.",
+            "rasterCounterexample": {
+              "path": "experiments/vertex-color-alpha/raster-ownership-counterexample.json",
+              "qualificationCredit": 0,
+              "freshFixtureClearance": "independently proved >=0.5 physical pixel for every32/64/96 sample center; no geometric raster ownership promotion"
+            }
+          }
+        }
+      }
     },
     "shader:ShaderNodeAttribute": {
       "category": "partial",
@@ -3919,6 +4018,30 @@
         },
         {
           "path": "experiments/compositor-ellipse-scene-mix/raw-display-sources.json"
+        },
+        {
+          "path": "experiments/compositor-ellipse-scene-mix/mask-families.json"
+        },
+        {
+          "path": "experiments/compositor-ellipse-scene-mix/verify.mjs"
+        },
+        {
+          "path": "experiments/compositor-ellipse-scene-mix/evidence-metal-canonical.json"
+        },
+        {
+          "path": "experiments/compositor-box-scene-mix/README.md"
+        },
+        {
+          "path": "experiments/compositor-box-scene-mix/evidence.json"
+        },
+        {
+          "path": "experiments/compositor-ellipse-scene-mix/box-cases.json"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_box_scene_mix_check.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorBoxSceneMix.test.ts"
         }
       ],
       "verification": {
@@ -3934,7 +4057,9 @@
         ],
         "sceneFrameComposition": {
           "status": "QUALIFIED_EXACT_LINEAR_ELLIPSE_SCENE_MIX",
+          "maskFamily": "ellipse",
           "evidence": "experiments/compositor-ellipse-scene-mix/evidence.json",
+          "evidenceSha256": "1bd80f5f24551430c7075605a33c75de17d0d62d2254b6c6d08ed7fb0f951ee4",
           "nativeVersion": "5.3.0",
           "nativeBuild": "02f0899d78e3",
           "nativeHost": "darwin-arm64",
@@ -3942,89 +4067,492 @@
           "savedFinalScenes": 8,
           "capturedNativeImageOracles": 64,
           "actualNativeRenders": 192,
-          "creditedBrowserCases": 32,
-          "preDisplayWords": 37440,
-          "installedFinalLinearWords": 224640,
+          "creditedBrowserCases": 64,
+          "preDisplayWords": 74880,
+          "installedFinalLinearWords": 449280,
           "exactLinearWordDifferences": 0,
-          "lifecycleCycles": 96,
+          "lifecycleCycles": 192,
           "uniqueActualPythonPrefixes": 10,
           "admittedRuntimeTuples": [
             "observed Apple Metal WebGPU",
-            "observed Apple Metal WebGL2 via WebGPURenderer"
+            "observed Apple Metal WebGL2 via WebGPURenderer",
+            "observed SwiftShader WebGPU",
+            "observed SwiftShader WebGL2 via WebGPURenderer"
           ],
-          "refusedRuntimeTuples": [
-            {
-              "backend": "webgpu",
-              "admitted": false,
-              "gpu": {
-                "api": "WebGPU",
-                "vendor": "google",
-                "architecture": "swiftshader",
-                "device": "",
-                "description": ""
-              },
-              "error": "Error: Ellipse scene frame: unqualified HalfFloat decoder: NaN/sign/encoding words differ from the closed model",
-              "witness": {
-                "index": 0,
-                "rawHalf": 31745,
-                "expectedDecodedF32": 2143289344,
-                "actualDecodedF32": 2139103232
-              },
-              "numericalCases": 0
+          "decoderModels": [
+            "half-decoder-canonical-nan-v1",
+            "half-decoder-payload-sign-signaling-v1"
+          ],
+          "actualCalibrationReports": {
+            "metal-webgpu": {
+              "model": "half-decoder-canonical-nan-v1",
+              "words": 262144,
+              "milliseconds": 12.5,
+              "nominalTransientBytes": 4194304,
+              "readbackFlipped": false
             },
-            {
-              "backend": "webgl2",
-              "admitted": false,
-              "gpu": {
-                "api": "WebGL2",
-                "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
-              },
-              "error": "Error: Ellipse scene frame: unqualified HalfFloat decoder: NaN/sign/encoding words differ from the closed model",
-              "witness": {
-                "index": 0,
-                "rawHalf": 31745,
-                "expectedDecodedF32": 2143289344,
-                "actualDecodedF32": 2139103232
-              },
-              "numericalCases": 0
+            "metal-webgl2": {
+              "model": "half-decoder-canonical-nan-v1",
+              "words": 262144,
+              "milliseconds": 20.899999976158142,
+              "nominalTransientBytes": 4194304,
+              "readbackFlipped": true
+            },
+            "software-webgpu": {
+              "model": "half-decoder-payload-sign-signaling-v1",
+              "words": 262144,
+              "milliseconds": 39.5,
+              "nominalTransientBytes": 4194304,
+              "readbackFlipped": false
+            },
+            "software-webgl2": {
+              "model": "half-decoder-payload-sign-signaling-v1",
+              "words": 262144,
+              "milliseconds": 45.200000047683716,
+              "nominalTransientBytes": 4194304,
+              "readbackFlipped": true
             }
-          ],
+          },
           "displayAudit": {
             "model": "cpu-reciprocal-f32-identity-ocio-audit-v1",
-            "wordDifferences": 11838,
+            "wordDifferences": 12690,
             "maxUlps": 8388608,
-            "maxUnclampedAbsoluteError": 7.450580596923828e-09,
-            "maxClampedAbsoluteError": 7.450580596923828e-09,
+            "maxUnclampedAbsoluteError": 1.4901161193847656e-08,
+            "maxClampedAbsoluteError": 1.4901161193847656e-08,
             "projectionLimit": 3e-05,
             "alphaWordDifferences": 0,
             "zeroWordDifferences": 10530,
+            "zeroDirectionExamples": [
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 68,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 69,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 70,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 72,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 73,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 74,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 76,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 77,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 68,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 69,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 70,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 72,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 73,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 74,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 76,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 77,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              }
+            ],
             "nonfiniteClassDifferences": 0,
             "bitExactDisplayClaim": false,
             "zeroBitExactClaim": false
           },
-          "displayCountScope": "Word-difference counts include six repeated display audits per source frame; maximum ULP is large for finite minimum-normal-to-zero underflow, while maximum absolute error remains7.450580596923828e-9. These are display audit observations, not compositor errors.",
-          "coverageScope": "Separately qualified Blender5.3.0 build02f0899d78e3 macOS arm64 CPU current-frame exception: one direct current Scene/ViewLayer RenderLayers Image or Alpha, one static binary Add Ellipse Mask0/Value1, and one terminal modern RGBA/MIX, either operand side. Background is an unlinked raw positive-zero/positive-normal F32 RGBA literal\u22641. Actual renderer-owned HalfFloat RGBA/MSAA0 physical-texel frame requires a lifecycle-bound decoder calibration; unknown decoders refuse before installation. One frame sampler plus one varying row plus at most6 display lookups, total8; no registered pre-HDR/post-LDR effects. Exact linear words are qualified on observed Metal WebGPU/WebGL2; both SwiftShader APIs named-refuse the NaN decoder model and receive zero credit for this exception. Raw display is separately audited under the existing clamp01 3e-5 projection contract with exact alpha/nonfinite classes; no bit-exact/zero-bit display claim, global display promotion, native GPU compositor, whole-scene PBR equivalence or demo acceptance.",
+          "displayCountScope": "Counts include six repeated display audits per source frame. Minimum-normal-to-zero differences account for large ULP distances; direct and installed linear words remain exact.",
+          "coverageScope": "Separately qualified Blender5.3.0 build02f0899d78e3 macOS arm64 CPU current-frame Ellipse exception: one direct current Scene/ViewLayer RenderLayers Image or Alpha, one static binary Add Ellipse Mask0/Value1, and one terminal modern RGBA/MIX, either operand side. Background is an unlinked raw positive-zero/positive-normal F32 RGBA literal at most1. Actual renderer-owned HalfFloat RGBA/MSAA0 physical-texel frame requires a lifecycle-bound decoder certificate matching one complete exact model: canonical NaNs or sign/payload/signaling-preserving NaNs; finite/infinity/zero decoding remains exact. Unknown or mixed mappings refuse. One frame sampler, one varying row sampler plus at most six display lookups, total8; no registered pre-HDR/post-LDR effects. Exact direct and actual installed Final linear words are qualified on the observed Apple Metal and SwiftShader WebGPU/WebGL2 tuples. Raw display is separately audited under the existing clamp01 maximum-absolute-error3e-5 projection contract with exact alpha/nonfinite classes; finite-zero differences are counted, not bit-exact. No whole-Final RGBA equality, global display promotion, native GPU compositor, whole-scene PBR equivalence, demo acceptance or other platform/build credit.",
           "costScope": {
-            "decoder": "Once per actual renderer/device/context/allocation epoch; no per-frame readback; temporary resources disposed before install; warm certificate reuse",
+            "decoder": "Once per actual renderer/device/context/allocation epoch; temporary resources disposed before install; warm certificate reuse; no per-frame readback",
             "nominalTransientBytes": 4194304,
-            "qualifiedRunObservedCalibrationMilliseconds": {
-              "MetalWebGPU": 7,
-              "MetalWebGL2": 16.399999976158142
-            },
-            "timingLimits": "Observed after an independent scene baseline with driver shader caches warm; not rendering/export latency or general cold-start guarantee.",
+            "timingLimits": "Actual calibration observations in actualCalibrationReports follow independent scene baselines with driver caches warm; not rendering/export latency or a general cold-start guarantee.",
             "rowTextureBytes": 65536,
-            "samplers": "frame1 + varyingrow1 + display\u22646; closed source shape and zero extra registered effects"
+            "samplers": "frame1 + varyingrow1 + display<=6; no extra registered effects"
           },
           "closedReader": {
-            "runtimeFingerprint": "2e72581650184e9702bb19f1fbe96157c25157bc39e8d76db366bae0df083c5d",
-            "verifierSha256": "4bdf584479b6536e16b350db13fab2553a26a556800b2fe616bc0648cb41b584"
-          }
+            "runtimeFingerprint": "1e502a811b254d42d5ad2ee9b2e98554b52eecc6257f0679a341dbf9418455f4",
+            "verifierSha256": "914982a6d8925ca0e39f8e50d73f0e94fb9888beae90db9d7528f351a95d1d59"
+          },
+          "sourceSnapshotLimits": "This receipt retains the pre-named-refusal-fix captured runtime fingerprint1e502a811b254d42d5ad2ee9b2e98554b52eecc6257f0679a341dbf9418455f4. Subsequent3d7f169 changes only named refusals for partial malformed operations; no current-build/all-ports freshness or numerical replay claim.",
+          "history": [
+            {
+              "scope": "Historical canonical-only decoder:32 Metal cases; software named-refusals remain accurate at that pinned revision. Superseded only by a fresh two-model full matrix, not patched or numerically reused.",
+              "verification": {
+                "status": "QUALIFIED_EXACT_LINEAR_ELLIPSE_SCENE_MIX",
+                "evidence": "experiments/compositor-ellipse-scene-mix/evidence-metal-canonical.json",
+                "nativeVersion": "5.3.0",
+                "nativeBuild": "02f0899d78e3",
+                "nativeHost": "darwin-arm64",
+                "nativeEvaluator": "CPU compositor; actual same-Three-frame native Image oracles, not Three PBR versus Cycles",
+                "savedFinalScenes": 8,
+                "capturedNativeImageOracles": 64,
+                "actualNativeRenders": 192,
+                "creditedBrowserCases": 32,
+                "preDisplayWords": 37440,
+                "installedFinalLinearWords": 224640,
+                "exactLinearWordDifferences": 0,
+                "lifecycleCycles": 96,
+                "uniqueActualPythonPrefixes": 10,
+                "admittedRuntimeTuples": [
+                  "observed Apple Metal WebGPU",
+                  "observed Apple Metal WebGL2 via WebGPURenderer"
+                ],
+                "refusedRuntimeTuples": [
+                  {
+                    "backend": "webgpu",
+                    "admitted": false,
+                    "gpu": {
+                      "api": "WebGPU",
+                      "vendor": "google",
+                      "architecture": "swiftshader",
+                      "device": "",
+                      "description": ""
+                    },
+                    "error": "Error: Ellipse scene frame: unqualified HalfFloat decoder: NaN/sign/encoding words differ from the closed model",
+                    "witness": {
+                      "index": 0,
+                      "rawHalf": 31745,
+                      "expectedDecodedF32": 2143289344,
+                      "actualDecodedF32": 2139103232
+                    },
+                    "numericalCases": 0
+                  },
+                  {
+                    "backend": "webgl2",
+                    "admitted": false,
+                    "gpu": {
+                      "api": "WebGL2",
+                      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+                    },
+                    "error": "Error: Ellipse scene frame: unqualified HalfFloat decoder: NaN/sign/encoding words differ from the closed model",
+                    "witness": {
+                      "index": 0,
+                      "rawHalf": 31745,
+                      "expectedDecodedF32": 2143289344,
+                      "actualDecodedF32": 2139103232
+                    },
+                    "numericalCases": 0
+                  }
+                ],
+                "displayAudit": {
+                  "model": "cpu-reciprocal-f32-identity-ocio-audit-v1",
+                  "wordDifferences": 11838,
+                  "maxUlps": 8388608,
+                  "maxUnclampedAbsoluteError": 7.450580596923828e-09,
+                  "maxClampedAbsoluteError": 7.450580596923828e-09,
+                  "projectionLimit": 3e-05,
+                  "alphaWordDifferences": 0,
+                  "zeroWordDifferences": 10530,
+                  "nonfiniteClassDifferences": 0,
+                  "bitExactDisplayClaim": false,
+                  "zeroBitExactClaim": false
+                },
+                "displayCountScope": "Word-difference counts include six repeated display audits per source frame; maximum ULP is large for finite minimum-normal-to-zero underflow, while maximum absolute error remains7.450580596923828e-9. These are display audit observations, not compositor errors.",
+                "coverageScope": "Separately qualified Blender5.3.0 build02f0899d78e3 macOS arm64 CPU current-frame exception: one direct current Scene/ViewLayer RenderLayers Image or Alpha, one static binary Add Ellipse Mask0/Value1, and one terminal modern RGBA/MIX, either operand side. Background is an unlinked raw positive-zero/positive-normal F32 RGBA literal\u22641. Actual renderer-owned HalfFloat RGBA/MSAA0 physical-texel frame requires a lifecycle-bound decoder calibration; unknown decoders refuse before installation. One frame sampler plus one varying row plus at most6 display lookups, total8; no registered pre-HDR/post-LDR effects. Exact linear words are qualified on observed Metal WebGPU/WebGL2; both SwiftShader APIs named-refuse the NaN decoder model and receive zero credit for this exception. Raw display is separately audited under the existing clamp01 3e-5 projection contract with exact alpha/nonfinite classes; no bit-exact/zero-bit display claim, global display promotion, native GPU compositor, whole-scene PBR equivalence or demo acceptance.",
+                "costScope": {
+                  "decoder": "Once per actual renderer/device/context/allocation epoch; no per-frame readback; temporary resources disposed before install; warm certificate reuse",
+                  "nominalTransientBytes": 4194304,
+                  "qualifiedRunObservedCalibrationMilliseconds": {
+                    "MetalWebGPU": 7,
+                    "MetalWebGL2": 16.399999976158142
+                  },
+                  "timingLimits": "Observed after an independent scene baseline with driver shader caches warm; not rendering/export latency or general cold-start guarantee.",
+                  "rowTextureBytes": 65536,
+                  "samplers": "frame1 + varyingrow1 + display\u22646; closed source shape and zero extra registered effects"
+                },
+                "closedReader": {
+                  "runtimeFingerprint": "2e72581650184e9702bb19f1fbe96157c25157bc39e8d76db366bae0df083c5d",
+                  "verifierSha256": "4bdf584479b6536e16b350db13fab2553a26a556800b2fe616bc0648cb41b584"
+                }
+              }
+            }
+          ]
+        },
+        "boxSceneFrameComposition": {
+          "status": "QUALIFIED_EXACT_LINEAR_BOX_SCENE_MIX",
+          "maskFamily": "box",
+          "evidence": "experiments/compositor-box-scene-mix/evidence.json",
+          "evidenceSha256": "674399006de70da376ba2d912a4d70a8f3e73d311865163029737b82974a6195",
+          "nativeVersion": "5.3.0",
+          "nativeBuild": "02f0899d78e3",
+          "nativeHost": "darwin-arm64",
+          "nativeEvaluator": "CPU compositor; actual same-Three-frame native Image oracles, not Three PBR versus Cycles",
+          "savedFinalScenes": 13,
+          "capturedNativeImageOracles": 104,
+          "actualNativeRenders": 312,
+          "creditedBrowserCases": 104,
+          "preDisplayWords": 121680,
+          "installedFinalLinearWords": 730080,
+          "exactLinearWordDifferences": 0,
+          "lifecycleCycles": 312,
+          "uniqueActualPythonPrefixes": 15,
+          "admittedRuntimeTuples": [
+            "observed Apple Metal WebGPU",
+            "observed Apple Metal WebGL2 via WebGPURenderer",
+            "observed SwiftShader WebGPU",
+            "observed SwiftShader WebGL2 via WebGPURenderer"
+          ],
+          "decoderModels": [
+            "half-decoder-canonical-nan-v1",
+            "half-decoder-payload-sign-signaling-v1"
+          ],
+          "actualCalibrationReports": {
+            "metal-webgpu": {
+              "model": "half-decoder-canonical-nan-v1",
+              "words": 262144,
+              "milliseconds": 11.699999988079071,
+              "nominalTransientBytes": 4194304,
+              "readbackFlipped": false
+            },
+            "metal-webgl2": {
+              "model": "half-decoder-canonical-nan-v1",
+              "words": 262144,
+              "milliseconds": 19.299999952316284,
+              "nominalTransientBytes": 4194304,
+              "readbackFlipped": true
+            },
+            "software-webgpu": {
+              "model": "half-decoder-payload-sign-signaling-v1",
+              "words": 262144,
+              "milliseconds": 39.5,
+              "nominalTransientBytes": 4194304,
+              "readbackFlipped": false
+            },
+            "software-webgl2": {
+              "model": "half-decoder-payload-sign-signaling-v1",
+              "words": 262144,
+              "milliseconds": 45.19999998807907,
+              "nominalTransientBytes": 4194304,
+              "readbackFlipped": true
+            }
+          },
+          "displayAudit": {
+            "model": "cpu-reciprocal-f32-identity-ocio-audit-v1",
+            "wordDifferences": 16398,
+            "maxUlps": 8388608,
+            "maxUnclampedAbsoluteError": 1.4901161193847656e-08,
+            "maxClampedAbsoluteError": 1.4901161193847656e-08,
+            "projectionLimit": 3e-05,
+            "alphaWordDifferences": 0,
+            "zeroWordDifferences": 10530,
+            "zeroDirectionExamples": [
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 56,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 57,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 58,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 60,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 61,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 62,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 64,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 65,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 56,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 57,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 58,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 60,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 61,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 62,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 64,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 65,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              }
+            ],
+            "nonfiniteClassDifferences": 0,
+            "bitExactDisplayClaim": false,
+            "zeroBitExactClaim": false
+          },
+          "displayCountScope": "Counts include six repeated display audits per source frame. Minimum-normal-to-zero differences account for large ULP distances; direct and installed linear words remain exact.",
+          "coverageScope": "Separately qualified Blender5.3.0 build02f0899d78e3 macOS arm64 CPU current-frame Box exception: one direct current Scene/ViewLayer RenderLayers Image or Alpha, one static binary Add Box Mask0/Value1, and one terminal modern RGBA/MIX, either operand side. Background is an unlinked raw positive-zero/positive-normal F32 RGBA literal at most1. Actual renderer-owned HalfFloat RGBA/MSAA0 physical-texel frame requires a lifecycle-bound decoder certificate matching one complete exact model: canonical NaNs or sign/payload/signaling-preserving NaNs; finite/infinity/zero decoding remains exact. Unknown or mixed mappings refuse. One frame sampler, no mask texture and at most seven display lookups, total8; no registered pre-HDR/post-LDR effects. Exact direct and actual installed Final linear words are qualified on the observed Apple Metal and SwiftShader WebGPU/WebGL2 tuples. Raw display is separately audited under the existing clamp01 maximum-absolute-error3e-5 projection contract with exact alpha/nonfinite classes; finite-zero differences are counted, not bit-exact. No whole-Final RGBA equality, global display promotion, native GPU compositor, whole-scene PBR equivalence, demo acceptance or other platform/build credit. Zero-axis Boxes remain full-frame fields, including zero-both; the old unmarked generic Box pointwise/Mix route retains its existing partial contracts.",
+          "costScope": {
+            "decoder": "Once per actual renderer/device/context/allocation epoch; temporary resources disposed before install; warm certificate reuse; no per-frame readback",
+            "nominalTransientBytes": 4194304,
+            "timingLimits": "Actual calibration observations in actualCalibrationReports follow independent scene baselines with driver caches warm; not rendering/export latency or a general cold-start guarantee.",
+            "rowTextureBytes": 0,
+            "samplers": "frame1 + display<=7; no mask texture or extra registered effects"
+          },
+          "closedReader": {
+            "runtimeFingerprint": "1e502a811b254d42d5ad2ee9b2e98554b52eecc6257f0679a341dbf9418455f4",
+            "verifierSha256": "914982a6d8925ca0e39f8e50d73f0e94fb9888beae90db9d7528f351a95d1d59"
+          },
+          "sourceSnapshotLimits": "This receipt retains the pre-named-refusal-fix captured runtime fingerprint1e502a811b254d42d5ad2ee9b2e98554b52eecc6257f0679a341dbf9418455f4. Subsequent3d7f169 changes only named refusals for partial malformed operations; no current-build/all-ports freshness or numerical replay claim."
         }
       },
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "FLOAT/VECTOR/RGBA, uniform/nonuniform factors and all 19 RGB blend modes with native factor/result clamping and color alpha behavior. ROTATION explicitly refuses pending verified quaternion transport. Separately qualified Blender5.3.0 build02f0899d78e3 macOS arm64 CPU current-frame exception: one direct current Scene/ViewLayer RenderLayers Image or Alpha, one static binary Add Ellipse Mask0/Value1, and one terminal modern RGBA/MIX, either operand side. Background is an unlinked raw positive-zero/positive-normal F32 RGBA literal\u22641. Actual renderer-owned HalfFloat RGBA/MSAA0 physical-texel frame requires a lifecycle-bound decoder calibration; unknown decoders refuse before installation. One frame sampler plus one varying row plus at most6 display lookups, total8; no registered pre-HDR/post-LDR effects. Exact linear words are qualified on observed Metal WebGPU/WebGL2; both SwiftShader APIs named-refuse the NaN decoder model and receive zero credit for this exception. Raw display is separately audited under the existing clamp01 3e-5 projection contract with exact alpha/nonfinite classes; no bit-exact/zero-bit display claim, global display promotion, native GPU compositor, whole-scene PBR equivalence or demo acceptance."
+          "limits": "FLOAT/VECTOR/RGBA, uniform/nonuniform factors and all 19 RGB blend modes with native factor/result clamping and color alpha behavior. ROTATION explicitly refuses pending verified quaternion transport. Separately qualified Blender5.3.0 build02f0899d78e3 macOS arm64 CPU current-frame Ellipse exception: one direct current Scene/ViewLayer RenderLayers Image or Alpha, one static binary Add Ellipse Mask0/Value1, and one terminal modern RGBA/MIX, either operand side. Background is an unlinked raw positive-zero/positive-normal F32 RGBA literal at most1. Actual renderer-owned HalfFloat RGBA/MSAA0 physical-texel frame requires a lifecycle-bound decoder certificate matching one complete exact model: canonical NaNs or sign/payload/signaling-preserving NaNs; finite/infinity/zero decoding remains exact. Unknown or mixed mappings refuse. One frame sampler, one varying row sampler plus at most six display lookups, total8; no registered pre-HDR/post-LDR effects. Exact direct and actual installed Final linear words are qualified on the observed Apple Metal and SwiftShader WebGPU/WebGL2 tuples. Raw display is separately audited under the existing clamp01 maximum-absolute-error3e-5 projection contract with exact alpha/nonfinite classes; finite-zero differences are counted, not bit-exact. No whole-Final RGBA equality, global display promotion, native GPU compositor, whole-scene PBR equivalence, demo acceptance or other platform/build credit. Separately qualified Blender5.3.0 build02f0899d78e3 macOS arm64 CPU current-frame Box exception: one direct current Scene/ViewLayer RenderLayers Image or Alpha, one static binary Add Box Mask0/Value1, and one terminal modern RGBA/MIX, either operand side. Background is an unlinked raw positive-zero/positive-normal F32 RGBA literal at most1. Actual renderer-owned HalfFloat RGBA/MSAA0 physical-texel frame requires a lifecycle-bound decoder certificate matching one complete exact model: canonical NaNs or sign/payload/signaling-preserving NaNs; finite/infinity/zero decoding remains exact. Unknown or mixed mappings refuse. One frame sampler, no mask texture and at most seven display lookups, total8; no registered pre-HDR/post-LDR effects. Exact direct and actual installed Final linear words are qualified on the observed Apple Metal and SwiftShader WebGPU/WebGL2 tuples. Raw display is separately audited under the existing clamp01 maximum-absolute-error3e-5 projection contract with exact alpha/nonfinite classes; finite-zero differences are counted, not bit-exact. No whole-Final RGBA equality, global display promotion, native GPU compositor, whole-scene PBR equivalence, demo acceptance or other platform/build credit. Zero-axis Boxes remain full-frame fields, including zero-both; the old unmarked generic Box pointwise/Mix route retains its existing partial contracts."
         }
       }
     },
@@ -13623,6 +14151,36 @@
         },
         {
           "path": "experiments/compositor-box-mask/evidence.json"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_ellipse_scene_mix.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorEllipseSceneMix.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorSceneFrame.ts"
+        },
+        {
+          "path": "experiments/compositor-ellipse-scene-mix/mask-families.json"
+        },
+        {
+          "path": "experiments/compositor-ellipse-scene-mix/verify.mjs"
+        },
+        {
+          "path": "experiments/compositor-box-scene-mix/README.md"
+        },
+        {
+          "path": "experiments/compositor-box-scene-mix/evidence.json"
+        },
+        {
+          "path": "experiments/compositor-ellipse-scene-mix/box-cases.json"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_box_scene_mix_check.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorBoxSceneMix.test.ts"
         }
       ],
       "verification": {
@@ -13680,12 +14238,212 @@
           "finalProofSha256": "2e7a52bb799afe5ea73ff716bee65bd772b4c4b8ee52c404fe784c625b85332d",
           "evidence": "experiments/compositor-box-mask/evidence.json",
           "limits": "This fresh post-budget-fix union replay closes Box only. Other ports retain their own captured source snapshots; no all-other-ports freshness claim."
+        },
+        "sceneFrameComposition": {
+          "status": "QUALIFIED_EXACT_LINEAR_BOX_SCENE_MIX",
+          "maskFamily": "box",
+          "evidence": "experiments/compositor-box-scene-mix/evidence.json",
+          "evidenceSha256": "674399006de70da376ba2d912a4d70a8f3e73d311865163029737b82974a6195",
+          "nativeVersion": "5.3.0",
+          "nativeBuild": "02f0899d78e3",
+          "nativeHost": "darwin-arm64",
+          "nativeEvaluator": "CPU compositor; actual same-Three-frame native Image oracles, not Three PBR versus Cycles",
+          "savedFinalScenes": 13,
+          "capturedNativeImageOracles": 104,
+          "actualNativeRenders": 312,
+          "creditedBrowserCases": 104,
+          "preDisplayWords": 121680,
+          "installedFinalLinearWords": 730080,
+          "exactLinearWordDifferences": 0,
+          "lifecycleCycles": 312,
+          "uniqueActualPythonPrefixes": 15,
+          "admittedRuntimeTuples": [
+            "observed Apple Metal WebGPU",
+            "observed Apple Metal WebGL2 via WebGPURenderer",
+            "observed SwiftShader WebGPU",
+            "observed SwiftShader WebGL2 via WebGPURenderer"
+          ],
+          "decoderModels": [
+            "half-decoder-canonical-nan-v1",
+            "half-decoder-payload-sign-signaling-v1"
+          ],
+          "actualCalibrationReports": {
+            "metal-webgpu": {
+              "model": "half-decoder-canonical-nan-v1",
+              "words": 262144,
+              "milliseconds": 11.699999988079071,
+              "nominalTransientBytes": 4194304,
+              "readbackFlipped": false
+            },
+            "metal-webgl2": {
+              "model": "half-decoder-canonical-nan-v1",
+              "words": 262144,
+              "milliseconds": 19.299999952316284,
+              "nominalTransientBytes": 4194304,
+              "readbackFlipped": true
+            },
+            "software-webgpu": {
+              "model": "half-decoder-payload-sign-signaling-v1",
+              "words": 262144,
+              "milliseconds": 39.5,
+              "nominalTransientBytes": 4194304,
+              "readbackFlipped": false
+            },
+            "software-webgl2": {
+              "model": "half-decoder-payload-sign-signaling-v1",
+              "words": 262144,
+              "milliseconds": 45.19999998807907,
+              "nominalTransientBytes": 4194304,
+              "readbackFlipped": true
+            }
+          },
+          "displayAudit": {
+            "model": "cpu-reciprocal-f32-identity-ocio-audit-v1",
+            "wordDifferences": 16398,
+            "maxUlps": 8388608,
+            "maxUnclampedAbsoluteError": 1.4901161193847656e-08,
+            "maxClampedAbsoluteError": 1.4901161193847656e-08,
+            "projectionLimit": 3e-05,
+            "alphaWordDifferences": 0,
+            "zeroWordDifferences": 10530,
+            "zeroDirectionExamples": [
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 56,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 57,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 58,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 60,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 61,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 62,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 64,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 65,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 56,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 57,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 58,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 60,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 61,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 62,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 64,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+                "index": 65,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              }
+            ],
+            "nonfiniteClassDifferences": 0,
+            "bitExactDisplayClaim": false,
+            "zeroBitExactClaim": false
+          },
+          "displayCountScope": "Counts include six repeated display audits per source frame. Minimum-normal-to-zero differences account for large ULP distances; direct and installed linear words remain exact.",
+          "coverageScope": "Separately qualified Blender5.3.0 build02f0899d78e3 macOS arm64 CPU current-frame Box exception: one direct current Scene/ViewLayer RenderLayers Image or Alpha, one static binary Add Box Mask0/Value1, and one terminal modern RGBA/MIX, either operand side. Background is an unlinked raw positive-zero/positive-normal F32 RGBA literal at most1. Actual renderer-owned HalfFloat RGBA/MSAA0 physical-texel frame requires a lifecycle-bound decoder certificate matching one complete exact model: canonical NaNs or sign/payload/signaling-preserving NaNs; finite/infinity/zero decoding remains exact. Unknown or mixed mappings refuse. One frame sampler, no mask texture and at most seven display lookups, total8; no registered pre-HDR/post-LDR effects. Exact direct and actual installed Final linear words are qualified on the observed Apple Metal and SwiftShader WebGPU/WebGL2 tuples. Raw display is separately audited under the existing clamp01 maximum-absolute-error3e-5 projection contract with exact alpha/nonfinite classes; finite-zero differences are counted, not bit-exact. No whole-Final RGBA equality, global display promotion, native GPU compositor, whole-scene PBR equivalence, demo acceptance or other platform/build credit. Zero-axis Boxes remain full-frame fields, including zero-both; the old unmarked generic Box pointwise/Mix route retains its existing partial contracts.",
+          "costScope": {
+            "decoder": "Once per actual renderer/device/context/allocation epoch; temporary resources disposed before install; warm certificate reuse; no per-frame readback",
+            "nominalTransientBytes": 4194304,
+            "timingLimits": "Actual calibration observations in actualCalibrationReports follow independent scene baselines with driver caches warm; not rendering/export latency or a general cold-start guarantee.",
+            "rowTextureBytes": 0,
+            "samplers": "frame1 + display<=7; no mask texture or extra registered effects"
+          },
+          "closedReader": {
+            "runtimeFingerprint": "1e502a811b254d42d5ad2ee9b2e98554b52eecc6257f0679a341dbf9418455f4",
+            "verifierSha256": "914982a6d8925ca0e39f8e50d73f0e94fb9888beae90db9d7528f351a95d1d59"
+          },
+          "sourceSnapshotLimits": "This receipt retains the pre-named-refusal-fix captured runtime fingerprint1e502a811b254d42d5ad2ee9b2e98554b52eecc6257f0679a341dbf9418455f4. Subsequent3d7f169 changes only named refusals for partial malformed operations; no current-build/all-ports freshness or numerical replay claim."
         }
       },
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor only. Static unlinked literal Position[-2,2], Size[0,2], Mask/Value[0,1], every component zero or abs>=2^-16, and raw Rotation positive zero. All four native Operation menu values Add/Subtract/Multiply/Not, including default geometry and exact empty masks. Position/Size use raw Float32 array reads; scalar sockets use native interface.from_socket copies into private homogeneous FLOAT storage, preserving signed-zero/subnormal detection without Python scalar promotion, source edits, FPU changes or init_socket. Negative zero, subnormals, nonfinite/out-of-bound values, links/fields, animation/drivers and rotated masks refuse. Zero-offset context full-frame domain with square pixels and physical extents2..8192; borders/crops and spatial/domain consumers including Flip refuse. One cached extent is updated atomically after validation; native ordered-F32 axes classify integer intervals in O(width+height), shader integer texels select precomputed inside/outside values. No shader epsilon, artist-input quantization, mask texture, new pass or per-frame readback. Result VarNode retains physical-extent validation on allzero/constant optimized graphs; invalid resize named-refuses and recovers. Scalar-to-RGBA alpha1 and strict-edge words require exact equality. Actual native reference is CPU compositor with a Cycles CPU carrier, not EEVEE shader/material or native GPU evaluation. Portable measured browser WebGPU and WebGL2 via WebGPURenderer on Apple Metal and SwiftShader. Legacy WebGLRenderer, other Blender versions/builds/hosts, arbitrary composed graphs, Ellipse, anti-aliasing and whole-scene appearance remain unqualified.",
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor only. Static unlinked literal Position[-2,2], Size[0,2], Mask/Value[0,1], every component zero or abs>=2^-16, and raw Rotation positive zero. All four native Operation menu values Add/Subtract/Multiply/Not, including default geometry and exact empty masks. Position/Size use raw Float32 array reads; scalar sockets use native interface.from_socket copies into private homogeneous FLOAT storage, preserving signed-zero/subnormal detection without Python scalar promotion, source edits, FPU changes or init_socket. Negative zero, subnormals, nonfinite/out-of-bound values, links/fields, animation/drivers and rotated masks refuse. Zero-offset context full-frame domain with square pixels and physical extents2..8192; borders/crops and spatial/domain consumers including Flip refuse. One cached extent is updated atomically after validation; native ordered-F32 axes classify integer intervals in O(width+height), shader integer texels select precomputed inside/outside values. No shader epsilon, artist-input quantization, mask texture, new pass or per-frame readback. Result VarNode retains physical-extent validation on allzero/constant optimized graphs; invalid resize named-refuses and recovers. Scalar-to-RGBA alpha1 and strict-edge words require exact equality. Actual native reference is CPU compositor with a Cycles CPU carrier, not EEVEE shader/material or native GPU evaluation. Portable measured browser WebGPU and WebGL2 via WebGPURenderer on Apple Metal and SwiftShader. Legacy WebGLRenderer, other Blender versions/builds/hosts, arbitrary composed graphs, Ellipse, anti-aliasing and whole-scene appearance remain unqualified. Separately qualified Blender5.3.0 build02f0899d78e3 macOS arm64 CPU current-frame Box exception: one direct current Scene/ViewLayer RenderLayers Image or Alpha, one static binary Add Box Mask0/Value1, and one terminal modern RGBA/MIX, either operand side. Background is an unlinked raw positive-zero/positive-normal F32 RGBA literal at most1. Actual renderer-owned HalfFloat RGBA/MSAA0 physical-texel frame requires a lifecycle-bound decoder certificate matching one complete exact model: canonical NaNs or sign/payload/signaling-preserving NaNs; finite/infinity/zero decoding remains exact. Unknown or mixed mappings refuse. One frame sampler, no mask texture and at most seven display lookups, total8; no registered pre-HDR/post-LDR effects. Exact direct and actual installed Final linear words are qualified on the observed Apple Metal and SwiftShader WebGPU/WebGL2 tuples. Raw display is separately audited under the existing clamp01 maximum-absolute-error3e-5 projection contract with exact alpha/nonfinite classes; finite-zero differences are counted, not bit-exact. No whole-Final RGBA equality, global display promotion, native GPU compositor, whole-scene PBR equivalence, demo acceptance or other platform/build credit. Zero-axis Boxes remain full-frame fields, including zero-both; the old unmarked generic Box pointwise/Mix route retains its existing partial contracts.",
           "modes": {
             "inputs:Operation": {
               "supported": [
@@ -13825,6 +14583,15 @@
         },
         {
           "path": "experiments/compositor-ellipse-scene-mix/raw-display-sources.json"
+        },
+        {
+          "path": "experiments/compositor-ellipse-scene-mix/mask-families.json"
+        },
+        {
+          "path": "experiments/compositor-ellipse-scene-mix/verify.mjs"
+        },
+        {
+          "path": "experiments/compositor-ellipse-scene-mix/evidence-metal-canonical.json"
         }
       ],
       "verification": {
@@ -13887,7 +14654,9 @@
         },
         "sceneFrameComposition": {
           "status": "QUALIFIED_EXACT_LINEAR_ELLIPSE_SCENE_MIX",
+          "maskFamily": "ellipse",
           "evidence": "experiments/compositor-ellipse-scene-mix/evidence.json",
+          "evidenceSha256": "1bd80f5f24551430c7075605a33c75de17d0d62d2254b6c6d08ed7fb0f951ee4",
           "nativeVersion": "5.3.0",
           "nativeBuild": "02f0899d78e3",
           "nativeHost": "darwin-arm64",
@@ -13895,89 +14664,292 @@
           "savedFinalScenes": 8,
           "capturedNativeImageOracles": 64,
           "actualNativeRenders": 192,
-          "creditedBrowserCases": 32,
-          "preDisplayWords": 37440,
-          "installedFinalLinearWords": 224640,
+          "creditedBrowserCases": 64,
+          "preDisplayWords": 74880,
+          "installedFinalLinearWords": 449280,
           "exactLinearWordDifferences": 0,
-          "lifecycleCycles": 96,
+          "lifecycleCycles": 192,
           "uniqueActualPythonPrefixes": 10,
           "admittedRuntimeTuples": [
             "observed Apple Metal WebGPU",
-            "observed Apple Metal WebGL2 via WebGPURenderer"
+            "observed Apple Metal WebGL2 via WebGPURenderer",
+            "observed SwiftShader WebGPU",
+            "observed SwiftShader WebGL2 via WebGPURenderer"
           ],
-          "refusedRuntimeTuples": [
-            {
-              "backend": "webgpu",
-              "admitted": false,
-              "gpu": {
-                "api": "WebGPU",
-                "vendor": "google",
-                "architecture": "swiftshader",
-                "device": "",
-                "description": ""
-              },
-              "error": "Error: Ellipse scene frame: unqualified HalfFloat decoder: NaN/sign/encoding words differ from the closed model",
-              "witness": {
-                "index": 0,
-                "rawHalf": 31745,
-                "expectedDecodedF32": 2143289344,
-                "actualDecodedF32": 2139103232
-              },
-              "numericalCases": 0
+          "decoderModels": [
+            "half-decoder-canonical-nan-v1",
+            "half-decoder-payload-sign-signaling-v1"
+          ],
+          "actualCalibrationReports": {
+            "metal-webgpu": {
+              "model": "half-decoder-canonical-nan-v1",
+              "words": 262144,
+              "milliseconds": 12.5,
+              "nominalTransientBytes": 4194304,
+              "readbackFlipped": false
             },
-            {
-              "backend": "webgl2",
-              "admitted": false,
-              "gpu": {
-                "api": "WebGL2",
-                "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
-              },
-              "error": "Error: Ellipse scene frame: unqualified HalfFloat decoder: NaN/sign/encoding words differ from the closed model",
-              "witness": {
-                "index": 0,
-                "rawHalf": 31745,
-                "expectedDecodedF32": 2143289344,
-                "actualDecodedF32": 2139103232
-              },
-              "numericalCases": 0
+            "metal-webgl2": {
+              "model": "half-decoder-canonical-nan-v1",
+              "words": 262144,
+              "milliseconds": 20.899999976158142,
+              "nominalTransientBytes": 4194304,
+              "readbackFlipped": true
+            },
+            "software-webgpu": {
+              "model": "half-decoder-payload-sign-signaling-v1",
+              "words": 262144,
+              "milliseconds": 39.5,
+              "nominalTransientBytes": 4194304,
+              "readbackFlipped": false
+            },
+            "software-webgl2": {
+              "model": "half-decoder-payload-sign-signaling-v1",
+              "words": 262144,
+              "milliseconds": 45.200000047683716,
+              "nominalTransientBytes": 4194304,
+              "readbackFlipped": true
             }
-          ],
+          },
           "displayAudit": {
             "model": "cpu-reciprocal-f32-identity-ocio-audit-v1",
-            "wordDifferences": 11838,
+            "wordDifferences": 12690,
             "maxUlps": 8388608,
-            "maxUnclampedAbsoluteError": 7.450580596923828e-09,
-            "maxClampedAbsoluteError": 7.450580596923828e-09,
+            "maxUnclampedAbsoluteError": 1.4901161193847656e-08,
+            "maxClampedAbsoluteError": 1.4901161193847656e-08,
             "projectionLimit": 3e-05,
             "alphaWordDifferences": 0,
             "zeroWordDifferences": 10530,
+            "zeroDirectionExamples": [
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 68,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 69,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 70,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 72,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 73,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 74,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 76,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 77,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 68,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 69,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 70,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 72,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 73,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 74,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 76,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              },
+              {
+                "case": "metal--webgpu--image-A-minnormal--13x9@1",
+                "index": 77,
+                "actualWord": 0,
+                "nativeWord": 8388608,
+                "direction": "to-zero"
+              }
+            ],
             "nonfiniteClassDifferences": 0,
             "bitExactDisplayClaim": false,
             "zeroBitExactClaim": false
           },
-          "displayCountScope": "Word-difference counts include six repeated display audits per source frame; maximum ULP is large for finite minimum-normal-to-zero underflow, while maximum absolute error remains7.450580596923828e-9. These are display audit observations, not compositor errors.",
-          "coverageScope": "Separately qualified Blender5.3.0 build02f0899d78e3 macOS arm64 CPU current-frame exception: one direct current Scene/ViewLayer RenderLayers Image or Alpha, one static binary Add Ellipse Mask0/Value1, and one terminal modern RGBA/MIX, either operand side. Background is an unlinked raw positive-zero/positive-normal F32 RGBA literal\u22641. Actual renderer-owned HalfFloat RGBA/MSAA0 physical-texel frame requires a lifecycle-bound decoder calibration; unknown decoders refuse before installation. One frame sampler plus one varying row plus at most6 display lookups, total8; no registered pre-HDR/post-LDR effects. Exact linear words are qualified on observed Metal WebGPU/WebGL2; both SwiftShader APIs named-refuse the NaN decoder model and receive zero credit for this exception. Raw display is separately audited under the existing clamp01 3e-5 projection contract with exact alpha/nonfinite classes; no bit-exact/zero-bit display claim, global display promotion, native GPU compositor, whole-scene PBR equivalence or demo acceptance.",
+          "displayCountScope": "Counts include six repeated display audits per source frame. Minimum-normal-to-zero differences account for large ULP distances; direct and installed linear words remain exact.",
+          "coverageScope": "Separately qualified Blender5.3.0 build02f0899d78e3 macOS arm64 CPU current-frame Ellipse exception: one direct current Scene/ViewLayer RenderLayers Image or Alpha, one static binary Add Ellipse Mask0/Value1, and one terminal modern RGBA/MIX, either operand side. Background is an unlinked raw positive-zero/positive-normal F32 RGBA literal at most1. Actual renderer-owned HalfFloat RGBA/MSAA0 physical-texel frame requires a lifecycle-bound decoder certificate matching one complete exact model: canonical NaNs or sign/payload/signaling-preserving NaNs; finite/infinity/zero decoding remains exact. Unknown or mixed mappings refuse. One frame sampler, one varying row sampler plus at most six display lookups, total8; no registered pre-HDR/post-LDR effects. Exact direct and actual installed Final linear words are qualified on the observed Apple Metal and SwiftShader WebGPU/WebGL2 tuples. Raw display is separately audited under the existing clamp01 maximum-absolute-error3e-5 projection contract with exact alpha/nonfinite classes; finite-zero differences are counted, not bit-exact. No whole-Final RGBA equality, global display promotion, native GPU compositor, whole-scene PBR equivalence, demo acceptance or other platform/build credit.",
           "costScope": {
-            "decoder": "Once per actual renderer/device/context/allocation epoch; no per-frame readback; temporary resources disposed before install; warm certificate reuse",
+            "decoder": "Once per actual renderer/device/context/allocation epoch; temporary resources disposed before install; warm certificate reuse; no per-frame readback",
             "nominalTransientBytes": 4194304,
-            "qualifiedRunObservedCalibrationMilliseconds": {
-              "MetalWebGPU": 7,
-              "MetalWebGL2": 16.399999976158142
-            },
-            "timingLimits": "Observed after an independent scene baseline with driver shader caches warm; not rendering/export latency or general cold-start guarantee.",
+            "timingLimits": "Actual calibration observations in actualCalibrationReports follow independent scene baselines with driver caches warm; not rendering/export latency or a general cold-start guarantee.",
             "rowTextureBytes": 65536,
-            "samplers": "frame1 + varyingrow1 + display\u22646; closed source shape and zero extra registered effects"
+            "samplers": "frame1 + varyingrow1 + display<=6; no extra registered effects"
           },
           "closedReader": {
-            "runtimeFingerprint": "2e72581650184e9702bb19f1fbe96157c25157bc39e8d76db366bae0df083c5d",
-            "verifierSha256": "4bdf584479b6536e16b350db13fab2553a26a556800b2fe616bc0648cb41b584"
-          }
+            "runtimeFingerprint": "1e502a811b254d42d5ad2ee9b2e98554b52eecc6257f0679a341dbf9418455f4",
+            "verifierSha256": "914982a6d8925ca0e39f8e50d73f0e94fb9888beae90db9d7528f351a95d1d59"
+          },
+          "sourceSnapshotLimits": "This receipt retains the pre-named-refusal-fix captured runtime fingerprint1e502a811b254d42d5ad2ee9b2e98554b52eecc6257f0679a341dbf9418455f4. Subsequent3d7f169 changes only named refusals for partial malformed operations; no current-build/all-ports freshness or numerical replay claim.",
+          "history": [
+            {
+              "scope": "Historical canonical-only decoder:32 Metal cases; software named-refusals remain accurate at that pinned revision. Superseded only by a fresh two-model full matrix, not patched or numerically reused.",
+              "verification": {
+                "status": "QUALIFIED_EXACT_LINEAR_ELLIPSE_SCENE_MIX",
+                "evidence": "experiments/compositor-ellipse-scene-mix/evidence-metal-canonical.json",
+                "nativeVersion": "5.3.0",
+                "nativeBuild": "02f0899d78e3",
+                "nativeHost": "darwin-arm64",
+                "nativeEvaluator": "CPU compositor; actual same-Three-frame native Image oracles, not Three PBR versus Cycles",
+                "savedFinalScenes": 8,
+                "capturedNativeImageOracles": 64,
+                "actualNativeRenders": 192,
+                "creditedBrowserCases": 32,
+                "preDisplayWords": 37440,
+                "installedFinalLinearWords": 224640,
+                "exactLinearWordDifferences": 0,
+                "lifecycleCycles": 96,
+                "uniqueActualPythonPrefixes": 10,
+                "admittedRuntimeTuples": [
+                  "observed Apple Metal WebGPU",
+                  "observed Apple Metal WebGL2 via WebGPURenderer"
+                ],
+                "refusedRuntimeTuples": [
+                  {
+                    "backend": "webgpu",
+                    "admitted": false,
+                    "gpu": {
+                      "api": "WebGPU",
+                      "vendor": "google",
+                      "architecture": "swiftshader",
+                      "device": "",
+                      "description": ""
+                    },
+                    "error": "Error: Ellipse scene frame: unqualified HalfFloat decoder: NaN/sign/encoding words differ from the closed model",
+                    "witness": {
+                      "index": 0,
+                      "rawHalf": 31745,
+                      "expectedDecodedF32": 2143289344,
+                      "actualDecodedF32": 2139103232
+                    },
+                    "numericalCases": 0
+                  },
+                  {
+                    "backend": "webgl2",
+                    "admitted": false,
+                    "gpu": {
+                      "api": "WebGL2",
+                      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+                    },
+                    "error": "Error: Ellipse scene frame: unqualified HalfFloat decoder: NaN/sign/encoding words differ from the closed model",
+                    "witness": {
+                      "index": 0,
+                      "rawHalf": 31745,
+                      "expectedDecodedF32": 2143289344,
+                      "actualDecodedF32": 2139103232
+                    },
+                    "numericalCases": 0
+                  }
+                ],
+                "displayAudit": {
+                  "model": "cpu-reciprocal-f32-identity-ocio-audit-v1",
+                  "wordDifferences": 11838,
+                  "maxUlps": 8388608,
+                  "maxUnclampedAbsoluteError": 7.450580596923828e-09,
+                  "maxClampedAbsoluteError": 7.450580596923828e-09,
+                  "projectionLimit": 3e-05,
+                  "alphaWordDifferences": 0,
+                  "zeroWordDifferences": 10530,
+                  "nonfiniteClassDifferences": 0,
+                  "bitExactDisplayClaim": false,
+                  "zeroBitExactClaim": false
+                },
+                "displayCountScope": "Word-difference counts include six repeated display audits per source frame; maximum ULP is large for finite minimum-normal-to-zero underflow, while maximum absolute error remains7.450580596923828e-9. These are display audit observations, not compositor errors.",
+                "coverageScope": "Separately qualified Blender5.3.0 build02f0899d78e3 macOS arm64 CPU current-frame exception: one direct current Scene/ViewLayer RenderLayers Image or Alpha, one static binary Add Ellipse Mask0/Value1, and one terminal modern RGBA/MIX, either operand side. Background is an unlinked raw positive-zero/positive-normal F32 RGBA literal\u22641. Actual renderer-owned HalfFloat RGBA/MSAA0 physical-texel frame requires a lifecycle-bound decoder calibration; unknown decoders refuse before installation. One frame sampler plus one varying row plus at most6 display lookups, total8; no registered pre-HDR/post-LDR effects. Exact linear words are qualified on observed Metal WebGPU/WebGL2; both SwiftShader APIs named-refuse the NaN decoder model and receive zero credit for this exception. Raw display is separately audited under the existing clamp01 3e-5 projection contract with exact alpha/nonfinite classes; no bit-exact/zero-bit display claim, global display promotion, native GPU compositor, whole-scene PBR equivalence or demo acceptance.",
+                "costScope": {
+                  "decoder": "Once per actual renderer/device/context/allocation epoch; no per-frame readback; temporary resources disposed before install; warm certificate reuse",
+                  "nominalTransientBytes": 4194304,
+                  "qualifiedRunObservedCalibrationMilliseconds": {
+                    "MetalWebGPU": 7,
+                    "MetalWebGL2": 16.399999976158142
+                  },
+                  "timingLimits": "Observed after an independent scene baseline with driver shader caches warm; not rendering/export latency or general cold-start guarantee.",
+                  "rowTextureBytes": 65536,
+                  "samplers": "frame1 + varyingrow1 + display\u22646; closed source shape and zero extra registered effects"
+                },
+                "closedReader": {
+                  "runtimeFingerprint": "2e72581650184e9702bb19f1fbe96157c25157bc39e8d76db366bae0df083c5d",
+                  "verifierSha256": "4bdf584479b6536e16b350db13fab2553a26a556800b2fe616bc0648cb41b584"
+                }
+              }
+            }
+          ]
         }
       },
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor only. Static unlinked literal Position[-2,2], Size[0,2], Mask/Value[0,1], each component zero or abs>=2^-16, with raw Rotation positive zero. All four Operation values Add/Subtract/Multiply/Not; raw native vector/scalar storage checks refuse negative zero, subnormals, nonfinite/out-of-bound values, links, animation and rotation. Zero-offset square-pixel full-frame context, physical extents2..8192. Native ordered Float32 division/subtraction/aspect/radius/products/sum/sqrt classify monotone integer row intervals in O(width+height log width) only on valid extent changes. Shader integer lookup/comparison selects precomputed branch values; no floating boundary, epsilon, quantization or full CPU pixel image. One fixed256x32 RG32I64KiB table per varying mask; at most one varying table per graph. Zero Size shares scalar Mask and remains single-valued for all operations; equal-valued nonzero masks remain fields, with no table allocation. Closed texture-free pointwise compositor kinds only: Render Layers/Image, curves/ramps and spatial/domain consumers remain excluded. Combined row plus display Lut1D/Lut3D budget8; additional post-LDR registrations refuse pending sampler accounting. Actual first-draw/resize/DPR, invalid-resize recovery, table identity/version/data, optimized constant guards and Final disposal are checked. All RGBA Float32 words, including scalar-to-RGBA alpha1 and strict edges, require exact equality. Reference is native CPU compositor with Cycles CPU carrier, not EEVEE shader/material or native GPU evaluation. Actual WebGPU/WebGL2 via WebGPURenderer measured on Apple Metal and SwiftShader. Legacy WebGLRenderer, other versions/builds/hosts, field/animated/rotated masks, arbitrary scene compositing and whole-scene appearance remain unqualified. Separately qualified Blender5.3.0 build02f0899d78e3 macOS arm64 CPU current-frame exception: one direct current Scene/ViewLayer RenderLayers Image or Alpha, one static binary Add Ellipse Mask0/Value1, and one terminal modern RGBA/MIX, either operand side. Background is an unlinked raw positive-zero/positive-normal F32 RGBA literal\u22641. Actual renderer-owned HalfFloat RGBA/MSAA0 physical-texel frame requires a lifecycle-bound decoder calibration; unknown decoders refuse before installation. One frame sampler plus one varying row plus at most6 display lookups, total8; no registered pre-HDR/post-LDR effects. Exact linear words are qualified on observed Metal WebGPU/WebGL2; both SwiftShader APIs named-refuse the NaN decoder model and receive zero credit for this exception. Raw display is separately audited under the existing clamp01 3e-5 projection contract with exact alpha/nonfinite classes; no bit-exact/zero-bit display claim, global display promotion, native GPU compositor, whole-scene PBR equivalence or demo acceptance.",
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor only. Static unlinked literal Position[-2,2], Size[0,2], Mask/Value[0,1], each component zero or abs>=2^-16, with raw Rotation positive zero. All four Operation values Add/Subtract/Multiply/Not; raw native vector/scalar storage checks refuse negative zero, subnormals, nonfinite/out-of-bound values, links, animation and rotation. Zero-offset square-pixel full-frame context, physical extents2..8192. Native ordered Float32 division/subtraction/aspect/radius/products/sum/sqrt classify monotone integer row intervals in O(width+height log width) only on valid extent changes. Shader integer lookup/comparison selects precomputed branch values; no floating boundary, epsilon, quantization or full CPU pixel image. One fixed256x32 RG32I64KiB table per varying mask; at most one varying table per graph. Zero Size shares scalar Mask and remains single-valued for all operations; equal-valued nonzero masks remain fields, with no table allocation. Closed texture-free pointwise compositor kinds only: Render Layers/Image, curves/ramps and spatial/domain consumers remain excluded. Combined row plus display Lut1D/Lut3D budget8; additional post-LDR registrations refuse pending sampler accounting. Actual first-draw/resize/DPR, invalid-resize recovery, table identity/version/data, optimized constant guards and Final disposal are checked. All RGBA Float32 words, including scalar-to-RGBA alpha1 and strict edges, require exact equality. Reference is native CPU compositor with Cycles CPU carrier, not EEVEE shader/material or native GPU evaluation. Actual WebGPU/WebGL2 via WebGPURenderer measured on Apple Metal and SwiftShader. Legacy WebGLRenderer, other versions/builds/hosts, field/animated/rotated masks, arbitrary scene compositing and whole-scene appearance remain unqualified. Separately qualified Blender5.3.0 build02f0899d78e3 macOS arm64 CPU current-frame Ellipse exception: one direct current Scene/ViewLayer RenderLayers Image or Alpha, one static binary Add Ellipse Mask0/Value1, and one terminal modern RGBA/MIX, either operand side. Background is an unlinked raw positive-zero/positive-normal F32 RGBA literal at most1. Actual renderer-owned HalfFloat RGBA/MSAA0 physical-texel frame requires a lifecycle-bound decoder certificate matching one complete exact model: canonical NaNs or sign/payload/signaling-preserving NaNs; finite/infinity/zero decoding remains exact. Unknown or mixed mappings refuse. One frame sampler, one varying row sampler plus at most six display lookups, total8; no registered pre-HDR/post-LDR effects. Exact direct and actual installed Final linear words are qualified on the observed Apple Metal and SwiftShader WebGPU/WebGL2 tuples. Raw display is separately audited under the existing clamp01 maximum-absolute-error3e-5 projection contract with exact alpha/nonfinite classes; finite-zero differences are counted, not bit-exact. No whole-Final RGBA equality, global display promotion, native GPU compositor, whole-scene PBR equivalence, demo acceptance or other platform/build credit.",
           "modes": {
             "inputs:Operation": {
               "supported": [

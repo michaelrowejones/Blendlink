@@ -1,4 +1,4 @@
-import {ellipseSceneMixContract,buildEllipseSceneBinaryMix} from './tslCompositorEllipseSceneMix.js'
+import {sceneMaskMixContract,validateSceneMaskMixMarkers,buildEllipseSceneBinaryMix} from './tslCompositorEllipseSceneMix.js'
 import {assertEllipseSceneFrameBinding,resolveEllipseSceneFrame,type EllipseSceneFrameBinding} from './tslCompositorSceneFrame.js'
 import {buildCompositorEllipseMask,validateEllipseMaskGraph} from './tslCompositorEllipseMask.js'
 import {buildCompositorBoxMask,validateBoxMaskGraph} from './tslCompositorBoxMask.js'
@@ -514,7 +514,8 @@ export function buildSourceCompositor(
     if (program.outputAlpha !== undefined && program.outputAlpha !== 'legacy-composite-opaque-v1')
       throw new SourceCompositorUnsupported('Composite output has an unknown alpha model')
     validateEllipseMaskGraph(program, message => { throw new SourceCompositorUnsupported(message) })
-    const sceneMix=ellipseSceneMixContract(program)
+    validateSceneMaskMixMarkers(program,message=>{throw new SourceCompositorUnsupported(message)})
+    const sceneMix=sceneMaskMixContract(program)
     if(sceneMix) assertEllipseSceneFrameBinding(options.sceneFrame)
     validateBoxMaskGraph(program, message => { throw new SourceCompositorUnsupported(message) })
     validateTextureFieldGraph(program, message => { throw new SourceCompositorUnsupported(message) })

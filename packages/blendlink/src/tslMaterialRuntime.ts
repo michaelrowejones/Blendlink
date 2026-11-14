@@ -1,3 +1,4 @@
+import { vertexAlphaBinding, assertVertexAlphaOpacity } from './tslVertexColorAlpha.js'
 import { prepareTslNoiseFields, type NoiseFieldPreparationStatistics } from './tslNoiseFields.js'
 export { createTslBuildResources } from './tslNodeRecipe.js'
 export { prepareTslNoiseFields, type PreparedTslNoiseFields, type PrepareTslNoiseFieldsOptions, type NoiseFieldPreparationStatistics } from './tslNoiseFields.js'
@@ -381,7 +382,10 @@ export async function installTslMaterials(
     if (!mesh.isMesh) return
     for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
       const source = material?.userData?.blendlink_source_material
-      if (typeof source === 'string' && (material as THREE.MeshStandardMaterial).isMeshStandardMaterial) used.add(source)
+      if (typeof source === 'string' && (material as THREE.MeshStandardMaterial).isMeshStandardMaterial) {
+        assertVertexAlphaOpacity(mesh,programs.materials[source]?.channels,material)
+        used.add(source)
+      }
     }
   })
   const preparation = await prepareTslNoiseFields([...used].map(source => programs.materials[source]),
@@ -436,6 +440,7 @@ export async function installTslMaterials(
     clone: MeshStandardNodeMaterial
     release?: (transferred: boolean) => void
     magic?: { proofs:MagicCoordinateProof[]; options:ReturnType<typeof buildOptionsFor> }
+    vertexAlpha?: ReturnType<typeof vertexAlphaBinding>
   }
   const installed: InstalledSwap[] = []
   // Geometry-only programs can share clones when their runtime extras agree.
@@ -495,6 +500,12 @@ export async function installTslMaterials(
             reason: 'loaded material is not MeshStandardMaterial; the shipped carrier stays',
           })
           return
+        }
+        let vertexAlpha: ReturnType<typeof vertexAlphaBinding>
+        try { vertexAlpha = vertexAlphaBinding(mesh, program.channels, extras, source) }
+        catch (error) {
+          if (!(error instanceof TslIrError)) throw error
+          skipped.push({material:source,reason:`mesh "${mesh.name}" Vertex Color Alpha refused: ${error.message}; its carrier stays`}); return
         }
         const needed = attributeNames.get(source)
         if (activeUvPrograms.has(source)) {
@@ -631,7 +642,7 @@ export async function installTslMaterials(
               { ...buildOptionsFor(
                 extras, resources, source, programTextures?.resolver,
                 objectAttribute,
-              ), ...(options.signal?{signal:options.signal}:{}), preparedNoiseFields: preparation, validateMagicCoordinates:expression=>validateMagicCoordinates(expression,mesh,magicOptions??{}), normalMapBasis, ...(info ? { objectInfo: createObjectInfoResolver(
+              ), ...vertexAlpha.options, ...(options.signal?{signal:options.signal}:{}), preparedNoiseFields: preparation, validateMagicCoordinates:expression=>validateMagicCoordinates(expression,mesh,magicOptions??{}), normalMapBasis, ...(info ? { objectInfo: createObjectInfoResolver(
                 owner.userData?.blendlink_tsl_object, material.userData?.blendlink_tsl_material,
               ) } : {}) },
             )
@@ -664,6 +675,7 @@ export async function installTslMaterials(
           clone: variant.clone,
           ...(release ? { release } : {}),
           ...(magicProofs&&magicOptions?{magic:{proofs:magicProofs,options:magicOptions}}:{}),
+          ...(vertexAlpha.options.vertexColorAlpha ? {vertexAlpha} : {}),
         })
         aborted()
         if (Array.isArray(mesh.material)) {
@@ -682,6 +694,11 @@ export async function installTslMaterials(
     }
     for (const [mesh, materials] of drawMaterials) {
       releaseDrawCallbacks.push(trackMaterialDrawOrientation(mesh, materials))
+      const alphaBindings = new Map(installed.filter(item => item.mesh === mesh && item.vertexAlpha)
+        .map(item => [item.clone, item.vertexAlpha!]))
+      if (alphaBindings.size) releaseDrawCallbacks.push(trackMaterialDrawCallback(mesh, new Set(alphaBindings.keys()), function (...args) {
+        alphaBindings.get(args[4] as MeshStandardNodeMaterial)?.validate()
+      }))
       if(installed.some(item=>item.mesh===mesh&&cameraDataContexts.has(item.clone.userData.blendlink_source_material))){
         const basis=meshRuntimeExtras(mesh)?.objectSpace
         const allMaterials=new Set(Array.isArray(mesh.material)?mesh.material:[mesh.material])

@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Owned actual-CPU image oracle. Original saved scenes/RenderLayers remain byte-identical.
-import bpy,json,sys,hashlib
+import bpy,json,sys,hashlib,os
 from pathlib import Path
 import numpy as np
+FAMILIES=json.loads((Path(__file__).parent/'mask-families.json').read_text());FAMILY=FAMILIES[os.environ.get('SCENETOWEB_SCENE_MIX_FAMILY','ellipse')]
 ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT/'packages/blender-addon/tests'))
 from compositor_reference import NativeCompositorReference
 sys.path.insert(0,str(ROOT/'packages/blendlink/blender'))
@@ -12,7 +13,7 @@ config,config_path=source_presentation.config_from_install();processor=source_pr
 for profile in baseline['profiles']:
  for api in profile['apis']:
   for frame in api['rows']:
-   source=next(r for r in sources['rows']if r['case']==frame['case']);assert sha(OUT/source['sourceFile'])==source['sourceSha256'];program=json.loads((OUT/source['programFile']).read_text());mask_spec=next(op['properties']for op in program['ops']if op['kind']=='ellipse-mask');w,h=frame['width'],frame['height'];pixels=OUT/frame['baselineFile'];assert sha(pixels)==frame['baselineSha256'];data=np.frombuffer(pixels.read_bytes(),np.float32).copy();assert len(data)==w*h*4;oracle.scene.render.resolution_x=w;oracle.scene.render.resolution_y=h;oracle.scene.render.resolution_percentage=100
+   source=next(r for r in sources['rows']if r['case']==frame['case']);assert sha(OUT/source['sourceFile'])==source['sourceSha256'];program=json.loads((OUT/source['programFile']).read_text());mask_spec=next(op['properties']for op in program['ops']if op['kind']==FAMILY['kind']);w,h=frame['width'],frame['height'];pixels=OUT/frame['baselineFile'];assert sha(pixels)==frame['baselineSha256'];data=np.frombuffer(pixels.read_bytes(),np.float32).copy();assert len(data)==w*h*4;oracle.scene.render.resolution_x=w;oracle.scene.render.resolution_y=h;oracle.scene.render.resolution_percentage=100
    image=bpy.data.images.new('Owned captured Three frame',width=w,height=h,alpha=True,float_buffer=True);image.alpha_mode='PREMUL';image.colorspace_settings.name='Non-Color';image.pixels.foreach_set(data);stored=np.empty_like(data);image.pixels.foreach_get(stored);assert np.array_equal(stored.view(np.uint32),data.view(np.uint32))
    def node_image():
     node=oracle.tree.nodes.new('CompositorNodeImage');node.image=image;return node.outputs['Image']
@@ -21,7 +22,7 @@ for profile in baseline['profiles']:
     for n in oracle.tree.nodes:n.show_preview=False
     bpy.ops.render.render(write_still=True);loaded=bpy.data.images.load(str(path),check_existing=False);loaded.alpha_mode='PREMUL';result=np.empty(w*h*4,np.float32);loaded.pixels.foreach_get(result);bpy.data.images.remove(loaded);target=OUT/'native'/(frame['id']+'.'+label+'.rgba32f');target.write_bytes(result.tobytes());return target,result
    sink,_=oracle.reset();copyfile,copied=render('copy',node_image(),sink);assert np.array_equal(copied.view(np.uint32),data.view(np.uint32))
-   sink,_=oracle.reset();mask=oracle.tree.nodes.new('CompositorNodeEllipseMask');mask.inputs['Mask'].default_value=0;mask.inputs['Value'].default_value=1;mask.inputs['Position'].default_value=mask_spec['ellipse_mask_position'];mask.inputs['Size'].default_value=mask_spec['ellipse_mask_size'];scene_input=node_image()
+   sink,_=oracle.reset();mask=oracle.tree.nodes.new(FAMILY['nativeClass']);mask.inputs['Mask'].default_value=0;mask.inputs['Value'].default_value=1;mask.inputs['Position'].default_value=mask_spec[FAMILY['prefix']+'position'];mask.inputs['Size'].default_value=mask_spec[FAMILY['prefix']+'size'];scene_input=node_image()
    if source['route']=='Alpha':
     sep=oracle.tree.nodes.new('CompositorNodeSeparateColor');sep.mode='RGB';oracle.tree.links.new(scene_input,sep.inputs['Image']);scene_input=sep.outputs['Alpha']
    mix=oracle.tree.nodes.new('ShaderNodeMix');mix.data_type='RGBA';mix.blend_type='MIX';mix.clamp_factor=True;mix.clamp_result=False;active=lambda n:next(s for s in mix.inputs if s.identifier==n);active('B_Color'if source['side']=='A'else'A_Color').default_value=source['background'];oracle.tree.links.new(mask.outputs['Mask'],active('Factor_Float'));oracle.tree.links.new(scene_input,active(source['side']+'_Color'));mixed=next(s for s in mix.outputs if s.identifier=='Result_Color');mixfile,mixdata=render('mix',mixed,sink)
@@ -39,4 +40,4 @@ for profile in baseline['profiles']:
     if pixel[3]!=0 and pixel[3]!=1:pixel[:3]=np.asarray(pixel[:3]*pixel[3],dtype=np.float32)
    displayfile=OUT/'native'/(frame['id']+'.display.rgba32f');displayfile.write_bytes(display.tobytes())
    rows.append({**{k:frame[k]for k in ['id','case','width','height','pixelRatio','baselineFile','baselineSha256']},'copyFile':str(copyfile.relative_to(OUT)),'copySha256':sha(copyfile),'mixFile':str(mixfile.relative_to(OUT)),'mixSha256':sha(mixfile),'displayFile':str(displayfile.relative_to(OUT)),'displaySha256':sha(displayfile),'divisionWitnessFile':str(divisionfile.relative_to(OUT)),'divisionWitnessSha256':sha(divisionfile),'copyDifferences':0,'words':w*h*4});bpy.data.images.remove(image)
-report={'status':'CAPTURED_ELLIPSE_SCENE_IMAGE_ORACLES','version':list(bpy.app.version),'build':bpy.app.build_hash.decode(),'rows':rows,'nativeRenders':len(rows)*3,'rawDisplayAudit':{'model':raw_sources['model'],'primarySourcesSha256':sha(Path(__file__).parent/'raw-display-sources.json'),'ocioProcessorIsNoOp':True,'configPath':str(config_path),'configSha256':sha(config_path)},'sourcePreserved':all(sha(OUT/r['sourceFile'])==r['sourceSha256']for r in sources['rows'])};(OUT/'native.json').write_text(json.dumps(report,indent=2)+'\n');print(report['status'],len(rows),report['nativeRenders'])
+report={'status':FAMILY['nativeStatus'],'version':list(bpy.app.version),'build':bpy.app.build_hash.decode(),'rows':rows,'nativeRenders':len(rows)*3,'rawDisplayAudit':{'model':raw_sources['model'],'primarySourcesSha256':sha(Path(__file__).parent/'raw-display-sources.json'),'ocioProcessorIsNoOp':True,'configPath':str(config_path),'configSha256':sha(config_path)},'sourcePreserved':all(sha(OUT/r['sourceFile'])==r['sourceSha256']for r in sources['rows'])};(OUT/'native.json').write_text(json.dumps(report,indent=2)+'\n');print(report['status'],len(rows),report['nativeRenders'])

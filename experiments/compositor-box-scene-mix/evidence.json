@@ -1,0 +1,277 @@
+{
+  "schemaVersion": 1,
+  "status": "QUALIFIED_EXACT_LINEAR_BOX_SCENE_MIX",
+  "maskFamily": "box",
+  "savedFinalScenes": 13,
+  "nativeImageOracles": 104,
+  "nativeRenders": 312,
+  "browserFinalCases": 104,
+  "preDisplayWords": 121680,
+  "installedFinalLinearWords": 730080,
+  "exactLinearWordDifferences": 0,
+  "displayAudit": {
+    "model": "cpu-reciprocal-f32-identity-ocio-audit-v1",
+    "wordDifferences": 16398,
+    "maxUlps": 8388608,
+    "maxUnclampedAbsoluteError": 1.4901161193847656e-8,
+    "maxClampedAbsoluteError": 1.4901161193847656e-8,
+    "projectionLimit": 0.00003,
+    "alphaWordDifferences": 0,
+    "zeroWordDifferences": 10530,
+    "zeroDirectionExamples": [
+      {
+        "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+        "index": 56,
+        "actualWord": 0,
+        "nativeWord": 8388608,
+        "direction": "to-zero"
+      },
+      {
+        "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+        "index": 57,
+        "actualWord": 0,
+        "nativeWord": 8388608,
+        "direction": "to-zero"
+      },
+      {
+        "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+        "index": 58,
+        "actualWord": 0,
+        "nativeWord": 8388608,
+        "direction": "to-zero"
+      },
+      {
+        "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+        "index": 60,
+        "actualWord": 0,
+        "nativeWord": 8388608,
+        "direction": "to-zero"
+      },
+      {
+        "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+        "index": 61,
+        "actualWord": 0,
+        "nativeWord": 8388608,
+        "direction": "to-zero"
+      },
+      {
+        "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+        "index": 62,
+        "actualWord": 0,
+        "nativeWord": 8388608,
+        "direction": "to-zero"
+      },
+      {
+        "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+        "index": 64,
+        "actualWord": 0,
+        "nativeWord": 8388608,
+        "direction": "to-zero"
+      },
+      {
+        "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+        "index": 65,
+        "actualWord": 0,
+        "nativeWord": 8388608,
+        "direction": "to-zero"
+      },
+      {
+        "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+        "index": 56,
+        "actualWord": 0,
+        "nativeWord": 8388608,
+        "direction": "to-zero"
+      },
+      {
+        "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+        "index": 57,
+        "actualWord": 0,
+        "nativeWord": 8388608,
+        "direction": "to-zero"
+      },
+      {
+        "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+        "index": 58,
+        "actualWord": 0,
+        "nativeWord": 8388608,
+        "direction": "to-zero"
+      },
+      {
+        "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+        "index": 60,
+        "actualWord": 0,
+        "nativeWord": 8388608,
+        "direction": "to-zero"
+      },
+      {
+        "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+        "index": 61,
+        "actualWord": 0,
+        "nativeWord": 8388608,
+        "direction": "to-zero"
+      },
+      {
+        "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+        "index": 62,
+        "actualWord": 0,
+        "nativeWord": 8388608,
+        "direction": "to-zero"
+      },
+      {
+        "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+        "index": 64,
+        "actualWord": 0,
+        "nativeWord": 8388608,
+        "direction": "to-zero"
+      },
+      {
+        "case": "metal--webgpu--box-image-A-minnormal--13x9@1",
+        "index": 65,
+        "actualWord": 0,
+        "nativeWord": 8388608,
+        "direction": "to-zero"
+      }
+    ],
+    "nonfiniteClassDifferences": 0,
+    "bitExactDisplayClaim": false,
+    "zeroBitExactClaim": false
+  },
+  "lifecycleCycles": 312,
+  "uniqueActualPythonPrefixes": 15,
+  "scope": "One direct current-scene/view-layer Image or Alpha, one binary CPU ADD box0/1, one modern RGBA/MIX with raw +0/positive normal≤1 background. Calibrated actual HalfFloat RGBA MSAA0 physical frame, no other registered effects; frame+row+display sampler budget8. Exact linear composition in the actual installed Final compositor; Raw display audited separately using the existing clamped3e-5 OCIO/PNG projection gate with exact alpha/nonfinite classes, no bit-exact Final display claim. Actual same-Three-frame composition only; no Three PBR versus Cycles, demo acceptance or other node/platform credit.",
+  "closedReader": {
+    "runtimeFingerprint": "1e502a811b254d42d5ad2ee9b2e98554b52eecc6257f0679a341dbf9418455f4",
+    "verifierSha256": "914982a6d8925ca0e39f8e50d73f0e94fb9888beae90db9d7528f351a95d1d59"
+  },
+  "sourceArchive": {
+    "pythonInvocations": 14,
+    "finalInvocations": 13,
+    "uniqueCachePrefixes": 14,
+    "numericalCredit": 0
+  },
+  "referenceArchive": {
+    "pythonInvocations": 1,
+    "finalInvocations": 0,
+    "uniqueCachePrefixes": 1,
+    "numericalCredit": 0
+  },
+  "runs": [
+    {
+      "phase": "baseline",
+      "profile": "metal",
+      "path": "artifacts/verification-next13-box-scene/browser-baseline-metal/report.json",
+      "sha256": "33ddfb3b72c47a3461999094287f92732b19097d1e73aae3170a415936cb3ec0",
+      "browserVersion": "158.0.8127.18",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 26
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 26
+        }
+      ]
+    },
+    {
+      "phase": "compare",
+      "profile": "metal",
+      "path": "artifacts/verification-next13-box-scene/browser-compare-metal/report.json",
+      "sha256": "58b83b677ae3e8327ae0059a452f55d030cc78678f955eee371207e31512f707",
+      "browserVersion": "158.0.8127.18",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 26
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 26
+        }
+      ]
+    },
+    {
+      "phase": "baseline",
+      "profile": "software",
+      "path": "artifacts/verification-next13-box-scene/browser-baseline-software/report.json",
+      "sha256": "eae9f43ad1a852ec4a728741d8aea5249afc032307c81054f05c4d9cf62f14e6",
+      "browserVersion": "158.0.8127.18",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 26
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 26
+        }
+      ]
+    },
+    {
+      "phase": "compare",
+      "profile": "software",
+      "path": "artifacts/verification-next13-box-scene/browser-compare-software/report.json",
+      "sha256": "1081c2d513c3eb485f19568c998c8d5dcf4f57d152d436d4007bf15fd2d6c235",
+      "browserVersion": "158.0.8127.18",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 26
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 26
+        }
+      ]
+    }
+  ],
+  "rawArtifacts": {
+    "machineLocal": true,
+    "path": "artifacts/verification-next13-box-scene"
+  },
+  "supportCredit": 0
+}

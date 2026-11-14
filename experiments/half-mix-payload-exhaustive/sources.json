@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "role": "Exhaustive HalfFloat binary native Mix prototype; no production/Final credit",
+  "sources": [
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/nodes/shader/nodes/node_shader_mix.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/shader/nodes/node_shader_mix.cc",
+      "sha256": "e8ce61bd2c5eb84fc2cf598381c2b2ba5f2541a6a619744625906257c298ed3f",
+      "bytes": 23444
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/blenkernel/intern/material.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenkernel/intern/material.cc",
+      "sha256": "2ccc4d979e2d50c3d43b8c17a6ad7d066a8349a2dcdb9a04c875a0d0a10d59b1",
+      "bytes": 68802
+    },
+    {
+      "package": "three",
+      "version": "0.184.0",
+      "path": "src/nodes/display/PassNode.js",
+      "url": "https://raw.githubusercontent.com/mrdoob/three.js/r184/src/nodes/display/PassNode.js",
+      "sha256": "e4547bb6d360cc7b2459bdfa1d1ca53a2f43f47538b37607d19d32c45a7526e5",
+      "bytes": 24020
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/blenlib/intern/task_scheduler.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/intern/task_scheduler.cc",
+      "sha256": "5ea4ec8c5f70740d941f4481812a7ebc26bb0f33201037d8f03a0f1f40ea91b7",
+      "bytes": 3199
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/blenlib/intern/threads.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/intern/threads.cc",
+      "sha256": "7761c2911f3b63cfc2f7f0f6b2cf669d58a9b54c201e1353edef4c7fc2961b33",
+      "bytes": 19739
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/blenlib/BLI_simd.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/BLI_simd.hh",
+      "sha256": "ea20be387df51daaad39f6191c4f566f591a0fda47e690a65ecd5f5a00423382",
+      "bytes": 5785
+    }
+  ]
+}

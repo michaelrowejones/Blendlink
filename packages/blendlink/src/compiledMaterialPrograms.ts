@@ -1,3 +1,4 @@
+import { vertexAlphaLayers, vertexAlphaBinding } from './tslVertexColorAlpha.js'
 import { prepareTslNoiseFields } from './tslNoiseFields.js'
 import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
@@ -17,6 +18,9 @@ export interface MaterialProgramPrimitiveData {
   normal: Float32Array | null
   tangent?: Float32Array | null
   uvs?: ReadonlyMap<string,Float32Array>
+  vertexAlpha?: ReadonlyMap<string,Float32Array>
+  /** Actual decoded normalized COLOR_0 alpha components, never JSON claims. */
+  colorAlpha?: Float32Array
   indices: Uint8Array | Uint16Array | Uint32Array | null
 }
 export type MaterialProgramGeometryData = ReadonlyMap<string, MaterialProgramPrimitiveData>
@@ -235,12 +239,13 @@ export async function validatedBaseColorProgramMaterials(
     const magic=record(program)&&hasMagic(program.channels)
     const cameraData=record(program)&&hasCameraData(program.channels)
     const squeeze=record(program)&&hasSqueeze(program.channels)
+    const vertexAlpha = vertexAlphaLayers(record(program) ? program.channels : null).size > 0
     const rendererRequired=record(program)&&bindings.some(binding=>{
       if(binding.primitive.material!==index)return false
       const validation=validateNodeRendererRequirement(program.channels,binding.runtime?.requiresNodeRenderer)
       return !!validation.issue||validation.required.length>0
     })
-    if(!baseColorRequired&&!nativeNormal&&!magic&&!cameraData&&!squeeze&&!rendererRequired)return []
+    if(!baseColorRequired&&!nativeNormal&&!magic&&!cameraData&&!squeeze&&!rendererRequired&&!vertexAlpha)return []
     const channel = record(program) && record(program.channels) ? program.channels['Base Color'] : null
     if (baseColorRequired&&(!record(channel) || !record(channel.tslIr))) return []
     // GLTFLoader creates MeshBasicMaterial for an unlit carrier; the actual
@@ -249,7 +254,7 @@ export async function validatedBaseColorProgramMaterials(
       if(squeeze||rendererRequired)throw new Error(`${nodeRendererProgramLabel(validateNodeRendererRequirement(record(program)?program.channels:null,undefined).required)} requires a lit material carrier compatible with its node renderer`)
       return []
     }
-    return [{ index, ir: record(channel)&&record(channel.tslIr)?channel.tslIr as unknown as TslIrDocument:null, program,baseColorRequired,nativeNormal,magic,cameraData,squeeze,rendererRequired }]
+    return [{ index, ir: record(channel)&&record(channel.tslIr)?channel.tslIr as unknown as TslIrDocument:null, program,baseColorRequired,nativeNormal,magic,cameraData,squeeze,rendererRequired,vertexAlpha }]
   })
   if (!candidates.length) return accepted
   const { buildTslColorNode, createTslBuildResources, TslIrError } = await import('./tslNodeRecipe.js')
@@ -305,7 +310,7 @@ export async function validatedBaseColorProgramMaterials(
       return texture
     },
   })
-    for (const { index, ir, program,baseColorRequired,nativeNormal,magic,cameraData,squeeze,rendererRequired } of candidates) {
+    for (const { index, ir, program,baseColorRequired,nativeNormal,magic,cameraData,squeeze,rendererRequired,vertexAlpha } of candidates) {
       let bindingCount = 0
       let valid = true
       let refusal=''
@@ -341,6 +346,12 @@ export async function validatedBaseColorProgramMaterials(
                 [...names].some(name => !Object.hasOwn(properties, name) || !objectAttributeValue(properties[name]))) {
               throw new TslIrError('Material program requires unavailable per-object properties or a non-mesh binding')
             }
+            const opacityChannel=record(program)&&record(program.channels)?program.channels.Alpha:null
+            const colorAccessor=Array.isArray(gltf.accessors)?gltf.accessors[Number(attributes.COLOR_0)]:null
+            const actualColorAlpha=geometryData?.get(`${binding.meshIndex}:${binding.primitiveIndex}`)?.colorAlpha
+            if(vertexAlphaLayers(opacityChannel).size&&record(colorAccessor)&&colorAccessor.type==='VEC4'
+              &&(!actualColorAlpha||actualColorAlpha.length!==colorAccessor.count||!actualColorAlpha.every(value=>value===1)))
+              throw new TslIrError('Vertex Color Alpha opacity with stock VEC4 COLOR_0 is unqualified; implicit vertex alpha would multiply opacity twice')
             const rendererRequirement=validateNodeRendererRequirement(record(program)?program.channels:null,extras?.requiresNodeRenderer)
             if(rendererRequirement.issue)throw new TslIrError(rendererRequirement.issue)
             const options:import('./tslNodeRecipe.js').BuildTslOptions = { ...buildOptionsFor(extras, resources, `materials[${index}]`, textures?.resolver, objectAttributeResolver()), preparedNoiseFields:preparation }
@@ -354,7 +365,7 @@ export async function validatedBaseColorProgramMaterials(
                 throw new TslIrError('Geometry context requires actual triangle position/normal attributes without skin, morph or GPU instances')
               validateGeometryContextMatrix(objectForBinding(binding),extras?.objectSpace)
             }
-            if(normalMaps.length||tangents.length||heights.length||cameraData||magicTextures.some(item=>item.evaluationModel==='shader')){
+            if(vertexAlpha||normalMaps.length||tangents.length||heights.length||cameraData||magicTextures.some(item=>item.evaluationModel==='shader')){
               const needsNormal=normalMaps.length||tangents.length||heights.length
               if(needsNormal&&!extras?.geometryContext?.includes('normal'))throw new TslIrError('Native Normal Map requires its exported primary-normal context declaration')
               if(magicTextures.some(item=>item.evaluationModel==='shader')&&(instanced||binding.nodeChain?.some(node=>node.skin!==undefined)||primitive.targets!==undefined))
@@ -365,6 +376,7 @@ export async function validatedBaseColorProgramMaterials(
                 const actual=new THREE.BufferGeometry().setAttribute('position',new THREE.BufferAttribute(data.position,3))
                 if(data.normal)actual.setAttribute('normal',new THREE.BufferAttribute(data.normal,3))
                 if(data.indices)actual.setIndex(new THREE.BufferAttribute(data.indices,1))
+                data.vertexAlpha?.forEach((values, semantic) => actual.setAttribute(semantic.toLowerCase(), new THREE.BufferAttribute(values, 1)))
                 if(data.tangent)actual.setAttribute('tangent',new THREE.BufferAttribute(data.tangent,4))
                 data.uvs?.forEach((values,semantic)=>{
                   const match=/^TEXCOORD_(\d+)$/.exec(semantic)
@@ -377,6 +389,19 @@ export async function validatedBaseColorProgramMaterials(
                 if(!(bound as import('three').Mesh).isMesh)throw new TslIrError('UV Tangent needs actual decoded primitive geometry')
                 validateTangentBinding(tangents,bound as import('three').Mesh,extras?.objectSpace,extras)
               }
+            }
+            if(vertexAlpha){
+              if(instanced || binding.nodeChain?.some(node=>node.skin!==undefined) || primitive.targets!==undefined || primitive.mode!==undefined&&primitive.mode!==4 || !actualGeometry)
+                throw new TslIrError('Vertex Color Alpha requires actual static triangle primitive data')
+              const source = record(material) && record(material.extras) ? material.extras.blendlink_source_material : null
+              if(typeof source !== 'string')throw new TslIrError('Vertex Color Alpha has no actual material source owner')
+              for(const layer of vertexAlphaLayers(record(program)?program.channels:null)){
+                const bound = extras?.vertexColorAlpha?.[layer]
+                const accessor = bound && Array.isArray(gltf.accessors) ? gltf.accessors[Number(attributes[bound.semantic])] : null
+                if(!record(accessor)||accessor.type!=='SCALAR'||accessor.componentType!==5126||accessor.normalized===true)
+                  throw new TslIrError('Vertex Color Alpha accessor metadata is not raw Float32 SCALAR')
+              }
+              Object.assign(options,vertexAlphaBinding(actualGeometry,record(program)?program.channels:null,extras,source).options)
             }
             if(cameraData){
               if(!actualGeometry)throw new TslIrError('Camera Data needs actual decoded primitive geometry')
@@ -445,10 +470,10 @@ export async function validatedBaseColorProgramMaterials(
             }
             inspect(record(program) ? program.channels : ir)
             if(ir)buildTslColorNode(ir, options)
-            if((nativeNormal||magic||cameraData||squeeze||rendererRequired)&&record(program)&&record(program.channels)){
+            if((vertexAlpha||nativeNormal||magic||cameraData||squeeze||rendererRequired)&&record(program)&&record(program.channels)){
               const built=buildMaterialProgram(program.channels as unknown as Record<string,import('./tslMaterialProgram.js').MaterialProgramChannel>,options)
               for(const [name,channel] of Object.entries(program.channels)){
-                if(hasNativeNormal(channel)||hasMagic(channel)||hasCameraData(channel)||hasSqueeze(channel)||matchingNodeRendererPrograms(channel,rendererRequirement.required).length){
+                if(vertexAlphaLayers(channel).size||hasNativeNormal(channel)||hasMagic(channel)||hasCameraData(channel)||hasSqueeze(channel)||matchingNodeRendererPrograms(channel,rendererRequirement.required).length){
                   const skipped=built.skipped.find(item=>item.channel===name)
                   if(skipped)throw new TslIrError(`Native material channel ${name}: ${skipped.reason}`)
                 }

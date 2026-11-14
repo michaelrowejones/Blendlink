@@ -1,0 +1,14 @@
+{
+  "model": "independent-even-slope-raster-clearance-v1",
+  "nodeVertices": [[-2, -4, 0], [2, -4, 0], [2, 4, 0], [-2, 4, 0]],
+  "calibrationVertices": [[-2, -2, 0], [2, -2, 0], [2, 2, 0], [-2, 2, 0]],
+  "triangles": [[0, 1, 2], [0, 2, 3]],
+  "nodeLocalDiagonal": {"slope": 2, "intercept": 0},
+  "cameraWorldRange": [-1, 1],
+  "sizes": [32, 64, 96],
+  "singleOwner": {"worldSlope": 2, "worldIntercept": 0},
+  "sharedOwners": [{"scaleX": 0.5, "translateX": -1, "worldSlope": 4, "worldIntercept": 4}, {"scaleX": 0.5, "translateX": 1, "worldSlope": 4, "worldIntercept": -4}],
+  "predeclaredMinimumVerticalPixelClearance": 0.5,
+  "derivation": "At even N, the world diagonal y=m*x+c maps to pixel y=m*pixelX+(1-m+c)*N/2. Here m is even and c is integer. The intercept is integer, whereas pixel centers are integer+1/2. Their residual from the diagonal is therefore a half-integer, with minimum absolute residual 1/2 physical pixel for every 32/64/96 case. Computed before the fresh capture, independently of alpha outputs.",
+  "scope": "Authored test geometry only; no alpha input, camera, node arithmetic, pixel mask or numerical gate changes. Raster edge ownership is not node-port credit."
+}

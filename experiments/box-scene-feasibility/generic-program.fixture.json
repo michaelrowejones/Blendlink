@@ -1,0 +1,167 @@
+{
+  "version": 1,
+  "blenderVersion": "5.3.0",
+  "engine": "CYCLES",
+  "frame": 1,
+  "status": "extracted",
+  "ops": [
+    {
+      "id": "n0",
+      "kind": "box-mask",
+      "source": {
+        "path": [
+          "Owned Box scene probe"
+        ],
+        "node": "Box Mask",
+        "nodeType": "CompositorNodeBoxMask",
+        "output": "Mask"
+      },
+      "type": "VALUE",
+      "properties": {
+        "evaluation_device": "CPU",
+        "native_gpu_backend": "METAL",
+        "single_value_device": "CPU",
+        "box_mask_model": "cpu-f32-axis-integer-intervals-v1",
+        "box_mask_source_profile": "darwin-arm64-53-box-mask-cpu-v1",
+        "box_mask_native_version": [
+          5,
+          3,
+          0
+        ],
+        "box_mask_reference_model": "full-frame-context-zero-offset-v1",
+        "box_mask_precision": "CPU_FLOAT32",
+        "box_mask_scalar_storage": "native-interface-copy-f32-v1",
+        "box_mask_scalar_words": [
+          0,
+          1065353216,
+          0
+        ],
+        "box_mask_literal_model": "zero-or-2^-16-bounded-f32-v1",
+        "box_mask_requested_precision": "FULL",
+        "box_mask_export_extent": [
+          13,
+          9
+        ],
+        "box_mask_operation": "ADD",
+        "box_mask_position": [
+          0.5,
+          0.5
+        ],
+        "box_mask_size": [
+          0.5,
+          0.5
+        ],
+        "box_mask_mask": 0.0,
+        "box_mask_value": 1.0
+      },
+      "inputs": {}
+    },
+    {
+      "id": "n1",
+      "kind": "render-pass",
+      "source": {
+        "path": [
+          "Owned Box scene probe"
+        ],
+        "node": "Render Layers",
+        "nodeType": "CompositorNodeRLayers",
+        "output": "Image"
+      },
+      "type": "RGBA",
+      "properties": {
+        "evaluation_device": "CPU",
+        "native_gpu_backend": "METAL",
+        "single_value_device": "CPU"
+      },
+      "inputs": {},
+      "pass": {
+        "scene": "Scene",
+        "viewLayer": "ViewLayer",
+        "pass": "Image",
+        "name": "Image",
+        "type": "RGBA",
+        "engine": "CYCLES",
+        "aov": null
+      }
+    },
+    {
+      "id": "n2",
+      "kind": "mix",
+      "source": {
+        "path": [
+          "Owned Box scene probe"
+        ],
+        "node": "Mix",
+        "nodeType": "ShaderNodeMix",
+        "output": "Result_Color"
+      },
+      "type": "RGBA",
+      "properties": {
+        "blend_type": "MIX",
+        "data_type": "RGBA",
+        "factor_mode": "UNIFORM",
+        "clamp_factor": true,
+        "clamp_result": false,
+        "evaluation_device": "CPU",
+        "native_gpu_backend": "METAL",
+        "single_value_device": "CPU",
+        "color_conversion_device": "CPU"
+      },
+      "inputs": {
+        "Factor_Float": {
+          "name": "Factor",
+          "socketType": "VALUE",
+          "value": {
+            "kind": "ref",
+            "node": "n0",
+            "type": "VALUE"
+          }
+        },
+        "A_Color": {
+          "name": "A",
+          "socketType": "RGBA",
+          "value": {
+            "kind": "ref",
+            "node": "n1",
+            "type": "RGBA"
+          }
+        },
+        "B_Color": {
+          "name": "B",
+          "socketType": "RGBA",
+          "value": {
+            "kind": "constant",
+            "type": "RGBA",
+            "value": [
+              0.125,
+              0.25,
+              0.5,
+              0.75
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "passes": [
+    {
+      "scene": "Scene",
+      "viewLayer": "ViewLayer",
+      "pass": "Image",
+      "name": "Image",
+      "type": "RGBA",
+      "engine": "CYCLES",
+      "aov": null
+    }
+  ],
+  "diagnostics": [],
+  "alphaConvention": "premultiplied",
+  "colorSpace": "scene-linear",
+  "displayTransform": "separate, after authored compositor",
+  "tree": "Owned Box scene probe",
+  "output": {
+    "kind": "ref",
+    "node": "n2",
+    "type": "RGBA"
+  }
+}

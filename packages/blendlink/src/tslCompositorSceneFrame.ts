@@ -7,15 +7,18 @@ import type {SourceCompositorOperation} from './sourceDisplay.js'
 const {floor,ivec2,textureLoad,uniform,uv}=TSL as unknown as Record<string,(...args:any[])=>TslEffectNode>
 const SIZE=256,WORDS=SIZE*SIZE*4
 const refuse=(message:string):never=>{throw Error('Ellipse scene frame: '+message)}
-export interface EllipseSceneDecoderReport {model:'half-decoder-canonical-nan-v1';words:number;milliseconds:number;nominalTransientBytes:number;readbackFlipped:boolean}
+export type EllipseHalfDecoderModel='half-decoder-canonical-nan-v1'|'half-decoder-payload-sign-signaling-v1'
+export const ELLIPSE_HALF_DECODER_MODELS=Object.freeze(['half-decoder-canonical-nan-v1','half-decoder-payload-sign-signaling-v1'] as const)
+export interface EllipseSceneDecoderReport {model:EllipseHalfDecoderModel;words:number;milliseconds:number;nominalTransientBytes:number;readbackFlipped:boolean}
 export interface EllipseSceneDecoder {readonly report:Readonly<EllipseSceneDecoderReport>}
 interface Entry {backend:any;token:any;invalid:boolean;promise:Promise<EllipseSceneDecoder>;detach:()=>void;epoch:symbol;disposeHook:(...args:any[])=>unknown;cleanups:Set<()=>void>;textureManager:any;textureEpoch:any}
 const cache=new WeakMap<object,Entry>(),certificates=new WeakMap<object,Entry>()
 const now=()=>performance.now()
 /** Exact declared decode model. No host float16 conversion or NaN arithmetic. */
-export function ellipseHalfDecodedWord(raw:number):number{
+export function ellipseHalfDecodedWord(raw:number,model:EllipseHalfDecoderModel='half-decoder-canonical-nan-v1'):number{
+ if(!ELLIPSE_HALF_DECODER_MODELS.includes(model))return refuse('unknown exact HalfFloat decoder model')
  const sign=(raw&0x8000)<<16,exponent=(raw>>>10)&31,mantissa=raw&1023
- if(exponent===31)return mantissa?0x7fc00000:(sign|0x7f800000)>>>0
+ if(exponent===31)return mantissa&&model==='half-decoder-canonical-nan-v1'?0x7fc00000:(sign|0x7f800000|(mantissa<<13))>>>0
  if(exponent)return(sign|((exponent+112)<<23)|(mantissa<<13))>>>0
  if(!mantissa)return sign>>>0
  const leading=31-Math.clz32(mantissa)
@@ -92,14 +95,17 @@ async function calibrate(renderer:any,entry:Entry):Promise<EllipseSceneDecoder>{
   // Renderer state is restored synchronously, before this first GPU await.
   const data=await pending!;assertEntry(renderer,entry)
   if(!(data instanceof Float32Array)||data.length!==WORDS)return refuse('decoder calibration requires exact RGBA32F readback extent')
-  const words=new Uint32Array(data.buffer,data.byteOffset,data.length);let normal=true,flipped=true;sweep=now()
+  const words=new Uint32Array(data.buffer,data.byteOffset,data.length),candidates=ELLIPSE_HALF_DECODER_MODELS.map(model=>({model,normal:true,flipped:true}));sweep=now()
   for(let i=0;i<SIZE*SIZE;i++){
    const x=i%SIZE,y=Math.floor(i/SIZE),opposite=(SIZE-1-y)*SIZE+x
-   for(let c=0;c<4;c++){const expected=ellipseHalfDecodedWord(rawHalf(i,c));if(words[i*4+c]!==expected)normal=false;if(words[opposite*4+c]!==expected)flipped=false}
-   if(!normal&&!flipped)return refuse('unqualified HalfFloat decoder: NaN/sign/encoding words differ from the closed model')
+   for(let c=0;c<4;c++)for(const candidate of candidates){if(!candidate.normal&&!candidate.flipped)continue;const expected=ellipseHalfDecodedWord(rawHalf(i,c),candidate.model);if(words[i*4+c]!==expected)candidate.normal=false;if(words[opposite*4+c]!==expected)candidate.flipped=false}
+   if(!candidates.some(candidate=>candidate.normal||candidate.flipped))return refuse('unqualified HalfFloat decoder: NaN/sign/encoding words differ from the closed model')
    if((i&4095)===4095&&now()-sweep>4){await new Promise<void>(done=>setTimeout(done,0));assertEntry(renderer,entry);sweep=now()}
   }
-  const certificate=Object.freeze({report:Object.freeze({model:'half-decoder-canonical-nan-v1' as const,words:WORDS,milliseconds:now()-start,nominalTransientBytes:4_194_304,readbackFlipped:!normal&&flipped})})
+  const matches=candidates.filter(candidate=>candidate.normal||candidate.flipped)
+  if(matches.length!==1||matches[0]!.normal&&matches[0]!.flipped)return refuse('ambiguous exact HalfFloat decoder model/orientation')
+  const matched=matches[0]!
+  const certificate=Object.freeze({report:Object.freeze({model:matched.model,words:WORDS,milliseconds:now()-start,nominalTransientBytes:4_194_304,readbackFlipped:!matched.normal&&matched.flipped})})
   certificates.set(certificate,entry);return certificate
  }finally{close()}
 }

@@ -1,0 +1,19 @@
+{
+  "status": "DIAGNOSTIC_RASTER_OWNERSHIP_COUNTEREXAMPLE",
+  "qualificationCredit": 0,
+  "sourceArtifacts": "artifacts/verification-next14r5-vertex-alpha-union and artifacts/verification-next14r5-material-id-native (retained, machine-local)",
+  "case": "shared-owner-material-rgb",
+  "size": [96, 96],
+  "pixelBottomUp": [24, 95],
+  "world": [-0.48958333333333337, 0.9895833333333333],
+  "localX": 1.0208333333333333,
+  "oldLocalDiagonal": "y=(33/32)*x-1/16",
+  "verticalDistanceWorld": -0.0006510416666667407,
+  "verticalDistancePhysicalPixels": -0.03125,
+  "nativeAlphaRGB": 0.25146484375,
+  "softwareWebGPUAlphaRGB": 0.6652462482452393,
+  "nativeIndependentOwnerMaterialID": [0.25, 0.5, 0, 1],
+  "softwareWebGPUIndependentOwnerMaterialID": [0.25, 0.25, 0, 1],
+  "conclusion": "The independently rendered flat IDs choose the same owner but different source material triangles. This is a raster coverage ownership counterexample; no tolerance widening, output repair or new port credit follows.",
+  "retention": "Earlier r2 world-varying orientation, r3 raw-camera and r4 missing-favicon fixture failures also retain zero qualification credit."
+}

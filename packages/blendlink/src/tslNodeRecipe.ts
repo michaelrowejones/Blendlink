@@ -189,7 +189,7 @@ const hybridPerlin2d = tslFn(([position]) => tslNoise(position!))
   .setLayout({ name: 'blendlinkHybridPerlin2dV1', type: 'float', inputs: [{ name: 'position', type: 'vec2' }] })
 const hybridPerlin3d = tslFn(([position]) => tslNoise(position!))
   .setLayout({ name: 'blendlinkHybridPerlin3dV1', type: 'float', inputs: [{ name: 'position', type: 'vec3' }] })
-const tslAttribute = attribute as unknown as (name: string) => TslExpression
+const tslAttribute = attribute as unknown as (name: string, type?: string) => TslExpression
 const tslTexture = texture as unknown as (
   map: DataTexture, coordinates: TslExpression,
 ) => TslExpression
@@ -327,6 +327,8 @@ export interface BuildTslOptions {
   /** Resolve a Blender color-layer name to the exported three attribute
    * name. Without a resolver, COLOR_0's 'color' attribute applies. */
   colorAttribute?: (layer: string) => string
+  /** Raw scalar carrier, authorized only by actual primitive validation. */
+  vertexColorAlpha?: (layer: string) => string
   /** Resolve a texture_ref IR op to a loaded three texture (the runtime
    * steals the decoded texture from the generated material's GLB slot).
    * texture_ref documents refuse to build without this resolver. */
@@ -859,6 +861,13 @@ function build(expression: TslIrExpression): TslExpression {
         return lanes.x.add(lanes.y).add(lanes.z).mul(1.0 / 3.0)
       }
       return value
+    }
+    case 'vertex_color_alpha': {
+      if (expression.model !== 'eevee53-float-color-alpha-scalar-v1' || expression.sourceProfile !== 'blender53-eevee-metal-float-color-alpha-v1' || typeof expression.layer !== 'string'
+        || !activeOptions.vertexColorAlpha) return fail('Vertex Color Alpha requires an actual qualified scalar primitive binding')
+      const name = activeOptions.vertexColorAlpha(expression.layer)
+      if (!/^_scenetoweb_vcol_alpha_[0-9a-f]{16}$/.test(name)) return fail('Vertex Color Alpha scalar semantic is invalid')
+      return tslAttribute(name, 'float')
     }
     case 'vertex_color': {
       // The glTF path ships the active color attribute as COLOR_0, which

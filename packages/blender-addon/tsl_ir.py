@@ -2808,6 +2808,16 @@ def _emit_output(node, from_socket, stack=()):
         }
 
     if idname == "ShaderNodeVertexColor":
+        if socket_name == "Alpha":
+            import bpy
+            import platform as alpha_platform
+            import sys as alpha_sys
+            if (tuple(bpy.app.version) != (5, 3, 0) or bpy.app.build_hash != b'02f0899d78e3'
+                    or get_evaluation_engine() != "EEVEE" or alpha_sys.platform != 'darwin'
+                    or alpha_platform.machine() != 'arm64' or bpy.context.preferences.system.gpu_backend != 'METAL'):
+                _refuse("Vertex Color Alpha requires the pinned Blender 5.3 macOS arm64 EEVEE Metal source profile")
+            return {"op": "vertex_color_alpha", "model": "eevee53-float-color-alpha-scalar-v1",
+                    "sourceProfile": "blender53-eevee-metal-float-color-alpha-v1", "layer": str(getattr(node, "layer_name", "") or "")}
         if socket_name != "Color":
             _refuse(f"Vertex Color output {socket_name!r} has no cell yet")
         return {

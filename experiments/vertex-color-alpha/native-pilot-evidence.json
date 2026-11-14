@@ -1,0 +1,270 @@
+{
+  "status": "CLOSED_NATIVE_VERTEX_ALPHA_INTERPOLATION_RESEARCH",
+  "portCredit": 0,
+  "FinalCredit": 0,
+  "browserCredit": 0,
+  "sourceStage": "actual EEVEE material Color Attribute Alpha into Emission, native half film; independent analytical geometry reference",
+  "implementationCredit": "none: this capture does not execute the SceneToWeb Alpha transport or browser shader",
+  "sourceSha256": "c87e9768602cf9101b5817fef01e26337a32f25d07a2e566ef5bb4996f8d97e9",
+  "readerSha256": "5860e7834d376664fa29e65afa20911b2efc88c59650d7a5f7e063dbb00cbf18",
+  "nativePythonProof": {
+    "pythonInvocations": 1,
+    "finalInvocations": 0,
+    "uniqueCachePrefixes": 1,
+    "numericalCredit": 0
+  },
+  "calibration": {
+    "status": "VERTEX_ALPHA_INDEPENDENT_RAMP_CAPTURED",
+    "nativeVersion": [
+      5,
+      3,
+      0
+    ],
+    "nativeBuild": "02f0899d78e3",
+    "nativeBackend": "METAL",
+    "nativeRenderer": "Metal API",
+    "size": [
+      64,
+      64
+    ],
+    "samples": 1,
+    "filterSize": 1.5,
+    "frame": 1,
+    "camera": {
+      "type": "ORTHO",
+      "scale": 2,
+      "position": [
+        0,
+        0,
+        2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "shiftX": 0,
+      "shiftY": 0
+    },
+    "filmStorage": "native EEVEE half film; 32bit EXR container is not a full-F32 kernel oracle",
+    "independentRampMaxAbs": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "meanNativePixelOffset": [
+      0,
+      0
+    ],
+    "cameraAdjusted": false,
+    "allPixels": 4096,
+    "nodePortCredit": 0,
+    "FinalCredit": 0,
+    "browserCredit": 0
+  },
+  "predeclaredContract": {
+    "rgbAbsoluteMax": 0.0009765625,
+    "alphaOneExact": true,
+    "allPixels": true,
+    "sourceOutputRepair": false
+  },
+  "nativeCases": 6,
+  "materialPixels": 24576,
+  "materialWords": 98304,
+  "maximumAbs": 0.000479412116957012,
+  "rows": [
+    {
+      "case": "zero",
+      "domain": "POINT",
+      "alphaInputWords": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "pixels": 4096,
+      "allPixelMaxAbs": 0,
+      "seamBandPixels": 246,
+      "seamBandMaxAbs": 0,
+      "edgeBandPixels": 496,
+      "edgeBandMaxAbs": 0,
+      "violations": 0,
+      "alphaOneDiff": 0
+    },
+    {
+      "case": "tenth",
+      "domain": "POINT",
+      "alphaInputWords": [
+        1036831949,
+        1036831949,
+        1036831949,
+        1036831949
+      ],
+      "pixels": 4096,
+      "allPixelMaxAbs": 0.000024415552616133263,
+      "seamBandPixels": 246,
+      "seamBandMaxAbs": 0.000024415552616133263,
+      "edgeBandPixels": 496,
+      "edgeBandMaxAbs": 0.000024415552616133263,
+      "violations": 0,
+      "alphaOneDiff": 0
+    },
+    {
+      "case": "third",
+      "domain": "POINT",
+      "alphaInputWords": [
+        1051372203,
+        1051372203,
+        1051372203,
+        1051372203
+      ],
+      "pixels": 4096,
+      "allPixelMaxAbs": 0.00008139014244085141,
+      "seamBandPixels": 246,
+      "seamBandMaxAbs": 0.00008139014244085141,
+      "edgeBandPixels": 496,
+      "edgeBandMaxAbs": 0.00008139014244085141,
+      "violations": 0,
+      "alphaOneDiff": 0
+    },
+    {
+      "case": "one",
+      "domain": "POINT",
+      "alphaInputWords": [
+        1065353216,
+        1065353216,
+        1065353216,
+        1065353216
+      ],
+      "pixels": 4096,
+      "allPixelMaxAbs": 0,
+      "seamBandPixels": 246,
+      "seamBandMaxAbs": 0,
+      "edgeBandPixels": 496,
+      "edgeBandMaxAbs": 0,
+      "violations": 0,
+      "alphaOneDiff": 0
+    },
+    {
+      "case": "point-nonuniform",
+      "domain": "POINT",
+      "alphaInputWords": [
+        0,
+        1036831949,
+        1051372203,
+        1065353216
+      ],
+      "pixels": 4096,
+      "allPixelMaxAbs": 0.0004734876036474045,
+      "seamBandPixels": 246,
+      "seamBandMaxAbs": 0.00019236047625204034,
+      "edgeBandPixels": 496,
+      "edgeBandMaxAbs": 0.00047348737081676084,
+      "violations": 0,
+      "alphaOneDiff": 0
+    },
+    {
+      "case": "corner-seam",
+      "domain": "CORNER",
+      "alphaInputWords": [
+        0,
+        1036831949,
+        1051372203,
+        1048576000,
+        1061997773,
+        1065353216
+      ],
+      "pixels": 4096,
+      "allPixelMaxAbs": 0.000479412116957012,
+      "seamBandPixels": 246,
+      "seamBandMaxAbs": 0.0004794111856343264,
+      "edgeBandPixels": 496,
+      "edgeBandMaxAbs": 0.000479412116957012,
+      "violations": 0,
+      "alphaOneDiff": 0
+    }
+  ],
+  "artifacts": {
+    "geometry-ramp.rgba32f": {
+      "bytes": 65536,
+      "sha256": "cf7df6a5f1736e887d1425a4de47b6ae17ef66d7194200b9ef6f08713a771b12"
+    },
+    "geometry-ramp.exr": {
+      "bytes": 67280,
+      "sha256": "ef442bbaa1bac33204cd59894b193adb756df868c5fde5461ecd007021ce735f"
+    },
+    "zero.rgba32f": {
+      "bytes": 65536,
+      "sha256": "49b4d9e4c5be5d006f048cced25f9ee7110fbea226a14d511ffac8320eb4d68e"
+    },
+    "zero.exr": {
+      "bytes": 67389,
+      "sha256": "af06700f9939b3526518f19d2cef57f9c10556a10ee8db924f8398e40853e868"
+    },
+    "zero.blend": {
+      "bytes": 98897,
+      "sha256": "15fb95598780cc8693108b90010217e09c716417f184833eddfa0e44562633a0"
+    },
+    "tenth.rgba32f": {
+      "bytes": 65536,
+      "sha256": "c2c53fcc811744ed4f4683b15973096784bb02769d7b3591bdcb35588ad18b34"
+    },
+    "tenth.exr": {
+      "bytes": 67390,
+      "sha256": "a0de9301b8954c2d5d50a5fc182c723bf38dfb0da33b3ed32110c9cb24cf9354"
+    },
+    "tenth.blend": {
+      "bytes": 98846,
+      "sha256": "5ace7f9082d8b2426f132a471598342f9de2ca94c2757a5828c06ed915927ee9"
+    },
+    "third.rgba32f": {
+      "bytes": 65536,
+      "sha256": "f3dacb025bacf51b115c41606d8713f1270c6faa5a868742d74d59bf5bfc6e4c"
+    },
+    "third.exr": {
+      "bytes": 67390,
+      "sha256": "fa0a319d93d9489eff75a0d1a55924f1a45843bb582cda08beba073f5e7cc511"
+    },
+    "third.blend": {
+      "bytes": 98849,
+      "sha256": "23edc948205be37478e3300b87254f6afc077ae6317e50fac8ef6b2c3c7379e3"
+    },
+    "one.rgba32f": {
+      "bytes": 65536,
+      "sha256": "3513f7981d1ead42bde088485afbba413d675b83c061c6362634bcb044bf8613"
+    },
+    "one.exr": {
+      "bytes": 67388,
+      "sha256": "b27dc3eae9e7df1f07ca5591eff38790cc19ed198d4d7eae3e929653622ea89f"
+    },
+    "one.blend": {
+      "bytes": 98845,
+      "sha256": "54331aa5e7d114bcad96d824f547b8e92d4e14aa9b306676be9508c13381b0a5"
+    },
+    "point-nonuniform.rgba32f": {
+      "bytes": 65536,
+      "sha256": "5df2052c1fd4da9e3ab9738826e5e7ff2f8001310bdcfeda05705db3c4bdc377"
+    },
+    "point-nonuniform.exr": {
+      "bytes": 67401,
+      "sha256": "b3ac38a5cdf7e5cab4fba1000fcd98f474c5ff953f4589005d56fb70e12b2026"
+    },
+    "point-nonuniform.blend": {
+      "bytes": 98859,
+      "sha256": "cce79e5bcc8da9f7c69893d7af39917907fdac49957d4d3ea74a579d86118780"
+    },
+    "corner-seam.rgba32f": {
+      "bytes": 65536,
+      "sha256": "6e1c56cbec57bfa3a2f91296161b330c2d32ea418c7118da96f5d2192f95dfb2"
+    },
+    "corner-seam.exr": {
+      "bytes": 67396,
+      "sha256": "93587b9ee4fcb0d95fbe2713780664b49410038f0acd8a23c5b24d4b28f105f7"
+    },
+    "corner-seam.blend": {
+      "bytes": 98882,
+      "sha256": "c26d9dbe1e67eb87675b17c33f01a4eeb9efd93a13356e9689ddb8d275bcce88"
+    }
+  }
+}

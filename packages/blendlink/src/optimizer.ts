@@ -1,3 +1,4 @@
+import {captureVertexAlphaOptimization} from './vertexAlphaOptimization.js'
 import { readFileSync, renameSync, writeFileSync } from 'node:fs'
 import { createHash } from 'node:crypto'
 import {
@@ -918,6 +919,7 @@ export async function optimizeMeshopt(glbPath: string): Promise<OptimizationRepo
   const beforeIdentity = captureSemanticIdentity(document)
   const beforeExtras = captureExtrasEvidence(document)
   const beforeTexcoords = captureTexcoordEvidence(document)
+  const beforeVertexAlpha = captureVertexAlphaOptimization(document)
   const beforeAccessorMetadata = captureAccessorMetadata(document)
   const originalReferencedAccessors = listCoreReferencedAccessors(document)
   const skipped: string[] = []
@@ -1034,11 +1036,13 @@ export async function optimizeMeshopt(glbPath: string): Promise<OptimizationRepo
     )
   }
   if(nativeGeometryContext)refusePass('POSITION/NORMAL/TANGENT quantization was skipped because live geometry inputs require authored float32 surface data.')
-  const quantizedSemantics = nativeGeometryContext
+  if(beforeVertexAlpha)refusePass('POSITION quantization was skipped asset-wide for attested Vertex Color Alpha field associations (initial bounded fallback: at most 1,000,000 unique position vertices); only declared raw Alpha scalars are additionally protected from generic quantization.')
+  let quantizedSemantics = nativeGeometryContext
     ? /^(?!(?:POSITION|NORMAL|TANGENT|TEXCOORD(?:_\d+)?)$).*$/
-    : positionQuantizationRisk
+    : positionQuantizationRisk || beforeVertexAlpha
     ? /^(?!(?:POSITION|TEXCOORD(?:_\d+)?)$).*$/
     : /^(?!TEXCOORD(?:_\d+)?$).*$/
+  if(beforeVertexAlpha)quantizedSemantics=new RegExp(`^(?!(?:${beforeVertexAlpha.semantics.join('|')})$)${quantizedSemantics.source.slice(1)}`)
   if (hasPrimitiveRestart) {
     refusePass(
       'Vertex reordering and quantization were skipped because glTF-Transform does not support '
@@ -1108,6 +1112,10 @@ export async function optimizeMeshopt(glbPath: string): Promise<OptimizationRepo
   if (canonicalJson(afterTexcoords) !== canonicalJson(beforeTexcoords)) {
     throw new Error('Optimization verification changed rendered TEXCOORD values or their component format.')
   }
+  const afterVertexAlpha = captureVertexAlphaOptimization(decoded)
+  if(canonicalJson(beforeVertexAlpha?.associations??null)!==canonicalJson(afterVertexAlpha?.associations??null)
+    ||canonicalJson(beforeVertexAlpha?.semantics??null)!==canonicalJson(afterVertexAlpha?.semantics??null))
+    throw new Error('Optimization verification changed actual owner/material Vertex Color Alpha Float32 triangle associations.')
   let maxBoundsError = 0
   let boundsTolerance = 0
   const beforeScenes = beforeInspection.scenes.properties

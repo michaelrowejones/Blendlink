@@ -29,12 +29,13 @@ import bpy
 
 if __package__:
     from .bakelib_loader import bakelib
-    from . import glblib, procedural, tsl_ir
+    from . import glblib, procedural, tsl_ir, vertex_color_alpha
 else:
     import bakelib
     import glblib
     import procedural
     import tsl_ir
+    import vertex_color_alpha
 
 
 PLAN_VERSION = 1
@@ -4392,15 +4393,18 @@ def exporter_overrides(plan: MaterialPlan) -> dict:
     therefore the transport carrier; unrelated authored color layers are not.
     The finished GLB is rewritten back to ordinary ``COLOR_0`` and attested.
     """
+    alpha_attributes = any(vertex_color_alpha.layers(decision.channel_plan) for decision in plan.lowerings)
     if any(any(row.get('pass') == 'NORMAL' and row.get('route') == 'bake'
                for row in (decision.channel_plan or {}).get('channels', ())) for decision in plan.lowerings):
-        return {'export_tangents': True, **({'export_attributes': True, 'export_all_vertex_colors': False}
+        return {'export_tangents': True, **({'export_attributes': True} if alpha_attributes else {}), **({'export_attributes': True, 'export_all_vertex_colors': False}
                 if any(decision.transport == 'vertexColor' for decision in plan.lowerings) else {})}
     if any(decision.transport == "vertexColor" for decision in plan.lowerings):
         return {
             "export_attributes": True,
             "export_all_vertex_colors": False,
         }
+    if alpha_attributes:
+        return {"export_attributes": True}
     return {}
 
 
@@ -5844,6 +5848,7 @@ def _ir_runtime_needs(value, needs) -> None:
             ("radial_segment_width", "regular-full-roundness-segment-width-v1"),
             ("radial_segment_coordinates", "regular-full-roundness-segment-coordinates-webgl2-m5pro-v1"),
             ("repeat_static", "eevee-static-repeat-53-v1"),
+            ("vertex_color_alpha", "eevee53-float-color-alpha-scalar-v1"),
         ):
             needs["requiresNodeRendererPrograms"].add((op, value["model"]))
         if op == "uv_active":
@@ -5873,7 +5878,7 @@ def _ir_runtime_needs(value, needs) -> None:
             _ir_runtime_needs(item, needs)
 
 
-def _tsl_runtime_mesh_entry(decision, obj, *, source_uv_state=None):
+def _tsl_runtime_mesh_entry(decision, obj, *, source_uv_state=None, alpha_installs=None, binding=None, object_space="gltf-y-up"):
     """Mesh-level application data for the TSL IR route, or None when the
     material's channel IR needs none of it.
 
@@ -5894,7 +5899,8 @@ def _tsl_runtime_mesh_entry(decision, obj, *, source_uv_state=None):
         ir = item.get("tslIr")
         if ir:
             _ir_runtime_needs(ir, needs)
-    if not needs["uvMaps"] and not needs["usesActiveUv"] and not needs["colorLayers"] \
+    alpha_layers = vertex_color_alpha.layers(decision.channel_plan)
+    if not alpha_layers and not needs["uvMaps"] and not needs["usesActiveUv"] and not needs["colorLayers"] \
             and not needs["texspace"] and not needs["objectSpace"] \
             and not needs["objectAttributes"] and not needs["objectInfo"] \
             and not needs["requiresNodeRendererPrograms"]:
@@ -5906,6 +5912,18 @@ def _tsl_runtime_mesh_entry(decision, obj, *, source_uv_state=None):
             f'data on "{getattr(obj, "name", "?")}", which has none.'
         )
     entry = {"schemaVersion": 1}
+    if alpha_layers:
+        if alpha_installs is None or binding is None:
+            raise MaterialCompileError("Vertex Color Alpha needs compiler-owned scalar installation")
+        try:
+            carriers, proof = vertex_color_alpha.install(obj, alpha_layers, alpha_installs,
+                material=decision.material_name, slot=binding.slot_index, basis=object_space)
+        except (ValueError, RuntimeError) as error:
+            raise MaterialCompileError(str(error)) from error
+        entry["vertexColorAlpha"] = carriers
+        entry["vertexColorAlphaOpacity"] = any(item.get("channel") == "Alpha" and vertex_color_alpha.layers(item.get("tslIr"))
+            for item in (decision.channel_plan or {}).get("channels", ()))
+        entry["vertexColorAlphaProof"] = {name: [item] for name, item in proof.items()}
     if needs["requiresNodeRendererPrograms"]:
         entry["requiresNodeRenderer"] = {"schemaVersion": 1, "model": "live-material-programs-v1",
             "programs": [{"op": op, "model": model} for op, model in sorted(needs["requiresNodeRendererPrograms"])]}
@@ -5982,6 +6000,19 @@ def _tsl_runtime_mesh_entry(decision, obj, *, source_uv_state=None):
     return entry
 
 
+def _store_tsl_runtime_entry(fact, owner, entry):
+    existing = fact.setdefault("tslRuntimeMeshes", {}).get(owner)
+    if existing is not None:
+        for layer, rows in entry.get("vertexColorAlphaProof", {}).items():
+            prior = existing.setdefault("vertexColorAlphaProof", {}).setdefault(layer, [])
+            for row in rows:
+                if row not in prior: prior.append(row)
+        if existing.get("vertexColorAlpha") != entry.get("vertexColorAlpha"):
+            raise MaterialCompileError("Vertex Color Alpha binding changed between material slots")
+        return
+    fact["tslRuntimeMeshes"][owner] = entry
+
+
 def _stamp_tsl_runtime_extras(path: str, generated_facts: dict, object_space="gltf-y-up") -> None:
     """Stamp mesh-level TSL runtime extras onto every exported mesh whose
     material's channel IR needs them (uvName->TEXCOORD map, COLOR_0
@@ -6007,7 +6038,7 @@ def _stamp_tsl_runtime_extras(path: str, generated_facts: dict, object_space="gl
     for _generated_name, fact in sorted(staged.items()):
         for object_name, entry in sorted(fact["tslRuntimeMeshes"].items()):
             mesh_entry = {key: value for key, value in entry.items()
-                          if key not in {"objectInfoOwner", "objectInfoMaterial", "vectorTransformOwner"}}
+                          if key not in {"objectInfoOwner", "objectInfoMaterial", "vectorTransformOwner", "vertexColorAlphaProof", "vertexColorAlphaOpacity"}}
             if "objectSpace" in mesh_entry:
                 mesh_entry["objectSpace"] = object_space
             if entry.get("objectAttributes") or entry.get("objectInfoOwner") or entry.get("vectorTransformOwner"):
@@ -6065,6 +6096,15 @@ def _stamp_tsl_runtime_extras(path: str, generated_facts: dict, object_space="gl
                                     for item in marker["programs"]}
                         merged[key] = {"schemaVersion": 1, "model": "live-material-programs-v1",
                             "programs": [{"op": op, "model": model} for op, model in sorted(programs)]}
+                    elif key == "vertexColorAlpha":
+                        values = dict(merged[key])
+                        for layer, marker in value.items():
+                            prior = values.get(layer)
+                            if prior is not None and {k: v for k, v in prior.items() if k != "materials"} != {k: v for k, v in marker.items() if k != "materials"}:
+                                conflict = True
+                            else:
+                                values[layer] = {**marker, "materials": sorted(set(marker["materials"]) | set(prior["materials"] if prior else []))}
+                        merged[key] = values
                     elif key in {"uvChannels", "colorLayers"} and all(
                         name not in merged[key] or merged[key][name] == target
                         for name, target in value.items()
@@ -6115,6 +6155,9 @@ def _rewrite_private_color_carriers(
     }
     if not carrier_semantics:
         return
+    alpha_semantics = {binding["semantic"] for fact in generated_facts.values()
+        for entry in fact.get("tslRuntimeMeshes", {}).values()
+        for binding in entry.get("vertexColorAlpha", {}).values()}
     try:
         document, chunks, json_index = glblib.read_document(
             path, "rewrite Website Color in",
@@ -6196,7 +6239,7 @@ def _rewrite_private_color_carriers(
                 attributes.pop(semantic, None)
             if not preserve_custom_attributes:
                 for semantic in tuple(attributes):
-                    if semantic.startswith("_"):
+                    if semantic.startswith("_") and semantic not in alpha_semantics:
                         attributes.pop(semantic, None)
     leaked = sorted({
         semantic
@@ -8052,6 +8095,7 @@ def with_compiled_materials(
     created_materials = []
     created_images = []
     carrier_installs = {}
+    alpha_installs = {}
     binding_entries = []
     data_swaps = []
     frozen_normal_modifiers = []
@@ -8208,7 +8252,7 @@ def with_compiled_materials(
                 if binding_key not in installed_binding_keys:
                     installed_bindings.append(entry)
                     installed_binding_keys.add(binding_key)
-                runtime_entry = _tsl_runtime_mesh_entry(decision, obj, source_uv_state=entry["sourceUvState"])
+                runtime_entry = _tsl_runtime_mesh_entry(decision, obj, source_uv_state=entry["sourceUvState"], alpha_installs=alpha_installs, binding=binding, object_space=object_space)
                 uv_layout = {key: runtime_entry[key] for key in ("uvChannels", "activeRenderUv")
                              if runtime_entry and key in runtime_entry}
                 uv_identity = json.dumps(uv_layout, sort_keys=True, separators=(",", ":"))
@@ -8265,9 +8309,7 @@ def with_compiled_materials(
                 fact = generated_facts[generated.name]
                 fact["bindings"].add(binding_key)
                 if runtime_entry is not None:
-                    fact.setdefault("tslRuntimeMeshes", {})[
-                        binding.object_name
-                    ] = runtime_entry
+                    _store_tsl_runtime_entry(fact, binding.object_name, runtime_entry)
                 slot = obj.material_slots[binding.slot_index]
                 try:
                     slot.link = "DATA"
@@ -9004,11 +9046,9 @@ def with_compiled_materials(
                 }
             fact = generated_facts[generated.name]
             fact["bindings"].add(binding_key)
-            runtime_entry = _tsl_runtime_mesh_entry(decision, obj, source_uv_state=entry["sourceUvState"])
+            runtime_entry = _tsl_runtime_mesh_entry(decision, obj, source_uv_state=entry["sourceUvState"], alpha_installs=alpha_installs, binding=binding, object_space=object_space)
             if runtime_entry is not None:
-                fact.setdefault("tslRuntimeMeshes", {})[
-                    binding.object_name
-                ] = runtime_entry
+                _store_tsl_runtime_entry(fact, binding.object_name, runtime_entry)
             slot = obj.material_slots[binding.slot_index]
             try:
                 slot.link = "DATA"
@@ -9052,6 +9092,18 @@ def with_compiled_materials(
         _rewrite_factorized_shared_textures(staged_glb, generated_facts)
         # Runtime extras go in BEFORE attestation so the evidence hashes the
         # bytes the runtime will actually load.
+        try:
+            alpha_document, alpha_chunks, _ = glblib.read_document(staged_glb, "attest Vertex Color Alpha in")
+            alpha_binary = glblib.binary_chunk(alpha_chunks, "attest Vertex Color Alpha")
+            vertex_color_alpha.attest(alpha_document, alpha_binary, generated_facts, _accessor_values)
+            # Large source-corner records are transaction-only. Drop them
+            # before any publication/debug/evidence serializer can see facts.
+            for fact in generated_facts.values():
+                for runtime_entry in fact.get("tslRuntimeMeshes", {}).values():
+                    runtime_entry.pop("vertexColorAlphaProof", None)
+                    runtime_entry.pop("vertexColorAlphaOpacity", None)
+        except ValueError as error:
+            raise MaterialCompileError(str(error)) from error
         _stamp_tsl_runtime_extras(staged_glb, generated_facts, object_space)
         gltf_evidence = _attest_generated_materials(staged_glb, generated_facts)
         compilation = MaterialCompilation(

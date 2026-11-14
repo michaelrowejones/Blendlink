@@ -40,6 +40,7 @@ export interface TslRuntimeMeshExtras {
   uvChannels?: Record<string, number>
   activeRenderUv?: { schemaVersion: 1; model: 'source-active-render-v1'; uvMap: string; channel: number }
   colorLayers?: Record<string, string>
+  vertexColorAlpha?: Record<string, import('./tslVertexColorAlpha.js').VertexAlphaBinding>
   texspace?: { location: number[]; size: number[] }
   objectSpace?: string
   objectAttributes?: readonly string[]

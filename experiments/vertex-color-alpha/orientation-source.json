@@ -1,0 +1,13 @@
+{
+  "purpose": "Independent browser readback orientation; no port-output fitting or camera calibration",
+  "package": "three",
+  "version": "0.184.0",
+  "path": "node_modules/three/src/nodes/display/ScreenNode.js",
+  "sha256": "350ff3e72871d50fccb4d66e4b287287ac7501e49025ea02d18b631a1d4f94a6",
+  "primarySource": "https://github.com/mrdoob/three.js/blob/r184/src/nodes/display/ScreenNode.js",
+  "sourceLines": [179, 195],
+  "contract": "COORDINATE uses builder.getFragCoord; when builder.isFlipY it returns (fragCoord.x, screenSize.y-fragCoord.y) to follow WebGPU standards. screenCoordinate is therefore top-left on both APIs.",
+  "probe": "vec4(screenCoordinate.x/64, 1-screenCoordinate.y/64, 0.5, 1)",
+  "precision": "Exact dyadic fragment centers, with 4096 whole-pixel matches required in exactly one readback orientation before loading node cases.",
+  "nativeCalibration": "Actual EEVEE independent geometric position ramp remains unchanged; no source-camera shift, node arithmetic, native image, 2^-10 gate, or pixel repair changes."
+}

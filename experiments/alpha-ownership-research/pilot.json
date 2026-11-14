@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "status": "RESEARCH_ACTUAL_MATERIAL_ALPHA_OWNERSHIP_PILOT",
+  "scope": "Actual upstream Three setupDiffuseColor through real SDK clone/property installer with research-only constructor injection, public outputNode=diffuseColor. Both requested Metal APIs, source constant scalar fields .1/third and dyadic RGB controls; no native EEVEE transparency/Final qualification.",
+  "caseRuns": 64,
+  "comparedFloat32Words": 16384,
+  "wordDifferences": 0,
+  "actualApis": [
+    {
+      "api": "WebGPU",
+      "vendor": "apple",
+      "architecture": "metal-3",
+      "description": ""
+    },
+    {
+      "api": "WebGL2",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+    }
+  ],
+  "browserVersion": "158.0.8127.18",
+  "sourceHashes": {
+    "experiments/alpha-ownership-research/probe.js": "18349c7ccc182ab86d3a6a26c498a154bcbaa2f324ec8e172335372e3d31ad6f",
+    "experiments/alpha-ownership-research/owned.ts": "746d7112d6e9879f84f785f86e96cdb1d98e1418f133bc84a90596b5a765fb57",
+    "experiments/alpha-ownership-research/index.html": "c4e07c5c3978e7fe264306242b35de68c83b20959d3f9f4acc0ce4269bcc357b",
+    "experiments/alpha-ownership-research/run.mjs": "24718f10de5fbcb545c9326d5bded8d319fcce28b33d46a327dd64eb2a27ef7c",
+    "packages/blendlink/src/tslMaterialRuntime.ts": "fa8f8f5910af0679a16d9c09fb1e525415a0626ed1c6084420f3b165287f82e6",
+    "packages/blendlink/src/tslMaterialProgram.ts": "a86c7f9ae3241c140e805e6bed726504e2530f5e59a062992331326b4746d5cc",
+    "packages/blendlink/src/tslNodeRecipe.ts": "7cbee6f80be5de5e11875ae1becd97350a035aa78ed8be9c06d78cf505b175bc",
+    "packages/blendlink/src/tslVertexColorAlpha.ts": "3e6dc69952d71bace1a82e1a913ed717822a153fd6327ae046079da07c294365",
+    "packages/blendlink/src/tslIrInspection.ts": "976cdc3ae2f8a9bfde73f466b912f7acef17223288dfd6b8f61acb311750e3c7"
+  },
+  "prototype": {
+    "baseCommit": "8217052",
+    "path": "packages/blendlink/src/tslMaterialRuntime.ts",
+    "originalSha256": "9679e842b11f2ee2d68f7b401c753471d08f3ab908c8b3b4b288033a0215f7a3",
+    "transformedSha256": "fa8f8f5910af0679a16d9c09fb1e525415a0626ed1c6084420f3b165287f82e6",
+    "patch": "experiments/alpha-ownership-research/installer-factory.patch",
+    "patchSha256": "9ebbfd35e6557443751ff424b5b4875bcf5dcfe905fd6c2d381a0008ce538e17",
+    "sdkPublished": false,
+    "limits": "The SDK working copy is restored before this research commit; apply the retained 2-line constructor patch only inside an isolated replay checkout. Future production must use a private opt-in adapter, not publish this generic research factory."
+  },
+  "rawArtifacts": {
+    "machineLocal": true,
+    "ignored": true,
+    "path": "artifacts/verification-alpha-ownership-r1",
+    "reportSha256": "f9d7e4ba8064c9fd9458067f77dee719abb84941b1c287600658124a43adf84b"
+  },
+  "qualificationCredit": 0,
+  "supportCredit": 0,
+  "nativeTransparencyCredit": 0,
+  "FinalCredit": 0,
+  "limits": [
+    "Both actual APIs were measured on Apple M5 Pro Metal only; no software/profile universality.",
+    "Browser compared all words, but report retains first pixel plus exact counts rather than independent raw-pixel archives; this is a pilot, not the closed Final harness.",
+    "No authored GLB/default Final exporter or source EEVEE dither appearance comparison.",
+    "Restoration induced-failure control throws from the shared setup callback; positive cases run real superclass GPU setup."
+  ]
+}

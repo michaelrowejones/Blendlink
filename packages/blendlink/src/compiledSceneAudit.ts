@@ -210,13 +210,16 @@ export async function auditCompiledSceneArtifact(
       throw new Error('Compiled scene primitive evidence drifted while decoding.')
     mesh.listPrimitives().forEach((primitive,part)=>{
     const position=primitive.getAttribute('POSITION')?.getArray(),normal=primitive.getAttribute('NORMAL')?.getArray(),indices=primitive.getIndices()?.getArray()
-    const tangent=primitive.getAttribute('TANGENT')?.getArray(),uvs=new Map<string,Float32Array>()
+    const tangent=primitive.getAttribute('TANGENT')?.getArray(),uvs=new Map<string,Float32Array>(),vertexAlpha=new Map<string,Float32Array>()
     primitive.listSemantics().forEach(semantic=>{
       const values=primitive.getAttribute(semantic)?.getArray()
       if(/^TEXCOORD_\d+$/.test(semantic)&&values instanceof Float32Array)uvs.set(semantic,values)
+      if(/^_SCENETOWEB_VCOL_ALPHA_[0-9A-F]{16}$/.test(semantic)&&values instanceof Float32Array)vertexAlpha.set(semantic,values)
     })
+    const color=primitive.getAttribute('COLOR_0'),colorAlpha=color?.getType()==='VEC4'
+      ?Float32Array.from({length:color.getCount()},(_,i)=>color.getElement(i,[])[3]!):undefined
     geometryData.set(`${index}:${part}`,{position:position instanceof Float32Array?position:null,normal:normal instanceof Float32Array?normal:null,
-      tangent:tangent instanceof Float32Array?tangent:null,uvs,
+      tangent:tangent instanceof Float32Array?tangent:null,uvs,vertexAlpha,...(colorAlpha?{colorAlpha}:{}),
       indices:indices instanceof Uint8Array||indices instanceof Uint16Array||indices instanceof Uint32Array?indices:null})
     })
   })

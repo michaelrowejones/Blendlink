@@ -3,9 +3,9 @@
 import math
 import struct
 if __package__:
-    from .compositor_ellipse_scene_mix import ellipse_scene_mix_contract
+    from .compositor_ellipse_scene_mix import ellipse_scene_mix_contract, box_scene_mix_contract
 else:
-    from compositor_ellipse_scene_mix import ellipse_scene_mix_contract
+    from compositor_ellipse_scene_mix import ellipse_scene_mix_contract, box_scene_mix_contract
 FAMILIES = {'CompositorNodeBoxMask': ('box-mask', 'Box Mask', 2048),
             'CompositorNodeEllipseMask': ('ellipse-mask', 'Ellipse Mask', 2048)}
 SPATIAL = frozenset({'translate', 'image-affine', 'image-input', 'image-crop', 'alpha-crop',
@@ -54,9 +54,11 @@ def validate_mask_domains(result, native_class):
 def validate_mask_presentation(presentation):
     graph = presentation.get('compositor') or {};ops = graph.get('ops',[])
     masks = [op for op in ops if op.get('kind') == 'ellipse-mask']
-    if not masks:return None
+    scene_mix = ellipse_scene_mix_contract(graph) or box_scene_mix_contract(graph)
+    if not masks and scene_mix is None:return None
+    if not masks:masks=[scene_mix['mask']]
     display = presentation.get('display') or {}
     lookups = sum(op.get('type') in DISPLAY_LOOKUPS for op in display.get('ops',[]))
-    if ellipse_table_count(ops)+lookups+(1 if ellipse_scene_mix_contract(graph) else 0) > 8:
-        return masks[0],'Ellipse Mask combined row/display lookup budget is eight sampled textures'
+    if ellipse_table_count(ops)+lookups+(1 if scene_mix else 0) > 8:
+        return masks[0],'Static mask combined row/frame/display lookup budget is eight sampled textures'
     return None

@@ -1,19 +1,20 @@
 {
   "schemaVersion": 1,
   "status": "QUALIFIED_EXACT_LINEAR_ELLIPSE_SCENE_MIX",
+  "maskFamily": "ellipse",
   "savedFinalScenes": 8,
   "nativeImageOracles": 64,
   "nativeRenders": 192,
-  "browserFinalCases": 32,
-  "preDisplayWords": 37440,
-  "installedFinalLinearWords": 224640,
+  "browserFinalCases": 64,
+  "preDisplayWords": 74880,
+  "installedFinalLinearWords": 449280,
   "exactLinearWordDifferences": 0,
   "displayAudit": {
     "model": "cpu-reciprocal-f32-identity-ocio-audit-v1",
-    "wordDifferences": 11838,
+    "wordDifferences": 12690,
     "maxUlps": 8388608,
-    "maxUnclampedAbsoluteError": 7.450580596923828e-9,
-    "maxClampedAbsoluteError": 7.450580596923828e-9,
+    "maxUnclampedAbsoluteError": 1.4901161193847656e-8,
+    "maxClampedAbsoluteError": 1.4901161193847656e-8,
     "projectionLimit": 0.00003,
     "alphaWordDifferences": 0,
     "zeroWordDifferences": 10530,
@@ -135,12 +136,12 @@
     "bitExactDisplayClaim": false,
     "zeroBitExactClaim": false
   },
-  "lifecycleCycles": 96,
+  "lifecycleCycles": 192,
   "uniqueActualPythonPrefixes": 10,
-  "scope": "One direct current-scene/view-layer Image or Alpha, one binary CPU ADD Ellipse0/1, one modern RGBA/MIX with raw +0/positive normal≤1 background. Calibrated actual HalfFloat RGBA MSAA0 physical frame, no other registered effects; frame+row+display sampler budget8. Exact linear composition in the actual installed Final compositor; Raw display audited separately using the existing clamped3e-5 OCIO/PNG projection gate with exact alpha/zero/nonfinite classes, no bit-exact Final display claim. Actual same-Three-frame composition only; no Three PBR versus Cycles, demo acceptance or other node/platform credit.",
+  "scope": "One direct current-scene/view-layer Image or Alpha, one binary CPU ADD ellipse0/1, one modern RGBA/MIX with raw +0/positive normal≤1 background. Calibrated actual HalfFloat RGBA MSAA0 physical frame, no other registered effects; frame+row+display sampler budget8. Exact linear composition in the actual installed Final compositor; Raw display audited separately using the existing clamped3e-5 OCIO/PNG projection gate with exact alpha/nonfinite classes, no bit-exact Final display claim. Actual same-Three-frame composition only; no Three PBR versus Cycles, demo acceptance or other node/platform credit.",
   "closedReader": {
-    "runtimeFingerprint": "2e72581650184e9702bb19f1fbe96157c25157bc39e8d76db366bae0df083c5d",
-    "verifierSha256": "4bdf584479b6536e16b350db13fab2553a26a556800b2fe616bc0648cb41b584"
+    "runtimeFingerprint": "1e502a811b254d42d5ad2ee9b2e98554b52eecc6257f0679a341dbf9418455f4",
+    "verifierSha256": "914982a6d8925ca0e39f8e50d73f0e94fb9888beae90db9d7528f351a95d1d59"
   },
   "sourceArchive": {
     "pythonInvocations": 9,
@@ -158,8 +159,8 @@
     {
       "phase": "baseline",
       "profile": "metal",
-      "path": "artifacts/verification-next11r5-scene-mix/cpu/browser-baseline-metal/report.json",
-      "sha256": "4828cd2eb08b39f34815bcc252f955166e7ff33b7bdc7ddd1bd7063ffa985d8d",
+      "path": "artifacts/verification-next13-ellipse-scene/browser-baseline-metal/report.json",
+      "sha256": "dd979df03b3acd4bde829e602dd1a6365387c7bc7794bd2afa38b0db80d517a8",
       "browserVersion": "158.0.8127.18",
       "apis": [
         {
@@ -186,8 +187,8 @@
     {
       "phase": "compare",
       "profile": "metal",
-      "path": "artifacts/verification-next11r5-scene-mix/cpu/browser-compare-metal/report.json",
-      "sha256": "bbfbbdb9412c4468b1313818c05e877c7719f8365c1b3db3925677dae8935622",
+      "path": "artifacts/verification-next13-ellipse-scene/browser-compare-metal/report.json",
+      "sha256": "0381a93465e16caf6789c3630f40f21d700b6ea9cf4f76abe51baa8ac508dcb4",
       "browserVersion": "158.0.8127.18",
       "apis": [
         {
@@ -214,8 +215,8 @@
     {
       "phase": "baseline",
       "profile": "software",
-      "path": "artifacts/verification-next11r5-scene-mix/cpu/browser-baseline-software/report.json",
-      "sha256": "a54c7f3468346c7ee30169298ac63b800e23a4d7251e96d44aa465faaa9cd73e",
+      "path": "artifacts/verification-next13-ellipse-scene/browser-baseline-software/report.json",
+      "sha256": "8a90ead7aea674ac7005d21f828294175867796170d9a366abb23069d57a1ec9",
       "browserVersion": "158.0.8127.18",
       "apis": [
         {
@@ -242,57 +243,35 @@
     {
       "phase": "compare",
       "profile": "software",
-      "path": "artifacts/verification-next11r5-scene-mix/cpu/browser-compare-software/report.json",
-      "sha256": "90d5aef0962ee9a2a1d87a861cf24e90dfca2450436d956bab758527306c8114",
+      "path": "artifacts/verification-next13-ellipse-scene/browser-compare-software/report.json",
+      "sha256": "3c2a56e8c83be9c6dd5ef1d6434e4b5e996c51d980decaee761f4e0bc2213b78",
       "browserVersion": "158.0.8127.18",
-      "apis": []
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 16
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 16
+        }
+      ]
     }
   ],
-  "softwareAdmission": {
-    "path": "artifacts/verification-next11r5-scene-mix/cpu/software-admission/report.json",
-    "sha256": "b01a60895b4a47c01c0fe2d2b274542f436155070e65a9486b7e28580e8ee268",
-    "tuples": [
-      {
-        "backend": "webgpu",
-        "admitted": false,
-        "gpu": {
-          "api": "WebGPU",
-          "vendor": "google",
-          "architecture": "swiftshader",
-          "device": "",
-          "description": ""
-        },
-        "error": "Error: Ellipse scene frame: unqualified HalfFloat decoder: NaN/sign/encoding words differ from the closed model",
-        "witness": {
-          "index": 0,
-          "rawHalf": 31745,
-          "expectedDecodedF32": 2143289344,
-          "actualDecodedF32": 2139103232
-        },
-        "numericalCases": 0
-      },
-      {
-        "backend": "webgl2",
-        "admitted": false,
-        "gpu": {
-          "api": "WebGL2",
-          "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
-        },
-        "error": "Error: Ellipse scene frame: unqualified HalfFloat decoder: NaN/sign/encoding words differ from the closed model",
-        "witness": {
-          "index": 0,
-          "rawHalf": 31745,
-          "expectedDecodedF32": 2143289344,
-          "actualDecodedF32": 2139103232
-        },
-        "numericalCases": 0
-      }
-    ],
-    "scope": "Named-refused tuples receive zero numerical or support credit; original failed software report remains unchanged."
-  },
   "rawArtifacts": {
     "machineLocal": true,
-    "path": "artifacts/verification-next11r5-scene-mix/cpu"
+    "path": "artifacts/verification-next13-ellipse-scene"
   },
   "supportCredit": 0
 }

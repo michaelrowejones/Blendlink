@@ -1,0 +1,22 @@
+{
+  "status": "RETAINED_BOX_SCENE_FEASIBILITY_OBSERVATIONS",
+  "researchOnly": true,
+  "numericalQualification": false,
+  "supportCredit": 0,
+  "finalCredit": 0,
+  "nativeRenders": 16,
+  "sourceGraphs": 4,
+  "guardedPythonInvocations": 2,
+  "gpuInitializationCalls": 0,
+  "closure": {
+    "path": "artifacts/verification-box-scene-scheduling-v1/closed.json",
+    "sha256": "da1f28e9155e7683ecfa462b8e3bea483f9f022d893000f16765d55c85711365"
+  },
+  "observedDimensions": [
+    13,
+    9,
+    0,
+    1
+  ],
+  "scope": "Box field/domain scheduling and existing generic partial admission only; no new exact scene-composition claim."
+}

@@ -176,3 +176,25 @@ This mode requires content-pinned full native catalogs and unchanged reviewed
 baselines. It rejects modified or focused catalogs, retains the native inventory
 audit date, and records a separate classification timestamp. It performs no
 native rediscovery and grants no numerical qualification by itself.
+
+## Field-port fixture preflight
+
+Separate source-to-runtime data transport, node evaluation, material channel
+ownership and display projection contracts before recording pixels. An exact
+Float32 carrier does not imply bit-exact native half-film output or native
+transparency/BSDF equivalence. Test the actual optimizer and actual installed
+material/pipeline, including shared owners and material splits.
+
+Before a full capture, verify independent readback orientation, actual exported
+camera presence and all HTTP assets. Use a data favicon rather than ignoring
+console errors. For discontinuous fields, declare sample-to-edge clearance
+independently of observed Alpha/color values; preserve all pixel and seam-band
+comparisons. A flat material/owner ID draw can distinguish raster ownership
+from node arithmetic without fitting the node's output.
+
+Reuse valid native/Final inputs only while their complete pinned input census
+remains unchanged. Browser-only diagnostics must use fresh output namespaces,
+retain failed artifacts and have no qualification pass status or numerical
+credit. Shared assembly/status preflight runs before Blender starts. Keep
+unrelated IR payload admission and named refusal diagnostics unchanged when
+adding new graph scans or source-family markers.

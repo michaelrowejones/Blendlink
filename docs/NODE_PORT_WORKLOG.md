@@ -1090,3 +1090,67 @@ patched to pass. The closed evidence is checked in separately at
 append this workflow only to Ellipse and modern compositor Mix; old categories,
 versions, standalone counts and receipts are preserved. All-node porting is
 still unfinished.
+
+### Portable exact scene masks and Vertex Color Alpha, 2026-11-14
+
+The source-preserving full scene-mask transactions close at
+`artifacts/verification-next13-ellipse-scene/qualified.json` and
+`artifacts/verification-next13-box-scene/qualified.json`. Ellipse records 64
+browser Final cases, 74,880 direct and 449,280 actual-installed linear words;
+Box records 104 cases, 121,680 direct and 730,080 installed linear words. All
+linear words match exactly across actual Metal/SwiftShader WebGPU/WebGL2. Box
+adds no row texture and reserves one frame plus at most seven display lookups.
+Zero-size Box remains a full-frame field. Existing generic Box graphs retain
+their older partial contracts; malformed explicit exact markers refuse.
+
+SwiftShader is admitted by a second complete decoder model after independent
+research replayed 9,437,184 native CPU/browser words, including 294,624 quieted
+NaN payload words, with zero differences. The model preserves sign, fraction
+and signaling/quiet bit in Half-to-Float decoding. Calibration matches one
+whole table and orientation; mixed/unknown mappings still refuse. The old
+canonical-only Metal receipt and both historical software refusals are retained
+verbatim. No binary arithmetic kernel changed. Source snapshots in these
+receipts precede the later malformed-spatial diagnostic correction; they are
+not a claim that all ports were refreshed at the current checkout.
+
+Vertex Color Alpha closes at
+`artifacts/verification-next14r6-vertex-alpha-union/qualified.json`: eight
+source graphs, 24 EEVEE gold frames, eight unchanged saved Final sources, 64
+raw/Final browser cases, 1,048,576 primary words, 192 resize frames and 192
+installation/disposal cycles, across both APIs on Metal and SwiftShader. Raw
+Float32 source-to-scalar transport and indexed source-corner associations are
+exact. Field RGB uses the predeclared 2^-10 absolute gate against actual native
+EEVEE half-film output: maximum error 0.00048828125, zero violations, exact
+alpha-one output. Its 574,488 differing RGB words are explicitly reported, not
+called bit-exact field output. Ten actual Python prefixes closed.
+
+The new private scalar survives authored normal Meshopt optimization. Actual
+decoded post-optimization owner/material/corner digests must match the source.
+Only declared Alpha semantics bypass generic quantization; POSITION protection
+is an explicit asset-wide fallback with a one-million unique-position budget
+and three-million checked-corner budget. Ordinary normal, color and UV policies
+are preserved. Per-draw validation checks immutable attribute/index/schema
+versions and empty primitive groups in constant time. Large unrelated IR
+payloads do not acquire new traversal-budget refusals.
+
+Initial scope is static FLOAT_COLOR POINT/CORNER on the pinned Blender 5.3
+macOS-arm64 EEVEE Metal source profile. BYTE_COLOR, deformation, instances,
+clocks, source signed zero/subnormals/HDR and ambiguous coincident triangles
+remain unqualified. Explicit Alpha programs with non-unit or unknown physical
+COLOR_0 alpha refuse before publication/mutation, avoiding double opacity.
+The default exporter's fake white COLOR_0 has exact unit alpha and is safe.
+The scoped ownership adapter remains a separate research/implementation lane.
+
+Retained Alpha failures distinguish fixture problems from numerical ports:
+an interpolated world-position orientation control was replaced by an exact
+fragment-coordinate control; raw stock selection now includes the authored
+camera; favicon/HTTP requests remain checked; and a SwiftShader seam sample
+selected a different source material than native EEVEE. Independent flat
+owner/material ID draws proved the latter before any Alpha evaluation. The
+new dyadic rectangle guarantees at least half a physical pixel of seam
+clearance for every tested size/owner, with unchanged Alpha inputs, camera,
+all-pixel/edge/seam gates and no repaired outputs. Arbitrary cross-engine edge
+coverage is not credited. Browser-only diagnostics use a separate fresh
+namespace and cannot publish a qualification pass token; original failures
+and references remain intact. Shared parsed preflight now includes both
+Euler and Alpha schemas and rejects status drift before native startup.
