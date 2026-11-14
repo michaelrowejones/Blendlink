@@ -68,7 +68,16 @@ for bits in [0x7f800000,0xff800000,0x7fc12345]:
 for axis in range(3):
     node,vector,value=base();words=[word(.1),word(.2),word(.3)];words[axis]=1
     vector.inputs.foreach_set('default_value',raw(words));check('combine-subnormal-'+str(axis),False)
-node,vector,value=base();tree.links.remove(node.inputs['Vector'].links[0]);check('implicit-coordinates',False)
+# Default fields have their own numerical qualification. This fixed family
+# checks only source-route separation and grants zero field numeric credit.
+node,vector,value=base();tree.links.remove(node.inputs['Vector'].links[0]);before=ownership();field_program=compositor_graph.extract(scene);assert ownership()==before
+assert field_program['status']=='extracted',field_program
+field_op=next(op for op in field_program['ops']if op['kind']=='white-noise-texture')
+field_properties=field_op['properties'];assert 'Vector'not in field_op['inputs']
+default_field_controls=[{'case':'implicit-default-field-model','status':field_program['status'],
+    'model':field_properties['white_noise_model'],'profile':field_properties['white_noise_profile'],
+    'coordinateModel':field_properties['white_noise_coordinate_model'],'dimension':field_properties['noise_dimensions'],
+    'authoredInputs':list(field_op['inputs']), 'isField':field_properties['white_noise_model']=='native-compositor-white-noise-uniform-cpu-53-v1', 'fieldNumericCredit':0}]
 node,vector,value=base('1D');node.inputs['W'].keyframe_insert(data_path='default_value',frame=1);check('animated-source',False)
 node,vector,value=base('1D');computed=tree.nodes.new('ShaderNodeMath');tree.links.new(computed.outputs[0],node.inputs['W']);check('computed-source',False)
 node,vector,value=base('1D');tree.links.new(vector.outputs[0],node.inputs['W']);check('implicit-vector-cast',False)
@@ -134,5 +143,5 @@ for name,patch in [('unknown-default',{'default_input':'UNKNOWN'}),('unknown-str
 for _ in range(18):
     previous=noise.inputs['Vector'].links[0].from_socket;reroute=group.nodes.new('NodeReroute');group.links.new(previous,reroute.inputs[0]);group.links.new(reroute.outputs[0],noise.inputs['Vector'])
 check('source-depth-budget',False)
-packet={'positiveControls':positives,'namedRefusals':refusals,'interfaceDefaultControls':interface_controls,'renders':0,'portCredit':0}
+packet={'positiveControls':positives,'namedRefusals':refusals,'interfaceDefaultControls':interface_controls,'defaultFieldControls':default_field_controls,'renders':0,'portCredit':0}
 print('BLENDLINK_COMPOSITOR_WHITE_NOISE_POLICY_PASSED '+json.dumps(packet))

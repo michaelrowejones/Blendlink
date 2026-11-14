@@ -730,11 +730,7 @@ function resolveAuthoringPreview(
  * Environment keeps the existing64x32 equirectangular source/IBL path. The
  * visible background is an owned uniform data cube, avoiding an unnecessary
  * equirectangular conversion and its renderer-owned depth attachments. */
-function installAuthoringPreviewWorld(
-  scene: THREE.Scene,
-  world: ResolvedAuthoringPreviewWorld | null,
-): InstalledAuthoringPreviewWorld {
-  if (!world) return { dispose() {} }
+function createAuthoringPreviewWorldTexture(world: ResolvedAuthoringPreviewWorld): THREE.DataTexture {
   if (!Number.isFinite(world.strength) || world.strength < 0
       || world.color.some((channel) => !Number.isFinite(channel) || channel < 0)) {
     throw new Error(
@@ -742,11 +738,6 @@ function installAuthoringPreviewWorld(
     )
   }
 
-  const previousBackground = scene.background
-  const previousEnvironment = scene.environment
-  const previousBackgroundIntensity = scene.backgroundIntensity
-  const previousEnvironmentIntensity = scene.environmentIntensity
-  const previousBackgroundBlurriness = scene.backgroundBlurriness
   const width = 64
   const height = 32
   const data = new Float32Array(width * height * 4)
@@ -774,14 +765,43 @@ function installAuthoringPreviewWorld(
   texture.generateMipmaps = false
   texture.needsUpdate = true
 
+  return texture
+}
+
+function installAuthoringPreviewWorld(
+  scene: THREE.Scene,
+  world: ResolvedAuthoringPreviewWorld | null,
+  lighting?: PreparedAuthoringPreviewLighting,
+  colorBackground = false,
+): InstalledAuthoringPreviewWorld {
+  if (!world) return { dispose() {} }
+  const texture = createAuthoringPreviewWorldTexture(world)
+  const data = texture.image.data as Float32Array
+  const environmentTexture = lighting?.texture ?? texture
+  if (world.useLighting && !lighting) {
+    texture.dispose()
+    throw new Error('Preview World lighting requires its prepared owned PMREM.')
+  }
+  const previousBackground = scene.background
+  const previousEnvironment = scene.environment
+  const previousBackgroundIntensity = scene.backgroundIntensity
+  const previousEnvironmentIntensity = scene.environmentIntensity
+  const previousBackgroundBlurriness = scene.backgroundBlurriness
+
   // Public Three uploaders support DataTexture cube faces on both backends.
   // The six logical texels share the existing source buffer, not six new
   // arrays. Background direction/blur cannot change uniform radiance.
   const backgroundPixel = data.subarray(0, 4)
-  const faces = world.useBackground ? Array.from({ length: 6 }, () =>
+  const faces = world.useBackground && !colorBackground ? Array.from({ length: 6 }, () =>
     new THREE.DataTexture(backgroundPixel, 1, 1, THREE.RGBAFormat, THREE.FloatType)) : []
-  const background = world.useBackground ? new THREE.CubeTexture(faces) : null
-  if (background) {
+  // A uniform source has the same F32 radiance as a clear-color background.
+  // Node renderer textured backgrounds create per-scene geometry whose source
+  // disposal is not forwarded by pinned Three. Classic rendering retains its
+  // established cube path; lighting still uses the exact original PMREM input.
+  const background = world.useBackground
+    ? colorBackground ? new THREE.Color().fromArray(backgroundPixel) : new THREE.CubeTexture(faces)
+    : null
+  if (background instanceof THREE.CubeTexture) {
     background.name = 'SceneToWeb Preview World Background'
     background.type = THREE.FloatType
     background.format = THREE.RGBAFormat
@@ -806,7 +826,7 @@ function installAuthoringPreviewWorld(
       scene.backgroundBlurriness = 0
     }
     if (world.useLighting) {
-      scene.environment = texture
+      scene.environment = environmentTexture
       scene.environmentIntensity = 1
     }
   } catch (error) {
@@ -819,13 +839,13 @@ function installAuthoringPreviewWorld(
     if (world.useBackground && scene.backgroundBlurriness === 0) {
       scene.backgroundBlurriness = previousBackgroundBlurriness
     }
-    if (world.useLighting && scene.environment === texture) {
+    if (world.useLighting && scene.environment === environmentTexture) {
       scene.environment = previousEnvironment
     }
     if (world.useLighting && scene.environmentIntensity === 1) {
       scene.environmentIntensity = previousEnvironmentIntensity
     }
-    background?.dispose()
+    if (background instanceof THREE.CubeTexture) background.dispose()
     texture.dispose()
     throw error
   }
@@ -842,7 +862,7 @@ function installAuthoringPreviewWorld(
         && scene.backgroundIntensity === 1
         && scene.backgroundBlurriness === 0
       const ownsEnvironment = world.useLighting
-        && scene.environment === texture
+        && scene.environment === environmentTexture
         && scene.environmentIntensity === 1
       if (ownsBackground) {
         scene.background = previousBackground
@@ -853,8 +873,9 @@ function installAuthoringPreviewWorld(
         scene.environment = previousEnvironment
         scene.environmentIntensity = previousEnvironmentIntensity
       }
-      if (background && scene.background !== background && scene.environment !== background) background.dispose()
+      if (background instanceof THREE.CubeTexture && scene.background !== background && scene.environment !== background) background.dispose()
       if (scene.background !== texture && scene.environment !== texture) texture.dispose()
+      if (lighting && (scene.environment === lighting.texture || scene.background === lighting.texture)) lighting.adopted()
     },
   }
 }
@@ -989,7 +1010,7 @@ function authoringPreviewShadowRoot(
 
 interface PmremGeneratorLike {
   compileEquirectangularShader(): unknown
-  fromEquirectangular(texture: THREE.Texture): { texture: THREE.Texture; dispose(): void }
+  fromEquirectangular(texture: THREE.Texture, destination?: THREE.RenderTarget): { texture: THREE.Texture; dispose(): void }
   dispose(): void
 }
 
@@ -1005,6 +1026,262 @@ async function createPmremGenerator(
     ) as unknown as PmremGeneratorLike
   }
   return new THREE.PMREMGenerator(renderer) as unknown as PmremGeneratorLike
+}
+
+interface PreparedAuthoringPreviewLighting {
+  texture: THREE.Texture
+  adopted(): void
+  dispose(): void
+}
+
+/** The common renderer initializes scratch for a supplied destination. The
+ * pinned classic generator only initializes scratch when it allocates output;
+ * observe that private-source operation's FIRST public bind before upload. */
+function generateAuthoringPreviewPmrem(
+  renderer: CompiledSceneRendererOption,
+  generator: PmremGeneratorLike,
+  source: THREE.DataTexture,
+  remember: (target: ReturnType<PmremGeneratorLike['fromEquirectangular']>) => void,
+): ReturnType<PmremGeneratorLike['fromEquirectangular']> {
+  const view = legacyRendererView(renderer)
+  const original = view.setRenderTarget
+  const descriptor = Object.getOwnPropertyDescriptor(view, 'setRenderTarget')
+  const previous = view.getRenderTarget?.() ?? null
+  const face = view.getActiveCubeFace?.() ?? 0, mip = view.getActiveMipmapLevel?.() ?? 0
+  const viewport = view.getViewport?.(new THREE.Vector4())
+  const scissor = view.getScissor?.(new THREE.Vector4()), scissorTest = view.getScissorTest?.()
+  const xr = view.xr?.enabled, autoClear = view.autoClear
+  const nodeRenderer = !!(renderer as { isWebGPURenderer?: boolean }).isWebGPURenderer
+  let output: THREE.RenderTarget | undefined
+  let observer: THREE.WebGLRenderer['setRenderTarget'] | undefined
+  const validOutput = (target: THREE.RenderTarget): boolean => target !== previous
+    && target?.isRenderTarget === true && target.width === 336 && target.height === 64
+    && target.texture.mapping === THREE.CubeUVReflectionMapping
+    && target.texture.name === 'PMREM.cubeUv' && target.texture.type === THREE.HalfFloatType
+    && target.texture.format === THREE.RGBAFormat && target.texture.colorSpace === THREE.LinearSRGBColorSpace
+    && target.texture.minFilter === THREE.LinearFilter && target.texture.magFilter === THREE.LinearFilter
+    && target.texture.generateMipmaps === false
+  try {
+    if (nodeRenderer) {
+      output = new THREE.RenderTarget(336, 64, { magFilter: THREE.LinearFilter, minFilter: THREE.LinearFilter,
+        generateMipmaps: false, type: THREE.HalfFloatType, format: THREE.RGBAFormat,
+        colorSpace: THREE.LinearSRGBColorSpace })
+      output.texture.mapping = THREE.CubeUVReflectionMapping
+      output.texture.name = 'PMREM.cubeUv'
+      ;(output.texture as THREE.Texture & { isPMREMTexture: boolean }).isPMREMTexture = true
+      output.scissorTest = true
+      remember(output)
+    } else {
+      observer = function(this: THREE.WebGLRenderer, target: THREE.WebGLRenderTarget | null,
+        activeFace?: number, activeMip?: number): void {
+        if (!output && target !== null && target !== previous) {
+          if (!validOutput(target)) throw new Error('Preview World PMREM generated an unexpected output target.')
+          output = target
+          remember(output)
+        }
+        original.call(this, target, activeFace, activeMip)
+      }
+      Object.defineProperty(view, 'setRenderTarget', { value: observer,
+        configurable: descriptor?.configurable ?? true, writable: true,
+        enumerable: descriptor?.enumerable ?? true })
+    }
+    const result = generator.fromEquirectangular(source, nodeRenderer ? output : undefined)
+    if (!output || result !== output) throw new Error('Preview World PMREM returned a different output target.')
+    return result
+  } finally {
+    if (observer && view.setRenderTarget === observer) {
+      if (descriptor) Object.defineProperty(view, 'setRenderTarget', descriptor)
+      else delete (view as unknown as { setRenderTarget?: unknown }).setRenderTarget
+    }
+    // Common getViewport drops its WebGPU depth range. PMREM never touches
+    // that canvas viewport, so do not reset it or silently replace its depths.
+    if (!nodeRenderer && viewport) view.setViewport(viewport)
+    if (!nodeRenderer && scissor) view.setScissor(scissor)
+    if (!nodeRenderer && scissorTest !== undefined) view.setScissorTest(scissorTest)
+    if (view.xr && xr !== undefined) view.xr.enabled = xr
+    view.autoClear = autoClear
+    original?.call(view, previous, face, mip)
+  }
+}
+
+/** A ready target can outlive renderer.dispose while asynchronous detached
+ * compilation settles. Retain only its original allocations, never a later
+ * renderer's records or replacement handles. */
+function readyPmremDisposer(
+  renderer: CompiledSceneRendererOption,
+  target: ReturnType<PmremGeneratorLike['fromEquirectangular']>,
+): () => void {
+  const view = renderer as unknown as { backend?: any; _textures?: any }
+  let backend = view.backend, manager = view._textures
+  if (!manager?.data || !(backend?.isWebGPUBackend || backend?.isWebGLBackend)) return () => target.dispose()
+  let epoch = manager.data, targetRecord = epoch.get(target)
+  if (!targetRecord?.initialized) throw new Error('Ready Preview World PMREM allocation is unavailable.')
+  const colors = [...targetRecord.textures], depth = targetRecord.depthTexture
+  if (colors.length !== 1 || colors[0] !== target.texture) throw new Error('Ready Preview World PMREM attachments changed.')
+  const textures = [...colors, ...(depth ? [depth] : [])]
+  const recordFor = (object: object): any => backend.has(object) ? backend.get(object) : undefined
+  const attachments = textures.map(texture => {
+    const record = epoch.get(texture), physical = recordFor(texture)
+    const key = backend.isWebGPUBackend ? 'texture' : 'textureGPU', handle = physical?.[key]
+    if (!record?.initialized || record.isDefaultTexture === true || !handle) throw new Error('Ready Preview World PMREM attachment is not an owned allocation.')
+    return { texture, record, physical, handles: [[key, handle], ...(physical.msaaTexture ? [['msaaTexture', physical.msaaTexture]] : [])] }
+ })
+  let token = backend.isWebGPUBackend ? backend.device : backend.gl
+  let targetPhysical = recordFor(target)
+  const auxiliary: Array<{ owner: any; key: string; handle: any; kind: 'framebuffer' | 'renderbuffer' }> = []
+  if (backend.isWebGLBackend && targetPhysical) {
+    for (const key of Object.keys(targetPhysical.framebuffers ?? {})) auxiliary.push({owner:targetPhysical.framebuffers,key,handle:targetPhysical.framebuffers[key],kind:'framebuffer'})
+    for (const key of ['msaaFrameBuffer','depthRenderbuffer','stencilRenderbuffer']) if (targetPhysical[key]) auxiliary.push({owner:targetPhysical,key,handle:targetPhysical[key],kind:key==='msaaFrameBuffer'?'framebuffer':'renderbuffer'})
+    for (const key of Object.keys(targetPhysical.msaaRenderbuffers ?? [])) auxiliary.push({owner:targetPhysical.msaaRenderbuffers,key,handle:targetPhysical.msaaRenderbuffers[key],kind:'renderbuffer'})
+  }
+  let originalAuxiliary: any = targetPhysical ? { framebuffers: targetPhysical.framebuffers,
+    framebufferKeys: Object.keys(targetPhysical.framebuffers ?? {}), msaaRenderbuffers: targetPhysical.msaaRenderbuffers,
+    msaaKeys: Object.keys(targetPhysical.msaaRenderbuffers ?? []) } : undefined
+  // Transfer the result color's public dispose to our complete-target owner.
+  // Three registered its texture listener during generation, before our owner
+  // listener. Leaving it installed would destroy a borrowed replacement before
+  // the owner can check allocation identity. Target disposal still calls
+  // manager._destroyTexture directly for the normal intact allocation path.
+  const color = attachments.find(entry => entry.texture === target.texture)!
+  color.texture.removeEventListener('dispose',color.record.onDispose)
+  let disposed = false
+  return () => {
+    if (disposed) return
+    disposed = true
+    const samePhysical = (entry: typeof attachments[number]): boolean => {
+      const physical = recordFor(entry.texture)
+      return physical === entry.physical && entry.handles.every(([key,handle]) => physical?.[key] === handle)
+    }
+    const auxiliaryConsumed = backend.isWebGLBackend && attachments.some(entry => !epoch.has(entry.texture))
+    const emptyAuxiliary = !targetPhysical || !Object.keys(targetPhysical.framebuffers ?? {}).length
+      && !targetPhysical.msaaFrameBuffer && !targetPhysical.depthRenderbuffer && !targetPhysical.stencilRenderbuffer
+      && !Object.keys(targetPhysical.msaaRenderbuffers ?? []).length
+    const sameTargetPhysical = recordFor(target) === targetPhysical
+      && (auxiliaryConsumed && emptyAuxiliary || !originalAuxiliary || targetPhysical.framebuffers === originalAuxiliary.framebuffers
+        && targetPhysical.msaaRenderbuffers === originalAuxiliary.msaaRenderbuffers
+        && Object.keys(targetPhysical.framebuffers ?? {}).join('|') === originalAuxiliary.framebufferKeys.join('|')
+        && Object.keys(targetPhysical.msaaRenderbuffers ?? []).join('|') === originalAuxiliary.msaaKeys.join('|')
+        && auxiliary.every(slot => slot.owner[slot.key] === slot.handle))
+    const originalInputs = targetRecord.textures.length === colors.length && targetRecord.textures.every((t: unknown,i:number)=>t===colors[i]) && targetRecord.depthTexture === depth
+    const tokenUnchanged = (backend.isWebGPUBackend ? backend.device : backend.gl) === token
+    const delegated = manager.data === epoch && epoch.get(target) === targetRecord && originalInputs
+      && sameTargetPhysical && tokenUnchanged && attachments.every(entry => !epoch.has(entry.texture) || epoch.get(entry.texture) === entry.record && samePhysical(entry))
+      && typeof targetRecord.onDispose === 'function' && (target as THREE.RenderTarget).hasEventListener('dispose',targetRecord.onDispose)
+    if (!delegated) {
+      ;(target as THREE.RenderTarget).removeEventListener('dispose',targetRecord.onDispose)
+      for (const entry of attachments) entry.texture.removeEventListener('dispose',entry.record.onDispose)
+    }
+    // Avoid notifying a later target owner: its listener may point at borrowed
+    // replacement records. A reset with no replacement can still emit normal
+    // public target disposal after our original listener is detached.
+    const notify = delegated || sameTargetPhysical && attachments.every(entry => {
+      const current = manager.data.get(entry.texture)
+      return (!current || current === entry.record) && (!recordFor(entry.texture) || samePhysical(entry))
+    }) && (!manager.data.get(target) || manager.data.get(target) === targetRecord)
+    try { if (notify) target.dispose() } finally {
+     try {
+      const targetConsumed = !epoch.has(target)
+      for (const entry of attachments) {
+        // The retained old WeakMap proves normal cleanup already ran even if a
+        // later listener reset manager.data after physically destroying it.
+        if (!epoch.has(entry.texture)) continue
+        for (const [key,handle] of entry.handles) {
+          if (backend.isWebGPUBackend) handle.destroy()
+          else token.deleteTexture(handle)
+          if (entry.physical[key] === handle) delete entry.physical[key]
+        }
+        const current = recordFor(entry.texture)
+        if (current === entry.physical && !current.texture && !current.textureGPU && !current.msaaTexture) backend.delete(entry.texture)
+        entry.texture.removeEventListener('dispose',entry.record.onDispose)
+        if (epoch.get(entry.texture) === entry.record) {
+          if (manager.data === epoch && entry.record.initialized && manager.info.memory.textures > 0) manager.info.destroyTexture(entry.texture)
+          epoch.delete(entry.texture)
+        }
+      }
+      if (!targetConsumed) {
+        const released = new Set<any>()
+        for (const slot of auxiliaryConsumed ? [] : auxiliary) {
+          if (released.has(slot.handle)) continue
+          released.add(slot.handle)
+          if (slot.kind === 'framebuffer') token.deleteFramebuffer(slot.handle)
+          else token.deleteRenderbuffer(slot.handle)
+          if (slot.owner[slot.key] === slot.handle) delete slot.owner[slot.key]
+        }
+        if (epoch.get(target) === targetRecord) {
+          if (manager.data === epoch && manager.info.memory.renderTargets > 0) manager.info.memory.renderTargets--
+          epoch.delete(target)
+        }
+        if (sameTargetPhysical && recordFor(target) === targetPhysical) backend.delete(target)
+      }
+     } finally {
+      attachments.length = 0; auxiliary.length = 0; colors.length = 0; textures.length = 0
+      backend = manager = epoch = targetRecord = targetPhysical = token = originalAuxiliary = undefined
+     }
+    }
+  }
+}
+
+/** Own the public PMREM result independently of Three's private environment
+ * cache. Preparation and commit borrow the same ready result; no GPU work is
+ * started by the synchronous commit. */
+async function prepareAuthoringPreviewWorldLighting(
+  renderer: CompiledSceneRendererOption,
+  world: ResolvedAuthoringPreviewWorld | null,
+  signal?: AbortSignal,
+): Promise<PreparedAuthoringPreviewLighting | undefined> {
+  if (!world?.useLighting) return undefined
+  const source = createAuthoringPreviewWorldTexture(world)
+  let generator: PmremGeneratorLike | undefined
+  let sourceDisposed = false
+  let retireTarget: (() => void) | undefined
+  let target: ReturnType<PmremGeneratorLike['fromEquirectangular']> | undefined
+  try {
+    throwIfInstallationAborted(signal)
+    if ((renderer as { isWebGPURenderer?: boolean }).isWebGPURenderer) {
+      const nodeRenderer = renderer as unknown as { hasInitialized(): boolean; init(): Promise<void> }
+      if (!nodeRenderer.hasInitialized()) await nodeRenderer.init()
+      throwIfInstallationAborted(signal)
+      if (!nodeRenderer.hasInitialized()) throw new Error('Preview World PMREM requires an initialized renderer.')
+    }
+    generator = await createPmremGenerator(legacyRendererView(renderer))
+    throwIfInstallationAborted(signal)
+    // The public optional precompile creates an unowned temporary geometry in
+    // pinned Three. Normal generation compiles its owned LOD meshes instead.
+    target = generateAuthoringPreviewPmrem(renderer, generator, source, owned => { target = owned })
+    retireTarget = readyPmremDisposer(renderer, target)
+    throwIfInstallationAborted(signal)
+    const scratch = generator
+    generator = undefined
+    scratch.dispose()
+    sourceDisposed = true
+    source.dispose()
+    const owned = target
+    let claimed = false, disposed = false, released = false
+    const release = (): void => {
+      if (released) return
+      released = true
+      owned.texture.removeEventListener('dispose', release)
+      retireTarget!()
+    }
+    // If a later caller claims this environment, their ordinary texture.dispose
+    // must still retire the complete result target and its attachments once.
+    owned.texture.addEventListener('dispose', release)
+    const result: PreparedAuthoringPreviewLighting = {
+      texture: owned.texture,
+      adopted() { claimed = true },
+      dispose() {
+        if (disposed) return
+        disposed = true
+        if (!claimed) release()
+      },
+    }
+    target = undefined
+    return result
+  } finally {
+    try { if (target) { if (retireTarget) retireTarget(); else target.dispose() } } finally {
+      try { if (!sourceDisposed) source.dispose() } finally { generator?.dispose() }
+    }
+  }
 }
 
 function createThreePublishedReflectionLoader(
@@ -1879,9 +2156,16 @@ export async function prepareLoadedThreeCompiledScene(
       )
       resources.own('detached look preview', () => stagingLook.dispose())
 
+      const previewLighting = await prepareAuthoringPreviewWorldLighting(
+        options.renderer, resolvedPreview.world, context.signal,
+      )
+      resources.own('prepared authoring preview lighting', () => previewLighting?.dispose())
+      context.throwIfCancelled()
       const stagingPreviewWorld = installAuthoringPreviewWorld(
         stagingScene,
         resolvedPreview.world,
+        previewLighting,
+        !!(options.renderer as { isWebGPURenderer?: boolean }).isWebGPURenderer,
       )
       resources.own('detached authoring preview world', () => stagingPreviewWorld.dispose())
       const stagingFog = applyCompiledSceneFog(stagingScene, descriptor, {
@@ -2010,6 +2294,8 @@ export async function prepareLoadedThreeCompiledScene(
           livePreviewWorld = installAuthoringPreviewWorld(
             options.scene,
             resolvedPreview.world,
+            previewLighting,
+            !!(options.renderer as { isWebGPURenderer?: boolean }).isWebGPURenderer,
           )
         },
         rollback() {
@@ -2365,7 +2651,13 @@ async function installLoadedThreeCompiledSceneNow(
     })
     register(() => look.dispose())
 
-    const previewWorld = installAuthoringPreviewWorld(scene, resolvedPreview.world)
+    const previewLighting = await prepareAuthoringPreviewWorldLighting(
+      options.renderer, resolvedPreview.world, options.signal,
+    )
+    register(() => previewLighting?.dispose())
+    throwIfInstallationAborted(options.signal)
+    const previewWorld = installAuthoringPreviewWorld(scene, resolvedPreview.world, previewLighting,
+      !!(options.renderer as { isWebGPURenderer?: boolean }).isWebGPURenderer)
     register(() => previewWorld.dispose())
 
     fog = applyCompiledSceneFog(scene, descriptor, {

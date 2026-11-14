@@ -1,0 +1,245 @@
+{
+  "schemaVersion": 1,
+  "status": "RETAINED_RESEARCH_ONLY_NOISE_UNIFORM_CPU",
+  "scope": "Actual varying default2D compositor FBM Fac/Color feasibility only. No SDK implementation, GPU/browser/Final or support credit.",
+  "rawArtifacts": {
+    "machineLocal": true,
+    "ignored": true,
+    "path": "/private/tmp/scenetoweb-compositor-noise-uniform-research-next/artifacts/verification-noise-uniform-cpu-r1"
+  },
+  "sourceCommit": "d7681ca5af9fc71a86838cf4c4825dad0a554ee5",
+  "pins": {
+    "report.json": "3b7f154e258a769501e22110443ca98c771430f09b4ba2886f4efceb280e3d78",
+    "research-receipt.json": "3f1de219175e34c875ff02a4ee52af018253d4f02d7a614d77451211760cc611",
+    "independent-summary.json": "b5e2a7abed30e5f32daae36628cb72a2d80b3b4e768722f127ecc4b0b7be5a08",
+    "independent-archive.json": "e704696eaf7b48823473c178e814132d7b9554c519423e3543e3583e1a1f0e7d",
+    "worst-staged-model-counterexample.json": "1b886d995244a2e4da2437086e8c28219a83eab00661dc2e5e9dde42b114252b"
+  },
+  "summary": {
+    "status": "INDEPENDENT_NOISE_CPU_RESEARCH_RECHECKED",
+    "reportSha256": "3b7f154e258a769501e22110443ca98c771430f09b4ba2886f4efceb280e3d78",
+    "contractSha256": "065b996c205e212cba84824af7bfbad7a2ada31e78aa7f8e614a95c920b0660f",
+    "coordinateWords": 1704,
+    "nativeRenders": 20,
+    "noiseRows": 16,
+    "genuineDefaultFieldRows": 8,
+    "savedOwnedSourcesPreserved": 2,
+    "fieldVariation": [
+      {
+        "case": "13x9-default-fac",
+        "distinctRgbTuples": 117
+      },
+      {
+        "case": "13x9-default-color",
+        "distinctRgbTuples": 117
+      },
+      {
+        "case": "9x13-default-fac",
+        "distinctRgbTuples": 117
+      },
+      {
+        "case": "9x13-default-color",
+        "distinctRgbTuples": 117
+      },
+      {
+        "case": "16x8-default-fac",
+        "distinctRgbTuples": 128
+      },
+      {
+        "case": "16x8-default-color",
+        "distinctRgbTuples": 128
+      },
+      {
+        "case": "8x8-default-fac",
+        "distinctRgbTuples": 64
+      },
+      {
+        "case": "8x8-default-color",
+        "distinctRgbTuples": 64
+      }
+    ],
+    "models": {
+      "source-unsuffixed-double-staging": {
+        "words": 6816,
+        "wordDifferences": 0,
+        "contractViolations": 0,
+        "maxAbs": 0,
+        "maxUlps": 0
+      },
+      "existing-mf-periodic-f32-host-model": {
+        "words": 6816,
+        "wordDifferences": 1221,
+        "contractViolations": 0,
+        "maxAbs": 2.384185791015625e-07,
+        "maxUlps": 7
+      }
+    },
+    "gpuRuns": 0,
+    "finalCredit": 0,
+    "browserCredit": 0,
+    "portCredit": 0
+  },
+  "archive": {
+    "status": "CLOSED_RESEARCH_ONLY_NOISE_UNIFORM",
+    "summarySha256": "b5e2a7abed30e5f32daae36628cb72a2d80b3b4e768722f127ecc4b0b7be5a08",
+    "archive": {
+      "pythonInvocations": 1,
+      "finalInvocations": 0,
+      "uniqueCachePrefixes": 1,
+      "numericalCredit": 0
+    },
+    "native": {
+      "path": "/Applications/Blender.app/Contents/MacOS/Blender",
+      "bytes": 210043328,
+      "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da"
+    },
+    "portCredit": 0,
+    "gpuRuns": 0,
+    "finalCredit": 0,
+    "browserCredit": 0
+  },
+  "nativeArchive": {
+    "identity": {
+      "kind": "blendlink-proof-native-python-v1",
+      "platform": "darwin",
+      "native": {
+        "path": "/Applications/Blender.app/Contents/MacOS/Blender",
+        "bytes": 210043328,
+        "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da"
+      },
+      "node": {
+        "path": "/Users/michaeljones/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "bytes": 126827136,
+        "sha256": "eb96bdabfd1f6705345bbd459f9308d140c011fa55865efdb4fa8f61d048f55d"
+      },
+      "launcher": {
+        "path": "/private/tmp/scenetoweb-compositor-noise-uniform-research-next/artifacts/verification-noise-uniform-cpu-r1/launcher/native-launcher-6996XZ/blender-proof",
+        "bytes": 792,
+        "sha256": "dc6dfc6e4126fc2d7e69dd628596eab23479bfe4bb3180ce22b90e7463ecd035"
+      },
+      "configuration": {
+        "path": "/private/tmp/scenetoweb-compositor-noise-uniform-research-next/artifacts/verification-noise-uniform-cpu-r1/launcher/native-launcher-6996XZ/launcher.json",
+        "bytes": 1304,
+        "sha256": "faa645ae49305be161a5dec49783fa988ebf9ba03549cf4bc5899d7d0e4ac788"
+      },
+      "helper": {
+        "path": "/private/tmp/scenetoweb-compositor-noise-uniform-research-next/artifacts/verification-noise-uniform-cpu-r1/launcher/native-launcher-6996XZ/lib/node-port-python.mjs",
+        "bytes": 18855,
+        "sha256": "33fc36d6c551583a119e558a60f77cd55ed25c92bcfd6d39e0171e7faaa33cde"
+      },
+      "bridge": {
+        "path": "/private/tmp/scenetoweb-compositor-noise-uniform-research-next/artifacts/verification-noise-uniform-cpu-r1/launcher/native-launcher-6996XZ/node-port-blender.mjs",
+        "bytes": 321,
+        "sha256": "3390a410423e0cc921567a97473f6fd67f91cbe2987af7846346cb7cb51e9a8c"
+      },
+      "cachePolicy": "Fresh per-invocation prefix before Python actions; no project/user cache deletion or numerical proof reuse",
+      "limit": "Subsequent imports only. Call dispose after owned commands stop. Whole-job SIGKILL may leave empty owned directories; it cannot run JavaScript cleanup."
+    },
+    "proof": {
+      "directory": "/private/tmp/scenetoweb-compositor-noise-uniform-research-next/artifacts/verification-noise-uniform-cpu-r1/native-python-proof",
+      "files": [
+        {
+          "path": "blender-proof",
+          "bytes": 792,
+          "sha256": "dc6dfc6e4126fc2d7e69dd628596eab23479bfe4bb3180ce22b90e7463ecd035"
+        },
+        {
+          "path": "invocations/c96a3eb6-b888-496a-bb65-04e4bfc99734.json",
+          "bytes": 1849,
+          "sha256": "7504de2dc96e48e99dcf5c0633ed4474cf4cd12c3950b03956db8795c066befe"
+        },
+        {
+          "path": "launcher.json",
+          "bytes": 1304,
+          "sha256": "faa645ae49305be161a5dec49783fa988ebf9ba03549cf4bc5899d7d0e4ac788"
+        },
+        {
+          "path": "lib/node-port-python.mjs",
+          "bytes": 18855,
+          "sha256": "33fc36d6c551583a119e558a60f77cd55ed25c92bcfd6d39e0171e7faaa33cde"
+        },
+        {
+          "path": "node-port-blender.mjs",
+          "bytes": 321,
+          "sha256": "3390a410423e0cc921567a97473f6fd67f91cbe2987af7846346cb7cb51e9a8c"
+        }
+      ],
+      "invocations": [
+        {
+          "schemaVersion": 1,
+          "kind": "blendlink-proof-native-python-v1",
+          "productionCases": 0,
+          "started": 1794677805614,
+          "owner": 27458,
+          "parentGone": false,
+          "native": {
+            "path": "/Applications/Blender.app/Contents/MacOS/Blender",
+            "bytes": 210043328,
+            "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da"
+          },
+          "node": {
+            "path": "/Users/michaeljones/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+            "bytes": 126827136,
+            "sha256": "eb96bdabfd1f6705345bbd459f9308d140c011fa55865efdb4fa8f61d048f55d"
+          },
+          "configSha256": "faa645ae49305be161a5dec49783fa988ebf9ba03549cf4bc5899d7d0e4ac788",
+          "timings": {
+            "preIdentityMs": 146.836333,
+            "postIdentityMs": 85.02954099999988,
+            "bridgeBeforeReceiptMs": 1326.161292
+          },
+          "result": {
+            "args": [
+              "--background",
+              "--factory-startup",
+              "-t",
+              "1",
+              "--python-exit-code",
+              "1",
+              "--python-expr",
+              "import sys; sys.pycache_prefix=\"/private/tmp/scenetoweb-compositor-noise-uniform-research-next/artifacts/verification-noise-uniform-cpu-r1/launcher/native-launcher-6996XZ/python-cache-uk1YJE\"; sys.dont_write_bytecode=True",
+              "--python",
+              "/private/tmp/scenetoweb-compositor-noise-uniform-research-next/experiments/compositor-noise-uniform-research/native.py",
+              "--",
+              "/private/tmp/scenetoweb-compositor-noise-uniform-research-next/artifacts/verification-noise-uniform-cpu-r1"
+            ],
+            "pythonGuardApplied": true,
+            "cacheDirectory": "/private/tmp/scenetoweb-compositor-noise-uniform-research-next/artifacts/verification-noise-uniform-cpu-r1/launcher/native-launcher-6996XZ/python-cache-uk1YJE",
+            "exitCode": 0,
+            "signal": null,
+            "timedOut": false,
+            "aborted": false,
+            "error": null,
+            "elapsedMs": 1093,
+            "cacheDisposed": true
+          }
+        }
+      ],
+      "pythonInvocations": 1,
+      "finalInvocations": 0,
+      "finalSources": [],
+      "numericalCredit": false,
+      "complete": true
+    }
+  },
+  "exactParityCounterexample": {
+    "case": "13x9-default-fac",
+    "pixel": 37,
+    "lane": 0,
+    "nativeWord": "0x3edca1a9",
+    "modelWord": "0x3edca1b0",
+    "ulps": 7,
+    "absoluteError": 2.086162567138672e-07
+  },
+  "limitations": [
+    "Source-staging and existing-MF-F32 results are CPU host hypotheses, not generated TSL execution.",
+    "The predeclared2^-20 absolute and8ULP research gate is not a universal analytical error bound.",
+    "No native GPU/EEVEE equivalence or alternate platform/compiler inference.",
+    "Scale0 is a control; genuine useful scope is8 varying original-default rows.",
+    "Original source node inputs remain authored/native; no patched node callbacks or rendered-pixel repair."
+  ],
+  "portCredit": 0,
+  "gpuRuns": 0,
+  "finalCredit": 0,
+  "browserCredit": 0
+}

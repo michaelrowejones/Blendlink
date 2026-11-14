@@ -79,6 +79,7 @@ normalize_vector_math = _sibling("compositor_vector_math").normalize_vector_math
 normalize_radial_width = _sibling("compositor_radial_width").normalize_radial_width
 normalize_blackbody = _sibling("compositor_blackbody").normalize_blackbody
 normalize_white_noise = _sibling("compositor_white_noise").normalize_white_noise
+validate_white_noise_field_graph = _sibling("compositor_white_noise").validate_white_noise_field_graph
 resolve_vector_math_literal = _sibling("compositor_procedural_texture").literal
 normalize_procedural_texture = _sibling("compositor_procedural_texture").normalize_procedural_texture
 validate_texture_field_graph = _sibling("compositor_procedural_texture").validate_texture_field_graph
@@ -465,6 +466,11 @@ def extract(scene):
                         socket,
                         "Muted output has no unique Blender internal bypass link",
                     )
+                if (tuple(bpy.app.version)[:2] == (5, 3)
+                        and node.bl_idname == 'ShaderNodeTexWhiteNoise'
+                        and links[0].from_socket.type != socket.type):
+                    fail('unsupported-white-noise-muted-bypass',path,node,socket,
+                         'Blender 5.3 White Noise type-changing mute bypass is unqualified; use an explicit source value with the required output type')
                 ref = input_value(links[0].from_socket, ctx)
             elif node.bl_idname == "NodeReroute":
                 ref = input_value(node.inputs[0], ctx)
@@ -1039,7 +1045,7 @@ def extract(scene):
                                 "value": input_value(incoming, ctx),
                             }
                 # Assign only after dependencies are emitted, yielding topological order.
-                single = op["kind"] == "image-info" or (op["kind"] == "ellipse-mask" and op["properties"].get("ellipse_mask_identity") is True) or (op["kind"] not in {"render-pass", "image-input", "box-mask", "ellipse-mask"} and not op["properties"].get("procedural_texture_coordinate_model") and all(is_single_value(incoming["value"]) for incoming in op["inputs"].values()))
+                single = op["kind"] == "image-info" or (op["kind"] == "ellipse-mask" and op["properties"].get("ellipse_mask_identity") is True) or (op["kind"] not in {"render-pass", "image-input", "box-mask", "ellipse-mask"} and not op["properties"].get("procedural_texture_coordinate_model") and not op["properties"].get("white_noise_coordinate_model") and all(is_single_value(incoming["value"]) for incoming in op["inputs"].values()))
                 if single and op["kind"] == "alpha-crop" and bpy.app.version < (4, 5, 0) and device == "CPU":
                     fail("unsupported-crop-domain", path, node, socket,
                          "Legacy CPU Crop requires a finite image input; constant-image canvas evaluation remains unqualified")
@@ -1120,6 +1126,11 @@ def extract(scene):
         if box_conflict:
             op, message = box_conflict
             result["diagnostics"].append({"code":"unsupported-box-mask", "path":op["source"]["path"], "node":op["source"]["node"], "socket":op["source"]["output"], "message":message})
+            raise Unsupported()
+        white_noise_conflict = validate_white_noise_field_graph(result)
+        if white_noise_conflict:
+            op, message = white_noise_conflict
+            result['diagnostics'].append({'code':'unsupported-white-noise-field', 'path':op['source']['path'], 'node':op['source']['node'], 'socket':op['source']['output'], 'message':message})
             raise Unsupported()
         texture_conflict = validate_texture_field_graph(result)
         if texture_conflict:

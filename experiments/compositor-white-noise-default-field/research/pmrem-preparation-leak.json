@@ -1,0 +1,200 @@
+{
+  "schemaVersion": 1,
+  "status": "NONQUALIFYING_PREPARATION_PMREM_OWNERSHIP_COUNTEREXAMPLE",
+  "portCredit": 0,
+  "productionChanges": false,
+  "requestedProfile": "metal",
+  "observedBackend": "webgpu",
+  "hardwareIdentityCredit": false,
+  "retainedRootInput": "artifacts/verification-next27-manifest-field/cpu",
+  "nativeQualificationSha256": "b22df50954cb8a0c55bae4ca86b57260a2ad5c120872e330228c967c8e1f3f77",
+  "retainedDiagnosticReport": "artifacts/diagnostic-default-field-final-leftovers-r2/cpu/browser-final-metal/report.json",
+  "diagnosticReportSha256": "0369ad31ebea33b905b9d912300a351e7872295e3c6524b81bab5f21b32d2068",
+  "sourcePins": {
+    "packages/blendlink/src/threeRuntime.ts": "888df8cf1d62dea3aadcfe9274edafd527b8c0af69ad85d344dff54e7173052f",
+    "node_modules/three/src/nodes/pmrem/PMREMNode.js": "6d565b82e749a6248a0e535258462032e9bbd35c7f03250b98f7c3117bc6f8fc",
+    "node_modules/three/src/renderers/common/extras/PMREMGenerator.js": "60fb90e3fde030868357d0e85889020b6f0e7aa28ebf98b40b77893a73d736c6"
+  },
+  "facts": {
+    "case": "13x9-2d-value",
+    "remaining": [
+      {
+        "uuid": "a4673049-7d98-47e0-8b02-8c44007fbcab",
+        "name": "DFG_LUT",
+        "width": 16,
+        "height": 16,
+        "type": 1016,
+        "format": 1030,
+        "renderTarget": false,
+        "source": "452a63a9-2793-457a-8d88-e5b5c005b4c7",
+        "sourceVersion": 1,
+        "textureVersion": 1,
+        "baseline": true,
+        "backendOwned": true,
+        "managerOwned": true,
+        "phaseAllocations": []
+      },
+      {
+        "uuid": "7acff31e-5d18-4c62-82fd-848019c1c7f0",
+        "name": "PMREM.cubeUv",
+        "width": 336,
+        "height": 64,
+        "type": 1016,
+        "format": 1023,
+        "renderTarget": true,
+        "source": "56c5fb52-ede9-44be-acd2-293f65c78787",
+        "sourceVersion": 2,
+        "textureVersion": 2,
+        "baseline": false,
+        "backendOwned": true,
+        "managerOwned": true,
+        "phaseAllocations": []
+      },
+      {
+        "uuid": "8718cd5f-d40f-491d-a953-8cf9c8b03bf6",
+        "name": "",
+        "width": 336,
+        "height": 64,
+        "type": 1014,
+        "format": 1026,
+        "renderTarget": false,
+        "source": "8c6a30a8-2afd-4e8d-b38f-77bcba0a0919",
+        "sourceVersion": 2,
+        "textureVersion": 2,
+        "baseline": false,
+        "backendOwned": true,
+        "managerOwned": true,
+        "phaseAllocations": []
+      },
+      {
+        "uuid": "d9ea5bfd-3350-4cc0-81c2-5e56d72d5c70",
+        "name": "PMREM.cubeUv",
+        "width": 336,
+        "height": 64,
+        "type": 1016,
+        "format": 1023,
+        "renderTarget": true,
+        "source": "57a54050-80f0-4dd8-9a9c-605cb1f454ea",
+        "sourceVersion": 2,
+        "textureVersion": 2,
+        "baseline": false,
+        "backendOwned": true,
+        "managerOwned": true,
+        "phaseAllocations": []
+      },
+      {
+        "uuid": "b47db352-3660-4858-a56f-4f6a88905bef",
+        "name": "",
+        "width": 336,
+        "height": 64,
+        "type": 1014,
+        "format": 1026,
+        "renderTarget": false,
+        "source": "8bdd7d6f-b065-413c-95a6-068f2120cc5b",
+        "sourceVersion": 2,
+        "textureVersion": 2,
+        "baseline": false,
+        "backendOwned": true,
+        "managerOwned": true,
+        "phaseAllocations": []
+      }
+    ],
+    "baseline": [
+      {
+        "uuid": "a4673049-7d98-47e0-8b02-8c44007fbcab",
+        "name": "DFG_LUT",
+        "width": 16,
+        "height": 16,
+        "type": 1016,
+        "format": 1030,
+        "renderTarget": false,
+        "source": "452a63a9-2793-457a-8d88-e5b5c005b4c7",
+        "sourceVersion": 1,
+        "textureVersion": 1,
+        "baseline": true,
+        "backendOwned": true,
+        "managerOwned": true,
+        "phaseAllocations": []
+      }
+    ],
+    "installationCycles": [
+      {
+        "preparation": {
+          "axisAllocations": 0,
+          "axisUploads": 0
+        },
+        "commit": {
+          "axisAllocations": 0,
+          "axisUploads": 0
+        },
+        "live": {
+          "axisAllocations": 1,
+          "initialAxisUploads": 1
+        }
+      }
+    ],
+    "environmentOwners": [
+      {
+        "uuid": "4f2d6009-b20f-43ba-9fc4-d278c1f870d8",
+        "name": "SceneToWeb Preview World",
+        "width": 64,
+        "height": 32,
+        "phase": "commit",
+        "disposed": 1
+      }
+    ],
+    "allocationTraces": [
+      {
+        "uuid": "7acff31e-5d18-4c62-82fd-848019c1c7f0",
+        "name": "PMREM.cubeUv",
+        "width": 336,
+        "height": 64,
+        "phase": "preparation",
+        "renderTarget": true,
+        "disposed": 0,
+        "stack": "Error\n    at renderer.backend.createTexture (http://127.0.0.1:63521/browser.js:22:280)\n    at Textures.updateTexture (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:33845:12)\n    at Textures.updateRenderTarget (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:33699:10)\n    at WebGPURenderer._renderScene (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:59426:19)\n    at WebGPURenderer.render (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:59067:8)\n    at PMREMGenerator._textureToCubeUV (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:26243:12)\n    at PMREMGenerator._fromTexture (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:26057:8)\n    at PMREMGenerator.fromEquirectangular (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:25871:15)\n    at _getPMREMFromTexture (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:26731:30)\n    at PMREMNode.updateBefore (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:26939:13)"
+      },
+      {
+        "uuid": "8718cd5f-d40f-491d-a953-8cf9c8b03bf6",
+        "name": "",
+        "width": 336,
+        "height": 64,
+        "phase": "preparation",
+        "renderTarget": false,
+        "disposed": 0,
+        "stack": "Error\n    at renderer.backend.createTexture (http://127.0.0.1:63521/browser.js:22:280)\n    at Textures.updateTexture (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:33845:12)\n    at Textures.updateRenderTarget (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:33705:10)\n    at WebGPURenderer._renderScene (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:59426:19)\n    at WebGPURenderer.render (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:59067:8)\n    at PMREMGenerator._textureToCubeUV (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:26243:12)\n    at PMREMGenerator._fromTexture (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:26057:8)\n    at PMREMGenerator.fromEquirectangular (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:25871:15)\n    at _getPMREMFromTexture (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:26731:30)\n    at PMREMNode.updateBefore (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:26939:13)"
+      },
+      {
+        "uuid": "2b79086b-7892-4284-a77b-ce2abbff1ee3",
+        "name": "SceneToWeb Preview World",
+        "width": 64,
+        "height": 32,
+        "phase": "preparation",
+        "renderTarget": false,
+        "disposed": 1,
+        "stack": "Error\n    at renderer.backend.createTexture (http://127.0.0.1:63521/browser.js:22:280)\n    at Textures.updateTexture (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:33885:15)\n    at Bindings._init (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:32529:19)\n    at Bindings.getForRender (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:32401:10)\n    at Bindings.updateForRender (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:32463:30)\n    at WebGPURenderer._renderObjectDirect (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:61311:19)\n    at WebGPURenderer.renderObject (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:61231:9)\n    at WebGPURenderer._renderObjects (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:61026:9)\n    at WebGPURenderer._renderScene (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:59491:64)\n    at WebGPURenderer.render (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:59067:8)"
+      },
+      {
+        "uuid": "d9ea5bfd-3350-4cc0-81c2-5e56d72d5c70",
+        "name": "PMREM.cubeUv",
+        "width": 336,
+        "height": 64,
+        "phase": "preparation",
+        "renderTarget": true,
+        "disposed": 0,
+        "stack": "Error\n    at renderer.backend.createTexture (http://127.0.0.1:63521/browser.js:22:280)\n    at Textures.updateTexture (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:33845:12)\n    at Textures.updateRenderTarget (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:33699:10)\n    at WebGPURenderer.clear (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:60049:19)\n    at WebGPURenderer.clearDepth (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:60100:8)\n    at WebGPURenderer._renderScene (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:59240:11)\n    at WebGPURenderer.render (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:59067:8)\n    at PMREMGenerator._applyGGXFilter (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:26311:12)\n    at PMREMGenerator._applyPMREM (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:26258:9)\n    at PMREMGenerator._fromTexture (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:26058:8)"
+      },
+      {
+        "uuid": "b47db352-3660-4858-a56f-4f6a88905bef",
+        "name": "",
+        "width": 336,
+        "height": 64,
+        "phase": "preparation",
+        "renderTarget": false,
+        "disposed": 0,
+        "stack": "Error\n    at renderer.backend.createTexture (http://127.0.0.1:63521/browser.js:22:280)\n    at Textures.updateTexture (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:33845:12)\n    at Textures.updateRenderTarget (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:33705:10)\n    at WebGPURenderer.clear (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:60049:19)\n    at WebGPURenderer.clearDepth (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:60100:8)\n    at WebGPURenderer._renderScene (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:59240:11)\n    at WebGPURenderer.render (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:59067:8)\n    at PMREMGenerator._applyGGXFilter (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:26311:12)\n    at PMREMGenerator._applyPMREM (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:26258:9)\n    at PMREMGenerator._fromTexture (http://127.0.0.1:63521/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:26058:8)"
+      }
+    ]
+  },
+  "conclusion": "Detached preparation generates one cached PMREM output and one generator ping-pong target; both336x64color/depth allocations survive source-texture disposal. Four nonbaseline allocations remain. White Noise axes disposed correctly."
+}

@@ -1,0 +1,413 @@
+{
+  "schemaVersion": 1,
+  "status": "NONQUALIFYING_ACTUAL_READY_PMREM_EPOCH_OWNERSHIP_PASS",
+  "portCredit": 0,
+  "nativeInvocations": 0,
+  "numericComparisons": 0,
+  "productionCommits": [
+    "ba238c8",
+    "8f79a14"
+  ],
+  "actualControls": 12,
+  "originalAttachmentDestroyCalls": 24,
+  "originalGLFramebufferDestroyCalls": 6,
+  "everyOriginalDestroyCallCount": 1,
+  "targetDisposalsPerControl": 1,
+  "hostRegressions": {
+    "realThreeTexturesAndInfo": true,
+    "backendScenarios": 22,
+    "focusedRuntimeAtomicOwnershipTests": 95,
+    "covers": [
+      "normal",
+      "manager-reset",
+      "intact-old-manager",
+      "reset-before-normal-disposal",
+      "reset-after-normal-disposal",
+      "foreign-physical-handle",
+      "foreign-target-record",
+      "caller-adopted-normal",
+      "caller-adopted-reset",
+      "caller-adopted-foreign-handle",
+      "caller-adopted-foreign-target"
+    ]
+  },
+  "runs": [
+    {
+      "profile": "metal",
+      "api": "webgpu",
+      "controls": [
+        {
+          "mode": "ready",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "description": "",
+            "device": ""
+          },
+          "actualAttachments": 2,
+          "attachmentDestroyCalls": [
+            1,
+            1
+          ],
+          "actualFramebuffers": 0,
+          "framebufferDestroyCalls": [],
+          "targetDisposals": 1,
+          "externalDeviceAlive": true,
+          "contextLost": null,
+          "managerEpochChanged": true,
+          "callerAdoption": false,
+          "pendingPreparationCancelled": false,
+          "textures": 0,
+          "renderTargets": 0,
+          "errors": []
+        },
+        {
+          "mode": "adopted",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "description": "",
+            "device": ""
+          },
+          "actualAttachments": 2,
+          "attachmentDestroyCalls": [
+            1,
+            1
+          ],
+          "actualFramebuffers": 0,
+          "framebufferDestroyCalls": [],
+          "targetDisposals": 1,
+          "externalDeviceAlive": true,
+          "contextLost": null,
+          "managerEpochChanged": true,
+          "callerAdoption": true,
+          "pendingPreparationCancelled": false,
+          "textures": 0,
+          "renderTargets": 0,
+          "errors": []
+        },
+        {
+          "mode": "cancelled-compile",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "description": "",
+            "device": ""
+          },
+          "actualAttachments": 2,
+          "attachmentDestroyCalls": [
+            1,
+            1
+          ],
+          "actualFramebuffers": 0,
+          "framebufferDestroyCalls": [],
+          "targetDisposals": 1,
+          "externalDeviceAlive": true,
+          "contextLost": null,
+          "managerEpochChanged": true,
+          "callerAdoption": false,
+          "pendingPreparationCancelled": true,
+          "textures": 0,
+          "renderTargets": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "profile": "metal",
+      "api": "webgl2",
+      "controls": [
+        {
+          "mode": "ready",
+          "gpu": {
+            "api": "WebGL2",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "actualAttachments": 2,
+          "attachmentDestroyCalls": [
+            1,
+            1
+          ],
+          "actualFramebuffers": 1,
+          "framebufferDestroyCalls": [
+            1
+          ],
+          "targetDisposals": 1,
+          "externalDeviceAlive": false,
+          "contextLost": true,
+          "managerEpochChanged": true,
+          "callerAdoption": false,
+          "pendingPreparationCancelled": false,
+          "textures": 0,
+          "renderTargets": 0,
+          "errors": []
+        },
+        {
+          "mode": "adopted",
+          "gpu": {
+            "api": "WebGL2",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "actualAttachments": 2,
+          "attachmentDestroyCalls": [
+            1,
+            1
+          ],
+          "actualFramebuffers": 1,
+          "framebufferDestroyCalls": [
+            1
+          ],
+          "targetDisposals": 1,
+          "externalDeviceAlive": false,
+          "contextLost": true,
+          "managerEpochChanged": true,
+          "callerAdoption": true,
+          "pendingPreparationCancelled": false,
+          "textures": 0,
+          "renderTargets": 0,
+          "errors": []
+        },
+        {
+          "mode": "cancelled-compile",
+          "gpu": {
+            "api": "WebGL2",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "actualAttachments": 2,
+          "attachmentDestroyCalls": [
+            1,
+            1
+          ],
+          "actualFramebuffers": 1,
+          "framebufferDestroyCalls": [
+            1
+          ],
+          "targetDisposals": 1,
+          "externalDeviceAlive": false,
+          "contextLost": true,
+          "managerEpochChanged": true,
+          "callerAdoption": false,
+          "pendingPreparationCancelled": true,
+          "textures": 0,
+          "renderTargets": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "profile": "software",
+      "api": "webgpu",
+      "controls": [
+        {
+          "mode": "ready",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "description": "",
+            "device": ""
+          },
+          "actualAttachments": 2,
+          "attachmentDestroyCalls": [
+            1,
+            1
+          ],
+          "actualFramebuffers": 0,
+          "framebufferDestroyCalls": [],
+          "targetDisposals": 1,
+          "externalDeviceAlive": true,
+          "contextLost": null,
+          "managerEpochChanged": true,
+          "callerAdoption": false,
+          "pendingPreparationCancelled": false,
+          "textures": 0,
+          "renderTargets": 0,
+          "errors": []
+        },
+        {
+          "mode": "adopted",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "description": "",
+            "device": ""
+          },
+          "actualAttachments": 2,
+          "attachmentDestroyCalls": [
+            1,
+            1
+          ],
+          "actualFramebuffers": 0,
+          "framebufferDestroyCalls": [],
+          "targetDisposals": 1,
+          "externalDeviceAlive": true,
+          "contextLost": null,
+          "managerEpochChanged": true,
+          "callerAdoption": true,
+          "pendingPreparationCancelled": false,
+          "textures": 0,
+          "renderTargets": 0,
+          "errors": []
+        },
+        {
+          "mode": "cancelled-compile",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "description": "",
+            "device": ""
+          },
+          "actualAttachments": 2,
+          "attachmentDestroyCalls": [
+            1,
+            1
+          ],
+          "actualFramebuffers": 0,
+          "framebufferDestroyCalls": [],
+          "targetDisposals": 1,
+          "externalDeviceAlive": true,
+          "contextLost": null,
+          "managerEpochChanged": true,
+          "callerAdoption": false,
+          "pendingPreparationCancelled": true,
+          "textures": 0,
+          "renderTargets": 0,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "profile": "software",
+      "api": "webgl2",
+      "controls": [
+        {
+          "mode": "ready",
+          "gpu": {
+            "api": "WebGL2",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "actualAttachments": 2,
+          "attachmentDestroyCalls": [
+            1,
+            1
+          ],
+          "actualFramebuffers": 1,
+          "framebufferDestroyCalls": [
+            1
+          ],
+          "targetDisposals": 1,
+          "externalDeviceAlive": false,
+          "contextLost": true,
+          "managerEpochChanged": true,
+          "callerAdoption": false,
+          "pendingPreparationCancelled": false,
+          "textures": 0,
+          "renderTargets": 0,
+          "errors": []
+        },
+        {
+          "mode": "adopted",
+          "gpu": {
+            "api": "WebGL2",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "actualAttachments": 2,
+          "attachmentDestroyCalls": [
+            1,
+            1
+          ],
+          "actualFramebuffers": 1,
+          "framebufferDestroyCalls": [
+            1
+          ],
+          "targetDisposals": 1,
+          "externalDeviceAlive": false,
+          "contextLost": true,
+          "managerEpochChanged": true,
+          "callerAdoption": true,
+          "pendingPreparationCancelled": false,
+          "textures": 0,
+          "renderTargets": 0,
+          "errors": []
+        },
+        {
+          "mode": "cancelled-compile",
+          "gpu": {
+            "api": "WebGL2",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "actualAttachments": 2,
+          "attachmentDestroyCalls": [
+            1,
+            1
+          ],
+          "actualFramebuffers": 1,
+          "framebufferDestroyCalls": [
+            1
+          ],
+          "targetDisposals": 1,
+          "externalDeviceAlive": false,
+          "contextLost": true,
+          "managerEpochChanged": true,
+          "callerAdoption": false,
+          "pendingPreparationCancelled": true,
+          "textures": 0,
+          "renderTargets": 0,
+          "errors": []
+        }
+      ]
+    }
+  ],
+  "sourcePins": {
+    "packages/blendlink/src/threeRuntime.ts": "4eac231544744877535e8e71f044ae8beadc9478a839fa3ba05357fa35c03632",
+    "packages/blendlink/src/threeRuntime.previewWorldOwnership.test.ts": "c60d8e9424cbae70284fc73b12aee09547b3086e84c4b322c3acad97f30803bf",
+    "packages/blendlink/dist/threeRuntime.js": "785920270b60cbd4bf8a708830ac795d44d11d9afd317a016ad596d16c7cc620",
+    "node_modules/three/src/renderers/common/Textures.js": "28faf9665bfdcbc063be31cd7725fa4e5d2d1ee822e890bbb6b6c204d88978a4",
+    "node_modules/three/src/renderers/common/Info.js": "f57050b6d6865f6c80504deb2d7c91c002ed89f65ea25e6792e2335e06eaeef7",
+    "node_modules/three/src/renderers/webgpu/utils/WebGPUTextureUtils.js": "5f241b35187e26b1d1b56279330df466d55f62bdce4a53e0106835cacba06ce1",
+    "node_modules/three/src/renderers/webgl-fallback/utils/WebGLTextureUtils.js": "6b08fc0d0af38b893bd243991ba09eef844c2af99cb07c59f53f7a1c7149acc0"
+  },
+  "scriptPins": [
+    {
+      "path": "experiments/research/preview-world-pmrem-epochs/actual-browser.js",
+      "sha256": "62e32b0fb503fb2e491d7715c421eaccc78a2422b6b46135f0462222ed530d48",
+      "byteIdenticalToInvocation": true,
+      "originalMachineLocalPath": "artifacts/pmrem-late-dispose-browser.js"
+    },
+    {
+      "path": "experiments/research/preview-world-pmrem-epochs/actual-host.mjs",
+      "sha256": "b2b991bc7bd89b8624e99587e92b98efc142f292c5d8300dfc48982a439e5922",
+      "byteIdenticalToInvocation": true,
+      "originalMachineLocalPath": "artifacts/pmrem-late-dispose-host.mjs"
+    }
+  ],
+  "report": {
+    "machineLocalPath": "artifacts/diagnostic-pmrem-late-dispose-r1/report.json",
+    "sha256": "c1d2c7e7d1fc462ec545f44fa63e25379188a8217bd50d4624029da8dd0433ba"
+  },
+  "retainedCounterexamples": [
+    {
+      "machineLocalPath": "/tmp/scenetoweb-pmrem-renderer-reset-counterexample.log",
+      "sha256": "cd63e5ab1cb93afb7664aeeed40f85965fe5ec814884a74e2fbf81b0795ed8b2",
+      "modified": false
+    },
+    {
+      "machineLocalPath": "/tmp/scenetoweb-pmrem-adopted-replacement-review.log",
+      "sha256": "0185fd8c90bafa2c08678f2b77290dcf5d094a87fbba5ecc83e48b022eabb01f",
+      "modified": false
+    }
+  ],
+  "scope": [
+    "Only original ready PMREM allocations are captured; no vendor/private PMREM-cache changes.",
+    "Normal old-manager disposal remains authoritative. Retained old WeakMap entries distinguish consumed allocations from erased current records.",
+    "Result-color native dispose ownership transfers to the complete-target owner before caller adoption. Foreign replacement handles/records are preserved.",
+    "GL context loss may release its resources implicitly; the report separately measures exact explicit deletes on the captured original context.",
+    "This public loaded-GLTF lifecycle probe establishes no native scene, pixel parity, new profile or node-support credit.",
+    "Fresh integrated field/World readers remain required after production integration."
+  ]
+}

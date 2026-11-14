@@ -16,6 +16,9 @@ else:
 
 MODEL = 'native-compositor-white-noise-fixed-cpu-53-v1'
 PROFILE = 'darwin-arm64-53-white-noise-cpu-v1'
+FIELD_PROFILE = 'darwin-arm64-53-white-noise-uniform-cpu-v1'
+FIELD_MODEL = 'native-compositor-white-noise-uniform-cpu-53-v1'
+FIELD_COORDINATES = 'exact-uniform-r32f-axes-v1'
 
 
 class WhiteNoiseUnsupported(ValueError):
@@ -200,14 +203,47 @@ def normalize_white_noise(node, socket, op, scene, stack, fail):
     names = ([] if dimensions == '1D' else ['Vector']) + (['W'] if dimensions in {'1D', '4D'} else [])
     try:
         incoming = [_active(node.inputs, name, 'VECTOR' if name == 'Vector' else 'VALUE') for name in names]
-        if 'Vector' in names and not any(link.is_valid and not link.is_muted for link in incoming[0].links):
-            raise WhiteNoiseUnsupported('White Noise implicit Uniform Image Coordinates are unqualified; Vector must be explicitly linked')
+        field = 'Vector' in names and not any(link.is_valid and not link.is_muted for link in incoming[0].links)
+        if field:
+            # Only this node's native implicit Uniform input is qualified. A
+            # linked group implicit field still reaches the fixed walker and
+            # refuses; it is never substituted with the group RNA default.
+            if (scene.render.use_border or scene.render.use_crop_to_border
+                    or scene.render.pixel_aspect_x != 1 or scene.render.pixel_aspect_y != 1):
+                raise WhiteNoiseUnsupported('White Noise fields require zero-origin full-frame square-pixel coordinates without render borders')
+            width = scene.render.resolution_x * scene.render.resolution_percentage // 100
+            height = scene.render.resolution_y * scene.render.resolution_percentage // 100
+            if not (4 <= width <= 8192 and 4 <= height <= 8192):
+                raise WhiteNoiseUnsupported('White Noise fields require physical full-frame extents in [4,8192]')
+            precision = scene.render.compositor_precision
+            if precision not in {'AUTO', 'FULL'}:
+                raise WhiteNoiseUnsupported('White Noise fields require the qualified CPU Float32 AUTO/FULL precision')
+            incoming = incoming[1:]; names = names[1:]
         values, members = fixed_inputs(incoming, stack)
     except WhiteNoiseUnsupported as error:
         fail(socket, str(error))
     for name, source, value in zip(names, incoming, values):
         op['inputs'][name] = {'name': name, 'socketType': source.type,
             'value': {'kind': 'constant', 'type': source.type, 'value': value}}
-    op['properties'].update(white_noise_model=MODEL, white_noise_profile=PROFILE,
+    op['properties'].update(white_noise_model=FIELD_MODEL if field else MODEL, white_noise_profile=FIELD_PROFILE if field else PROFILE,
         white_noise_version=list(bpy.app.version), white_noise_build=bpy.app.build_hash.decode(),
         white_noise_evaluator='CPU-MF', noise_dimensions=int(dimensions[0]), white_noise_fixed_sources=members)
+
+    if field:
+        op['properties'].update(white_noise_coordinate_model=FIELD_COORDINATES,
+            white_noise_reference_model='full-frame-context-zero-offset-v1',
+            white_noise_export_extent=[width,height], white_noise_precision='CPU_FLOAT32',
+            white_noise_requested_precision=precision, white_noise_normalization='u32-rne-integer-mantissa-v1')
+
+
+def validate_white_noise_field_graph(program):
+    # Reuse the existing closed texture-free pointwise set. One shared axis
+    # lookup plus optional Ellipse rows is the entire graph sampler census.
+    if __package__:
+        from .compositor_mask_domains import ELLIPSE_POINTWISE
+    else:
+        from compositor_mask_domains import ELLIPSE_POINTWISE
+    fields=[op for op in program['ops'] if op.get('properties',{}).get('white_noise_model')==FIELD_MODEL]
+    if fields and any(op['kind'] not in ELLIPSE_POINTWISE and op['kind']!='white-noise-texture' for op in program['ops']):
+        return fields[0], 'White Noise fields require closed texture-free pointwise composition; image, render-pass, spatial and unknown sampler/domain producers remain unqualified'
+    return None

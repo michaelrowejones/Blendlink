@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 1,
+  "status": "NONQUALIFYING_UNIFORM_COLOR_APPEARANCE_AND_OWNERSHIP_PILOT_PASS",
+  "portCredit": 0,
+  "sourcePins": {
+    "packages/blendlink/src/threeRuntime.ts": "339ad40f7c813f09cb7eae704311941f24b513ce0c15859d2794665bb9ca9da6",
+    "node_modules/three/src/renderers/common/Background.js": "d06aa01d4f12a384800baf00caddc406f03d276309b9cb82236a91709ea3e86a"
+  },
+  "reports": [
+    {
+      "path": "artifacts/diagnostic-cube-color-appearance-r1/report.json",
+      "sha256": "c1ff514047c5dd672d5fb2db995ab7bbf4b71fbc03afd0d6c56961c77dcb4093"
+    },
+    {
+      "path": "artifacts/diagnostic-preview-color-owned-final-r1/cpu/browser-final-metal/report.json",
+      "sha256": "a15f4cbbb6db22ead907efb884ef60ca715692dde8d8ecd5af4433cf20a3de02"
+    }
+  ],
+  "appearance": {
+    "actualTuples": [
+      {
+        "profile": "metal",
+        "api": "webgpu",
+        "gpu": {
+          "api": "WebGPU",
+          "vendor": "apple",
+          "architecture": "metal-3",
+          "description": ""
+        }
+      },
+      {
+        "profile": "metal",
+        "api": "webgl2",
+        "gpu": {
+          "api": "WebGL2",
+          "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+        }
+      },
+      {
+        "profile": "software",
+        "api": "webgpu",
+        "gpu": {
+          "api": "WebGPU",
+          "vendor": "google",
+          "architecture": "swiftshader",
+          "description": ""
+        }
+      },
+      {
+        "profile": "software",
+        "api": "webgl2",
+        "gpu": {
+          "api": "WebGL2",
+          "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+        }
+      }
+    ],
+    "linearFloat32Words": 61440,
+    "onscreenRGBA8Channels": 737280,
+    "wordOrByteDifferences": 0,
+    "casesPerTuple": 60,
+    "toneMappings": [
+      "NoToneMapping",
+      "LinearToneMapping",
+      "ACESFilmicToneMapping",
+      "AgXToneMapping",
+      "NeutralToneMapping",
+      "ReinhardToneMapping"
+    ],
+    "exposures": [
+      0.5,
+      2
+    ],
+    "scope": "Uniform originalF32RGB, initialbackgroundIntensity1, ownbackgroundBlur0. Same64x32Float32IBLsource/publicPMREM path. NodeRendereronly; classicCube unchanged. No geometrycleanup claim foroldCube."
+  },
+  "knownCompatibilityDifference": {
+    "property": "scene.backgroundIntensity",
+    "laterValue": 0.5,
+    "equivalent": false,
+    "reason": "Three applies intensity to texturedCube backgrounds; Color uses its own RGB directly. Artist-authored World strength remains folded into originalF32radiance.",
+    "perTuple": [
+      {
+        "equivalent": false,
+        "compared": 3072,
+        "differences": 2304,
+        "max": 0.25
+      },
+      {
+        "equivalent": false,
+        "compared": 3072,
+        "differences": 2304,
+        "max": 0.25
+      },
+      {
+        "equivalent": false,
+        "compared": 3072,
+        "differences": 2304,
+        "max": 0.25
+      },
+      {
+        "equivalent": false,
+        "compared": 3072,
+        "differences": 2304,
+        "max": 0.25
+      }
+    ]
+  },
+  "savedFinalDiagnostic": {
+    "actualTuples": [
+      {
+        "api": "WebGPU",
+        "vendor": "apple",
+        "architecture": "metal-3",
+        "device": "",
+        "description": ""
+      },
+      {
+        "api": "WebGL2",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+      }
+    ],
+    "savedCasesPerApi": 8,
+    "disposalCycles": 48,
+    "geometryBaseline": 2,
+    "geometryAfterEveryDispose": 2,
+    "strictTextureBaselineRestored": true,
+    "savedOriginalAxisPhysicalDestroysPerApi": 1,
+    "nativeOrFinalQualificationCredit": 0
+  },
+  "productionCandidate": {
+    "pmremOwnershipCommit": "814f43d",
+    "colorBackgroundCommit": "0636c35",
+    "trackedSdkChangesAfterDiagnostic": false
+  },
+  "retainedScriptPins": [
+    {
+      "path": "experiments/research/preview-world-color-ownership/appearance-browser.js",
+      "sha256": "17a81f1381320b2f93419b6bcddff42076c3f39b12d1e9bcf3db684719342520",
+      "originalMachineLocalPath": "artifacts/preview-background-color-pilot.js",
+      "byteIdentical": true
+    },
+    {
+      "path": "experiments/research/preview-world-color-ownership/appearance-host.mjs",
+      "sha256": "4439c71594d17dd512e4a4eb15f709e610149243b6f009aef4f66e60a9ba4c83",
+      "originalMachineLocalPath": "artifacts/preview-background-color-pilot.mjs",
+      "byteIdentical": true
+    },
+    {
+      "path": "experiments/research/preview-world-color-ownership/appearance.html",
+      "sha256": "5022356f528c923e6d238c454157a895fbccb8b047a561d1c9febe7900775d83",
+      "originalMachineLocalPath": "artifacts/preview-background-color-pilot.html",
+      "byteIdentical": true
+    },
+    {
+      "path": "experiments/research/preview-world-color-ownership/final-geometry-browser.js",
+      "sha256": "88d9ac50ca4de8e135ba1c294f631dc485b3c7a9af008f40a354e97107255302",
+      "originalMachineLocalPath": "artifacts/diagnostic-preview-color-owned-final-r1/fixture/browser.js",
+      "byteIdentical": true
+    },
+    {
+      "path": "experiments/research/preview-world-color-ownership/final-geometry-host.mjs",
+      "sha256": "b435d3d71a0c12f8bcb0aaf550b4486c56b6e46070acc6390039ff9977ffc2cf",
+      "originalMachineLocalPath": "artifacts/preview-color-final-diagnostic-run.mjs",
+      "byteIdentical": true
+    },
+    {
+      "path": "experiments/research/preview-world-color-ownership/background-node-counterexample.mjs",
+      "sha256": "dfe37fbdafe2aaa94e261f1f5be5294b61cd5995c92aaa757991919c1b1f72a5",
+      "originalMachineLocalPath": "artifacts/probe-owned-background-node.mjs",
+      "byteIdentical": true
+    }
+  ],
+  "retainedFailures": [
+    {
+      "label": "original-integrated-texture-failure",
+      "machineLocalPath": "/Users/michaeljones/Documents/GitHub/Blendlink/artifacts/verification-next27-manifest-field/cpu/browser-final-metal/report.json",
+      "sha256": "77b89fe73667c9ec759230fa8933be96d8aee2c34bd49c791ca849b2c763752f",
+      "status": "failed",
+      "modified": false
+    },
+    {
+      "label": "owned-pmrem-extra-geometry",
+      "machineLocalPath": "/private/tmp/scenetoweb-preview-world-pmrem-ownership-next/artifacts/diagnostic-preview-pmrem-owned-final-r1/cpu/browser-final-metal/report.json",
+      "sha256": "e8f0ab870577ab4e3e487b918367e58ef5ecc521b325ca20fd31f0459a7aaedc",
+      "status": "failed",
+      "modified": false
+    },
+    {
+      "label": "owned-pmrem-background-sphere-identification",
+      "machineLocalPath": "/private/tmp/scenetoweb-preview-world-pmrem-ownership-next/artifacts/diagnostic-preview-pmrem-owned-final-r2/cpu/browser-final-metal/report.json",
+      "sha256": "d92f650139761ceb8e9c5dd089b56aca9cc3955503fd6ef40583917ca3ca235c",
+      "status": "failed",
+      "modified": false
+    }
+  ],
+  "nonQualificationLimits": [
+    "Retained native/Final packet reused for diagnostics; no fresh integrated numerical qualification.",
+    "Appearance comparison contains no Blender native scene or camera acceptance.",
+    "The caller background becomes Three.Color only on the node renderer; classic Cube remains.",
+    "No new shader/compositor node or context coverage, native API profile, domain or support status.",
+    "The public backgroundIntensity property is texture-only and does not multiply a Color; authored Blender Strength remains folded into the originalF32radiance.",
+    "Old Cube controls retain the known per-scene Background.mesh geometry; no baseline exemption was added.",
+    "Retained host scripts capture exact original invocations, including machine-local paths, and are not registered production proof entrypoints."
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "scope": "Research only: pinned Blender5.3 macOS arm64 CPU compositor, unlinked native Uniform Vector, actual 2D normalized FBM original defaults (Scale5, Detail2, Roughness0.5, Lacunarity2, Distortion+0), Fac and Color. Scale0 is an endpoint control, not the useful field scope.",
+  "extents": [[13,9],[9,13],[16,8],[8,8]],
+  "routes": ["default-fac","default-color","scale-zero-fac","scale-zero-color"],
+  "nativeRenders": 20,
+  "precision": {"researchGateAbsoluteMax": 0.00000095367431640625,"researchGateUlpsMax":8,"alphaOneExact":true,"integerLatticeFacHalfExact":true,"finiteRgbMinimum":0,"finiteRgbMaximum":1,"rawWordDifferencesRetained":true,"universalErrorProof":false},
+  "models": ["source-unsuffixed-double-staging","existing-mf-periodic-f32-host-model"],
+  "gpuRuns":0,"finalCredit":0,"browserCredit":0,"portCredit":0
+}

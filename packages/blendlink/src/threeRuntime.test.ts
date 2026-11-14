@@ -3,7 +3,7 @@ import { createRequire } from 'node:module'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js'
@@ -18,6 +18,32 @@ import {
   type ThreeBakedSceneHandle,
 } from './threeRuntime.js'
 import type { CompiledSceneDescriptor } from './runtime.js'
+
+// Exercise public PMREM ownership without a browser GL context. Keep the
+// actual source texture and result target distinct, as the real generator does.
+let previewSources: THREE.DataTexture[] = []
+let previewTargets: THREE.WebGLRenderTarget[] = []
+let previewPmremMocks: Array<{ mockRestore(): void }> = []
+beforeEach(() => {
+  previewSources = []; previewTargets = []
+  previewPmremMocks = [
+    vi.spyOn(THREE.PMREMGenerator.prototype, 'compileEquirectangularShader').mockImplementation(() => {}),
+    vi.spyOn(THREE.PMREMGenerator.prototype, 'fromEquirectangular').mockImplementation(function(source) {
+      previewSources.push(source as THREE.DataTexture)
+      const target = new THREE.WebGLRenderTarget(336, 64)
+      target.texture.mapping = THREE.CubeUVReflectionMapping
+      target.texture.name = 'PMREM.cubeUv'; target.texture.type = THREE.HalfFloatType
+      target.texture.colorSpace = THREE.LinearSRGBColorSpace
+      target.texture.minFilter = target.texture.magFilter = THREE.LinearFilter
+      target.texture.generateMipmaps = false
+      ;(this as unknown as { _renderer: THREE.WebGLRenderer })._renderer.setRenderTarget(target)
+      previewTargets.push(target)
+      return target
+    }),
+    vi.spyOn(THREE.PMREMGenerator.prototype, 'dispose').mockImplementation(() => {}),
+  ]
+})
+afterEach(() => { for (const mock of previewPmremMocks) mock.mockRestore() })
 
 function descriptor(overrides: Partial<CompiledSceneDescriptor> = {}): CompiledSceneDescriptor {
   return {
@@ -54,6 +80,12 @@ function renderer() {
       sizes.push([width, height, updateStyle])
     },
     render: vi.fn(),
+    getRenderTarget: () => null,
+    setRenderTarget: vi.fn(),
+    getViewport: (v: THREE.Vector4) => v.set(0, 0, 640, 360),
+    setViewport: vi.fn(),
+    getScissor: (v: THREE.Vector4) => v.set(0, 0, 640, 360),
+    setScissor: vi.fn(), getScissorTest: () => false, setScissorTest: vi.fn(),
     initTexture: vi.fn(),
     sizes,
   }
@@ -828,7 +860,8 @@ describe('official Three scene installation seam', () => {
       },
     )
 
-    const environment = previewScene.environment as THREE.DataTexture
+    const environment = previewScene.environment as THREE.Texture
+    const source = previewSources.at(-1)!
     const background = previewScene.background as THREE.CubeTexture
     expect(background).toBeInstanceOf(THREE.CubeTexture)
     expect(background).not.toBe(environment)
@@ -842,12 +875,14 @@ describe('official Three scene installation seam', () => {
       expect(face).toBeInstanceOf(THREE.DataTexture)
       expect(face.image).toMatchObject({ width: 1, height: 1 })
       expect(face.image.data).toBe(faces[0]!.image.data)
-      expect(face.image.data.buffer).toBe(environment.image.data.buffer)
-      expect(Array.from(face.image.data)).toEqual(Array.from(environment.image.data.slice(0, 4)))
+      expect(face.image.data.buffer).not.toBe(source.image.data.buffer)
+      expect(Array.from(face.image.data)).toEqual(Array.from(source.image.data.slice(0, 4)))
     }
     expect(previewScene.backgroundBlurriness).toBe(0)
-    expect(environment).toBeInstanceOf(THREE.DataTexture)
-    expect(environment).toMatchObject({
+    expect(environment).toBe(previewTargets.at(-1)!.texture)
+    expect(environment.mapping).toBe(THREE.CubeUVReflectionMapping)
+    expect(source).toBeInstanceOf(THREE.DataTexture)
+    expect(source).toMatchObject({
       name: 'SceneToWeb Preview World',
       mapping: THREE.EquirectangularReflectionMapping,
       colorSpace: THREE.LinearSRGBColorSpace,
@@ -857,8 +892,8 @@ describe('official Three scene installation seam', () => {
       minFilter: THREE.LinearFilter,
       generateMipmaps: false,
     })
-    expect(environment.image).toMatchObject({ width: 64, height: 32 })
-    expect(Array.from(environment.image.data.slice(0, 8))).toEqual([
+    expect(source.image).toMatchObject({ width: 64, height: 32 })
+    expect(Array.from(source.image.data.slice(0, 8))).toEqual([
       expect.closeTo(0.2), expect.closeTo(0.4), expect.closeTo(0.6), 1,
       expect.closeTo(0.2), expect.closeTo(0.4), expect.closeTo(0.6), 1,
     ])
@@ -866,7 +901,7 @@ describe('official Three scene installation seam', () => {
     expect(previewScene.environmentIntensity).toBe(1)
     expect(previewScene.getObjectByName('SceneToWeb Preview World')).toBeUndefined()
     expect(sceneDescriptor.authoringPreview?.world).toBe(world)
-    const disposeEnvironment = vi.spyOn(environment, 'dispose')
+    const disposeEnvironment = vi.spyOn(previewTargets.at(-1)!, 'dispose')
     const disposeBackground = vi.spyOn(background, 'dispose')
     const disposeFaces = faces.map(face => vi.spyOn(face, 'dispose'))
     const disposeBorrowedEnvironment = vi.spyOn(previousEnvironment, 'dispose')
@@ -958,8 +993,8 @@ describe('official Three scene installation seam', () => {
     )
 
     expect(scene.background).toBe(previousBackground)
-    expect(scene.environment).toBeInstanceOf(THREE.DataTexture)
-    expect(Array.from((scene.environment as THREE.DataTexture).image.data.slice(0, 4))).toEqual([
+    expect(scene.environment).toBe(previewTargets.at(-1)!.texture)
+    expect(Array.from(previewSources.at(-1)!.image.data.slice(0, 4))).toEqual([
       expect.closeTo(0.6), expect.closeTo(0.4), expect.closeTo(0.2), 1,
     ])
     installed.dispose()

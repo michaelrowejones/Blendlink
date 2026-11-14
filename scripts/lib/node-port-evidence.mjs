@@ -55,6 +55,7 @@ async function readFloatToIntEvidence({ root, evidence, manifest, profile, compl
 
 export const NODE_PORT_EVIDENCE_ADAPTERS = Object.freeze({
   'compositor-white-noise-fixed-v1': closedFamilyAdapter('compositor-white-noise'),
+  'compositor-white-noise-default-field-v1': closedFamilyAdapter('compositor-white-noise-default-field'),
   'mono-switch-view-v1': closedFamilyAdapter('mono-switch-view'),
   'squeeze-v1': Object.freeze({ read: readSqueezeNodePortEvidence, nativeFinalPaths: ['references.json', 'final-proof.json'],
     finalSources: async evidence => (await json(join(evidence, 'references.json'))).cases.map(row => join(evidence, row.file)) }),

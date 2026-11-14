@@ -2127,6 +2127,10 @@ function hashUint4(
   return jenkinsFinal(a.add(kw), b, c, vector)
 }
 
+/** Compositor CPU-field integer reuse; original hash bodies/callers are unchanged. */
+export function compositorHashUint3(x:TslExpression,y:TslExpression,z:TslExpression):TslExpression{return hashUint3(x,y,z)}
+export function compositorHashUint4(x:TslExpression,y:TslExpression,z:TslExpression,w:TslExpression):TslExpression{return hashUint4(x,y,z,w)}
+
 const uintToUnitFloat = (value: TslExpression): TslExpression =>
   tslFloat(value).div(4294967295.0)
 

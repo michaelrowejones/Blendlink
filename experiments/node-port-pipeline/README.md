@@ -42,3 +42,10 @@ Original machine-local reports:
 
 No original receipt, source fixture, SDK file or coverage classification was
 changed while retaining this record.
+
+A subsequent [fresh checkpoint refresh](./refresh-next25.json) repeats both complete
+manifest transactions at published source `33053dd7b3171ea295b815c33aacb07a6fb9318e`,
+after the shared group-interface/closure and owned World cube changes. Both are
+qualified and workspace-stable, with the same case/word census and zero word
+differences shown above. Original next23 receipts remain unchanged. This refresh
+adds no new node or default-coordinate White Noise field coverage.

@@ -258,7 +258,7 @@ def export_source_presentation(scene, glb_path):
     if budget_issue:
         op, message = budget_issue
         result['compositor']['status'] = 'unsupported'
-        result['compositor']['diagnostics'].append({'code':('unsupported-box-mask-sampler-budget' if op['kind']=='box-mask' else 'unsupported-ellipse-mask-sampler-budget'),
+        result['compositor']['diagnostics'].append({'code':('unsupported-white-noise-sampler-budget' if op['kind']=='white-noise-texture' else 'unsupported-box-mask-sampler-budget' if op['kind']=='box-mask' else 'unsupported-ellipse-mask-sampler-budget'),
             'path':op['source']['path'], 'node':op['source']['node'],
             'socket':op['source']['output'], 'message':message})
     payload = json.dumps(

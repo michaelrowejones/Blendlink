@@ -1466,6 +1466,8 @@
     }
   },
   "researchNotes": {
+    "compositor:ShaderNodeTexNoise": "Research only; no production support. Twenty guarded Blender 5.3 CPU renders cover eight varying default 2D FBM rows, eight Scale-zero controls and four independent Uniform-coordinate witnesses. The source-faithful mixed-precision host model matches 6,816 primary words exactly. The existing staged-F32 host model differs in 1,221 words by at most 7 ULP, within its predeclared research gate; this is not actual TSL, GPU or saved-Final qualification. Default CPU Noise cannot be relabeled as the EEVEE/Cycles profile. Shared exact axes, fixed Color offsets and a distinct CPU precision contract are the proposed next enablers.",
+    "compositor:ShaderNodeTexWave": "Research only; no production support. Native CPU Uniform Bands X/Y SAW and TRI each match 2,148,632 words across 126 bound/seam frames. An O(W+H) owned factor-row design preserves ordinary authored values and live resizing. SIN's proposed wider domain fails 24 unchanged exact-endpoint checks despite a small absolute error; actual compiler/libm evidence confirms a native sinf versus rounded-double difference. SIN remains unqualified. Official retained demo inventories contain no Wave usage, so artist priority remains an engineering judgment.",
     "compositor:FunctionNodeFloatToInt": "Qualified partial literal production port on measured Blender 5.3 macOS arm64: all four modes, native typed consumers and actual saved Final/browser proof. Computed/image fields, other platforms and implicit conversions remain unqualified; native subnormal and save/reopen image counterexamples are retained. Earlier Geometry-only/private kernel trials grant no additional support. Shader creation is rejected in all audited versions.",
     "shader:ShaderNodeRadialTiling": "Qualified partial literal Segment Width port with closed native/Final/browser evidence. Computed Sides3/8/12 and Segment Coordinates in the unchanged stepped official demo remain unqualified. Generated-kernel compilation research is separate and earns no new support or scene credit.",
     "compositor:ShaderNodeRadialTiling": "Qualified partial literal Segment Width port with closed native/Final/browser evidence. Computed Sides3/8/12 and Segment Coordinates in the unchanged stepped official demo remain unqualified. Generated-kernel compilation research is separate and earns no new support or scene credit.",
@@ -1492,6 +1494,19 @@
     "experiments/official-demo-node-performance/metadata-vector-triage.json"
   ],
   "researchEvidencePaths": {
+    "compositor:ShaderNodeTexNoise": [
+      "experiments/compositor-noise-uniform-research/README.md",
+      "experiments/compositor-noise-uniform-research/evidence.json",
+      "experiments/compositor-noise-uniform-research/contract.json",
+      "experiments/compositor-noise-uniform-research/sources.json"
+    ],
+    "compositor:ShaderNodeTexWave": [
+      "experiments/compositor-wave-axis-research/README.md",
+      "experiments/compositor-wave-axis-research/design.md",
+      "experiments/compositor-wave-axis-research/receipt.json",
+      "experiments/compositor-wave-axis-research/bound-receipt.json",
+      "experiments/compositor-wave-axis-research/math-enabler-research.json"
+    ],
     "compositor:FunctionNodeFloatToInt": [
       "experiments/float-to-int-native/README.md",
       "experiments/float-to-int-native/literal-evidence.json"

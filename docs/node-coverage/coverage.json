@@ -1,5 +1,5 @@
 {
-  "capabilityMapSha256": "d92bd3d5e9f3f1671e524b68163dcf1e50ccae3eda663a31a834ae940a49667c",
+  "capabilityMapSha256": "67dcc5f573a9006212da45d870613e332b6889925fbccd288cb951ecadc6d20b",
   "capabilityValidationFailures": [],
   "classificationRefresh": {
     "catalogSha256": {
@@ -12,7 +12,7 @@
     "nativeInventoryRefreshed": false,
     "reason": "Classification-only refresh against unchanged content-pinned full inventories; no native rediscovery or numerical qualification is performed."
   },
-  "generatedAt": "2026-11-14T15:27:31.106014+00:00",
+  "generatedAt": "2026-11-14T18:23:33.159201+00:00",
   "nativeAvailabilityChanges": [],
   "nativeCatalogSha256": {
     "docs/node-coverage/blender-4.2.0.json": "2f71cb192f6a62e0e343ba5fcb11a2d8e0c6f6af1e8ac663ec6c3350b016b151",
@@ -3378,6 +3378,15 @@
                 },
                 {
                   "path": "experiments/constant-world-background/verify.mjs"
+                },
+                {
+                  "path": "experiments/constant-world-background/history/next24r4-evidence.json"
+                },
+                {
+                  "path": "experiments/research/preview-world-color-ownership/evidence.json"
+                },
+                {
+                  "path": "experiments/research/world-shared-quad-baseline/evidence.json"
                 }
               ],
               "id": "ShaderNodeBackground",
@@ -4903,6 +4912,15 @@
                 },
                 {
                   "path": "experiments/constant-world-background/verify.mjs"
+                },
+                {
+                  "path": "experiments/constant-world-background/history/next24r4-evidence.json"
+                },
+                {
+                  "path": "experiments/research/preview-world-color-ownership/evidence.json"
+                },
+                {
+                  "path": "experiments/research/world-shared-quad-baseline/evidence.json"
                 }
               ],
               "id": "ShaderNodeOutputWorld",
@@ -11856,11 +11874,48 @@
                 },
                 {
                   "path": "experiments/compositor-white-noise/evidence.json"
+                },
+                {
+                  "anchor": "export function validateWhiteNoiseFieldGraph",
+                  "path": "packages/blendlink/src/tslCompositorWhiteNoiseField.ts"
+                },
+                {
+                  "anchor": "export const compositorCpuUintRne",
+                  "path": "packages/blendlink/src/tslCompositorWhiteNoiseRne.ts"
+                },
+                {
+                  "anchor": "export class CompositorExactAxes",
+                  "path": "packages/blendlink/src/tslCompositorExactAxes.ts"
+                },
+                {
+                  "anchor": "def validate_input",
+                  "path": "packages/blendlink/blender/compositor_group_defaults.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_white_noise_fields_check.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_white_noise_muted_check.py"
+                },
+                {
+                  "path": "experiments/compositor-white-noise-default-field/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-white-noise-default-field/README.md"
+                },
+                {
+                  "path": "experiments/compositor-white-noise-default-field/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-white-noise-default-field/verify.mjs"
+                },
+                {
+                  "path": "node-ports/compositor-white-noise-default-field.json"
                 }
               ],
               "id": "ShaderNodeTexWhiteNoise",
               "label": "White Noise Texture",
-              "limits": "No admitted route outside the explicitly qualified Blender 5.3.0 CPU compositor fixed-input source slice. Native node availability alone is not numerical support.",
+              "limits": "No admitted route outside the separately qualified Blender 5.3.0 CPU compositor fixed-input and default-field source slices. Native node availability alone is not numerical support.",
               "runtimeOps": [
                 "white-noise-texture"
               ],
@@ -12636,6 +12691,15 @@
                 },
                 {
                   "path": "experiments/constant-world-background/verify.mjs"
+                },
+                {
+                  "path": "experiments/constant-world-background/history/next24r4-evidence.json"
+                },
+                {
+                  "path": "experiments/research/preview-world-color-ownership/evidence.json"
+                },
+                {
+                  "path": "experiments/research/world-shared-quad-baseline/evidence.json"
                 }
               ],
               "id": "ShaderNodeBackground",
@@ -14136,6 +14200,15 @@
                 },
                 {
                   "path": "experiments/constant-world-background/verify.mjs"
+                },
+                {
+                  "path": "experiments/constant-world-background/history/next24r4-evidence.json"
+                },
+                {
+                  "path": "experiments/research/preview-world-color-ownership/evidence.json"
+                },
+                {
+                  "path": "experiments/research/world-shared-quad-baseline/evidence.json"
                 }
               ],
               "id": "ShaderNodeOutputWorld",
@@ -21835,11 +21908,48 @@
                 },
                 {
                   "path": "experiments/compositor-white-noise/evidence.json"
+                },
+                {
+                  "anchor": "export function validateWhiteNoiseFieldGraph",
+                  "path": "packages/blendlink/src/tslCompositorWhiteNoiseField.ts"
+                },
+                {
+                  "anchor": "export const compositorCpuUintRne",
+                  "path": "packages/blendlink/src/tslCompositorWhiteNoiseRne.ts"
+                },
+                {
+                  "anchor": "export class CompositorExactAxes",
+                  "path": "packages/blendlink/src/tslCompositorExactAxes.ts"
+                },
+                {
+                  "anchor": "def validate_input",
+                  "path": "packages/blendlink/blender/compositor_group_defaults.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_white_noise_fields_check.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_white_noise_muted_check.py"
+                },
+                {
+                  "path": "experiments/compositor-white-noise-default-field/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-white-noise-default-field/README.md"
+                },
+                {
+                  "path": "experiments/compositor-white-noise-default-field/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-white-noise-default-field/verify.mjs"
+                },
+                {
+                  "path": "node-ports/compositor-white-noise-default-field.json"
                 }
               ],
               "id": "ShaderNodeTexWhiteNoise",
               "label": "White Noise Texture",
-              "limits": "Blender 5.3.0 build 02f0899d78e3 macOS arm64 CPU compositor White Noise, 1D/2D/3D/4D Value and Color. Explicit fixed seeds emitted solely as compile-time literal constants; uniform/dynamic inputs are not admitted: raw positive zero or any finite normal Float32, classified in owned homogeneous native socket storage before Python scalar promotion. Native typed W defaults, linked Value, CombineXYZ, explicit instance-bound Float/Vector group defaults, reroutes and actual mute bypass copy routes. Unlinked group-instance inputs must match the actual native INPUT interface identifier/type, require default_input VALUE and structure AUTO/SINGLE, and stay within 256 interface items. Implicit Uniform coordinates and Scene Frame defaults refuse; explicit linked overrides remain qualified. These are copy routes only; no native MF/hash evaluation during extraction. Vector must be explicitly linked because the native unlinked compositor input uses Uniform Image Coordinates, not zero; compositor default dimension is 2D. Source Float32 bits drive the same Jenkins uint32 hash family and channel seeds/permutations as the existing shader hash kernels, with distinct CPU-compositor admission. All measured RGBA output words, including alpha 1, are exact through actual saved Final publication, both actual APIs/profiles and physical resize. Bounds: 64 source nodes, 256 visits, 16 source hops and group ancestry depth 16. Owned raw-copy groups are removed in finally; source scene/frame/active-selected objects/ID ownership remain unchanged. Raw negative zero, subnormal/nonfinite seeds, implicit casts/coordinates, computed/field producers, animation/drivers/NLA, GPU-authored Blender, other versions/builds/hosts and EEVEE shader source equivalence remain unqualified. Independent native Image Info Dimensions 0x0 is a domain control only; Image Info single-value support is not promoted. Existing shader White Noise and its field approximation policies are unchanged. No port-owned texture/pass/readback; three actual Final apply/dispose cycles preserve source material/callback and exact renderer-cache ownership.",
+              "limits": "Pinned Blender 5.3.0 build 02f0899d78e3, macOS arm64 CPU compositor. Fixed-input 1D-4D Value/Color retains its separately qualified raw normal Float32/+0 typed-copy scope: native W defaults, explicit linked Vector, Value/CombineXYZ, bounded group defaults and reroutes. No computed seeds or native MF/hash folding. Native group INPUT identifiers/types must match; unlinked defaults require VALUE and AUTO/SINGLE structure within 256 interface items. Raw negative zero, subnormal/nonfinite seeds, linked implicit Uniform/Scene Frame defaults and unknown structures refuse. Additionally, this node's own unlinked Vector supports native Uniform fields for 2D/3D/4D Value/Color, with fixed typed W for 4D. Stored Vector RNA defaults are natively ignored. Requires AUTO/FULL CPU Float32, square pixels, no border/crop and zero-origin full-frame physical extents 4..8192, checked during live resize/DPR. One shared R32F two-row axis table per built pipeline: O(width+height) work/upload only on valid extent changes, at most 64 KiB CPU data/logical GPU texels, one binding/two unfiltered loads, no helper pass/readback. Integer ties-to-even normalization preserves CPU hash words across actual Metal/SwiftShader WebGPU/WebGL2. The separately recorded field slice closes 54 production graphs, 8 saved Finals and 248 browser cases with 7,943,520 exact primary words. Nine native coordinate/domain controls grant zero runtime consumer credit; ImageInfo is not extended. Axis-only preparation/commit counters exclude PMREM and other installation work. Texture/source/binding/version, renderer/device/context/epoch, mip/viewport/scissor and saved-dispose ownership guards survive constant terminal consumers. Closed validated texture-free pointwise composition only; combined axes/Ellipse/display budget is eight sampled textures, without unaccounted registered effects. Type-changing White Noise mute bypasses refuse; same-type W-to-Value paths remain. Other builds/hosts/versions, Blender GPU/EEVEE shader equivalence, linked coordinate fields, image/render-pass/spatial producers, animation/drivers/NLA, arbitrary downstream amplification, whole-scene lighting/BSDF and original-demo acceptance remain unqualified. Shader behavior and historical fixed-input receipts are unchanged.",
               "runtimeOps": [
                 "white-noise-texture"
               ],
@@ -23396,11 +23506,20 @@
                 },
                 {
                   "path": "experiments/constant-world-background/verify.mjs"
+                },
+                {
+                  "path": "experiments/constant-world-background/history/next24r4-evidence.json"
+                },
+                {
+                  "path": "experiments/research/preview-world-color-ownership/evidence.json"
+                },
+                {
+                  "path": "experiments/research/world-shared-quad-baseline/evidence.json"
                 }
               ],
               "id": "ShaderNodeBackground",
               "label": "Background",
-              "limits": "Pinned Blender5.3.0 build02f0899d78e3 macOS arm64 EEVEE direct static Background→native engine-selected WorldOutput, through the existing authoringPreview/sourcePresentation default Final bridge. Unmuted direct Surface, unlinked finite nonnegative Color/Strength, no connected Volume; qualified source radiance[0,1]. Five unchanged sources include native .8 Background and .05 initialized-World defaults, dyadic RGB/strength, zero strength and nonhalf products. Native EEVEE Metal half-film EXR32 reference: predeclared RGB abs≤2^-10, alpha1 exact, dyadic/black controls wordexact. Fifteen native frames, seven saved actual default Final sources, 180 browser frame pairs/60 install cycles/393408 words on actual WebGPU and WebGL2, Metal and SwiftShader; no contract violations. General RGB is bounded, not bitexact: linear85752/display9528 word differences, maxAbs .00019532442092895508/.0001220703125. Raw display/exposure0 only. Native target selection handles EEVEE/ALL precedence; source animation/drivers/effective NLA block Final/connected-site export, with private current-frame preview explicitly warned. Explicit website look/environment ownership, Film Transparent and source opt-out remain authoritative. Public uniform data-cube background prevents orphan conversion depths; per helper64×32 Float32 environment source32768 CPU bytes and six1×1 Float32 cube faces96 logical GPU texel bytes sharing that helper's source view. Actual default preparation uses detached and live helpers (120 cube uploads/60 cycles), not a total32KiB/96B install; physical GPU allocation bytes unmeasured. Measured preparation0draws, linear scene1draw, installed Final2draws; exact texture/host/blur/clear-alpha restoration. No new GPU opcode. No IBL, whole lighting, BSDF, HDRI, Volume, procedural/linked World, Cycles-render, AgX visual, legacy renderer, other versions/builds/hosts or animated playback credit.",
+              "limits": "Pinned Blender 5.3.0 build 02f0899d78e3 macOS arm64 EEVEE direct static Background to native engine-selected World Output, through the default authoringPreview/sourcePresentation Final bridge. Unmuted direct Surface, unlinked finite nonnegative Color/Strength, no connected Volume; qualified radiance in [0,1]. Five sources include original .8 Background and .05 initialized-World defaults, dyadic products, zero strength and nonhalf products. Fifteen native EEVEE half-film reference frames, seven actual saved Finals, 180 browser frame pairs and 60 install cycles compare 393,408 words across actual Metal/SwiftShader WebGPU/WebGL2. RGB absolute error <=2^-10 and alpha 1 exact; dyadic/black controls are word-exact. General RGB is bounded, not bit-exact: 85,752 linear and 19,056 display word differences, maximum absolute error .00019532442092895508/.0001220703125. Raw display/exposure zero. World Output uses native EEVEE/ALL target precedence; animation/drivers/effective NLA block Final/connected export and only private current-frame preview warns. Explicit website ownership, Film Transparent and source opt-out remain authoritative. Node rendering uses exact authored Float32 radiance in a Color background, creating no background texture/geometry and leaving backgroundNode untouched; later backgroundIntensity follows Three Color semantics and has no texture-intensity equivalence claim. Lighting preparation explicitly owns the public PMREM target, shares it across detached/live scenes, and disposes source/scratch/result with caller adoption preserved. Per generation: 32 KiB transient Float32 source, one ready 336x64 HalfFloat target; not a total-install CPU/physical-GPU byte claim. In the declared off-camera-mesh fixture, preparation measures 13 draws, synchronous commit zero draws, direct linear background zero scene draws and Final one display draw; exact texture identity, host state, ready-target version and geometry-count baselines restored. Geometry identity is not claimed. Original cube-based receipt remains historical. No IBL, whole lighting/BSDF, HDRI, Volume, procedural/linked World, Cycles-render, AgX visual, legacy renderer, other builds/hosts/versions or animated playback credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -24956,11 +25075,20 @@
                 },
                 {
                   "path": "experiments/constant-world-background/verify.mjs"
+                },
+                {
+                  "path": "experiments/constant-world-background/history/next24r4-evidence.json"
+                },
+                {
+                  "path": "experiments/research/preview-world-color-ownership/evidence.json"
+                },
+                {
+                  "path": "experiments/research/world-shared-quad-baseline/evidence.json"
                 }
               ],
               "id": "ShaderNodeOutputWorld",
               "label": "World Output",
-              "limits": "Pinned Blender5.3.0 build02f0899d78e3 macOS arm64 EEVEE direct static Background→native engine-selected WorldOutput, through the existing authoringPreview/sourcePresentation default Final bridge. Unmuted direct Surface, unlinked finite nonnegative Color/Strength, no connected Volume; qualified source radiance[0,1]. Five unchanged sources include native .8 Background and .05 initialized-World defaults, dyadic RGB/strength, zero strength and nonhalf products. Native EEVEE Metal half-film EXR32 reference: predeclared RGB abs≤2^-10, alpha1 exact, dyadic/black controls wordexact. Fifteen native frames, seven saved actual default Final sources, 180 browser frame pairs/60 install cycles/393408 words on actual WebGPU and WebGL2, Metal and SwiftShader; no contract violations. General RGB is bounded, not bitexact: linear85752/display9528 word differences, maxAbs .00019532442092895508/.0001220703125. Raw display/exposure0 only. Native target selection handles EEVEE/ALL precedence; source animation/drivers/effective NLA block Final/connected-site export, with private current-frame preview explicitly warned. Explicit website look/environment ownership, Film Transparent and source opt-out remain authoritative. Public uniform data-cube background prevents orphan conversion depths; per helper64×32 Float32 environment source32768 CPU bytes and six1×1 Float32 cube faces96 logical GPU texel bytes sharing that helper's source view. Actual default preparation uses detached and live helpers (120 cube uploads/60 cycles), not a total32KiB/96B install; physical GPU allocation bytes unmeasured. Measured preparation0draws, linear scene1draw, installed Final2draws; exact texture/host/blur/clear-alpha restoration. No new GPU opcode. No IBL, whole lighting, BSDF, HDRI, Volume, procedural/linked World, Cycles-render, AgX visual, legacy renderer, other versions/builds/hosts or animated playback credit.",
+              "limits": "Pinned Blender 5.3.0 build 02f0899d78e3 macOS arm64 EEVEE direct static Background to native engine-selected World Output, through the default authoringPreview/sourcePresentation Final bridge. Unmuted direct Surface, unlinked finite nonnegative Color/Strength, no connected Volume; qualified radiance in [0,1]. Five sources include original .8 Background and .05 initialized-World defaults, dyadic products, zero strength and nonhalf products. Fifteen native EEVEE half-film reference frames, seven actual saved Finals, 180 browser frame pairs and 60 install cycles compare 393,408 words across actual Metal/SwiftShader WebGPU/WebGL2. RGB absolute error <=2^-10 and alpha 1 exact; dyadic/black controls are word-exact. General RGB is bounded, not bit-exact: 85,752 linear and 19,056 display word differences, maximum absolute error .00019532442092895508/.0001220703125. Raw display/exposure zero. World Output uses native EEVEE/ALL target precedence; animation/drivers/effective NLA block Final/connected export and only private current-frame preview warns. Explicit website ownership, Film Transparent and source opt-out remain authoritative. Node rendering uses exact authored Float32 radiance in a Color background, creating no background texture/geometry and leaving backgroundNode untouched; later backgroundIntensity follows Three Color semantics and has no texture-intensity equivalence claim. Lighting preparation explicitly owns the public PMREM target, shares it across detached/live scenes, and disposes source/scratch/result with caller adoption preserved. Per generation: 32 KiB transient Float32 source, one ready 336x64 HalfFloat target; not a total-install CPU/physical-GPU byte claim. In the declared off-camera-mesh fixture, preparation measures 13 draws, synchronous commit zero draws, direct linear background zero scene draws and Final one display draw; exact texture identity, host state, ready-target version and geometry-count baselines restored. Geometry identity is not claimed. Original cube-based receipt remains historical. No IBL, whole lighting/BSDF, HDRI, Volume, procedural/linked World, Cycles-render, AgX visual, legacy renderer, other builds/hosts/versions or animated playback credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -26719,7 +26847,8 @@
     "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
     "packages/blendlink/blender/compositor_float_coordinates.py": "a300cbfb6e5ea06806e2fb9b9d7795cd2e3b91cb21ada43e4c128ac89d8f0cec",
     "packages/blendlink/blender/compositor_float_to_int.py": "6292f5a5904107b59591c282fcf9def24a5f98dc2ead0a92d950b6219226658d",
-    "packages/blendlink/blender/compositor_graph.py": "2946cec10ee660f1350be1b5415afe1c8721fdfc54ae815bd5c0f99b24744d20",
+    "packages/blendlink/blender/compositor_graph.py": "0752b79af682bdde9d30a3c0b79c1752eb08c2f8cbdbf7d5f58668f456f8f483",
+    "packages/blendlink/blender/compositor_group_defaults.py": "484fea6a45208531f189e65d627747f94c1386b98a9a6b460a21f51afa01889d",
     "packages/blendlink/blender/compositor_image.py": "55ee3b7800002331c4e30042a7d5da18538267b58ff60c006e03ad238da9e012",
     "packages/blendlink/blender/compositor_image_coordinates.py": "4b796327c579e7c08ed487cce4758c899a1a11be648e93977c22a0536451054a",
     "packages/blendlink/blender/compositor_image_info.py": "92e3f2488f646b8f7f79de67940717c54bd3e4cfc69956090b31ebd9b0e64729",
@@ -26727,7 +26856,7 @@
     "packages/blendlink/blender/compositor_luminance_key.py": "5391ac3ca522590a0bffa0a2ef3ca25c8be44d0218381fa9f3bc48ab14edb3cd",
     "packages/blendlink/blender/compositor_map_value.py": "784d1ba979b02e2e665b41818d4efd8912c5fe35ae821ea39135912fda3fe5fe",
     "packages/blendlink/blender/compositor_map_value_domain.py": "ff43991bf956ed131835b671f9d44c0a80e23b9888c53903f6486c5a287448eb",
-    "packages/blendlink/blender/compositor_mask_domains.py": "582ed5859f5d555a80a9bdd23487e679bd185f179028d8a1f4154c84f36fc155",
+    "packages/blendlink/blender/compositor_mask_domains.py": "a0b8ecbb20590b0c6499b680f5a61c89667e9fd4d39c7755aae587442b7ec247",
     "packages/blendlink/blender/compositor_normal.py": "9dcd0e53d674560bb7c060a2a6a2b5ccdec361235ae67620c587a29136d2c94d",
     "packages/blendlink/blender/compositor_pixelate.py": "607f738a09fc75f15facb9cb0c261bfb72800663d5908826e5d105d980800b3d",
     "packages/blendlink/blender/compositor_procedural_texture.py": "70d34a56ea67a67aecd899fb05e66716746865c190e9d9f2bd4289b6df2bf025",
@@ -26743,13 +26872,13 @@
     "packages/blendlink/blender/compositor_vector_component.py": "8b29742404fa7d80d2bdc661363a052bc1a2680b3306a2a47b20d0d9e5bfe20c",
     "packages/blendlink/blender/compositor_vector_math.py": "94a78be4e19d1b824b046665250fccb801e363b2339253a7f047c2e76532e0f9",
     "packages/blendlink/blender/compositor_view_selection.py": "f5ef756dfd61ca8047f55bb004c74372f7af27fff357a74476d8d0c5432ab491",
-    "packages/blendlink/blender/compositor_white_noise.py": "f5520035cafc15c7eac64c815903c6dbf34248ea488d3555191560f9ac3f17e1",
+    "packages/blendlink/blender/compositor_white_noise.py": "516789aed1ded25b03a389f74a30edd7578186189899dbe2b39e10f5b709ffdd",
     "packages/blendlink/blender/compositor_whitepoint.py": "a2beb2b16a1f7fbf6b02a31cb4690d0c98e23e144748e5962a0d4f755922d2e5",
     "packages/blendlink/blender/export_scene.py": "d746ba319cdf24915ea8f718104639b2d17075fff6da46cb503caf2c225c171f",
     "packages/blendlink/blender/geometry_export.py": "3d147a218ee96f0bf72ffeb5add773396347fc39224501eb62d5d7f67551fd2d",
     "packages/blendlink/blender/native_color_band.py": "23aa27b056846d42cdb96919da968d04f9e8e44d794ffa10c80871f786bfc8d4",
     "packages/blendlink/blender/normal_bake_transport.py": "1e6211bb197f6e015262f80937112ec594e70977945fc1259133aa8ffd36429e",
-    "packages/blendlink/blender/source_presentation.py": "6737226c3a2cc6d0c229123b03190f6a4f47e062b65d5474d06a0a5300485c79",
+    "packages/blendlink/blender/source_presentation.py": "acc2fe9a639e5b6f755af1b963fcbccfc333d3bd6b9075239587dc95120bad00",
     "packages/blendlink/blender/tangent_export.py": "4815854bd825e910009b42de73ecf5aa9cc0bb07966bb2d688731e5df12b514e",
     "packages/blendlink/src/compiledMaterialPrograms.ts": "d6f2d9471ec145d7ed7b2abc395221eb316a7daa55a004ebf8b0c3d2fecc6cec",
     "packages/blendlink/src/compiledSceneAudit.ts": "08fded1eb26f0fb964401d24699bd6ea0bc26aa9c0536c764a8965f0124748a5",
@@ -26757,8 +26886,8 @@
     "packages/blendlink/src/materialProgramRendererRequirements.ts": "01eff9b1241d907d302f90a88822fe5deedeb3c5309b24c48a192aee47a380ca",
     "packages/blendlink/src/sceneDiagnostics.ts": "48b8d220ad2b5216f496694ef1b29c19903e90cc65fc9ce01bda77e21c84dc0e",
     "packages/blendlink/src/staticNoise4d.ts": "0677ad1169801c601d74b8a5658d98691415bf313081ca0b4fa88ec762e62a76",
-    "packages/blendlink/src/threeRuntime.ts": "888df8cf1d62dea3aadcfe9274edafd527b8c0af69ad85d344dff54e7173052f",
-    "packages/blendlink/src/threeWebgpuPostPipeline.ts": "52946c95fac6696c46db279b9082388be535f8b7830f0d8b2c10644581311a85",
+    "packages/blendlink/src/threeRuntime.ts": "4eac231544744877535e8e71f044ae8beadc9478a839fa3ba05357fa35c03632",
+    "packages/blendlink/src/threeWebgpuPostPipeline.ts": "3f24386cb941b32f272ee945bd52965c5cd1a621082bbbeec26c376d2b5d2bd0",
     "packages/blendlink/src/tslBlackbodyCoefficients.ts": "39d17f54a1bb7f394bae6393200badb5faa756e9772ea4d4ef92f878ff4fac18",
     "packages/blendlink/src/tslBrickNodes.ts": "5b61f5565af2b818d3a507b3cc0b408f1ef3537d5d8cb64517280f8473afde9b",
     "packages/blendlink/src/tslBumpHeight.ts": "3c8622196e1fcdbbbdafcd76a85f42a545e05a54fc8ad61002e5a259d2fd2f8f",
@@ -26788,6 +26917,7 @@
     "packages/blendlink/src/tslCompositorDistanceKey.ts": "8a2aebf7105274f8d02fd9b68b358bdb3cb89a6b43a60edda00a0fd30a5aa2fa",
     "packages/blendlink/src/tslCompositorEllipseMask.ts": "bcbcf7be97750ec105df27d98c2239d2ef9e41b010d84462b2ee9f8e57e3da07",
     "packages/blendlink/src/tslCompositorEllipseSceneMix.ts": "5717eecb8b5378f7c3f1c2d54c4c12dd008cefe004820191cf552bea256aa38f",
+    "packages/blendlink/src/tslCompositorExactAxes.ts": "bc80cf071c35355a9fc62836ccf03a112d4e74b2b6f93043ed261c22185186e1",
     "packages/blendlink/src/tslCompositorFilter.ts": "a03e7e652c3d86daf3f29ac930688f9d2a282cdd50b4b89f8ab87e1c86262227",
     "packages/blendlink/src/tslCompositorFloatCoordinates.ts": "473b117bb7dc3872761f2c098e58cdf7dab1262a2e1f47fdf9e1286ba4e8ada9",
     "packages/blendlink/src/tslCompositorFloatToInt.ts": "8e39857c7d79d0233e4f29163052f6dcc3ef14585ee05425be3405d924989aac",
@@ -26800,7 +26930,7 @@
     "packages/blendlink/src/tslCompositorLuminanceKey.ts": "3858b364150d9dc847ea05ee4ef768cb9b2ef5fae3c0ece240f3c3c1016e23c4",
     "packages/blendlink/src/tslCompositorMapValue.ts": "a3ec846d3af2a2e91e234a0c425c192f3dbaacad0319af11a4414f42baa7e538",
     "packages/blendlink/src/tslCompositorMapValueDomain.ts": "325637bd5fb107ff49ce5aa8b45aa954be7a4411e9daf8cb79b4bb64ffa9ad0a",
-    "packages/blendlink/src/tslCompositorMaskDomains.ts": "f0f2e898c4bbcb35566ccd5cb6fcd532ca7d67b43eef6a564321593953b5433c",
+    "packages/blendlink/src/tslCompositorMaskDomains.ts": "3d4f7d24df1a00e853f5fa1d252b32c8177e0619d171d371b77bb0664014d347",
     "packages/blendlink/src/tslCompositorPixelate.ts": "20feecc95d60c471e11428474bbcd3c214133652ecaafabc6b81a0486bc28b21",
     "packages/blendlink/src/tslCompositorProceduralTexture.ts": "6c53d01b82960c77bb624bcefdb261805244363d4ffb7e70b1d45d1004d8cb9a",
     "packages/blendlink/src/tslCompositorRelativeToPixel.ts": "0594bfe77a71f54c5526abc520b5ef6a9f59a864db07f1554c39133bf4153646",
@@ -26813,7 +26943,9 @@
     "packages/blendlink/src/tslCompositorStaticImageDomain.ts": "82bb6bf70f547a8b3309df0ac564456d5ae262b0c42525f8a2d6e80565cab7cf",
     "packages/blendlink/src/tslCompositorTextureField.ts": "e4816ef165f41d5f667f0b6667a03a6d94283ef737aaa945f9912a42157d4023",
     "packages/blendlink/src/tslCompositorVectorMath.ts": "72e656d14d7a1a7d83e2102b36803a48af72392623ac7129db4ebda58717dd9a",
-    "packages/blendlink/src/tslCompositorWhiteNoise.ts": "9cb10d21ae1ef4633eff6753910b120fa4ed836e3a9e79bc8ee3d63a2a5868f7",
+    "packages/blendlink/src/tslCompositorWhiteNoise.ts": "3cd7b1e681bb3c4e93930d4d0c61ff2c6d12c086f0a292b0f2decedbc833a661",
+    "packages/blendlink/src/tslCompositorWhiteNoiseField.ts": "b8956478c4e840dc711edf4deb05168bb39237fcf6b66f6075b3696356def926",
+    "packages/blendlink/src/tslCompositorWhiteNoiseRne.ts": "35ce2b3bca81a3deeab4bb1feb65c86d1fc67a948e2722380220f1ac7df8386b",
     "packages/blendlink/src/tslCompositorWhitePoint.ts": "70f5f1ae4ddc1bd9c723dcc8cb0af3567e75d110a35e7e812bfd124959814353",
     "packages/blendlink/src/tslCurveNodes.ts": "b88bff5a13527319e2be958f100115a2a87565a7546157b49e30c3fd3979de72",
     "packages/blendlink/src/tslFractalNoise.ts": "002ee4fd88186aad763fb6cfa8e40940452904f6bd48f33ef5bfa57557eed8b0",
@@ -26829,7 +26961,7 @@
     "packages/blendlink/src/tslNativeColorBand.ts": "71727e4ad3d5498f35d56b875e1475361a1a3a0adf62f7e7fd98b1581f308c92",
     "packages/blendlink/src/tslNativeNoisePrecision.ts": "7b64b75c45d38815d7d0cb9c1f74b4abae9352612edd2d7c6b615e4df1c495dd",
     "packages/blendlink/src/tslNativeVaryingNoise.ts": "f9d1268c168cbf5d486b1560454567565ecee3649332e556f2415455165248b7",
-    "packages/blendlink/src/tslNodeRecipe.ts": "a76347d92394a994e500b66b65cfca0fd21e81426eaef47fce4ca7083a055901",
+    "packages/blendlink/src/tslNodeRecipe.ts": "a40d55b3810875f8c4a92008a2168f6aca7beb5d04f6e52d221ecb4f715c143a",
     "packages/blendlink/src/tslNoiseCoordinates.ts": "f0eb9e256f75be2915f0d2d78509fe3d638fbcb0936fc6c79099b19a1472f9f4",
     "packages/blendlink/src/tslNoiseFieldBarrier.ts": "9dcbd46802101108eeb3ae5fffc78d64317f48c832406e6b713bc129335295bf",
     "packages/blendlink/src/tslNoiseFields.ts": "a66cf44b0298add1ab3db195085629788060a9005df14757d283228e703416d1",
@@ -26844,7 +26976,7 @@
     "packages/blendlink/src/tslRadialWidth.ts": "9ffc9e3a7e32b3d0676b2a90fffad64e2578cd30d160ddaf00278d2d9ff43719",
     "packages/blendlink/src/tslRepeat.ts": "4d7925f09220e54973155c6af8c41c98e3b32e141f5acbdc6d29741c701d9a93",
     "packages/blendlink/src/tslSharedUtilities.ts": "1f21b06a4d60a439b0549b7c6716c66945b4cce3cc00fc6e965acbe77c80d9b9",
-    "packages/blendlink/src/tslSourceCompositor.ts": "1991336b03483972b22db584e8e7a95539e4394dc4e1689658497837f13b90d9",
+    "packages/blendlink/src/tslSourceCompositor.ts": "1cfbefbacdb6f4cec09c0856df884b417b9186c15ef44dc0953dd608a196c45d",
     "packages/blendlink/src/tslSpectralNodes.ts": "10719a4f7ceef71f80a9b3492561c382cd0904de209e0e93f9f578b5af529bf2",
     "packages/blendlink/src/tslSqueeze.ts": "14a56aa219ca2bb2dace54d512e8b9cfda754ea83991a92a1c270a1122ea492b",
     "packages/blendlink/src/tslTangentNodes.ts": "fb7ad452300be3e96a9f01b4f82f9ce59cb8577cf68e056df994876321cffcc1",

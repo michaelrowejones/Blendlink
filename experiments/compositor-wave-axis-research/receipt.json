@@ -1,0 +1,521 @@
+{
+  "schemaVersion": 1,
+  "status": "RESEARCH_ONLY_NATIVE_WAVE_AXIS_FACTORS",
+  "supportCredit": 0,
+  "sourceBase": "33053dd7b3171ea295b815c33aacb07a6fb9318e",
+  "sourceModel": "Blender5.3.0 pinned native CPU compositor FULL implicit Uniform Bands X/Y, Distortion0, SAW/TRI",
+  "nativeReport": {
+    "path": "artifacts/verification-wave-axis-native-r1/report.json",
+    "sha256": "b77ddc660f389d7b37b86832fcb817187bcee84c9d7af05b7df0534fb0dc0aa9"
+  },
+  "comparison": {
+    "path": "artifacts/verification-wave-axis-native-r1/comparison.json",
+    "sha256": "9bbb3c6c56fb54f9776dd532576ef5a5668deb0b8d9deb38a3a4b4366f8d29d7",
+    "result": {
+      "schemaVersion": 1,
+      "status": "RESEARCH_WAVE_AXIS_EXACT",
+      "supportCredit": 0,
+      "cases": 64,
+      "words": 1074784,
+      "differences": 0,
+      "maximumAbsolute": 0,
+      "failures": [],
+      "nativeReportSha256": "b77ddc660f389d7b37b86832fcb817187bcee84c9d7af05b7df0534fb0dc0aa9",
+      "rows": [
+        {
+          "case": "13x9-X-SAW-default",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-X-SAW-ordinary",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-X-SAW-negative",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-X-SAW-zero-scale",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-X-SAW-minimum",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-X-SAW-scale-predecessor",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-X-SAW-scale-successor",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-X-TRI-default",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-X-TRI-ordinary",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-X-TRI-negative",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-X-TRI-zero-scale",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-X-TRI-minimum",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-X-TRI-scale-predecessor",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-X-TRI-scale-successor",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-Y-SAW-default",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-Y-SAW-ordinary",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-Y-SAW-negative",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-Y-SAW-zero-scale",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-Y-SAW-minimum",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-Y-SAW-scale-predecessor",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-Y-SAW-scale-successor",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-Y-TRI-default",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-Y-TRI-ordinary",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-Y-TRI-negative",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-Y-TRI-zero-scale",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-Y-TRI-minimum",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-Y-TRI-scale-predecessor",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-Y-TRI-scale-successor",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-X-SAW-default",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-X-SAW-ordinary",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-X-SAW-negative",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-X-SAW-zero-scale",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-X-SAW-minimum",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-X-SAW-scale-predecessor",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-X-SAW-scale-successor",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-X-TRI-default",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-X-TRI-ordinary",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-X-TRI-negative",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-X-TRI-zero-scale",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-X-TRI-minimum",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-X-TRI-scale-predecessor",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-X-TRI-scale-successor",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-Y-SAW-default",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-Y-SAW-ordinary",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-Y-SAW-negative",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-Y-SAW-zero-scale",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-Y-SAW-minimum",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-Y-SAW-scale-predecessor",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-Y-SAW-scale-successor",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-Y-TRI-default",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-Y-TRI-ordinary",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-Y-TRI-negative",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-Y-TRI-zero-scale",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-Y-TRI-minimum",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-Y-TRI-scale-predecessor",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-Y-TRI-scale-successor",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "8192x4-X-SAW-default",
+          "comparedWords": 131072,
+          "wordDifferences": 0
+        },
+        {
+          "case": "8192x4-X-TRI-default",
+          "comparedWords": 131072,
+          "wordDifferences": 0
+        },
+        {
+          "case": "8192x4-Y-SAW-default",
+          "comparedWords": 131072,
+          "wordDifferences": 0
+        },
+        {
+          "case": "8192x4-Y-TRI-default",
+          "comparedWords": 131072,
+          "wordDifferences": 0
+        },
+        {
+          "case": "4x8192-X-SAW-default",
+          "comparedWords": 131072,
+          "wordDifferences": 0
+        },
+        {
+          "case": "4x8192-X-TRI-default",
+          "comparedWords": 131072,
+          "wordDifferences": 0
+        },
+        {
+          "case": "4x8192-Y-SAW-default",
+          "comparedWords": 131072,
+          "wordDifferences": 0
+        },
+        {
+          "case": "4x8192-Y-TRI-default",
+          "comparedWords": 131072,
+          "wordDifferences": 0
+        }
+      ],
+      "shaderOrSavedFinalCredit": 0
+    }
+  },
+  "guardedPython": {
+    "path": "artifacts/verification-wave-axis-native-r1/archive.json",
+    "sha256": "a25619b598f54ca004c30e69aaf819ef3254c3890ea041a2b0724236fb503b97",
+    "receipt": {
+      "identity": {
+        "kind": "blendlink-proof-native-python-v1",
+        "platform": "darwin",
+        "native": {
+          "path": "/Applications/Blender.app/Contents/MacOS/Blender",
+          "bytes": 210043328,
+          "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da"
+        },
+        "node": {
+          "path": "/Users/michaeljones/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "bytes": 126827136,
+          "sha256": "eb96bdabfd1f6705345bbd459f9308d140c011fa55865efdb4fa8f61d048f55d"
+        },
+        "launcher": {
+          "path": "/private/tmp/scenetoweb-compositor-wave-axis-research-next/artifacts/verification-wave-axis-native-r1/active/native-launcher-4yAYpg/blender-proof",
+          "bytes": 778,
+          "sha256": "cfb64469e4493ba2d57143eed6a31c45953854f1923938f602254d1c71b9dd1d"
+        },
+        "configuration": {
+          "path": "/private/tmp/scenetoweb-compositor-wave-axis-research-next/artifacts/verification-wave-axis-native-r1/active/native-launcher-4yAYpg/launcher.json",
+          "bytes": 1284,
+          "sha256": "11258485fb4c5623593bd188f6b50a612c729397a999e523463aae86d8be3486"
+        },
+        "helper": {
+          "path": "/private/tmp/scenetoweb-compositor-wave-axis-research-next/artifacts/verification-wave-axis-native-r1/active/native-launcher-4yAYpg/lib/node-port-python.mjs",
+          "bytes": 18855,
+          "sha256": "33fc36d6c551583a119e558a60f77cd55ed25c92bcfd6d39e0171e7faaa33cde"
+        },
+        "bridge": {
+          "path": "/private/tmp/scenetoweb-compositor-wave-axis-research-next/artifacts/verification-wave-axis-native-r1/active/native-launcher-4yAYpg/node-port-blender.mjs",
+          "bytes": 321,
+          "sha256": "3390a410423e0cc921567a97473f6fd67f91cbe2987af7846346cb7cb51e9a8c"
+        },
+        "cachePolicy": "Fresh per-invocation prefix before Python actions; no project/user cache deletion or numerical proof reuse",
+        "limit": "Subsequent imports only. Call dispose after owned commands stop. Whole-job SIGKILL may leave empty owned directories; it cannot run JavaScript cleanup."
+      },
+      "proof": {
+        "directory": "/tmp/scenetoweb-compositor-wave-axis-research-next/artifacts/verification-wave-axis-native-r1/native-python-proof",
+        "files": [
+          {
+            "path": "blender-proof",
+            "bytes": 778,
+            "sha256": "cfb64469e4493ba2d57143eed6a31c45953854f1923938f602254d1c71b9dd1d"
+          },
+          {
+            "path": "invocations/b488622f-14d7-4ccd-9583-b2abfa0b9a8e.json",
+            "bytes": 1698,
+            "sha256": "b86ef9e3bc8dbe29bc47e487c5830dbf1faeaa78793ddf05a3022b17b04eb48c"
+          },
+          {
+            "path": "launcher.json",
+            "bytes": 1284,
+            "sha256": "11258485fb4c5623593bd188f6b50a612c729397a999e523463aae86d8be3486"
+          },
+          {
+            "path": "lib/node-port-python.mjs",
+            "bytes": 18855,
+            "sha256": "33fc36d6c551583a119e558a60f77cd55ed25c92bcfd6d39e0171e7faaa33cde"
+          },
+          {
+            "path": "node-port-blender.mjs",
+            "bytes": 321,
+            "sha256": "3390a410423e0cc921567a97473f6fd67f91cbe2987af7846346cb7cb51e9a8c"
+          }
+        ],
+        "invocations": [
+          {
+            "schemaVersion": 1,
+            "kind": "blendlink-proof-native-python-v1",
+            "productionCases": 0,
+            "started": 1794671156289,
+            "owner": 11933,
+            "parentGone": false,
+            "native": {
+              "path": "/Applications/Blender.app/Contents/MacOS/Blender",
+              "bytes": 210043328,
+              "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da"
+            },
+            "node": {
+              "path": "/Users/michaeljones/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+              "bytes": 126827136,
+              "sha256": "eb96bdabfd1f6705345bbd459f9308d140c011fa55865efdb4fa8f61d048f55d"
+            },
+            "configSha256": "11258485fb4c5623593bd188f6b50a612c729397a999e523463aae86d8be3486",
+            "timings": {
+              "preIdentityMs": 141.82375000000002,
+              "postIdentityMs": 85.39924999999994,
+              "bridgeBeforeReceiptMs": 942.409334
+            },
+            "result": {
+              "args": [
+                "--background",
+                "--factory-startup",
+                "-t",
+                "1",
+                "--python-exit-code",
+                "1",
+                "--python-expr",
+                "import sys; sys.pycache_prefix=\"/private/tmp/scenetoweb-compositor-wave-axis-research-next/artifacts/verification-wave-axis-native-r1/active/native-launcher-4yAYpg/python-cache-uOUjqZ\"; sys.dont_write_bytecode=True",
+                "--python",
+                "/tmp/scenetoweb-compositor-wave-axis-research-next/experiments/compositor-wave-axis-research/capture.py"
+              ],
+              "pythonGuardApplied": true,
+              "cacheDirectory": "/private/tmp/scenetoweb-compositor-wave-axis-research-next/artifacts/verification-wave-axis-native-r1/active/native-launcher-4yAYpg/python-cache-uOUjqZ",
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "aborted": false,
+              "error": null,
+              "elapsedMs": 714,
+              "cacheDisposed": true
+            }
+          }
+        ],
+        "pythonInvocations": 1,
+        "finalInvocations": 0,
+        "finalSources": [],
+        "numericalCredit": false,
+        "complete": true
+      }
+    }
+  },
+  "sourcePins": {
+    "experiments/compositor-wave-axis-research/capture.py": "8a1c8ffd60c27c535806b21d63ee462723c34710be49950e3afb6c8dabfbcf2e",
+    "packages/blender-addon/tests/compositor_reference.py": "d52af8d60fec4bbd6f1b977e12a0c913c6f599e0e401b0b962b2bf2b101b5a55",
+    "packages/blendlink/blender/compositor_white_noise.py": "f5520035cafc15c7eac64c815903c6dbf34248ea488d3555191560f9ac3f17e1"
+  },
+  "sourcePinScope": "Research pins capture.py, shared CPU-reference setup and raw socket helper; not a claimed complete transitive SDK-source or production proof census. Future Final qualification requires a fresh closed capture.",
+  "corpus": {
+    "nativeFrames": 64,
+    "rgbaWords": 1074784,
+    "exactWordDifferences": 0,
+    "extents": [
+      [
+        13,
+        9
+      ],
+      [
+        9,
+        13
+      ],
+      [
+        8192,
+        4
+      ],
+      [
+        4,
+        8192
+      ]
+    ],
+    "settings": [
+      "default5/0",
+      "ordinary .1/.3",
+      "negative -1.25/-.1",
+      "zero Scale",
+      "Scale2^-16/Phase.125",
+      "Scale5 predecessor",
+      "Scale5 successor"
+    ]
+  },
+  "costModel": "Host mathematical axis factors O(W+H) on extent/settings change, R32F sampled row(s); no per-frame native evaluation or scene render proposed. Prototype is host comparison only, no runtime row allocation built.",
+  "exclusions": [
+    "No SDK/source admission change",
+    "No saved Final/browser/EEVEE/shader coverage",
+    "No original official demo acceptance",
+    "No arbitrary parameters/coordinate producers",
+    "No SIN/Rings/DIAGONAL/nonzeroDistortion evidence"
+  ]
+}

@@ -25,7 +25,7 @@ export function expectedRgbaWords(row){
  const [x,y,z,w]=words,seeds=words.length===4?[words,[z,x,w,y],[w,z,y,x]]:[words,[...words,floatBits(1)],[...words,floatBits(2)]]
  return [...seeds.map(unit),floatBits(1)]
 }
-export const policyRefusals=['raw-refusal-0x80000000','raw-refusal-0x1','raw-refusal-0x80000001','raw-refusal-0x7fffff','stored-nonfinite-0x7fc12345','combine-subnormal-0','combine-subnormal-1','combine-subnormal-2','implicit-coordinates','animated-source','computed-source','implicit-vector-cast','unqualified-gpu-authored-source','group-default-subnormal','group-default-negative-zero','source-depth-budget']
+export const policyRefusals=['raw-refusal-0x80000000','raw-refusal-0x1','raw-refusal-0x80000001','raw-refusal-0x7fffff','stored-nonfinite-0x7fc12345','combine-subnormal-0','combine-subnormal-1','combine-subnormal-2','animated-source','computed-source','implicit-vector-cast','unqualified-gpu-authored-source','group-default-subnormal','group-default-negative-zero','source-depth-budget']
 export const interfaceDefaultControls=[
  {case:'vector-UNIFORM_IMAGE_COORDINATES',nativeAvailable:true,status:'unsupported'},
  {case:'vector-linked-override',nativeAvailable:true,status:'extracted'},
@@ -38,8 +38,10 @@ export const interfaceDefaultControls=[
  {case:'float-SCENE_SECONDS',nativeAvailable:false},
  ...['unknown-default','unknown-structure','field-structure','identifier-mismatch','output-direction','type-mismatch'].map(name=>({case:name,privateSchemaBoundary:true,status:'unsupported'}))
 ]
+export const defaultFieldControls=[{case:'implicit-default-field-model',status:'extracted',model:'native-compositor-white-noise-uniform-cpu-53-v1',profile:'darwin-arm64-53-white-noise-uniform-cpu-v1',coordinateModel:'exact-uniform-r32f-axes-v1',dimension:4,authoredInputs:['W'],isField:true,fieldNumericCredit:0}]
 export function assertPolicy(value){
  assert.equal(value.status,'WHITE_NOISE_SOURCE_POLICY_PASSED');assert.equal(value.positiveControls.length,18);assert.deepEqual(value.namedRefusals,policyRefusals)
+ assert.deepEqual(value.defaultFieldControls,defaultFieldControls)
  assert.deepEqual(value.interfaceDefaultControls.map(({setterRefusal,...row})=>row),interfaceDefaultControls)
  for(const row of value.interfaceDefaultControls)if(row.nativeAvailable===false){assert.equal(typeof row.setterRefusal,'string');assert.match(row.setterRefusal,/not found/)}
  assert.equal(value.gpuInitializationCalls,0);assert.equal(value.renders,0);assert.equal(value.portCredit,0);return value

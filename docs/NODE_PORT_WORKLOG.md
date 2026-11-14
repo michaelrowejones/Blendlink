@@ -1340,3 +1340,101 @@ Vanilla/React Three Fiber consumer compilation from the 911-file tarball.
 Default-coordinate White Noise remains an isolated candidate pending review
 and full production qualification; experimental exact hashes do not grant
 field support.
+
+### Default compositor White Noise fields, 2026-11-14
+
+The automatic `compositor-white-noise-default-field` transaction closes at
+`artifacts/verification-next30-manifest-field/adapter-closed.json`, source
+`75a7891e7e355e838a996e7d0f80536a4c2fb63f`. It covers 54 production graphs,
+eight saved actual Finals and 248 browser case-runs across actual
+Metal/SwiftShader WebGPU/WebGL2. All 7,943,520 primary Float32 words match;
+336 resize frames, 96 installation cycles and eight saved-renderer-dispose
+controls pass. Nine native coordinate/domain controls are separate from
+runtime consumer credit. Ten fresh Python prefixes close. The earlier next29
+success and failed next27 transaction retain their original snapshots.
+
+Native unlinked Uniform Vector inputs now have a separate 2D/3D/4D CPU field
+model; 4D W retains raw normal Float32/+0 fixed-copy admission. A shared R32F
+two-row table provides exact axes and an explicit integer ties-to-even
+construction normalizes the hash. Maximum logical table storage is 64 KiB;
+valid extent changes cost O(width + height). All measured Final cycles use
+zero axis allocations/uploads in preparation/commit and one at first live
+draw; this excludes PMREM and other installation work. Closed full-frame
+pointwise graphs, sampler accounting and actual binding/schema/epoch/viewport
+checks remain strict. The constant-terminal path retains those checks.
+The original 70 NodeRecipe function declarations are byte-identical to the
+earlier published checkpoint; only two hash delegates were added.
+
+The first full Final run exposed unowned detached preview-world PMREM output
+and scratch. Explicit public generation now owns the result and scratch,
+shares the ready result across staging/live installation, and preserves caller
+adoption. A node-renderer constant Color background avoids a separate retained
+background sphere. Its original F32 radiance matches the old cube in bounded
+four-tuple appearance diagnostics; Three's texture-only backgroundIntensity
+behavior is explicitly different for a Color. Fresh World qualification and
+cost accounting remain separate. Native type-changing White Noise mute
+bypasses now refuse after a real stored-default/native-black counterexample;
+same-type W-to-Value forwarding remains. The 6-positive/8-refusal source
+regression grants no numerical node credit.
+
+Coverage remains 46 supported, 133 partial, 139 unsupported and 14 structural:
+this expands an existing partial context. Legacy classifications, enum reviews
+and fixed-input verification records are preserved. A retained-catalog
+reclassification is not a new native inventory discovery. Current checks pass
+1,664 unit tests, 98 release-policy tests, 166 Node pipeline tests and 11 Python
+audit tests. Lifecycle tests now wait for actual readback-entry signals instead
+of depending on whether the bounded CPU calibration yields under parallel load.
+
+### Owned preview environments and final checkpoint refresh, 2026-11-14
+
+Fresh field transaction `artifacts/verification-next35-manifest-field` qualifies
+at source `7c50dedfe84a941ede17297d909682d63355c738`, with the same 54 production
+plus nine native-control graphs, eight Finals, 248 browser cases, 7,943,520 exact
+words, 336 resize frames and 96 cycles. Automatic workspace stability and the
+second independent whole-program reader close. The prior next30 wrapper is
+preserved byte-for-byte under the family history directory. Recording compact
+proof outputs no longer changes executable-input digests; case/contract/source
+JSON changes still require fresh verification. A host regression proves that
+boundary without permitting numerical proof reuse.
+
+`artifacts/verification-next34-world-ready/qualified.json` separately closes the
+ready PMREM/Color background implementation: five native graphs/15 frames,
+seven Finals, 180 browser frame pairs, 60 cycles and 393,408 words. The original
+absolute 2^-10 RGB and exact-alpha/dyadic/black requirements pass. General colors
+remain bounded, with 85,752 linear and 19,056 display word differences; maximum
+errors remain .00019532442092895508 and .0001220703125. The original next24r4
+cube-based evidence is preserved unchanged under history. These are shared
+Background/World Output family totals, not two independent suites.
+
+All 60 measured World cycles use one explicit public PMREM generation, a 32 KiB
+transient source, one shared 336x64 HalfFloat result, and complete source/scratch/
+result cleanup. Scratch contains two observed texture allocations per generation.
+Preparation measures 13 draws and commit zero. In the off-camera-mesh fixture,
+Color clears the linear background with zero scene draws and Final uses one
+display quad. Background texture/geometry allocations and backgroundNode writes
+are zero. Exact texture identities and host policy restore; geometry COUNT1→1
+uses an independently warmed public shared quad, not a geometry-identity claim.
+Eight caller adoption controls retain the ready target until caller disposal.
+Authored Float32 radiance/Blender Strength is preserved; later backgroundIntensity
+follows Color semantics, without claiming the old texture-only behavior.
+
+The next30 World run exposed the cold shared-quad baseline. Next31 stopped in
+preflight because a broad anti-substitution regex rejected the legitimate
+independent warm-up; a scoped AST guard now allows only that constant, before
+measurement, and rejects output replacement/reuse. Next32 completed both Metal
+pixel/resource matrices but rejected obsolete minimum draw counts. The final
+reader instead requires exact zero linear/one display draw. Numerical and
+cleanup limits were never relaxed, and failed namespaces retain zero full credit.
+
+Late cleanup after saved renderer disposal now captures only original PMREM
+attachments/framebuffers and allocation epochs. Real Three ownership tests plus
+12 actual four-tuple lifecycle controls cover ready, adopted and canceled
+installations, including borrowed replacements; original physical handles retire
+once. Those controls grant no additional numerical node or IBL credit.
+
+The final SDK passes 1,666 unit tests, 98 release-policy checks and the native
+source-policy controls. The 920-file, 2,772,870-byte tarball compiles independent
+Vanilla/R3F consumers. Retained-catalog coverage stays 46 supported, 133 partial,
+139 unsupported and 14 structural. Wave/shared-row code and default Noise
+feasibility remain isolated/unqualified until their fresh complete matrices;
+no user study, publication release or hosted workflow was introduced.

@@ -7,7 +7,7 @@ import {join,resolve} from 'node:path'
 import {tmpdir} from 'node:os'
 import {assertClosedFamilyReceipt,assertClosedFamilyScope,assertClosedFamilyNativeIdentity,closedFamilyReaderCommand,CLOSED_NODE_PORT_FAMILIES} from './node-port-family-evidence.mjs'
 import {nodePortEvidenceAdapter,nativeFinalEvidenceHash} from './node-port-evidence.mjs'
-import {readNodePortManifest,validateNodePortManifest,nodePortHash} from './node-port-contract.mjs'
+import {readNodePortManifest,validateNodePortManifest,nodePortHash,fingerprintNodePortInputs} from './node-port-contract.mjs'
 import {closedFamilySuitePlan} from '../run-node-port-family.mjs'
 import {runNodePort} from '../test-node-port.mjs'
 import {diffBlenderSnapshots,digest} from './blender-node-changes.mjs'
@@ -15,7 +15,17 @@ import {planUnqualifiedPorts} from '../watch-blender-nodes.mjs'
 
 const root=resolve(import.meta.dirname,'../..'),ids=Object.keys(CLOSED_NODE_PORT_FAMILIES)
 const manifests=Object.fromEntries(await Promise.all(ids.map(async id=>[id,await readNodePortManifest(join(root,'node-ports',id+'.json'))])))
-const receipt=id=>readFile(join(root,id==='mono-switch-view'?'experiments/compositor-switch-view/evidence.json':'experiments/compositor-white-noise/evidence.json'),'utf8').then(JSON.parse)
+const receipt=async id=>{
+ // This new-family object exercises only parser/scheduling boundaries. It is
+ // intentionally synthetic and never written as production evidence.
+ if(id==='compositor-white-noise-default-field'){
+  const fixed=JSON.parse(await readFile(join(root,'experiments/compositor-white-noise/evidence.json'),'utf8'))
+  return {...fixed,status:'QUALIFIED_PARTIAL_COMPOSITOR_WHITE_NOISE_DEFAULT_FIELD',nativeGraphs:54,nativeOracleControls:9,nativeRenders:63,savedFinalScenes:8,browserCaseRuns:248,primaryFloat32Words:7943520,uniqueActualPythonPrefixes:10,lifecycleCycles:96,
+   sources:[{nativeArchive:{pythonInvocations:10,finalInvocations:8,uniqueCachePrefixes:10}}],
+   runs:fixed.runs.map(run=>({...run,actualApis:run.actualApis.map(api=>({...api,cases:run.phase==='raw'?54:8}))}))}
+ }
+ return JSON.parse(await readFile(join(root,id==='mono-switch-view'?'experiments/compositor-switch-view/evidence.json':'experiments/compositor-white-noise/evidence.json'),'utf8'))
+}
 const scope=id=>{const manifest=structuredClone(manifests[id]);return{manifest,profile:manifest.profiles[0],completedRuns:structuredClone(manifest.profiles[0].runs)}}
 const browsers=(id,q)=>id==='mono-switch-view'?q.receipts[0].browsers:q.runs
 const apis=(id,run)=>id==='mono-switch-view'?run.APIs:run.actualApis
@@ -48,6 +58,7 @@ for(const id of ids){
   ]
   if(id==='mono-switch-view')mutations.push(q=>q.variant='static',q=>q.productionNativeGraphs=8,q=>q.productionBrowserCaseRuns=64,q=>q.receipts[0].nativeBackend.gpuInitialized=true,q=>q.nativePythonProof.finalInvocations=0)
   else mutations.push(q=>q.exactWordMismatches=1,q=>q.contractViolations=1,q=>apis(id,browsers(id,q)[0])[0].cases=0,q=>q.sources[0].nativeArchive.finalInvocations=0)
+  if(id==='compositor-white-noise-default-field')mutations.push(q=>q.nativeOracleControls=0,q=>q.nativeRenders=54,q=>q.lifecycleCycles=0,q=>q.uniqueActualPythonPrefixes=14)
   for(const mutate of mutations){const copy=structuredClone(q);mutate(copy);assert.throws(()=>assertClosedFamilyReceipt(id,copy))}
  })
  test(id+' dry-run schedules one full existing family without a launcher, GPU or evidence writes',async t=>{
@@ -59,7 +70,7 @@ for(const id of ids){
   assert.ok(suites[0].argv.includes('scripts/run-node-port-family.mjs'));assert.equal(suites[0].argv.includes('--reuse-native'),false)
   const owned=closedFamilySuitePlan(id,{root,evidence,blender});assert.equal(owned.env.BLENDLINK_BLENDER,blender);assert.equal(owned.env.SCENETOWEB_RUNTIME_TRANSACTION,null)
   if(id==='mono-switch-view'){assert.ok(owned.argv.includes('--mono-view'));assert.equal(owned.env.SCENETOWEB_SWITCH_VARIANT,'mono-view')}
-  else assert.ok(owned.argv.includes(join(root,'experiments/compositor-white-noise/matrix.mjs')))
+  else assert.ok(owned.argv.includes(join(root,CLOSED_NODE_PORT_FAMILIES[id].folder,'matrix.mjs')))
   const closing=closedFamilyReaderCommand(id,{root,evidence,output:join(evidence,'closed.json'),transaction:(await receipt(id)).runtimeTransaction});assert.ok(closing.argv.includes(join(root,CLOSED_NODE_PORT_FAMILIES[id].folder,'verify.mjs')))
   await assert.rejects(readFile(join(evidence,'report.json')),{code:'ENOENT'})
  })
@@ -144,7 +155,29 @@ test('new family manifests participate in source-change selection and observatio
  const make=files=>{const s={schemaVersion:1,collectorVersion:1,kind:'blendlink-blender-node-source-snapshot-v1',watchScope:['synthetic'],sourceRevision:'a'.repeat(40),files,nodeSources:{},sourceDependencies:{},catalogIdentity:null,catalogNodes:null};return{...s,inputDigest:digest(s)}}
  const before=make(files)
  for(const port of ports){const path=port.upstream.direct[0],queue=diffBlenderSnapshots(before,make({...files,[path]:'changed'}),ports)
-  assert.deepEqual(queue.affectedManifestIds,[port.id]);const plan=planUnqualifiedPorts(ports,queue,{source:{commit:'a'.repeat(40)},build:{version:'5.3.0'}})
-  assert.equal(plan.productionCredit,false);assert.equal(plan.productionCases,0);assert.equal(plan.ports[0].id,port.id);assert.equal(plan.ports[0].status,'needs-fresh-qualified-verification')
+  const expected=ports.filter(other=>[...other.upstream.direct,...other.upstream.shared].includes(path)).map(other=>other.id).sort()
+  assert.deepEqual([...queue.affectedManifestIds].sort(),expected);const plan=planUnqualifiedPorts(ports,queue,{source:{commit:'a'.repeat(40)},build:{version:'5.3.0'}})
+  assert.equal(plan.productionCredit,false);assert.equal(plan.productionCases,0)
+  assert.deepEqual(plan.ports.map(row=>row.id).sort(),expected)
+  assert.ok(plan.ports.every(row=>row.status==='needs-fresh-qualified-verification'))
+ }
+})
+
+// Compact evidence is a result of verification, never an executable input.
+// Recording it must not recursively queue the same numerical transaction.
+test('White Noise record updates do not invalidate executable inputs, but case changes do',async t=>{
+ const tmp=await mkdtemp(join(tmpdir(),'scenetoweb-proof-record-boundary-'));t.after(()=>rm(tmp,{recursive:true,force:true}))
+ for(const id of ['compositor-white-noise','compositor-white-noise-default-field']){
+  const folder=CLOSED_NODE_PORT_FAMILIES[id].folder,jsonInputs=manifests[id].inputs.tests.filter(path=>path.startsWith(folder+'/')&&path.endsWith('.json'))
+  assert.ok(jsonInputs.length>0);assert.ok(jsonInputs.every(path=>!path.includes('*')))
+  const dir=join(tmp,id);await mkdir(join(dir,folder),{recursive:true})
+  for(const path of jsonInputs)await writeFile(join(dir,path),await readFile(join(root,path)))
+  for(const path of ['native.py','runtime.ts','package.json'])await writeFile(join(dir,path),'fixed executable input')
+  const manifest={...manifests[id],inputs:{native:['native.py'],runtime:['runtime.ts'],sdk:['package.json'],tests:jsonInputs}}
+  const before=await fingerprintNodePortInputs(dir,manifest)
+  for(const name of ['evidence.json','pilot.json'])await writeFile(join(dir,folder,name),'new retrospective proof record')
+  assert.equal((await fingerprintNodePortInputs(dir,manifest)).inputDigest,before.inputDigest)
+  const cases=join(dir,folder,'cases.json');await writeFile(cases,(await readFile(cases,'utf8'))+'\n')
+  assert.notEqual((await fingerprintNodePortInputs(dir,manifest)).inputDigest,before.inputDigest)
  }
 })

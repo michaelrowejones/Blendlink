@@ -1,3 +1,4 @@
+import {validateWhiteNoisePresentation} from './tslCompositorWhiteNoiseField.js'
 import {sceneMaskMixContract,validateSceneMaskMixMarkers} from './tslCompositorEllipseSceneMix.js'
 import {prepareEllipseSceneDecoder,createEllipseSceneFrameBinding,disposeEllipseSceneFrameBinding,type EllipseSceneDecoder,type EllipseSceneFrameBinding} from './tslCompositorSceneFrame.js'
 import {validateEllipsePresentation} from './tslCompositorMaskDomains.js'
@@ -221,6 +222,7 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
       .sort((left, right) => phaseRank(left.phase) - phaseRank(right.phase)
         || left.id.localeCompare(right.id))
 
+    validateWhiteNoisePresentation(this.options.sourcePresentation,registrations.filter(entry=>entry.phase==='post-ldr').length,message=>{throw new SourceCompositorUnsupported(message)},registrations.filter(entry=>entry.phase!=='post-ldr').length)
     validateEllipsePresentation(this.options.sourcePresentation, registrations.filter(entry => entry.phase === 'post-ldr').length, message => { throw new SourceCompositorUnsupported(message) }, registrations.filter(entry => entry.phase !== 'post-ldr').length)
     const scene = this.options.scene
     const camera = this.options.camera

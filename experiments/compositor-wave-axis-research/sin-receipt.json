@@ -1,0 +1,547 @@
+{
+  "schemaVersion": 1,
+  "status": "RESEARCH_ONLY_NATIVE_WAVE_SIN_BOUNDED",
+  "supportCredit": 0,
+  "baseResearch": "a2de02c",
+  "nativeReport": {
+    "path": "artifacts/verification-wave-axis-sin-native-r1/report.json",
+    "sha256": "f5a5d6f6954c3dfe39c28ceb0e63bac52164da024239f2a68c92b9aebee2c1f6"
+  },
+  "firstComparison": {
+    "path": "artifacts/verification-wave-axis-sin-native-r1/comparison-first.json",
+    "sha256": "0cc8c9c129e4270e54065df5b3d086b1dff3a4b1b90396ba19452a3ae1061697"
+  },
+  "comparison": {
+    "path": "artifacts/verification-wave-axis-sin-native-r1/comparison.json",
+    "sha256": "0cc8c9c129e4270e54065df5b3d086b1dff3a4b1b90396ba19452a3ae1061697",
+    "result": {
+      "schemaVersion": 1,
+      "status": "RESEARCH_WAVE_AXIS_BOUNDED",
+      "supportCredit": 0,
+      "cases": 32,
+      "words": 537392,
+      "differences": 1224,
+      "maximumAbsolute": 5.960464477539063e-08,
+      "contractViolations": 0,
+      "endpointControls": 1800,
+      "sinContract": {
+        "absoluteMax": 9.5367431640625e-07,
+        "nativeZeroOneExact": true,
+        "alphaAndGrayExact": true
+      },
+      "failures": [
+        {
+          "case": "8192x4-X-SIN-default",
+          "x": 201,
+          "y": 0,
+          "channel": 0,
+          "expectedWord": 1042774316,
+          "actualWord": 1042774314,
+          "expected": 0.16354817152023315,
+          "actual": 0.16354814171791077
+        },
+        {
+          "case": "8192x4-X-SIN-default",
+          "x": 201,
+          "y": 0,
+          "channel": 1,
+          "expectedWord": 1042774316,
+          "actualWord": 1042774314,
+          "expected": 0.16354817152023315,
+          "actual": 0.16354814171791077
+        },
+        {
+          "case": "8192x4-X-SIN-default",
+          "x": 201,
+          "y": 0,
+          "channel": 2,
+          "expectedWord": 1042774316,
+          "actualWord": 1042774314,
+          "expected": 0.16354817152023315,
+          "actual": 0.16354814171791077
+        },
+        {
+          "case": "8192x4-X-SIN-default",
+          "x": 486,
+          "y": 0,
+          "channel": 0,
+          "expectedWord": 1003205760,
+          "actualWord": 1003205696,
+          "expected": 0.006216585636138916,
+          "actual": 0.006216555833816528
+        },
+        {
+          "case": "8192x4-X-SIN-default",
+          "x": 486,
+          "y": 0,
+          "channel": 1,
+          "expectedWord": 1003205760,
+          "actualWord": 1003205696,
+          "expected": 0.006216585636138916,
+          "actual": 0.006216555833816528
+        },
+        {
+          "case": "8192x4-X-SIN-default",
+          "x": 486,
+          "y": 0,
+          "channel": 2,
+          "expectedWord": 1003205760,
+          "actualWord": 1003205696,
+          "expected": 0.006216585636138916,
+          "actual": 0.006216555833816528
+        },
+        {
+          "case": "8192x4-X-SIN-default",
+          "x": 786,
+          "y": 0,
+          "channel": 0,
+          "expectedWord": 1044056298,
+          "actualWord": 1044056296,
+          "expected": 0.18265119194984436,
+          "actual": 0.18265116214752197
+        },
+        {
+          "case": "8192x4-X-SIN-default",
+          "x": 786,
+          "y": 0,
+          "channel": 1,
+          "expectedWord": 1044056298,
+          "actualWord": 1044056296,
+          "expected": 0.18265119194984436,
+          "actual": 0.18265116214752197
+        },
+        {
+          "case": "8192x4-X-SIN-default",
+          "x": 786,
+          "y": 0,
+          "channel": 2,
+          "expectedWord": 1044056298,
+          "actualWord": 1044056296,
+          "expected": 0.18265119194984436,
+          "actual": 0.18265116214752197
+        },
+        {
+          "case": "8192x4-X-SIN-default",
+          "x": 790,
+          "y": 0,
+          "channel": 0,
+          "expectedWord": 1046685926,
+          "actualWord": 1046685928,
+          "expected": 0.22183570265769958,
+          "actual": 0.22183573246002197
+        },
+        {
+          "case": "8192x4-X-SIN-default",
+          "x": 790,
+          "y": 0,
+          "channel": 1,
+          "expectedWord": 1046685926,
+          "actualWord": 1046685928,
+          "expected": 0.22183570265769958,
+          "actual": 0.22183573246002197
+        },
+        {
+          "case": "8192x4-X-SIN-default",
+          "x": 790,
+          "y": 0,
+          "channel": 2,
+          "expectedWord": 1046685926,
+          "actualWord": 1046685928,
+          "expected": 0.22183570265769958,
+          "actual": 0.22183573246002197
+        },
+        {
+          "case": "8192x4-X-SIN-default",
+          "x": 801,
+          "y": 0,
+          "channel": 0,
+          "expectedWord": 1051664667,
+          "actualWord": 1051664666,
+          "expected": 0.3420494496822357,
+          "actual": 0.34204941987991333
+        },
+        {
+          "case": "8192x4-X-SIN-default",
+          "x": 801,
+          "y": 0,
+          "channel": 1,
+          "expectedWord": 1051664667,
+          "actualWord": 1051664666,
+          "expected": 0.3420494496822357,
+          "actual": 0.34204941987991333
+        },
+        {
+          "case": "8192x4-X-SIN-default",
+          "x": 801,
+          "y": 0,
+          "channel": 2,
+          "expectedWord": 1051664667,
+          "actualWord": 1051664666,
+          "expected": 0.3420494496822357,
+          "actual": 0.34204941987991333
+        },
+        {
+          "case": "8192x4-X-SIN-default",
+          "x": 912,
+          "y": 0,
+          "channel": 0,
+          "expectedWord": 1062701275,
+          "actualWord": 1062701276,
+          "expected": 0.8419319987297058,
+          "actual": 0.8419320583343506
+        },
+        {
+          "case": "8192x4-X-SIN-default",
+          "x": 912,
+          "y": 0,
+          "channel": 1,
+          "expectedWord": 1062701275,
+          "actualWord": 1062701276,
+          "expected": 0.8419319987297058,
+          "actual": 0.8419320583343506
+        },
+        {
+          "case": "8192x4-X-SIN-default",
+          "x": 912,
+          "y": 0,
+          "channel": 2,
+          "expectedWord": 1062701275,
+          "actualWord": 1062701276,
+          "expected": 0.8419319987297058,
+          "actual": 0.8419320583343506
+        },
+        {
+          "case": "8192x4-X-SIN-default",
+          "x": 918,
+          "y": 0,
+          "channel": 0,
+          "expectedWord": 1061746549,
+          "actualWord": 1061746548,
+          "expected": 0.7850258946418762,
+          "actual": 0.7850258350372314
+        },
+        {
+          "case": "8192x4-X-SIN-default",
+          "x": 918,
+          "y": 0,
+          "channel": 1,
+          "expectedWord": 1061746549,
+          "actualWord": 1061746548,
+          "expected": 0.7850258946418762,
+          "actual": 0.7850258350372314
+        }
+      ],
+      "nativeReportSha256": "f5a5d6f6954c3dfe39c28ceb0e63bac52164da024239f2a68c92b9aebee2c1f6",
+      "rows": [
+        {
+          "case": "13x9-X-SIN-default",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-X-SIN-ordinary",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-X-SIN-negative",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-X-SIN-zero-scale",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-X-SIN-minimum",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-X-SIN-scale-predecessor",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-X-SIN-scale-successor",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-Y-SIN-default",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-Y-SIN-ordinary",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-Y-SIN-negative",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-Y-SIN-zero-scale",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-Y-SIN-minimum",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-Y-SIN-scale-predecessor",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "13x9-Y-SIN-scale-successor",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-X-SIN-default",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-X-SIN-ordinary",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-X-SIN-negative",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-X-SIN-zero-scale",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-X-SIN-minimum",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-X-SIN-scale-predecessor",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-X-SIN-scale-successor",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-Y-SIN-default",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-Y-SIN-ordinary",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-Y-SIN-negative",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-Y-SIN-zero-scale",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-Y-SIN-minimum",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-Y-SIN-scale-predecessor",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "9x13-Y-SIN-scale-successor",
+          "comparedWords": 468,
+          "wordDifferences": 0
+        },
+        {
+          "case": "8192x4-X-SIN-default",
+          "comparedWords": 131072,
+          "wordDifferences": 612
+        },
+        {
+          "case": "8192x4-Y-SIN-default",
+          "comparedWords": 131072,
+          "wordDifferences": 0
+        },
+        {
+          "case": "4x8192-X-SIN-default",
+          "comparedWords": 131072,
+          "wordDifferences": 0
+        },
+        {
+          "case": "4x8192-Y-SIN-default",
+          "comparedWords": 131072,
+          "wordDifferences": 612
+        }
+      ],
+      "shaderOrSavedFinalCredit": 0
+    }
+  },
+  "guardedPython": {
+    "path": "artifacts/verification-wave-axis-sin-native-r1/archive.json",
+    "sha256": "e5350662970d655baefb5f17291831fff87221a91374d14a4010d25ccdb3eb43",
+    "receipt": {
+      "identity": {
+        "kind": "blendlink-proof-native-python-v1",
+        "platform": "darwin",
+        "native": {
+          "path": "/Applications/Blender.app/Contents/MacOS/Blender",
+          "bytes": 210043328,
+          "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da"
+        },
+        "node": {
+          "path": "/Users/michaeljones/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "bytes": 126827136,
+          "sha256": "eb96bdabfd1f6705345bbd459f9308d140c011fa55865efdb4fa8f61d048f55d"
+        },
+        "launcher": {
+          "path": "/private/tmp/scenetoweb-compositor-wave-axis-research-next/artifacts/verification-wave-axis-sin-native-r1/active/native-launcher-O1FCk9/blender-proof",
+          "bytes": 786,
+          "sha256": "c99efad4d339ae8b64807adf884b711672dfc7730e32e9577bc6a7c6e29cc89b"
+        },
+        "configuration": {
+          "path": "/private/tmp/scenetoweb-compositor-wave-axis-research-next/artifacts/verification-wave-axis-sin-native-r1/active/native-launcher-O1FCk9/launcher.json",
+          "bytes": 1296,
+          "sha256": "17996ab8561c04a8e5481a162eeb23f658f5e2bd343efab3bc6294e5372636bf"
+        },
+        "helper": {
+          "path": "/private/tmp/scenetoweb-compositor-wave-axis-research-next/artifacts/verification-wave-axis-sin-native-r1/active/native-launcher-O1FCk9/lib/node-port-python.mjs",
+          "bytes": 18855,
+          "sha256": "33fc36d6c551583a119e558a60f77cd55ed25c92bcfd6d39e0171e7faaa33cde"
+        },
+        "bridge": {
+          "path": "/private/tmp/scenetoweb-compositor-wave-axis-research-next/artifacts/verification-wave-axis-sin-native-r1/active/native-launcher-O1FCk9/node-port-blender.mjs",
+          "bytes": 321,
+          "sha256": "3390a410423e0cc921567a97473f6fd67f91cbe2987af7846346cb7cb51e9a8c"
+        },
+        "cachePolicy": "Fresh per-invocation prefix before Python actions; no project/user cache deletion or numerical proof reuse",
+        "limit": "Subsequent imports only. Call dispose after owned commands stop. Whole-job SIGKILL may leave empty owned directories; it cannot run JavaScript cleanup."
+      },
+      "proof": {
+        "directory": "/private/tmp/scenetoweb-compositor-wave-axis-research-next/artifacts/verification-wave-axis-sin-native-r1/native-python-proof",
+        "files": [
+          {
+            "path": "blender-proof",
+            "bytes": 786,
+            "sha256": "c99efad4d339ae8b64807adf884b711672dfc7730e32e9577bc6a7c6e29cc89b"
+          },
+          {
+            "path": "invocations/07b51e84-973a-4028-bd52-265730c3aa9f.json",
+            "bytes": 1705,
+            "sha256": "2eecc61bb602e89c59be180bc7287d52f235613d961bab3176974c74e6263ac1"
+          },
+          {
+            "path": "launcher.json",
+            "bytes": 1296,
+            "sha256": "17996ab8561c04a8e5481a162eeb23f658f5e2bd343efab3bc6294e5372636bf"
+          },
+          {
+            "path": "lib/node-port-python.mjs",
+            "bytes": 18855,
+            "sha256": "33fc36d6c551583a119e558a60f77cd55ed25c92bcfd6d39e0171e7faaa33cde"
+          },
+          {
+            "path": "node-port-blender.mjs",
+            "bytes": 321,
+            "sha256": "3390a410423e0cc921567a97473f6fd67f91cbe2987af7846346cb7cb51e9a8c"
+          }
+        ],
+        "invocations": [
+          {
+            "schemaVersion": 1,
+            "kind": "blendlink-proof-native-python-v1",
+            "productionCases": 0,
+            "started": 1794671391022,
+            "owner": 12263,
+            "parentGone": false,
+            "native": {
+              "path": "/Applications/Blender.app/Contents/MacOS/Blender",
+              "bytes": 210043328,
+              "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da"
+            },
+            "node": {
+              "path": "/Users/michaeljones/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+              "bytes": 126827136,
+              "sha256": "eb96bdabfd1f6705345bbd459f9308d140c011fa55865efdb4fa8f61d048f55d"
+            },
+            "configSha256": "17996ab8561c04a8e5481a162eeb23f658f5e2bd343efab3bc6294e5372636bf",
+            "timings": {
+              "preIdentityMs": 142.75475,
+              "postIdentityMs": 84.32887500000004,
+              "bridgeBeforeReceiptMs": 943.127375
+            },
+            "result": {
+              "args": [
+                "--background",
+                "--factory-startup",
+                "-t",
+                "1",
+                "--python-exit-code",
+                "1",
+                "--python-expr",
+                "import sys; sys.pycache_prefix=\"/private/tmp/scenetoweb-compositor-wave-axis-research-next/artifacts/verification-wave-axis-sin-native-r1/active/native-launcher-O1FCk9/python-cache-tmh8jm\"; sys.dont_write_bytecode=True",
+                "--python",
+                "/private/tmp/scenetoweb-compositor-wave-axis-research-next/experiments/compositor-wave-axis-research/capture.py"
+              ],
+              "pythonGuardApplied": true,
+              "cacheDirectory": "/private/tmp/scenetoweb-compositor-wave-axis-research-next/artifacts/verification-wave-axis-sin-native-r1/active/native-launcher-O1FCk9/python-cache-tmh8jm",
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "aborted": false,
+              "error": null,
+              "elapsedMs": 715,
+              "cacheDisposed": true
+            }
+          }
+        ],
+        "pythonInvocations": 1,
+        "finalInvocations": 0,
+        "finalSources": [],
+        "numericalCredit": false,
+        "complete": true
+      }
+    }
+  },
+  "sourcePins": {
+    "experiments/compositor-wave-axis-research/capture.py": "94f52724af719410a0c652c3fbcacdf07f339808b1e35fe5edc754a5c47aff53",
+    "packages/blender-addon/tests/compositor_reference.py": "d52af8d60fec4bbd6f1b977e12a0c913c6f599e0e401b0b962b2bf2b101b5a55",
+    "packages/blendlink/blender/compositor_white_noise.py": "f5520035cafc15c7eac64c815903c6dbf34248ea488d3555191560f9ac3f17e1"
+  },
+  "comparator": {
+    "path": "experiments/compositor-wave-axis-research/compare.mjs",
+    "sha256": "3f1e7e224d6c7d0dfa6aa1494563eba47fb64201d8f8bd233f21a5ea04d8f164"
+  },
+  "nativeEndpointWords": {
+    "zero": 1800,
+    "one": 0
+  },
+  "stagingInterpretation": "Matches explicit CPU Float32 stages and double \u03c0/2 argument subtraction before sinf. Nonzero SIN-only word differences are consistent with native sinf versus rounded JavaScript Math.sin, but no instruction/register-level cause attribution is claimed. SAW/TRI exact corpus remains separate.",
+  "contractScope": "Predeclared abs2^-20; exact alpha/gray and any native zero/one controls; no tolerance change, output repair or general parameter-domain proof. Native-one endpoint was absent and earns no control credit.",
+  "exclusions": [
+    "No SDK/production/Final/browser/EEVEE/demo credit",
+    "No arbitrary coordinate/parameter coverage",
+    "No native-one endpoint qualification",
+    "No DIAGONAL/Rings/distortion coverage"
+  ]
+}

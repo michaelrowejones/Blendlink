@@ -6,7 +6,8 @@ import {join,relative,sep} from 'node:path'
 import {executeNodePortCommand,nodePortHash} from './node-port-contract.mjs'
 
 export const CLOSED_NODE_PORT_FAMILIES=Object.freeze({
- 'compositor-white-noise':Object.freeze({adapter:'compositor-white-noise-fixed-v1',node:'ShaderNodeTexWhiteNoise',folder:'experiments/compositor-white-noise',profile:'darwin-arm64-53-white-noise-cpu-v1',productionCases:44,calibrationCases:0,nativeGraphs:44,finals:12,caseRuns:224,words:14336,status:'QUALIFIED_PARTIAL_COMPOSITOR_WHITE_NOISE'}),
+ 'compositor-white-noise':Object.freeze({adapter:'compositor-white-noise-fixed-v1',node:'ShaderNodeTexWhiteNoise',folder:'experiments/compositor-white-noise',profile:'darwin-arm64-53-white-noise-cpu-v1',productionCases:44,calibrationCases:0,nativeGraphs:44,prefixes:14,finals:12,caseRuns:224,words:14336,status:'QUALIFIED_PARTIAL_COMPOSITOR_WHITE_NOISE'}),
+ 'compositor-white-noise-default-field':Object.freeze({adapter:'compositor-white-noise-default-field-v1',node:'ShaderNodeTexWhiteNoise',folder:'experiments/compositor-white-noise-default-field',profile:'darwin-arm64-53-white-noise-uniform-cpu-v1',productionCases:54,calibrationCases:0,nativeGraphs:54,nativeOracleControls:9,nativeRenders:63,prefixes:10,finals:8,caseRuns:248,words:7943520,status:'QUALIFIED_PARTIAL_COMPOSITOR_WHITE_NOISE_DEFAULT_FIELD'}),
  'mono-switch-view':Object.freeze({adapter:'mono-switch-view-v1',node:'CompositorNodeSwitchView',folder:'experiments/static-switch-family',profile:'darwin-arm64-53-mono-view-cpu-v1',productionCases:7,calibrationCases:1,nativeGraphs:8,finals:8,caseRuns:64,words:16384,status:'qualified-mono-switch-view-slice'}),
 })
 export function closedNodePortFamily(id){const value=Object.hasOwn(CLOSED_NODE_PORT_FAMILIES,id)&&CLOSED_NODE_PORT_FAMILIES[id];assert.ok(value,'Unknown closed node-port family');return value}
@@ -48,11 +49,12 @@ export function assertClosedFamilyReceipt(id,value){
   assert.deepEqual(receipt.browsers.map(r=>[r.profile,r.phase]),phases)
   for(const run of receipt.browsers){assert.equal(run.caseRuns,16);actualApis(run.APIs,run.profile)}
  }else{
-  assert.equal(value.contractViolations,0);assert.equal(value.uniqueActualPythonPrefixes,14)
+  assert.equal(value.contractViolations,0);assert.equal(value.uniqueActualPythonPrefixes,f.prefixes)
   assert.equal(value.sources.length,1);const archive=value.sources[0].nativeArchive
-  assert.equal(archive?.pythonInvocations,14);assert.equal(archive.finalInvocations,12);assert.equal(archive.uniqueCachePrefixes,14)
+  assert.equal(archive?.pythonInvocations,f.prefixes);assert.equal(archive.finalInvocations,f.finals);assert.equal(archive.uniqueCachePrefixes,f.prefixes)
+  if(f.nativeOracleControls!==undefined){assert.equal(value.nativeOracleControls,f.nativeOracleControls);assert.equal(value.nativeRenders,f.nativeRenders);assert.equal(value.lifecycleCycles,96)}
   assert.deepEqual(value.runs.map(r=>[r.profile,r.phase]),phases)
-  for(const run of value.runs)actualApis(run.actualApis,run.profile,run.phase==='raw'?44:12)
+  for(const run of value.runs)actualApis(run.actualApis,run.profile,run.phase==='raw'?f.productionCases:f.finals)
  }
  assert.match(mono(id)?value.runtimeFingerprint:value.closedReader?.runtimeFingerprint,/^[a-f0-9]{64}$/)
  return value
@@ -86,7 +88,7 @@ export function closedFamilyReaderCommand(id,{root,evidence,output,transaction})
 }
 export function closedFamilyAdapter(id){
  const f=closedNodePortFamily(id)
- return Object.freeze({nativeOwnership:'family',validate:args=>assertClosedFamilyScope(id,args),nativeFinalPaths:mono(id)?[...pins,'native-python-proof.json','runtime-transaction/transaction.json']:pins,finalSources:evidence=>finalSources(id,evidence),
+ return Object.freeze({nativeOwnership:'family',validate:args=>assertClosedFamilyScope(id,args),nativeFinalPaths:mono(id)?[...pins,'native-python-proof.json','runtime-transaction/transaction.json']:id==='compositor-white-noise-default-field'?[...pins,'cpu/policy.json']:pins,finalSources:evidence=>finalSources(id,evidence),
   async read({root,evidence,manifest,profile,completedRuns,nativeIdentity}){
    assertClosedFamilyScope(id,{manifest,profile,completedRuns})
    const suite=await json(join(evidence,'suite-matrix.json'));assert.equal(suite.status,'passed');assert.equal(suite.family,id);assert.equal(suite.built,true);assert.equal(suite.reuseNative,false)
@@ -105,6 +107,7 @@ export function closedFamilyAdapter(id){
    assertClosedFamilyNativeIdentity(native,archive,nativeIdentity)
    const sources=await finalSources(id,evidence);assert.equal(sources.length,f.finals);assert.equal(new Set(sources).size,f.finals)
    return {status:'qualified',productionCases:f.productionCases,calibrationCases:f.calibrationCases,nativeGraphs:f.nativeGraphs,savedFinalScenes:f.finals,
+    ...(f.nativeOracleControls===undefined?{}:{nativeOracleControls:f.nativeOracleControls,nativeRenders:f.nativeRenders}),
     caseRuns:f.caseRuns,primaryFloat32Words:f.words,productionCaseRuns:mono(id)?56:f.caseRuns,productionFloat32Words:mono(id)?14336:f.words,wordMismatches:0,finalSources:sources,
     nativePythonOwnership:'family',nativePythonProof:mono(id)?proof.nativePythonProof:proof.sources[0].nativeArchive,
     files:[{path:relative(evidence,output),sha256:nodePortHash(await readFile(output))}],

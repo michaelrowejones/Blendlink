@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "role": "Read-only primary implementation availability research; no library port or code reuse",
+  "supportCredit": 0,
+  "sources": [
+    {
+      "repository": "apple-oss-distributions/Libm",
+      "revision": "17a5f9daa3f5679f7536b26f133b40cc078753c3",
+      "path": "Source/ARM/sinf.s",
+      "url": "https://raw.githubusercontent.com/apple-oss-distributions/Libm/17a5f9daa3f5679f7536b26f133b40cc078753c3/Source/ARM/sinf.s",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "repository": "apple-oss-distributions/Libm",
+      "revision": "17a5f9daa3f5679f7536b26f133b40cc078753c3",
+      "path": "Source/Intel/sinfcosf.s",
+      "url": "https://raw.githubusercontent.com/apple-oss-distributions/Libm/17a5f9daa3f5679f7536b26f133b40cc078753c3/Source/Intel/sinfcosf.s",
+      "sha256": "af39e62dd1b37e26a4c7697a74c29ca3d0c36f5715c1116db0f03ed21331dd80",
+      "bytes": 14773
+    },
+    {
+      "repository": "llvm/llvm-project",
+      "revision": "c0005dfe81fedaf852727b81a07d728f94ecfa2d",
+      "path": "libc/src/__support/math/sinf.h",
+      "url": "https://raw.githubusercontent.com/llvm/llvm-project/c0005dfe81fedaf852727b81a07d728f94ecfa2d/libc/src/__support/math/sinf.h",
+      "sha256": "bb5bb9f204187f66977cefbb1764d8e172c9bfbd4513c6767766f23741192cae",
+      "bytes": 1681
+    },
+    {
+      "repository": "llvm/llvm-project",
+      "revision": "c0005dfe81fedaf852727b81a07d728f94ecfa2d",
+      "path": "libc/src/__support/math/sinf_double_eval.h",
+      "url": "https://raw.githubusercontent.com/llvm/llvm-project/c0005dfe81fedaf852727b81a07d728f94ecfa2d/libc/src/__support/math/sinf_double_eval.h",
+      "sha256": "c12241a687939a93d3d6ba9364571ff5df662083319e8b3892276b39c288c9ae",
+      "bytes": 7286
+    },
+    {
+      "repository": "llvm/llvm-project",
+      "revision": "c0005dfe81fedaf852727b81a07d728f94ecfa2d",
+      "path": "LICENSE.TXT",
+      "url": "https://raw.githubusercontent.com/llvm/llvm-project/c0005dfe81fedaf852727b81a07d728f94ecfa2d/LICENSE.TXT",
+      "sha256": "8d85c1057d742e597985c7d4e6320b015a9139385cff4cbae06ffc0ebe89afee",
+      "bytes": 15141
+    }
+  ],
+  "findings": {
+    "actualAppleArmSinf": "The reviewed official Apple Libm snapshot has an empty Source/ARM/sinf.s. No usable implementation of the relevant measured arm64 libSystem sinf was identified in that primary snapshot. The nonempty Intel implementation is architecture-specific historical code; neither arithmetic nor licensing is assumed to match current arm64.",
+    "portableCandidate": "LLVM libc provides sinf with an explicit Apache-2.0 WITH LLVM-exception header and published implementation/dependencies. It is a possible separately qualified portable math enabler, not evidence of equivalence to the measured Apple library.",
+    "reuseRisks": [
+      "Configuration selects FMA and non-FMA evaluation/range-reduction paths.",
+      "Float conversion, signed zeros, exceptional values and rounding assumptions need independent browser/host proofs.",
+      "A more accurate portable sine is not necessarily bit-identical to Apple sinf and cannot automatically restore the failed native endpoint gate."
+    ],
+    "decision": "Do not implement or emulate Apple libm in this batch. Keep immediate Wave candidate SAW/TRI; default SIN remains unqualified. Future portable math work needs its own source-stage contract, license/attribution preservation and differential corpus."
+  }
+}

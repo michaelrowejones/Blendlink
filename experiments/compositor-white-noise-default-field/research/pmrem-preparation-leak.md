@@ -1,0 +1,11 @@
+# Detached Final preparation PMREM ownership counterexample
+
+The first fresh integrated default-field matrix stopped at the strict texture identity check after disposing the first actual Final installation. Native captures, saved exports and the raw Metal phase had completed. This is a resource counterexample and earns zero node or field credit.
+
+A separate namespace reused the unchanged retained native/Final packet. Instrumentation kept the strict check and recorded all actual texture identities, dimensions, ownership records, creation stacks and source dispose events. Four unexpected allocations survive: the 336×64 PMREM output and depth attachment, plus the same-sized generator ping-pong target and depth attachment. Every creation stack belongs to detached **preparation**. Both staging and live `SceneToWeb Preview World` source textures receive their dispose event; the live source never needed a GPU upload. The White Noise axis allocation is absent after disposal. The original DFG cache identity is unchanged.
+
+The pinned Three PMREMNode creates a cached target from the raw equirectangular environment but does not attach a source-dispose listener. Its generator owns a separate ping-pong target. Disposing the source and loaded material does not dispose those generated targets. The public installation therefore needs explicit ownership of the generated preview-world lighting PMREM, independent of source-texture ownership.
+
+A narrow candidate can generate the same public PMREM algorithm during asynchronous preparation, own its returned render target, release the generator's temporary target, and borrow the resulting texture for staging and live scene attachment. Commit stays synchronous. Cancellation and disposal must retire the owned result once; background conversion and restoration must retain their existing behavior. No vendor changes, private-cache access, constant-PMREM substitution or baseline expansion is justified by this diagnostic.
+
+The compact receipt pins source and the retained diagnostic report. Its observed backend is WebGPU; the failed diagnostic did not save a completed hardware-identity row, so it provides no new hardware qualification. The raw diagnostic inputs and full fixture patch are machine-local ignored artifacts. Original failed integrated evidence remains unchanged.

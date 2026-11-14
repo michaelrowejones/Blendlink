@@ -1,0 +1,305 @@
+{
+  "schemaVersion": 1,
+  "status": "RESEARCH_ONLY_WAVE_DOMAIN_COUNTEREXAMPLE",
+  "supportCredit": 0,
+  "gatesChanged": false,
+  "productionChanged": false,
+  "earlierReceiptsUnchanged": [
+    "receipt.json",
+    "sin-receipt.json"
+  ],
+  "plan": {
+    "path": "experiments/compositor-wave-axis-research/bound-cases.json",
+    "sha256": "790238e746c992f0bb537e11db21589d2efe235214018f4d2120cc905c5fde6b",
+    "declaredBeforeCapture": true
+  },
+  "native": {
+    "path": "artifacts/verification-wave-axis-bound-native-r1/report.json",
+    "sha256": "0c05aa4ab25803ef92481c47f88cc5c18efbc86c1dcadd8200e7c5d961278715",
+    "sourcePins": {
+      "experiments/compositor-wave-axis-research/capture.py": "278fc55c8693794fc829d640bd78ef1c5437de0f5a4f3e97e0d53d86036e7645",
+      "packages/blender-addon/tests/compositor_reference.py": "d52af8d60fec4bbd6f1b977e12a0c913c6f599e0e401b0b962b2bf2b101b5a55",
+      "packages/blendlink/blender/compositor_white_noise.py": "f5520035cafc15c7eac64c815903c6dbf34248ea488d3555191560f9ac3f17e1",
+      "experiments/compositor-wave-axis-research/bound-cases.json": "790238e746c992f0bb537e11db21589d2efe235214018f4d2120cc905c5fde6b"
+    }
+  },
+  "comparison": {
+    "path": "artifacts/verification-wave-axis-bound-native-r1/comparison.json",
+    "sha256": "d00a8433f582adf2b6d7a78aeab65e65afeefce7d42351852b83ea8a96e111ac",
+    "cases": 378,
+    "words": 6445896,
+    "wordDifferences": 12426,
+    "maximumAbsolute": 5.960464477539063e-08,
+    "contractViolations": 24,
+    "firstViolation": {
+      "case": "8192x4-X-SIN-thin-negative-maximum",
+      "x": 352,
+      "y": 0,
+      "channel": 0,
+      "profile": "SIN",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ],
+      "expectedWord": 855638016,
+      "actualWord": 0,
+      "expected": 2.9802322387695312e-08,
+      "actual": 0
+    }
+  },
+  "guardedPython": {
+    "path": "artifacts/verification-wave-axis-bound-native-r1/archive.json",
+    "sha256": "b945bb553c92db44af2d59cd98d76a23ef19f5ceb521e91b490f6c1ead3cf333",
+    "receipt": {
+      "identity": {
+        "kind": "blendlink-proof-native-python-v1",
+        "platform": "darwin",
+        "native": {
+          "path": "/Applications/Blender.app/Contents/MacOS/Blender",
+          "bytes": 210043328,
+          "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da"
+        },
+        "node": {
+          "path": "/Users/michaeljones/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "bytes": 126827136,
+          "sha256": "eb96bdabfd1f6705345bbd459f9308d140c011fa55865efdb4fa8f61d048f55d"
+        },
+        "launcher": {
+          "path": "/private/tmp/scenetoweb-compositor-wave-axis-research-next/artifacts/verification-wave-axis-bound-native-r1/active/native-launcher-uw7aIf/blender-proof",
+          "bytes": 790,
+          "sha256": "5f2aed8a233701dd20d03d6ff43e0958c07dd344eaa81469a813c95e0f7e58e0"
+        },
+        "configuration": {
+          "path": "/private/tmp/scenetoweb-compositor-wave-axis-research-next/artifacts/verification-wave-axis-bound-native-r1/active/native-launcher-uw7aIf/launcher.json",
+          "bytes": 1302,
+          "sha256": "38633a1f266b077a6300f5b418795515857ace401e803fb4cb1ebe8c5f9d5ff3"
+        },
+        "helper": {
+          "path": "/private/tmp/scenetoweb-compositor-wave-axis-research-next/artifacts/verification-wave-axis-bound-native-r1/active/native-launcher-uw7aIf/lib/node-port-python.mjs",
+          "bytes": 18855,
+          "sha256": "33fc36d6c551583a119e558a60f77cd55ed25c92bcfd6d39e0171e7faaa33cde"
+        },
+        "bridge": {
+          "path": "/private/tmp/scenetoweb-compositor-wave-axis-research-next/artifacts/verification-wave-axis-bound-native-r1/active/native-launcher-uw7aIf/node-port-blender.mjs",
+          "bytes": 321,
+          "sha256": "3390a410423e0cc921567a97473f6fd67f91cbe2987af7846346cb7cb51e9a8c"
+        },
+        "cachePolicy": "Fresh per-invocation prefix before Python actions; no project/user cache deletion or numerical proof reuse",
+        "limit": "Subsequent imports only. Call dispose after owned commands stop. Whole-job SIGKILL may leave empty owned directories; it cannot run JavaScript cleanup."
+      },
+      "proof": {
+        "directory": "/private/tmp/scenetoweb-compositor-wave-axis-research-next/artifacts/verification-wave-axis-bound-native-r1/native-python-proof",
+        "files": [
+          {
+            "path": "blender-proof",
+            "bytes": 790,
+            "sha256": "5f2aed8a233701dd20d03d6ff43e0958c07dd344eaa81469a813c95e0f7e58e0"
+          },
+          {
+            "path": "invocations/519b437b-9081-44bf-9d77-3020183e1b73.json",
+            "bytes": 1719,
+            "sha256": "3577dbfc0f42b65679c454abc85764cd209e49e8676c2b89c77f08290652b004"
+          },
+          {
+            "path": "launcher.json",
+            "bytes": 1302,
+            "sha256": "38633a1f266b077a6300f5b418795515857ace401e803fb4cb1ebe8c5f9d5ff3"
+          },
+          {
+            "path": "lib/node-port-python.mjs",
+            "bytes": 18855,
+            "sha256": "33fc36d6c551583a119e558a60f77cd55ed25c92bcfd6d39e0171e7faaa33cde"
+          },
+          {
+            "path": "node-port-blender.mjs",
+            "bytes": 321,
+            "sha256": "3390a410423e0cc921567a97473f6fd67f91cbe2987af7846346cb7cb51e9a8c"
+          }
+        ],
+        "invocations": [
+          {
+            "schemaVersion": 1,
+            "kind": "blendlink-proof-native-python-v1",
+            "productionCases": 0,
+            "started": 1794671940633,
+            "owner": 14680,
+            "parentGone": false,
+            "native": {
+              "path": "/Applications/Blender.app/Contents/MacOS/Blender",
+              "bytes": 210043328,
+              "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da"
+            },
+            "node": {
+              "path": "/Users/michaeljones/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+              "bytes": 126827136,
+              "sha256": "eb96bdabfd1f6705345bbd459f9308d140c011fa55865efdb4fa8f61d048f55d"
+            },
+            "configSha256": "38633a1f266b077a6300f5b418795515857ace401e803fb4cb1ebe8c5f9d5ff3",
+            "timings": {
+              "preIdentityMs": 142.95866700000002,
+              "postIdentityMs": 84.3750829999999,
+              "bridgeBeforeReceiptMs": 1362.227042
+            },
+            "result": {
+              "args": [
+                "--background",
+                "--factory-startup",
+                "-t",
+                "1",
+                "--python-exit-code",
+                "1",
+                "--python-expr",
+                "import sys; sys.pycache_prefix=\"/private/tmp/scenetoweb-compositor-wave-axis-research-next/artifacts/verification-wave-axis-bound-native-r1/active/native-launcher-uw7aIf/python-cache-7Wbf2P\"; sys.dont_write_bytecode=True",
+                "--python",
+                "/private/tmp/scenetoweb-compositor-wave-axis-research-next/experiments/compositor-wave-axis-research/capture.py"
+              ],
+              "pythonGuardApplied": true,
+              "cacheDirectory": "/private/tmp/scenetoweb-compositor-wave-axis-research-next/artifacts/verification-wave-axis-bound-native-r1/active/native-launcher-uw7aIf/python-cache-7Wbf2P",
+              "exitCode": 0,
+              "signal": null,
+              "timedOut": false,
+              "aborted": false,
+              "error": null,
+              "elapsedMs": 1134,
+              "cacheDisposed": true
+            }
+          }
+        ],
+        "pythonInvocations": 1,
+        "finalInvocations": 0,
+        "finalSources": [],
+        "numericalCredit": false,
+        "complete": true
+      }
+    }
+  },
+  "perProfile": {
+    "SAW": {
+      "frames": 126,
+      "words": 2148632,
+      "wordDifferences": 0,
+      "nativeZeroRgbWords": 198,
+      "nativeOneRgbWords": 186
+    },
+    "TRI": {
+      "frames": 126,
+      "words": 2148632,
+      "wordDifferences": 0,
+      "nativeZeroRgbWords": 198,
+      "nativeOneRgbWords": 198
+    },
+    "SIN": {
+      "frames": 126,
+      "words": 2148632,
+      "wordDifferences": 12426,
+      "nativeZeroRgbWords": 718284,
+      "nativeOneRgbWords": 396
+    }
+  },
+  "scopeDecision": "SAW/TRI remain exact research candidates after all signed-bound and seam controls. The current SIN implementation/proposed domain failed its exact-native-zero endpoint gate and is closed as unqualified; no threshold, tolerance or output repair. This finite census does not itself prove every input in the proposed domain.",
+  "nativeOneCoverage": "396 native-one RGB words in SIN matched; 198 in TRI and 186 in SAW matched. SAW returning1 after Float32 subtraction is preserved, never clipped or assumed strictly below1.",
+  "compilerEvidence": {
+    "path": "artifacts/verification-wave-sinf-compiler-r1/report.json",
+    "sha256": "33b958709833c712adc82fd238a08a121f3612061131db1a9e217646175a4f65",
+    "receipt": {
+      "schemaVersion": 1,
+      "status": "RESEARCH_WAVE_SINF_LIBRARY_DIAGNOSIS",
+      "supportCredit": 0,
+      "binary": {
+        "path": "/Applications/Blender.app/Contents/MacOS/Blender",
+        "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da"
+      },
+      "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.5.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+      "commands": [
+        [
+          "xcrun",
+          "llvm-objdump",
+          "-d",
+          "--demangle",
+          "--start-address=0x102912da8",
+          "--stop-address=0x1029130d0",
+          "/Applications/Blender.app/Contents/MacOS/Blender"
+        ],
+        [
+          "xcrun",
+          "llvm-objdump",
+          "-d",
+          "--demangle",
+          "--start-address=0x10291271c",
+          "--stop-address=0x102912da8",
+          "/Applications/Blender.app/Contents/MacOS/Blender"
+        ],
+        [
+          "xcrun",
+          "llvm-objdump",
+          "--macho",
+          "--indirect-symbols",
+          "/Applications/Blender.app/Contents/MacOS/Blender"
+        ],
+        [
+          "xcrun",
+          "llvm-objdump",
+          "--macho",
+          "--bind",
+          "/Applications/Blender.app/Contents/MacOS/Blender"
+        ],
+        [
+          "xcrun",
+          "clang++",
+          "--version"
+        ],
+        [
+          "xcrun",
+          "clang++",
+          "-O2",
+          "-ffp-contract=off",
+          "-fno-builtin-sinf",
+          "/private/tmp/scenetoweb-compositor-wave-axis-research-next/experiments/compositor-wave-axis-research/sinf_probe.cpp",
+          "-o",
+          "/private/tmp/scenetoweb-compositor-wave-axis-research-next/artifacts/verification-wave-sinf-compiler-r1/sinf-probe"
+        ],
+        [
+          "/private/tmp/scenetoweb-compositor-wave-axis-research-next/artifacts/verification-wave-sinf-compiler-r1/sinf-probe"
+        ]
+      ],
+      "source": {
+        "path": "experiments/compositor-wave-axis-research/sinf_probe.cpp",
+        "sha256": "6fd241ce18bfd2ed4bf3d6b44e0f4e0b553edcf38ce2e170164614547ca5351a"
+      },
+      "files": {
+        "lambda.asm": "6a7f0e79832d9dd7363d5cc4c2eb6bf0d959c71841bd440f2a3127bd2342f356",
+        "caller.asm": "1922e9b34eb9e6bc89a1e4358c01482fdb20ee921de47ee77e1d2306ec186cb2",
+        "indirect-sinf.txt": "fc1b8f36bab65bdfa65c4a70d6b055596c656fd1c75cf1e5199563f2f46ee2ce",
+        "bind-sinf.txt": "74cf645f0549da6d404c5a43e223eab0688fc7df9c658a6472c458f5177a8240",
+        "probe.txt": "b5c129a11b62662e2622ac19703524a03b971959f6bc88f4ed3ad24a59614aad"
+      },
+      "argumentWord": "4308a8d7",
+      "nativeSinfWord": "bf800000",
+      "roundedDoubleSinWord": "bf7fffff",
+      "nativeFactorWord": "00000000",
+      "hostFactorWord": "33000000",
+      "claim": "Actual pinned Wave call/lambda machine instructions confirm the staged Float32 arithmetic and double pi/2 subtraction before the imported libSystem sinf call. Intermediate words are reconstructed from the native Uniform input and actual instructions, not live register instrumentation. The independent real-libm probe confirms the divergent result for exactly that argument; no function body/output repair or FPU-state changes."
+    }
+  },
+  "derivedCounterexampleStages": {
+    "scope": "Reconstructed from native implicit Uniform coordinates and verified actual compiled instructions; not live register instrumentation.",
+    "coordinate": "bf69f800",
+    "scaled": "40e9f800",
+    "afterEpsilon": "40e9f802",
+    "afterShrink": "40e9f7f2",
+    "after20AndPhase": "430a3af7",
+    "sinfArgument": "4308a8d7",
+    "nativeLibmSinf": "bf800000",
+    "roundedDoubleSin": "bf7fffff",
+    "nativeFactor": "00000000",
+    "hostFactor": "33000000"
+  },
+  "credits": {
+    "nativeResearchFrames": 378,
+    "savedFinal": 0,
+    "browser": 0,
+    "EEVEE": 0,
+    "production": 0
+  }
+}

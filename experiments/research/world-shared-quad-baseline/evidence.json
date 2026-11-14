@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "status": "NONQUALIFYING_INDEPENDENT_SHARED_QUAD_BASELINE_PASS",
+  "portCredit": 0,
+  "sdkChanges": false,
+  "originalFailedRootNamespace": "artifacts/verification-next30-world-ready",
+  "retainedOriginalEvidenceUnchanged": true,
+  "firstFailure": {
+    "case": "background-schema-default",
+    "cycle": 0,
+    "before": 0,
+    "after": 1
+  },
+  "remainingGeometryTrace": [
+    {
+      "uuid": "f8b1ac2f-6459-46ca-a668-20965d2a4a85",
+      "type": "BufferGeometry",
+      "objectName": "Render Pipeline",
+      "disposed": 0,
+      "stack": "Error\n    at renderer._geometries.initGeometry (http://127.0.0.1:64594/browser.js:23:220)\n    at Geometries.updateForRender (http://127.0.0.1:64594/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:30917:50)\n    at WebGPURenderer._renderObjectDirect (http://127.0.0.1:64594/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:61308:21)\n    at WebGPURenderer.renderObject (http://127.0.0.1:64594/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:61231:9)\n    at WebGPURenderer._renderObjects (http://127.0.0.1:64594/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:61026:9)\n    at WebGPURenderer._renderScene (http://127.0.0.1:64594/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:59491:64)\n    at WebGPURenderer.render (http://127.0.0.1:64594/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:59067:8)\n    at QuadMesh.render (http://127.0.0.1:64594/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:37548:12)\n    at RenderPipeline.render (http://127.0.0.1:64594/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:82905:18)\n    at ThreeWebgpuPostPipelineService.render (http://127.0.0.1:64594/@fs/private/tmp/scenetoweb-world-geometry-diagnostic-next/artifacts/diagnostic-world-geometry-r1/browser-metal/runtime/threeWebgpuPostPipeline.js:302:23)"
+    }
+  ],
+  "independentWarmup": {
+    "publicApi": "new QuadMesh(NodeMaterial with constant fragmentNode).render(renderer)",
+    "sourceWorldOrCompositor": false,
+    "ownMaterialDisposed": true,
+    "sharedGeometryDisposed": false,
+    "baselineAllowanceChanged": false,
+    "strictGeometryCheckChanged": false
+  },
+  "actualMetalRuns": [
+    {
+      "backend": "webgpu",
+      "gpu": {
+        "api": "WebGPU",
+        "vendor": "apple",
+        "architecture": "metal-3",
+        "description": "",
+        "device": ""
+      },
+      "cases": 5,
+      "disposalCycles": 15,
+      "before": 1,
+      "after": 1,
+      "onlyActiveGeometryId": "d4930be1-caf0-492a-8a85-9d345c4b292f",
+      "activeIdentityStableEveryCycle": true,
+      "differentCallerScenes": 5,
+      "nativeAndOwnershipGatesUnchanged": true
+    },
+    {
+      "backend": "webgl2",
+      "gpu": {
+        "api": "WebGL2",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+      },
+      "cases": 5,
+      "disposalCycles": 15,
+      "before": 1,
+      "after": 1,
+      "onlyActiveGeometryId": "cd46fd24-f199-4d9c-8cf6-81da39ebd236",
+      "activeIdentityStableEveryCycle": true,
+      "differentCallerScenes": 5,
+      "nativeAndOwnershipGatesUnchanged": true
+    }
+  ],
+  "reports": [
+    {
+      "machineLocalPath": "artifacts/diagnostic-world-geometry-r1/browser-metal/report.json",
+      "sha256": "767110cdbceeec9a953b79e938367c5f5995ca87e21a723084e088e1679944f7"
+    },
+    {
+      "machineLocalPath": "artifacts/diagnostic-world-geometry-r2/browser-metal/report.json",
+      "sha256": "0b0d3d650f05adb68deaef3437a32734eca09b4dfd1229a311dfa228b491d015"
+    }
+  ],
+  "scriptPins": [
+    {
+      "path": "experiments/research/world-shared-quad-baseline/diagnostic-browser.js",
+      "sha256": "3dfd0381be0c76fcb5fc5f4d8b96c1410c04e37a0e255071714e79ea417a451c",
+      "byteIdenticalToDiagnostic": true
+    },
+    {
+      "path": "experiments/research/world-shared-quad-baseline/diagnostic-run.mjs",
+      "sha256": "9c979e2ebf7c15f16f6a2b9292523549140709b0e1cbe04a8bd9d6749c5a4739",
+      "byteIdenticalToDiagnostic": true
+    }
+  ],
+  "sourcePins": {
+    "experiments/constant-world-background/browser.js": "4a8001163a5a1ac6d95c7cf7aca765e5c5ed53b2b6b3297c130010fc22e2e460",
+    "packages/blendlink/src/threeRuntime.ts": "339ad40f7c813f09cb7eae704311941f24b513ce0c15859d2794665bb9ca9da6",
+    "node_modules/three/src/renderers/common/QuadMesh.js": "5ed200346ed07b0aeb248677e2242478a1057b0fd1404212f2b43b591cb3cdea",
+    "node_modules/three/src/renderers/common/RenderPipeline.js": "9dcf203793aec85ab2faf21a1acfc3e61869a5b073e6e119c4ea8c1cfb386c17"
+  },
+  "limits": [
+    "Retained native/Final packet reused only for diagnostics.",
+    "Only Metal WebGPU/WebGL2 diagnostic replay; fresh integrated all-profile World matrix still required.",
+    "No source appearance, numeric tolerance or cleanup gate changed.",
+    "No node coverage or numerical support promotion."
+  ]
+}

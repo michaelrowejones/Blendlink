@@ -50,3 +50,10 @@ native/browser transactions; their exact historical snapshot receipts are in
 [the pipeline proof record](../experiments/node-port-pipeline/README.md).
 This verifies the bridge without adding node coverage. Retained compact receipts
 used as schema fixtures in CPU tests still provide **zero fresh numerical credit**.
+
+White Noise manifests explicitly list executable case/contract/source JSON.
+Retrospective `evidence.json` and pilot records are outputs, so recording a
+successful run does not invalidate its own executable-input digest or queue
+it again. Changes to the actual case files still require fresh verification.
+The strict readers continue to validate the generated native/Final/runtime
+archives independently; this boundary does not permit numerical proof reuse.

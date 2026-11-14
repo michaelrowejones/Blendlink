@@ -3,7 +3,7 @@ import type {SourceCompositorProgram,SourcePresentation} from './sourceDisplay.j
 import {ellipseSceneMixContract,sceneMaskMixContract,validateSceneMaskMixMarkers} from './tslCompositorEllipseSceneMix.js'
 const families={CompositorNodeBoxMask:{kind:'box-mask',label:'Box Mask',limit:2048},CompositorNodeEllipseMask:{kind:'ellipse-mask',label:'Ellipse Mask',limit:2048}} as const
 const spatial=new Set(['translate','image-affine','image-input','image-crop','alpha-crop','image-split','pixelate','blur','filter','glare','flip'])
-const pointwise=new Set(['ellipse-mask','box-mask','value','rgb','utility-constant','math','vector-math','vector-component','combine-vector','separate-vector','combine-color','separate-color','mix','mix-rgb','alpha-over','set-alpha','convert-alpha','exposure','brightness-contrast','invert','gamma','hue-saturation-value','rgb-to-bw','clamp','map-range','map-value','posterize','switch','luminance-key','difference-key','distance-key','chroma-key','channel-key','color-spill','color-key','color-correction','color-balance','normal-direction'])
+export const STATIC_MASK_POINTWISE=new Set(['ellipse-mask','box-mask','value','rgb','utility-constant','math','vector-math','vector-component','combine-vector','separate-vector','combine-color','separate-color','mix','mix-rgb','alpha-over','set-alpha','convert-alpha','exposure','brightness-contrast','invert','gamma','hue-saturation-value','rgb-to-bw','clamp','map-range','map-value','posterize','switch','luminance-key','difference-key','distance-key','chroma-key','channel-key','color-spill','color-key','color-correction','color-balance','normal-direction'])
 const displayLookups=new Set(['Lut1DTransform','Lut3DTransform'])
 export function ellipseRowTextureCount(ops:SourceCompositorProgram['ops']):number{
  let count=0
@@ -25,7 +25,7 @@ export function validateStaticMaskDomains(program:SourceCompositorProgram,native
  if(masks.length>family.limit)return fail(family.label+' exceeds its static mask node budget')
  if(masks.length&&family.kind==='ellipse-mask'){
   if(ellipseRowTextureCount(program.ops)>1)return fail('Ellipse Mask varying row texture budget permits at most one table')
-  if(program.ops.some(op=>!pointwise.has(op.kind))&&!ellipseSceneMixContract(program))return fail('Ellipse Mask requires closed texture-free pointwise composition; other sampler/domain producers remain unqualified')
+  if(program.ops.some(op=>!STATIC_MASK_POINTWISE.has(op.kind)&&!(op.kind==='white-noise-texture'&&op.properties?.white_noise_model==='native-compositor-white-noise-uniform-cpu-53-v1'))&&!ellipseSceneMixContract(program))return fail('Ellipse Mask requires closed texture-free pointwise composition; other sampler/domain producers remain unqualified')
  }else if(masks.length&&program.ops.some(op=>spatial.has(op.kind)))return fail(family.label+' requires full-frame pointwise consumers; spatial/domain transformations remain unqualified')
 }
 /** Reserve presentation slots independently of sampler minimums and third-party effects. */

@@ -1,24 +1,64 @@
-A bounded proof of the existing default Final constant World background route, not a new GPU kernel. Five unchanged direct World sources cover native Background defaults(.8), initialized World defaults(.05), dyadic RGB/strength, zero strength and nonhalf products. Fifteen actual EEVEE Metal half-film references in EXR32 predeclare RGB maxAbs2^-10, alpha1 exact; dyadic/black controls also require bit equality. The source radiance stays within[0,1]. This grants no IBL/BSDF/whole-lighting, HDRI, volume, procedural World or legacy renderer coverage.
+# Constant World backgrounds
 
-Seven default Final sources include those five visible backgrounds plus two real authored ownership controls (Film Transparent and explicit website background recipe). The actual generated `.gen.ts` modules are pinned/archived and passed unchanged to `installThreeCompiledScene`; source opt-out uses its public API. No manually constructed scene descriptor or fragment replacement supplies the visible-background proof. Linear scene and actual installed Raw-display outputs are compared separately across physical resize/DPR, both actual APIs and Metal/SwiftShader.
+A qualified partial route preserves direct static Background → World Output
+through the default source-presentation Final installer. Five unchanged sources
+cover native .8/.05 defaults, dyadic products, zero strength and nonhalf products.
+Fifteen EEVEE Metal half-film frames in EXR32 provide the reference. Seven saved
+Finals include two authored ownership controls; source opt-out is also tested.
+This is visible-background fidelity, with no IBL, whole-lighting, BSDF, HDRI,
+Volume, procedural World, Cycles-render or legacy-renderer numerical credit.
 
-Resources are part of the proof: the environment keeps its32KiB64×32 Float32 source; the visible background is an owned six-face1×1 Float32 data cube (96logicalGPUbytes), whose faces share a view of that same source buffer. Detached preparation/PMREM and their initialization draws are measured explicitly, not called free. Every install/dispose cycle must restore the host's exact background/environment policy and the independently established renderer texture-identity baseline. The constant source texture must not be reuploaded on resize. Native field values and source files remain intact. The closed reader qualified the bounded visible-background route described below.
+[Current evidence](./evidence.json) closes the `ready-owned-pmrem-color-v2`
+implementation: all four actual Metal/SwiftShader WebGPU/WebGL2 configurations,
+180 browser frame pairs, 60 install cycles and 393,408 words. RGB stays within
+the original absolute 2^-10 gate; alpha, black and declared dyadic controls are
+exact. General RGB is bounded rather than word-exact: 85,752 linear and 19,056
+Raw-display word differences, maximum errors 0.00019532442092895508 and
+0.0001220703125. Raw/exposure zero is authored; AgX parity is not inferred.
 
+Node rendering uses `THREE.Color` with the original authored Float32 radiance.
+It creates no background texture or geometry and never writes backgroundNode.
+Classic rendering retains its cube implementation outside this receipt. Three's
+backgroundIntensity is texture-only: a later change does not alter a Color.
+The source's Blender Strength is already applied. Actual takeover/intensity
+controls preserve later caller Color ownership without claiming equivalence to
+the former texture-intensity behavior.
+
+The lighting path explicitly owns public PMREM generation and shares its ready
+336×64 HalfFloat CubeUV target across detached and live installation. Every
+measured cycle disposes the 32 KiB transient source and generator scratch, then
+retires the result target once; adoption keeps it until caller texture disposal.
+These are source-generation bytes, not total CPU or physical GPU memory.
+Creation histograms record the actual color/depth derivatives and display targets.
+All 60 cycles measured 13 preparation draws and zero synchronous commit draws.
+In the declared off-camera-mesh fixture, the direct linear background clears
+without a scene draw, and Final uses one display-transform quad. Resizing leaves
+the ready PMREM version unchanged.
+
+Exact texture identities and host state are restored. Geometry **counts** return
+to the independently initialized shared-quad baseline; geometry identity is not
+claimed by the full reader. The warm-up is a separate public constant QuadMesh,
+strictly before measurement. An AST guard permits only that constant warm-up and
+forbids supplying substitute fragment outputs to the World cases.
+
+The [original cube-based evidence](./history/next24r4-evidence.json) remains
+byte-identical, including its different preparation/draw/word-difference costs.
+Original failed namespaces are preserved. The next30 run exposed a cold shared
+fullscreen geometry baseline; next31 stopped before native work on the warm-up
+scaffold guard, and next32 rejected the obsolete requirement for a background
+mesh draw. The corrected full matrix retains the same native pixel/cleanup
+limits and requires exact zero linear/one Final draw costs.
+
+World/World-tree actions, drivers and effective NLA block Final and connected
+preview export. Only an explicitly warned private draft may inspect a current
+frame. Native engine-target selection, linked Volume refusal and all seven
+source recipes are checked before expensive rendering/export. Unrelated ports
+are not claimed freshly requalified.
+
+```sh
+PATH=/tmp/mrj-tooling:$PATH node experiments/constant-world-background/matrix.mjs artifacts/verification-constant-world-FRESH
 ```
-PATH=/tmp/mrj-tooling:$PATH node experiments/constant-world-background/matrix.mjs artifacts/verification-constant-world-unique-run
-```
 
-The first isolated source pilot failed before rendering due to /tmp versus /private/tmp source-census paths. Its second run passed all15native frames numerically, then failed only its temporary driver's archive containment for the same symlinked-root issue. Both remain zero-qualification research; the final module-based capture uses canonical import paths and requires strict native archive closure before any browser work. The separate target schema canary found that native `get_output_node(engineTarget)` must replace global `is_active_output` selection; the production guard and native policy cover matching/mixed targets, unknown engines and connected Volume.
-
-The full root r1 stopped before browser work because the website-only control unnecessarily supplied `environment.groundHeight=0`, below the native recipe validator's0.01 minimum. Its native numerical results and six completed Finals remain in that failed transaction with no qualification. The fixture now uses1 and first runs **all seven actual source recipes** through `resolve_scene_recipe` in a separate no-render setup phase. A guarded standalone setup replay closed successfully with zero renders; capture counts both reference-script invocations explicitly before any browser qualification.
-
-R2 passed all native references and7Final publications, then correctly failed the first Metal resource identity gate; it earned no browser qualification. A separate zero-credit diagnostic proved per-install depth growth2→4→6 on the same host Scene, both actual Metal APIs: each orphan belongs to a distinct32×32 CubeRenderTarget whose color was already disposed. The unchanged source textures all disposed. Upstream CubeMapNode caches only the converted texture and disposes that texture, leaving its render target/depth lifecycle. The private source World installer now supplies a direct public uniform data cube instead of asking Three to convert equirectangular data; its existing environment/IBL path remains unchanged. No vendor/prototype/private-cache patch or numerical tolerance change was used. Host blur is temporarily zero for the uniform background and restored on release; subsequent application ownership is preserved.
-
-R3 reached the ownership controls after the visible-source gates but stopped because the test called `renderer.setClearColor(0,0)` after installing the website's color look. The runtime correctly treats that later clear-alpha change as an application ownership transfer and preserves the published color on disposal. A zero-credit same-runtime diagnostic confirmed exact restoration after moving test clear setup before installation, for all three controls on both Metal APIs. The full fixture now checks renderer clear alpha as part of restoration and prints named field/texture differences; no SDK ownership rule or pixel tolerance changed.
-
-
-Root r4 closed successfully on both actual APIs with Metal and SwiftShader. The exact qualified receipt is embedded and SHA-pinned in `evidence.json`: 5 native graphs/15 frames, 7 saved Finals, 180 browser frame pairs, 60 install/dispose cycles, 12 ownership controls and 393,408 compared words, with zero contract violations. Native half-film versus browser Float32 is deliberately bounded: linear 85,752 and Raw display 9,528 word differences, maximum absolute error 0.00019532442092895508 and 0.0001220703125 respectively. Alpha1 and dyadic/black controls remain exact. These are shared family totals for Background and WorldOutput, not two independent suites. Raw view/exposure0 is authored in the fixtures; this does not establish AgX or other display-transform parity.
-
-Resource results describe measured work rather than a zero-cost background. Each private helper owns a 32KiB64×32 Float32 environment source plus six1×1 cube face wrappers sharing its first16-byte view (96 logical GPU texel bytes per cube). The default prepared installer uses detached and live helpers: 120 cube uploads across60 cycles, so the per-helper numbers are not whole-install memory totals. Physical GPU allocations were not measured. Preparation recorded0 draws, direct linear scene1 draw and actual Final2 draws per frame. Exact texture identities and host background/environment/blur/clear-alpha state restored across every API/profile tuple, without source texture reupload on resize. Environment/IBL appearance earns no numerical credit.
-
-Animation is not silently published as a still. Existing `pointer_animation_issues` detects World and World-tree actions, drivers and effective NLA; `enforce_pointer_animation_policy` blocks Final and connected-site previews. Only private draft+authoringPreview may inspect a current-frame snapshot with an explicit `PRIVATE PREVIEW ONLY` warning. The separate guarded no-render `world_animation_policy_check.py` regression covers World action, tree action, NLA and driver, plus static and ownership cleanup. It changes no production code or r4 fixture and earns no numerical coverage. All source/runtime/fixture lineages in the original r4 receipt remain unchanged; unrelated ports are not claimed freshly requalified.
+Run from a frozen built checkout into a new directory. Native archives, actual
+generated descriptors, both browser APIs/profiles, resource/adoption controls
+and a fresh independent whole-program reader must all close.

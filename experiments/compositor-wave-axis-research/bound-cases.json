@@ -1,0 +1,4566 @@
+{
+  "schemaVersion": 1,
+  "role": "Research only; gates declared before capture",
+  "sourceBase": "33053dd7",
+  "proposedDomain": {
+    "scaleAndPhase": {
+      "maximumAbsolute": 8,
+      "minimumNonzeroAbsolute": 0.0000152587890625,
+      "positiveZero": true
+    },
+    "coordinates": "Own implicit Uniform",
+    "type": "BANDS",
+    "axes": [
+      "X",
+      "Y"
+    ],
+    "distortionWord": 0
+  },
+  "gates": {
+    "SAW_TRI": "Every raw RGBA word exact",
+    "SIN": {
+      "absoluteMax": 9.5367431640625e-7,
+      "finiteUnit": true,
+      "nativeZeroOneExact": true
+    },
+    "alphaOneAndGrayExact": true
+  },
+  "cases": [
+    {
+      "case": "13x9-X-SAW-bounds-min-negative-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-bounds-min-negative-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-bounds-min-negative-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-min-negative-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-min-negative-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-bounds-min-negative-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-bounds-min-negative-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-bounds-min-negative-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-bounds-min-negative-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        3238002688,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-min-negative-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-min-negative-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-bounds-min-negative-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        3238002688,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-bounds-min-negative-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-bounds-min-negative-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-bounds-min-negative-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        3238002688,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-min-negative-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-min-negative-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-bounds-min-negative-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        3238002688,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-bounds-min-negative-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-bounds-min-negative-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-bounds-min-negative-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        3238002688,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-min-negative-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-min-negative-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-bounds-min-negative-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        3238002688,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-bounds-min-negative-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-bounds-min-negative-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-bounds-min-negative-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        3238002688,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-min-negative-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-min-negative-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-bounds-min-negative-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        3238002688,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-bounds-minimum-negative-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-bounds-minimum-negative-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-bounds-minimum-negative-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        3078619136,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-minimum-negative-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-minimum-negative-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-bounds-minimum-negative-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        3078619136,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-bounds-minimum-negative-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-bounds-minimum-negative-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-bounds-minimum-negative-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        3078619136,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-minimum-negative-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-minimum-negative-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-bounds-minimum-negative-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        3078619136,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-bounds-minimum-negative-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-bounds-minimum-negative-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-bounds-minimum-negative-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        3078619136,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-minimum-negative-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-minimum-negative-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-bounds-minimum-negative-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        3078619136,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-bounds-minimum-negative-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-bounds-minimum-negative-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-bounds-minimum-negative-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        3078619136,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-minimum-negative-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-minimum-negative-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-bounds-minimum-negative-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        3078619136,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-bounds-minimum-negative-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-bounds-minimum-negative-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-bounds-minimum-negative-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        3078619136,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-minimum-negative-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-minimum-negative-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-bounds-minimum-negative-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        3078619136,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-bounds-zero-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-bounds-zero-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-bounds-zero-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        0,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-zero-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-zero-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-bounds-zero-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        0,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-bounds-zero-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-bounds-zero-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-bounds-zero-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        0,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-zero-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-zero-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-bounds-zero-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        0,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-bounds-zero-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-bounds-zero-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-bounds-zero-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-zero-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-zero-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-bounds-zero-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-bounds-zero-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-bounds-zero-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-bounds-zero-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        0,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-zero-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-zero-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-bounds-zero-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        0,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-bounds-zero-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-bounds-zero-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-bounds-zero-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        0,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-zero-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-zero-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-bounds-zero-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        0,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-bounds-minimum-positive-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-bounds-minimum-positive-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-bounds-minimum-positive-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        931135488,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-minimum-positive-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-minimum-positive-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-bounds-minimum-positive-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        931135488,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-bounds-minimum-positive-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-bounds-minimum-positive-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-bounds-minimum-positive-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        931135488,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-minimum-positive-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-minimum-positive-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-bounds-minimum-positive-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        931135488,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-bounds-minimum-positive-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-bounds-minimum-positive-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-bounds-minimum-positive-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        931135488,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-minimum-positive-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-minimum-positive-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-bounds-minimum-positive-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        931135488,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-bounds-minimum-positive-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-bounds-minimum-positive-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-bounds-minimum-positive-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        931135488,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-minimum-positive-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-minimum-positive-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-bounds-minimum-positive-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        931135488,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-bounds-minimum-positive-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-bounds-minimum-positive-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-bounds-minimum-positive-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        931135488,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-minimum-positive-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-minimum-positive-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-bounds-minimum-positive-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        931135488,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-bounds-max-positive-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-bounds-max-positive-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-bounds-max-positive-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        1090519040,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-max-positive-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-max-positive-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-bounds-max-positive-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        1090519040,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-bounds-max-positive-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-bounds-max-positive-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-bounds-max-positive-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        1090519040,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-max-positive-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-max-positive-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-bounds-max-positive-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        1090519040,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-bounds-max-positive-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-bounds-max-positive-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-bounds-max-positive-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        1090519040,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-max-positive-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-max-positive-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-bounds-max-positive-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        1090519040,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-bounds-max-positive-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-bounds-max-positive-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-bounds-max-positive-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        1090519040,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-max-positive-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-max-positive-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-bounds-max-positive-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        1090519040,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-bounds-max-positive-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-bounds-max-positive-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-bounds-max-positive-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        1090519040,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-max-positive-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-max-positive-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-bounds-max-positive-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        1090519040,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "9x13-X-SAW-scale-bound-min-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-X-TRI-scale-bound-min-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-X-SIN-scale-bound-min-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        3238002688,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-Y-SAW-scale-bound-min-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-Y-TRI-scale-bound-min-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-Y-SIN-scale-bound-min-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        3238002688,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-X-SAW-scale-bound-minimum-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-X-TRI-scale-bound-minimum-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-X-SIN-scale-bound-minimum-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        3078619136,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-Y-SAW-scale-bound-minimum-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-Y-TRI-scale-bound-minimum-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-Y-SIN-scale-bound-minimum-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        3078619136,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-X-SAW-scale-bound-zero",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-X-TRI-scale-bound-zero",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-X-SIN-scale-bound-zero",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-Y-SAW-scale-bound-zero",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-Y-TRI-scale-bound-zero",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-Y-SIN-scale-bound-zero",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-X-SAW-scale-bound-minimum-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-X-TRI-scale-bound-minimum-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-X-SIN-scale-bound-minimum-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        931135488,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-Y-SAW-scale-bound-minimum-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-Y-TRI-scale-bound-minimum-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-Y-SIN-scale-bound-minimum-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        931135488,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-X-SAW-scale-bound-max-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-X-TRI-scale-bound-max-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-X-SIN-scale-bound-max-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        1090519040,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-Y-SAW-scale-bound-max-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-Y-TRI-scale-bound-max-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-Y-SIN-scale-bound-max-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        1090519040,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-X-SAW-phase-bound-min-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "9x13-X-TRI-phase-bound-min-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "9x13-X-SIN-phase-bound-min-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        0,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "9x13-Y-SAW-phase-bound-min-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "9x13-Y-TRI-phase-bound-min-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "9x13-Y-SIN-phase-bound-min-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        0,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "9x13-X-SAW-phase-bound-minimum-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "9x13-X-TRI-phase-bound-minimum-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "9x13-X-SIN-phase-bound-minimum-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        0,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "9x13-Y-SAW-phase-bound-minimum-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "9x13-Y-TRI-phase-bound-minimum-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "9x13-Y-SIN-phase-bound-minimum-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        0,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "9x13-X-SAW-phase-bound-minimum-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "9x13-X-TRI-phase-bound-minimum-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "9x13-X-SIN-phase-bound-minimum-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        0,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "9x13-Y-SAW-phase-bound-minimum-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "9x13-Y-TRI-phase-bound-minimum-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "9x13-Y-SIN-phase-bound-minimum-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        0,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "9x13-X-SAW-phase-bound-max-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "9x13-X-TRI-phase-bound-max-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "9x13-X-SIN-phase-bound-max-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        0,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "9x13-Y-SAW-phase-bound-max-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "9x13-Y-TRI-phase-bound-max-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "9x13-Y-SIN-phase-bound-max-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        0,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-seam-zero-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3081225634,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-seam-zero-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3081225634,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-seam-zero-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        3081225634,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-seam-zero-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3081225634,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-seam-zero-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3081225634,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-seam-zero-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        3081225634,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-seam-zero-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3081225633,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-seam-zero-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3081225633,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-seam-zero-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        3081225633,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-seam-zero-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3081225633,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-seam-zero-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3081225633,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-seam-zero-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        3081225633,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-seam-zero-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3081225632,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-seam-zero-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3081225632,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-seam-zero-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        3081225632,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-seam-zero-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3081225632,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-seam-zero-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3081225632,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-seam-zero-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        3081225632,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-seam-quarter-positive-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1070141234,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-seam-quarter-positive-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1070141234,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-seam-quarter-positive-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        1070141234,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-seam-quarter-positive-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1070141234,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-seam-quarter-positive-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1070141234,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-seam-quarter-positive-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        1070141234,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-seam-quarter-positive-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1070141235,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-seam-quarter-positive-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1070141235,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-seam-quarter-positive-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        1070141235,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-seam-quarter-positive-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1070141235,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-seam-quarter-positive-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1070141235,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-seam-quarter-positive-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        1070141235,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-seam-quarter-positive-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1070141236,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-seam-quarter-positive-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1070141236,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-seam-quarter-positive-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        1070141236,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-seam-quarter-positive-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1070141236,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-seam-quarter-positive-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1070141236,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-seam-quarter-positive-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        1070141236,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-seam-sine-one-triangle-half-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1078529926,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-seam-sine-one-triangle-half-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1078529926,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-seam-sine-one-triangle-half-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        1078529926,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-seam-sine-one-triangle-half-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1078529926,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-seam-sine-one-triangle-half-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1078529926,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-seam-sine-one-triangle-half-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        1078529926,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-seam-sine-one-triangle-half-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1078529927,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-seam-sine-one-triangle-half-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1078529927,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-seam-sine-one-triangle-half-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        1078529927,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-seam-sine-one-triangle-half-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1078529927,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-seam-sine-one-triangle-half-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1078529927,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-seam-sine-one-triangle-half-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        1078529927,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-seam-sine-one-triangle-half-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1078529928,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-seam-sine-one-triangle-half-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1078529928,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-seam-sine-one-triangle-half-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        1078529928,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-seam-sine-one-triangle-half-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1078529928,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-seam-sine-one-triangle-half-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1078529928,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-seam-sine-one-triangle-half-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        1078529928,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-seam-three-quarter-positive-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1083624377,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-seam-three-quarter-positive-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1083624377,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-seam-three-quarter-positive-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        1083624377,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-seam-three-quarter-positive-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1083624377,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-seam-three-quarter-positive-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1083624377,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-seam-three-quarter-positive-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        1083624377,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-seam-three-quarter-positive-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1083624378,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-seam-three-quarter-positive-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1083624378,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-seam-three-quarter-positive-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        1083624378,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-seam-three-quarter-positive-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1083624378,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-seam-three-quarter-positive-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1083624378,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-seam-three-quarter-positive-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        1083624378,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-seam-three-quarter-positive-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1083624379,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-seam-three-quarter-positive-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1083624379,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-seam-three-quarter-positive-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        1083624379,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-seam-three-quarter-positive-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1083624379,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-seam-three-quarter-positive-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1083624379,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-seam-three-quarter-positive-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        1083624379,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-seam-cycle-positive-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1086918576,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-seam-cycle-positive-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1086918576,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-seam-cycle-positive-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        1086918576,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-seam-cycle-positive-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1086918576,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-seam-cycle-positive-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1086918576,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-seam-cycle-positive-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        1086918576,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-seam-cycle-positive-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1086918577,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-seam-cycle-positive-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1086918577,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-seam-cycle-positive-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        1086918577,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-seam-cycle-positive-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1086918577,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-seam-cycle-positive-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1086918577,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-seam-cycle-positive-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        1086918577,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-seam-cycle-positive-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1086918578,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-seam-cycle-positive-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1086918578,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-seam-cycle-positive-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        1086918578,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-seam-cycle-positive-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1086918578,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-seam-cycle-positive-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1086918578,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-seam-cycle-positive-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        1086918578,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-seam-sine-one-negative-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3226013744,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-seam-sine-one-negative-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3226013744,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-seam-sine-one-negative-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        3226013744,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-seam-sine-one-negative-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3226013744,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-seam-sine-one-negative-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3226013744,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-seam-sine-one-negative-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        3226013744,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-seam-sine-one-negative-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3226013743,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-seam-sine-one-negative-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3226013743,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-seam-sine-one-negative-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        3226013743,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-seam-sine-one-negative-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3226013743,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-seam-sine-one-negative-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3226013743,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-seam-sine-one-negative-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        3226013743,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-seam-sine-one-negative-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3226013742,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-seam-sine-one-negative-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3226013742,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-seam-sine-one-negative-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        3226013742,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-seam-sine-one-negative-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3226013742,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-seam-sine-one-negative-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3226013742,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-seam-sine-one-negative-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        3226013742,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-seam-cycle-negative-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3234402310,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-seam-cycle-negative-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3234402310,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-seam-cycle-negative-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        3234402310,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-seam-cycle-negative-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3234402310,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-seam-cycle-negative-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3234402310,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-seam-cycle-negative-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        3234402310,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-seam-cycle-negative-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3234402309,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-seam-cycle-negative-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3234402309,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-seam-cycle-negative-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        3234402309,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-seam-cycle-negative-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3234402309,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-seam-cycle-negative-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3234402309,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-seam-cycle-negative-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        3234402309,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SAW-seam-cycle-negative-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3234402308,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-TRI-seam-cycle-negative-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3234402308,
+        0
+      ]
+    },
+    {
+      "case": "13x9-X-SIN-seam-cycle-negative-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        3234402308,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SAW-seam-cycle-negative-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3234402308,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-TRI-seam-cycle-negative-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3234402308,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Y-SIN-seam-cycle-negative-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        1084227584,
+        3234402308,
+        0
+      ]
+    },
+    {
+      "case": "8192x4-X-SAW-thin-negative-maximum",
+      "width": 8192,
+      "height": 4,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "8192x4-X-TRI-thin-negative-maximum",
+      "width": 8192,
+      "height": 4,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "8192x4-X-SIN-thin-negative-maximum",
+      "width": 8192,
+      "height": 4,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "8192x4-Y-SAW-thin-negative-maximum",
+      "width": 8192,
+      "height": 4,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "8192x4-Y-TRI-thin-negative-maximum",
+      "width": 8192,
+      "height": 4,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "8192x4-Y-SIN-thin-negative-maximum",
+      "width": 8192,
+      "height": 4,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "8192x4-X-SAW-thin-positive-maximum",
+      "width": 8192,
+      "height": 4,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "8192x4-X-TRI-thin-positive-maximum",
+      "width": 8192,
+      "height": 4,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "8192x4-X-SIN-thin-positive-maximum",
+      "width": 8192,
+      "height": 4,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        1090519040,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "8192x4-Y-SAW-thin-positive-maximum",
+      "width": 8192,
+      "height": 4,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "8192x4-Y-TRI-thin-positive-maximum",
+      "width": 8192,
+      "height": 4,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "8192x4-Y-SIN-thin-positive-maximum",
+      "width": 8192,
+      "height": 4,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        1090519040,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "8192x4-X-SAW-thin-negative-minimum",
+      "width": 8192,
+      "height": 4,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "8192x4-X-TRI-thin-negative-minimum",
+      "width": 8192,
+      "height": 4,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "8192x4-X-SIN-thin-negative-minimum",
+      "width": 8192,
+      "height": 4,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        3078619136,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "8192x4-Y-SAW-thin-negative-minimum",
+      "width": 8192,
+      "height": 4,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "8192x4-Y-TRI-thin-negative-minimum",
+      "width": 8192,
+      "height": 4,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "8192x4-Y-SIN-thin-negative-minimum",
+      "width": 8192,
+      "height": 4,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        3078619136,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "8192x4-X-SAW-thin-positive-minimum",
+      "width": 8192,
+      "height": 4,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "8192x4-X-TRI-thin-positive-minimum",
+      "width": 8192,
+      "height": 4,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "8192x4-X-SIN-thin-positive-minimum",
+      "width": 8192,
+      "height": 4,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        931135488,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "8192x4-Y-SAW-thin-positive-minimum",
+      "width": 8192,
+      "height": 4,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "8192x4-Y-TRI-thin-positive-minimum",
+      "width": 8192,
+      "height": 4,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "8192x4-Y-SIN-thin-positive-minimum",
+      "width": 8192,
+      "height": 4,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        931135488,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "4x8192-X-SAW-thin-negative-maximum",
+      "width": 4,
+      "height": 8192,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "4x8192-X-TRI-thin-negative-maximum",
+      "width": 4,
+      "height": 8192,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "4x8192-X-SIN-thin-negative-maximum",
+      "width": 4,
+      "height": 8192,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "4x8192-Y-SAW-thin-negative-maximum",
+      "width": 4,
+      "height": 8192,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "4x8192-Y-TRI-thin-negative-maximum",
+      "width": 4,
+      "height": 8192,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "4x8192-Y-SIN-thin-negative-maximum",
+      "width": 4,
+      "height": 8192,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ]
+    },
+    {
+      "case": "4x8192-X-SAW-thin-positive-maximum",
+      "width": 4,
+      "height": 8192,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "4x8192-X-TRI-thin-positive-maximum",
+      "width": 4,
+      "height": 8192,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "4x8192-X-SIN-thin-positive-maximum",
+      "width": 4,
+      "height": 8192,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        1090519040,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "4x8192-Y-SAW-thin-positive-maximum",
+      "width": 4,
+      "height": 8192,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "4x8192-Y-TRI-thin-positive-maximum",
+      "width": 4,
+      "height": 8192,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "4x8192-Y-SIN-thin-positive-maximum",
+      "width": 4,
+      "height": 8192,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        1090519040,
+        1090519040,
+        0
+      ]
+    },
+    {
+      "case": "4x8192-X-SAW-thin-negative-minimum",
+      "width": 4,
+      "height": 8192,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "4x8192-X-TRI-thin-negative-minimum",
+      "width": 4,
+      "height": 8192,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "4x8192-X-SIN-thin-negative-minimum",
+      "width": 4,
+      "height": 8192,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        3078619136,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "4x8192-Y-SAW-thin-negative-minimum",
+      "width": 4,
+      "height": 8192,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "4x8192-Y-TRI-thin-negative-minimum",
+      "width": 4,
+      "height": 8192,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "4x8192-Y-SIN-thin-negative-minimum",
+      "width": 4,
+      "height": 8192,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        3078619136,
+        3078619136,
+        0
+      ]
+    },
+    {
+      "case": "4x8192-X-SAW-thin-positive-minimum",
+      "width": 4,
+      "height": 8192,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "4x8192-X-TRI-thin-positive-minimum",
+      "width": 4,
+      "height": 8192,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "4x8192-X-SIN-thin-positive-minimum",
+      "width": 4,
+      "height": 8192,
+      "axis": "X",
+      "profile": "SIN",
+      "parameterWords": [
+        931135488,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "4x8192-Y-SAW-thin-positive-minimum",
+      "width": 4,
+      "height": 8192,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "4x8192-Y-TRI-thin-positive-minimum",
+      "width": 4,
+      "height": 8192,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        931135488,
+        0
+      ]
+    },
+    {
+      "case": "4x8192-Y-SIN-thin-positive-minimum",
+      "width": 4,
+      "height": 8192,
+      "axis": "Y",
+      "profile": "SIN",
+      "parameterWords": [
+        931135488,
+        931135488,
+        0
+      ]
+    }
+  ]
+}
