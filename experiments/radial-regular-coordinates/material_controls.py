@@ -35,6 +35,8 @@ for i in range(128):
    if spec['route'].endswith('reroute'):
     reroute=tree.nodes.new('NodeReroute');tree.links.new(source,reroute.inputs[0]);source=reroute.outputs[0]
    tree.links.new(source,radial.inputs['Vector'])
+  if spec.get('route')=='reroute':
+   radial.inputs['Vector'].default_value=(1.5,-1.5);literal=tree.nodes.new('FunctionNodeInputVector');literal.vector=(*spec['point'],9);reroute=tree.nodes.new('NodeReroute');tree.links.new(literal.outputs[0],reroute.inputs[0]);tree.links.new(reroute.outputs[0],radial.inputs['Vector'])
   separate=tree.nodes.new('ShaderNodeSeparateXYZ');tree.links.new(radial.outputs['Segment Coordinates'],separate.inputs[0]);axis=separate.outputs[0 if spec['component'].startswith('phase')else 1]
   if spec['component'].endswith('negative'):scalar=math(tree,'LESS_THAN',axis,0)
   else:

@@ -689,3 +689,40 @@ Studio defaults to WebGPU, so this measured path needs explicit
 Radial demo's computed STEPPED Sides and field coordinates remain unsupported.
 The new receipt supersedes the earlier pending-candidate note for this static
 slice only; the broader cross-profile/seam counterexamples stay research.
+
+## 2026-11-13 — Exact origin constant and fresh Radial source lineages
+
+The existing partial shader Radial entry now folds only exact stored positive
+zero XY, literal Sides 3/8/12, Roundness 1 and either Normalize state into existing
+`const_vec3`. Normalized output is `(.5,0,0)`; otherwise it is `(0,-1,0)`.
+The native origin assignment overwrites phase explicitly; discarded rotation
+can remain NaN. Source emission traps GPU initialization/platform queries and
+records zero calls. No Radial kernel, uniform, adapter guard or fresh renderer
+requirement is needed for this constant. **Native defaults Sides 5 and Roundness
+0 remain unsupported.** This is not general default-node support.
+
+The [origin receipt](../experiments/radial-origin/evidence.json) closes six actual
+native material settings, 36 magnitude/sign/residue witnesses, two independent
+carrier controls and six saved Final sources. Across Metal/SwiftShader and both
+actual WebGPU/WebGL2 APIs, 24 raw plus 24 Final case-runs, 72 install/dispose
+cycles and 12 resize/DPR frames compare 30,544 words with zero differences.
+Eight source refusals retain negative-zero/subnormal, branch, animation, mute
+and vector-mean restrictions. The owned reversible positive carrier is checked
+only after raw tuples; it does not alter the native Radial inputs or body.
+
+The [M5 static receipt](../experiments/radial-coordinates-static/evidence.json) was
+also recaptured on the union source: 410 source cases now comprise 404 nonzero
+cases and six folded origins. Its eight nonzero Finals, 112,596 exact raw/Final
+words, six nonzero adapter refusals and separately bounded actual EEVEE material
+phase error remain explicit. Nonzero coordinates still need M5 Pro WebGL2 and
+`?backend=webgl2`; only the exact origin condition gains the measured portable
+runtime route. No original-demo or general default-preview scene acceptance is
+claimed, and no context/node count changes.
+
+Both fresh Radial transactions share 121 SDK/addon Python inputs at source
+fingerprint `d75965928da3a499c84b9e19128748dc294e52a7b39589f5ad7ffb84645d608b`;
+each retains its own fixture and qualification hashes. Their JavaScript runtime
+fingerprint remains `fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959`.
+This closes those two source lineages only. Earlier Width, compositor, legacy
+and unrelated node proofs retain their original captured snapshots; matching
+JavaScript fingerprints do not imply that every other port was freshly tested.

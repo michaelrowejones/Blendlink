@@ -7,6 +7,7 @@ ROOT=Path(__file__).resolve().parents[2]
 sys.path[:0]=[str(ROOT/'packages/blender-addon'),str(ROOT/'packages/blendlink/blender')]
 import material_compiler as compiler
 import procedural
+import export_scene
 source=Path(sys.argv[sys.argv.index('--')+1]);source_hash=hashlib.sha256(source.read_bytes()).hexdigest()
 assert source_hash=='a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e'
 with bpy.data.libraries.load(str(source),link=False)as(catalog,owned):owned.objects=['Floor','Beam2']
@@ -20,6 +21,8 @@ assert compiler._simple_normal_receiver_triangles(wood)is None
 # paths, fail instead of allocating the real high-resolution Floor.
 def forbidden(*args,**kwargs):raise AssertionError('Floor preflight attempted evaluated mesh allocation')
 with patch.object(procedural,'evaluated_material_uses',forbidden),patch.object(compiler,'_materialized_binding_hash',forbidden),patch.object(bpy.types.Object,'evaluated_get',forbidden,create=True):
+ assert procedural.object_scene_time_dependencies(floor)==[]
+ assert export_scene.enforce_material_scene_time_policy({'mode':'baked'},[floor],{'diagnostics':{}})==[]
  plan=compiler.plan_materials([floor],purpose='final',automatic_programs=True)
  assert any(issue.code=='material.normal-bake-geometry-budget'and issue.objects==('Floor',)and '8,388,608'in issue.problem for issue in plan.errors),[i.as_dict()for i in plan.errors]
 # Small independent actual native mesh controls prove the admitted formula.

@@ -134,7 +134,8 @@ and material-channel capture checks; preserve explicit Baked intent and its
 warning policy. If a graph remains unsupported in Realtime, surface that refusal
 rather than silently route it back to an atlas. Check selected/unselected
 selectors, groups, unlinked Time nodes, owner keyframes, private preview and
-explicit Baked overrides before changing policy. No guard is implemented here.
+explicit Baked overrides before changing policy. No guard was implemented by
+this research checkpoint.
 
 A bounded owned Blender 5.3 no-render query confirmed the Appearance admission
 chain under both `CYCLES` and `BLENDER_EEVEE`: frame range1–250, no Action/driver
@@ -146,3 +147,51 @@ atlas preparation, bake, render, export or source save. This is admission
 evidence only. The temporary research query/log are outside committed
 fixtures; the proposal above must receive its own regression and publication
 proof when implemented.
+
+## Follow-up admission guard (no clock implementation)
+
+`material_time.py` now inspects the actual source-engine output and contributing
+shader sockets before Automatic Appearance ownership. It follows native group
+instance socket identifiers, reroutes and muted-node bypasses, and reuses the
+qualified static selector/Repeat dependency rules. Unlinked Time nodes,
+engine-inactive outputs, unused group inputs and proven inactive selector
+branches do not force refusal. Traversal uncertainty has a named refusal rather
+than permission to freeze a clock.
+
+Ordinary Final and connected previews reject a reachable unsupported shader
+Scene Time dependency with `material.scene-time-clock-unproven`. An explicit
+`blendlink_dynamic=False` override permits a current-frame freeze only when the
+object is an actual Baked Appearance receiver; Lighting, excluded receivers and
+Automatic ownership cannot inherit that permission. Private authoring inspection
+requires both `draft=True` and `authoringPreview=True` and retains an explicit
+diagnostic warning; stock unsupported-node shading earns no appearance credit.
+
+A selected Web Color field is an existing artist authorization to replace its
+discarded downstream response. The guard first keeps the original temporal
+Surface out of Automatic Appearance capture, then admits this exception only
+after the actual selected-field lowering survives on the same object/material
+binding and the selected Color/Alpha dependencies contain no Time. A marker
+alone, stale marker or selected field upstream of Time cannot authorize stock
+fallback or a hidden automatic frame capture.
+
+Material-use inspection never evaluates geometry. Ordinary unmodified meshes
+reuse the allocation-free used-slot helper. Source-index-preserving chains use
+source face slots conservatively; generated-material chains recursively inspect
+referenced objects, collections/children/instances and node groups, including
+Blender 5.3 `modifier.properties.inputs.<socket>.value` ID bindings. Potential
+temporal materials with unproven render-used reachability refuse by name.
+The census is limited to 4096 referenced IDs; shader traversal has 4096 visits,
+4096 group trees and group depth32 limits. Native material identity is retained
+across linked/local IDs sharing the same short name.
+The selected-field replacement exception conservatively refuses ambiguous short
+names because existing downstream carrier helpers have not qualified linked-ID
+disambiguation; an unambiguous source binding alone is insufficient shipping
+evidence for that case.
+
+The owned Blender 5.3 regression is
+`packages/blender-addon/tests/scene_time_admission_check.py`; it exercises both
+EEVEE and Cycles without rendering, baking, exporting or implementing clock
+arithmetic. The existing `experiments/cycles-normal-bake/budget_preflight_check.py`
+also passes: the original Cube Floor's 8,388,608 render triangles still produce
+the early resource refusal without evaluating that mesh. These are admission
+and ownership checks, with zero live-node or numerical qualification credit.

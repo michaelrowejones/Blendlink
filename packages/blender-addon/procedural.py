@@ -1852,7 +1852,23 @@ def _linked_output(node, *names):
     )
 
 
-def material_realtime_reason(material):
+def material_scene_time_dependencies(material, *, target=None, inputs=None):
+    if __package__:
+        from .material_time import material_scene_time_dependencies as inspect
+    else:
+        from material_time import material_scene_time_dependencies as inspect
+    return inspect(material, target=target, inputs=inputs)
+
+
+def object_scene_time_dependencies(obj):
+    if __package__:
+        from .material_time import object_scene_time_dependencies as inspect
+    else:
+        from material_time import object_scene_time_dependencies as inspect
+    return inspect(obj)
+
+
+def material_realtime_reason(material, *, include_scene_time=True):
     """Why a material cannot honestly become a static unlit lightmap."""
     if material is None:
         return None
@@ -1866,6 +1882,8 @@ def material_realtime_reason(material):
     pointer_reason = material_pointer_animation_reason(material)
     if pointer_reason:
         return pointer_reason
+    if include_scene_time and material_scene_time_dependencies(material):
+        return "Scene Time changes the material without a supported website scene clock"
     tree = bakelib.active_shader_node_tree(material)
     if tree is None:
         return None
@@ -1913,7 +1931,7 @@ def fixed_camera_material_bake_reason(material):
     if not hasattr(material, "surface_render_method") and getattr(
             material, "blend_method", "OPAQUE") in {"BLEND", "HASHED", "CLIP"}:
         return None
-    if material_pointer_animation_reason(material):
+    if material_pointer_animation_reason(material) or material_scene_time_dependencies(material):
         return None
     tree = bakelib.active_shader_node_tree(material)
     if tree is None:
@@ -2373,9 +2391,11 @@ def automatic_dynamic_reason(obj):
         return f"{modifier.type.lower().replace('_', ' ')} modifier {modifier.name!r} can deform"
     if getattr(obj, "particle_systems", None) and len(obj.particle_systems) > 0:
         return "particle-system geometry is time-dependent"
+    if object_scene_time_dependencies(obj):
+        return "view-dependent material: Scene Time requires a supported website scene clock"
     for slot in obj.material_slots:
         material = slot.material
-        reason = material_realtime_reason(material)
+        reason = material_realtime_reason(material, include_scene_time=False)
         if reason:
             return f"view-dependent material {material.name!r}: {reason}"
     return None

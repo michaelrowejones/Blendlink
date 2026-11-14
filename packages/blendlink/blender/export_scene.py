@@ -6222,6 +6222,83 @@ def enforce_pointer_animation_policy(
     )
 
 
+def material_capture_atlas_output(obj, settings):
+    """Read-only equivalent of assign_atlases ownership, including proximity."""
+    specs = atlas_config(settings.get("bake") or {})
+    override = obj.get("blendlink_atlas")
+    if isinstance(override, str) and override in specs:
+        return specs[override]["bakeOutput"]
+    fallback = "main" if "main" in specs else next(
+        (name for name in reversed(specs) if "maxCameraDistance" not in specs[name]),
+        next(reversed(specs)),
+    )
+    distance = nearest_camera_distance(obj, camera_positions())
+    if distance is not None:
+        for name, spec in specs.items():
+            threshold = spec.get("maxCameraDistance")
+            if threshold is not None and distance <= threshold:
+                return spec["bakeOutput"]
+    return specs[fallback]["bakeOutput"]
+
+
+def enforce_material_scene_time_policy(settings, objects, sidecar, material_plan=None):
+    records, blockers = [], []
+    private = settings.get("draft") is True and settings.get("authoringPreview") is True
+    receivers = None
+    for obj in objects:
+        for temporal in procedural.object_scene_time_dependencies(obj):
+            material = next((item for item in bpy.data.materials
+                             if item.as_pointer() == temporal.get("materialPointer")), None)
+            dependencies = temporal["dependencies"]
+            label = (f'{obj.name}: material "{material.name}" reaches unsupported Scene Time'
+                     if material is not None else f'{obj.name}: Scene Time material reachability is unproven')
+            if temporal.get("unproven"):label += "; " + temporal["unproven"]
+            if receivers is None:
+                receivers = ({item.as_pointer() for item in render_meshes(
+                    fixed_camera_appearance=bool((settings.get("bake") or {}).get("fixedCameraAppearance")))}
+                    if settings.get("mode") == "baked" else set())
+            captured = (obj.as_pointer() in receivers
+                and (obj.get("blendlink_dynamic") is False or obj.get("blendlink_dynamic") == 0)
+                and material_capture_atlas_output(obj, settings) == "appearance")
+            markers = material_compiler.marker_nodes(material) if material is not None else []
+            replacement = False
+            # Downstream carrier helpers still use short material names. A
+            # linked/local name collision cannot attest a surviving replacement.
+            unique_name = material is not None and sum(item.name == material.name for item in bpy.data.materials) == 1
+            if material_plan is not None and len(markers) == 1 and unique_name:
+                replacement = any(decision.material_name == material.name and decision.intent == "webColor"
+                    and decision.outcome == "lowered" and any(binding.object_name == obj.name
+                        and 0 <= binding.slot_index < len(obj.material_slots)
+                        and obj.material_slots[binding.slot_index].material == material
+                        for binding in decision.bindings)
+                    for decision in material_plan.decisions)
+                if replacement:
+                    selected = [markers[0].inputs.get(name) for name in [material_compiler.COLOR_INPUT, material_compiler.ALPHA_INPUT]]
+                    replacement = not procedural.material_scene_time_dependencies(material, inputs=selected)
+            if captured:
+                status, message = "explicit-appearance-capture", label + "; explicit Baked Appearance intentionally freezes the current native frame, with no live-clock credit."
+            elif replacement:
+                status, message = "selected-field-replacement", f'{obj.name}: the surviving compiled Web Color field intentionally replaces the discarded Time-driven response; no live-clock credit.'
+            elif markers and material_plan is None:
+                # A marker alone grants nothing. Keep the original temporal
+                # Surface out of Automatic atlases, then verify the actual
+                # surviving lowering and its selected field after planning.
+                status, message = "pending-selected-field", label
+            elif private:
+                status, message = "private-inspection-only", "PRIVATE PREVIEW ONLY — " + label + "; current-frame inspection keeps its diagnostic-only exception. Stock unsupported-node shading is not qualified appearance; Final and connected previews remain blocked."
+            else:
+                status, message = "blocked", label + "; a live website scene clock is unqualified. Choose an explicit Baked Appearance capture or private authoring inspection; Automatic atlas capture, Lighting and stock fallback cannot preserve this dependency."
+                blockers.append(message)
+            records.append({"code": "material.scene-time-clock-unproven", "object": obj.name,
+                            "material": material.name if material else None, "status": status,
+                            "materialLibrary": temporal.get("materialLibrary"),
+                            "message": message, "dependencies": dependencies})
+    if records:sidecar.setdefault("diagnostics", {})["sceneTime"] = records
+    if blockers:
+        raise SystemExit("Website scene clock blocked (material.scene-time-clock-unproven):\n  - " + "\n  - ".join(blockers))
+    return records
+
+
 def plan_export_materials(
     settings: dict, sidecar: dict, export_kwargs: dict,
 ) -> tuple[material_compiler.MaterialPlan, tuple]:
@@ -6238,6 +6315,7 @@ def plan_export_materials(
         bpy.context.scene, view_layer=bpy.context.view_layer,
         export_kwargs=export_kwargs,
     )
+    enforce_material_scene_time_policy(settings, export_objects, sidecar)
     enforce_supported_renderable_transport(export_objects)
     for issue in skin_joint_budget_issues(export_objects):
         # Early, and deliberately not fatal: the classic WebGL runtime renders
@@ -6351,6 +6429,7 @@ def plan_export_materials(
         compile_objects, purpose=purpose,
         automatic_programs=settings.get('automaticMaterials', True),
     )
+    enforce_material_scene_time_policy(settings, export_objects, sidecar, material_plan)
     material_compiler.merge_diagnostics(
         sidecar["diagnostics"].setdefault("materials", []), material_plan,
     )
@@ -6481,6 +6560,8 @@ def main() -> None:
     excluded = remove_noimp_objects()
     sidecar = collect_sidecar(settings, recipe, export_kwargs=kwargs)
     material_plan, export_objects = plan_export_materials(settings, sidecar, kwargs)
+    warnings.extend(row["message"] for row in sidecar["diagnostics"].get("sceneTime", ())
+                    if row["status"] in {"private-inspection-only", "explicit-appearance-capture"})
     preserve_custom_attributes = apply_material_exporter_contract(material_plan, kwargs)
     warnings.extend(bevel_uv_reproducibility_warnings(
         export_objects,

@@ -72,11 +72,20 @@
     "missingFunction": "node_tex_gabor",
     "isolatedWrapperFunctionsObserved": 1,
     "unexpectedTopLevelEmission": "phasor.div( normalization_factor );",
-    "attribution": "Full concatenated module traversal loses wrapper; isolated void/out wrapper parses. Generic void/out syntax is not established as the root cause.",
+    "attribution": "The old adapter retained native BSL [[node]] before node_tex_gabor. Independent lexical census rejects that incomplete GLSL adaptation. Removing only the declaration annotation gives ten native and ten decoded functions; isolated void/out parsing already worked. This is not a parser-grammar fix or numerical/compile/material proof.",
     "gpuDraws": 0,
     "nativeNumericalCases": 0,
     "savedFinalExports": 0
   },
   "supportCredit": 0,
-  "productionAdmission": false
+  "productionAdmission": false,
+  "cpuSourceCensusFollowUp": {
+    "stage": "independent bounded source signatures/top-level declarations versus actual GLSLDecoder AST",
+    "oldAdapterNativeFunctionCount": 10,
+    "oldAdapterDecodedFunctionCount": 9,
+    "explicitNodeAnnotationAbiNativeFunctionCount": 10,
+    "explicitNodeAnnotationAbiDecodedFunctionCount": 10,
+    "numericalCredit": 0,
+    "productionAdmission": false
+  }
 }

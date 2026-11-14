@@ -1,0 +1,376 @@
+{
+  "schemaVersion": 1,
+  "model": "blender-53-floor-receiver-source-research-v1",
+  "role": "Research-only negative finding. Not an automatic optimization, proxy implementation, immutable numerical receipt or appearance qualification.",
+  "productionImplementation": false,
+  "supportCredit": 0,
+  "numericalQualificationCredit": 0,
+  "asset": {
+    "source": "artifacts/verification-official-demo-performance/sources/cube_diorama.blend",
+    "sourceSha256": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e",
+    "object": "Floor",
+    "ownedCopyLoadedWithoutLinkingToScene": true,
+    "actualFloorEvaluated": false,
+    "renderCalls": 0,
+    "bakeCalls": 0,
+    "originalSaved": false,
+    "ownedStateSha256Before": "58f7bb208522193786b19ad680704c718595580e806352fd355b677abb430b8a",
+    "ownedStateSha256After": "58f7bb208522193786b19ad680704c718595580e806352fd355b677abb430b8a",
+    "ownedStateScope": "Within one native invocation: object/mesh identity, positions, topology, face material/smooth/hide flags, UV arrays, attribute schema, source material bindings, authored transform and modifier settings. Includes process-local pointers, so this is an equality check, not a cross-run fingerprint."
+  },
+  "native": {
+    "version": "5.3.0",
+    "buildHash": "02f0899d78e3",
+    "buildRevision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+    "smallControlMaximumFaces": 16,
+    "gpuInitializationRequested": false
+  },
+  "actualFloorInspection": {
+    "counts": {
+      "vertices": 4225,
+      "edges": 8320,
+      "polygons": 4096,
+      "loops": 16384
+    },
+    "bounds": [
+      [
+        -1.0,
+        -1.0,
+        0.0
+      ],
+      [
+        1.0,
+        1.0,
+        0.0
+      ]
+    ],
+    "coordinateCardinality": [
+      65,
+      65,
+      1
+    ],
+    "texspace": {
+      "auto": true,
+      "location": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "size": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "smoothFaces": 4096,
+    "materialIndices": [
+      0
+    ],
+    "customNormals": false,
+    "attributes": [
+      [
+        ".select_vert",
+        "POINT",
+        "BOOLEAN",
+        4225
+      ],
+      [
+        ".select_edge",
+        "EDGE",
+        "BOOLEAN",
+        8320
+      ],
+      [
+        ".select_poly",
+        "FACE",
+        "BOOLEAN",
+        4096
+      ],
+      [
+        "position",
+        "POINT",
+        "FLOAT_VECTOR",
+        4225
+      ],
+      [
+        ".edge_verts",
+        "EDGE",
+        "INT32_2D",
+        8320
+      ],
+      [
+        ".corner_vert",
+        "CORNER",
+        "INT",
+        16384
+      ],
+      [
+        ".corner_edge",
+        "CORNER",
+        "INT",
+        16384
+      ],
+      [
+        "UVMap",
+        "CORNER",
+        "FLOAT2",
+        16384
+      ]
+    ],
+    "modifiers": [
+      {
+        "name": "Subdivision",
+        "type": "SUBSURF",
+        "show_render": true,
+        "show_viewport": true,
+        "subdivision_type": "SIMPLE",
+        "levels": 4,
+        "render_levels": 5,
+        "quality": 3,
+        "uv_smooth": "PRESERVE_CORNERS",
+        "boundary_smooth": "ALL",
+        "use_creases": true,
+        "use_custom_normals": false,
+        "use_limit_surface": true,
+        "show_only_control_edges": false
+      }
+    ],
+    "uv": [
+      {
+        "name": "UVMap",
+        "activeRender": true,
+        "affineCoefficients": [
+          [
+            0.6293940616728627,
+            -5.230411210863141e-06
+          ],
+          [
+            8.761522793744589e-08,
+            0.6293940817716358
+          ],
+          [
+            0.0,
+            0.0
+          ],
+          [
+            0.4999999834908524,
+            0.49999580577423347
+          ]
+        ],
+        "maxAffineResidual": 1.054399790878513e-05,
+        "bounds": [
+          [
+            -0.12940430641174316,
+            -0.12941378355026245
+          ],
+          [
+            1.1294043064117432,
+            1.1294054985046387
+          ]
+        ],
+        "firstFace": [
+          [
+            1.1097164154052734,
+            1.109707236289978
+          ],
+          [
+            1.1293836832046509,
+            1.109707236289978
+          ],
+          [
+            1.12938392162323,
+            1.129374384880066
+          ],
+          [
+            1.1097164154052734,
+            1.1293745040893555
+          ]
+        ],
+        "maxFaceBilinearCrossTerm": 5.960464477539062e-07
+      }
+    ]
+  },
+  "syntheticControls": [
+    {
+      "nonaffine": false,
+      "mode": "NONE",
+      "faces": 16,
+      "maxZ": 0.0,
+      "maxUVMinusXY": 1.1920928955078125e-07,
+      "maxUAgainstCoarseDiagonal02": 1.1920928955078125e-07,
+      "maxTangentMinusX": 1.4900906819548254e-07,
+      "maxNormalMinusZ": 0.0
+    },
+    {
+      "nonaffine": false,
+      "mode": "PRESERVE_CORNERS",
+      "faces": 16,
+      "maxZ": 0.0,
+      "maxUVMinusXY": 0.0,
+      "maxUAgainstCoarseDiagonal02": 0.0,
+      "maxTangentMinusX": 0.0,
+      "maxNormalMinusZ": 0.0
+    },
+    {
+      "nonaffine": false,
+      "mode": "PRESERVE_CORNERS_AND_JUNCTIONS",
+      "faces": 16,
+      "maxZ": 0.0,
+      "maxUVMinusXY": 0.0,
+      "maxUAgainstCoarseDiagonal02": 0.0,
+      "maxTangentMinusX": 0.0,
+      "maxNormalMinusZ": 0.0
+    },
+    {
+      "nonaffine": false,
+      "mode": "PRESERVE_CORNERS_JUNCTIONS_AND_CONCAVE",
+      "faces": 16,
+      "maxZ": 0.0,
+      "maxUVMinusXY": 0.0,
+      "maxUAgainstCoarseDiagonal02": 0.0,
+      "maxTangentMinusX": 0.0,
+      "maxNormalMinusZ": 0.0
+    },
+    {
+      "nonaffine": false,
+      "mode": "PRESERVE_BOUNDARIES",
+      "faces": 16,
+      "maxZ": 0.0,
+      "maxUVMinusXY": 0.0,
+      "maxUAgainstCoarseDiagonal02": 0.0,
+      "maxTangentMinusX": 0.0,
+      "maxNormalMinusZ": 0.0
+    },
+    {
+      "nonaffine": false,
+      "mode": "SMOOTH_ALL",
+      "faces": 16,
+      "maxZ": 0.0,
+      "maxUVMinusXY": 0.0,
+      "maxUAgainstCoarseDiagonal02": 0.0,
+      "maxTangentMinusX": 0.0,
+      "maxNormalMinusZ": 0.0
+    },
+    {
+      "nonaffine": true,
+      "mode": "NONE",
+      "faces": 16,
+      "maxZ": 0.0,
+      "maxUVMinusXY": 0.25,
+      "maxUAgainstCoarseDiagonal02": 0.062499940395355225,
+      "maxTangentMinusX": 1.7881215796933247e-07,
+      "maxNormalMinusZ": 0.0
+    },
+    {
+      "nonaffine": true,
+      "mode": "PRESERVE_CORNERS",
+      "faces": 16,
+      "maxZ": 0.0,
+      "maxUVMinusXY": 0.2500000298023224,
+      "maxUAgainstCoarseDiagonal02": 0.0625,
+      "maxTangentMinusX": 5.960464477539063e-08,
+      "maxNormalMinusZ": 0.0
+    },
+    {
+      "nonaffine": true,
+      "mode": "PRESERVE_CORNERS_AND_JUNCTIONS",
+      "faces": 16,
+      "maxZ": 0.0,
+      "maxUVMinusXY": 0.2500000298023224,
+      "maxUAgainstCoarseDiagonal02": 0.0625,
+      "maxTangentMinusX": 5.960464477539063e-08,
+      "maxNormalMinusZ": 0.0
+    },
+    {
+      "nonaffine": true,
+      "mode": "PRESERVE_CORNERS_JUNCTIONS_AND_CONCAVE",
+      "faces": 16,
+      "maxZ": 0.0,
+      "maxUVMinusXY": 0.2500000298023224,
+      "maxUAgainstCoarseDiagonal02": 0.0625,
+      "maxTangentMinusX": 5.960464477539063e-08,
+      "maxNormalMinusZ": 0.0
+    },
+    {
+      "nonaffine": true,
+      "mode": "PRESERVE_BOUNDARIES",
+      "faces": 16,
+      "maxZ": 0.0,
+      "maxUVMinusXY": 0.2500000298023224,
+      "maxUAgainstCoarseDiagonal02": 0.0625,
+      "maxTangentMinusX": 5.960464477539063e-08,
+      "maxNormalMinusZ": 0.0
+    },
+    {
+      "nonaffine": true,
+      "mode": "SMOOTH_ALL",
+      "faces": 16,
+      "maxZ": 0.0,
+      "maxUVMinusXY": 0.2500000298023224,
+      "maxUAgainstCoarseDiagonal02": 0.0625,
+      "maxTangentMinusX": 5.960464477539063e-08,
+      "maxNormalMinusZ": 0.0
+    }
+  ],
+  "sources": [
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/modifiers/intern/MOD_subsurf.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/modifiers/intern/MOD_subsurf.cc",
+      "bytes": 17347,
+      "sha256": "f46d9e5e506f653bd207ca62a08ad2e2fa530202fd15aeeaa05c8594d79df001"
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/blenkernel/intern/subdiv_mesh.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenkernel/intern/subdiv_mesh.cc",
+      "bytes": 65991,
+      "sha256": "4ebfce74ce778ab4e54f61cd2b7b3ceb003c1b6d2aead6f8807310963bf2ac53"
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/blenkernel/intern/subdiv.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenkernel/intern/subdiv.cc",
+      "bytes": 7322,
+      "sha256": "535121c99db5b7c5c154ed862c60ddccc4047c8151bc433ec7f906954603959a"
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/blenkernel/intern/subdiv_modifier.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenkernel/intern/subdiv_modifier.cc",
+      "bytes": 5151,
+      "sha256": "119344a7cf1e1bcdb807cb5784f3d993f668bb8148082ebe8ab20d3e4a420dec"
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/blenkernel/intern/subdiv_eval.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenkernel/intern/subdiv_eval.cc",
+      "bytes": 13887,
+      "sha256": "8ed41577f09021f08c556b7475e7b90c15128b85bd0e472ba363353f47f819ca"
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/blenkernel/intern/mesh_tangent.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenkernel/intern/mesh_tangent.cc",
+      "bytes": 12495,
+      "sha256": "5f903346e4eecd6b9213ee95a9ce45aaea1edc5ef08a3d3aed14ad948dbf576b"
+    }
+  ],
+  "localResearchArtifacts": [
+    {
+      "name": "inspect.py",
+      "sha256": "d5ca42facc429b9598bffb38adc499722a8e474ab4f10f85916a6a81c0cf1b22",
+      "bytes": 6042
+    },
+    {
+      "name": "report.json",
+      "sha256": "353438c8652e47e83059e9f4608bceeb08c9507f44cda1ecb276c7be1b1397a0",
+      "bytes": 23572
+    },
+    {
+      "name": "native-ownership.log",
+      "sha256": "a6d6b0ff38c44880738626711847ef64afb8c2ed64168564ed28a2df68c1779a",
+      "bytes": 3735
+    }
+  ]
+}

@@ -12181,13 +12181,14 @@
       "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
       "runtimeOps": [
         "radial_segment_width",
-        "radial_segment_coordinates"
+        "radial_segment_coordinates",
+        "const_vec3"
       ],
       "modes": {},
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Segment Width retains its previously qualified Blender5.3.0 build02f0899d78e3 macOS arm64 EEVEE Metal slice: literal integer Sides2..64, Roundness1, Vector/Normalize pruned only by the selected Width dependency invariant, <=2ULP AND absolute error<=2^-22; its prior runtime profiles and verification are unchanged. Shader Segment Coordinates additionally admits actual native Apple M5 Pro EEVEE Metal source and actual WebGL2 ANGLE Apple M5 Pro Metal runtime only: literal Sides3/8/12, Roundness1, both Normalize states, static finite normal/+0 Float32 literal XY[-2,2] read from raw RNA storage; explicit native float2 input boundaries, native float3 phase/radius/Z0 output. Raw negative-zero/subnormal XY, images/fields, UV/Object/arithmetic vectors and computed Sides refuse. Predeclared phase absolute error<=2^-18 with native exact0/1 retained, radius<=8ULP AND absolute error<=2^-20. Built raw/Final words were exact to the independent GPU-kernel reference; separate actual EEVEE material phase error was3.5762786865234375e-7. WebGPU privacy/identity, software and unknown adapters named-refuse; Preview Studio needs explicit ?backend=webgl2 and its default WebGPU path is not accepted. Segment ID/Rotation, other branches/profiles, Cycles live and unchanged official Radial demo acceptance remain unqualified. No port-owned textures/targets/readback."
+          "limits": "Segment Width keeps its prior literal integer Sides2..64/Roundness1, source-dependency invariant, native/runtime profiles and old verification unchanged. Segment Coordinates has two explicit Blender5.3.0 build02f0899d78e3 EEVEE slices. Exact stored positive-zero XY words[0,0], literal Sides3/8/12, Roundness1 and either Normalize fold before GPU initialization to existing const_vec3: normalized(.5,0,0), otherwise(0,-1,0). This origin has exact-word native material/savedFinal acceptance on actual Metal and SwiftShader WebGPU/WebGL2, without a Radial renderer requirement/kernel/uniform/adapter query. Native node defaults Sides5 and Roundness0 remain unsupported. Nonzero static normal/+0 Float32 literal XY[-2,2] still requires actual native Apple M5 Pro Metal source and actual WebGL2 ANGLE Apple M5 Pro Metal runtime; its WebGPU/software/unknown adapters named-refuse and need explicit ?backend=webgl2 for this nonzero path. Nonzero phase retains <=2^-18 absolute error with exact native0/1; radius<=8ULP AND <=2^-20 absolute. Independent native F32-kernel and actual EEVEE material stages remain distinct. Negative-zero/subnormal XY, fields/images/UV/Object/arithmetic vectors, computed/fractional/other Sides, other Roundness/builds/engines, scalar means and ID/Rotation remain unqualified. No general default-preview scene or original demo acceptance; no new node count."
         }
       },
       "rendererNeeds": {
@@ -12214,7 +12215,22 @@
             "SwiftShader/software",
             "Unknown/unmeasured adapters"
           ],
-          "previewChoice": "?backend=webgl2; default WebGPU named-refuses"
+          "previewChoice": "?backend=webgl2; default WebGPU named-refuses",
+          "scope": "Nonzero static literal coordinates only; exact +0/+0 origin is separately folded and has no Radial renderer requirement."
+        },
+        "originProfile": {
+          "runtimeOp": "const_vec3",
+          "requiresFreshRadialRendererProgram": false,
+          "specificAdapterAttestationRequired": false,
+          "actualRuntimeBackends": [
+            "WebGPU via WebGPURenderer",
+            "WebGL2 via WebGPURenderer"
+          ],
+          "actualRuntimeProfiles": [
+            "Apple Metal",
+            "SwiftShader"
+          ],
+          "scope": "Exact stored +0/+0, explicit literal Sides3/8/12, Roundness1 and both Normalize states. Native defaults remain unsupported."
         }
       },
       "evidence": [
@@ -12256,6 +12272,15 @@
         },
         {
           "path": "experiments/radial-coordinates-static/evidence.json"
+        },
+        {
+          "path": "experiments/radial-origin/evidence.json"
+        },
+        {
+          "path": "experiments/radial-origin/numeric-contract.json"
+        },
+        {
+          "path": "experiments/radial-origin/verify.mjs"
         }
       ],
       "verification": {
@@ -12395,9 +12420,117 @@
         "sourceAdapter": "packages/blender-addon/radial_coordinates_ir.py",
         "runtimeAdapter": "packages/blendlink/src/tslRadialCoordinates.ts",
         "nativeDerivative": "packages/blendlink/src/tslRadialRegularNative.ts",
-        "coverageScope": "Extends the existing partial shader entry only. Native F32-kernel and actual EEVEE material/film stages are distinct; no compositor Coordinates, default-preview, portable-device or original-scene acceptance credit.",
+        "coverageScope": "Fresh union M5 transaction:410 sourceIR cases comprise404 nonzero cases and6 folded origins; eight Final settings remain nonzero. Adapter refusals use verified nonzero cases. Existing partial shader entry only; no compositor/default-preview/general-scene credit. Older Width verification retains its original lineage.",
         "officialSceneAcceptance": false,
-        "defaultPreviewAcceptance": false
+        "defaultPreviewAcceptance": false,
+        "nonzeroSourceIRCases": 404,
+        "foldedOriginSourceIRCases": 6,
+        "sourceSnapshotLineage": {
+          "qualificationSha256": "0b62d844d7418e3c7c7db7e102922a2a6ea948e3c7600032cdc6d984abe6128e",
+          "qualificationSourceInputs": 124,
+          "sharedSdkAddonSourceInputs": 121,
+          "sharedSdkAddonSourceFingerprint": "d75965928da3a499c84b9e19128748dc294e52a7b39589f5ad7ffb84645d608b",
+          "keySources": {
+            "packages/blender-addon/tsl_ir.py": "c8661394ac6c1970f98c88941d47211012aadeb8efb86c086c03409a234f8688",
+            "packages/blender-addon/radial_coordinates_ir.py": "e7aa85fb79a16b57d280d0b8b331e269c6f0c1b079921083d4950a18327bb147"
+          },
+          "scope": "Fresh transaction on the union Python source snapshot; own fixture inputs are separately pinned. Matching JavaScript fingerprints do not refresh older Width or unrelated proofs."
+        }
+      },
+      "originVerification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeMaterialMeasuredHost": "darwin-arm64 / Apple M5 Pro Metal",
+        "serializedRuntimeOp": "const_vec3",
+        "sourceCases": 6,
+        "sourceRefusals": 8,
+        "gpuQueriesDuringEmission": 0,
+        "actualNativeMaterialSettings": 6,
+        "nativeMagnitudeSignResidueWitnesses": 36,
+        "independentCarrierControls": 2,
+        "actualSavedFinalScenes": 6,
+        "rawApiCaseRuns": 24,
+        "finalApiCaseRuns": 24,
+        "installDisposeCycles": 72,
+        "resizeFrames": 12,
+        "primaryFloat32Words": 30544,
+        "wordMismatches": 0,
+        "contractViolations": 0,
+        "uniqueActualPythonPrefixes": 8,
+        "actualRuntimeBackends": [
+          "WebGPU via WebGPURenderer",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959",
+        "sourceSnapshotLineage": {
+          "qualificationSha256": "10b14d41107e3791ffba095edf25a08952a0fff188a514db178878d24e14d300",
+          "qualificationSourceInputs": 123,
+          "sharedSdkAddonSourceInputs": 121,
+          "sharedSdkAddonSourceFingerprint": "d75965928da3a499c84b9e19128748dc294e52a7b39589f5ad7ffb84645d608b",
+          "keySources": {
+            "packages/blender-addon/tsl_ir.py": "c8661394ac6c1970f98c88941d47211012aadeb8efb86c086c03409a234f8688",
+            "packages/blender-addon/radial_coordinates_ir.py": "e7aa85fb79a16b57d280d0b8b331e269c6f0c1b079921083d4950a18327bb147"
+          },
+          "scope": "Fresh transaction on the union Python source snapshot; own fixture inputs are separately pinned. Matching JavaScript fingerprints do not refresh older Width or unrelated proofs."
+        },
+        "numericContract": {
+          "schemaVersion": 1,
+          "model": "regular-full-roundness-exact-origin-const-v1",
+          "serializedRuntimeOp": "const_vec3",
+          "scope": "Pinned Blender 5.3.0 build 02f0899d78e3 EEVEE, actual float2 input/float3 output schema, exact stored positive-zero XY words [0,0], literal Sides 3/8/12, Roundness 1, both Normalize states, static literal/group/reroute bindings.",
+          "nativeDefaultsExcluded": "Native schema defaults Sides 5 and Roundness 0 remain unsupported. This is an explicit regular/full-roundness origin condition, not default-node support.",
+          "sourceInvariant": "The shared native regular/full-roundness branch assigns radius=length(+0,+0). The origin condition explicitly overwrites phase with +0; Normalize then gives phase .5/radius 0, or phase 0/radius -1 otherwise. Native output is (phase,radius,0). Discarded rotation may be NaN; no multiplication by zero masks it.",
+          "exactRawOutputWords": {
+            "normalizeFalse": [
+              0,
+              3212836864,
+              0
+            ],
+            "normalizeTrue": [
+              1056964608,
+              0,
+              0
+            ]
+          },
+          "inputFidelity": "Raw RNA foreach_get Float32 storage is classified as uint32 before promotion or GPU initialization. Negative-zero and subnormal XY refuse; static-tree and fixed-control checks remain. The existing nonzero M5 Pro hardware route is unchanged.",
+          "runtimeLowering": "Existing const_vec3 only; no new opcode, Radial renderer requirement, kernel, uniforms, adapter query, texture, render target or pixel readback. Ordinary material rendering still uses its renderer.",
+          "nativeReference": "Six actual native EEVEE material settings with 36 independently decoded magnitude/sign/residue witnesses and two independent half-safe carrier controls. Source emission separately traps GPU init and platform getters and records zero calls.",
+          "finalReference": "Six saved native graphs preserve the Radial operator. Raw tuple is checked first; an authored reversible coordinate+(0,1,0) carrier gives nonnegative final colors: (0,0,0) or (.5,1,0). Final publication and installed material-channel binding are checked without changing Radial inputs or body.",
+          "comparison": {
+            "exactFloat32WordsRequired": true,
+            "maximumUlps": 0,
+            "maximumAbsoluteError": 0,
+            "finiteProjectedCoordinatesRequired": true,
+            "nativeMaterialSettings": 6,
+            "savedFinalScenes": 6,
+            "rawApiCaseRuns": 24,
+            "finalApiCaseRuns": 24,
+            "installDisposeCycles": 72,
+            "resizeFrames": 12,
+            "comparedWords": 30544
+          },
+          "actualRuntimeApis": [
+            "WebGPU via WebGPURenderer",
+            "WebGL2 via WebGPURenderer"
+          ],
+          "actualRuntimeProfiles": [
+            "Apple Metal",
+            "SwiftShader"
+          ],
+          "exclusions": "General nonzero portability, native default Sides/Roundness, fields/images/arithmetic vectors, computed controls, animation, other builds/engines/outputs, direct or grouped vector-to-scalar means, original demo acceptance and general default-preview scene acceptance.",
+          "sourceSnapshotPolicy": "Origin and M5 static matrices were recaptured on their recorded union Python source snapshots. Matching built JavaScript runtime fingerprints do not imply other node families or older Width source snapshots were freshly revalidated."
+        },
+        "evidence": "experiments/radial-origin/evidence.json",
+        "reader": "experiments/radial-origin/verify.mjs",
+        "generalDefaultPreviewAcceptance": false,
+        "originalDemoAcceptance": false,
+        "coverageScope": "Explicit regular/full-roundness +0 origin only; native defaults Sides5/Roundness0 remain unsupported. No new node count, no nonzero hardware-portability claim and no other-family freshness claim."
       }
     },
     "compositor:ShaderNodeRadialTiling": {

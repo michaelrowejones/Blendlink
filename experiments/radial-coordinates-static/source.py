@@ -56,7 +56,7 @@ for grouped in[False,True]:
  else:raise AssertionError('Nativevector3scalarmeanwasnotrefused')
 rows=[]
 for spec in PLAN['cases']:
- radial,surface=setup(spec);ir=emit(surface);assert ir['output']['op']=='radial_segment_coordinates';reference=next(r for r in REFERENCE['rows']if r['case']==spec['case']);assert reference['inputWords']==spec['inputWords'];file=spec['case']+'.ir.json';(OUT/file).write_text(json.dumps(ir,indent=2)+'\n');rows.append({**spec,'irFile':file,'irSha256':sha(OUT/file),'expectedWords':[reference['rawOutputWords'][1],reference['rawOutputWords'][0],0,1065353216]})
+ radial,surface=setup(spec);ir=emit(surface);assert ir['output']['op']==('const_vec3'if spec['inputWords'][:2]==[0,0]else'radial_segment_coordinates');reference=next(r for r in REFERENCE['rows']if r['case']==spec['case']);assert reference['inputWords']==spec['inputWords'];file=spec['case']+'.ir.json';(OUT/file).write_text(json.dumps(ir,indent=2)+'\n');rows.append({**spec,'irFile':file,'irSha256':sha(OUT/file),'expectedWords':[reference['rawOutputWords'][1],reference['rawOutputWords'][0],0,1065353216]})
 finals=[]
 for spec in PLAN['finals']:
  radial,surface=setup(spec,spec['route']);ir=emit(surface);file=spec['finalCase']+'.ir.json';(OUT/file).write_text(json.dumps(ir,indent=2)+'\n');path=OUT/spec['sourceFile'];bpy.ops.wm.save_as_mainfile(filepath=str(path));finals.append({**spec,'irFile':file,'irSha256':sha(OUT/file),'sourceSha256':sha(path),'expectedWords':next(r['expectedWords']for r in rows if r['case']==spec['case'])})

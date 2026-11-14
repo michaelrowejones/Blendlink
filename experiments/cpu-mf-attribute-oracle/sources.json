@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "nativeVersion": [
+    5,
+    3,
+    0
+  ],
+  "nativeBuild": "02f0899d78e3",
+  "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "sources": [
+    {
+      "path": "source/blender/nodes/intern/node_multi_function.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/intern/node_multi_function.cc",
+      "sha256": "8d845f5b2b347e998f414ab40d5db8d6f281ba3ad7baed7888e705c430b0ed3b"
+    },
+    {
+      "path": "source/blender/compositor/intern/multi_function_procedure_operation.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/intern/multi_function_procedure_operation.cc",
+      "sha256": "d61a452a55f9d333ea8c5fca6e81bf9604627521b547e59fb4ebfe0a59762ce9"
+    },
+    {
+      "path": "source/blender/nodes/geometry/nodes/node_geo_store_named_attribute.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/geometry/nodes/node_geo_store_named_attribute.cc",
+      "sha256": "d2cc6bdb58c8861c38389d2402c8ab919bddbb08680a59c38a2d235a5394825f"
+    },
+    {
+      "path": "source/blender/makesrna/intern/rna_modifier.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/makesrna/intern/rna_modifier.cc",
+      "sha256": "c883858c0eebfb8ad541ac4ae89db1257cc901878de90533f449a032dc90c9dd"
+    },
+    {
+      "path": "source/blender/nodes/intern/geometry_nodes_lazy_function.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/intern/geometry_nodes_lazy_function.cc",
+      "sha256": "ee75945148a28867aab9b0bf8685023a311d134b69df7c047d41b080e22231fd"
+    },
+    {
+      "path": "source/blender/compositor/intern/pixel_operation.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/intern/pixel_operation.cc",
+      "sha256": "4dd35b1aca143231aca2521550e89a28961639ddebce754503ca86f0b8905af5"
+    },
+    {
+      "path": "source/blender/makesrna/intern/rna_attribute.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/makesrna/intern/rna_attribute.cc",
+      "sha256": "80c8d28d6eb322e260f20e9fd1e29faab452a5aaae3ba340eecd3dd45ba21495"
+    },
+    {
+      "path": "source/blender/modifiers/intern/MOD_nodes.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/modifiers/intern/MOD_nodes.cc",
+      "sha256": "481b0619936579a98890066e875f3e076296f4de5bed0b434dc1198777692df6"
+    },
+    {
+      "path": "source/blender/nodes/function/nodes/node_fn_matrix_multiply.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/function/nodes/node_fn_matrix_multiply.cc",
+      "sha256": "206ac9541b178c35241a86c973ab47e68c48714c08e311272721cbcef842ae8a"
+    },
+    {
+      "path": "source/blender/compositor/intern/node_tree_evaluator.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/intern/node_tree_evaluator.cc",
+      "sha256": "370c09bdaf564780a208a0a4498b9760830c96f10ef85a4dbb2358f533a5aab2"
+    },
+    {
+      "path": "source/blender/nodes/function/nodes/node_fn_combine_matrix.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/function/nodes/node_fn_combine_matrix.cc",
+      "sha256": "f82332fe75a1d5e34855e64d3f4c543bca02de230f4081d6ad845560bf1cbe6d"
+    },
+    {
+      "path": "source/blender/nodes/function/nodes/node_fn_quaternion_to_rotation.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/function/nodes/node_fn_quaternion_to_rotation.cc",
+      "sha256": "ed42cf3afdaf9630e64ecced43d99a8b5effe83d5b0bd3b86d6396ebf4317da8"
+    },
+    {
+      "path": "source/blender/nodes/function/nodes/node_fn_rotation_to_quaternion.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/function/nodes/node_fn_rotation_to_quaternion.cc",
+      "sha256": "8fe89ac9b6d713d0dd5571b1e957f6222bd4244d52655b6277760635573e5f0c"
+    },
+    {
+      "path": "source/blender/nodes/function/nodes/node_fn_input_int.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/function/nodes/node_fn_input_int.cc",
+      "sha256": "0bc07f082e73406aac8d8f88678c4be4883b6a23a21a44d54906c296937175ec"
+    },
+    {
+      "path": "source/blender/nodes/shader/nodes/node_shader_value.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/shader/nodes/node_shader_value.cc",
+      "sha256": "63e6b100aedc7ba40d86c3d522caca6ad0af33edfd96f22b38e4b46d863b1c75"
+    }
+  ],
+  "sourceStage": "Private Geometry Nodes CPU-MF attribute oracle only. Shared source callbacks are not generic compositor/EEVEE/GPU parity."
+}

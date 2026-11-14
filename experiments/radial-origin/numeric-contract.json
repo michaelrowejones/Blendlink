@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "model": "regular-full-roundness-exact-origin-const-v1",
+  "serializedRuntimeOp": "const_vec3",
+  "scope": "Pinned Blender 5.3.0 build 02f0899d78e3 EEVEE, actual float2 input/float3 output schema, exact stored positive-zero XY words [0,0], literal Sides 3/8/12, Roundness 1, both Normalize states, static literal/group/reroute bindings.",
+  "nativeDefaultsExcluded": "Native schema defaults Sides 5 and Roundness 0 remain unsupported. This is an explicit regular/full-roundness origin condition, not default-node support.",
+  "sourceInvariant": "The shared native regular/full-roundness branch assigns radius=length(+0,+0). The origin condition explicitly overwrites phase with +0; Normalize then gives phase .5/radius 0, or phase 0/radius -1 otherwise. Native output is (phase,radius,0). Discarded rotation may be NaN; no multiplication by zero masks it.",
+  "exactRawOutputWords": {"normalizeFalse":[0,3212836864,0],"normalizeTrue":[1056964608,0,0]},
+  "inputFidelity": "Raw RNA foreach_get Float32 storage is classified as uint32 before promotion or GPU initialization. Negative-zero and subnormal XY refuse; static-tree and fixed-control checks remain. The existing nonzero M5 Pro hardware route is unchanged.",
+  "runtimeLowering": "Existing const_vec3 only; no new opcode, Radial renderer requirement, kernel, uniforms, adapter query, texture, render target or pixel readback. Ordinary material rendering still uses its renderer.",
+  "nativeReference": "Six actual native EEVEE material settings with 36 independently decoded magnitude/sign/residue witnesses and two independent half-safe carrier controls. Source emission separately traps GPU init and platform getters and records zero calls.",
+  "finalReference": "Six saved native graphs preserve the Radial operator. Raw tuple is checked first; an authored reversible coordinate+(0,1,0) carrier gives nonnegative final colors: (0,0,0) or (.5,1,0). Final publication and installed material-channel binding are checked without changing Radial inputs or body.",
+  "comparison": {"exactFloat32WordsRequired":true,"maximumUlps":0,"maximumAbsoluteError":0,"finiteProjectedCoordinatesRequired":true,"nativeMaterialSettings":6,"savedFinalScenes":6,"rawApiCaseRuns":24,"finalApiCaseRuns":24,"installDisposeCycles":72,"resizeFrames":12,"comparedWords":30544},
+  "actualRuntimeApis": ["WebGPU via WebGPURenderer","WebGL2 via WebGPURenderer"],
+  "actualRuntimeProfiles": ["Apple Metal","SwiftShader"],
+  "exclusions": "General nonzero portability, native default Sides/Roundness, fields/images/arithmetic vectors, computed controls, animation, other builds/engines/outputs, direct or grouped vector-to-scalar means, original demo acceptance and general default-preview scene acceptance.",
+  "sourceSnapshotPolicy": "Origin and M5 static matrices were recaptured on their recorded union Python source snapshots. Matching built JavaScript runtime fingerprints do not imply other node families or older Width source snapshots were freshly revalidated."
+}

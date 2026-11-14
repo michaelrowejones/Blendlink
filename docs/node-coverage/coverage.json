@@ -1,5 +1,5 @@
 {
-  "capabilityMapSha256": "838fbeb2ad99bdc753b48e1b156b30b29ab3c1b56a3e13e73969a48b7d0dce87",
+  "capabilityMapSha256": "c6ff5b6c4305dd5d21fd3637c4b0f114d481260b9da77be4ea41484c28e92b40",
   "capabilityValidationFailures": [],
   "classificationRefresh": {
     "catalogSha256": {
@@ -12,7 +12,7 @@
     "nativeInventoryRefreshed": false,
     "reason": "Classification-only refresh against unchanged content-pinned full inventories; no native rediscovery or numerical qualification is performed."
   },
-  "generatedAt": "2026-11-14T04:19:56.270182+00:00",
+  "generatedAt": "2026-11-14T06:26:28.249180+00:00",
   "nativeAvailabilityChanges": [],
   "nativeCatalogSha256": {
     "docs/node-coverage/blender-4.2.0.json": "2f71cb192f6a62e0e343ba5fcb11a2d8e0c6f6af1e8ac663ec6c3350b016b151",
@@ -13177,6 +13177,15 @@
                 },
                 {
                   "path": "experiments/radial-coordinates-static/evidence.json"
+                },
+                {
+                  "path": "experiments/radial-origin/evidence.json"
+                },
+                {
+                  "path": "experiments/radial-origin/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/radial-origin/verify.mjs"
                 }
               ],
               "id": "ShaderNodeRadialTiling",
@@ -13184,7 +13193,8 @@
               "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
               "runtimeOps": [
                 "radial_segment_width",
-                "radial_segment_coordinates"
+                "radial_segment_coordinates",
+                "const_vec3"
               ],
               "unreviewedCapability": false
             },
@@ -23132,14 +23142,24 @@
                 },
                 {
                   "path": "experiments/radial-coordinates-static/evidence.json"
+                },
+                {
+                  "path": "experiments/radial-origin/evidence.json"
+                },
+                {
+                  "path": "experiments/radial-origin/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/radial-origin/verify.mjs"
                 }
               ],
               "id": "ShaderNodeRadialTiling",
               "label": "Radial Tiling",
-              "limits": "Segment Width retains its previously qualified Blender5.3.0 build02f0899d78e3 macOS arm64 EEVEE Metal slice: literal integer Sides2..64, Roundness1, Vector/Normalize pruned only by the selected Width dependency invariant, <=2ULP AND absolute error<=2^-22; its prior runtime profiles and verification are unchanged. Shader Segment Coordinates additionally admits actual native Apple M5 Pro EEVEE Metal source and actual WebGL2 ANGLE Apple M5 Pro Metal runtime only: literal Sides3/8/12, Roundness1, both Normalize states, static finite normal/+0 Float32 literal XY[-2,2] read from raw RNA storage; explicit native float2 input boundaries, native float3 phase/radius/Z0 output. Raw negative-zero/subnormal XY, images/fields, UV/Object/arithmetic vectors and computed Sides refuse. Predeclared phase absolute error<=2^-18 with native exact0/1 retained, radius<=8ULP AND absolute error<=2^-20. Built raw/Final words were exact to the independent GPU-kernel reference; separate actual EEVEE material phase error was3.5762786865234375e-7. WebGPU privacy/identity, software and unknown adapters named-refuse; Preview Studio needs explicit ?backend=webgl2 and its default WebGPU path is not accepted. Segment ID/Rotation, other branches/profiles, Cycles live and unchanged official Radial demo acceptance remain unqualified. No port-owned textures/targets/readback.",
+              "limits": "Segment Width keeps its prior literal integer Sides2..64/Roundness1, source-dependency invariant, native/runtime profiles and old verification unchanged. Segment Coordinates has two explicit Blender5.3.0 build02f0899d78e3 EEVEE slices. Exact stored positive-zero XY words[0,0], literal Sides3/8/12, Roundness1 and either Normalize fold before GPU initialization to existing const_vec3: normalized(.5,0,0), otherwise(0,-1,0). This origin has exact-word native material/savedFinal acceptance on actual Metal and SwiftShader WebGPU/WebGL2, without a Radial renderer requirement/kernel/uniform/adapter query. Native node defaults Sides5 and Roundness0 remain unsupported. Nonzero static normal/+0 Float32 literal XY[-2,2] still requires actual native Apple M5 Pro Metal source and actual WebGL2 ANGLE Apple M5 Pro Metal runtime; its WebGPU/software/unknown adapters named-refuse and need explicit ?backend=webgl2 for this nonzero path. Nonzero phase retains <=2^-18 absolute error with exact native0/1; radius<=8ULP AND <=2^-20 absolute. Independent native F32-kernel and actual EEVEE material stages remain distinct. Negative-zero/subnormal XY, fields/images/UV/Object/arithmetic vectors, computed/fractional/other Sides, other Roundness/builds/engines, scalar means and ID/Rotation remain unqualified. No general default-preview scene or original demo acceptance; no new node count.",
               "runtimeOps": [
                 "radial_segment_width",
-                "radial_segment_coordinates"
+                "radial_segment_coordinates",
+                "const_vec3"
               ],
               "unreviewedCapability": false
             },
@@ -24635,8 +24655,8 @@
     "packages/blender-addon/normal_ir.py": "5884980ca27e5a12bbf239cd69bed3b5295ba80ad3b728b9011580f2c6ef3899",
     "packages/blender-addon/normal_map_tangent_ir.py": "44bf4a455b32489d632b6e2d5dd98c10e716b7df6aaf54817b086d34fad9375c",
     "packages/blender-addon/normal_noise_bounds.py": "af58552f1d0df0fa363d900d7995b1117e116c1e1702c974d93fc78cf94faa4f",
-    "packages/blender-addon/procedural.py": "dd5419b4313f3102d6f7161789592f4648babcad01543272416c80d58016926f",
-    "packages/blender-addon/radial_coordinates_ir.py": "afd12fcd54371185ef9396f4f76d495c9f0a8e449a0397c1c8fb09ec7201578d",
+    "packages/blender-addon/procedural.py": "dd85b29a3293db0829f024941881e7ec068a0d7d9258e7d019484184ac2cf31c",
+    "packages/blender-addon/radial_coordinates_ir.py": "e7aa85fb79a16b57d280d0b8b331e269c6f0c1b079921083d4950a18327bb147",
     "packages/blender-addon/radial_width_ir.py": "bac7aeee78bad23d28b6bafe62abd2675aa652adc24e29ebe32af729c1cc27e6",
     "packages/blender-addon/ramps_ir.py": "fc9f2fd95a6e650a3bacde298fe92f2a63e85185763f17204d4e328a90c9ea96",
     "packages/blender-addon/repeat_ir.py": "f2027e55c03d1c7a8e018e82c9ce0d5d8a35af528632173d1cdde0dfa293ed71",

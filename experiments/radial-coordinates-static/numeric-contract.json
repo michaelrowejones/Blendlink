@@ -2,22 +2,38 @@
   "schemaVersion": 1,
   "model": "regular-full-roundness-segment-coordinates-webgl2-m5pro-v1",
   "sourceProfile": "darwin-arm64-53-eevee-metal-m5pro-radial-coordinates-v1",
-  "scope": "Shader Segment Coordinates only: Blender5.3.0 build02f0899d78e3 macOS arm64 EEVEE on native Apple M5 Pro Metal; literal Sides3/8/12, Roundness1, both Normalize states; static finite Float32 normal/+0 literal XY in[-2,2]. Actual WebGL2 ANGLE Apple M5 Pro Metal renderer only.",
+  "scope": "Nonzero Shader Segment Coordinates only: Blender5.3.0 build02f0899d78e3 macOS arm64 EEVEE on native Apple M5 Pro Metal; literal Sides3/8/12, Roundness1, both Normalize states; static finite Float32 normal/+0 literal XY in[-2,2]. Actual WebGL2 ANGLE Apple M5 Pro Metal renderer only. Six exact positive-zero cases in this matrix use the separately qualified portable const_vec3 origin route.",
   "literalTypeSource": "Actual NodeSocketVector2D input storage is read through bpy_prop_array.foreach_get into a Float32 buffer and classified by uint32 exponent/sign bits before float promotion. Negative-zero/subnormal XY is refused. Bounded actual array defaults, Vector/Color literals, bound groups, reroutes and native bypasses retain exact XY; no scalar CombineXYZ or arithmetic route is admitted.",
   "representation": "Native float2 input with explicit native_vector2 padded-vector boundary; native float3 output=(phase,radius,0). Unchanged literal Float32 coordinates and controls upload as uniforms, without artist-input quantization. Direct/group vector-to-scalar mean remains refused; qualified SeparateXYZ component reads retain their own scalar type.",
-  "referenceCases": {"nativeKernelInputs":440,"admittedSourceIRCases":410,"actualSavedFinalScenes":8,"actualEeveeMaterialSettings":8,"sourceRefusals":13},
+  "referenceCases": {
+    "nativeKernelInputs": 440,
+    "admittedSourceIRCases": 410,
+    "actualSavedFinalScenes": 8,
+    "actualEeveeMaterialSettings": 8,
+    "sourceRefusals": 13
+  },
   "referenceStages": {
     "kernel": "Independent unchanged pinned native shared function and explicitly adapted ABI/helpers through Blender PythonGPU GLSL frontend/native Metal compiler into RGBA32F. Not an EEVEE material/film oracle.",
     "material": "Actual EEVEE material/film for all8 ordinary/group Final settings. Independently calibrated half-safe digit carrier provides16 coordinate magnitudes,16 negative-sign witnesses and16 exact-grid residue witnesses, plus2 independent non-half controls. Preserved native operator inputs/body; no SDK kernel supplies these material pixels.",
     "browserFinal": "Built programs from actual saved Final publication install on actual GLTF meshes. Their installed colorNode is exposed as fragment output for channel acceptance; this is not general PBR/full-scene appearance proof. Source material/callback ownership, exact actual renderer baseline identities and physical resize/DPR are checked."
   },
-  "phase": {"maximumAbsoluteError":0.000003814697265625,"finiteRequired":true,"nativeExactZeroAndOneRemainExact":true},
-  "radius": {"maximumUlps":8,"maximumAbsoluteError":0.00000095367431640625,"bothRequired":true,"finiteRequired":true},
+  "phase": {
+    "maximumAbsoluteError": 3.814697265625e-06,
+    "finiteRequired": true,
+    "nativeExactZeroAndOneRemainExact": true
+  },
+  "radius": {
+    "maximumUlps": 8,
+    "maximumAbsoluteError": 9.5367431640625e-07,
+    "bothRequired": true,
+    "finiteRequired": true
+  },
   "exactControls": "Projected output Z0 and readback alpha1 require exact Float32 words. Input storage and independent carrier controls are exact. All112596 observed built raw/Final/resize words match the native F32 reference; actual EEVEE material stage is separately bounded, not relabelled bit-exact.",
   "predeclaredGateReference": "experiments/radial-regular-coordinates/contract.json; original phase2^-18 and radius8ULP AND2^-20 gates were retained without widening after research failures.",
-  "rendererAdmission": "Actual branded WebGL2 context must report vendor Google Inc. (Apple) and renderer ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version). A material payload or generic Apple/metal-3 claim cannot grant admission. Result-variable onRenderUpdate checks actual draw renderer without adding floating arithmetic.",
-  "preview": "Preview Studio defaults to WebGPU, which named-refuses because the measured device identity is privacy-redacted. Explicit ?backend=webgl2 is required for this M5 Pro route. No default-preview acceptance credit.",
+  "rendererAdmission": "For the nonzero path only: Actual branded WebGL2 context must report vendor Google Inc. (Apple) and renderer ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version). A material payload or generic Apple/metal-3 claim cannot grant admission. Result-variable onRenderUpdate checks actual draw renderer without adding floating arithmetic.",
+  "preview": "Nonzero coordinates require explicit ?backend=webgl2 on the measured M5 Pro; WebGPU named-refuses. Exact origin under explicit Sides3/8/12 and Roundness1 is separately portable across the four measured API/profiles. Native defaults Sides5/Roundness0 remain unsupported; no general default-preview scene acceptance.",
   "exclusions": "Images/fields, UV/Object/generated coordinates, arithmetic vectors, negative-zero/subnormal XY, computed/fractional/other Sides, other Roundness, scalar mean conversion, compositor Coordinates, other source builds/devices, WebGPU, software/unknown adapters, Segment ID/Rotation, arbitrary downstream composition and unchanged official Radial demo acceptance.",
   "runtimeResources": "No port-owned textures, render targets or pixel readback. Verification alone reads pixels; exact zero-or-one known16x16 renderer-owned DFG baseline identities are restored after install/dispose cycles.",
-  "oldWidthScopeUnchanged": true
+  "oldWidthScopeUnchanged": true,
+  "originRoute": "Six exact +0/+0 cases in the 410-case corpus now fold to existing const_vec3 and are independently qualified by experiments/radial-origin/evidence.json. The remaining404 nonzero source cases retain the M5 Pro WebGL-only route."
 }

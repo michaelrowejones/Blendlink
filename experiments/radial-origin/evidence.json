@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "status": "QUALIFIED_EXACT_RADIAL_ORIGIN_CONSTANT",
+  "directory": "artifacts/verification-next7-radial-origin-union",
+  "readerSha256": "8a24e2272f5a98d1b678bacf5008dafad340e4209e063f3d7968665a82394db5",
+  "sourceCases": 6,
+  "sourceRefusals": 8,
+  "gpuQueriesDuringEmission": 0,
+  "actualNativeMaterialSettings": 6,
+  "actualNativeMagnitudeSignResidueWitnesses": 36,
+  "independentCarrierControls": 2,
+  "savedFinals": 6,
+  "rawCaseRuns": 24,
+  "finalCaseRuns": 24,
+  "finalLifecycleCycles": 72,
+  "resizeFrames": 12,
+  "comparedWords": 30544,
+  "wordDifferences": 0,
+  "contractViolations": 0,
+  "profiles": [
+    {
+      "profile": "metal",
+      "backend": "webgpu",
+      "gpu": {
+        "api": "WebGPU",
+        "vendor": "apple",
+        "architecture": "metal-3",
+        "device": "",
+        "description": ""
+      },
+      "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959"
+    },
+    {
+      "profile": "metal",
+      "backend": "webgl2",
+      "gpu": {
+        "api": "WebGL2",
+        "vendor": "Google Inc. (Apple)",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+      },
+      "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959"
+    },
+    {
+      "profile": "software",
+      "backend": "webgpu",
+      "gpu": {
+        "api": "WebGPU",
+        "vendor": "google",
+        "architecture": "swiftshader",
+        "device": "",
+        "description": ""
+      },
+      "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959"
+    },
+    {
+      "profile": "software",
+      "backend": "webgl2",
+      "gpu": {
+        "api": "WebGL2",
+        "vendor": "Google Inc. (Google)",
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+      },
+      "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959"
+    }
+  ],
+  "archives": [
+    {
+      "pythonInvocations": 1,
+      "finalInvocations": 0,
+      "uniqueCachePrefixes": 1,
+      "numericalCredit": 0
+    },
+    {
+      "pythonInvocations": 7,
+      "finalInvocations": 6,
+      "uniqueCachePrefixes": 7,
+      "numericalCredit": 0
+    }
+  ],
+  "pins": {
+    "actual-material/capture/report.json": "f92b69a0183abfe095d7b15d1e474e89a9513e4956b89ccc135d1704fecf946a",
+    "actual-material/capture/atlas.exr": "82de7f9f018c64576b15b435a59e725e27bba2c7207427886e9f11f17f41a91e",
+    "actual-material/capture/packed.rgba32f": "016dfef5431e223d85df3ddab78eab5bea15f5a0e0795d0c5b19473ae6ca800b",
+    "actual-material/capture/decoded.f32": "eb4d900e205ab8613151208d0072a9b6eafd8726793265e4fc305309dcad9351",
+    "actual-material/capture/actual-native-controls.blend": "e22ac87aa896aa4faae956e246834ae200d92d404c34ca3a1cb15a5ee324bd44",
+    "actual-material/native-python-proof.json": "22f0acc46ecd2da19f0ea30cf087ebd0c50ba82d81c7b2e4e4acd7765337d25f",
+    "native-python-proof.json": "fa546ddc8b18599add5de7f64ddf1126ac6c621aaa663a872b8d5efbca5e22fc",
+    "browser-metal/report.json": "11f0c8665e5ad35ed54eba50e09683ededc1a9e30792f195fc1fa6c684d5cc2a",
+    "browser-software/report.json": "efaef039426047432a570b32f974d9ccdbf12d50f4e64b7773e849ec2cbca361",
+    "qualification.json": "10b14d41107e3791ffba095edf25a08952a0fff188a514db178878d24e14d300",
+    "final-proof.json": "5268531654253587246d7dfaa3147e33b1d713303ca67260101b179504c59a4f",
+    "plan.json": "736b8502992b99c816d80d39db7ef300bab2bebce4bc5aca972dfedfe966980f"
+  },
+  "scope": "Exact stored +0/+0 origin only; fixed Sides3/8/12, Roundness1, both Normalize; pinned5.3 EEVEE. Emits existing const_vec3 without Radial renderer requirement/kernel/uniforms.",
+  "limits": [
+    "Portable origin constant only; nonzero M5 Pro WebGL route remains hardware restricted.",
+    "Actual saved Final positive carrier is coordinate+(0,1,0); raw tuple is independently asserted before carrier construction.",
+    "Both actual APIs/profiles prove library/channel acceptance, not general default-preview or original-scene appearance."
+  ],
+  "generalDefaultPreviewAcceptance": false,
+  "originalDemoAcceptance": false
+}

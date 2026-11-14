@@ -48,15 +48,21 @@ not dependency resolution, actual shader compilation or numerical evidence.
 The complete source should contain ten functions. The combined-module probe
 emits only nine returning helpers, loses `node_tex_gabor`, and appends a stray
 `phasor.div( normalization_factor );` statement. **The isolated void/out wrapper
-parses correctly.** The cause is therefore not established as generic void/out
-syntax support; full-module traversal needs investigation. Calling parse/emit
-success a faithful translation would miss this failure.
+parses correctly.** The subsequent independent source census locates the retained
+BSL `[[node]]` annotation before that wrapper. The old alias-only adapter did
+not remove it, so its input was not fully adapted GLSL. Explicitly removing
+that one declaration annotation produces ten native and ten decoded functions.
+This corrects the earlier suspected traversal cause; generic void/out syntax
+was not the problem. Calling parse/emit success a faithful translation would
+have missed the incomplete BSL-to-GLSL ABI adaptation. Function census success
+still earns no numerical, dependency-closure or material credit.
 
-The highest-value tooling prerequisite is an exact native-to-AST function
-census, signatures, loop bounds and control-flow inventory before codegen.
-Reject missing/extra functions and unexpected top-level executable statements.
-Keep the existing mutable-local materialization pass for accumulators and
-separately prove Continue behavior and nested-loop counts. Radial's current
+The source-only `scripts/lib/glsl-source-census.mjs` gate now checks exact
+native-to-AST function signatures and top-level declarations before codegen.
+It rejects missing/extra functions and unexpected top-level executable statements.
+Function-body loop bounds and control-flow inventory remain separate future
+checks. Keep the existing mutable-local materialization pass for accumulators
+and separately prove Continue behavior and nested-loop counts. Radial's current
 exhaustive-tail adapter refuses non-tail early returns, which the3D orientation
 helper contains. Include/attribute/reference adaptation, overload/dependency
 closure and single-output lowering of the three out parameters are additional

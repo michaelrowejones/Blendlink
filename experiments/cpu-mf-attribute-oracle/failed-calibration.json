@@ -1,0 +1,1231 @@
+{
+  "model": "blender53-private-geometry-cpu-mf-attribute-v1",
+  "stage": "Private Geometry Nodes CPU-MF attribute readback; not compositor execution, EEVEE, GPU kernel or scene proof",
+  "version": [
+    5,
+    3,
+    0
+  ],
+  "build": "02f0899d78e3",
+  "gpuInitializedByProbe": false,
+  "renders": 0,
+  "bakes": 0,
+  "nodePortCredit": 0,
+  "sourceOwnershipRestored": true,
+  "ownershipSnapshotSha256": "770173ae039ed7adc0681dbfded78e25b317b9013da0d9839eb56e199a35ddcf",
+  "timing": {
+    "buildMilliseconds": 5.816832999698818,
+    "evaluateMilliseconds": 0.8322079665958881,
+    "readMilliseconds": 0.08441699901595712,
+    "cleanupMilliseconds": 0.1790410024113953
+  },
+  "rows": [
+    {
+      "case": "int--2147483648",
+      "kind": "int",
+      "attributeType": "INT",
+      "socketType": "INT",
+      "domain": "POINT",
+      "width": 1,
+      "values": [
+        -2147483648
+      ],
+      "words": [
+        2147483648
+      ],
+      "expected": [
+        -2147483648
+      ],
+      "matches": true,
+      "actualInputs": [
+        {
+          "type": "INT",
+          "value": -2147483648
+        }
+      ],
+      "nativeClasses": [
+        "FunctionNodeInputInt"
+      ]
+    },
+    {
+      "case": "int-2147483647",
+      "kind": "int",
+      "attributeType": "INT",
+      "socketType": "INT",
+      "domain": "POINT",
+      "width": 1,
+      "values": [
+        2147483647
+      ],
+      "words": [
+        2147483647
+      ],
+      "expected": [
+        2147483647
+      ],
+      "matches": true,
+      "actualInputs": [
+        {
+          "type": "INT",
+          "value": 2147483647
+        }
+      ],
+      "nativeClasses": [
+        "FunctionNodeInputInt"
+      ]
+    },
+    {
+      "case": "int-2049",
+      "kind": "int",
+      "attributeType": "INT",
+      "socketType": "INT",
+      "domain": "POINT",
+      "width": 1,
+      "values": [
+        2049
+      ],
+      "words": [
+        2049
+      ],
+      "expected": [
+        2049
+      ],
+      "matches": true,
+      "actualInputs": [
+        {
+          "type": "INT",
+          "value": 2049
+        }
+      ],
+      "nativeClasses": [
+        "FunctionNodeInputInt"
+      ]
+    },
+    {
+      "case": "float-ordinary",
+      "kind": "float",
+      "attributeType": "FLOAT",
+      "socketType": "VALUE",
+      "domain": "POINT",
+      "width": 1,
+      "values": [
+        0.10000000149011612
+      ],
+      "words": [
+        1036831949
+      ],
+      "expected": [
+        1036831949
+      ],
+      "matches": true,
+      "actualInputs": [
+        {
+          "type": "VALUE",
+          "word": 1036831949,
+          "requestedWord": 1036831949
+        }
+      ],
+      "nativeClasses": [
+        "ShaderNodeValue"
+      ]
+    },
+    {
+      "case": "float-third",
+      "kind": "float",
+      "attributeType": "FLOAT",
+      "socketType": "VALUE",
+      "domain": "POINT",
+      "width": 1,
+      "values": [
+        0.3333333432674408
+      ],
+      "words": [
+        1051372203
+      ],
+      "expected": [
+        1051372203
+      ],
+      "matches": true,
+      "actualInputs": [
+        {
+          "type": "VALUE",
+          "word": 1051372203,
+          "requestedWord": 1051372203
+        }
+      ],
+      "nativeClasses": [
+        "ShaderNodeValue"
+      ]
+    },
+    {
+      "case": "float-half-film-loss",
+      "kind": "float",
+      "attributeType": "FLOAT",
+      "socketType": "VALUE",
+      "domain": "POINT",
+      "width": 1,
+      "values": [
+        2016.125
+      ],
+      "words": [
+        1157366784
+      ],
+      "expected": [
+        1157366784
+      ],
+      "matches": true,
+      "actualInputs": [
+        {
+          "type": "VALUE",
+          "word": 1157366784,
+          "requestedWord": 1157366784
+        }
+      ],
+      "nativeClasses": [
+        "ShaderNodeValue"
+      ]
+    },
+    {
+      "case": "float-odd-hdr",
+      "kind": "float",
+      "attributeType": "FLOAT",
+      "socketType": "VALUE",
+      "domain": "POINT",
+      "width": 1,
+      "values": [
+        2049.0
+      ],
+      "words": [
+        1157632000
+      ],
+      "expected": [
+        1157632000
+      ],
+      "matches": true,
+      "actualInputs": [
+        {
+          "type": "VALUE",
+          "word": 1157632000,
+          "requestedWord": 1157632000
+        }
+      ],
+      "nativeClasses": [
+        "ShaderNodeValue"
+      ]
+    },
+    {
+      "case": "float-negative-zero",
+      "kind": "float",
+      "attributeType": "FLOAT",
+      "socketType": "VALUE",
+      "domain": "POINT",
+      "width": 1,
+      "values": [
+        0.0
+      ],
+      "words": [
+        0
+      ],
+      "expected": [
+        2147483648
+      ],
+      "matches": false,
+      "actualInputs": [
+        {
+          "type": "VALUE",
+          "word": 2147483648,
+          "requestedWord": 2147483648
+        }
+      ],
+      "nativeClasses": [
+        "ShaderNodeValue"
+      ]
+    },
+    {
+      "case": "float-subnormal-min",
+      "kind": "float",
+      "attributeType": "FLOAT",
+      "socketType": "VALUE",
+      "domain": "POINT",
+      "width": 1,
+      "values": [
+        0.0
+      ],
+      "words": [
+        0
+      ],
+      "expected": [
+        1
+      ],
+      "matches": false,
+      "actualInputs": [
+        {
+          "type": "VALUE",
+          "word": 0,
+          "requestedWord": 1
+        }
+      ],
+      "nativeClasses": [
+        "ShaderNodeValue"
+      ]
+    },
+    {
+      "case": "float-subnormal-max",
+      "kind": "float",
+      "attributeType": "FLOAT",
+      "socketType": "VALUE",
+      "domain": "POINT",
+      "width": 1,
+      "values": [
+        0.0
+      ],
+      "words": [
+        0
+      ],
+      "expected": [
+        8388607
+      ],
+      "matches": false,
+      "actualInputs": [
+        {
+          "type": "VALUE",
+          "word": 0,
+          "requestedWord": 8388607
+        }
+      ],
+      "nativeClasses": [
+        "ShaderNodeValue"
+      ]
+    },
+    {
+      "case": "float-normal-min",
+      "kind": "float",
+      "attributeType": "FLOAT",
+      "socketType": "VALUE",
+      "domain": "POINT",
+      "width": 1,
+      "values": [
+        1.1754943508222875e-38
+      ],
+      "words": [
+        8388608
+      ],
+      "expected": [
+        8388608
+      ],
+      "matches": true,
+      "actualInputs": [
+        {
+          "type": "VALUE",
+          "word": 8388608,
+          "requestedWord": 8388608
+        }
+      ],
+      "nativeClasses": [
+        "ShaderNodeValue"
+      ]
+    },
+    {
+      "case": "parse-min-Value",
+      "kind": "parse",
+      "attributeType": "INT",
+      "socketType": "INT",
+      "domain": "POINT",
+      "width": 1,
+      "values": [
+        -2147483648
+      ],
+      "words": [
+        2147483648
+      ],
+      "expected": [
+        -2147483648
+      ],
+      "matches": true,
+      "actualInputs": [
+        {
+          "type": "INT",
+          "value": 10
+        },
+        {
+          "type": "STRING",
+          "value": "-2147483648"
+        }
+      ],
+      "nativeClasses": [
+        "FunctionNodeStringToValue",
+        "FunctionNodeInputInt"
+      ]
+    },
+    {
+      "case": "parse-min-Length",
+      "kind": "parse",
+      "attributeType": "INT",
+      "socketType": "INT",
+      "domain": "POINT",
+      "width": 1,
+      "values": [
+        11
+      ],
+      "words": [
+        11
+      ],
+      "expected": [
+        11
+      ],
+      "matches": true,
+      "actualInputs": [
+        {
+          "type": "INT",
+          "value": 10
+        },
+        {
+          "type": "STRING",
+          "value": "-2147483648"
+        }
+      ],
+      "nativeClasses": [
+        "FunctionNodeStringToValue",
+        "FunctionNodeInputInt"
+      ]
+    },
+    {
+      "case": "parse-max-Value",
+      "kind": "parse",
+      "attributeType": "INT",
+      "socketType": "INT",
+      "domain": "POINT",
+      "width": 1,
+      "values": [
+        2147483647
+      ],
+      "words": [
+        2147483647
+      ],
+      "expected": [
+        2147483647
+      ],
+      "matches": true,
+      "actualInputs": [
+        {
+          "type": "INT",
+          "value": 10
+        },
+        {
+          "type": "STRING",
+          "value": "2147483647"
+        }
+      ],
+      "nativeClasses": [
+        "FunctionNodeStringToValue",
+        "FunctionNodeInputInt"
+      ]
+    },
+    {
+      "case": "parse-max-Length",
+      "kind": "parse",
+      "attributeType": "INT",
+      "socketType": "INT",
+      "domain": "POINT",
+      "width": 1,
+      "values": [
+        10
+      ],
+      "words": [
+        10
+      ],
+      "expected": [
+        10
+      ],
+      "matches": true,
+      "actualInputs": [
+        {
+          "type": "INT",
+          "value": 10
+        },
+        {
+          "type": "STRING",
+          "value": "2147483647"
+        }
+      ],
+      "nativeClasses": [
+        "FunctionNodeStringToValue",
+        "FunctionNodeInputInt"
+      ]
+    },
+    {
+      "case": "parse-hex-min-Value",
+      "kind": "parse",
+      "attributeType": "INT",
+      "socketType": "INT",
+      "domain": "POINT",
+      "width": 1,
+      "values": [
+        -2147483648
+      ],
+      "words": [
+        2147483648
+      ],
+      "expected": [
+        -2147483648
+      ],
+      "matches": true,
+      "actualInputs": [
+        {
+          "type": "INT",
+          "value": 16
+        },
+        {
+          "type": "STRING",
+          "value": "-80000000\ud83d\ude42"
+        }
+      ],
+      "nativeClasses": [
+        "FunctionNodeStringToValue",
+        "FunctionNodeInputInt"
+      ]
+    },
+    {
+      "case": "parse-hex-min-Length",
+      "kind": "parse",
+      "attributeType": "INT",
+      "socketType": "INT",
+      "domain": "POINT",
+      "width": 1,
+      "values": [
+        9
+      ],
+      "words": [
+        9
+      ],
+      "expected": [
+        9
+      ],
+      "matches": true,
+      "actualInputs": [
+        {
+          "type": "INT",
+          "value": 16
+        },
+        {
+          "type": "STRING",
+          "value": "-80000000\ud83d\ude42"
+        }
+      ],
+      "nativeClasses": [
+        "FunctionNodeStringToValue",
+        "FunctionNodeInputInt"
+      ]
+    },
+    {
+      "case": "parse-overflow-Value",
+      "kind": "parse",
+      "attributeType": "INT",
+      "socketType": "INT",
+      "domain": "POINT",
+      "width": 1,
+      "values": [
+        0
+      ],
+      "words": [
+        0
+      ],
+      "expected": [
+        0
+      ],
+      "matches": true,
+      "actualInputs": [
+        {
+          "type": "INT",
+          "value": 10
+        },
+        {
+          "type": "STRING",
+          "value": "2147483648"
+        }
+      ],
+      "nativeClasses": [
+        "FunctionNodeStringToValue",
+        "FunctionNodeInputInt"
+      ]
+    },
+    {
+      "case": "parse-overflow-Length",
+      "kind": "parse",
+      "attributeType": "INT",
+      "socketType": "INT",
+      "domain": "POINT",
+      "width": 1,
+      "values": [
+        0
+      ],
+      "words": [
+        0
+      ],
+      "expected": [
+        0
+      ],
+      "matches": true,
+      "actualInputs": [
+        {
+          "type": "INT",
+          "value": 10
+        },
+        {
+          "type": "STRING",
+          "value": "2147483648"
+        }
+      ],
+      "nativeClasses": [
+        "FunctionNodeStringToValue",
+        "FunctionNodeInputInt"
+      ]
+    },
+    {
+      "case": "matrix",
+      "kind": "matrix",
+      "attributeType": "FLOAT4X4",
+      "socketType": "MATRIX",
+      "domain": "POINT",
+      "width": 16,
+      "values": [
+        0.0625,
+        0.125,
+        0.1875,
+        0.25,
+        0.3125,
+        0.375,
+        0.4375,
+        0.5,
+        0.5625,
+        0.625,
+        0.6875,
+        0.75,
+        0.8125,
+        0.875,
+        0.9375,
+        1.0
+      ],
+      "words": [
+        1031798784,
+        1040187392,
+        1044381696,
+        1048576000,
+        1050673152,
+        1052770304,
+        1054867456,
+        1056964608,
+        1058013184,
+        1059061760,
+        1060110336,
+        1061158912,
+        1062207488,
+        1063256064,
+        1064304640,
+        1065353216
+      ],
+      "expected": [
+        1031798784,
+        1040187392,
+        1044381696,
+        1048576000,
+        1050673152,
+        1052770304,
+        1054867456,
+        1056964608,
+        1058013184,
+        1059061760,
+        1060110336,
+        1061158912,
+        1062207488,
+        1063256064,
+        1064304640,
+        1065353216
+      ],
+      "matches": true,
+      "actualInputs": [
+        {
+          "type": "VALUE",
+          "word": 1031798784,
+          "requestedWord": 1031798784
+        },
+        {
+          "type": "VALUE",
+          "word": 1040187392,
+          "requestedWord": 1040187392
+        },
+        {
+          "type": "VALUE",
+          "word": 1044381696,
+          "requestedWord": 1044381696
+        },
+        {
+          "type": "VALUE",
+          "word": 1048576000,
+          "requestedWord": 1048576000
+        },
+        {
+          "type": "VALUE",
+          "word": 1050673152,
+          "requestedWord": 1050673152
+        },
+        {
+          "type": "VALUE",
+          "word": 1052770304,
+          "requestedWord": 1052770304
+        },
+        {
+          "type": "VALUE",
+          "word": 1054867456,
+          "requestedWord": 1054867456
+        },
+        {
+          "type": "VALUE",
+          "word": 1056964608,
+          "requestedWord": 1056964608
+        },
+        {
+          "type": "VALUE",
+          "word": 1058013184,
+          "requestedWord": 1058013184
+        },
+        {
+          "type": "VALUE",
+          "word": 1059061760,
+          "requestedWord": 1059061760
+        },
+        {
+          "type": "VALUE",
+          "word": 1060110336,
+          "requestedWord": 1060110336
+        },
+        {
+          "type": "VALUE",
+          "word": 1061158912,
+          "requestedWord": 1061158912
+        },
+        {
+          "type": "VALUE",
+          "word": 1062207488,
+          "requestedWord": 1062207488
+        },
+        {
+          "type": "VALUE",
+          "word": 1063256064,
+          "requestedWord": 1063256064
+        },
+        {
+          "type": "VALUE",
+          "word": 1064304640,
+          "requestedWord": 1064304640
+        },
+        {
+          "type": "VALUE",
+          "word": 1065353216,
+          "requestedWord": 1065353216
+        }
+      ],
+      "nativeClasses": [
+        "FunctionNodeCombineMatrix"
+      ]
+    },
+    {
+      "case": "matrix-multiply",
+      "kind": "matrix-multiply",
+      "attributeType": "FLOAT4X4",
+      "socketType": "MATRIX",
+      "domain": "POINT",
+      "width": 16,
+      "values": [
+        0.0625,
+        0.125,
+        0.1875,
+        0.25,
+        0.3125,
+        0.375,
+        0.4375,
+        0.5,
+        0.5625,
+        0.625,
+        0.6875,
+        0.75,
+        0.8125,
+        0.875,
+        0.9375,
+        1.0
+      ],
+      "words": [
+        1031798784,
+        1040187392,
+        1044381696,
+        1048576000,
+        1050673152,
+        1052770304,
+        1054867456,
+        1056964608,
+        1058013184,
+        1059061760,
+        1060110336,
+        1061158912,
+        1062207488,
+        1063256064,
+        1064304640,
+        1065353216
+      ],
+      "expected": [
+        1031798784,
+        1040187392,
+        1044381696,
+        1048576000,
+        1050673152,
+        1052770304,
+        1054867456,
+        1056964608,
+        1058013184,
+        1059061760,
+        1060110336,
+        1061158912,
+        1062207488,
+        1063256064,
+        1064304640,
+        1065353216
+      ],
+      "matches": true,
+      "actualInputs": [
+        {
+          "type": "VALUE",
+          "word": 1031798784,
+          "requestedWord": 1031798784
+        },
+        {
+          "type": "VALUE",
+          "word": 1040187392,
+          "requestedWord": 1040187392
+        },
+        {
+          "type": "VALUE",
+          "word": 1044381696,
+          "requestedWord": 1044381696
+        },
+        {
+          "type": "VALUE",
+          "word": 1048576000,
+          "requestedWord": 1048576000
+        },
+        {
+          "type": "VALUE",
+          "word": 1050673152,
+          "requestedWord": 1050673152
+        },
+        {
+          "type": "VALUE",
+          "word": 1052770304,
+          "requestedWord": 1052770304
+        },
+        {
+          "type": "VALUE",
+          "word": 1054867456,
+          "requestedWord": 1054867456
+        },
+        {
+          "type": "VALUE",
+          "word": 1056964608,
+          "requestedWord": 1056964608
+        },
+        {
+          "type": "VALUE",
+          "word": 1058013184,
+          "requestedWord": 1058013184
+        },
+        {
+          "type": "VALUE",
+          "word": 1059061760,
+          "requestedWord": 1059061760
+        },
+        {
+          "type": "VALUE",
+          "word": 1060110336,
+          "requestedWord": 1060110336
+        },
+        {
+          "type": "VALUE",
+          "word": 1061158912,
+          "requestedWord": 1061158912
+        },
+        {
+          "type": "VALUE",
+          "word": 1062207488,
+          "requestedWord": 1062207488
+        },
+        {
+          "type": "VALUE",
+          "word": 1063256064,
+          "requestedWord": 1063256064
+        },
+        {
+          "type": "VALUE",
+          "word": 1064304640,
+          "requestedWord": 1064304640
+        },
+        {
+          "type": "VALUE",
+          "word": 1065353216,
+          "requestedWord": 1065353216
+        },
+        {
+          "type": "VALUE",
+          "word": 1065353216,
+          "requestedWord": 1065353216
+        },
+        {
+          "type": "VALUE",
+          "word": 0,
+          "requestedWord": 0
+        },
+        {
+          "type": "VALUE",
+          "word": 0,
+          "requestedWord": 0
+        },
+        {
+          "type": "VALUE",
+          "word": 0,
+          "requestedWord": 0
+        },
+        {
+          "type": "VALUE",
+          "word": 0,
+          "requestedWord": 0
+        },
+        {
+          "type": "VALUE",
+          "word": 1065353216,
+          "requestedWord": 1065353216
+        },
+        {
+          "type": "VALUE",
+          "word": 0,
+          "requestedWord": 0
+        },
+        {
+          "type": "VALUE",
+          "word": 0,
+          "requestedWord": 0
+        },
+        {
+          "type": "VALUE",
+          "word": 0,
+          "requestedWord": 0
+        },
+        {
+          "type": "VALUE",
+          "word": 0,
+          "requestedWord": 0
+        },
+        {
+          "type": "VALUE",
+          "word": 1065353216,
+          "requestedWord": 1065353216
+        },
+        {
+          "type": "VALUE",
+          "word": 0,
+          "requestedWord": 0
+        },
+        {
+          "type": "VALUE",
+          "word": 0,
+          "requestedWord": 0
+        },
+        {
+          "type": "VALUE",
+          "word": 0,
+          "requestedWord": 0
+        },
+        {
+          "type": "VALUE",
+          "word": 0,
+          "requestedWord": 0
+        },
+        {
+          "type": "VALUE",
+          "word": 1065353216,
+          "requestedWord": 1065353216
+        }
+      ],
+      "nativeClasses": [
+        "FunctionNodeCombineMatrix",
+        "FunctionNodeCombineMatrix",
+        "FunctionNodeMatrixMultiply"
+      ]
+    },
+    {
+      "case": "quaternion-identity",
+      "kind": "quaternion",
+      "attributeType": "QUATERNION",
+      "socketType": "ROTATION",
+      "domain": "POINT",
+      "width": 4,
+      "values": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "words": [
+        1065353216,
+        0,
+        0,
+        0
+      ],
+      "expected": [
+        1065353216,
+        0,
+        0,
+        0
+      ],
+      "matches": true,
+      "actualInputs": [
+        {
+          "type": "VALUE",
+          "word": 1065353216,
+          "requestedWord": 1065353216
+        },
+        {
+          "type": "VALUE",
+          "word": 0,
+          "requestedWord": 0
+        },
+        {
+          "type": "VALUE",
+          "word": 0,
+          "requestedWord": 0
+        },
+        {
+          "type": "VALUE",
+          "word": 0,
+          "requestedWord": 0
+        }
+      ],
+      "nativeClasses": [
+        "FunctionNodeQuaternionToRotation"
+      ]
+    },
+    {
+      "case": "quaternion-x",
+      "kind": "quaternion",
+      "attributeType": "QUATERNION",
+      "socketType": "ROTATION",
+      "domain": "POINT",
+      "width": 4,
+      "values": [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "words": [
+        0,
+        1065353216,
+        0,
+        0
+      ],
+      "expected": [
+        0,
+        1065353216,
+        0,
+        0
+      ],
+      "matches": true,
+      "actualInputs": [
+        {
+          "type": "VALUE",
+          "word": 0,
+          "requestedWord": 0
+        },
+        {
+          "type": "VALUE",
+          "word": 1065353216,
+          "requestedWord": 1065353216
+        },
+        {
+          "type": "VALUE",
+          "word": 0,
+          "requestedWord": 0
+        },
+        {
+          "type": "VALUE",
+          "word": 0,
+          "requestedWord": 0
+        }
+      ],
+      "nativeClasses": [
+        "FunctionNodeQuaternionToRotation"
+      ]
+    },
+    {
+      "case": "quaternion-y",
+      "kind": "quaternion",
+      "attributeType": "QUATERNION",
+      "socketType": "ROTATION",
+      "domain": "POINT",
+      "width": 4,
+      "values": [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      "words": [
+        0,
+        0,
+        1065353216,
+        0
+      ],
+      "expected": [
+        0,
+        0,
+        1065353216,
+        0
+      ],
+      "matches": true,
+      "actualInputs": [
+        {
+          "type": "VALUE",
+          "word": 0,
+          "requestedWord": 0
+        },
+        {
+          "type": "VALUE",
+          "word": 0,
+          "requestedWord": 0
+        },
+        {
+          "type": "VALUE",
+          "word": 1065353216,
+          "requestedWord": 1065353216
+        },
+        {
+          "type": "VALUE",
+          "word": 0,
+          "requestedWord": 0
+        }
+      ],
+      "nativeClasses": [
+        "FunctionNodeQuaternionToRotation"
+      ]
+    },
+    {
+      "case": "quaternion-z",
+      "kind": "quaternion",
+      "attributeType": "QUATERNION",
+      "socketType": "ROTATION",
+      "domain": "POINT",
+      "width": 4,
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "words": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "expected": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "matches": true,
+      "actualInputs": [
+        {
+          "type": "VALUE",
+          "word": 0,
+          "requestedWord": 0
+        },
+        {
+          "type": "VALUE",
+          "word": 0,
+          "requestedWord": 0
+        },
+        {
+          "type": "VALUE",
+          "word": 0,
+          "requestedWord": 0
+        },
+        {
+          "type": "VALUE",
+          "word": 1065353216,
+          "requestedWord": 1065353216
+        }
+      ],
+      "nativeClasses": [
+        "FunctionNodeQuaternionToRotation"
+      ]
+    },
+    {
+      "case": "quaternion-negative-w",
+      "kind": "quaternion",
+      "attributeType": "QUATERNION",
+      "socketType": "ROTATION",
+      "domain": "POINT",
+      "width": 4,
+      "values": [
+        -1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "words": [
+        3212836864,
+        0,
+        0,
+        0
+      ],
+      "expected": [
+        3212836864,
+        0,
+        0,
+        0
+      ],
+      "matches": true,
+      "actualInputs": [
+        {
+          "type": "VALUE",
+          "word": 3212836864,
+          "requestedWord": 3212836864
+        },
+        {
+          "type": "VALUE",
+          "word": 0,
+          "requestedWord": 0
+        },
+        {
+          "type": "VALUE",
+          "word": 0,
+          "requestedWord": 0
+        },
+        {
+          "type": "VALUE",
+          "word": 0,
+          "requestedWord": 0
+        }
+      ],
+      "nativeClasses": [
+        "FunctionNodeQuaternionToRotation"
+      ]
+    }
+  ],
+  "wordOrIntegerMismatches": 3,
+  "status": "CPU_MF_ATTRIBUTE_PROTOTYPE_RESEARCH_FAILURE",
+  "sourceHashes": {
+    "oracle.py": "c21bc1f0a40f59b48e6b0e873cff373f8cb9386fd0ba403d2b799f69f6aab322",
+    "probe.py": "73c2706be5755100e8c550faa30cc5638a17e31b8ad2122ce5bb7b3edb3ed02f",
+    "sources.json": "97b5a01e3093c2b6b03415860c97cffe4e92b2377822dc34c67f41b6f1ae9303"
+  },
+  "elapsedMilliseconds": 7.2529169847257435
+}

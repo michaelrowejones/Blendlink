@@ -1,0 +1,8 @@
+import assert from'node:assert/strict'
+export const browserProofContract=Object.freeze({schemaVersion:1,family:'radial-origin',nativeStatus:'native-radial-origin-qualified',finalStatus:'actual-final-radial-origin-published',browserStatus:'built-radial-origin-browser-passed'})
+const routes=['literal','group2','reroute','literal','group2-reroute','literal']
+export const expectedOriginCases=()=>[3,8,12].flatMap(sides=>[false,true].map(normalize=>({case:'origin-'+sides+'-'+Number(normalize),sides,roundness:1,normalize,xy:[0,0],route:routes[[3,8,12].indexOf(sides)*2+Number(normalize)],finalCase:'origin-'+sides+'-'+Number(normalize),sourceFile:'origin-'+sides+'-'+Number(normalize)+'.blend',rawTuple:normalize?[.5,0,0]:[0,-1,0],carrierTuple:normalize?[.5,1,0]:[0,0,0]})))
+export const words=tuple=>Array.from(new Uint32Array(new Float32Array([...tuple,1]).buffer))
+export function assertOriginNative(value){assert.equal(value.status,browserProofContract.nativeStatus);assert.equal(value.gpuCallsDuringEmission,0);assert.deepEqual(value.cases.map(row=>row.case),expectedOriginCases().map(row=>row.case));for(const[row,spec]of value.cases.map((row,i)=>[row,expectedOriginCases()[i]])){assert.deepEqual(row.rawTuple,spec.rawTuple);assert.deepEqual(row.expectedWords,words(spec.rawTuple));assert.deepEqual(row.carrierWords,words(spec.carrierTuple));assert.equal(row.route,spec.route)}assert.equal(value.refusals.length,8);return value}
+
+export function assertOriginFinal(value,native){assert.equal(value.status,browserProofContract.finalStatus);assert.equal(value.exporter,'built');assert.equal(value.sourcePreserved,true);assert.deepEqual(value.rows.map(row=>row.case),native.cases.map(row=>row.case));return value}
