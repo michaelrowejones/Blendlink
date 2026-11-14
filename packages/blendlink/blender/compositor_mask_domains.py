@@ -46,7 +46,7 @@ def validate_mask_domains(result, native_class):
     if len(masks) > limit:return masks[0],label+' exceeds its static mask node budget'
     if masks and kind == 'ellipse-mask':
         if ellipse_table_count(result['ops']) > 1:return masks[0],'Ellipse Mask varying row texture budget permits at most one table'
-        if any(op['kind'] not in ELLIPSE_POINTWISE and not (op['kind']=='white-noise-texture' and op.get('properties',{}).get('white_noise_model')=='native-compositor-white-noise-uniform-cpu-53-v1') for op in result['ops']) and ellipse_scene_mix_contract(result) is None:return masks[0],'Ellipse Mask requires closed texture-free pointwise composition; other sampler/domain producers remain unqualified'
+        if any(op['kind'] not in ELLIPSE_POINTWISE and not (op['kind']=='wave-texture' and op.get('properties',{}).get('wave_axis_model')=='native-compositor-wave-axis-cpu-53-v1' or op['kind']=='white-noise-texture' and op.get('properties',{}).get('white_noise_model')=='native-compositor-white-noise-uniform-cpu-53-v1') for op in result['ops']) and ellipse_scene_mix_contract(result) is None:return masks[0],'Ellipse Mask requires closed texture-free pointwise composition; other sampler/domain producers remain unqualified'
     elif masks and any(op['kind'] in SPATIAL for op in result['ops']):
         return masks[0],label+' currently requires full-frame pointwise consumers; spatial/domain transformations remain unqualified'
     return None
@@ -56,10 +56,12 @@ def validate_mask_presentation(presentation):
     masks = [op for op in ops if op.get('kind') == 'ellipse-mask']
     scene_mix = ellipse_scene_mix_contract(graph) or box_scene_mix_contract(graph)
     white_fields=[op for op in ops if op.get('properties',{}).get('white_noise_model')=='native-compositor-white-noise-uniform-cpu-53-v1']
-    if not masks and scene_mix is None and not white_fields:return None
-    if not masks:masks=[white_fields[0] if white_fields else scene_mix['mask']]
+    wave_fields=[op for op in ops if op['kind']=='wave-texture']
+    if not masks and scene_mix is None and not white_fields and not wave_fields:return None
+    if not masks:masks=[white_fields[0] if white_fields else wave_fields[0] if wave_fields else scene_mix['mask']]
     display = presentation.get('display') or {}
     lookups = sum(op.get('type') in DISPLAY_LOOKUPS for op in display.get('ops',[]))
-    if ellipse_table_count(ops)+lookups+(1 if scene_mix else 0)+(1 if white_fields else 0) > 8:
-        return masks[0],('White Noise' if white_fields else 'Static mask')+' combined axis/row/frame/display lookup budget is eight sampled textures'
+    wave_keys={(op['properties']['wave_axis_direction'],op['properties']['wave_axis_wave_profile'],tuple(op['properties']['wave_axis_parameter_words'][:2])) for op in wave_fields}
+    if len(wave_keys)+ellipse_table_count(ops)+lookups+(1 if scene_mix else 0)+(1 if white_fields else 0) > 8:
+        return masks[0],('Wave axis' if wave_fields else 'White Noise' if white_fields else 'Static mask')+' combined axis/row/frame/display lookup budget is eight sampled textures'
     return None

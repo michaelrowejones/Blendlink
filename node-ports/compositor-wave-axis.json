@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 1,
+  "id": "compositor-wave-axis",
+  "nativeNode": "ShaderNodeTexWave",
+  "domain": "compositor",
+  "lifecycle": "production",
+  "scope": "Candidate bounded Blender 5.3 macOS arm64 CPU compositor Wave Bands X/Y SAW/TRI Fac/Color. Own unlinked Uniform Vector, raw Float32 Scale/Phase positive zero or magnitude [2^-16,8], positive-zero Distortion and unlinked unused Detail inputs. Physical full-frame square-pixel extents 4 through 8192, closed pointwise/sampler budget. One cached exact factor row per key; no SIN, linked inputs, native GPU/EEVEE or image/spatial producer credit. Automatic execution grants bounded qualification only after the authoritative native/Final/browser reader closes; category promotion remains separate review.",
+  "upstream": {
+    "direct": [
+      "source/blender/nodes/shader/nodes/node_shader_tex_wave.cc",
+      "source/blender/gpu/shaders/material/gpu_shader_material_tex_wave.bsl.hh"
+    ],
+    "shared": [
+      "source/blender/compositor/intern/node_tree_evaluator.cc",
+      "source/blender/compositor/intern/compile_state.cc",
+      "source/blender/compositor/intern/compile_state.hh",
+      "source/blender/compositor/intern/operation.cc",
+      "source/blender/compositor/intern/multi_function_procedure_operation.cc",
+      "source/blender/nodes/intern/node_multi_function.cc",
+      "source/blender/nodes/NOD_multi_function.hh",
+      "source/blender/makesrna/intern/rna_nodetree.cc",
+      "source/blender/nodes/NOD_static_types.h",
+      "source/blender/blenlib/BLI_noise.hh",
+      "source/blender/blenlib/BLI_hash.hh",
+      "source/blender/compositor/intern/implicit_input_operation.cc",
+      "source/blender/compositor/intern/utilities.cc",
+      "source/blender/compositor/cached_resources/intern/image_coordinates.cc",
+      "source/blender/compositor/intern/domain.cc",
+      "source/blender/render/intern/compositor.cc",
+      "source/blender/blenkernel/intern/type_conversions.cc",
+      "source/blender/nodes/composite/nodes/node_composite_image_coordinates.cc",
+      "source/blender/compositor/shaders/compositor_image_coordinates_uniform.glsl",
+      "source/blender/nodes/shader/nodes/node_shader_tex_white_noise.cc",
+      "source/blender/blenlib/intern/noise.cc"
+    ]
+  },
+  "inputs": {
+    "native": [
+      "packages/blender-addon/*.py",
+      "packages/blender-addon/*.json",
+      "packages/blendlink/blender/**/*.py",
+      "experiments/compositor-wave-axis/*.py",
+      "experiments/compositor-white-noise/hash_reference.py",
+      "packages/blender-addon/tests/compositor_reference.py",
+      "packages/blender-addon/tests/compositor_wave_axis_check.py"
+    ],
+    "runtime": [
+      "packages/blendlink/src/**/*.ts"
+    ],
+    "sdk": [
+      "package.json",
+      "package-lock.json",
+      "packages/blendlink/package.json",
+      "packages/blendlink/tsconfig.json",
+      "packages/blendlink/scripts/*.mjs",
+      "scripts/test-node-port.mjs",
+      "scripts/run-node-port-family.mjs",
+      "scripts/lib/node-port-contract.mjs",
+      "scripts/lib/node-port-evidence.mjs",
+      "scripts/lib/node-port-family-evidence.mjs",
+      "scripts/lib/node-port-python.mjs",
+      "scripts/node-port-blender.mjs",
+      "scripts/lib/native-proof-archive.mjs",
+      "scripts/lib/runtime-provenance.mjs",
+      "scripts/lib/runtime-proof-archive.mjs",
+      "scripts/lib/runtime-compiler-trace.mjs",
+      "scripts/lib/runtime-transaction-snapshot.mjs",
+      "scripts/lib/browser-proof-contract.mjs"
+    ],
+    "tests": [
+      "experiments/compositor-wave-axis/*.mjs",
+      "experiments/compositor-wave-axis/*.ts",
+      "experiments/compositor-wave-axis/*.js",
+      "experiments/compositor-wave-axis/*.html",
+      "experiments/compositor-wave-axis/cases.json",
+      "experiments/compositor-wave-axis/sources.json",
+      "experiments/compositor-wave-axis/native-row-goldens.json",
+      "experiments/compositor-white-noise/protocol.mjs",
+      "experiments/compositor-white-noise/cases.json",
+      "scripts/lib/node-port-family-evidence.test.mjs",
+      "scripts/lib/node-port-contract.test.mjs",
+      "scripts/lib/node-port-python.*",
+      "scripts/lib/node-port-evidence*",
+      "scripts/lib/browser-proof-contract.test.mjs",
+      "node-ports/compositor-wave-axis.json"
+    ]
+  },
+  "commands": {
+    "build": [
+      {
+        "id": "clean",
+        "argv": [
+          "{node}",
+          "packages/blendlink/scripts/clean-dist.mjs"
+        ],
+        "timeoutMs": 60000
+      },
+      {
+        "id": "typescript",
+        "argv": [
+          "{node}",
+          "node_modules/typescript/bin/tsc",
+          "-p",
+          "packages/blendlink/tsconfig.json"
+        ],
+        "timeoutMs": 180000
+      },
+      {
+        "id": "assets",
+        "argv": [
+          "{node}",
+          "packages/blendlink/scripts/copy-assets.mjs"
+        ],
+        "timeoutMs": 60000
+      }
+    ],
+    "verify": {
+      "id": "suite",
+      "argv": [
+        "{node}",
+        "scripts/run-node-port-family.mjs",
+        "compositor-wave-axis",
+        "--evidence",
+        "{evidence}",
+        "--blender",
+        "{blender}"
+      ],
+      "timeoutMs": 1500000
+    }
+  },
+  "profiles": [
+    {
+      "id": "mac-53",
+      "hostPlatforms": [
+        "darwin"
+      ],
+      "blenderVersion": "5.3.0",
+      "blenderBuildHash": "02f0899d78e3",
+      "nativeSource": {
+        "profile": "darwin-arm64-53-wave-saw-tri-cpu-v1",
+        "backend": null,
+        "evaluator": "CPU-compositor"
+      },
+      "runs": [
+        {
+          "id": "matrix",
+          "adapter": "matrix",
+          "env": {}
+        }
+      ]
+    }
+  ],
+  "evidence": {
+    "adapter": "compositor-wave-axis-v1",
+    "productionCases": 140,
+    "calibrationCases": 0,
+    "refusedNativeCases": 0
+  }
+}

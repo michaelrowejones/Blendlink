@@ -1,3 +1,4 @@
+import {waveAxisTableKeys} from './tslCompositorWaveAxis.js'
 /* SPDX-License-Identifier: MIT */
 import type {SourceCompositorProgram,SourcePresentation} from './sourceDisplay.js'
 import {ellipseSceneMixContract,sceneMaskMixContract,validateSceneMaskMixMarkers} from './tslCompositorEllipseSceneMix.js'
@@ -25,7 +26,7 @@ export function validateStaticMaskDomains(program:SourceCompositorProgram,native
  if(masks.length>family.limit)return fail(family.label+' exceeds its static mask node budget')
  if(masks.length&&family.kind==='ellipse-mask'){
   if(ellipseRowTextureCount(program.ops)>1)return fail('Ellipse Mask varying row texture budget permits at most one table')
-  if(program.ops.some(op=>!STATIC_MASK_POINTWISE.has(op.kind)&&!(op.kind==='white-noise-texture'&&op.properties?.white_noise_model==='native-compositor-white-noise-uniform-cpu-53-v1'))&&!ellipseSceneMixContract(program))return fail('Ellipse Mask requires closed texture-free pointwise composition; other sampler/domain producers remain unqualified')
+  if(program.ops.some(op=>!STATIC_MASK_POINTWISE.has(op.kind)&&!(op.kind==='wave-texture'&&op.properties?.wave_axis_model==='native-compositor-wave-axis-cpu-53-v1'||op.kind==='white-noise-texture'&&op.properties?.white_noise_model==='native-compositor-white-noise-uniform-cpu-53-v1'))&&!ellipseSceneMixContract(program))return fail('Ellipse Mask requires closed texture-free pointwise composition; other sampler/domain producers remain unqualified')
  }else if(masks.length&&program.ops.some(op=>spatial.has(op.kind)))return fail(family.label+' requires full-frame pointwise consumers; spatial/domain transformations remain unqualified')
 }
 /** Reserve presentation slots independently of sampler minimums and third-party effects. */
@@ -38,7 +39,7 @@ export function validateEllipsePresentation(presentation:SourcePresentation|unde
  if(sceneMix?.family==='box')validateStaticMaskDomains(graph,'CompositorNodeBoxMask',fail)
  const ops=presentation?.display?.ops??[]
  if(!Array.isArray(ops))return fail('Static mask requires a bounded display operation list')
- if(ellipseRowTextureCount(graph.ops)+ops.filter(op=>displayLookups.has(op.type)).length+(sceneMix?1:0)>8)return fail('Static mask combined row/frame/display lookup budget is eight sampled textures')
+ if(waveAxisTableKeys(graph.ops).size+ellipseRowTextureCount(graph.ops)+ops.filter(op=>displayLookups.has(op.type)).length+(sceneMix?1:0)>8)return fail('Static mask combined row/frame/display lookup budget is eight sampled textures')
  if(sceneMix&&preHdrCount!==0)return fail('Static mask scene composition requires no registered pre-HDR or post-LDR effects')
  if(postLdrCount!==0)return fail('Static mask custom post-LDR registrations require independent sampler accounting')
 }

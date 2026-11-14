@@ -7,7 +7,7 @@ The 4D W input uses the existing raw normal Float32/+0 fixed-copy rules.
 The shader route and older Blender versions keep their existing scopes.
 
 [Evidence](./evidence.json) records a fresh automatic pipeline transaction at
-source `7c50dedfe84a941ede17297d909682d63355c738`: 54 production graphs, eight
+source `d459c1db3d097bd23ab9ff5c17d48676faed110d`: 54 production graphs, eight
 actual saved Finals, 248 browser cases and 7,943,520 primary Float32 words with
 zero differences across Metal/SwiftShader WebGPU/WebGL2. Nine additional native
 coordinate/domain controls are separate from runtime node credit. The receipt
@@ -49,3 +49,21 @@ PATH=/tmp/mrj-tooling:$PATH node scripts/test-node-port.mjs compositor-white-noi
 The manifest owns the complete guarded native/export/browser matrix and invokes
 the strict reader again with a fresh whole-program emit. It never promotes
 coverage automatically or reuses numerical proof from the source watcher.
+
+## Fresh shared-owner regression (next38)
+
+The current [closed evidence wrapper](./evidence.json) now records source
+`d459c1db3d097bd23ab9ff5c17d48676faed110d`, after extracting the unchanged axis
+resource lifecycle into `OwnedCompositorRowTable` for the separately reviewed
+Wave route. The full automatic transaction and independent reader closed with
+54 production graphs plus 9 native controls / 63 renders, 8 actual saved Finals,
+248 browser cases, 7,943,520 exact primary words, 336 resize frames and 96 lifecycle
+cycles across actual Metal/SwiftShader WebGPU/WebGL2. No coordinate/RNE arithmetic
+or fixed-input scope changed. All 96 actual Final cycles measure row-only
+preparation 0 allocations / 0 uploads, commit 0/0 and live 1 allocation / 1 initial upload;
+PMREM and other installation work remain excluded.
+
+The [previous next35 wrapper](./history/next35-qualified-wrapper.json) is retained
+byte-for-byte with its own source snapshot. Earlier fixed-input receipts and
+other ports are unchanged. This regression adds no additional ImageInfo, linked
+coordinate, shader, Wave or original-demo credit.

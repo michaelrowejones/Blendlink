@@ -14,7 +14,7 @@ const strings = value => Array.isArray(value) && Array.from(value).every(item =>
 const plain = value => JSON.parse(JSON.stringify(value))
 const checkKeys = (value, keys, label) => { assert.ok(record(value), label + ' must be an object'); for (const key of Object.keys(value)) assert.ok(keys.includes(key), label + ' has unknown field ' + key) }
 function assertEvidenceAdapterScope(manifest) {
-  const closedFamilies = { 'compositor-white-noise-fixed-v1': ['compositor-white-noise', 'ShaderNodeTexWhiteNoise'], 'compositor-white-noise-default-field-v1': ['compositor-white-noise-default-field', 'ShaderNodeTexWhiteNoise'], 'mono-switch-view-v1': ['mono-switch-view', 'CompositorNodeSwitchView'] }
+  const closedFamilies = { 'compositor-wave-axis-v1': ['compositor-wave-axis', 'ShaderNodeTexWave'], 'compositor-white-noise-fixed-v1': ['compositor-white-noise', 'ShaderNodeTexWhiteNoise'], 'compositor-white-noise-default-field-v1': ['compositor-white-noise-default-field', 'ShaderNodeTexWhiteNoise'], 'mono-switch-view-v1': ['mono-switch-view', 'CompositorNodeSwitchView'] }
   const closedFamily = Object.hasOwn(closedFamilies, manifest.evidence?.adapter) ? closedFamilies[manifest.evidence.adapter] : null
   if (closedFamily) {
     assert.equal(manifest.id, closedFamily[0]); assert.equal(manifest.nativeNode, closedFamily[1], 'Closed family evidence cannot qualify another native node')
@@ -77,7 +77,7 @@ export function validateNodePortManifest(value) {
     assert.ok(Array.isArray(profile.runs) && profile.runs.length > 0); assert.equal(new Set(profile.runs.map(run => run.id)).size, profile.runs.length)
     for (const [index, run] of profile.runs.entries()) {
       checkKeys(run, ['id', 'adapter', 'env', 'args'], 'browser run'); assert.ok(slug(run.id)); assert.ok(['metal', 'software','matrix'].includes(run.adapter)); environment(run.env, 'browser run')
-      if(run.adapter==='matrix') assert.ok(['compositor-white-noise-fixed-v1','compositor-white-noise-default-field-v1','mono-switch-view-v1'].includes(value.evidence?.adapter),'Matrix scheduling requires a trusted closed family adapter')
+      if(run.adapter==='matrix') assert.ok(['compositor-wave-axis-v1','compositor-white-noise-fixed-v1','compositor-white-noise-default-field-v1','mono-switch-view-v1'].includes(value.evidence?.adapter),'Matrix scheduling requires a trusted closed family adapter')
       assert.ok(run.args === undefined || strings(run.args)); if (index === 0) assert.ok(!run.args?.includes('--reuse-native'), 'First verification must generate fresh native evidence')
     }
   }

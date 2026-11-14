@@ -7,6 +7,7 @@ import ts from 'typescript'
 
 export const browserProofFamilies=Object.freeze({
  'compositor-white-noise-default-field':Object.freeze({schemaVersion:1,family:'compositor-white-noise-default-field',nativeStatus:'CAPTURED_COMPOSITOR_WHITE_NOISE_DEFAULT_FIELD',finalStatus:'PUBLISHED_COMPOSITOR_WHITE_NOISE_DEFAULT_FIELD',browserStatus:'PASSED_WHITE_NOISE_DEFAULT_FIELD_BUILT_PROOF'}),
+ 'compositor-wave-axis':Object.freeze({schemaVersion:1,family:'compositor-wave-axis',nativeStatus:'CAPTURED_COMPOSITOR_WAVE_AXIS',finalStatus:'PUBLISHED_COMPOSITOR_WAVE_AXIS',browserStatus:'PASSED_WAVE_AXIS_BUILT_PROOF'}),
  'compositor-white-noise':Object.freeze({schemaVersion:1,family:'compositor-white-noise',nativeStatus:'CAPTURED_COMPOSITOR_WHITE_NOISE',finalStatus:'PUBLISHED_COMPOSITOR_WHITE_NOISE',browserStatus:'PASSED_WHITE_NOISE_BUILT_PROOF'}),
  'vertex-color-alpha':Object.freeze({schemaVersion:1,family:'vertex-color-alpha',nativeStatus:'CAPTURED_VERTEX_COLOR_ALPHA',finalStatus:'PUBLISHED_VERTEX_COLOR_ALPHA',browserStatus:'PASSED_VERTEX_COLOR_ALPHA_BUILT_PROOF'}),
  'compositor-blackbody':Object.freeze({schemaVersion:1,family:'compositor-blackbody',nativeStatus:'CAPTURED_COMPOSITOR_BLACKBODY',finalStatus:'PUBLISHED_COMPOSITOR_BLACKBODY',browserStatus:'PASSED_COMPOSITOR_BLACKBODY_BUILT_PROOF'}),

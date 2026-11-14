@@ -1467,7 +1467,7 @@
   },
   "researchNotes": {
     "compositor:ShaderNodeTexNoise": "Research only; no production support. Twenty guarded Blender 5.3 CPU renders cover eight varying default 2D FBM rows, eight Scale-zero controls and four independent Uniform-coordinate witnesses. The source-faithful mixed-precision host model matches 6,816 primary words exactly. The existing staged-F32 host model differs in 1,221 words by at most 7 ULP, within its predeclared research gate; this is not actual TSL, GPU or saved-Final qualification. Default CPU Noise cannot be relabeled as the EEVEE/Cycles profile. Shared exact axes, fixed Color offsets and a distinct CPU precision contract are the proposed next enablers.",
-    "compositor:ShaderNodeTexWave": "Research only; no production support. Native CPU Uniform Bands X/Y SAW and TRI each match 2,148,632 words across 126 bound/seam frames. An O(W+H) owned factor-row design preserves ordinary authored values and live resizing. SIN's proposed wider domain fails 24 unchanged exact-endpoint checks despite a small absolute error; actual compiler/libm evidence confirms a native sinf versus rounded-double difference. SIN remains unqualified. Official retained demo inventories contain no Wave usage, so artist priority remains an engineering judgment.",
+    "compositor:ShaderNodeTexWave": "Pinned Blender 5.3 CPU Bands X/Y SAW/TRI default Uniform fields now have reviewed partial production coverage: 140 graphs plus 9 native controls, 20 saved Final scenes, 640 actual browser cases and 10,876,288 exact primary words on Metal/SwiftShader WebGPU/WebGL2. Source Scale/Phase raw+0/normal magnitude [2^-16,8], positive-zero Distortion and unlinked Detail inputs only; repeated Fac/Color keys share one bounded row. SIN retains its independent exact-endpoint/compiler/libm counterexample and remains refused, as do Rings, linked controls/coordinates and other domains. Next useful work is truthful SIN or linked-coordinate support, not claiming the whole node finished. The official retained demo inventories contain no Wave usage; qualitative artist priority is not measured user demand.",
     "compositor:FunctionNodeFloatToInt": "Qualified partial literal production port on measured Blender 5.3 macOS arm64: all four modes, native typed consumers and actual saved Final/browser proof. Computed/image fields, other platforms and implicit conversions remain unqualified; native subnormal and save/reopen image counterexamples are retained. Earlier Geometry-only/private kernel trials grant no additional support. Shader creation is rejected in all audited versions.",
     "shader:ShaderNodeRadialTiling": "Qualified partial literal Segment Width port with closed native/Final/browser evidence. Computed Sides3/8/12 and Segment Coordinates in the unchanged stepped official demo remain unqualified. Generated-kernel compilation research is separate and earns no new support or scene credit.",
     "compositor:ShaderNodeRadialTiling": "Qualified partial literal Segment Width port with closed native/Final/browser evidence. Computed Sides3/8/12 and Segment Coordinates in the unchanged stepped official demo remain unqualified. Generated-kernel compilation research is separate and earns no new support or scene credit.",
@@ -1505,7 +1505,10 @@
       "experiments/compositor-wave-axis-research/design.md",
       "experiments/compositor-wave-axis-research/receipt.json",
       "experiments/compositor-wave-axis-research/bound-receipt.json",
-      "experiments/compositor-wave-axis-research/math-enabler-research.json"
+      "experiments/compositor-wave-axis-research/math-enabler-research.json",
+      "experiments/compositor-wave-axis/evidence.json",
+      "experiments/compositor-wave-axis/README.md",
+      "node-ports/compositor-wave-axis.json"
     ],
     "compositor:FunctionNodeFloatToInt": [
       "experiments/float-to-int-native/README.md",

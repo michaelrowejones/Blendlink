@@ -1,0 +1,594 @@
+{
+  "schemaVersion": 1,
+  "kind": "qualified-partial-white-noise-default-field-v1",
+  "status": "QUALIFIED_PARTIAL_COMPOSITOR_WHITE_NOISE_DEFAULT_FIELD",
+  "sourceCommit": "7c50dedfe84a941ede17297d909682d63355c738",
+  "supportPromotion": false,
+  "counts": {
+    "nativeGraphs": 54,
+    "nativeOracleControls": 9,
+    "nativeRenders": 63,
+    "savedFinalScenes": 8,
+    "browserCaseRuns": 248,
+    "primaryFloat32Words": 7943520,
+    "exactWordMismatches": 0,
+    "contractViolations": 0,
+    "resizeFrames": 336,
+    "lifecycleCycles": 96,
+    "uniqueActualPythonPrefixes": 10
+  },
+  "qualification": {
+    "path": "artifacts/verification-next35-manifest-field/adapter-closed.json",
+    "sha256": "4dab6acc7d63a289b39cbcdd9da22545d9b5407b393554269613a79dda982465",
+    "closedReader": {
+      "runtimeFingerprint": "bd8ec47aed085787de498a7f54f1a446b04b13f95dda0a75da20b63cecc75462",
+      "verifierSha256": "7b3bc3828dcf609f53e52ce54d0e2f0ad7eaea3f172a64f67a7d30d42da90003",
+      "runtimeArchiveHelperSha256": "431b8a4e92a194d63a8db512aa84f3076c9951e083b873885d8115e0caf509ed",
+      "nativeArchiveHelperSha256": "3a2310c94ed3109230d3fa89dc1ac6ea5bed447155e98144a68d52dac568a3da"
+    }
+  },
+  "automaticPipeline": {
+    "status": "qualified",
+    "workspaceStable": true,
+    "supportPromotion": false,
+    "productionCredit": true,
+    "inputDigest": "2424c6a79d49b7c934bceb35419397d75ea7fa7659a84676b5693d88fe884c4a",
+    "requestKey": "2251728a4b908253f0c4a93be141fe2ad4b9ddb00418110a5b3c8dbd2153fa23",
+    "evidenceKey": "ec5f04d0f61c46a54e83dc343719da42dc833f440bc366af9429594f72d03147"
+  },
+  "pipelineReport": {
+    "path": "artifacts/verification-next35-manifest-field/report.json",
+    "sha256": "27f252c346749720f86731966f5623d08037a43f8187c67bb074795d16a9e3ec"
+  },
+  "scope": "Pinned Blender5.3 macOS arm64 CPU compositor. Native unlinked Vector Uniform input for dimensions2..4 Value/Color; fixed raw normal/+0 W for4D; same-frame full-frame zero-origin square-pixel context, AUTO/FULL CPU Float32. Exact cached shared R32F axis table and integer RN-even uint normalization. Closed texture-free pointwise consumers and total axis/row/display sampler budget8. No linked implicit field, native GPU/EEVEE, image/render-pass/spatial producer, ImageInfo consumer extension or original-demo acceptance.",
+  "resources": "One shared O(W+H) R32F table per build, at most64KiB; one update per valid physical extent change, no production readback or extra render pass. Independent native coordinate and domain controls receive no runtime node credit.",
+  "nativeOnlyControls": [
+    {
+      "case": "13x9-raw-uniform",
+      "pixelSha256": "e845dacdd94200e4266f1a360ad869abb0583b69750bbef8450467706d389f0f",
+      "comparedWords": 468
+    },
+    {
+      "case": "9x13-raw-uniform",
+      "pixelSha256": "253e2dba1c3b454a7e2f70d652943344012ec6e16183b138d61a7364203a6313",
+      "comparedWords": 468
+    },
+    {
+      "case": "16x8-raw-uniform",
+      "pixelSha256": "a1ecf7a6066f17ff6fdcbdfd4e980e11ba52a3a0492724d823fdb30a1f649262",
+      "comparedWords": 512
+    },
+    {
+      "case": "8x8-raw-uniform",
+      "pixelSha256": "c4bb3cd330c51c2aeeddb6b3377fef2e76990e01f531eedb7af4e06a16a3a5df",
+      "comparedWords": 256
+    },
+    {
+      "case": "127x65-raw-uniform",
+      "pixelSha256": "ad4040037a6e1db0c4868eff4f35e6831637ff6bda6156027e9613482a894b81",
+      "comparedWords": 33020
+    },
+    {
+      "case": "65x127-raw-uniform",
+      "pixelSha256": "6fa82c851a425b7030d7f6a675e701ac75f4d8b5e39f768540d42b283681dc8c",
+      "comparedWords": 33020
+    },
+    {
+      "case": "8192x4-raw-uniform",
+      "pixelSha256": "3cdcda5a5c6ba985d9a416b345e5df3d406bf48121361aeffeb119ff10b5def7",
+      "comparedWords": 131072
+    },
+    {
+      "case": "4x8192-raw-uniform",
+      "pixelSha256": "4bdd8f4f5561374be576051cce78dd0350062cfc9572e7efebd6d79b44d86fdc",
+      "comparedWords": 131072
+    },
+    {
+      "case": "13x9-native-image-info-field-domain",
+      "pixelSha256": "47633e755119db42ff42959b126ff1ca1c8e215ca401005eec5e06d147eeb959",
+      "comparedWords": 468,
+      "runtimeConsumerCredit": 0
+    }
+  ],
+  "sourcePolicy": {
+    "status": "WHITE_NOISE_DEFAULT_FIELD_SOURCE_POLICY_PASSED",
+    "field": {
+      "positive": [
+        "2D-Value-AUTO",
+        "2D-Color-AUTO",
+        "3D-Value-AUTO",
+        "3D-Color-AUTO",
+        "4D-Value-AUTO",
+        "4D-Color-AUTO",
+        "2D-Value-FULL",
+        "2D-Color-FULL",
+        "3D-Value-FULL",
+        "3D-Color-FULL",
+        "4D-Value-FULL",
+        "4D-Color-FULL",
+        "implicit-ignores-stored-vector-default",
+        "1D-fixed-unchanged",
+        "W-positive-zero",
+        "W-min-normal",
+        "W-negative-min-normal",
+        "W-maximum-normal",
+        "presentation-shared-table-source",
+        "source-addon-package-alias"
+      ],
+      "refusals": [
+        "W-negative-zero",
+        "W-subnormal",
+        "W-nan",
+        "border",
+        "crop-border",
+        "pixel-aspect",
+        "small-extent",
+        "large-extent",
+        "GPU",
+        "linked-group-implicit-still-refuses",
+        "spatial-CompositorNodeFlip",
+        "spatial-CompositorNodeBlur",
+        "animated-tree"
+      ],
+      "renders": 0,
+      "gpuInitializationCalls": 0,
+      "portCredit": 0
+    },
+    "fixed": {
+      "positiveControls": [
+        "1D-Value",
+        "1D-Color",
+        "2D-Value",
+        "2D-Color",
+        "3D-Value",
+        "3D-Color",
+        "4D-Value",
+        "4D-Color",
+        "raw-normal-0x0",
+        "raw-normal-0x800000",
+        "raw-normal-0x80800000",
+        "raw-normal-0x7f7fffff",
+        "raw-normal-0xff7fffff",
+        "RNA-clamped-source-0x7f800000",
+        "RNA-clamped-source-0xff800000",
+        "group-instance-0",
+        "group-instance-1",
+        "group-reroute"
+      ],
+      "namedRefusals": [
+        "raw-refusal-0x80000000",
+        "raw-refusal-0x1",
+        "raw-refusal-0x80000001",
+        "raw-refusal-0x7fffff",
+        "stored-nonfinite-0x7fc12345",
+        "combine-subnormal-0",
+        "combine-subnormal-1",
+        "combine-subnormal-2",
+        "animated-source",
+        "computed-source",
+        "implicit-vector-cast",
+        "unqualified-gpu-authored-source",
+        "group-default-subnormal",
+        "group-default-negative-zero",
+        "source-depth-budget"
+      ],
+      "interfaceDefaultControls": [
+        {
+          "case": "vector-UNIFORM_IMAGE_COORDINATES",
+          "nativeAvailable": true,
+          "status": "unsupported"
+        },
+        {
+          "case": "vector-linked-override",
+          "nativeAvailable": true,
+          "status": "extracted"
+        },
+        {
+          "case": "vector-NORMALIZED_IMAGE_COORDINATES",
+          "nativeAvailable": false,
+          "setterRefusal": "bpy_struct: item.attr = val: enum \"NORMALIZED_IMAGE_COORDINATES\" not found in ('VALUE', 'UNIFORM_IMAGE_COORDINATES')"
+        },
+        {
+          "case": "vector-PIXEL_IMAGE_COORDINATES",
+          "nativeAvailable": false,
+          "setterRefusal": "bpy_struct: item.attr = val: enum \"PIXEL_IMAGE_COORDINATES\" not found in ('VALUE', 'UNIFORM_IMAGE_COORDINATES')"
+        },
+        {
+          "case": "vector-single-value",
+          "nativeAvailable": true,
+          "status": "extracted"
+        },
+        {
+          "case": "float-value-default",
+          "nativeAvailable": true,
+          "status": "extracted"
+        },
+        {
+          "case": "float-SCENE_FRAME",
+          "nativeAvailable": true,
+          "status": "unsupported"
+        },
+        {
+          "case": "float-SCENE_TIME",
+          "nativeAvailable": false,
+          "setterRefusal": "bpy_struct: item.attr = val: enum \"SCENE_TIME\" not found in ('VALUE', 'SCENE_FRAME')"
+        },
+        {
+          "case": "float-SCENE_SECONDS",
+          "nativeAvailable": false,
+          "setterRefusal": "bpy_struct: item.attr = val: enum \"SCENE_SECONDS\" not found in ('VALUE', 'SCENE_FRAME')"
+        },
+        {
+          "case": "unknown-default",
+          "privateSchemaBoundary": true,
+          "status": "unsupported"
+        },
+        {
+          "case": "unknown-structure",
+          "privateSchemaBoundary": true,
+          "status": "unsupported"
+        },
+        {
+          "case": "field-structure",
+          "privateSchemaBoundary": true,
+          "status": "unsupported"
+        },
+        {
+          "case": "identifier-mismatch",
+          "privateSchemaBoundary": true,
+          "status": "unsupported"
+        },
+        {
+          "case": "output-direction",
+          "privateSchemaBoundary": true,
+          "status": "unsupported"
+        },
+        {
+          "case": "type-mismatch",
+          "privateSchemaBoundary": true,
+          "status": "unsupported"
+        }
+      ],
+      "defaultFieldControls": [
+        {
+          "case": "implicit-default-field-model",
+          "status": "extracted",
+          "model": "native-compositor-white-noise-uniform-cpu-53-v1",
+          "profile": "darwin-arm64-53-white-noise-uniform-cpu-v1",
+          "coordinateModel": "exact-uniform-r32f-axes-v1",
+          "dimension": 4,
+          "authoredInputs": [
+            "W"
+          ],
+          "isField": true,
+          "fieldNumericCredit": 0
+        }
+      ],
+      "renders": 0,
+      "portCredit": 0,
+      "status": "WHITE_NOISE_SOURCE_POLICY_PASSED",
+      "gpuInitializationCalls": 0
+    },
+    "renders": 0,
+    "gpuInitializationCalls": 0,
+    "portCredit": 0
+  },
+  "runs": [
+    {
+      "path": "artifacts/verification-next35-manifest-field/cpu/browser-raw-metal/report.json",
+      "sha256": "89719d40591b7e726f271aebd6111d476754b5299da2d8dac8b2e70af2314b0e",
+      "profile": "metal",
+      "phase": "raw",
+      "browserVersion": "158.0.8127.18",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 54,
+          "savedDispose": {
+            "error": "Error: White Noise exact axes: renderer/device/context/allocation epoch changed",
+            "physicalDestroys": 1,
+            "externalDevice": true,
+            "remainingOwnedTextures": 0,
+            "idempotentDisposal": true,
+            "ownerRoute": "buildSourceCompositor"
+          }
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 54,
+          "savedDispose": {
+            "error": "Error: White Noise exact axes: actual available renderer/device/context required",
+            "physicalDestroys": 1,
+            "externalDevice": false,
+            "remainingOwnedTextures": 0,
+            "idempotentDisposal": true,
+            "ownerRoute": "buildSourceCompositor"
+          }
+        }
+      ]
+    },
+    {
+      "path": "artifacts/verification-next35-manifest-field/cpu/browser-final-metal/report.json",
+      "sha256": "ecfe7ae278ab01cf97230bb661144fa86600dfb27738756c066e8cc5586a9f1c",
+      "profile": "metal",
+      "phase": "final",
+      "browserVersion": "158.0.8127.18",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 8,
+          "savedDispose": {
+            "error": "Error: White Noise exact axes: renderer/device/context/allocation epoch changed",
+            "physicalDestroys": 1,
+            "externalDevice": true,
+            "remainingOwnedTextures": 0,
+            "idempotentDisposal": true,
+            "ownerRoute": "buildSourceCompositor"
+          }
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 8,
+          "savedDispose": {
+            "error": "Error: White Noise exact axes: actual available renderer/device/context required",
+            "physicalDestroys": 1,
+            "externalDevice": false,
+            "remainingOwnedTextures": 0,
+            "idempotentDisposal": true,
+            "ownerRoute": "buildSourceCompositor"
+          }
+        }
+      ]
+    },
+    {
+      "path": "artifacts/verification-next35-manifest-field/cpu/browser-raw-software/report.json",
+      "sha256": "ff80134d8b861b26e6412e39f8255ac442605d271a985dbee65f53d5f50fa2c3",
+      "profile": "software",
+      "phase": "raw",
+      "browserVersion": "158.0.8127.18",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 54,
+          "savedDispose": {
+            "error": "Error: White Noise exact axes: renderer/device/context/allocation epoch changed",
+            "physicalDestroys": 1,
+            "externalDevice": true,
+            "remainingOwnedTextures": 0,
+            "idempotentDisposal": true,
+            "ownerRoute": "buildSourceCompositor"
+          }
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 54,
+          "savedDispose": {
+            "error": "Error: White Noise exact axes: actual available renderer/device/context required",
+            "physicalDestroys": 1,
+            "externalDevice": false,
+            "remainingOwnedTextures": 0,
+            "idempotentDisposal": true,
+            "ownerRoute": "buildSourceCompositor"
+          }
+        }
+      ]
+    },
+    {
+      "path": "artifacts/verification-next35-manifest-field/cpu/browser-final-software/report.json",
+      "sha256": "f592d776efd1c6c59c97ddda46cc3faac8dc60af631c49874a23ef45dd59b837",
+      "profile": "software",
+      "phase": "final",
+      "browserVersion": "158.0.8127.18",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 8,
+          "savedDispose": {
+            "error": "Error: White Noise exact axes: renderer/device/context/allocation epoch changed",
+            "physicalDestroys": 1,
+            "externalDevice": true,
+            "remainingOwnedTextures": 0,
+            "idempotentDisposal": true,
+            "ownerRoute": "buildSourceCompositor"
+          }
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 8,
+          "savedDispose": {
+            "error": "Error: White Noise exact axes: actual available renderer/device/context required",
+            "physicalDestroys": 1,
+            "externalDevice": false,
+            "remainingOwnedTextures": 0,
+            "idempotentDisposal": true,
+            "ownerRoute": "buildSourceCompositor"
+          }
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Pinned Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor only; no native GPU or EEVEE shader equivalence.",
+    "Unlinked native Uniform Vector only for dimensions2..4; fixed raw normal/+0 W for4D. No linked coordinate fields, image/render-pass/spatial producers, registered custom effects or ImageInfo consumer extension.",
+    "Raw display/exposure0; exact node outputs do not prove arbitrary amplified/discontinuous downstream graphs or whole-scene lighting.",
+    "One shared axis table per built pipeline; PMREM preparation and other Final resources are separate from axis counters.",
+    "Earlier transactions and failed/diagnostic namespaces retain their own snapshots. No all-ports or future-checkout qualification is claimed."
+  ],
+  "historicalFailure": {
+    "path": "artifacts/verification-next27-manifest-field/report.json",
+    "sha256": "190df487d68038c72c411c39a51f6b4ca62eb092288167263cd7d53edc148403",
+    "cause": "Detached preview-world PMREM output and scratch were unowned; zero full qualification credit. See research/pmrem-preparation-leak.md."
+  },
+  "axisInstallMeasurements": {
+    "measuredFinalCycles": 96,
+    "preparation": {
+      "axisAllocations": 0,
+      "axisUploads": 0
+    },
+    "commit": {
+      "axisAllocations": 0,
+      "axisUploads": 0
+    },
+    "live": {
+      "axisAllocations": 1,
+      "initialAxisUploads": 1
+    },
+    "allCyclesEqual": true,
+    "scope": "Axis allocations/uploads only; excludes PMREM work and all other pipeline resources."
+  },
+  "savedOriginalRendererDisposalControls": [
+    {
+      "profile": "metal",
+      "phase": "raw",
+      "backend": "webgpu",
+      "control": {
+        "error": "Error: White Noise exact axes: renderer/device/context/allocation epoch changed",
+        "physicalDestroys": 1,
+        "externalDevice": true,
+        "remainingOwnedTextures": 0,
+        "idempotentDisposal": true,
+        "ownerRoute": "buildSourceCompositor"
+      }
+    },
+    {
+      "profile": "metal",
+      "phase": "raw",
+      "backend": "webgl2",
+      "control": {
+        "error": "Error: White Noise exact axes: actual available renderer/device/context required",
+        "physicalDestroys": 1,
+        "externalDevice": false,
+        "remainingOwnedTextures": 0,
+        "idempotentDisposal": true,
+        "ownerRoute": "buildSourceCompositor"
+      }
+    },
+    {
+      "profile": "metal",
+      "phase": "final",
+      "backend": "webgpu",
+      "control": {
+        "error": "Error: White Noise exact axes: renderer/device/context/allocation epoch changed",
+        "physicalDestroys": 1,
+        "externalDevice": true,
+        "remainingOwnedTextures": 0,
+        "idempotentDisposal": true,
+        "ownerRoute": "buildSourceCompositor"
+      }
+    },
+    {
+      "profile": "metal",
+      "phase": "final",
+      "backend": "webgl2",
+      "control": {
+        "error": "Error: White Noise exact axes: actual available renderer/device/context required",
+        "physicalDestroys": 1,
+        "externalDevice": false,
+        "remainingOwnedTextures": 0,
+        "idempotentDisposal": true,
+        "ownerRoute": "buildSourceCompositor"
+      }
+    },
+    {
+      "profile": "software",
+      "phase": "raw",
+      "backend": "webgpu",
+      "control": {
+        "error": "Error: White Noise exact axes: renderer/device/context/allocation epoch changed",
+        "physicalDestroys": 1,
+        "externalDevice": true,
+        "remainingOwnedTextures": 0,
+        "idempotentDisposal": true,
+        "ownerRoute": "buildSourceCompositor"
+      }
+    },
+    {
+      "profile": "software",
+      "phase": "raw",
+      "backend": "webgl2",
+      "control": {
+        "error": "Error: White Noise exact axes: actual available renderer/device/context required",
+        "physicalDestroys": 1,
+        "externalDevice": false,
+        "remainingOwnedTextures": 0,
+        "idempotentDisposal": true,
+        "ownerRoute": "buildSourceCompositor"
+      }
+    },
+    {
+      "profile": "software",
+      "phase": "final",
+      "backend": "webgpu",
+      "control": {
+        "error": "Error: White Noise exact axes: renderer/device/context/allocation epoch changed",
+        "physicalDestroys": 1,
+        "externalDevice": true,
+        "remainingOwnedTextures": 0,
+        "idempotentDisposal": true,
+        "ownerRoute": "buildSourceCompositor"
+      }
+    },
+    {
+      "profile": "software",
+      "phase": "final",
+      "backend": "webgl2",
+      "control": {
+        "error": "Error: White Noise exact axes: actual available renderer/device/context required",
+        "physicalDestroys": 1,
+        "externalDevice": false,
+        "remainingOwnedTextures": 0,
+        "idempotentDisposal": true,
+        "ownerRoute": "buildSourceCompositor"
+      }
+    }
+  ],
+  "manualScopeReview": "Reviewed expansion of the existing Blender5.3 compositor partial entry; no new supported-node count.",
+  "previousQualifiedWrapper": {
+    "path": "experiments/compositor-white-noise-default-field/history/next30-evidence.json",
+    "sha256": "ab56540576d7b5de0d3c04f6f10dd255b355e344b3d732bffef67eec3f7b3f8c"
+  }
+}

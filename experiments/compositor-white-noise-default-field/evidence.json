@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "qualified-partial-white-noise-default-field-v1",
   "status": "QUALIFIED_PARTIAL_COMPOSITOR_WHITE_NOISE_DEFAULT_FIELD",
-  "sourceCommit": "7c50dedfe84a941ede17297d909682d63355c738",
+  "sourceCommit": "d459c1db3d097bd23ab9ff5c17d48676faed110d",
   "supportPromotion": false,
   "counts": {
     "nativeGraphs": 54,
@@ -18,10 +18,10 @@
     "uniqueActualPythonPrefixes": 10
   },
   "qualification": {
-    "path": "artifacts/verification-next35-manifest-field/adapter-closed.json",
-    "sha256": "4dab6acc7d63a289b39cbcdd9da22545d9b5407b393554269613a79dda982465",
+    "path": "artifacts/verification-next38-manifest-field/adapter-closed.json",
+    "sha256": "96171ee2e35d6b90b340c489687f8e2125b237c169de6ac2a2fe818ae748e77f",
     "closedReader": {
-      "runtimeFingerprint": "bd8ec47aed085787de498a7f54f1a446b04b13f95dda0a75da20b63cecc75462",
+      "runtimeFingerprint": "e9ca7ff7a1e285e59cff472790ad2fc762473862d5f348568e0d8afa75944f94",
       "verifierSha256": "7b3bc3828dcf609f53e52ce54d0e2f0ad7eaea3f172a64f67a7d30d42da90003",
       "runtimeArchiveHelperSha256": "431b8a4e92a194d63a8db512aa84f3076c9951e083b873885d8115e0caf509ed",
       "nativeArchiveHelperSha256": "3a2310c94ed3109230d3fa89dc1ac6ea5bed447155e98144a68d52dac568a3da"
@@ -32,13 +32,13 @@
     "workspaceStable": true,
     "supportPromotion": false,
     "productionCredit": true,
-    "inputDigest": "2424c6a79d49b7c934bceb35419397d75ea7fa7659a84676b5693d88fe884c4a",
-    "requestKey": "2251728a4b908253f0c4a93be141fe2ad4b9ddb00418110a5b3c8dbd2153fa23",
-    "evidenceKey": "ec5f04d0f61c46a54e83dc343719da42dc833f440bc366af9429594f72d03147"
+    "inputDigest": "182c1f4d021a22909e51cc4a6c1be38eaf6c6b3b679dbe9b65746ffd6a56d262",
+    "requestKey": "fa558e3d9c358d71b207ad69100683128c94640b437e80882c7b798dc8f3c03e",
+    "evidenceKey": "85e1cc936c001573d04372d4b21da5b35e04834a5d4ec0049af694922667352e"
   },
   "pipelineReport": {
-    "path": "artifacts/verification-next35-manifest-field/report.json",
-    "sha256": "27f252c346749720f86731966f5623d08037a43f8187c67bb074795d16a9e3ec"
+    "path": "artifacts/verification-next38-manifest-field/report.json",
+    "sha256": "5dded17497760715d75b2420451eddb185a07a9936bc26f24d7bc00e89554047"
   },
   "scope": "Pinned Blender5.3 macOS arm64 CPU compositor. Native unlinked Vector Uniform input for dimensions2..4 Value/Color; fixed raw normal/+0 W for4D; same-frame full-frame zero-origin square-pixel context, AUTO/FULL CPU Float32. Exact cached shared R32F axis table and integer RN-even uint normalization. Closed texture-free pointwise consumers and total axis/row/display sampler budget8. No linked implicit field, native GPU/EEVEE, image/render-pass/spatial producer, ImageInfo consumer extension or original-demo acceptance.",
   "resources": "One shared O(W+H) R32F table per build, at most64KiB; one update per valid physical extent change, no production readback or extra render pass. Independent native coordinate and domain controls receive no runtime node credit.",
@@ -275,8 +275,8 @@
   },
   "runs": [
     {
-      "path": "artifacts/verification-next35-manifest-field/cpu/browser-raw-metal/report.json",
-      "sha256": "89719d40591b7e726f271aebd6111d476754b5299da2d8dac8b2e70af2314b0e",
+      "path": "artifacts/verification-next38-manifest-field/cpu/browser-raw-metal/report.json",
+      "sha256": "97eb314e14fd78db155341554fa62632ecee709c2f73fc98a8f87ef2635ee068",
       "profile": "metal",
       "phase": "raw",
       "browserVersion": "158.0.8127.18",
@@ -319,8 +319,8 @@
       ]
     },
     {
-      "path": "artifacts/verification-next35-manifest-field/cpu/browser-final-metal/report.json",
-      "sha256": "ecfe7ae278ab01cf97230bb661144fa86600dfb27738756c066e8cc5586a9f1c",
+      "path": "artifacts/verification-next38-manifest-field/cpu/browser-final-metal/report.json",
+      "sha256": "1b44b1350a4d5c20076ebd29646232bc40f3aed89163291fb49a4d92b3c2b996",
       "profile": "metal",
       "phase": "final",
       "browserVersion": "158.0.8127.18",
@@ -363,8 +363,8 @@
       ]
     },
     {
-      "path": "artifacts/verification-next35-manifest-field/cpu/browser-raw-software/report.json",
-      "sha256": "ff80134d8b861b26e6412e39f8255ac442605d271a985dbee65f53d5f50fa2c3",
+      "path": "artifacts/verification-next38-manifest-field/cpu/browser-raw-software/report.json",
+      "sha256": "a09cbe4d5311d84028a16a28a5637bcdd824757396b10575d0f6ab00c2da03e9",
       "profile": "software",
       "phase": "raw",
       "browserVersion": "158.0.8127.18",
@@ -407,8 +407,8 @@
       ]
     },
     {
-      "path": "artifacts/verification-next35-manifest-field/cpu/browser-final-software/report.json",
-      "sha256": "f592d776efd1c6c59c97ddda46cc3faac8dc60af631c49874a23ef45dd59b837",
+      "path": "artifacts/verification-next38-manifest-field/cpu/browser-final-software/report.json",
+      "sha256": "1b010bc1553c26f454cccd82582e7083267a27ff77ef31f7af7f0a2e2d8c6dbc",
       "profile": "software",
       "phase": "final",
       "browserVersion": "158.0.8127.18",
@@ -478,7 +478,7 @@
       "initialAxisUploads": 1
     },
     "allCyclesEqual": true,
-    "scope": "Axis allocations/uploads only; excludes PMREM work and all other pipeline resources."
+    "scope": "Axis/row-table allocations and uploads only under the extracted shared OwnedCompositorRowTable; excludes PMREM and all other installation resources. Actual96cycles allretain0/0 preparation andcommit plus1/1 live."
   },
   "savedOriginalRendererDisposalControls": [
     {
@@ -588,7 +588,14 @@
   ],
   "manualScopeReview": "Reviewed expansion of the existing Blender5.3 compositor partial entry; no new supported-node count.",
   "previousQualifiedWrapper": {
-    "path": "experiments/compositor-white-noise-default-field/history/next30-evidence.json",
-    "sha256": "ab56540576d7b5de0d3c04f6f10dd255b355e344b3d732bffef67eec3f7b3f8c"
+    "path": "experiments/compositor-white-noise-default-field/history/next35-qualified-wrapper.json",
+    "sha256": "7cadaae35f93f830f0609026e9b370bae841cdd11454f792963b3e166cf8910d",
+    "limits": "Byte-identical previous next35 qualified wrapper retained; its source snapshot and counts are historical."
+  },
+  "sharedOwnerRegression": {
+    "sourceCommit": "d459c1db3d097bd23ab9ff5c17d48676faed110d",
+    "implementation": "packages/blendlink/src/tslCompositorRowTable.ts",
+    "numericalChange": false,
+    "scope": "Fresh complete native/SavedFinal/all-four-browser closure after shared row ownership extraction. White Noise coordinate/RNE arithmetic and fixed-input proof remain unchanged. No Wave node credit is inferred from this regression."
   }
 }

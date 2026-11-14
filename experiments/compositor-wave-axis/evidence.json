@@ -1,0 +1,583 @@
+{
+  "schemaVersion": 1,
+  "kind": "qualified-partial-compositor-wave-axis-v1",
+  "status": "QUALIFIED_PARTIAL_COMPOSITOR_WAVE_AXIS",
+  "sourceCommit": "d459c1db3d097bd23ab9ff5c17d48676faed110d",
+  "supportPromotion": false,
+  "manualScopeReview": "Reviewed new Blender5.3-only compositor partial entry; the automatic runner does not promote categories. All older classifications and shader Wave verification remain unchanged.",
+  "counts": {
+    "nativeGraphs": 140,
+    "nativeOracleControls": 9,
+    "nativeRenders": 149,
+    "savedFinalScenes": 20,
+    "browserCaseRuns": 640,
+    "primaryFloat32Words": 10876288,
+    "nativeZeroRgbWords": 264,
+    "nativeOneRgbWords": 198,
+    "exactWordMismatches": 0,
+    "contractViolations": 0,
+    "resizeFrames": 384,
+    "lifecycleCycles": 240,
+    "uniqueActualPythonPrefixes": 22
+  },
+  "qualification": {
+    "path": "artifacts/verification-next37-manifest-wave/adapter-closed.json",
+    "sha256": "79a6c98f5cccaa4f5ab83e06172d82323f1e5cbaf30fdb522c0595d6e53a7696",
+    "closedReader": {
+      "runtimeFingerprint": "e9ca7ff7a1e285e59cff472790ad2fc762473862d5f348568e0d8afa75944f94",
+      "verifierSha256": "3f3ce26442df436d7d556b6432f4c9323febb8457de52a2b0626ee9d4d1d05af",
+      "runtimeArchiveHelperSha256": "431b8a4e92a194d63a8db512aa84f3076c9951e083b873885d8115e0caf509ed",
+      "nativeArchiveHelperSha256": "3a2310c94ed3109230d3fa89dc1ac6ea5bed447155e98144a68d52dac568a3da"
+    }
+  },
+  "automaticPipeline": {
+    "status": "qualified",
+    "workspaceStable": true,
+    "supportPromotion": false,
+    "productionCredit": true,
+    "inputDigest": "0e41a607df63c2cbd564ba6d6dcdf7808f194b2c095c37d3a53976b622bb9f60",
+    "requestKey": "ed0fa83200de6c824102e989bcec600a797f636438514fdb47a8a5d9e07c00da",
+    "evidenceKey": "9d7f6f02c119c58b7f33d7a6a36c0de7ed8008bf8304669222075302fdcc5cf1"
+  },
+  "pipelineReport": {
+    "path": "artifacts/verification-next37-manifest-wave/report.json",
+    "sha256": "eb6bc20447501a8b2a21032f273cce91c0a27d8206182ec3f71011a6b0891cf6"
+  },
+  "scope": "Pinned Blender 5.3 macOS arm64 CPU compositor. Native implicit Uniform Vector for Bands X/Y SAW/TRI Color/Fac, positive zero or normal raw Float32 Scale/Phase magnitude [2^-16,8] and positive-zero Distortion. Same-frame full-frame square-pixel extent 4..8192, AUTO/FULL CPU Float32. Exact cached factor rows, separately owned shared White Noise axes for mixed controls. No SIN, linked controls/coordinates, native GPU/EEVEE, image/render-pass/spatial producer, ImageInfo consumer extension or original-demo acceptance.",
+  "resources": "One cached factor row per distinct reviewed Wave key, at most 32 KiB per row at maximum extent 8192. Eight combined Wave/White Noise/Ellipse/display samplers. One upload per valid extent change, zero warm uploads, no production readback or extra row render pass. Measured preparation/commit/live allocations remain separate; whole-install resources are not a one-row claim.",
+  "sourcePolicy": {
+    "status": "WAVE_AXIS_SOURCE_POLICY_PASSED",
+    "positive": [
+      "X-SAW-Color",
+      "X-SAW-Fac",
+      "X-TRI-Color",
+      "X-TRI-Fac",
+      "Y-SAW-Color",
+      "Y-SAW-Fac",
+      "Y-TRI-Color",
+      "Y-TRI-Fac",
+      "literal-8",
+      "literal-9",
+      "literal-10",
+      "literal-11",
+      "literal-12",
+      "literal-13",
+      "ignored-vector-and-dead-detail",
+      "group-reroute-field",
+      "repeated-group-shared-key",
+      "cross-family-unchanged"
+    ],
+    "refusals": [
+      "native-muted-Color",
+      "native-muted-Fac",
+      "default-SIN",
+      "rings",
+      "diagonal",
+      "distortion",
+      "negative-zero",
+      "below-minimum",
+      "above-maximum",
+      "mapping",
+      "linked-Scale",
+      "linked-Phase Offset",
+      "linked-Distortion",
+      "linked-Vector",
+      "linked-Detail",
+      "linked-Detail Scale",
+      "linked-Detail Roughness",
+      "border",
+      "pixel-aspect",
+      "GPU",
+      "small",
+      "spatial-CompositorNodeFlip",
+      "spatial-CompositorNodeBlur",
+      "nine-distinct-keys",
+      "source-operation-limit",
+      "animated",
+      "cross-family-source-mutation",
+      "cross-family-group-mute",
+      "cross-family-reroute-relink",
+      "injected-reader-word-0x80000000",
+      "injected-reader-word-0x1",
+      "injected-reader-word-0x7fc12345"
+    ],
+    "nativeRenders": 0,
+    "gpuInitializations": 0,
+    "supportCredit": 0,
+    "injectedReaderWordControls": 3
+  },
+  "nativeOnlyControls": [
+    {
+      "case": "13x9-raw-uniform",
+      "pixelSha256": "e845dacdd94200e4266f1a360ad869abb0583b69750bbef8450467706d389f0f",
+      "comparedWords": 468
+    },
+    {
+      "case": "9x13-raw-uniform",
+      "pixelSha256": "253e2dba1c3b454a7e2f70d652943344012ec6e16183b138d61a7364203a6313",
+      "comparedWords": 468
+    },
+    {
+      "case": "26x18-raw-uniform",
+      "pixelSha256": "a4e1776a468bbcd7611fe785a2968c77be0ab012e1ab1261c65a58a22a855a2d",
+      "comparedWords": 1872
+    },
+    {
+      "case": "18x26-raw-uniform",
+      "pixelSha256": "7aea5b9ab5fe91969922222eebc9d00362e5996b4b2c38e86f3c02ac83f05fb5",
+      "comparedWords": 1872
+    },
+    {
+      "case": "127x65-raw-uniform",
+      "pixelSha256": "ad4040037a6e1db0c4868eff4f35e6831637ff6bda6156027e9613482a894b81",
+      "comparedWords": 33020
+    },
+    {
+      "case": "65x127-raw-uniform",
+      "pixelSha256": "6fa82c851a425b7030d7f6a675e701ac75f4d8b5e39f768540d42b283681dc8c",
+      "comparedWords": 33020
+    },
+    {
+      "case": "8192x4-raw-uniform",
+      "pixelSha256": "3cdcda5a5c6ba985d9a416b345e5df3d406bf48121361aeffeb119ff10b5def7",
+      "comparedWords": 131072
+    },
+    {
+      "case": "4x8192-raw-uniform",
+      "pixelSha256": "4bdd8f4f5561374be576051cce78dd0350062cfc9572e7efebd6d79b44d86fdc",
+      "comparedWords": 131072
+    },
+    {
+      "case": "13x9-native-wave-image-info-field-domain",
+      "pixelSha256": "47633e755119db42ff42959b126ff1ca1c8e215ca401005eec5e06d147eeb959",
+      "comparedWords": 468,
+      "runtimeConsumerCredit": 0
+    }
+  ],
+  "nativeProofs": [
+    {
+      "native": {
+        "path": "artifacts/verification-next37-manifest-wave/cpu/qualification.json",
+        "sha256": "86adc248952fa2309f7dac186c43cc22e0691e85848a6bac86d1a046d2260fb9"
+      },
+      "final": {
+        "path": "artifacts/verification-next37-manifest-wave/cpu/final-proof.json",
+        "sha256": "da417f5f65a04d7f2ab6fe51aa7c143087d757ab1cd95dd12b62310b92f1f00a"
+      },
+      "nativeArchive": {
+        "pythonInvocations": 22,
+        "finalInvocations": 20,
+        "uniqueCachePrefixes": 22,
+        "numericalCredit": 0
+      }
+    }
+  ],
+  "runs": [
+    {
+      "path": "artifacts/verification-next37-manifest-wave/cpu/browser-raw-metal/report.json",
+      "sha256": "4252d36679557a4f0cf654d23ab0b4e7138bf7178b332317756d36e203ed2335",
+      "profile": "metal",
+      "phase": "raw",
+      "browserVersion": "158.0.8127.18",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 140,
+          "savedDispose": {
+            "error": "Error: Wave axis: renderer/device/context/allocation epoch changed",
+            "physicalDestroys": 1,
+            "externalDevice": true,
+            "remainingOwnedTextures": 0,
+            "idempotentDisposal": true,
+            "ownerRoute": "buildSourceCompositor",
+            "bindingControls": [
+              {
+                "kind": "value",
+                "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "reference",
+                "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "uv",
+                "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              }
+            ]
+          }
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 140,
+          "savedDispose": {
+            "error": "Error: Wave axis: actual available renderer/device/context required",
+            "physicalDestroys": 1,
+            "externalDevice": false,
+            "remainingOwnedTextures": 0,
+            "idempotentDisposal": true,
+            "ownerRoute": "buildSourceCompositor",
+            "bindingControls": [
+              {
+                "kind": "value",
+                "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "reference",
+                "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "uv",
+                "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "artifacts/verification-next37-manifest-wave/cpu/browser-final-metal/report.json",
+      "sha256": "2e5c58168380471b94a22f1775f0d54387d7cd06a0c9c86d7e8f33a2468d8333",
+      "profile": "metal",
+      "phase": "final",
+      "browserVersion": "158.0.8127.18",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 20,
+          "savedDispose": {
+            "error": "Error: Wave axis: renderer/device/context/allocation epoch changed",
+            "physicalDestroys": 1,
+            "externalDevice": true,
+            "remainingOwnedTextures": 0,
+            "idempotentDisposal": true,
+            "ownerRoute": "buildSourceCompositor",
+            "bindingControls": [
+              {
+                "kind": "value",
+                "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "reference",
+                "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "uv",
+                "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              }
+            ]
+          }
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 20,
+          "savedDispose": {
+            "error": "Error: Wave axis: actual available renderer/device/context required",
+            "physicalDestroys": 1,
+            "externalDevice": false,
+            "remainingOwnedTextures": 0,
+            "idempotentDisposal": true,
+            "ownerRoute": "buildSourceCompositor",
+            "bindingControls": [
+              {
+                "kind": "value",
+                "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "reference",
+                "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "uv",
+                "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "artifacts/verification-next37-manifest-wave/cpu/browser-raw-software/report.json",
+      "sha256": "3648fe06e743d235b7c88a888014ef4470b2e93b80ae5f57aaf2ded9e8e2f928",
+      "profile": "software",
+      "phase": "raw",
+      "browserVersion": "158.0.8127.18",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 140,
+          "savedDispose": {
+            "error": "Error: Wave axis: renderer/device/context/allocation epoch changed",
+            "physicalDestroys": 1,
+            "externalDevice": true,
+            "remainingOwnedTextures": 0,
+            "idempotentDisposal": true,
+            "ownerRoute": "buildSourceCompositor",
+            "bindingControls": [
+              {
+                "kind": "value",
+                "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "reference",
+                "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "uv",
+                "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              }
+            ]
+          }
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 140,
+          "savedDispose": {
+            "error": "Error: Wave axis: actual available renderer/device/context required",
+            "physicalDestroys": 1,
+            "externalDevice": false,
+            "remainingOwnedTextures": 0,
+            "idempotentDisposal": true,
+            "ownerRoute": "buildSourceCompositor",
+            "bindingControls": [
+              {
+                "kind": "value",
+                "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "reference",
+                "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "uv",
+                "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "artifacts/verification-next37-manifest-wave/cpu/browser-final-software/report.json",
+      "sha256": "d110cce3fb785ea52537db82dad451dbe387d43d8b06a71b0f7f14d3039e154c",
+      "profile": "software",
+      "phase": "final",
+      "browserVersion": "158.0.8127.18",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 20,
+          "savedDispose": {
+            "error": "Error: Wave axis: renderer/device/context/allocation epoch changed",
+            "physicalDestroys": 1,
+            "externalDevice": true,
+            "remainingOwnedTextures": 0,
+            "idempotentDisposal": true,
+            "ownerRoute": "buildSourceCompositor",
+            "bindingControls": [
+              {
+                "kind": "value",
+                "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "reference",
+                "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "uv",
+                "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              }
+            ]
+          }
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 20,
+          "savedDispose": {
+            "error": "Error: Wave axis: actual available renderer/device/context required",
+            "physicalDestroys": 1,
+            "externalDevice": false,
+            "remainingOwnedTextures": 0,
+            "idempotentDisposal": true,
+            "ownerRoute": "buildSourceCompositor",
+            "bindingControls": [
+              {
+                "kind": "value",
+                "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "reference",
+                "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "uv",
+                "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "rowInstallMeasurements": {
+    "measuredFinalCycles": 240,
+    "singleWave": {
+      "cycles": 216,
+      "preparation": {
+        "rowAllocations": 0,
+        "rowUploads": 0
+      },
+      "commit": {
+        "rowAllocations": 0,
+        "rowUploads": 0
+      },
+      "live": {
+        "rowAllocations": 1,
+        "initialRowUploads": 1
+      }
+    },
+    "mixedWhiteNoiseWave": {
+      "cycles": 24,
+      "preparation": {
+        "rowAllocations": 0,
+        "rowUploads": 0
+      },
+      "commit": {
+        "rowAllocations": 0,
+        "rowUploads": 0
+      },
+      "live": {
+        "rowAllocations": 2,
+        "initialRowUploads": 2
+      }
+    },
+    "actualTuples": {
+      "metal-webgpu": {
+        "singleWaveCycles": 54,
+        "mixedWhiteNoiseWaveCycles": 6
+      },
+      "metal-webgl2": {
+        "singleWaveCycles": 54,
+        "mixedWhiteNoiseWaveCycles": 6
+      },
+      "software-webgpu": {
+        "singleWaveCycles": 54,
+        "mixedWhiteNoiseWaveCycles": 6
+      },
+      "software-webgl2": {
+        "singleWaveCycles": 54,
+        "mixedWhiteNoiseWaveCycles": 6
+      }
+    },
+    "scope": "Combined owned Wave/White Noise row-table allocations/uploads only; excludes PMREM and all other installation resources. All three preparation/commit/live cycles are measured per actual Final case."
+  },
+  "savedOriginalRendererDisposalControls": 8,
+  "limits": [
+    "Pinned Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor FULL/AUTO only; no other native host/version/build/GPU or EEVEE shader equivalence.",
+    "Own unlinked Uniform Vector only; raw +0 or normal Float32 Scale/Phase magnitude[2^-16,8], raw +0 Distortion, unused Detail inputs unlinked. Rings, SIN, Z/DIAGONAL, linked coordinate/control fields, nonidentity mapping, animation/drivers/NLA and native mute bypasses remain refused.",
+    "Zero-origin square-pixel full-frame physical extent4..8192 including resize/DPR; closed texture-free pointwise composition only. No scene/image/render-pass/spatial inputs, registered effects, ImageInfo consumer extension or arbitrary downstream amplification.",
+    "One cached R32F factor row per distinct axis/profile/Scale-word/Phase-word key, at most32KiB logical data per Wave row; sharedWhiteNoise axis table is separate and at most64KiB. Eight combined sampled resources is a structural budget, not an observed eight-table performance benchmark.",
+    "No output repair, source scene bake or authored parameter quantization. Exact node outputs do not qualify whole-scene BSDF/lighting/IBL or original official demos.",
+    "Earlier/failed receipts remain unchanged at their own source snapshots; this is a bounded partial classification, not all-node support."
+  ],
+  "historicalFailure": {
+    "path": "artifacts/verification-next36-wave-axis",
+    "log": {
+      "path": "/tmp/scenetoweb-next36-wave.log",
+      "sha256": "a91a79f426f17d2d52994ea100659ce106586d4fe0693c2866667f27377739fd"
+    },
+    "cause": "The independent reader rejected JSON input-key insertion order after captures. Schema correction compares the exact key set without depending on insertion order; no source arithmetic, pixel gate or ownership tolerance changed. This failed transaction grants zero qualification credit.",
+    "qualificationCredit": 0
+  }
+}

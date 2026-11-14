@@ -244,6 +244,6 @@ def validate_white_noise_field_graph(program):
     else:
         from compositor_mask_domains import ELLIPSE_POINTWISE
     fields=[op for op in program['ops'] if op.get('properties',{}).get('white_noise_model')==FIELD_MODEL]
-    if fields and any(op['kind'] not in ELLIPSE_POINTWISE and op['kind']!='white-noise-texture' for op in program['ops']):
+    if fields and any(op['kind'] not in ELLIPSE_POINTWISE and op['kind'] not in {'white-noise-texture','wave-texture'} for op in program['ops']):
         return fields[0], 'White Noise fields require closed texture-free pointwise composition; image, render-pass, spatial and unknown sampler/domain producers remain unqualified'
     return None

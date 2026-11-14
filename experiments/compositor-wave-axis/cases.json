@@ -1,0 +1,2446 @@
+[
+  {
+    "case": "13x9-X-SAW-Fac-direct-defaults",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": true,
+    "resizeCases": [
+      "9x13-X-SAW-Fac-direct-defaults",
+      "26x18-X-SAW-Fac-direct-defaults",
+      "13x9-X-SAW-Fac-direct-defaults"
+    ]
+  },
+  {
+    "case": "13x9-X-SAW-Color-direct-defaults",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": true,
+    "resizeCases": [
+      "9x13-X-SAW-Color-direct-defaults",
+      "26x18-X-SAW-Color-direct-defaults",
+      "13x9-X-SAW-Color-direct-defaults"
+    ]
+  },
+  {
+    "case": "13x9-X-TRI-Fac-direct-defaults",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": true,
+    "resizeCases": [
+      "9x13-X-TRI-Fac-direct-defaults",
+      "26x18-X-TRI-Fac-direct-defaults",
+      "13x9-X-TRI-Fac-direct-defaults"
+    ]
+  },
+  {
+    "case": "13x9-X-TRI-Color-direct-defaults",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": true,
+    "resizeCases": [
+      "9x13-X-TRI-Color-direct-defaults",
+      "26x18-X-TRI-Color-direct-defaults",
+      "13x9-X-TRI-Color-direct-defaults"
+    ]
+  },
+  {
+    "case": "13x9-Y-SAW-Fac-direct-defaults",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": true,
+    "resizeCases": [
+      "9x13-Y-SAW-Fac-direct-defaults",
+      "26x18-Y-SAW-Fac-direct-defaults",
+      "13x9-Y-SAW-Fac-direct-defaults"
+    ]
+  },
+  {
+    "case": "13x9-Y-SAW-Color-direct-defaults",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": true,
+    "resizeCases": [
+      "9x13-Y-SAW-Color-direct-defaults",
+      "26x18-Y-SAW-Color-direct-defaults",
+      "13x9-Y-SAW-Color-direct-defaults"
+    ]
+  },
+  {
+    "case": "13x9-Y-TRI-Fac-direct-defaults",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": true,
+    "resizeCases": [
+      "9x13-Y-TRI-Fac-direct-defaults",
+      "26x18-Y-TRI-Fac-direct-defaults",
+      "13x9-Y-TRI-Fac-direct-defaults"
+    ]
+  },
+  {
+    "case": "13x9-Y-TRI-Color-direct-defaults",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": true,
+    "resizeCases": [
+      "9x13-Y-TRI-Color-direct-defaults",
+      "26x18-Y-TRI-Color-direct-defaults",
+      "13x9-Y-TRI-Color-direct-defaults"
+    ]
+  },
+  {
+    "case": "9x13-X-SAW-Fac-direct-defaults",
+    "width": 9,
+    "height": 13,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "9x13-X-SAW-Color-direct-defaults",
+    "width": 9,
+    "height": 13,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "9x13-X-TRI-Fac-direct-defaults",
+    "width": 9,
+    "height": 13,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "9x13-X-TRI-Color-direct-defaults",
+    "width": 9,
+    "height": 13,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "9x13-Y-SAW-Fac-direct-defaults",
+    "width": 9,
+    "height": 13,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "9x13-Y-SAW-Color-direct-defaults",
+    "width": 9,
+    "height": 13,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "9x13-Y-TRI-Fac-direct-defaults",
+    "width": 9,
+    "height": 13,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "9x13-Y-TRI-Color-direct-defaults",
+    "width": 9,
+    "height": 13,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "26x18-X-SAW-Fac-direct-defaults",
+    "width": 26,
+    "height": 18,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "26x18-X-SAW-Color-direct-defaults",
+    "width": 26,
+    "height": 18,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "26x18-X-TRI-Fac-direct-defaults",
+    "width": 26,
+    "height": 18,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "26x18-X-TRI-Color-direct-defaults",
+    "width": 26,
+    "height": 18,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "26x18-Y-SAW-Fac-direct-defaults",
+    "width": 26,
+    "height": 18,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "26x18-Y-SAW-Color-direct-defaults",
+    "width": 26,
+    "height": 18,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "26x18-Y-TRI-Fac-direct-defaults",
+    "width": 26,
+    "height": 18,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "26x18-Y-TRI-Color-direct-defaults",
+    "width": 26,
+    "height": 18,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "18x26-X-SAW-Fac-direct-defaults",
+    "width": 18,
+    "height": 26,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "18x26-X-SAW-Color-direct-defaults",
+    "width": 18,
+    "height": 26,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "18x26-X-TRI-Fac-direct-defaults",
+    "width": 18,
+    "height": 26,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "18x26-X-TRI-Color-direct-defaults",
+    "width": 18,
+    "height": 26,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "18x26-Y-SAW-Fac-direct-defaults",
+    "width": 18,
+    "height": 26,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "18x26-Y-SAW-Color-direct-defaults",
+    "width": 18,
+    "height": 26,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "18x26-Y-TRI-Fac-direct-defaults",
+    "width": 18,
+    "height": 26,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "18x26-Y-TRI-Color-direct-defaults",
+    "width": 18,
+    "height": 26,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "127x65-X-SAW-Fac-direct-defaults",
+    "width": 127,
+    "height": 65,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "127x65-X-SAW-Color-direct-defaults",
+    "width": 127,
+    "height": 65,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "127x65-X-TRI-Fac-direct-defaults",
+    "width": 127,
+    "height": 65,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "127x65-X-TRI-Color-direct-defaults",
+    "width": 127,
+    "height": 65,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "127x65-Y-SAW-Fac-direct-defaults",
+    "width": 127,
+    "height": 65,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "127x65-Y-SAW-Color-direct-defaults",
+    "width": 127,
+    "height": 65,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "127x65-Y-TRI-Fac-direct-defaults",
+    "width": 127,
+    "height": 65,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "127x65-Y-TRI-Color-direct-defaults",
+    "width": 127,
+    "height": 65,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "65x127-X-SAW-Fac-direct-defaults",
+    "width": 65,
+    "height": 127,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "65x127-X-SAW-Color-direct-defaults",
+    "width": 65,
+    "height": 127,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "65x127-X-TRI-Fac-direct-defaults",
+    "width": 65,
+    "height": 127,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "65x127-X-TRI-Color-direct-defaults",
+    "width": 65,
+    "height": 127,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "65x127-Y-SAW-Fac-direct-defaults",
+    "width": 65,
+    "height": 127,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "65x127-Y-SAW-Color-direct-defaults",
+    "width": 65,
+    "height": 127,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "65x127-Y-TRI-Fac-direct-defaults",
+    "width": 65,
+    "height": 127,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "65x127-Y-TRI-Color-direct-defaults",
+    "width": 65,
+    "height": 127,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "8192x4-X-SAW-Fac-direct-defaults",
+    "width": 8192,
+    "height": 4,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "8192x4-X-SAW-Color-direct-defaults",
+    "width": 8192,
+    "height": 4,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "8192x4-X-TRI-Fac-direct-defaults",
+    "width": 8192,
+    "height": 4,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "8192x4-X-TRI-Color-direct-defaults",
+    "width": 8192,
+    "height": 4,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "8192x4-Y-SAW-Fac-direct-defaults",
+    "width": 8192,
+    "height": 4,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "8192x4-Y-SAW-Color-direct-defaults",
+    "width": 8192,
+    "height": 4,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "8192x4-Y-TRI-Fac-direct-defaults",
+    "width": 8192,
+    "height": 4,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "8192x4-Y-TRI-Color-direct-defaults",
+    "width": 8192,
+    "height": 4,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "4x8192-X-SAW-Fac-direct-defaults",
+    "width": 4,
+    "height": 8192,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "4x8192-X-SAW-Color-direct-defaults",
+    "width": 4,
+    "height": 8192,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "4x8192-X-TRI-Fac-direct-defaults",
+    "width": 4,
+    "height": 8192,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "4x8192-X-TRI-Color-direct-defaults",
+    "width": 4,
+    "height": 8192,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "4x8192-Y-SAW-Fac-direct-defaults",
+    "width": 4,
+    "height": 8192,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "4x8192-Y-SAW-Color-direct-defaults",
+    "width": 4,
+    "height": 8192,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "4x8192-Y-TRI-Fac-direct-defaults",
+    "width": 4,
+    "height": 8192,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "4x8192-Y-TRI-Color-direct-defaults",
+    "width": 4,
+    "height": 8192,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Color",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-X-SAW-Fac-direct-negative-bound",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      3238002688,
+      3238002688,
+      0
+    ],
+    "saved": true,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-X-SAW-Fac-direct-signed-minimum",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      931135488,
+      3078619136,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-X-SAW-Fac-direct-zero-scale",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      0,
+      1090519040,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-X-SAW-Fac-direct-ordinary",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1036831949,
+      3197737370,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-X-SAW-Fac-direct-zero-seam-predecessor",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      3081225634,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-X-SAW-Fac-direct-zero-seam-nearest",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      3081225633,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-X-SAW-Fac-direct-zero-seam-successor",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      3081225632,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-X-SAW-Fac-direct-half-seam-predecessor",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      1078529926,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-X-SAW-Fac-direct-half-seam-nearest",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      1078529927,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-X-SAW-Fac-direct-half-seam-successor",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      1078529928,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-X-SAW-Fac-direct-cycle-seam-predecessor",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      1086918576,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-X-SAW-Fac-direct-cycle-seam-nearest",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      1086918577,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-X-SAW-Fac-direct-cycle-seam-successor",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      1086918578,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-X-TRI-Fac-direct-negative-bound",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      3238002688,
+      3238002688,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-X-TRI-Fac-direct-signed-minimum",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      931135488,
+      3078619136,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-X-TRI-Fac-direct-zero-scale",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      0,
+      1090519040,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-X-TRI-Fac-direct-ordinary",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1036831949,
+      3197737370,
+      0
+    ],
+    "saved": true,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-X-TRI-Fac-direct-zero-seam-predecessor",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      3081225634,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-X-TRI-Fac-direct-zero-seam-nearest",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      3081225633,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-X-TRI-Fac-direct-zero-seam-successor",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      3081225632,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-X-TRI-Fac-direct-half-seam-predecessor",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      1078529926,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-X-TRI-Fac-direct-half-seam-nearest",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      1078529927,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-X-TRI-Fac-direct-half-seam-successor",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      1078529928,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-X-TRI-Fac-direct-cycle-seam-predecessor",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      1086918576,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-X-TRI-Fac-direct-cycle-seam-nearest",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      1086918577,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-X-TRI-Fac-direct-cycle-seam-successor",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      1086918578,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-Y-SAW-Fac-direct-negative-bound",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      3238002688,
+      3238002688,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-Y-SAW-Fac-direct-signed-minimum",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      931135488,
+      3078619136,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-Y-SAW-Fac-direct-zero-scale",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      0,
+      1090519040,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-Y-SAW-Fac-direct-ordinary",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1036831949,
+      3197737370,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-Y-SAW-Fac-direct-zero-seam-predecessor",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      3081225634,
+      0
+    ],
+    "saved": true,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-Y-SAW-Fac-direct-zero-seam-nearest",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      3081225633,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-Y-SAW-Fac-direct-zero-seam-successor",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      3081225632,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-Y-SAW-Fac-direct-half-seam-predecessor",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      1078529926,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-Y-SAW-Fac-direct-half-seam-nearest",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      1078529927,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-Y-SAW-Fac-direct-half-seam-successor",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      1078529928,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-Y-SAW-Fac-direct-cycle-seam-predecessor",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      1086918576,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-Y-SAW-Fac-direct-cycle-seam-nearest",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      1086918577,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-Y-SAW-Fac-direct-cycle-seam-successor",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      1086918578,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-Y-TRI-Fac-direct-negative-bound",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      3238002688,
+      3238002688,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-Y-TRI-Fac-direct-signed-minimum",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      931135488,
+      3078619136,
+      0
+    ],
+    "saved": true,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-Y-TRI-Fac-direct-zero-scale",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      0,
+      1090519040,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-Y-TRI-Fac-direct-ordinary",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1036831949,
+      3197737370,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-Y-TRI-Fac-direct-zero-seam-predecessor",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      3081225634,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-Y-TRI-Fac-direct-zero-seam-nearest",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      3081225633,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-Y-TRI-Fac-direct-zero-seam-successor",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      3081225632,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-Y-TRI-Fac-direct-half-seam-predecessor",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      1078529926,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-Y-TRI-Fac-direct-half-seam-nearest",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      1078529927,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-Y-TRI-Fac-direct-half-seam-successor",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      1078529928,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-Y-TRI-Fac-direct-cycle-seam-predecessor",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      1086918576,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-Y-TRI-Fac-direct-cycle-seam-nearest",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      1086918577,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-Y-TRI-Fac-direct-cycle-seam-successor",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Fac",
+    "route": "direct",
+    "parameterWords": [
+      1084227584,
+      1086918578,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "13x9-X-SAW-Color-group-reroute-defaults",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Color",
+    "route": "group-reroute",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": true,
+    "resizeCases": [
+      "9x13-X-SAW-Color-group-reroute-defaults",
+      "26x18-X-SAW-Color-group-reroute-defaults",
+      "13x9-X-SAW-Color-group-reroute-defaults"
+    ]
+  },
+  {
+    "case": "13x9-X-TRI-Color-group-reroute-defaults",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Color",
+    "route": "group-reroute",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": true,
+    "resizeCases": [
+      "9x13-X-TRI-Color-group-reroute-defaults",
+      "26x18-X-TRI-Color-group-reroute-defaults",
+      "13x9-X-TRI-Color-group-reroute-defaults"
+    ]
+  },
+  {
+    "case": "13x9-X-SAW-Fac-shared-defaults",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "shared",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": true,
+    "resizeCases": [
+      "9x13-X-SAW-Fac-shared-defaults",
+      "26x18-X-SAW-Fac-shared-defaults",
+      "13x9-X-SAW-Fac-shared-defaults"
+    ]
+  },
+  {
+    "case": "13x9-X-SAW-Fac-mixed-white-noise-defaults",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "mixed-white-noise",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": true,
+    "resizeCases": [
+      "9x13-X-SAW-Fac-mixed-white-noise-defaults",
+      "26x18-X-SAW-Fac-mixed-white-noise-defaults",
+      "13x9-X-SAW-Fac-mixed-white-noise-defaults"
+    ]
+  },
+  {
+    "case": "13x9-Y-SAW-Color-group-reroute-defaults",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Color",
+    "route": "group-reroute",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": true,
+    "resizeCases": [
+      "9x13-Y-SAW-Color-group-reroute-defaults",
+      "26x18-Y-SAW-Color-group-reroute-defaults",
+      "13x9-Y-SAW-Color-group-reroute-defaults"
+    ]
+  },
+  {
+    "case": "13x9-Y-TRI-Color-group-reroute-defaults",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Color",
+    "route": "group-reroute",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": true,
+    "resizeCases": [
+      "9x13-Y-TRI-Color-group-reroute-defaults",
+      "26x18-Y-TRI-Color-group-reroute-defaults",
+      "13x9-Y-TRI-Color-group-reroute-defaults"
+    ]
+  },
+  {
+    "case": "13x9-Y-SAW-Fac-shared-defaults",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "shared",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": true,
+    "resizeCases": [
+      "9x13-Y-SAW-Fac-shared-defaults",
+      "26x18-Y-SAW-Fac-shared-defaults",
+      "13x9-Y-SAW-Fac-shared-defaults"
+    ]
+  },
+  {
+    "case": "13x9-Y-SAW-Fac-mixed-white-noise-defaults",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "mixed-white-noise",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": true,
+    "resizeCases": [
+      "9x13-Y-SAW-Fac-mixed-white-noise-defaults",
+      "26x18-Y-SAW-Fac-mixed-white-noise-defaults",
+      "13x9-Y-SAW-Fac-mixed-white-noise-defaults"
+    ]
+  },
+  {
+    "case": "9x13-X-SAW-Color-group-reroute-defaults",
+    "width": 9,
+    "height": 13,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Color",
+    "route": "group-reroute",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "9x13-X-TRI-Color-group-reroute-defaults",
+    "width": 9,
+    "height": 13,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Color",
+    "route": "group-reroute",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "9x13-X-SAW-Fac-shared-defaults",
+    "width": 9,
+    "height": 13,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "shared",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "9x13-X-SAW-Fac-mixed-white-noise-defaults",
+    "width": 9,
+    "height": 13,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "mixed-white-noise",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "9x13-Y-SAW-Color-group-reroute-defaults",
+    "width": 9,
+    "height": 13,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Color",
+    "route": "group-reroute",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "9x13-Y-TRI-Color-group-reroute-defaults",
+    "width": 9,
+    "height": 13,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Color",
+    "route": "group-reroute",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "9x13-Y-SAW-Fac-shared-defaults",
+    "width": 9,
+    "height": 13,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "shared",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "9x13-Y-SAW-Fac-mixed-white-noise-defaults",
+    "width": 9,
+    "height": 13,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "mixed-white-noise",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "26x18-X-SAW-Color-group-reroute-defaults",
+    "width": 26,
+    "height": 18,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Color",
+    "route": "group-reroute",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "26x18-X-TRI-Color-group-reroute-defaults",
+    "width": 26,
+    "height": 18,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "TRI",
+    "output": "Color",
+    "route": "group-reroute",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "26x18-X-SAW-Fac-shared-defaults",
+    "width": 26,
+    "height": 18,
+    "pixelRatio": 1,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "shared",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "26x18-X-SAW-Fac-mixed-white-noise-defaults",
+    "width": 26,
+    "height": 18,
+    "pixelRatio": 2,
+    "axis": "X",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "mixed-white-noise",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "26x18-Y-SAW-Color-group-reroute-defaults",
+    "width": 26,
+    "height": 18,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Color",
+    "route": "group-reroute",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "26x18-Y-TRI-Color-group-reroute-defaults",
+    "width": 26,
+    "height": 18,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "TRI",
+    "output": "Color",
+    "route": "group-reroute",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "26x18-Y-SAW-Fac-shared-defaults",
+    "width": 26,
+    "height": 18,
+    "pixelRatio": 1,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "shared",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "26x18-Y-SAW-Fac-mixed-white-noise-defaults",
+    "width": 26,
+    "height": 18,
+    "pixelRatio": 2,
+    "axis": "Y",
+    "profile": "SAW",
+    "output": "Fac",
+    "route": "mixed-white-noise",
+    "parameterWords": [
+      1084227584,
+      0,
+      0
+    ],
+    "saved": false,
+    "resizeCases": []
+  }
+]

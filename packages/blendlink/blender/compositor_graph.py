@@ -80,6 +80,7 @@ normalize_radial_width = _sibling("compositor_radial_width").normalize_radial_wi
 normalize_blackbody = _sibling("compositor_blackbody").normalize_blackbody
 normalize_white_noise = _sibling("compositor_white_noise").normalize_white_noise
 validate_white_noise_field_graph = _sibling("compositor_white_noise").validate_white_noise_field_graph
+wave_axis = _sibling("compositor_wave_axis")
 resolve_vector_math_literal = _sibling("compositor_procedural_texture").literal
 normalize_procedural_texture = _sibling("compositor_procedural_texture").normalize_procedural_texture
 validate_texture_field_graph = _sibling("compositor_procedural_texture").validate_texture_field_graph
@@ -114,6 +115,7 @@ TYPES = {
     "ShaderNodeRadialTiling": "radial-segment-width",
     "ShaderNodeBlackbody": "blackbody-color",
     "ShaderNodeTexWhiteNoise": "white-noise-texture",
+    "ShaderNodeTexWave": "wave-texture",
     "ShaderNodeTexGradient": "gradient-texture",
     "ShaderNodeTexChecker": "checker-texture",
     "CompositorNodeRelativeToPixel": "relative-to-pixel",
@@ -312,6 +314,10 @@ def extract(scene):
     static_matrix_cache = {}
     static_rotation_cache = {}
     static_euler_cache = {}
+    wave_axis_reads = []
+    wave_used_nodes = {}
+    wave_topology = {}
+    wave_active = [False]
     source_nodes = {}
     view_selections = []
     used_group_interfaces = {}
@@ -650,6 +656,15 @@ def extract(scene):
                 elif node.bl_idname == "ShaderNodeBlackbody":
                     normalize_blackbody(node, socket, op, lambda incoming: input_value(incoming, ctx), result["ops"],
                         lambda incoming, message: fail("unsupported-blackbody", path, node, incoming, message), resolve_vector_math_literal)
+                elif node.bl_idname == "ShaderNodeTexWave":
+                    if not wave_active[0]:
+                        wave_active[0]=True
+                        for used,used_path in wave_used_nodes.values():observe_wave_topology(used,used_path)
+                    if len(wave_axis_reads)>=128:
+                        fail('unsupported-wave-axis',path,node,socket,'Wave axis exceeds its 128 source-operation budget')
+                    signature=wave_axis.normalize_wave_axis(node,socket,op,scene,
+                        lambda incoming,message: fail('unsupported-wave-axis',path,node,incoming,message))
+                    wave_axis_reads.append((node,socket,signature,path))
                 elif node.bl_idname == "ShaderNodeTexWhiteNoise":
                     frames = []; current = ctx
                     while current.get('parent') is not None:
@@ -1045,7 +1060,7 @@ def extract(scene):
                                 "value": input_value(incoming, ctx),
                             }
                 # Assign only after dependencies are emitted, yielding topological order.
-                single = op["kind"] == "image-info" or (op["kind"] == "ellipse-mask" and op["properties"].get("ellipse_mask_identity") is True) or (op["kind"] not in {"render-pass", "image-input", "box-mask", "ellipse-mask"} and not op["properties"].get("procedural_texture_coordinate_model") and not op["properties"].get("white_noise_coordinate_model") and all(is_single_value(incoming["value"]) for incoming in op["inputs"].values()))
+                single = op["kind"] == "image-info" or (op["kind"] == "ellipse-mask" and op["properties"].get("ellipse_mask_identity") is True) or (op["kind"] not in {"render-pass", "image-input", "box-mask", "ellipse-mask"} and not op["properties"].get("procedural_texture_coordinate_model") and not op["properties"].get("white_noise_coordinate_model") and not op["properties"].get("wave_axis_model") and all(is_single_value(incoming["value"]) for incoming in op["inputs"].values()))
                 if single and op["kind"] == "alpha-crop" and bpy.app.version < (4, 5, 0) and device == "CPU":
                     fail("unsupported-crop-domain", path, node, socket,
                          "Legacy CPU Crop requires a finite image input; constant-image canvas evaluation remains unqualified")
@@ -1064,7 +1079,25 @@ def extract(scene):
         finally:
             visiting.remove(key)
 
+    def observe_wave_topology(node, path):
+        # Only used nodes, never a containing-tree copy or unused-node walk.
+        if len(wave_topology)>=2048 and node.as_pointer() not in wave_topology:
+            fail('unsupported-wave-axis',path,node,None,'Wave source topology exceeds 2048 used nodes')
+        if len(node.inputs)+len(node.outputs)>4096:
+            fail('unsupported-wave-axis',path,node,None,'Wave source topology exceeds its socket budget')
+        try:
+            signature=static_matrix._Evaluator.signature(node)
+            key=node.as_pointer()
+            prior=wave_topology.get(key)
+            if prior is not None and prior[1]!=signature:
+                raise ValueError('Wave used topology changed during extraction')
+            wave_topology[key]=(node,signature,tuple(path),node.name)
+        except (ValueError,ReferenceError,RuntimeError) as error:
+            fail('wave-axis-topology-changed',path,node,None,str(error))
+
     def require_static(node, socket, ctx):
+        wave_used_nodes[node.as_pointer()]=(node,tuple(ctx['path']))
+        if wave_active[0]:observe_wave_topology(node,ctx['path'])
         owner = node.id_data
         animation = owner.animation_data
         if animation and (
@@ -1126,6 +1159,11 @@ def extract(scene):
         if box_conflict:
             op, message = box_conflict
             result["diagnostics"].append({"code":"unsupported-box-mask", "path":op["source"]["path"], "node":op["source"]["node"], "socket":op["source"]["output"], "message":message})
+            raise Unsupported()
+        wave_conflict = wave_axis.validate_wave_axis_graph(result)
+        if wave_conflict:
+            op,message=wave_conflict
+            result['diagnostics'].append({'code':'unsupported-wave-axis','path':op['source']['path'],'node':op['source']['node'],'socket':op['source']['output'],'message':message})
             raise Unsupported()
         white_noise_conflict = validate_white_noise_field_graph(result)
         if white_noise_conflict:
@@ -1211,6 +1249,18 @@ def extract(scene):
             except (group_defaults.GroupDefaultUnsupported,ReferenceError,RuntimeError) as error:
                 # The node itself may have been removed by an evaluation handler.
                 fail('group-interface-changed',path,None,None,label+': '+str(error))
+        for node,signature,path,label in wave_topology.values():
+            try:
+                if static_matrix._Evaluator.signature(node)!=signature:
+                    raise ValueError('Wave used topology changed during extraction')
+            except (ValueError,ReferenceError,RuntimeError) as error:
+                fail('wave-axis-topology-changed',path,None,None,label+': '+str(error))
+        for node,socket,signature,path in wave_axis_reads:
+            try:
+                if wave_axis.source_signature(node,scene)!=signature:
+                    raise wave_axis.WaveAxisUnsupported('Wave axis source/context changed during extraction')
+            except (wave_axis.WaveAxisUnsupported,ReferenceError,RuntimeError) as error:
+                fail('wave-axis-source-changed',path,node,socket,str(error))
         result["status"] = "extracted"
     except Unsupported:
         result["status"] = "unsupported"

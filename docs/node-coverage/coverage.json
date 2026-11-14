@@ -1,5 +1,5 @@
 {
-  "capabilityMapSha256": "67dcc5f573a9006212da45d870613e332b6889925fbccd288cb951ecadc6d20b",
+  "capabilityMapSha256": "23f7c0e7138402489bb51eced8653a786735556c8d00b123365f0facc31322c9",
   "capabilityValidationFailures": [],
   "classificationRefresh": {
     "catalogSha256": {
@@ -12,7 +12,7 @@
     "nativeInventoryRefreshed": false,
     "reason": "Classification-only refresh against unchanged content-pinned full inventories; no native rediscovery or numerical qualification is performed."
   },
-  "generatedAt": "2026-11-14T18:23:33.159201+00:00",
+  "generatedAt": "2026-11-14T18:57:55.723636+00:00",
   "nativeAvailabilityChanges": [],
   "nativeCatalogSha256": {
     "docs/node-coverage/blender-4.2.0.json": "2f71cb192f6a62e0e343ba5fcb11a2d8e0c6f6af1e8ac663ec6c3350b016b151",
@@ -11808,11 +11808,79 @@
                   "RINGS": "unsupported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def normalize_wave_axis",
+                  "path": "packages/blendlink/blender/compositor_wave_axis.py"
+                },
+                {
+                  "anchor": "def validate_wave_axis_graph",
+                  "path": "packages/blendlink/blender/compositor_wave_axis.py"
+                },
+                {
+                  "anchor": "\"ShaderNodeTexWave\": \"wave-texture\"",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "anchor": "export function waveAxisRows",
+                  "path": "packages/blendlink/src/tslCompositorWaveAxis.ts"
+                },
+                {
+                  "anchor": "export function buildCompositorWaveAxis",
+                  "path": "packages/blendlink/src/tslCompositorWaveAxis.ts"
+                },
+                {
+                  "anchor": "export function validateWaveAxisGraph",
+                  "path": "packages/blendlink/src/tslCompositorWaveField.ts"
+                },
+                {
+                  "anchor": "export class OwnedCompositorRowTable",
+                  "path": "packages/blendlink/src/tslCompositorRowTable.ts"
+                },
+                {
+                  "anchor": "case 'wave-texture':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_wave_axis_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorWaveAxis.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorRowTable.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorRowBinding.test.ts"
+                },
+                {
+                  "path": "experiments/compositor-wave-axis/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-wave-axis/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-wave-axis/reference.py"
+                },
+                {
+                  "path": "experiments/compositor-wave-axis/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-wave-axis/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-wave-axis/README.md"
+                },
+                {
+                  "path": "node-ports/compositor-wave-axis.json"
+                }
+              ],
               "id": "ShaderNodeTexWave",
               "label": "Wave Texture",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "No admitted route outside the explicitly qualified Blender5.3.0 CPU compositor axis-field override. Native availability alone is not numerical support.",
+              "runtimeOps": [
+                "wave-texture"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -15858,16 +15926,16 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 71,
+            "partial": 72,
             "structural": 7,
             "supported": 24,
-            "unsupported": 85
+            "unsupported": 84
           },
           "enumValueCounts": {
             "partial": 36,
             "structural": 3,
-            "supported": 291,
-            "unsupported": 602
+            "supported": 296,
+            "unsupported": 597
           },
           "nodes": [
             {
@@ -21817,13 +21885,13 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "bands_direction": {
                   "DIAGONAL": "unsupported",
-                  "X": "unsupported",
-                  "Y": "unsupported",
+                  "X": "supported",
+                  "Y": "supported",
                   "Z": "unsupported"
                 },
                 "rings_direction": {
@@ -21833,20 +21901,88 @@
                   "Z": "unsupported"
                 },
                 "wave_profile": {
-                  "SAW": "unsupported",
+                  "SAW": "supported",
                   "SIN": "unsupported",
-                  "TRI": "unsupported"
+                  "TRI": "supported"
                 },
                 "wave_type": {
-                  "BANDS": "unsupported",
+                  "BANDS": "supported",
                   "RINGS": "unsupported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def normalize_wave_axis",
+                  "path": "packages/blendlink/blender/compositor_wave_axis.py"
+                },
+                {
+                  "anchor": "def validate_wave_axis_graph",
+                  "path": "packages/blendlink/blender/compositor_wave_axis.py"
+                },
+                {
+                  "anchor": "\"ShaderNodeTexWave\": \"wave-texture\"",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "anchor": "export function waveAxisRows",
+                  "path": "packages/blendlink/src/tslCompositorWaveAxis.ts"
+                },
+                {
+                  "anchor": "export function buildCompositorWaveAxis",
+                  "path": "packages/blendlink/src/tslCompositorWaveAxis.ts"
+                },
+                {
+                  "anchor": "export function validateWaveAxisGraph",
+                  "path": "packages/blendlink/src/tslCompositorWaveField.ts"
+                },
+                {
+                  "anchor": "export class OwnedCompositorRowTable",
+                  "path": "packages/blendlink/src/tslCompositorRowTable.ts"
+                },
+                {
+                  "anchor": "case 'wave-texture':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_wave_axis_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorWaveAxis.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorRowTable.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorRowBinding.test.ts"
+                },
+                {
+                  "path": "experiments/compositor-wave-axis/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-wave-axis/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-wave-axis/reference.py"
+                },
+                {
+                  "path": "experiments/compositor-wave-axis/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-wave-axis/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-wave-axis/README.md"
+                },
+                {
+                  "path": "node-ports/compositor-wave-axis.json"
+                }
+              ],
               "id": "ShaderNodeTexWave",
               "label": "Wave Texture",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Pinned Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor FULL/AUTO. Native own-unlinked Uniform Vector for Bands X/Y SAW/TRI Color/Fac. Scale and Phase Offset must be unlinked raw Float32 +0 or normal with magnitude in[2^-16,8]; defaultScale5/Phase0 remain intact. Distortion must be raw+0 and all Detail controls unlinked. Stored Vector defaults are natively ignored. Identity texture mapping, square pixels, no borders/crop, same-frame zero-origin full-frame physical extents4..8192 including live resize/DPR. The native field domain remains field even when values coincide. A source-derived exact factor row is built O(width+height) only on valid extent changes, shared by repeated Color/Fac nodes with the same axis/profile/Scale-word/Phase-word key; at most32KiB logical data per Wave row and one unfiltered lookup. Separately owned White Noise axes consume one table up to64KiB in mixed controls. Combined Wave/WhiteNoise/Ellipse/display sampler budget8; no unaccounted effects or declared scene passes. Actual Metal and SwiftShader WebGPU/WebGL2 raw+SavedFinal closure compares10,876,288 exact primary words, including native exact zero/one endpoints. Row-only preparation/commit/live allocation counters exclude PMREM and other install work. Renderer/physical-binding/target/mip/viewport/DPR/epoch/version guards, failed-first-upload cleanup, saved-dispose fallback, caller ownership and resize recovery are checked. Closed validated texture-free pointwise consumers only; Rings, SIN, Z/DIAGONAL, linked coordinates/controls, distortion, animation/drivers/NLA, native mute bypass, nonidentity mapping, image/render-pass/spatial producers, ImageInfo consumer extension, arbitrary amplification, native GPU/EEVEE/other profiles and original-demo acceptance remain unqualified. The existing shader Wave implementation and all historical source snapshots are unchanged.",
+              "runtimeOps": [
+                "wave-texture"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -26847,7 +26983,7 @@
     "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
     "packages/blendlink/blender/compositor_float_coordinates.py": "a300cbfb6e5ea06806e2fb9b9d7795cd2e3b91cb21ada43e4c128ac89d8f0cec",
     "packages/blendlink/blender/compositor_float_to_int.py": "6292f5a5904107b59591c282fcf9def24a5f98dc2ead0a92d950b6219226658d",
-    "packages/blendlink/blender/compositor_graph.py": "0752b79af682bdde9d30a3c0b79c1752eb08c2f8cbdbf7d5f58668f456f8f483",
+    "packages/blendlink/blender/compositor_graph.py": "c2cce842b3cbfaf6bae84c126628975199ce85f6904ce6570b7ea8b75be4c4fb",
     "packages/blendlink/blender/compositor_group_defaults.py": "484fea6a45208531f189e65d627747f94c1386b98a9a6b460a21f51afa01889d",
     "packages/blendlink/blender/compositor_image.py": "55ee3b7800002331c4e30042a7d5da18538267b58ff60c006e03ad238da9e012",
     "packages/blendlink/blender/compositor_image_coordinates.py": "4b796327c579e7c08ed487cce4758c899a1a11be648e93977c22a0536451054a",
@@ -26856,7 +26992,7 @@
     "packages/blendlink/blender/compositor_luminance_key.py": "5391ac3ca522590a0bffa0a2ef3ca25c8be44d0218381fa9f3bc48ab14edb3cd",
     "packages/blendlink/blender/compositor_map_value.py": "784d1ba979b02e2e665b41818d4efd8912c5fe35ae821ea39135912fda3fe5fe",
     "packages/blendlink/blender/compositor_map_value_domain.py": "ff43991bf956ed131835b671f9d44c0a80e23b9888c53903f6486c5a287448eb",
-    "packages/blendlink/blender/compositor_mask_domains.py": "a0b8ecbb20590b0c6499b680f5a61c89667e9fd4d39c7755aae587442b7ec247",
+    "packages/blendlink/blender/compositor_mask_domains.py": "0a513ff741c657b0cee96387591e0640ebd9a04091bdce311cd4a2372743991c",
     "packages/blendlink/blender/compositor_normal.py": "9dcd0e53d674560bb7c060a2a6a2b5ccdec361235ae67620c587a29136d2c94d",
     "packages/blendlink/blender/compositor_pixelate.py": "607f738a09fc75f15facb9cb0c261bfb72800663d5908826e5d105d980800b3d",
     "packages/blendlink/blender/compositor_procedural_texture.py": "70d34a56ea67a67aecd899fb05e66716746865c190e9d9f2bd4289b6df2bf025",
@@ -26872,13 +27008,14 @@
     "packages/blendlink/blender/compositor_vector_component.py": "8b29742404fa7d80d2bdc661363a052bc1a2680b3306a2a47b20d0d9e5bfe20c",
     "packages/blendlink/blender/compositor_vector_math.py": "94a78be4e19d1b824b046665250fccb801e363b2339253a7f047c2e76532e0f9",
     "packages/blendlink/blender/compositor_view_selection.py": "f5ef756dfd61ca8047f55bb004c74372f7af27fff357a74476d8d0c5432ab491",
-    "packages/blendlink/blender/compositor_white_noise.py": "516789aed1ded25b03a389f74a30edd7578186189899dbe2b39e10f5b709ffdd",
+    "packages/blendlink/blender/compositor_wave_axis.py": "f36726191e86c79695e1dab086137002c6a71d2c6a2ba560928b6274b24f1f2c",
+    "packages/blendlink/blender/compositor_white_noise.py": "b98321026920b3d39c62a0e5331d74f758eb94d4d5c067a9c2d2b9d8eb4c23fa",
     "packages/blendlink/blender/compositor_whitepoint.py": "a2beb2b16a1f7fbf6b02a31cb4690d0c98e23e144748e5962a0d4f755922d2e5",
     "packages/blendlink/blender/export_scene.py": "d746ba319cdf24915ea8f718104639b2d17075fff6da46cb503caf2c225c171f",
     "packages/blendlink/blender/geometry_export.py": "3d147a218ee96f0bf72ffeb5add773396347fc39224501eb62d5d7f67551fd2d",
     "packages/blendlink/blender/native_color_band.py": "23aa27b056846d42cdb96919da968d04f9e8e44d794ffa10c80871f786bfc8d4",
     "packages/blendlink/blender/normal_bake_transport.py": "1e6211bb197f6e015262f80937112ec594e70977945fc1259133aa8ffd36429e",
-    "packages/blendlink/blender/source_presentation.py": "acc2fe9a639e5b6f755af1b963fcbccfc333d3bd6b9075239587dc95120bad00",
+    "packages/blendlink/blender/source_presentation.py": "4ecd0ad81889abd39693348b2ff32201b7806c3473ba3860316ca8c5d2526706",
     "packages/blendlink/blender/tangent_export.py": "4815854bd825e910009b42de73ecf5aa9cc0bb07966bb2d688731e5df12b514e",
     "packages/blendlink/src/compiledMaterialPrograms.ts": "d6f2d9471ec145d7ed7b2abc395221eb316a7daa55a004ebf8b0c3d2fecc6cec",
     "packages/blendlink/src/compiledSceneAudit.ts": "08fded1eb26f0fb964401d24699bd6ea0bc26aa9c0536c764a8965f0124748a5",
@@ -26887,7 +27024,7 @@
     "packages/blendlink/src/sceneDiagnostics.ts": "48b8d220ad2b5216f496694ef1b29c19903e90cc65fc9ce01bda77e21c84dc0e",
     "packages/blendlink/src/staticNoise4d.ts": "0677ad1169801c601d74b8a5658d98691415bf313081ca0b4fa88ec762e62a76",
     "packages/blendlink/src/threeRuntime.ts": "4eac231544744877535e8e71f044ae8beadc9478a839fa3ba05357fa35c03632",
-    "packages/blendlink/src/threeWebgpuPostPipeline.ts": "3f24386cb941b32f272ee945bd52965c5cd1a621082bbbeec26c376d2b5d2bd0",
+    "packages/blendlink/src/threeWebgpuPostPipeline.ts": "d6f6a8b396b1e60f150d187c49ca2ada8797bf0e96f424b0fc600cea1ec305b9",
     "packages/blendlink/src/tslBlackbodyCoefficients.ts": "39d17f54a1bb7f394bae6393200badb5faa756e9772ea4d4ef92f878ff4fac18",
     "packages/blendlink/src/tslBrickNodes.ts": "5b61f5565af2b818d3a507b3cc0b408f1ef3537d5d8cb64517280f8473afde9b",
     "packages/blendlink/src/tslBumpHeight.ts": "3c8622196e1fcdbbbdafcd76a85f42a545e05a54fc8ad61002e5a259d2fd2f8f",
@@ -26917,7 +27054,7 @@
     "packages/blendlink/src/tslCompositorDistanceKey.ts": "8a2aebf7105274f8d02fd9b68b358bdb3cb89a6b43a60edda00a0fd30a5aa2fa",
     "packages/blendlink/src/tslCompositorEllipseMask.ts": "bcbcf7be97750ec105df27d98c2239d2ef9e41b010d84462b2ee9f8e57e3da07",
     "packages/blendlink/src/tslCompositorEllipseSceneMix.ts": "5717eecb8b5378f7c3f1c2d54c4c12dd008cefe004820191cf552bea256aa38f",
-    "packages/blendlink/src/tslCompositorExactAxes.ts": "bc80cf071c35355a9fc62836ccf03a112d4e74b2b6f93043ed261c22185186e1",
+    "packages/blendlink/src/tslCompositorExactAxes.ts": "6ff937485a75f226deee286d7a564bec675f6348557751d3c145f7e817bad2d8",
     "packages/blendlink/src/tslCompositorFilter.ts": "a03e7e652c3d86daf3f29ac930688f9d2a282cdd50b4b89f8ab87e1c86262227",
     "packages/blendlink/src/tslCompositorFloatCoordinates.ts": "473b117bb7dc3872761f2c098e58cdf7dab1262a2e1f47fdf9e1286ba4e8ada9",
     "packages/blendlink/src/tslCompositorFloatToInt.ts": "8e39857c7d79d0233e4f29163052f6dcc3ef14585ee05425be3405d924989aac",
@@ -26930,11 +27067,12 @@
     "packages/blendlink/src/tslCompositorLuminanceKey.ts": "3858b364150d9dc847ea05ee4ef768cb9b2ef5fae3c0ece240f3c3c1016e23c4",
     "packages/blendlink/src/tslCompositorMapValue.ts": "a3ec846d3af2a2e91e234a0c425c192f3dbaacad0319af11a4414f42baa7e538",
     "packages/blendlink/src/tslCompositorMapValueDomain.ts": "325637bd5fb107ff49ce5aa8b45aa954be7a4411e9daf8cb79b4bb64ffa9ad0a",
-    "packages/blendlink/src/tslCompositorMaskDomains.ts": "3d4f7d24df1a00e853f5fa1d252b32c8177e0619d171d371b77bb0664014d347",
+    "packages/blendlink/src/tslCompositorMaskDomains.ts": "d694173c3a48f986d083baad0ab58ca76fe5a3cb94473dc4fa3976239fcbdaa4",
     "packages/blendlink/src/tslCompositorPixelate.ts": "20feecc95d60c471e11428474bbcd3c214133652ecaafabc6b81a0486bc28b21",
     "packages/blendlink/src/tslCompositorProceduralTexture.ts": "6c53d01b82960c77bb624bcefdb261805244363d4ffb7e70b1d45d1004d8cb9a",
     "packages/blendlink/src/tslCompositorRelativeToPixel.ts": "0594bfe77a71f54c5526abc520b5ef6a9f59a864db07f1554c39133bf4153646",
     "packages/blendlink/src/tslCompositorResampling.ts": "6ff79d9bb5f31bee831e2491fe5cfb89582584c80026b1a3c0c302985377a1d6",
+    "packages/blendlink/src/tslCompositorRowTable.ts": "03ee44ba3b7040f80c204ca74aebc1a8cb81ba160331304d082fc695b9c1897f",
     "packages/blendlink/src/tslCompositorSceneFrame.ts": "b24e41bb51d684d589d97669e0ca279093ce8b68a5cc2e38d43bd42ff8c12479",
     "packages/blendlink/src/tslCompositorSpatial.ts": "9cf2dbf99faca6d063e978a5f0463d26c43473b96ddffb543849e1733162806c",
     "packages/blendlink/src/tslCompositorSpill.ts": "df6393b864834cfb8a386c88ce52d3b45ed169df94b4c8724b501272d148903d",
@@ -26943,8 +27081,10 @@
     "packages/blendlink/src/tslCompositorStaticImageDomain.ts": "82bb6bf70f547a8b3309df0ac564456d5ae262b0c42525f8a2d6e80565cab7cf",
     "packages/blendlink/src/tslCompositorTextureField.ts": "e4816ef165f41d5f667f0b6667a03a6d94283ef737aaa945f9912a42157d4023",
     "packages/blendlink/src/tslCompositorVectorMath.ts": "72e656d14d7a1a7d83e2102b36803a48af72392623ac7129db4ebda58717dd9a",
+    "packages/blendlink/src/tslCompositorWaveAxis.ts": "19305925d6c13f172a4d44a082f4da51be94e4415126c567e088cce77153de2a",
+    "packages/blendlink/src/tslCompositorWaveField.ts": "2377aec6dfe65cd3a14ddeeb52bd635755b9f2bf8169c99f73217268a95a080e",
     "packages/blendlink/src/tslCompositorWhiteNoise.ts": "3cd7b1e681bb3c4e93930d4d0c61ff2c6d12c086f0a292b0f2decedbc833a661",
-    "packages/blendlink/src/tslCompositorWhiteNoiseField.ts": "b8956478c4e840dc711edf4deb05168bb39237fcf6b66f6075b3696356def926",
+    "packages/blendlink/src/tslCompositorWhiteNoiseField.ts": "dd4633dacbabe60ed762b90df240a7c46a0015cf33c9aa5c575a7ad5c74799da",
     "packages/blendlink/src/tslCompositorWhiteNoiseRne.ts": "35ce2b3bca81a3deeab4bb1feb65c86d1fc67a948e2722380220f1ac7df8386b",
     "packages/blendlink/src/tslCompositorWhitePoint.ts": "70f5f1ae4ddc1bd9c723dcc8cb0af3567e75d110a35e7e812bfd124959814353",
     "packages/blendlink/src/tslCurveNodes.ts": "b88bff5a13527319e2be958f100115a2a87565a7546157b49e30c3fd3979de72",
@@ -26976,7 +27116,7 @@
     "packages/blendlink/src/tslRadialWidth.ts": "9ffc9e3a7e32b3d0676b2a90fffad64e2578cd30d160ddaf00278d2d9ff43719",
     "packages/blendlink/src/tslRepeat.ts": "4d7925f09220e54973155c6af8c41c98e3b32e141f5acbdc6d29741c701d9a93",
     "packages/blendlink/src/tslSharedUtilities.ts": "1f21b06a4d60a439b0549b7c6716c66945b4cce3cc00fc6e965acbe77c80d9b9",
-    "packages/blendlink/src/tslSourceCompositor.ts": "1cfbefbacdb6f4cec09c0856df884b417b9186c15ef44dc0953dd608a196c45d",
+    "packages/blendlink/src/tslSourceCompositor.ts": "f8ab2ab28ddadef7b8b9b8a93cc83e45b478a939ef0a941d599f5cc3095ad72a",
     "packages/blendlink/src/tslSpectralNodes.ts": "10719a4f7ceef71f80a9b3492561c382cd0904de209e0e93f9f578b5af529bf2",
     "packages/blendlink/src/tslSqueeze.ts": "14a56aa219ca2bb2dace54d512e8b9cfda754ea83991a92a1c270a1122ea492b",
     "packages/blendlink/src/tslTangentNodes.ts": "fb7ad452300be3e96a9f01b4f82f9ce59cb8577cf68e056df994876321cffcc1",

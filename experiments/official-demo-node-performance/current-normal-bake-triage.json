@@ -1,0 +1,638 @@
+{
+  "schemaVersion": 1,
+  "kind": "official-demo-current-native-planner-triage-v1",
+  "status": "OBSERVED_NOT_QUALIFIED",
+  "sourceCommit": "d459c1db3d097bd23ab9ff5c17d48676faed110d",
+  "role": "Fresh source-preserving Blender 5.3 load, active-view-layer geometry and current automatic material planning on three unchanged official demos. Planning only: no actual bake, native render, stock export, Final publication, browser fidelity or numerical port credit.",
+  "nativeInventoryScope": "Loaded original physical and contributing used-material trees; not an exhaustive Blender schema inventory.",
+  "sdkSources": {
+    "sha256": "89e48043e11429bf9f0d03a031913b829048fce2b4a86a3a0dfa2bee82313d43",
+    "fileCount": 345,
+    "stable": true,
+    "completeInventory": {
+      "path": "artifacts/verification-official-demo-next37-20261114/run.json",
+      "bytes": 200534,
+      "sha256": "be45f882957cc2f08b8692a240bce6a5e393f45e679326479dad25eff39a317f"
+    }
+  },
+  "startedAt": "2026-11-14T18:47:18.799Z",
+  "completedAt": "2026-11-14T18:47:22.242Z",
+  "corpus": {
+    "path": "experiments/official-demo-node-performance/corpus.json",
+    "bytes": 2540,
+    "sha256": "4cf26200e6ec31fd21b7792e2c5b99df03cf517532270a79bee9634562fd6156"
+  },
+  "harness": {
+    "path": "experiments/official-demo-node-performance/run.mjs",
+    "bytes": 8313,
+    "sha256": "b41790280482e23b34d53ab381bd6fc2a554167a798366202d55b0e59b6f78a9"
+  },
+  "probe": {
+    "path": "experiments/official-demo-node-performance/probe.py",
+    "bytes": 16772,
+    "sha256": "badffecaa706dbae95af52d2b580742bfde9420dcb2cd848c64206decf5db442"
+  },
+  "nodeVersion": "v24.22.1",
+  "rows": [
+    {
+      "scene": "mandelbrot-grow",
+      "native": {
+        "version": [
+          5,
+          3,
+          0
+        ],
+        "versionString": "5.3.0",
+        "buildHash": "02f0899d78e3",
+        "autoexecEnabled": false
+      },
+      "sourceSha256": "08b1928c3b8c6c2ed120a470cdc08277a706e624c8133e72bc2f0e0c6c4255f9",
+      "sourceSha256After": "08b1928c3b8c6c2ed120a470cdc08277a706e624c8133e72bc2f0e0c6c4255f9",
+      "copySha256After": "08b1928c3b8c6c2ed120a470cdc08277a706e624c8133e72bc2f0e0c6c4255f9",
+      "sourcePreserved": true,
+      "authoredScene": {
+        "name": "Scene",
+        "engine": "BLENDER_EEVEE",
+        "frame": 31,
+        "frameRange": [
+          1,
+          200
+        ],
+        "resolution": [
+          1920,
+          1024,
+          100
+        ],
+        "camera": "Camera"
+      },
+      "adjustments": [],
+      "physicalNodes": 35,
+      "usedMaterialActiveSurfaceNodes": 25,
+      "usedMaterialActiveSurfaceClasses": {
+        "GeometryNodeRepeatInput": 1,
+        "GeometryNodeRepeatOutput": 1,
+        "NodeReroute": 3,
+        "ShaderNodeBsdfPrincipled": 1,
+        "ShaderNodeBump": 1,
+        "ShaderNodeCombineXYZ": 1,
+        "ShaderNodeMath": 7,
+        "ShaderNodeMix": 3,
+        "ShaderNodeSeparateXYZ": 1,
+        "ShaderNodeTexCoord": 1,
+        "ShaderNodeValue": 1,
+        "ShaderNodeVectorMath": 4
+      },
+      "geometry": {
+        "meshObjects": 1,
+        "trianglesSumPerObject": 2,
+        "scopeLimit": "Active view-layer non-hide_render mesh objects; instance multiplicity/curves not included in this triangle sum."
+      },
+      "outcomes": {
+        "blocked": 1
+      },
+      "decisions": [
+        {
+          "material": "Mandelbrot Grow",
+          "outcome": "blocked",
+          "transport": "program",
+          "bindings": 1,
+          "issues": [
+            {
+              "code": "material.normal-map-program-unproven",
+              "material": "Mandelbrot Grow",
+              "problem": "Native normal/tangent channel Normal has no proven program: node tree 'Shader Nodetree' has animation or drivers; live curve transport is required",
+              "fix": "Keep this channel within a verified native normal domain; its source nodes remain intact.",
+              "objects": [
+                "Mandelbrot"
+              ]
+            }
+          ],
+          "channels": [
+            {
+              "channel": "Base Color",
+              "route": "refused",
+              "tslIrRefusal": "node tree 'Shader Nodetree' has animation or drivers; live curve transport is required"
+            },
+            {
+              "channel": "Metallic",
+              "route": "refused",
+              "tslIrRefusal": "node tree 'Shader Nodetree' has animation or drivers; live curve transport is required"
+            },
+            {
+              "channel": "Roughness",
+              "route": "refused",
+              "tslIrRefusal": "node tree 'Shader Nodetree' has animation or drivers; live curve transport is required"
+            },
+            {
+              "channel": "Alpha",
+              "route": "refused",
+              "tslIrRefusal": "node tree 'Shader Nodetree' has animation or drivers; live curve transport is required"
+            },
+            {
+              "channel": "Emission",
+              "route": "refused",
+              "tslIrRefusal": "node tree 'Shader Nodetree' has animation or drivers; live curve transport is required"
+            },
+            {
+              "channel": "Normal",
+              "route": "refused",
+              "tslIrRefusal": "node tree 'Shader Nodetree' has animation or drivers; live curve transport is required"
+            },
+            {
+              "channel": "IOR",
+              "route": "refused",
+              "tslIrRefusal": "node tree 'Shader Nodetree' has animation or drivers; live curve transport is required"
+            }
+          ]
+        }
+      ],
+      "rawReport": {
+        "path": "artifacts/verification-official-demo-next37-20261114/mandelbrot-grow-1/report.json",
+        "bytes": 12506,
+        "sha256": "a91cce84c5e855099939387390bf16e3777224803f430c70ccc720e4ebae4798"
+      },
+      "materialPlan": {
+        "path": "artifacts/verification-official-demo-next37-20261114/mandelbrot-grow-1/material-plan.json",
+        "bytes": 3629,
+        "sha256": "a76fc1f8affa45d5758d57e4f344bd0a6fce8ba8e0c6e0d945183879bb49ab0e"
+      },
+      "stdout": {
+        "path": "artifacts/verification-official-demo-next37-20261114/mandelbrot-grow-1.stdout.log",
+        "bytes": 645,
+        "sha256": "f3771b5abfcc5c495dbf0418ab13d3007f354793733ee361f48100190eb20d82"
+      },
+      "stderr": {
+        "path": "artifacts/verification-official-demo-next37-20261114/mandelbrot-grow-1.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "scene": "radial-tiling",
+      "native": {
+        "version": [
+          5,
+          3,
+          0
+        ],
+        "versionString": "5.3.0",
+        "buildHash": "02f0899d78e3",
+        "autoexecEnabled": false
+      },
+      "sourceSha256": "bfc3cea66963e84c4468e8fac6b0313ef72265cafa5df36cf0f03d21479d1e3c",
+      "sourceSha256After": "bfc3cea66963e84c4468e8fac6b0313ef72265cafa5df36cf0f03d21479d1e3c",
+      "copySha256After": "bfc3cea66963e84c4468e8fac6b0313ef72265cafa5df36cf0f03d21479d1e3c",
+      "sourcePreserved": true,
+      "authoredScene": {
+        "name": "Scene",
+        "engine": "BLENDER_EEVEE",
+        "frame": 1,
+        "frameRange": [
+          1,
+          250
+        ],
+        "resolution": [
+          1920,
+          1080,
+          100
+        ],
+        "camera": null
+      },
+      "adjustments": [],
+      "physicalNodes": 30,
+      "usedMaterialActiveSurfaceNodes": 23,
+      "usedMaterialActiveSurfaceClasses": {
+        "NodeReroute": 6,
+        "ShaderNodeBsdfPrincipled": 2,
+        "ShaderNodeCombineXYZ": 1,
+        "ShaderNodeGroup": 2,
+        "ShaderNodeMapRange": 1,
+        "ShaderNodeMath": 4,
+        "ShaderNodeMix": 1,
+        "ShaderNodeRadialTiling": 1,
+        "ShaderNodeSeparateXYZ": 1,
+        "ShaderNodeTexCoord": 1,
+        "ShaderNodeTexImage": 1,
+        "ShaderNodeVectorMath": 2
+      },
+      "geometry": {
+        "meshObjects": 2,
+        "trianglesSumPerObject": 4,
+        "scopeLimit": "Active view-layer non-hide_render mesh objects; instance multiplicity/curves not included in this triangle sum."
+      },
+      "outcomes": {
+        "blocked": 1,
+        "preserved": 1
+      },
+      "decisions": [
+        {
+          "material": "CobbleStone",
+          "outcome": "preserved",
+          "transport": "stock",
+          "bindings": 1,
+          "issues": [],
+          "channels": []
+        },
+        {
+          "material": "Coordinates",
+          "outcome": "blocked",
+          "transport": null,
+          "bindings": 1,
+          "issues": [
+            {
+              "code": "material.automatic-fallback-engine-unproven",
+              "material": "Coordinates",
+              "problem": "The Base Color channel cannot automatically switch from EEVEE to a CYCLES channel bake: native node evaluation differs and channel equivalence is unproven for Radial Tiling (ShaderNodeRadialTiling). (Radial Tiling is not classified for channel routing yet.)",
+              "fix": "Keep this channel live, use Cycles as the source engine, or explicitly choose a capture after reviewing the engine change.",
+              "objects": [
+                "Coordinates"
+              ]
+            }
+          ],
+          "channels": [
+            {
+              "channel": "Alpha",
+              "route": "factor"
+            },
+            {
+              "channel": "Base Color",
+              "route": "refused"
+            },
+            {
+              "channel": "Metallic",
+              "route": "factor"
+            },
+            {
+              "channel": "Roughness",
+              "route": "factor"
+            },
+            {
+              "channel": "Emission",
+              "route": "factor"
+            },
+            {
+              "channel": "IOR",
+              "route": "program"
+            }
+          ]
+        }
+      ],
+      "rawReport": {
+        "path": "artifacts/verification-official-demo-next37-20261114/radial-tiling-1/report.json",
+        "bytes": 14036,
+        "sha256": "988441888a3ae96db4f9d5c96a49b3991a944a42ce8383e4eb24d1026cd37d5c"
+      },
+      "materialPlan": {
+        "path": "artifacts/verification-official-demo-next37-20261114/radial-tiling-1/material-plan.json",
+        "bytes": 5145,
+        "sha256": "dd0ef0289d9c2d7bc85790fef22208f683735da932395cf8443653efcf40afeb"
+      },
+      "stdout": {
+        "path": "artifacts/verification-official-demo-next37-20261114/radial-tiling-1.stdout.log",
+        "bytes": 649,
+        "sha256": "9b0f08455b3f26aa42bba7e3c5f211ac4ea765dd2d5fd1cc1984ac082bca750d"
+      },
+      "stderr": {
+        "path": "artifacts/verification-official-demo-next37-20261114/radial-tiling-1.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "scene": "cube-diorama",
+      "native": {
+        "version": [
+          5,
+          3,
+          0
+        ],
+        "versionString": "5.3.0",
+        "buildHash": "02f0899d78e3",
+        "autoexecEnabled": false
+      },
+      "sourceSha256": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e",
+      "sourceSha256After": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e",
+      "copySha256After": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e",
+      "sourcePreserved": true,
+      "authoredScene": {
+        "name": "Cube Diorama",
+        "engine": "CYCLES",
+        "frame": 0,
+        "frameRange": [
+          1,
+          10000
+        ],
+        "resolution": [
+          1024,
+          1024,
+          200
+        ],
+        "camera": "Camera"
+      },
+      "adjustments": [],
+      "physicalNodes": 723,
+      "usedMaterialActiveSurfaceNodes": 93,
+      "usedMaterialActiveSurfaceClasses": {
+        "NodeReroute": 2,
+        "ShaderNodeBsdfPrincipled": 6,
+        "ShaderNodeBump": 5,
+        "ShaderNodeCombineColor": 1,
+        "ShaderNodeGroup": 7,
+        "ShaderNodeMapRange": 4,
+        "ShaderNodeMath": 24,
+        "ShaderNodeMix": 9,
+        "ShaderNodeObjectInfo": 3,
+        "ShaderNodeRGBCurve": 1,
+        "ShaderNodeSeparateColor": 1,
+        "ShaderNodeSeparateXYZ": 2,
+        "ShaderNodeTexCoord": 3,
+        "ShaderNodeTexImage": 3,
+        "ShaderNodeTexNoise": 4,
+        "ShaderNodeUVMap": 4,
+        "ShaderNodeValToRGB": 3,
+        "ShaderNodeValue": 1,
+        "ShaderNodeVectorMath": 10
+      },
+      "geometry": {
+        "meshObjects": 19,
+        "trianglesSumPerObject": 2106644,
+        "scopeLimit": "Active view-layer non-hide_render mesh objects; instance multiplicity/curves not included in this triangle sum."
+      },
+      "outcomes": {
+        "blocked": 1,
+        "lowered": 4,
+        "preserved": 1
+      },
+      "decisions": [
+        {
+          "material": "Boards - Basketweave",
+          "outcome": "blocked",
+          "transport": null,
+          "bindings": 1,
+          "issues": [
+            {
+              "code": "material.normal-bake-geometry-budget",
+              "material": "Boards - Basketweave",
+              "problem": "Object \"Floor\" requires exactly 8,388,608 render SIMPLE-subdivision triangles, proved from its source quad mesh before evaluated-mesh allocation; the static normal receiver budget is 2,000,000.",
+              "fix": "Use an explicitly reviewed lower-resolution coincident receiver or reduce redundant static subdivision; SceneToWeb will not silently bake viewport geometry or omit the normal.",
+              "objects": [
+                "Floor"
+              ]
+            }
+          ],
+          "channels": [
+            {
+              "channel": "Alpha",
+              "route": "factor"
+            },
+            {
+              "channel": "Base Color",
+              "route": "program"
+            },
+            {
+              "channel": "Metallic",
+              "route": "factor"
+            },
+            {
+              "channel": "Roughness",
+              "route": "factor"
+            },
+            {
+              "channel": "Emission",
+              "route": "factor"
+            },
+            {
+              "channel": "Normal",
+              "route": "bake",
+              "pass": "NORMAL"
+            },
+            {
+              "channel": "Coat Weight",
+              "route": "program"
+            },
+            {
+              "channel": "Coat Roughness",
+              "route": "program"
+            },
+            {
+              "channel": "IOR",
+              "route": "program"
+            }
+          ]
+        },
+        {
+          "material": "Concrete",
+          "outcome": "lowered",
+          "transport": "channels",
+          "bindings": 1,
+          "issues": [],
+          "channels": [
+            {
+              "channel": "Alpha",
+              "route": "factor"
+            },
+            {
+              "channel": "Base Color",
+              "route": "program"
+            },
+            {
+              "channel": "Metallic",
+              "route": "factor"
+            },
+            {
+              "channel": "Roughness",
+              "route": "factor"
+            },
+            {
+              "channel": "Emission",
+              "route": "factor"
+            },
+            {
+              "channel": "Normal",
+              "route": "bake",
+              "pass": "NORMAL"
+            },
+            {
+              "channel": "IOR",
+              "route": "program"
+            }
+          ]
+        },
+        {
+          "material": "Material.003",
+          "outcome": "preserved",
+          "transport": "stock",
+          "bindings": 1,
+          "issues": [],
+          "channels": []
+        },
+        {
+          "material": "Plaster - Teal",
+          "outcome": "lowered",
+          "transport": "channels",
+          "bindings": 1,
+          "issues": [],
+          "channels": [
+            {
+              "channel": "Alpha",
+              "route": "factor"
+            },
+            {
+              "channel": "Base Color",
+              "route": "bake",
+              "pass": "EMIT"
+            },
+            {
+              "channel": "Metallic",
+              "route": "factor"
+            },
+            {
+              "channel": "Roughness",
+              "route": "program"
+            },
+            {
+              "channel": "Emission",
+              "route": "factor"
+            },
+            {
+              "channel": "Normal",
+              "route": "bake",
+              "pass": "NORMAL"
+            },
+            {
+              "channel": "IOR",
+              "route": "program"
+            }
+          ]
+        },
+        {
+          "material": "Wood 6",
+          "outcome": "lowered",
+          "transport": "channels",
+          "bindings": 8,
+          "issues": [],
+          "channels": [
+            {
+              "channel": "Alpha",
+              "route": "factor"
+            },
+            {
+              "channel": "Base Color",
+              "route": "program"
+            },
+            {
+              "channel": "Metallic",
+              "route": "factor"
+            },
+            {
+              "channel": "Roughness",
+              "route": "program"
+            },
+            {
+              "channel": "Emission",
+              "route": "factor"
+            },
+            {
+              "channel": "Normal",
+              "route": "bake",
+              "pass": "NORMAL"
+            },
+            {
+              "channel": "Coat Weight",
+              "route": "program"
+            },
+            {
+              "channel": "Coat Roughness",
+              "route": "program"
+            },
+            {
+              "channel": "IOR",
+              "route": "program"
+            }
+          ]
+        },
+        {
+          "material": "Wooden Bars",
+          "outcome": "lowered",
+          "transport": "channels",
+          "bindings": 7,
+          "issues": [],
+          "channels": [
+            {
+              "channel": "Alpha",
+              "route": "factor"
+            },
+            {
+              "channel": "Base Color",
+              "route": "bake",
+              "pass": "EMIT"
+            },
+            {
+              "channel": "Metallic",
+              "route": "factor"
+            },
+            {
+              "channel": "Roughness",
+              "route": "bake",
+              "pass": "EMIT"
+            },
+            {
+              "channel": "Emission",
+              "route": "factor"
+            },
+            {
+              "channel": "Normal",
+              "route": "bake",
+              "pass": "NORMAL"
+            },
+            {
+              "channel": "IOR",
+              "route": "program"
+            }
+          ]
+        }
+      ],
+      "rawReport": {
+        "path": "artifacts/verification-official-demo-next37-20261114/cube-diorama-1/report.json",
+        "bytes": 84957,
+        "sha256": "dc86f0a28e93765890bec2862d14365601171eba3a1871c3dabe750c3057fcf3"
+      },
+      "materialPlan": {
+        "path": "artifacts/verification-official-demo-next37-20261114/cube-diorama-1/material-plan.json",
+        "bytes": 52688,
+        "sha256": "80e1aba21cfdb5e7191496ac5d3a24365a3d5641807a89f9d66a66bc2342c4e7"
+      },
+      "stdout": {
+        "path": "artifacts/verification-official-demo-next37-20261114/cube-diorama-1.stdout.log",
+        "bytes": 639,
+        "sha256": "bd84cfc1054c7809f9343fb47d5ada0495dd2fb6da1b26b99d3e5bcf35a0e41e"
+      },
+      "stderr": {
+        "path": "artifacts/verification-official-demo-next37-20261114/cube-diorama-1.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "credit": {
+    "nativeRenders": 0,
+    "stockExports": 0,
+    "actualBakes": 0,
+    "finalExports": 0,
+    "browserRuns": 0,
+    "nodeNumericalCases": 0,
+    "performanceBenchmarkClaims": 0
+  },
+  "findings": [
+    "Four previously blocked Cube materials now have lowered channel plans, using the existing Cycles NORMAL bake route plus selective EMIT channels. No bake was executed and no Final acceptance follows.",
+    "The unchanged Cube Floor is still blocked: exact render SIMPLE-subdivision count 8,388,608 exceeds the 2,000,000 static normal receiver budget. The geometry probe instead evaluates the active viewport depsgraph and reports 2,106,644 total scene triangles; these are different explicitly labeled scopes. No subdivision or budget was changed.",
+    "Mandelbrot retains animation/driver transport refusals. Radial now blocks unproven automatic EEVEE-to-Cycles Radial baking; the earlier partly lowered planner result was never publication or fidelity acceptance."
+  ],
+  "nextGate": "Attempt the exact owned current SDK Final route on the unchanged originals after the native/GPU queue is released; retain refusals. No Floor derivative or authored camera/material/modifier edits in this batch.",
+  "pythonImportIsolation": {
+    "freshDistinctPrefixes": 3,
+    "dontWriteBytecode": true,
+    "ownedPrefixesCleaned": true,
+    "rawArgvAndObservedMarkersPinned": true
+  }
+}

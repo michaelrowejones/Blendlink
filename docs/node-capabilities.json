@@ -16370,7 +16370,7 @@
           "credit": "Only a fully closed native/Saved Final/both-API/both-profile receipt can qualify this bounded compositor route. No EEVEE shader/field/implicit-coordinate credit."
         },
         "numericContractSha256": "d07bb248334552f3fb6e91ec19e26fcc8db4d30b39c5d70ddcf37183d78157dc",
-        "coverageScope": "Pinned Blender5.3 macOS arm64 CPU compositor White Noise. 1D–4D Value and Color, raw normal/+0 fixed source words, explicit typed Value/CombineXYZ/group/reroute/mute copy routes only. No implicit Uniform Image Coordinates, fields/computed seeds/casts, negative zero/subnormals/nonfinite source seeds or GPU-authored/EEVEE source credit. Fixed sources become compile-time literals only. Unlinked native group interfaces require VALUE/AUTO-or-SINGLE; implicit coordinate/frame defaults refuse and linked overrides remain accepted.",
+        "coverageScope": "Pinned Blender5.3 macOS arm64 CPU compositor White Noise. 1D\u20134D Value and Color, raw normal/+0 fixed source words, explicit typed Value/CombineXYZ/group/reroute/mute copy routes only. No implicit Uniform Image Coordinates, fields/computed seeds/casts, negative zero/subnormals/nonfinite source seeds or GPU-authored/EEVEE source credit. Fixed sources become compile-time literals only. Unlinked native group interfaces require VALUE/AUTO-or-SINGLE; implicit coordinate/frame defaults refuse and linked overrides remain accepted.",
         "closedReader": {
           "runtimeFingerprint": "7b1700db87eb6a68335d7fb1eb5605e5d08bc4e45a2361cda9473783d1555472",
           "verifierSha256": "cb7a4eb613d380e4cee43aa61fb744c558b19652ac8fb6462c1213b4764c372d",
@@ -16389,7 +16389,7 @@
         },
         "defaultField": {
           "scope": "Own native unlinked Uniform Vector only; separate from the retained fixed-input verification fields above.",
-          "sourceCommit": "7c50dedfe84a941ede17297d909682d63355c738",
+          "sourceCommit": "d459c1db3d097bd23ab9ff5c17d48676faed110d",
           "nativeGraphs": 54,
           "nativeOracleControls": 9,
           "nativeRenders": 63,
@@ -16431,7 +16431,7 @@
               "initialAxisUploads": 1
             },
             "allCyclesEqual": true,
-            "scope": "Axis allocations/uploads only; excludes PMREM work and all other pipeline resources."
+            "scope": "Axis/row-table allocations and uploads only under the extracted shared OwnedCompositorRowTable; excludes PMREM and all other installation resources. Actual96cycles allretain0/0 preparation andcommit plus1/1 live."
           },
           "nativeFieldDomainControl": {
             "dimensions": [
@@ -16442,10 +16442,10 @@
           },
           "savedOriginalRendererDisposalControls": 8,
           "receipt": {
-            "path": "artifacts/verification-next35-manifest-field/adapter-closed.json",
-            "sha256": "4dab6acc7d63a289b39cbcdd9da22545d9b5407b393554269613a79dda982465",
+            "path": "artifacts/verification-next38-manifest-field/adapter-closed.json",
+            "sha256": "96171ee2e35d6b90b340c489687f8e2125b237c169de6ac2a2fe818ae748e77f",
             "closedReader": {
-              "runtimeFingerprint": "bd8ec47aed085787de498a7f54f1a446b04b13f95dda0a75da20b63cecc75462",
+              "runtimeFingerprint": "e9ca7ff7a1e285e59cff472790ad2fc762473862d5f348568e0d8afa75944f94",
               "verifierSha256": "7b3bc3828dcf609f53e52ce54d0e2f0ad7eaea3f172a64f67a7d30d42da90003",
               "runtimeArchiveHelperSha256": "431b8a4e92a194d63a8db512aa84f3076c9951e083b873885d8115e0caf509ed",
               "nativeArchiveHelperSha256": "3a2310c94ed3109230d3fa89dc1ac6ea5bed447155e98144a68d52dac568a3da"
@@ -16456,9 +16456,9 @@
             "workspaceStable": true,
             "supportPromotion": false,
             "productionCredit": true,
-            "inputDigest": "2424c6a79d49b7c934bceb35419397d75ea7fa7659a84676b5693d88fe884c4a",
-            "requestKey": "2251728a4b908253f0c4a93be141fe2ad4b9ddb00418110a5b3c8dbd2153fa23",
-            "evidenceKey": "ec5f04d0f61c46a54e83dc343719da42dc833f440bc366af9429594f72d03147"
+            "inputDigest": "182c1f4d021a22909e51cc4a6c1be38eaf6c6b3b679dbe9b65746ffd6a56d262",
+            "requestKey": "fa558e3d9c358d71b207ad69100683128c94640b437e80882c7b798dc8f3c03e",
+            "evidenceKey": "85e1cc936c001573d04372d4b21da5b35e04834a5d4ec0049af694922667352e"
           },
           "limits": [
             "Pinned Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor only; no native GPU or EEVEE shader equivalence.",
@@ -16466,7 +16466,19 @@
             "Raw display/exposure0; exact node outputs do not prove arbitrary amplified/discontinuous downstream graphs or whole-scene lighting.",
             "One shared axis table per built pipeline; PMREM preparation and other Final resources are separate from axis counters.",
             "Earlier transactions and failed/diagnostic namespaces retain their own snapshots. No all-ports or future-checkout qualification is claimed."
-          ]
+          ],
+          "previousQualifiedWrapper": {
+            "path": "experiments/compositor-white-noise-default-field/history/next35-qualified-wrapper.json",
+            "sha256": "7cadaae35f93f830f0609026e9b370bae841cdd11454f792963b3e166cf8910d",
+            "limits": "Byte-identical previous next35 qualified wrapper retained; its source snapshot and counts are historical."
+          },
+          "sharedOwnerRegression": {
+            "sourceCommit": "d459c1db3d097bd23ab9ff5c17d48676faed110d",
+            "implementation": "packages/blendlink/src/tslCompositorRowTable.ts",
+            "numericalChange": false,
+            "scope": "Fresh complete native/SavedFinal/all-four-browser closure after shared row ownership extraction. White Noise coordinate/RNE arithmetic and fixed-input proof remain unchanged. No Wave node credit is inferred from this regression."
+          },
+          "evidenceSha256": "f0f5592ea864f7d70cdc322d1892ad30ad5ef4f109c12986a0b470eff4d57bc4"
         }
       }
     },
@@ -17270,6 +17282,267 @@
           }
         ]
       }
+    },
+    "compositor:ShaderNodeTexWave": {
+      "category": "unsupported",
+      "limits": "No admitted route outside the explicitly qualified Blender5.3.0 CPU compositor axis-field override. Native availability alone is not numerical support.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "wave-texture"
+      ],
+      "modes": {},
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Pinned Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor FULL/AUTO. Native own-unlinked Uniform Vector for Bands X/Y SAW/TRI Color/Fac. Scale and Phase Offset must be unlinked raw Float32 +0 or normal with magnitude in[2^-16,8]; defaultScale5/Phase0 remain intact. Distortion must be raw+0 and all Detail controls unlinked. Stored Vector defaults are natively ignored. Identity texture mapping, square pixels, no borders/crop, same-frame zero-origin full-frame physical extents4..8192 including live resize/DPR. The native field domain remains field even when values coincide. A source-derived exact factor row is built O(width+height) only on valid extent changes, shared by repeated Color/Fac nodes with the same axis/profile/Scale-word/Phase-word key; at most32KiB logical data per Wave row and one unfiltered lookup. Separately owned White Noise axes consume one table up to64KiB in mixed controls. Combined Wave/WhiteNoise/Ellipse/display sampler budget8; no unaccounted effects or declared scene passes. Actual Metal and SwiftShader WebGPU/WebGL2 raw+SavedFinal closure compares10,876,288 exact primary words, including native exact zero/one endpoints. Row-only preparation/commit/live allocation counters exclude PMREM and other install work. Renderer/physical-binding/target/mip/viewport/DPR/epoch/version guards, failed-first-upload cleanup, saved-dispose fallback, caller ownership and resize recovery are checked. Closed validated texture-free pointwise consumers only; Rings, SIN, Z/DIAGONAL, linked coordinates/controls, distortion, animation/drivers/NLA, native mute bypass, nonidentity mapping, image/render-pass/spatial producers, ImageInfo consumer extension, arbitrary amplification, native GPU/EEVEE/other profiles and original-demo acceptance remain unqualified. The existing shader Wave implementation and all historical source snapshots are unchanged.",
+          "modes": {
+            "wave_type": {
+              "supported": [
+                "BANDS"
+              ],
+              "unsupported": [
+                "RINGS"
+              ]
+            },
+            "bands_direction": {
+              "supported": [
+                "X",
+                "Y"
+              ],
+              "unsupported": [
+                "Z",
+                "DIAGONAL"
+              ]
+            },
+            "rings_direction": {
+              "unsupported": [
+                "X",
+                "Y",
+                "Z",
+                "SPHERICAL"
+              ]
+            },
+            "wave_profile": {
+              "supported": [
+                "SAW",
+                "TRI"
+              ],
+              "unsupported": [
+                "SIN"
+              ]
+            }
+          }
+        }
+      },
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2 backends; Apple Metal and SwiftShader measured. Legacy WebGLRenderer has no live installer.",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_wave_axis.py",
+          "anchor": "def normalize_wave_axis"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_wave_axis.py",
+          "anchor": "def validate_wave_axis_graph"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "\"ShaderNodeTexWave\": \"wave-texture\""
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorWaveAxis.ts",
+          "anchor": "export function waveAxisRows"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorWaveAxis.ts",
+          "anchor": "export function buildCompositorWaveAxis"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorWaveField.ts",
+          "anchor": "export function validateWaveAxisGraph"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorRowTable.ts",
+          "anchor": "export class OwnedCompositorRowTable"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'wave-texture':"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_wave_axis_check.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorWaveAxis.test.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorRowTable.test.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorRowBinding.test.ts"
+        },
+        {
+          "path": "experiments/compositor-wave-axis/sources.json"
+        },
+        {
+          "path": "experiments/compositor-wave-axis/protocol.mjs"
+        },
+        {
+          "path": "experiments/compositor-wave-axis/reference.py"
+        },
+        {
+          "path": "experiments/compositor-wave-axis/verify.mjs"
+        },
+        {
+          "path": "experiments/compositor-wave-axis/evidence.json"
+        },
+        {
+          "path": "experiments/compositor-wave-axis/README.md"
+        },
+        {
+          "path": "node-ports/compositor-wave-axis.json"
+        }
+      ],
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeCompositorDevices": [
+          "CPU"
+        ],
+        "nativeNodeEvaluator": "Actual CPU compositor MF field output with independent raw native Uniform coordinate witnesses; source-derived host factor-row model. Carrier scene uses CyclesCPU, not a BlenderGPU/EEVEE shader reference.",
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "nativeGraphs": 140,
+        "nativeOracleControls": 9,
+        "nativeRenders": 149,
+        "savedFinalScenes": 20,
+        "browserCaseRuns": 640,
+        "primaryFloat32Words": 10876288,
+        "nativeZeroRgbWords": 264,
+        "nativeOneRgbWords": 198,
+        "exactWordMismatches": 0,
+        "contractViolations": 0,
+        "resizeFrames": 384,
+        "lifecycleCycles": 240,
+        "uniqueActualPythonPrefixes": 22,
+        "sourcePolicy": {
+          "positiveControls": 18,
+          "namedRefusals": 32,
+          "injectedReaderWordControls": 3,
+          "rawStorageBeforePromotion": true,
+          "gpuInitializationCalls": 0,
+          "limits": "Three injected reader-word refusals are protocol tests, distinct from actual native negative-zero storage refusal."
+        },
+        "nativeFieldDomainControl": {
+          "dimensions": [
+            13,
+            9
+          ],
+          "runtimePortCredit": false
+        },
+        "numericContract": {
+          "inputs": "Raw normal Float32/+0 unlinked Scale/Phase magnitude[2^-16,8], raw+0 Distortion; native implicit Uniform axes.",
+          "gate": {
+            "exactWordMismatches": 0,
+            "contractViolations": 0,
+            "alphaWord": 1065353216
+          },
+          "endpointWords": {
+            "zeroRgb": 264,
+            "oneRgb": 198
+          },
+          "coverageScope": "BandsX/Y SAW/TRI source model plus declared saved group/reroute/shared/mixedWhiteNoise paths only; no SIN/shader/math promotion."
+        },
+        "rowInstallMeasurements": {
+          "measuredFinalCycles": 240,
+          "singleWave": {
+            "cycles": 216,
+            "preparation": {
+              "rowAllocations": 0,
+              "rowUploads": 0
+            },
+            "commit": {
+              "rowAllocations": 0,
+              "rowUploads": 0
+            },
+            "live": {
+              "rowAllocations": 1,
+              "initialRowUploads": 1
+            }
+          },
+          "mixedWhiteNoiseWave": {
+            "cycles": 24,
+            "preparation": {
+              "rowAllocations": 0,
+              "rowUploads": 0
+            },
+            "commit": {
+              "rowAllocations": 0,
+              "rowUploads": 0
+            },
+            "live": {
+              "rowAllocations": 2,
+              "initialRowUploads": 2
+            }
+          },
+          "actualTuples": {
+            "metal-webgpu": {
+              "singleWaveCycles": 54,
+              "mixedWhiteNoiseWaveCycles": 6
+            },
+            "metal-webgl2": {
+              "singleWaveCycles": 54,
+              "mixedWhiteNoiseWaveCycles": 6
+            },
+            "software-webgpu": {
+              "singleWaveCycles": 54,
+              "mixedWhiteNoiseWaveCycles": 6
+            },
+            "software-webgl2": {
+              "singleWaveCycles": 54,
+              "mixedWhiteNoiseWaveCycles": 6
+            }
+          },
+          "scope": "Combined owned Wave/White Noise row-table allocations/uploads only; excludes PMREM and all other installation resources. All three preparation/commit/live cycles are measured per actual Final case."
+        },
+        "savedOriginalRendererDisposalControls": 8,
+        "closedReader": {
+          "runtimeFingerprint": "e9ca7ff7a1e285e59cff472790ad2fc762473862d5f348568e0d8afa75944f94",
+          "verifierSha256": "3f3ce26442df436d7d556b6432f4c9323febb8457de52a2b0626ee9d4d1d05af",
+          "runtimeArchiveHelperSha256": "431b8a4e92a194d63a8db512aa84f3076c9951e083b873885d8115e0caf509ed",
+          "nativeArchiveHelperSha256": "3a2310c94ed3109230d3fa89dc1ac6ea5bed447155e98144a68d52dac568a3da"
+        },
+        "automaticPipeline": {
+          "status": "qualified",
+          "workspaceStable": true,
+          "supportPromotion": false,
+          "productionCredit": true,
+          "inputDigest": "0e41a607df63c2cbd564ba6d6dcdf7808f194b2c095c37d3a53976b622bb9f60",
+          "requestKey": "ed0fa83200de6c824102e989bcec600a797f636438514fdb47a8a5d9e07c00da",
+          "evidenceKey": "9d7f6f02c119c58b7f33d7a6a36c0de7ed8008bf8304669222075302fdcc5cf1"
+        },
+        "sourceSnapshot": {
+          "sourceCommit": "d459c1db3d097bd23ab9ff5c17d48676faed110d",
+          "sourceInputs": 144,
+          "nativeQualificationSha256": "86adc248952fa2309f7dac186c43cc22e0691e85848a6bac86d1a046d2260fb9",
+          "finalProofSha256": "da417f5f65a04d7f2ab6fe51aa7c143087d757ab1cd95dd12b62310b92f1f00a",
+          "closedReceipt": {
+            "path": "artifacts/verification-next37-manifest-wave/adapter-closed.json",
+            "sha256": "79a6c98f5cccaa4f5ab83e06172d82323f1e5cbaf30fdb522c0595d6e53a7696"
+          },
+          "evidence": "experiments/compositor-wave-axis/evidence.json",
+          "evidenceSha256": "3b9887c4af6518162185ca6278422b301ab066b6fe56d44e1efbcb42612984c8",
+          "limits": "Fresh Wave-only automatic snapshot; other port receipts retain their own source snapshots. Failednext36 remains zero qualification credit."
+        }
+      }
     }
   },
   "knownUnsupported": [
@@ -17386,7 +17659,6 @@
     "compositor:ShaderNodeTexMagic",
     "compositor:ShaderNodeTexNoise",
     "compositor:ShaderNodeTexVoronoi",
-    "compositor:ShaderNodeTexWave",
     "compositor:ShaderNodeTexWhiteNoise",
     "compositor:ShaderNodeVectorMath",
     "compositor:ShaderNodeVectorRotate",

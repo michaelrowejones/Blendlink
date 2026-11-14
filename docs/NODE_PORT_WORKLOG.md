@@ -1438,3 +1438,75 @@ Vanilla/R3F consumers. Retained-catalog coverage stays 46 supported, 133 partial
 139 unsupported and 14 structural. Wave/shared-row code and default Noise
 feasibility remain isolated/unqualified until their fresh complete matrices;
 no user study, publication release or hosted workflow was introduced.
+
+### Shared rows, qualified Wave and original-demo regression, 2026-11-14
+
+The new internal owned R32F row resource extracts the existing White Noise
+allocation, binding and lifecycle checks without changing its coordinate law.
+The actual texture-node reference/value/UV/sampling guards, partial-upload cleanup,
+original WebGL context and foreign allocation handling survive integration.
+Root's White Noise type-changing mute refusal and preview PMREM/Color fixes remain.
+
+`artifacts/verification-next37-manifest-wave` qualifies the pinned Blender 5.3
+macOS arm64 CPU compositor Bands X/Y SAW/TRI slice at source
+`d459c1db3d097bd23ab9ff5c17d48676faed110d`: 140 production graphs plus nine
+native-only controls, 149 renders, 20 unchanged authored saved Finals, 640 actual
+browser cases and 10,876,288 exact primary Float32 words across Metal/SwiftShader
+WebGPU/WebGL2. It closes 384 resize frames, 240 Final installation cycles and
+22 distinct guarded Python prefixes. Both independent reader invocations close;
+automatic workspace stability passes and category promotion remains separate.
+Native RGB zero/one witnesses total 264/198. SIN remains refused after its earlier
+native endpoint counterexample. Other profiles, linked inputs, arbitrary image
+windows, native GPU/EEVEE and unproved composition remain outside this partial.
+
+A distinct axis/profile/Scale-word/Phase-word key owns one cached factor row,
+shared by Fac/Color and repeated nodes. Per-row logical data is at most 32 KiB;
+the separate White Noise axes are at most 64 KiB. All 240 actual Final cycles have
+zero row allocations/uploads in preparation and commit; 216 single-Wave cycles
+allocate/upload one live row and 24 mixed cycles allocate/upload two. Warm frames
+upload zero. These are row-only costs, excluding PMREM and other installation
+work. The eight combined sampler limit is an admission bound, not an eight-table
+benchmark. The port introduces no production readback or row render-target pass.
+
+The initial next36 transaction passed every actual browser run but its reader
+incorrectly required object insertion order after sorted JSON export. It retains
+zero qualification credit. A sorted exact-key-set regression now covers native,
+lexicographic and reversed objects, while missing/extra members still refuse.
+Actual captured program schemas/hashes now close before Final export, and actual
+published schemas close before browser work. Independent diagnostic replay found
+no other closing failures; next37 is a fresh transaction, not reused qualification.
+
+The full automatic White Noise field regression at
+`artifacts/verification-next38-manifest-field` then closes the shared-owner SDK:
+54 production graphs plus nine controls, 63 native renders, eight saved Finals,
+248 browser cases, 7,943,520 exact words, 336 resize frames and 96 cycles.
+Its independent readers and workspace stability pass at the same source and
+runtime fingerprint as Wave. The previous next35 wrapper is preserved byte-for-byte;
+fixed-input historical receipts and all legacy classifications remain unchanged.
+
+The original official demo no-render planning regression preserves all three
+sources and the complete 345-file native PY/JSON inventory. Cube improves from
+five blocked materials to four planned lowering/bake routes and one blocked
+Floor, plus its preserved material. This is planning, not actual bake/Final/browser
+acceptance. Floor's render receiver is 8,388,608 SIMPLE triangles, exceeding the
+existing 2M normal-bake bound; viewport geometry counts describe a different scope.
+Mandelbrot still refuses animation/driver transport and Radial refuses unproved
+automatic EEVEE-to-Cycles baking. No source modifiers, cameras or budgets changed.
+
+Validation passes 1,675 unit tests (seven optional skips), 98 release-policy checks,
+172 Node pipeline tests and 11 Python audits. The 932-file archive is 2,782,256 bytes
+packed and 12,655,740 unpacked; Vanilla/R3F consumers compile, content-addressed
+identity checks pass, and the exact archive installs with independent dependencies
+and an empty cache, then passes CLI/root import/browser build. Coverage is now
+46 supported, 134 partial, 138 unsupported and 14 structural in the retained 5.3
+catalog; this is one new partial context. The native inventory was not rediscovered.
+Noise and spatial Displace candidates remain isolated and unqualified.
+
+The separate owned-SDK actual Final gate regression also closes all three
+unchanged official sources: each reaches its expected production fidelity
+refusal, with no site/assets, bake, render or browser acceptance. Its complete
+865-file SDK census is unchanged before/after; adjacent package identity and all
+original/copy hashes match. Six guarded launcher invocations include three actual
+Python runs with distinct cleaned prefixes. Earlier missing-package and bytecode-
+mutating diagnostic namespaces retain zero qualification credit. The guarded
+rerun preserves the full file census instead of excluding Python cache files.

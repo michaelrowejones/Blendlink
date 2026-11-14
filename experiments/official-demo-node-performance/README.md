@@ -96,3 +96,55 @@ executable downloader intentionally rejects `/demo/` paths. Download tests cover
 wrong hashes, oversized/truncated bodies, redirects and non-demo hosts/paths.
 
 Keep the bulk material-use scan and its exact-binding tests. Prioritize real contributing normal/animated-loop/Radial domains or honest bake workflows before calling the tiny stock controls useful web ports. Retain output/fidelity gates while measuring preview load/compile/frame costs independently. Treat evaluated modifiers and texture payloads as separate geometry/transfer budgets; do not infer them from `.blend` size or node count.
+
+## Current 5.3 source-preserving regression
+
+The [fresh normal-bake triage](./current-normal-bake-triage.json) repeats the
+read-only original-scene checks at source `d459c1db`. All three original and
+private-copy hashes match the official corpus pins; the complete 345-file
+PY/JSON SDK source inventory is stable. No camera, material, modifier, engine or
+frame was changed, and no render, bake, stock export or Final was performed.
+
+Cube now plans **four lowered, one preserved and one blocked material**, compared
+with five blocked and one preserved in the older receipt. Concrete, Plaster -
+Teal, Wood 6 and Wooden Bars use the existing Cycles NORMAL bake route, with
+selective EMIT channels where needed. These are planning results, not completed
+bakes or artistic-fidelity acceptance.
+
+The remaining Floor refusal is deliberate: its authored render SIMPLE
+subdivision requires exactly **8,388,608 triangles**, above the 2,000,000 static
+normal receiver budget. The separate active-viewport geometry probe still counts
+2,106,644 triangles across the scene; it uses viewport evaluation rather than the
+render modifier level. This batch does not reduce subdivision or weaken the gate.
+Mandelbrot retains its animation/driver refusal. Radial now explicitly blocks an
+unproven automatic EEVEE-to-Cycles Radial channel bake; the earlier partly lowered
+plan was never successful publication or fidelity acceptance.
+
+The next regression uses a byte-verified owned complete current SDK distribution
+on the same unchanged originals, after the render queue is released. Any source-
+preserving refusal remains a recorded refusal.
+
+### Actual current Final gate regression
+
+The [closed Final regression](./current-final-refusal-regression.json) uses an
+owned byte-verified current SDK with all **865 distribution files** unchanged
+before/after, plus its exact adjacent package identity. The actual production
+CLI attempts on all three unchanged originals correctly refuse before publishing
+any site or asset: Mandelbrot needs live animation/driver transport, Radial lacks
+proven EEVEE-to-Cycles channel equivalence, and Cube retains the exact Floor
+render-geometry normal-bake budget refusal. Four improved Cube plans therefore
+still grant no actual bake, saved Final or browser-fidelity credit.
+
+The shared guarded native launcher owns three fresh Python prefixes across
+three real export invocations (plus three version queries); all are archived and
+cleaned. This is required for the strict complete-distribution census. An earlier
+dist-only diagnostic lacked adjacent package identity and stopped before native
+launch. A second direct-Blender diagnostic created Python bytecode in its private
+SDK and correctly failed the unchanged-census gate. Both remain separate failed
+transactions with zero qualification credit. The successful refusal regression
+uses a fresh output and fresh SDK snapshot; no failed evidence was overwritten.
+
+No native render/bake, stock fallback or browser check was performed, and no
+Floor subdivision, source material, authored camera or normal budget was changed.
+The next useful product work remains animation transport, faithful Radial fields
+and a reviewed scalable normal-bake receiver strategy.

@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "status": "ASSEMBLED_HOST_PREFLIGHT_ONLY",
+  "supportCredit": 0,
+  "detailGuardCommit": "3c88fda",
+  "historicalReadiness": {
+    "path": "experiments/compositor-wave-axis/readiness.json",
+    "bytes": 10911,
+    "sha256": "7e7fee7139191cfe9aef4867452eaacefd8e2674c6b9afb4f1b138978ad40c63"
+  },
+  "nativePolicy": {
+    "policy": {
+      "path": "artifacts/verification-wave-axis-source-policy-r9/policy.json",
+      "bytes": 46190,
+      "sha256": "878a752841cce290efdc942bf0ead35a591a829e4b39a956b5c469a46262fee0"
+    },
+    "log": {
+      "path": "artifacts/verification-wave-axis-source-policy-r9/native.log",
+      "bytes": 1619,
+      "sha256": "6f2c77fcf41bccd88db218dd91c9709842766334e918039500082db3638234ad"
+    },
+    "archive": {
+      "path": "artifacts/verification-wave-axis-source-policy-r9/archive.json",
+      "bytes": 5168,
+      "sha256": "6b47ea31630c682cb7b86443e222f09dab1105cfe5f6219786c6b6635412ec77"
+    },
+    "nativeIdentity": {
+      "path": "/Applications/Blender.app/Contents/MacOS/Blender",
+      "bytes": 210043328,
+      "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da"
+    },
+    "nodeIdentity": {
+      "path": "/Users/michaeljones/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "bytes": 126827136,
+      "sha256": "eb96bdabfd1f6705345bbd459f9308d140c011fa55865efdb4fa8f61d048f55d"
+    },
+    "positive": 18,
+    "refusals": 32,
+    "injectedReaderWordControls": 3,
+    "nativeRenders": 0,
+    "gpuInitializations": 0,
+    "completeArchiveValidated": true
+  },
+  "host": {
+    "protocolPreflight": {
+      "log": {
+        "path": "artifacts/verification-wave-axis-scaffold-host/scenetoweb-wave-protocol-tests-r7.log",
+        "bytes": 3990,
+        "sha256": "23a892479902aed3bb6b5472d4dc1ba933307b82e3057647d8af3c0fd97ed67f"
+      },
+      "passed": 28
+    },
+    "focusedProduction": {
+      "log": {
+        "path": "artifacts/verification-wave-axis-scaffold-host/scenetoweb-wave-scaffold-host-final.log",
+        "bytes": 248,
+        "sha256": "db98dc0426ff090324877c3dc976ee0216c0c7a2ef044b0f3f010bceee616b81"
+      },
+      "passed": 42,
+      "optionalSkipped": 1
+    },
+    "typecheck": {
+      "log": {
+        "path": "artifacts/verification-wave-axis-scaffold-host/scenetoweb-wave-scaffold-tsc-final.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exitCode": 0
+    }
+  },
+  "plan": {
+    "cases": {
+      "path": "experiments/compositor-wave-axis/cases.json",
+      "bytes": 45865,
+      "sha256": "e3cd73ae48e68f60fd7d11c6576c32ce5fd924518afa7c19688e0918067fa6c0"
+    },
+    "nativeGraphs": 140,
+    "nativeCoordinateControls": 8,
+    "nativeDomainControls": 1,
+    "nativeRenders": 149,
+    "savedFinalSources": 20,
+    "primaryBrowserCaseRuns": 640,
+    "primaryFloat32Words": 10876288,
+    "resizeFrames": 384,
+    "finalLifecycleCycles": 240
+  },
+  "fixturePins": {
+    "experiments/compositor-wave-axis/browser.js": "b65eba41b21f24e26effda9c45b9d2ce7f3b064f858ae1b94949af7706a70ab5",
+    "experiments/compositor-wave-axis/capture.mjs": "7048965e6027d21e228dd096ab2c15bb87d90655e658bf0757dde0c53fec5f80",
+    "experiments/compositor-wave-axis/cases.json": "e3cd73ae48e68f60fd7d11c6576c32ce5fd924518afa7c19688e0918067fa6c0",
+    "experiments/compositor-wave-axis/export.test.ts": "b62a0982138beab77528739671853ea40cea423fef907a9441e075ee38ec720f",
+    "experiments/compositor-wave-axis/index.html": "da0ac19d61bba82ac4885903eb52c713b47dcc92746589a78090cea1264ad800",
+    "experiments/compositor-wave-axis/matrix.mjs": "77bb035a5c9f6c4df7247479355d80a17f51be55ae3d07d3587ef29b77e83e17",
+    "experiments/compositor-wave-axis/native-row-goldens.json": "fd6bfc2b5f088f5a173021ff7cedb293bb2fb2e99bb58f280dc2246701b5c127",
+    "experiments/compositor-wave-axis/policy.mjs": "de50509387679c0bb89d9b6f25247995597485e8c6afb958f1b49edae75cb31b",
+    "experiments/compositor-wave-axis/policy.py": "4dcb73a6e0b969e30f5c6e72bdd228025f013c7d09643db03031d7bc0636ddf4",
+    "experiments/compositor-wave-axis/protocol.mjs": "dfafe9607d931c97a53f39aa057e7f9c385ab59487ac4f6a6d2400f6906ae376",
+    "experiments/compositor-wave-axis/protocol.test.mjs": "cf4f8eae96872827df301dc2a2963f1795ec3ab8842bb12828a2e357863bece3",
+    "experiments/compositor-wave-axis/readiness.json": "7e7fee7139191cfe9aef4867452eaacefd8e2674c6b9afb4f1b138978ad40c63",
+    "experiments/compositor-wave-axis/reference.py": "e0f7987775e30296eacffb776cb213fa2fb133bb76d73231fce873b0bf9dded8",
+    "experiments/compositor-wave-axis/run.mjs": "b53a82f6140eaa21248a57f04c6133ee4916f2f79e7f74faa0c600c04c6f5ff0",
+    "experiments/compositor-wave-axis/schema-fixtures.mjs": "4cf38372403b6a374bb5060547aee1c399ac9375593f8b243d8cc4300c836c32",
+    "experiments/compositor-wave-axis/sources.json": "2f09483391bc6b0279cf253cc068ba9867aa4c421ec3788b73815653033dfc5d",
+    "experiments/compositor-wave-axis/verify.mjs": "3f3ce26442df436d7d556b6432f4c9323febb8457de52a2b0626ee9d4d1d05af"
+  },
+  "qualified": {
+    "nativeGraphs": 0,
+    "savedFinals": 0,
+    "browserCases": 0,
+    "capabilitiesChanged": false
+  },
+  "pending": [
+    "Rebase and integrate with Root White Noise mute/binding and public PMREM/background preparation fixes",
+    "Single coordinated union build then fresh Wave native/Final/both API/profile proof",
+    "Fresh affected White Noise exact-axis and lifecycle regression after shared owner extraction"
+  ],
+  "limits": [
+    "No native Wave render or browser job ran for this scaffold checkpoint",
+    "Source policy and host tests grant zero numerical support",
+    "Default SIN and linked Detail scheduling remain unqualified; no gate widened and no outputs repaired"
+  ]
+}

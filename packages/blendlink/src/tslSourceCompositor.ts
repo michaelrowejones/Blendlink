@@ -1,3 +1,5 @@
+import {buildCompositorWaveAxis,CompositorWaveAxisTable} from './tslCompositorWaveAxis.js'
+import {validateWaveAxisGraph,waveAxisFieldKind} from './tslCompositorWaveField.js'
 import {CompositorExactAxes} from './tslCompositorExactAxes.js'
 import {validateWhiteNoiseFieldGraph,whiteNoiseFieldKind} from './tslCompositorWhiteNoiseField.js'
 import {sceneMaskMixContract,validateSceneMaskMixMarkers,buildEllipseSceneBinaryMix} from './tslCompositorEllipseSceneMix.js'
@@ -516,6 +518,7 @@ export function buildSourceCompositor(
     }
     if (program.outputAlpha !== undefined && program.outputAlpha !== 'legacy-composite-opaque-v1')
       throw new SourceCompositorUnsupported('Composite output has an unknown alpha model')
+    validateWaveAxisGraph(program,message=>{throw new SourceCompositorUnsupported(message)})
     validateWhiteNoiseFieldGraph(program,message=>{throw new SourceCompositorUnsupported(message)})
     validateEllipseMaskGraph(program, message => { throw new SourceCompositorUnsupported(message) })
     validateSceneMaskMixMarkers(program,message=>{throw new SourceCompositorUnsupported(message)})
@@ -526,6 +529,7 @@ export function buildSourceCompositor(
     validateImageCoordinateGraph(program, message => { throw new SourceCompositorUnsupported(message) })
     const exactAxes=program.ops.some(whiteNoiseFieldKind)?new CompositorExactAxes():undefined
     if(exactAxes)resources.push(exactAxes)
+    const waveTables=new Map<string,CompositorWaveAxisTable>()
     const nodes = new Map<string, TslEffectNode>()
     const images = new Map<string, ReturnType<typeof staticCompositorTexture>>()
     const cacheImages = staticImageCacheEligible(program)
@@ -592,7 +596,7 @@ export function buildSourceCompositor(
       if(op.kind==='white-noise-texture')validateCompositorWhiteNoise(op,message=>{throw new SourceCompositorUnsupported(message)})
       const domainFail = (message: string): never => { throw new SourceCompositorUnsupported(
         `${op.source.path.join(' / ')} / ${op.source.node} [${op.source.output}]: ${message}`) }
-      const single = op.kind==='image-info'||(op.kind==='ellipse-mask'&&op.properties.ellipse_mask_identity===true)||(!['render-pass', 'image-input', 'box-mask', 'ellipse-mask'].includes(op.kind) && !textureFieldKind(op) && !whiteNoiseFieldKind(op) && Object.values(op.inputs).every(input => isSingleValue(input.value)))
+      const single = op.kind==='image-info'||(op.kind==='ellipse-mask'&&op.properties.ellipse_mask_identity===true)||(!['render-pass', 'image-input', 'box-mask', 'ellipse-mask'].includes(op.kind) && !textureFieldKind(op) && !whiteNoiseFieldKind(op) && !waveAxisFieldKind(op) && Object.values(op.inputs).every(input => isSingleValue(input.value)))
       const incoming = Object.entries(op.inputs).map(([name, input]) => ({ name, domain: origin(input.value) }))
       if (incoming.some(input => input.domain?.croppedWindow)
         && !['exposure', 'invert', 'posterize', 'alpha-over'].includes(op.kind))
@@ -688,6 +692,9 @@ export function buildSourceCompositor(
             break
           case 'blackbody-color':
             node = buildCompositorBlackbody(op,program.ops,domainFail)
+            break
+          case 'wave-texture':
+            node = buildCompositorWaveAxis(op,waveTables,resources,domainFail)
             break
           case 'white-noise-texture':
             node = buildCompositorWhiteNoise(op,domainFail,whiteNoiseFieldKind(op)?exactAxes:undefined)
@@ -1318,7 +1325,10 @@ export function buildSourceCompositor(
     let finalNode=program.outputAlpha === 'legacy-composite-opaque-v1' ? vec4(realized.rgb, 1) : realized
     // Domain admission survives a pointwise consumer selecting a constant:
     // native field domain must never become a single value by inspection.
-    if(exactAxes)finalNode=finalNode.toVar().onRenderUpdate((frame:TslEffectNode)=>{exactAxes.validate(frame.renderer)})
+    if(exactAxes||waveTables.size)finalNode=finalNode.toVar().onRenderUpdate((frame:TslEffectNode)=>{
+      exactAxes?.validate(frame.renderer)
+      for(const table of waveTables.values())table.validate(frame.renderer)
+    })
     return { node: finalNode, dispose }
   } catch (error) {
     dispose()

@@ -54,6 +54,7 @@ async function readFloatToIntEvidence({ root, evidence, manifest, profile, compl
 }
 
 export const NODE_PORT_EVIDENCE_ADAPTERS = Object.freeze({
+  'compositor-wave-axis-v1': closedFamilyAdapter('compositor-wave-axis'),
   'compositor-white-noise-fixed-v1': closedFamilyAdapter('compositor-white-noise'),
   'compositor-white-noise-default-field-v1': closedFamilyAdapter('compositor-white-noise-default-field'),
   'mono-switch-view-v1': closedFamilyAdapter('mono-switch-view'),

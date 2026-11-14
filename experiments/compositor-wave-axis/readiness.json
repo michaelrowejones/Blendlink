@@ -1,0 +1,229 @@
+{
+  "schemaVersion": 1,
+  "status": "SOURCE_AND_HOST_READINESS_ONLY",
+  "supportCredit": 0,
+  "productionCoverageChanged": false,
+  "candidateBase": "1e4b6faff94ec18acc273ff870a787ca276c73b2",
+  "candidateCommits": [
+    "8aee4eb",
+    "95cc0db",
+    "0e1de14"
+  ],
+  "scope": {
+    "native": "Blender 5.3.0 02f0899d78e3 macOS arm64 CPU compositor AUTO/FULL",
+    "wave": "Bands X/Y, SAW/TRI, own unlinked Uniform Vector",
+    "controls": "Raw Float32 Scale/Phase positive zero or magnitude [2^-16,8], raw positive-zero Distortion",
+    "dimensions": "Physical zero-offset square-pixel full frame; width and height 4 through 8192",
+    "numericalContract": "Exact Float32 factor words; alpha one and grayscale exact; no output repair or artist-input quantization",
+    "defaultSIN": "Refused; native sinf endpoint counterexample retained in research 69ca4f3"
+  },
+  "sourcePolicy": {
+    "policy": {
+      "path": "artifacts/verification-wave-axis-source-policy-r8/policy.json",
+      "bytes": 46105,
+      "sha256": "d6b9a375fb0ff971dc757a3dd17b507c9a9c417eb15bf60b9d30311dfe074387"
+    },
+    "log": {
+      "path": "artifacts/verification-wave-axis-source-policy-r8/native.log",
+      "bytes": 1552,
+      "sha256": "eabf760df3d42938cf076f4d3dc2eea386f1609aa0d02c74f0e94850340db7ca"
+    },
+    "archive": {
+      "path": "artifacts/verification-wave-axis-source-policy-r8/archive.json",
+      "bytes": 5175,
+      "sha256": "1e8a7e868b394c7a037a8185a3e5f10459177a37eaed33c55b78d0310d9e88d3"
+    },
+    "counts": {
+      "positive": 18,
+      "refusals": 29,
+      "injectedReaderWordControls": 3,
+      "nativeRenders": 0,
+      "gpuInitializations": 0
+    },
+    "controls": {
+      "positive": [
+        "X-SAW-Color",
+        "X-SAW-Fac",
+        "X-TRI-Color",
+        "X-TRI-Fac",
+        "Y-SAW-Color",
+        "Y-SAW-Fac",
+        "Y-TRI-Color",
+        "Y-TRI-Fac",
+        "literal-8",
+        "literal-9",
+        "literal-10",
+        "literal-11",
+        "literal-12",
+        "literal-13",
+        "ignored-vector-and-dead-detail",
+        "group-reroute-field",
+        "repeated-group-shared-key",
+        "cross-family-unchanged"
+      ],
+      "refusals": [
+        "native-muted-Color",
+        "native-muted-Fac",
+        "default-SIN",
+        "rings",
+        "diagonal",
+        "distortion",
+        "negative-zero",
+        "below-minimum",
+        "above-maximum",
+        "mapping",
+        "linked-Scale",
+        "linked-Phase Offset",
+        "linked-Distortion",
+        "linked-Vector",
+        "border",
+        "pixel-aspect",
+        "GPU",
+        "small",
+        "spatial-CompositorNodeFlip",
+        "spatial-CompositorNodeBlur",
+        "nine-distinct-keys",
+        "source-operation-limit",
+        "animated",
+        "cross-family-source-mutation",
+        "cross-family-group-mute",
+        "cross-family-reroute-relink",
+        "injected-reader-word-0x80000000",
+        "injected-reader-word-0x1",
+        "injected-reader-word-0x7fc12345"
+      ],
+      "nativeRenders": 0,
+      "gpuInitializations": 0,
+      "injectedReaderWordControls": 3,
+      "supportCredit": 0
+    },
+    "sourcePinsSha256": "5bf3d36c25fac5572653c2004688256631f81ad7deb9bbbefe67b458d029cb01",
+    "nativeIdentity": {
+      "path": "/Applications/Blender.app/Contents/MacOS/Blender",
+      "bytes": 210043328,
+      "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da"
+    },
+    "nodeIdentity": {
+      "path": "/Users/michaeljones/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "bytes": 126827136,
+      "sha256": "eb96bdabfd1f6705345bbd459f9308d140c011fa55865efdb4fa8f61d048f55d"
+    },
+    "freshNativePrefixes": 1,
+    "exactArchiveValidated": true,
+    "qualificationCredit": 0
+  },
+  "hostChecks": {
+    "focusedTests": {
+      "log": {
+        "path": "artifacts/verification-wave-axis-readiness-host/scenetoweb-wave-candidate-host-final2.log",
+        "bytes": 248,
+        "sha256": "517e76832917882452f8544ab10032692b4ce40f12c57afd0019dbacb5a900f2"
+      },
+      "filesPassed": 7,
+      "passed": 42,
+      "optionalSkipped": 1,
+      "command": "PATH=/tmp/mrj-tooling:$PATH node node_modules/vitest/vitest.mjs run packages/blendlink/src/tslCompositorRowBinding.test.ts packages/blendlink/src/tslCompositorWaveAxis.test.ts packages/blendlink/src/tslCompositorRowTable.test.ts packages/blendlink/src/tslCompositorExactAxes.test.ts packages/blendlink/src/tslCompositorWhiteNoiseField.test.ts packages/blendlink/src/tslCompositorEllipseMask.test.ts packages/blendlink/src/tslCompositorWhiteNoise.test.ts"
+    },
+    "typecheck": {
+      "log": {
+        "path": "artifacts/verification-wave-axis-readiness-host/scenetoweb-wave-candidate-tsc-final2.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "exitCode": 0,
+      "command": "PATH=/tmp/mrj-tooling:$PATH node node_modules/typescript/bin/tsc -p packages/blendlink/tsconfig.json --noEmit"
+    }
+  },
+  "historicalNativeGoldens": {
+    "file": {
+      "path": "experiments/compositor-wave-axis/native-row-goldens.json",
+      "bytes": 84075,
+      "sha256": "fd6bfc2b5f088f5a173021ff7cedb293bb2fb2e99bb58f280dc2246701b5c127"
+    },
+    "researchReceipt": {
+      "path": "experiments/compositor-wave-axis-research/bound-receipt.json",
+      "bytes": 12954,
+      "sha256": "be8498537c68995adccbe8dba0866b8139a4d63162c5f220e6d6399ef773aefb"
+    },
+    "independentNativeRows": 252,
+    "sawFrames": 126,
+    "triangleFrames": 126,
+    "exactWordsPerProfile": 2148632,
+    "freshProductionQualification": false
+  },
+  "regressions": {
+    "binding": {
+      "reviewedDependency": "8d64420 (Root dc2f218)",
+      "failedLog": {
+        "path": "artifacts/verification-wave-axis-readiness-host/scenetoweb-row-binding-counterexample.log",
+        "bytes": 1169,
+        "sha256": "97d365dd7c12b9e8d31948c082a0786dcc013c9c31e5c951a20a06a7000ea812"
+      },
+      "fix": "Authored TextureNode reference/value/UV and sampling schema checked; generated setup caches allowed"
+    },
+    "constantTerminal": {
+      "failedLog": {
+        "path": "artifacts/verification-wave-axis-readiness-host/scenetoweb-wave-root-guard-counterexample.log",
+        "bytes": 1002,
+        "sha256": "da3dcb37a353e5a0dc907e31112c3e71afb4b9ea1ee60364b52a5686160e57c1"
+      },
+      "fixCommit": "0e1de14",
+      "fix": "Actual final root validates all bounded Wave rows, even if a pointwise consumer selects a constant"
+    },
+    "fixtureAssembly": {
+      "failedLog": {
+        "path": "artifacts/verification-wave-axis-readiness-host/scenetoweb-wave-axis-policy-r6.log",
+        "bytes": 2529,
+        "sha256": "7c2797bb14e9f98d0162d6b1708152c6a15a384688da485dcf35d30cd323d481"
+      },
+      "credit": 0,
+      "cause": "New repeated-group policy initially used removed CompositorNodeMixRGB; corrected to actual ShaderNodeMixRGB before successful policy runs"
+    }
+  },
+  "sourceInputs": {
+    "experiments/compositor-wave-axis/native-row-goldens.json": "fd6bfc2b5f088f5a173021ff7cedb293bb2fb2e99bb58f280dc2246701b5c127",
+    "packages/blender-addon/tests/compositor_wave_axis_check.py": "45e3a98d7440b2e22da7bba115df9c1c157b32610a81e12187fe5f5da56b8405",
+    "packages/blendlink/blender/compositor_graph.py": "db6402087e70b9fce92fd23a39facbf82851d9a721ca0f166aeb8f3140ca8f22",
+    "packages/blendlink/blender/compositor_mask_domains.py": "0a513ff741c657b0cee96387591e0640ebd9a04091bdce311cd4a2372743991c",
+    "packages/blendlink/blender/compositor_wave_axis.py": "994135d2ab099d59106245d51bc16f7e16c88152aafd32b09c7d5385688d9d34",
+    "packages/blendlink/blender/compositor_white_noise.py": "b98321026920b3d39c62a0e5331d74f758eb94d4d5c067a9c2d2b9d8eb4c23fa",
+    "packages/blendlink/blender/source_presentation.py": "4ecd0ad81889abd39693348b2ff32201b7806c3473ba3860316ca8c5d2526706",
+    "packages/blendlink/src/threeWebgpuPostPipeline.ts": "d6f6a8b396b1e60f150d187c49ca2ada8797bf0e96f424b0fc600cea1ec305b9",
+    "packages/blendlink/src/tslCompositorExactAxes.test.ts": "35eecfbe5277112360995ec4624a189c62a9d37ee3710b0e9fbc87ed37ce42d0",
+    "packages/blendlink/src/tslCompositorExactAxes.ts": "6ff937485a75f226deee286d7a564bec675f6348557751d3c145f7e817bad2d8",
+    "packages/blendlink/src/tslCompositorMaskDomains.ts": "d694173c3a48f986d083baad0ab58ca76fe5a3cb94473dc4fa3976239fcbdaa4",
+    "packages/blendlink/src/tslCompositorRowBinding.test.ts": "b04274348888b2f68cd3bc32fbafe67d8952f5450c40837c3be7559757ff48aa",
+    "packages/blendlink/src/tslCompositorRowTable.test.ts": "99ca3b3c26960e6e0e4360a7ceef2bf1a0e224ea36d03b8bbee202538bbbad27",
+    "packages/blendlink/src/tslCompositorRowTable.ts": "03ee44ba3b7040f80c204ca74aebc1a8cb81ba160331304d082fc695b9c1897f",
+    "packages/blendlink/src/tslCompositorWaveAxis.test.ts": "b4e5a96a1a31b898406a5305c3edb7345b23ba0266b602d7c473121ef5c39a19",
+    "packages/blendlink/src/tslCompositorWaveAxis.ts": "010445254d2325b673656c928ebe61e685cd7a9cc8485f0c7fbd2e70a8412e9c",
+    "packages/blendlink/src/tslCompositorWaveField.ts": "2377aec6dfe65cd3a14ddeeb52bd635755b9f2bf8169c99f73217268a95a080e",
+    "packages/blendlink/src/tslCompositorWhiteNoiseField.ts": "dd4633dacbabe60ed762b90df240a7c46a0015cf33c9aa5c575a7ad5c74799da",
+    "packages/blendlink/src/tslSourceCompositor.ts": "f8ab2ab28ddadef7b8b9b8a93cc83e45b478a939ef0a941d599f5cc3095ad72a"
+  },
+  "unchangedMatrixHelper": {
+    "path": "packages/blendlink/blender/compositor_static_matrix.py",
+    "bytes": 22399,
+    "sha256": "07c0b4b2c47ccad0697b76968c0e21c90b9cf5fdb6a8ef0d5d3232e908bbd1d7"
+  },
+  "integrationObligations": [
+    "Preserve Root d343501 White Noise type-changing mute refusal when rebasing graph dispatch",
+    "Preserve reviewed ExactAxes binding invariants from 8d64420 / Root dc2f218",
+    "Fresh combined build and affected White Noise lifecycle/native/Final/browser regression after shared owner extraction",
+    "Fresh Wave native CPU references, authored saved Final exports, both actual APIs on Metal and SwiftShader, physical resize/DPR/invalid recovery and allocation cleanup",
+    "Explicit mixed sampler/source graph proofs before claiming composition beyond isolated factor rows"
+  ],
+  "freshProof": {
+    "savedFinals": 0,
+    "browserCases": 0,
+    "nativeEEVEECredit": 0,
+    "productionNumericalCases": 0
+  },
+  "limits": [
+    "Candidate source admission and runtime are isolated and not capability promotion",
+    "No SIN, Rings, DIAGONAL, nonzero Distortion, linked controls or coordinates, animated sources, unsupported physical domains",
+    "Row bytes at maximum extent are 32768 per Wave key, not a whole-installer physical GPU measurement",
+    "Accepted mixed pointwise graph schema is not numerical qualification of every composed graph",
+    "Historical native research does not make other ports current or qualify this candidate Final/browser path"
+  ]
+}

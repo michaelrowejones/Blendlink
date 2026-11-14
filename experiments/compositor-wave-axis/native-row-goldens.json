@@ -1,0 +1,3284 @@
+{
+  "schemaVersion": 1,
+  "role": "Independent native CPU research row digests, not Final/browser qualification",
+  "reportSha256": "0c05aa4ab25803ef92481c47f88cc5c18efbc86c1dcadd8200e7c5d961278715",
+  "sourceRecipe": "research commit 69ca4f3 and raw bound report",
+  "rows": [
+    {
+      "case": "13x9-X-SAW-bounds-min-negative-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "fe91fbe88cebe9ffa138f81880711d651aae81f77f2fffa862a058dce024d4f8"
+    },
+    {
+      "case": "13x9-X-TRI-bounds-min-negative-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "650b845844ce611c51406b12c98c428c63ea21e6273519bfe10abf9ca322f3a9"
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-min-negative-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "82a7c36c27250328bb73316ab33fe8d15d63a11ad5447f56a5d68da17819a040"
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-min-negative-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "552e5bb415969e5840ac179cdf4d1c94278f74eb9640e47114e3ba93675ba405"
+    },
+    {
+      "case": "13x9-X-SAW-bounds-min-negative-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "e0eb0f24f1257f88287217bcad0b6204bab7044c05b3643c949c8825b54fc3e9"
+    },
+    {
+      "case": "13x9-X-TRI-bounds-min-negative-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "d03aaf5c35a7298db60e246f692f1d2ee98b7ecb07a7c94a9d7f5dcdb01dac78"
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-min-negative-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "c9b8617fd4f62370999dea810d4d97bbfb0212ded47c6e348901e263d16eeeca"
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-min-negative-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "fae696dce5565c3fd6408371fd2ba2abf325c9ee8319ee2e5cd19a1eb682b0de"
+    },
+    {
+      "case": "13x9-X-SAW-bounds-min-negative-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "9997903badd6cec1fea85b9345bbfef9dcd3de042981d7c9b10a5a85cc375c0f"
+    },
+    {
+      "case": "13x9-X-TRI-bounds-min-negative-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "82b3f68ea734e94d11a700c7eae2d991f47f1e94a27ca7c35e118b0a6d018846"
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-min-negative-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "66b1f8f848867e0207ea23618ae06a953ebc579f57fb6f4035110468c1fa66a0"
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-min-negative-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "8de48e4622db8c9379920e0c1f9b74f9d82173bf634fd08b16618a83962cc3d8"
+    },
+    {
+      "case": "13x9-X-SAW-bounds-min-negative-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "0177221416a9939b5e4c4d46e8f485ae7a98c9960f7c6b52b92c1f0427cb1e37"
+    },
+    {
+      "case": "13x9-X-TRI-bounds-min-negative-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "5b08fc173173b00628363dcf656d5d5eb75922e323cf4e93676ec680e9d646e4"
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-min-negative-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "98463675ee6684b65d55f2927d5644c6d36e6de94b145920fb6031f6bcb7c065"
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-min-negative-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "d0dad1163259ceca417e4b4b185dce1847bbcdeb89289f562373f442fa496ba7"
+    },
+    {
+      "case": "13x9-X-SAW-bounds-min-negative-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "f4ef7974fac6c6b7c81269577baedea2441bc836de809f63cf4e1a1364d9eff7"
+    },
+    {
+      "case": "13x9-X-TRI-bounds-min-negative-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "be9d568e817fbdafb93b794ee81fa800f7d69950371413920ab3ed4cba78ddc4"
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-min-negative-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "9c1c2a3d909b424c069643bb3d16132755d3e4cc4afda2257be7b6a0dbed79c2"
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-min-negative-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "415200e24d15d02bb1657bd5af6bb05314ad89460fda196c21eaed967045df74"
+    },
+    {
+      "case": "13x9-X-SAW-bounds-minimum-negative-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "e9b91fbc889c0d667581fefefbcd928404a02065c6406de9e9be6894bfe4fd4c"
+    },
+    {
+      "case": "13x9-X-TRI-bounds-minimum-negative-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "b13dccdbfe113b43f8e3b389911833c083d6450ac49f878ab063c6c219cc2bc2"
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-minimum-negative-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "c629053f0c830c42f2d7c409303d8782847d29669242bd2d8f19327b821f1070"
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-minimum-negative-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "603ebcc0eb9ec24fb76896f5f0e7f197b142d7cec95032aefe7e621ee8d41d79"
+    },
+    {
+      "case": "13x9-X-SAW-bounds-minimum-negative-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "e26876f8b737e05067d87115a192d70dc259a6c576718f5f095bb476a5f93c22"
+    },
+    {
+      "case": "13x9-X-TRI-bounds-minimum-negative-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "8598ed9bd00f938bb8efb4136b75fd6ad30ac135640d76102b9855f0c2b73e5c"
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-minimum-negative-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "6f85b467cfbfe3785340e09020487b2b12fe4aca825073adc1289d55e7f58697"
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-minimum-negative-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "c2d3b56d7c8a221e240c798698b3f6c4ac1bb13891d1a4a20cc25e0650f93c8d"
+    },
+    {
+      "case": "13x9-X-SAW-bounds-minimum-negative-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "68c93303a5f9f9b219c94ba63c31a90e6ac54146178f02ef2eb122565275b1dc"
+    },
+    {
+      "case": "13x9-X-TRI-bounds-minimum-negative-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "196f89c1b916f6b1db0962f2f34e5ffbb9f6f5be86626c1c17a1572fae30f69d"
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-minimum-negative-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "614d9985843f936a6726dfdf917b76b45fd0ef71f79513d685f28a5628163f69"
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-minimum-negative-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "4068d112954012bbf850fc4aa0aaee2f1a6cc06112fddc822772d671c0111346"
+    },
+    {
+      "case": "13x9-X-SAW-bounds-minimum-negative-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "3c7e7ea522b77e64650be3a533e220a46e6f4c74eb1f27415a7d54a6346d1e39"
+    },
+    {
+      "case": "13x9-X-TRI-bounds-minimum-negative-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "98a1cfa393d8a30244bf75b53a3d7e29d406d4a6ef7ed292e40b13bf3e5144c1"
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-minimum-negative-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "1da0bd1fbcfe7f8b040603befe70da1a47a07752fc7ab6855949d2b4e2a18504"
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-minimum-negative-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "cf984440ed57af66a799e2142880f82df124f3007d1bbbf5f9999d8d2401fb8f"
+    },
+    {
+      "case": "13x9-X-SAW-bounds-minimum-negative-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "9ca578a40d056f960f85baf1b331cdd32958c8d9d1c6fbe2fc2368911438111a"
+    },
+    {
+      "case": "13x9-X-TRI-bounds-minimum-negative-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "845c58784980ae776b72a7256db4c128ba765f5cceea9aa0cea37dcecda54b15"
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-minimum-negative-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "93ef25a3044102d3c0cdbb28932d897866da4cfb52d6396c75de9b9fc0b5fdce"
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-minimum-negative-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "05d4088a217da89282fd2c2a3fb718fb53b06e7afcd83ff581ea0f2e7dd571d6"
+    },
+    {
+      "case": "13x9-X-SAW-bounds-zero-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "7fe80fbd1df8423826f4c614c0350811bba22e111210c58f29d3fdd7f1af3be6"
+    },
+    {
+      "case": "13x9-X-TRI-bounds-zero-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "888b21cd676724f54378dfcd25d06c8ceb24bb648a4fcb8222ee3d992aab64fe"
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-zero-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "f7cb8d622dd2f52d13db7b7eb71b9fed80bb67011d1b10daf4824613ea199d89"
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-zero-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "d5fcb1a299e81c527d95840b5838a15d4bf56318732f5abb4a36fdc509bb30df"
+    },
+    {
+      "case": "13x9-X-SAW-bounds-zero-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "49d155f538a658ab8d02adbfd67260c5b9217f86d26e191993481e8e47e9e1f2"
+    },
+    {
+      "case": "13x9-X-TRI-bounds-zero-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "43dee7855eac1913f358cf524b9fbd5c31a30f228134c2521838b725fa39daee"
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-zero-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "eb40e454b4a463ff678905b4152609294b7b4ec7c6ce09bf7795ddcf3866741b"
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-zero-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "9578d8e2e3247851202cc05d8dc835ee96337ebfc868cf120e0f9f23b7243bd9"
+    },
+    {
+      "case": "13x9-X-SAW-bounds-zero-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "c5d04b9ac5ee4cb21e9f373327c5ca6437fcb9385f0f7fb7f8dfa6caa7beb017"
+    },
+    {
+      "case": "13x9-X-TRI-bounds-zero-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "75f5cf9b10929f1b21442d3c895639046cd99401c42e715ce52b4442479db835"
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-zero-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "ceaddfd9321d1eeb9b9a949703c1e83b3e4e041562c1c31b8418c7606aafe88b"
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-zero-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "00fd97b26581ffe6116baf1ed034dfb4a3717707c8ebbb5559773b4107629aba"
+    },
+    {
+      "case": "13x9-X-SAW-bounds-zero-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "6717f5411e19b5d4de413ea0d0769657e71b9fdc7d0c7c816ab52e0a83031160"
+    },
+    {
+      "case": "13x9-X-TRI-bounds-zero-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "a900b2cf362089be67b225f2b85fd4ccf400e0782be4ca8c9bcfccd1bb20b1bc"
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-zero-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "2fc9e8a1725495fb5421f2ecad343376f5efd72aaf723bd295d5df6895e335ee"
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-zero-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "8dacb95d137a879373eb7d5665c3f1d890a70eb9db9ffd8323d3665bebf36dc0"
+    },
+    {
+      "case": "13x9-X-SAW-bounds-zero-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "bbbc2ae09869782ca5331568f7e82c2ddb3bd3f39f454051d6ef2ee7ec70fb98"
+    },
+    {
+      "case": "13x9-X-TRI-bounds-zero-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "98743965a882e41d2bfb2aca4b7f93346920c42049586d3794570b2d4cd936a2"
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-zero-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "b3655272efe945575437f19f507744474a8cc7100800fc0035f6d9275618603b"
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-zero-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "b60ffe8bce934f1d3d97428ef7d283ab8e859e3f6eebb2b139ddab0f5dfeb82c"
+    },
+    {
+      "case": "13x9-X-SAW-bounds-minimum-positive-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "514127e5c236a29b1bd98a76d9554b474926eb7be5e96210dd25e240ad53c22b"
+    },
+    {
+      "case": "13x9-X-TRI-bounds-minimum-positive-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "26c511d383479c802628476898338404c811b3c41e186d801a9ba17dd271fb3e"
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-minimum-positive-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "7be9bf82518fe5d15f862c57ff3ca87a736f7c35417fcea7ca03d2abe05b2f65"
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-minimum-positive-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "2e1313ef930be8738a0a7803116571239003c043db0bb3358a32a3c5fe2120e2"
+    },
+    {
+      "case": "13x9-X-SAW-bounds-minimum-positive-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "c7e60cc76f05d1592c6a20af75f1ec587fe79a6a40797d8db8a263d43deea733"
+    },
+    {
+      "case": "13x9-X-TRI-bounds-minimum-positive-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "4d8756981ff9e05b420f3268843f5f1757939b132de80ca328449f9ba42ecbfb"
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-minimum-positive-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "1fc09910eca14787f010e6fe750b46b8ff287f64f67efa6286d2247c3514d7b6"
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-minimum-positive-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "c7ef7fb498db58e662b0eae8ef9c606bdae6f476775900006e6f37d175e75019"
+    },
+    {
+      "case": "13x9-X-SAW-bounds-minimum-positive-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "c805517040923e23585ac04fafcbed5ce02628e12bf848e4eff1987c46ca5676"
+    },
+    {
+      "case": "13x9-X-TRI-bounds-minimum-positive-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "2b41084f1dedf26efbf7190f7ddf143d8f7c58042a5acda7527a78d7cc3960b3"
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-minimum-positive-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "d2c3e119138da199e7e85e90b89e93dc1290b6ebef0b031192749bbf24a5196e"
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-minimum-positive-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "d325f171ff77cba0a58ccca129654b83d813cc1b0f139d873e73f2a6be4d2430"
+    },
+    {
+      "case": "13x9-X-SAW-bounds-minimum-positive-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "563b3ea29383711fa25205b10575d7106c3e566212846661a1e3c9f832c09df6"
+    },
+    {
+      "case": "13x9-X-TRI-bounds-minimum-positive-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "11c79ef89b43847f4552edc15ebb61868ea04a6dadb4e7f5d3a24fe11b37304a"
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-minimum-positive-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "dc095d352a5150c8e21cb8bc70f9da834f7a6124118f926625f131df5c6211cf"
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-minimum-positive-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "a22128493de95d06168e16253d25966a3d144541246e85b96ac38958a6d54dfe"
+    },
+    {
+      "case": "13x9-X-SAW-bounds-minimum-positive-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "451e0f5b501f90cc9214a05cb8ad106abd8a6edb53c17bb82301515eabefb61d"
+    },
+    {
+      "case": "13x9-X-TRI-bounds-minimum-positive-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "786000f5d004205c53c272469468a561680298324d1a0bb9536a5228464ad61f"
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-minimum-positive-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "a48cf071c9512a52536a04b14db89b0cac616189067da7afe3ed1f94827bcbd8"
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-minimum-positive-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "33c34c2b987ec3bc108b694023c5925dc3a25e4d5f4fea4af5b618e8a984e14f"
+    },
+    {
+      "case": "13x9-X-SAW-bounds-max-positive-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "a693bc809755f23c6158340a904f002e7640e78805bd5ad36eddf23af8996e06"
+    },
+    {
+      "case": "13x9-X-TRI-bounds-max-positive-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "31ae4d30bcf94e78c31c01f412bf5eb2e8f757703e4585a52d36071e6664db81"
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-max-positive-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "d2b8c6ccc473c96ebb3a62bf49cd7282a2a4010667b188c2e65cf7a2d8568e15"
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-max-positive-min-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "807c8785e79b96eff1215a11faf394612ea9f76fbbf9fb6ec12e31a8187d8a1f"
+    },
+    {
+      "case": "13x9-X-SAW-bounds-max-positive-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "deaf7ac8be8cd2f834c1a5b8f273a093157bea774d2e9bc3fc6d48971f401fa1"
+    },
+    {
+      "case": "13x9-X-TRI-bounds-max-positive-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "747208503f311015ea05696732aba8865628b2ca9fcac6bdec9d9499e576e004"
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-max-positive-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "451d658c559fbb759eb867224c9f9d0e7ff1ba0f57293b1c46bcd9aec2d41792"
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-max-positive-minimum-negative",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "1d76db3d91375fbff147e9349c53f5e81d67595f5c0e3fb3a19e2450fb0cb137"
+    },
+    {
+      "case": "13x9-X-SAW-bounds-max-positive-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "0eae4b2bce15da0387eecaad2ac98c4f57d6c2deef82521b35cf2706c7a532c9"
+    },
+    {
+      "case": "13x9-X-TRI-bounds-max-positive-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "84cde00fb25c7b781bc264c0ee9397dee37533a42af5bf508c60ea31b15c65cf"
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-max-positive-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "5174fbaed8fa65a0743f115be0365dd93020e08c1f97b5aacc984ae9f13c2f13"
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-max-positive-zero",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "6b0d791734bee572f9acfa3ae9811f0aeb4ee9e385b4014f35121ee1285e19c1"
+    },
+    {
+      "case": "13x9-X-SAW-bounds-max-positive-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "8366360c9d8a5976ed36a0e7e0847e273d39a47c547ad62642ef06373ed21264"
+    },
+    {
+      "case": "13x9-X-TRI-bounds-max-positive-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "3a2ba898bcf4e67758a6987ffbdfcd6d741b236bb3ab143b2ab064c65e51a6dc"
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-max-positive-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "99a6b89327f804e3008253be8fb5745af8a1490bb91561f561bc44d15ac88877"
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-max-positive-minimum-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "877e105f9ef88c446de6d5d8ae6ce9bf236bf89480c2f97532b3883e50537bad"
+    },
+    {
+      "case": "13x9-X-SAW-bounds-max-positive-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "0e0c3f6ebe0c0027758aea33b788a678555feb20a48abd66f2e0e05435a61a43"
+    },
+    {
+      "case": "13x9-X-TRI-bounds-max-positive-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "107283e3da79fd9d7909642cf24ed00fcfc72387671bbde90869caf978700948"
+    },
+    {
+      "case": "13x9-Y-SAW-bounds-max-positive-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "5433cd64b6d4edb6e00a35e8aded1ae6b191d0ca8c5c1af945d598ad4e9b65c9"
+    },
+    {
+      "case": "13x9-Y-TRI-bounds-max-positive-max-positive",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "c6a4b352128715b3b7490103758bf338ddbd08fd0c1e3ec1c526610f5b79af84"
+    },
+    {
+      "case": "9x13-X-SAW-scale-bound-min-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "66b1f8f848867e0207ea23618ae06a953ebc579f57fb6f4035110468c1fa66a0"
+    },
+    {
+      "case": "9x13-X-TRI-scale-bound-min-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "8de48e4622db8c9379920e0c1f9b74f9d82173bf634fd08b16618a83962cc3d8"
+    },
+    {
+      "case": "9x13-Y-SAW-scale-bound-min-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "9997903badd6cec1fea85b9345bbfef9dcd3de042981d7c9b10a5a85cc375c0f"
+    },
+    {
+      "case": "9x13-Y-TRI-scale-bound-min-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "82b3f68ea734e94d11a700c7eae2d991f47f1e94a27ca7c35e118b0a6d018846"
+    },
+    {
+      "case": "9x13-X-SAW-scale-bound-minimum-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "614d9985843f936a6726dfdf917b76b45fd0ef71f79513d685f28a5628163f69"
+    },
+    {
+      "case": "9x13-X-TRI-scale-bound-minimum-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "4068d112954012bbf850fc4aa0aaee2f1a6cc06112fddc822772d671c0111346"
+    },
+    {
+      "case": "9x13-Y-SAW-scale-bound-minimum-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "68c93303a5f9f9b219c94ba63c31a90e6ac54146178f02ef2eb122565275b1dc"
+    },
+    {
+      "case": "9x13-Y-TRI-scale-bound-minimum-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "196f89c1b916f6b1db0962f2f34e5ffbb9f6f5be86626c1c17a1572fae30f69d"
+    },
+    {
+      "case": "9x13-X-SAW-scale-bound-zero",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "ceaddfd9321d1eeb9b9a949703c1e83b3e4e041562c1c31b8418c7606aafe88b"
+    },
+    {
+      "case": "9x13-X-TRI-scale-bound-zero",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "00fd97b26581ffe6116baf1ed034dfb4a3717707c8ebbb5559773b4107629aba"
+    },
+    {
+      "case": "9x13-Y-SAW-scale-bound-zero",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "c5d04b9ac5ee4cb21e9f373327c5ca6437fcb9385f0f7fb7f8dfa6caa7beb017"
+    },
+    {
+      "case": "9x13-Y-TRI-scale-bound-zero",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "75f5cf9b10929f1b21442d3c895639046cd99401c42e715ce52b4442479db835"
+    },
+    {
+      "case": "9x13-X-SAW-scale-bound-minimum-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "d2c3e119138da199e7e85e90b89e93dc1290b6ebef0b031192749bbf24a5196e"
+    },
+    {
+      "case": "9x13-X-TRI-scale-bound-minimum-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "d325f171ff77cba0a58ccca129654b83d813cc1b0f139d873e73f2a6be4d2430"
+    },
+    {
+      "case": "9x13-Y-SAW-scale-bound-minimum-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "c805517040923e23585ac04fafcbed5ce02628e12bf848e4eff1987c46ca5676"
+    },
+    {
+      "case": "9x13-Y-TRI-scale-bound-minimum-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "2b41084f1dedf26efbf7190f7ddf143d8f7c58042a5acda7527a78d7cc3960b3"
+    },
+    {
+      "case": "9x13-X-SAW-scale-bound-max-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "5174fbaed8fa65a0743f115be0365dd93020e08c1f97b5aacc984ae9f13c2f13"
+    },
+    {
+      "case": "9x13-X-TRI-scale-bound-max-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "6b0d791734bee572f9acfa3ae9811f0aeb4ee9e385b4014f35121ee1285e19c1"
+    },
+    {
+      "case": "9x13-Y-SAW-scale-bound-max-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "0eae4b2bce15da0387eecaad2ac98c4f57d6c2deef82521b35cf2706c7a532c9"
+    },
+    {
+      "case": "9x13-Y-TRI-scale-bound-max-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        0,
+        0
+      ],
+      "nativeFactorRowSha256": "84cde00fb25c7b781bc264c0ee9397dee37533a42af5bf508c60ea31b15c65cf"
+    },
+    {
+      "case": "9x13-X-SAW-phase-bound-min-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "f7cb8d622dd2f52d13db7b7eb71b9fed80bb67011d1b10daf4824613ea199d89"
+    },
+    {
+      "case": "9x13-X-TRI-phase-bound-min-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "d5fcb1a299e81c527d95840b5838a15d4bf56318732f5abb4a36fdc509bb30df"
+    },
+    {
+      "case": "9x13-Y-SAW-phase-bound-min-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "7fe80fbd1df8423826f4c614c0350811bba22e111210c58f29d3fdd7f1af3be6"
+    },
+    {
+      "case": "9x13-Y-TRI-phase-bound-min-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "888b21cd676724f54378dfcd25d06c8ceb24bb648a4fcb8222ee3d992aab64fe"
+    },
+    {
+      "case": "9x13-X-SAW-phase-bound-minimum-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "eb40e454b4a463ff678905b4152609294b7b4ec7c6ce09bf7795ddcf3866741b"
+    },
+    {
+      "case": "9x13-X-TRI-phase-bound-minimum-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "9578d8e2e3247851202cc05d8dc835ee96337ebfc868cf120e0f9f23b7243bd9"
+    },
+    {
+      "case": "9x13-Y-SAW-phase-bound-minimum-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "49d155f538a658ab8d02adbfd67260c5b9217f86d26e191993481e8e47e9e1f2"
+    },
+    {
+      "case": "9x13-Y-TRI-phase-bound-minimum-negative",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "43dee7855eac1913f358cf524b9fbd5c31a30f228134c2521838b725fa39daee"
+    },
+    {
+      "case": "9x13-X-SAW-phase-bound-minimum-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "2fc9e8a1725495fb5421f2ecad343376f5efd72aaf723bd295d5df6895e335ee"
+    },
+    {
+      "case": "9x13-X-TRI-phase-bound-minimum-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "8dacb95d137a879373eb7d5665c3f1d890a70eb9db9ffd8323d3665bebf36dc0"
+    },
+    {
+      "case": "9x13-Y-SAW-phase-bound-minimum-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "6717f5411e19b5d4de413ea0d0769657e71b9fdc7d0c7c816ab52e0a83031160"
+    },
+    {
+      "case": "9x13-Y-TRI-phase-bound-minimum-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "a900b2cf362089be67b225f2b85fd4ccf400e0782be4ca8c9bcfccd1bb20b1bc"
+    },
+    {
+      "case": "9x13-X-SAW-phase-bound-max-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "b3655272efe945575437f19f507744474a8cc7100800fc0035f6d9275618603b"
+    },
+    {
+      "case": "9x13-X-TRI-phase-bound-max-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "b60ffe8bce934f1d3d97428ef7d283ab8e859e3f6eebb2b139ddab0f5dfeb82c"
+    },
+    {
+      "case": "9x13-Y-SAW-phase-bound-max-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        0,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "bbbc2ae09869782ca5331568f7e82c2ddb3bd3f39f454051d6ef2ee7ec70fb98"
+    },
+    {
+      "case": "9x13-Y-TRI-phase-bound-max-positive",
+      "width": 9,
+      "height": 13,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        0,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "98743965a882e41d2bfb2aca4b7f93346920c42049586d3794570b2d4cd936a2"
+    },
+    {
+      "case": "13x9-X-SAW-seam-zero-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3081225634,
+        0
+      ],
+      "nativeFactorRowSha256": "8d1d7eefe39d7f9ba72715682df12b1815c5420725f7c47381fa7ec51d8ca47b"
+    },
+    {
+      "case": "13x9-X-TRI-seam-zero-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3081225634,
+        0
+      ],
+      "nativeFactorRowSha256": "bfb941db292f89b5c6ec3e42412cb9c411718f8c4098f6cd4c5b857cdef6cc88"
+    },
+    {
+      "case": "13x9-Y-SAW-seam-zero-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3081225634,
+        0
+      ],
+      "nativeFactorRowSha256": "38f959a677c6d78cc24f0efb6a1b354727de4a12fe8f00d0c0325ea2d07459eb"
+    },
+    {
+      "case": "13x9-Y-TRI-seam-zero-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3081225634,
+        0
+      ],
+      "nativeFactorRowSha256": "f42f0fc2fded727e52491e689458561a419126cd720cfaf6cb95b96b1df02182"
+    },
+    {
+      "case": "13x9-X-SAW-seam-zero-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3081225633,
+        0
+      ],
+      "nativeFactorRowSha256": "2bfb4a204dd8815af46a299534e4f21e2a2fae97ceaf15c15d39843ca68bb655"
+    },
+    {
+      "case": "13x9-X-TRI-seam-zero-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3081225633,
+        0
+      ],
+      "nativeFactorRowSha256": "46ffd158b93362d10838295b803ae291d1e99adadb613701328377d83b8462fa"
+    },
+    {
+      "case": "13x9-Y-SAW-seam-zero-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3081225633,
+        0
+      ],
+      "nativeFactorRowSha256": "2a5effcf9460e43d73e4ae7f47866723d84dd52e949eac6f23fc6b5640a036d0"
+    },
+    {
+      "case": "13x9-Y-TRI-seam-zero-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3081225633,
+        0
+      ],
+      "nativeFactorRowSha256": "9857aedb2985ace767822b1c074b84a242e5433a65daa450a367bf2c9ecc0b9d"
+    },
+    {
+      "case": "13x9-X-SAW-seam-zero-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3081225632,
+        0
+      ],
+      "nativeFactorRowSha256": "74c587511b27f87962b07ca9910eb098f59151fc40159a312a4a460fe547587b"
+    },
+    {
+      "case": "13x9-X-TRI-seam-zero-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3081225632,
+        0
+      ],
+      "nativeFactorRowSha256": "bfb941db292f89b5c6ec3e42412cb9c411718f8c4098f6cd4c5b857cdef6cc88"
+    },
+    {
+      "case": "13x9-Y-SAW-seam-zero-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3081225632,
+        0
+      ],
+      "nativeFactorRowSha256": "6027be430d7796d66153b1aa6aeb8a8879339b9f91ca807dff34d56d80579c82"
+    },
+    {
+      "case": "13x9-Y-TRI-seam-zero-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3081225632,
+        0
+      ],
+      "nativeFactorRowSha256": "f42f0fc2fded727e52491e689458561a419126cd720cfaf6cb95b96b1df02182"
+    },
+    {
+      "case": "13x9-X-SAW-seam-quarter-positive-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1070141234,
+        0
+      ],
+      "nativeFactorRowSha256": "84f49ff0f86df723338feaeb1ca42b43342c064cee70f8022b69fe6bb6cdf6ff"
+    },
+    {
+      "case": "13x9-X-TRI-seam-quarter-positive-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1070141234,
+        0
+      ],
+      "nativeFactorRowSha256": "7fa3b1d77f5635319d09c1fb8ea3213f19f8073a819f3c14a5dd6ab7693c4ba9"
+    },
+    {
+      "case": "13x9-Y-SAW-seam-quarter-positive-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1070141234,
+        0
+      ],
+      "nativeFactorRowSha256": "8a448efd957a0fec1ad7466f42b6eac449631d302648c0eaff5fa54df394cd7b"
+    },
+    {
+      "case": "13x9-Y-TRI-seam-quarter-positive-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1070141234,
+        0
+      ],
+      "nativeFactorRowSha256": "2df3d4333c02bd2a63c60750f9731957133101b6e54586ad53806153b0890d50"
+    },
+    {
+      "case": "13x9-X-SAW-seam-quarter-positive-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1070141235,
+        0
+      ],
+      "nativeFactorRowSha256": "c889103387b94071a7140ac3d297417cdcb8b50edbd693088cc354789f65019d"
+    },
+    {
+      "case": "13x9-X-TRI-seam-quarter-positive-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1070141235,
+        0
+      ],
+      "nativeFactorRowSha256": "6a9df1140315510ac193ca59dcb2d7b2f60de387d60a5d4b1cb85a417989c0a5"
+    },
+    {
+      "case": "13x9-Y-SAW-seam-quarter-positive-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1070141235,
+        0
+      ],
+      "nativeFactorRowSha256": "a5c818b6813d98f9413ffac9ab0048a77ac2d3968afde48d8d41f40e71b04d4f"
+    },
+    {
+      "case": "13x9-Y-TRI-seam-quarter-positive-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1070141235,
+        0
+      ],
+      "nativeFactorRowSha256": "f27dae21b43415bc32741f69164a8cfba3b0eb1f556b62d1c17ffa2f9840530e"
+    },
+    {
+      "case": "13x9-X-SAW-seam-quarter-positive-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1070141236,
+        0
+      ],
+      "nativeFactorRowSha256": "359bbfebff01f1473dfca5364d89647f90d22eb463ee47108dd8d8d9c777b99b"
+    },
+    {
+      "case": "13x9-X-TRI-seam-quarter-positive-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1070141236,
+        0
+      ],
+      "nativeFactorRowSha256": "50b7caa507829c6254bc858eba2d93459edfb438aaa4eb2fe930ea4724c7421d"
+    },
+    {
+      "case": "13x9-Y-SAW-seam-quarter-positive-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1070141236,
+        0
+      ],
+      "nativeFactorRowSha256": "08d889a161b8a58d942bd29fca8d0b07ed4434ad1172629e42f74e6d5572176d"
+    },
+    {
+      "case": "13x9-Y-TRI-seam-quarter-positive-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1070141236,
+        0
+      ],
+      "nativeFactorRowSha256": "d9a054cd26f44f121e0a5ed4b9f782db975c56e90566afd819ab2773ec065ee6"
+    },
+    {
+      "case": "13x9-X-SAW-seam-sine-one-triangle-half-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1078529926,
+        0
+      ],
+      "nativeFactorRowSha256": "5f08373ee4b35e2d3215286d1454c3cf824d3a7af1cd0843e150585c5d714910"
+    },
+    {
+      "case": "13x9-X-TRI-seam-sine-one-triangle-half-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1078529926,
+        0
+      ],
+      "nativeFactorRowSha256": "25c9cb4ccfe41452505ee86014c5006ef0e36c4a88d9ea8842e1d6f25b9cb04c"
+    },
+    {
+      "case": "13x9-Y-SAW-seam-sine-one-triangle-half-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1078529926,
+        0
+      ],
+      "nativeFactorRowSha256": "36adfadd3ba3dffd3e33d9f865038300dcc2ebb7922c7a5e84a924a84bb169e7"
+    },
+    {
+      "case": "13x9-Y-TRI-seam-sine-one-triangle-half-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1078529926,
+        0
+      ],
+      "nativeFactorRowSha256": "8d80f44926d48d48cba28963eb95b66f9b7f27add768fa29e8ea0b3b30f9bbe7"
+    },
+    {
+      "case": "13x9-X-SAW-seam-sine-one-triangle-half-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1078529927,
+        0
+      ],
+      "nativeFactorRowSha256": "8821a2f6e543155dbcd555f7fd68d5fa18acd56aa09f82056c0e6692e7d7a4c2"
+    },
+    {
+      "case": "13x9-X-TRI-seam-sine-one-triangle-half-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1078529927,
+        0
+      ],
+      "nativeFactorRowSha256": "6575c8a087252d8da084594663ebf7e853b6d7931d666e8c39a258d20a44f756"
+    },
+    {
+      "case": "13x9-Y-SAW-seam-sine-one-triangle-half-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1078529927,
+        0
+      ],
+      "nativeFactorRowSha256": "856700cc695c98a73a7fe7a4b945ed944e984db1b199eff9e75970f34c789244"
+    },
+    {
+      "case": "13x9-Y-TRI-seam-sine-one-triangle-half-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1078529927,
+        0
+      ],
+      "nativeFactorRowSha256": "bc2b48ed55c7f21ca13d34e5be4ea188b502be6bdffced411a5645139acc5b97"
+    },
+    {
+      "case": "13x9-X-SAW-seam-sine-one-triangle-half-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1078529928,
+        0
+      ],
+      "nativeFactorRowSha256": "321f81a6af837cb1f9b19278350deaba676ade4cfa49a4227a3fc4f15fed4189"
+    },
+    {
+      "case": "13x9-X-TRI-seam-sine-one-triangle-half-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1078529928,
+        0
+      ],
+      "nativeFactorRowSha256": "507b9e3db7dac7f8c7fa0ab5f8848e8be866be5a8816947c78e3151b63fc8fc9"
+    },
+    {
+      "case": "13x9-Y-SAW-seam-sine-one-triangle-half-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1078529928,
+        0
+      ],
+      "nativeFactorRowSha256": "443c1d415696e8e15015ff55c06bfdf1b638bb95c14b14c376263a3702925fb8"
+    },
+    {
+      "case": "13x9-Y-TRI-seam-sine-one-triangle-half-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1078529928,
+        0
+      ],
+      "nativeFactorRowSha256": "e454452c81a157bf2e95b524a1153b2b3003f64ad090881725190702718851f6"
+    },
+    {
+      "case": "13x9-X-SAW-seam-three-quarter-positive-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1083624377,
+        0
+      ],
+      "nativeFactorRowSha256": "493446999c2be56a85d01647652d5bf76c999dff236d1694e0d5e22497a86add"
+    },
+    {
+      "case": "13x9-X-TRI-seam-three-quarter-positive-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1083624377,
+        0
+      ],
+      "nativeFactorRowSha256": "595646207bfc6e73d7fabba650abf115efa7c7c5eb7488c7c787329a2e34cbc8"
+    },
+    {
+      "case": "13x9-Y-SAW-seam-three-quarter-positive-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1083624377,
+        0
+      ],
+      "nativeFactorRowSha256": "257d91f6e0ad08fd87873d42a68df6b5a209ff04bdb5acc64accb7db6957a58f"
+    },
+    {
+      "case": "13x9-Y-TRI-seam-three-quarter-positive-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1083624377,
+        0
+      ],
+      "nativeFactorRowSha256": "5b2fc20bae2429c73a03b6340251de9a81f0c42c27b9e59f2939a0d985e2e2a5"
+    },
+    {
+      "case": "13x9-X-SAW-seam-three-quarter-positive-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1083624378,
+        0
+      ],
+      "nativeFactorRowSha256": "80cc9e074638e21abe940c78b6010d70b3c57f05b191cf4b3b746afb2333478c"
+    },
+    {
+      "case": "13x9-X-TRI-seam-three-quarter-positive-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1083624378,
+        0
+      ],
+      "nativeFactorRowSha256": "1b21b9ea3a3d4b76b5d6de153cfcb92d2d9ff59a655408ccb712fd887bde131d"
+    },
+    {
+      "case": "13x9-Y-SAW-seam-three-quarter-positive-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1083624378,
+        0
+      ],
+      "nativeFactorRowSha256": "c77edea8970049c2d1d365611e6356c7167163615900adb0dce32024ce74b8e5"
+    },
+    {
+      "case": "13x9-Y-TRI-seam-three-quarter-positive-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1083624378,
+        0
+      ],
+      "nativeFactorRowSha256": "f2cca7c6310d00ea31a3d86f874c8a53a58d38e60c001f4fed7a7caee2c0df50"
+    },
+    {
+      "case": "13x9-X-SAW-seam-three-quarter-positive-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1083624379,
+        0
+      ],
+      "nativeFactorRowSha256": "c55fb5a94d74495eee176df4a913443d335acdd67b9548e9fd4e27fa01304dde"
+    },
+    {
+      "case": "13x9-X-TRI-seam-three-quarter-positive-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1083624379,
+        0
+      ],
+      "nativeFactorRowSha256": "5b714d8b6c694d69f608375a733ff239d11b077550fe739e68a441fd84c69ab7"
+    },
+    {
+      "case": "13x9-Y-SAW-seam-three-quarter-positive-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1083624379,
+        0
+      ],
+      "nativeFactorRowSha256": "52afedae8d9570579e0310a9558e5445ce691e920646af3fa96651df294b0fdd"
+    },
+    {
+      "case": "13x9-Y-TRI-seam-three-quarter-positive-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1083624379,
+        0
+      ],
+      "nativeFactorRowSha256": "e25febdae04b4aaaedd70aa6cc26e6c05e4e8a300f3dabe1cdda6de7e1c48186"
+    },
+    {
+      "case": "13x9-X-SAW-seam-cycle-positive-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1086918576,
+        0
+      ],
+      "nativeFactorRowSha256": "aebc3fad2b65e9ef3322bc6a2ed4847421ebce9c600123829cf172b6ea77c7ce"
+    },
+    {
+      "case": "13x9-X-TRI-seam-cycle-positive-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1086918576,
+        0
+      ],
+      "nativeFactorRowSha256": "066a2a1348e3b2d23697bc2d741244d57979d2ea3ed4e9502561bfd51da6d7ba"
+    },
+    {
+      "case": "13x9-Y-SAW-seam-cycle-positive-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1086918576,
+        0
+      ],
+      "nativeFactorRowSha256": "97504ad5e5a6a71bdefcb7900f97220c8f9614ba15dc294040a9d113a5a4ec1f"
+    },
+    {
+      "case": "13x9-Y-TRI-seam-cycle-positive-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1086918576,
+        0
+      ],
+      "nativeFactorRowSha256": "18fd4141fd93bd2b53fadd4d2ed1e9edf013c9b001b011bec99d897c21ed54f5"
+    },
+    {
+      "case": "13x9-X-SAW-seam-cycle-positive-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1086918577,
+        0
+      ],
+      "nativeFactorRowSha256": "f1cbb4914bb3ac0f1d16049b72e659844ab365bb373d160e6183a8891c92b384"
+    },
+    {
+      "case": "13x9-X-TRI-seam-cycle-positive-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1086918577,
+        0
+      ],
+      "nativeFactorRowSha256": "6712ff9b8f3b222368962b05476dd1081f9399989a6162a4907c0002fbd6c606"
+    },
+    {
+      "case": "13x9-Y-SAW-seam-cycle-positive-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1086918577,
+        0
+      ],
+      "nativeFactorRowSha256": "23e2b60647855528646f5f436738239d1ce6fbe5303987c6bc7b40019aaf727d"
+    },
+    {
+      "case": "13x9-Y-TRI-seam-cycle-positive-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1086918577,
+        0
+      ],
+      "nativeFactorRowSha256": "ea48e720d3ad7f80c3b3732af212c8bcb17d6528cb0c56db75d9ad46bd75f822"
+    },
+    {
+      "case": "13x9-X-SAW-seam-cycle-positive-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1086918578,
+        0
+      ],
+      "nativeFactorRowSha256": "7b024ad32541b584ccf5e77eaae34c48214ccd9b9b57b5742513333b07b3633d"
+    },
+    {
+      "case": "13x9-X-TRI-seam-cycle-positive-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1086918578,
+        0
+      ],
+      "nativeFactorRowSha256": "2f0be86d507c774250284ea2e91d0fc8173b1f5977fa8affe038bc3b4685ef39"
+    },
+    {
+      "case": "13x9-Y-SAW-seam-cycle-positive-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        1086918578,
+        0
+      ],
+      "nativeFactorRowSha256": "75ca25cfa0074c01ea0905e8d0611a3e8acb0e5c8ca093fefc2209d3566f7b51"
+    },
+    {
+      "case": "13x9-Y-TRI-seam-cycle-positive-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        1086918578,
+        0
+      ],
+      "nativeFactorRowSha256": "001c8fa0a8a4d134b672cda5593f04fdd62057853884c0b76b060e32cfa01d20"
+    },
+    {
+      "case": "13x9-X-SAW-seam-sine-one-negative-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3226013744,
+        0
+      ],
+      "nativeFactorRowSha256": "02246f6adb258641148802d1e9786f93e5d59cbc9b65e31fcf1041215e4a7d15"
+    },
+    {
+      "case": "13x9-X-TRI-seam-sine-one-negative-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3226013744,
+        0
+      ],
+      "nativeFactorRowSha256": "6423629bbd7982ef50fcc4dcd2c4f582b2f198c81f29f0640d19ef364dede13b"
+    },
+    {
+      "case": "13x9-Y-SAW-seam-sine-one-negative-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3226013744,
+        0
+      ],
+      "nativeFactorRowSha256": "19f9d3a231827bd8d079933b09c9b79cd89c6b554ae4052c530a0e569afea615"
+    },
+    {
+      "case": "13x9-Y-TRI-seam-sine-one-negative-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3226013744,
+        0
+      ],
+      "nativeFactorRowSha256": "963ebf4a1774a8cd324812a2e20b9a25a24ca36949aec6df940c5987ceb72c63"
+    },
+    {
+      "case": "13x9-X-SAW-seam-sine-one-negative-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3226013743,
+        0
+      ],
+      "nativeFactorRowSha256": "da4bc914a139010b7f71ea5480e4762a06aeaca6202959ecaa0fe7de578f604d"
+    },
+    {
+      "case": "13x9-X-TRI-seam-sine-one-negative-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3226013743,
+        0
+      ],
+      "nativeFactorRowSha256": "2958fa5a8b1e17530ec299a1304f963426584d6eb39df7356710b2a8d5005046"
+    },
+    {
+      "case": "13x9-Y-SAW-seam-sine-one-negative-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3226013743,
+        0
+      ],
+      "nativeFactorRowSha256": "06a5dddd583528d29cefe38ab1443f2f9c163791a24e6e931e0152f742f67094"
+    },
+    {
+      "case": "13x9-Y-TRI-seam-sine-one-negative-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3226013743,
+        0
+      ],
+      "nativeFactorRowSha256": "99b2abe79d1557ff3ce4b35dc7e81dcf0c68ae94c72a646d68c904e40ae406aa"
+    },
+    {
+      "case": "13x9-X-SAW-seam-sine-one-negative-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3226013742,
+        0
+      ],
+      "nativeFactorRowSha256": "da4bc914a139010b7f71ea5480e4762a06aeaca6202959ecaa0fe7de578f604d"
+    },
+    {
+      "case": "13x9-X-TRI-seam-sine-one-negative-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3226013742,
+        0
+      ],
+      "nativeFactorRowSha256": "7252ac64a9c19562d165cec86a6114728984334e18f24dd6bb28513fba4220bc"
+    },
+    {
+      "case": "13x9-Y-SAW-seam-sine-one-negative-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3226013742,
+        0
+      ],
+      "nativeFactorRowSha256": "06a5dddd583528d29cefe38ab1443f2f9c163791a24e6e931e0152f742f67094"
+    },
+    {
+      "case": "13x9-Y-TRI-seam-sine-one-negative-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3226013742,
+        0
+      ],
+      "nativeFactorRowSha256": "fcfa78bda5cea0d896ff4b63d7d7d2ae48de582c98d1f38dcac00357e2379342"
+    },
+    {
+      "case": "13x9-X-SAW-seam-cycle-negative-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3234402310,
+        0
+      ],
+      "nativeFactorRowSha256": "09f88a83c03d69c3ddf3afa111c211969df8477fe84c99205d7e388485e892d6"
+    },
+    {
+      "case": "13x9-X-TRI-seam-cycle-negative-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3234402310,
+        0
+      ],
+      "nativeFactorRowSha256": "6e49c7ec7c4aeb3899677e5e16ee81ef9ba4d62831b6db49ad66c6d4d9b22645"
+    },
+    {
+      "case": "13x9-Y-SAW-seam-cycle-negative-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3234402310,
+        0
+      ],
+      "nativeFactorRowSha256": "cc41d60a2d47ab7067c5520a39789fbd2327078228e1b0ace31a67c8d382ff56"
+    },
+    {
+      "case": "13x9-Y-TRI-seam-cycle-negative-predecessor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3234402310,
+        0
+      ],
+      "nativeFactorRowSha256": "7478c2b1c775bae38d7a25364f1af3f54b3d4186e2135260d8f1705f4c12bf7f"
+    },
+    {
+      "case": "13x9-X-SAW-seam-cycle-negative-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3234402309,
+        0
+      ],
+      "nativeFactorRowSha256": "135be99406edb7eaa75cddc09f18fbdb930aa3575d913358b4980c78085127e5"
+    },
+    {
+      "case": "13x9-X-TRI-seam-cycle-negative-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3234402309,
+        0
+      ],
+      "nativeFactorRowSha256": "898818fe45f6fcb3eb6301474dc37146684f81245bcb3fd5ef0224c8b28e1e4b"
+    },
+    {
+      "case": "13x9-Y-SAW-seam-cycle-negative-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3234402309,
+        0
+      ],
+      "nativeFactorRowSha256": "0603a47eec6a625ea5bf5d5210a26aa594aa129bdab9869def18133a226635ba"
+    },
+    {
+      "case": "13x9-Y-TRI-seam-cycle-negative-nearest",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3234402309,
+        0
+      ],
+      "nativeFactorRowSha256": "fa8b9f2aaea09d3bc2ea352f0254f792ffdc3ac00e0980476f1398da9bda0415"
+    },
+    {
+      "case": "13x9-X-SAW-seam-cycle-negative-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3234402308,
+        0
+      ],
+      "nativeFactorRowSha256": "2c8187c3127aeae776a1f45854d9404f6c4b6accf54b7fac5726fc6bdcf1838b"
+    },
+    {
+      "case": "13x9-X-TRI-seam-cycle-negative-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3234402308,
+        0
+      ],
+      "nativeFactorRowSha256": "86f5fb4e5d334c819344ad8a8368b5ac39a47fdf505c181c578a5089142ecada"
+    },
+    {
+      "case": "13x9-Y-SAW-seam-cycle-negative-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1084227584,
+        3234402308,
+        0
+      ],
+      "nativeFactorRowSha256": "216c4564f52e2358c38592c233d4188e965c87ff9894cb574d3fce2f0afa3930"
+    },
+    {
+      "case": "13x9-Y-TRI-seam-cycle-negative-successor",
+      "width": 13,
+      "height": 9,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1084227584,
+        3234402308,
+        0
+      ],
+      "nativeFactorRowSha256": "aee1a245376985a935caffedb70b2ef638f9f38b3a4990874d990ac36b3dc5fb"
+    },
+    {
+      "case": "8192x4-X-SAW-thin-negative-maximum",
+      "width": 8192,
+      "height": 4,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "144e27371b10491a90fd852ce47595304f5a2024148373ded1187d50f3122c48"
+    },
+    {
+      "case": "8192x4-X-TRI-thin-negative-maximum",
+      "width": 8192,
+      "height": 4,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "0e5e70bb3a8f3f588c6829e56190edd97bdbddb30870637f90e139512c5134ef"
+    },
+    {
+      "case": "8192x4-Y-SAW-thin-negative-maximum",
+      "width": 8192,
+      "height": 4,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "ca154e6016785fd92c9391ce56af9294a04a98522e60632bd9ce179b7cc062ed"
+    },
+    {
+      "case": "8192x4-Y-TRI-thin-negative-maximum",
+      "width": 8192,
+      "height": 4,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "dc6bad2f2e11b09ec0b4e1b9acba00f2404729ed433ff2f8eea54e921a0e2aa7"
+    },
+    {
+      "case": "8192x4-X-SAW-thin-positive-maximum",
+      "width": 8192,
+      "height": 4,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "c048103febf4c332786e4aa73481b04189ab04e0bab3fb438adc8abdb7dec2bf"
+    },
+    {
+      "case": "8192x4-X-TRI-thin-positive-maximum",
+      "width": 8192,
+      "height": 4,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "8d4d278a8d85175e0c1d7c6df2b47d06f5a9f58e3e1b5a862dbf09a4ba6fc5ff"
+    },
+    {
+      "case": "8192x4-Y-SAW-thin-positive-maximum",
+      "width": 8192,
+      "height": 4,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "abc5116f128bde5edf76a25035d1ff9db8327b74ad9dfcd49d98aee4082110e2"
+    },
+    {
+      "case": "8192x4-Y-TRI-thin-positive-maximum",
+      "width": 8192,
+      "height": 4,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "ececefa2df8e99fe64060d0a10716e65fc8c54673848dc6f4ced922ba5f419bf"
+    },
+    {
+      "case": "8192x4-X-SAW-thin-negative-minimum",
+      "width": 8192,
+      "height": 4,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "fe8a54cafa71bc494c7b9eb77e392a33365091fe7c7b27594e43ec6329fc3951"
+    },
+    {
+      "case": "8192x4-X-TRI-thin-negative-minimum",
+      "width": 8192,
+      "height": 4,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "2fcd1a4703a71bb0e8b6840a1d7f281a55957f97392348d80785d84aefc001c1"
+    },
+    {
+      "case": "8192x4-Y-SAW-thin-negative-minimum",
+      "width": 8192,
+      "height": 4,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "3e780787c004fcd535d88c39e4e5a18204303d0c4bf55b4be6ecfea0d72cf35d"
+    },
+    {
+      "case": "8192x4-Y-TRI-thin-negative-minimum",
+      "width": 8192,
+      "height": 4,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "abfb37e994788933508e1a90ccb73257d5826a1ec9af29d9f1504aaaff4a7085"
+    },
+    {
+      "case": "8192x4-X-SAW-thin-positive-minimum",
+      "width": 8192,
+      "height": 4,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "f76084ce554799e62ce475f32079b73043e97be75d9529b9043d6ab7dc406822"
+    },
+    {
+      "case": "8192x4-X-TRI-thin-positive-minimum",
+      "width": 8192,
+      "height": 4,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "ff316f656f31e892c1474da03f0e7a24a5e422cdeab886ed601e8a4f202263dc"
+    },
+    {
+      "case": "8192x4-Y-SAW-thin-positive-minimum",
+      "width": 8192,
+      "height": 4,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "30570021b8f545f2c38b507bb9a6195a2adf16c9a2ffed8d807f3f678b8cec30"
+    },
+    {
+      "case": "8192x4-Y-TRI-thin-positive-minimum",
+      "width": 8192,
+      "height": 4,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "8bcaa16fbcdf284c6aeb907db184b4ffc11b9d31489bf6ce316eeb9f869d5d9f"
+    },
+    {
+      "case": "4x8192-X-SAW-thin-negative-maximum",
+      "width": 4,
+      "height": 8192,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "ca154e6016785fd92c9391ce56af9294a04a98522e60632bd9ce179b7cc062ed"
+    },
+    {
+      "case": "4x8192-X-TRI-thin-negative-maximum",
+      "width": 4,
+      "height": 8192,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "dc6bad2f2e11b09ec0b4e1b9acba00f2404729ed433ff2f8eea54e921a0e2aa7"
+    },
+    {
+      "case": "4x8192-Y-SAW-thin-negative-maximum",
+      "width": 4,
+      "height": 8192,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "144e27371b10491a90fd852ce47595304f5a2024148373ded1187d50f3122c48"
+    },
+    {
+      "case": "4x8192-Y-TRI-thin-negative-maximum",
+      "width": 4,
+      "height": 8192,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3238002688,
+        3238002688,
+        0
+      ],
+      "nativeFactorRowSha256": "0e5e70bb3a8f3f588c6829e56190edd97bdbddb30870637f90e139512c5134ef"
+    },
+    {
+      "case": "4x8192-X-SAW-thin-positive-maximum",
+      "width": 4,
+      "height": 8192,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "abc5116f128bde5edf76a25035d1ff9db8327b74ad9dfcd49d98aee4082110e2"
+    },
+    {
+      "case": "4x8192-X-TRI-thin-positive-maximum",
+      "width": 4,
+      "height": 8192,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "ececefa2df8e99fe64060d0a10716e65fc8c54673848dc6f4ced922ba5f419bf"
+    },
+    {
+      "case": "4x8192-Y-SAW-thin-positive-maximum",
+      "width": 4,
+      "height": 8192,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        1090519040,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "c048103febf4c332786e4aa73481b04189ab04e0bab3fb438adc8abdb7dec2bf"
+    },
+    {
+      "case": "4x8192-Y-TRI-thin-positive-maximum",
+      "width": 4,
+      "height": 8192,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        1090519040,
+        1090519040,
+        0
+      ],
+      "nativeFactorRowSha256": "8d4d278a8d85175e0c1d7c6df2b47d06f5a9f58e3e1b5a862dbf09a4ba6fc5ff"
+    },
+    {
+      "case": "4x8192-X-SAW-thin-negative-minimum",
+      "width": 4,
+      "height": 8192,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "3e780787c004fcd535d88c39e4e5a18204303d0c4bf55b4be6ecfea0d72cf35d"
+    },
+    {
+      "case": "4x8192-X-TRI-thin-negative-minimum",
+      "width": 4,
+      "height": 8192,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "abfb37e994788933508e1a90ccb73257d5826a1ec9af29d9f1504aaaff4a7085"
+    },
+    {
+      "case": "4x8192-Y-SAW-thin-negative-minimum",
+      "width": 4,
+      "height": 8192,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        3078619136,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "fe8a54cafa71bc494c7b9eb77e392a33365091fe7c7b27594e43ec6329fc3951"
+    },
+    {
+      "case": "4x8192-Y-TRI-thin-negative-minimum",
+      "width": 4,
+      "height": 8192,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        3078619136,
+        3078619136,
+        0
+      ],
+      "nativeFactorRowSha256": "2fcd1a4703a71bb0e8b6840a1d7f281a55957f97392348d80785d84aefc001c1"
+    },
+    {
+      "case": "4x8192-X-SAW-thin-positive-minimum",
+      "width": 4,
+      "height": 8192,
+      "axis": "X",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "30570021b8f545f2c38b507bb9a6195a2adf16c9a2ffed8d807f3f678b8cec30"
+    },
+    {
+      "case": "4x8192-X-TRI-thin-positive-minimum",
+      "width": 4,
+      "height": 8192,
+      "axis": "X",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "8bcaa16fbcdf284c6aeb907db184b4ffc11b9d31489bf6ce316eeb9f869d5d9f"
+    },
+    {
+      "case": "4x8192-Y-SAW-thin-positive-minimum",
+      "width": 4,
+      "height": 8192,
+      "axis": "Y",
+      "profile": "SAW",
+      "parameterWords": [
+        931135488,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "f76084ce554799e62ce475f32079b73043e97be75d9529b9043d6ab7dc406822"
+    },
+    {
+      "case": "4x8192-Y-TRI-thin-positive-minimum",
+      "width": 4,
+      "height": 8192,
+      "axis": "Y",
+      "profile": "TRI",
+      "parameterWords": [
+        931135488,
+        931135488,
+        0
+      ],
+      "nativeFactorRowSha256": "ff316f656f31e892c1474da03f0e7a24a5e422cdeab886ed601e8a4f202263dc"
+    }
+  ]
+}

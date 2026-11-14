@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "supportCredit": 0,
+  "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "sources": [
+    {
+      "path": "source/blender/nodes/shader/nodes/node_shader_tex_wave.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/shader/nodes/node_shader_tex_wave.cc",
+      "sha256": "672f7369f202ce4a0917d0c7f4a3696f962e12d8a38465c1b9e40843ab6ffce8",
+      "bytes": 13190,
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/gpu/shaders/material/gpu_shader_material_tex_wave.bsl.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shaders/material/gpu_shader_material_tex_wave.bsl.hh",
+      "sha256": "3225e22d0db561ded6d53fe2f4a4a8917a985713856869c6d1e42d94ddeb3a51",
+      "bytes": 2579,
+      "license": "GPL-2.0-or-later"
+    }
+  ],
+  "role": "Pinned primary source for the separate CPU SAW/TRI axis model; no shader or GPU credit"
+}

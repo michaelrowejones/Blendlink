@@ -18,6 +18,11 @@ const manifests=Object.fromEntries(await Promise.all(ids.map(async id=>[id,await
 const receipt=async id=>{
  // This new-family object exercises only parser/scheduling boundaries. It is
  // intentionally synthetic and never written as production evidence.
+ if(id==='compositor-wave-axis'){
+  const fixed=JSON.parse(await readFile(join(root,'experiments/compositor-white-noise/evidence.json'),'utf8'))
+  return {...fixed,status:'QUALIFIED_PARTIAL_COMPOSITOR_WAVE_AXIS',nativeGraphs:140,nativeOracleControls:9,nativeRenders:149,savedFinalScenes:20,browserCaseRuns:640,primaryFloat32Words:10876288,uniqueActualPythonPrefixes:22,lifecycleCycles:240,resizeFrames:384,nativeZeroRgbWords:1,nativeOneRgbWords:1,
+   sources:[{nativeArchive:{pythonInvocations:22,finalInvocations:20,uniqueCachePrefixes:22}}],runs:fixed.runs.map(run=>({...run,actualApis:run.actualApis.map(api=>({...api,cases:run.phase==='raw'?140:20}))}))}
+ }
  if(id==='compositor-white-noise-default-field'){
   const fixed=JSON.parse(await readFile(join(root,'experiments/compositor-white-noise/evidence.json'),'utf8'))
   return {...fixed,status:'QUALIFIED_PARTIAL_COMPOSITOR_WHITE_NOISE_DEFAULT_FIELD',nativeGraphs:54,nativeOracleControls:9,nativeRenders:63,savedFinalScenes:8,browserCaseRuns:248,primaryFloat32Words:7943520,uniqueActualPythonPrefixes:10,lifecycleCycles:96,
@@ -58,6 +63,7 @@ for(const id of ids){
   ]
   if(id==='mono-switch-view')mutations.push(q=>q.variant='static',q=>q.productionNativeGraphs=8,q=>q.productionBrowserCaseRuns=64,q=>q.receipts[0].nativeBackend.gpuInitialized=true,q=>q.nativePythonProof.finalInvocations=0)
   else mutations.push(q=>q.exactWordMismatches=1,q=>q.contractViolations=1,q=>apis(id,browsers(id,q)[0])[0].cases=0,q=>q.sources[0].nativeArchive.finalInvocations=0)
+  if(id==='compositor-wave-axis')mutations.push(q=>q.nativeOracleControls=0,q=>q.nativeRenders=140,q=>q.lifecycleCycles=96,q=>q.uniqueActualPythonPrefixes=10,q=>q.resizeFrames=0,q=>q.nativeZeroRgbWords=0,q=>q.nativeOneRgbWords=0)
   if(id==='compositor-white-noise-default-field')mutations.push(q=>q.nativeOracleControls=0,q=>q.nativeRenders=54,q=>q.lifecycleCycles=0,q=>q.uniqueActualPythonPrefixes=14)
   for(const mutate of mutations){const copy=structuredClone(q);mutate(copy);assert.throws(()=>assertClosedFamilyReceipt(id,copy))}
  })
@@ -165,9 +171,9 @@ test('new family manifests participate in source-change selection and observatio
 
 // Compact evidence is a result of verification, never an executable input.
 // Recording it must not recursively queue the same numerical transaction.
-test('White Noise record updates do not invalidate executable inputs, but case changes do',async t=>{
+test('proof record updates do not invalidate executable inputs, but case changes do',async t=>{
  const tmp=await mkdtemp(join(tmpdir(),'scenetoweb-proof-record-boundary-'));t.after(()=>rm(tmp,{recursive:true,force:true}))
- for(const id of ['compositor-white-noise','compositor-white-noise-default-field']){
+ for(const id of ['compositor-white-noise','compositor-white-noise-default-field','compositor-wave-axis']){
   const folder=CLOSED_NODE_PORT_FAMILIES[id].folder,jsonInputs=manifests[id].inputs.tests.filter(path=>path.startsWith(folder+'/')&&path.endsWith('.json'))
   assert.ok(jsonInputs.length>0);assert.ok(jsonInputs.every(path=>!path.includes('*')))
   const dir=join(tmp,id);await mkdir(join(dir,folder),{recursive:true})
@@ -175,7 +181,7 @@ test('White Noise record updates do not invalidate executable inputs, but case c
   for(const path of ['native.py','runtime.ts','package.json'])await writeFile(join(dir,path),'fixed executable input')
   const manifest={...manifests[id],inputs:{native:['native.py'],runtime:['runtime.ts'],sdk:['package.json'],tests:jsonInputs}}
   const before=await fingerprintNodePortInputs(dir,manifest)
-  for(const name of ['evidence.json','pilot.json'])await writeFile(join(dir,folder,name),'new retrospective proof record')
+  for(const name of ['evidence.json','pilot.json','readiness.json','scaffold-readiness.json'])await writeFile(join(dir,folder,name),'new retrospective proof record')
   assert.equal((await fingerprintNodePortInputs(dir,manifest)).inputDigest,before.inputDigest)
   const cases=join(dir,folder,'cases.json');await writeFile(cases,(await readFile(cases,'utf8'))+'\n')
   assert.notEqual((await fingerprintNodePortInputs(dir,manifest)).inputDigest,before.inputDigest)
