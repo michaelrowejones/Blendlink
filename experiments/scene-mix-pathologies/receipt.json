@@ -1,0 +1,330 @@
+{
+  "status": "CLOSED_NEGATIVE_MIX_PATHOLOGY_RESEARCH",
+  "role": "Negative research; kernels fail strict exceptional-word contract",
+  "directory": "/tmp/scenetoweb-scene-mix-pathologies-next/artifacts/verification-scene-mix-pathologies-v1",
+  "closedSha256": "b6e006df77cc7d16436abb9e3efcb299c75fad6f02f90bf6b515ab13b53d8660",
+  "nativeRenders": 9,
+  "browserCaseRuns": 36,
+  "comparedWords": 9216,
+  "findings": [
+    {
+      "backend": "webgpu",
+      "gpu": {
+        "vendor": "apple",
+        "architecture": "metal-3",
+        "device": "",
+        "description": ""
+      },
+      "copyControls": [
+        {
+          "key": "a",
+          "wordDifferences": 0,
+          "classDifferences": 0,
+          "nanPayloadOnly": 0,
+          "examples": []
+        },
+        {
+          "key": "b",
+          "wordDifferences": 0,
+          "classDifferences": 0,
+          "nanPayloadOnly": 0,
+          "examples": []
+        },
+        {
+          "key": "factor",
+          "wordDifferences": 0,
+          "classDifferences": 0,
+          "nanPayloadOnly": 0,
+          "examples": []
+        }
+      ],
+      "rows": [
+        {
+          "id": "a-b-field",
+          "algorithm": "select",
+          "wordDifferences": 56,
+          "classDifferences": 56,
+          "nanPayloadOnly": 0
+        },
+        {
+          "id": "a-b-field",
+          "algorithm": "typed-mix",
+          "wordDifferences": 48,
+          "classDifferences": 16,
+          "nanPayloadOnly": 32
+        },
+        {
+          "id": "a-b-field",
+          "algorithm": "mul-add",
+          "wordDifferences": 32,
+          "classDifferences": 0,
+          "nanPayloadOnly": 32
+        },
+        {
+          "id": "a-b-zero",
+          "algorithm": "select",
+          "wordDifferences": 48,
+          "classDifferences": 48,
+          "nanPayloadOnly": 0
+        },
+        {
+          "id": "a-b-zero",
+          "algorithm": "typed-mix",
+          "wordDifferences": 48,
+          "classDifferences": 48,
+          "nanPayloadOnly": 0
+        },
+        {
+          "id": "a-b-zero",
+          "algorithm": "mul-add",
+          "wordDifferences": 32,
+          "classDifferences": 0,
+          "nanPayloadOnly": 32
+        },
+        {
+          "id": "a-b-one",
+          "algorithm": "select",
+          "wordDifferences": 64,
+          "classDifferences": 64,
+          "nanPayloadOnly": 0
+        },
+        {
+          "id": "a-b-one",
+          "algorithm": "typed-mix",
+          "wordDifferences": 64,
+          "classDifferences": 64,
+          "nanPayloadOnly": 0
+        },
+        {
+          "id": "a-b-one",
+          "algorithm": "mul-add",
+          "wordDifferences": 32,
+          "classDifferences": 0,
+          "nanPayloadOnly": 32
+        },
+        {
+          "id": "b-a-field",
+          "algorithm": "select",
+          "wordDifferences": 56,
+          "classDifferences": 56,
+          "nanPayloadOnly": 0
+        },
+        {
+          "id": "b-a-field",
+          "algorithm": "typed-mix",
+          "wordDifferences": 32,
+          "classDifferences": 0,
+          "nanPayloadOnly": 32
+        },
+        {
+          "id": "b-a-field",
+          "algorithm": "mul-add",
+          "wordDifferences": 32,
+          "classDifferences": 0,
+          "nanPayloadOnly": 32
+        },
+        {
+          "id": "b-a-zero",
+          "algorithm": "select",
+          "wordDifferences": 64,
+          "classDifferences": 64,
+          "nanPayloadOnly": 0
+        },
+        {
+          "id": "b-a-zero",
+          "algorithm": "typed-mix",
+          "wordDifferences": 64,
+          "classDifferences": 64,
+          "nanPayloadOnly": 0
+        },
+        {
+          "id": "b-a-zero",
+          "algorithm": "mul-add",
+          "wordDifferences": 32,
+          "classDifferences": 0,
+          "nanPayloadOnly": 32
+        },
+        {
+          "id": "b-a-one",
+          "algorithm": "select",
+          "wordDifferences": 48,
+          "classDifferences": 48,
+          "nanPayloadOnly": 0
+        },
+        {
+          "id": "b-a-one",
+          "algorithm": "typed-mix",
+          "wordDifferences": 48,
+          "classDifferences": 48,
+          "nanPayloadOnly": 0
+        },
+        {
+          "id": "b-a-one",
+          "algorithm": "mul-add",
+          "wordDifferences": 32,
+          "classDifferences": 0,
+          "nanPayloadOnly": 32
+        }
+      ]
+    },
+    {
+      "backend": "webgl2",
+      "gpu": {
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+      },
+      "copyControls": [
+        {
+          "key": "a",
+          "wordDifferences": 0,
+          "classDifferences": 0,
+          "nanPayloadOnly": 0,
+          "examples": []
+        },
+        {
+          "key": "b",
+          "wordDifferences": 0,
+          "classDifferences": 0,
+          "nanPayloadOnly": 0,
+          "examples": []
+        },
+        {
+          "key": "factor",
+          "wordDifferences": 0,
+          "classDifferences": 0,
+          "nanPayloadOnly": 0,
+          "examples": []
+        }
+      ],
+      "rows": [
+        {
+          "id": "a-b-field",
+          "algorithm": "select",
+          "wordDifferences": 56,
+          "classDifferences": 56,
+          "nanPayloadOnly": 0
+        },
+        {
+          "id": "a-b-field",
+          "algorithm": "typed-mix",
+          "wordDifferences": 48,
+          "classDifferences": 16,
+          "nanPayloadOnly": 32
+        },
+        {
+          "id": "a-b-field",
+          "algorithm": "mul-add",
+          "wordDifferences": 32,
+          "classDifferences": 0,
+          "nanPayloadOnly": 32
+        },
+        {
+          "id": "a-b-zero",
+          "algorithm": "select",
+          "wordDifferences": 48,
+          "classDifferences": 48,
+          "nanPayloadOnly": 0
+        },
+        {
+          "id": "a-b-zero",
+          "algorithm": "typed-mix",
+          "wordDifferences": 48,
+          "classDifferences": 48,
+          "nanPayloadOnly": 0
+        },
+        {
+          "id": "a-b-zero",
+          "algorithm": "mul-add",
+          "wordDifferences": 48,
+          "classDifferences": 48,
+          "nanPayloadOnly": 0
+        },
+        {
+          "id": "a-b-one",
+          "algorithm": "select",
+          "wordDifferences": 64,
+          "classDifferences": 64,
+          "nanPayloadOnly": 0
+        },
+        {
+          "id": "a-b-one",
+          "algorithm": "typed-mix",
+          "wordDifferences": 64,
+          "classDifferences": 64,
+          "nanPayloadOnly": 0
+        },
+        {
+          "id": "a-b-one",
+          "algorithm": "mul-add",
+          "wordDifferences": 64,
+          "classDifferences": 64,
+          "nanPayloadOnly": 0
+        },
+        {
+          "id": "b-a-field",
+          "algorithm": "select",
+          "wordDifferences": 56,
+          "classDifferences": 56,
+          "nanPayloadOnly": 0
+        },
+        {
+          "id": "b-a-field",
+          "algorithm": "typed-mix",
+          "wordDifferences": 32,
+          "classDifferences": 0,
+          "nanPayloadOnly": 32
+        },
+        {
+          "id": "b-a-field",
+          "algorithm": "mul-add",
+          "wordDifferences": 32,
+          "classDifferences": 0,
+          "nanPayloadOnly": 32
+        },
+        {
+          "id": "b-a-zero",
+          "algorithm": "select",
+          "wordDifferences": 64,
+          "classDifferences": 64,
+          "nanPayloadOnly": 0
+        },
+        {
+          "id": "b-a-zero",
+          "algorithm": "typed-mix",
+          "wordDifferences": 64,
+          "classDifferences": 64,
+          "nanPayloadOnly": 0
+        },
+        {
+          "id": "b-a-zero",
+          "algorithm": "mul-add",
+          "wordDifferences": 64,
+          "classDifferences": 64,
+          "nanPayloadOnly": 0
+        },
+        {
+          "id": "b-a-one",
+          "algorithm": "select",
+          "wordDifferences": 48,
+          "classDifferences": 48,
+          "nanPayloadOnly": 0
+        },
+        {
+          "id": "b-a-one",
+          "algorithm": "typed-mix",
+          "wordDifferences": 48,
+          "classDifferences": 48,
+          "nanPayloadOnly": 0
+        },
+        {
+          "id": "b-a-one",
+          "algorithm": "mul-add",
+          "wordDifferences": 48,
+          "classDifferences": 48,
+          "nanPayloadOnly": 0
+        }
+      ]
+    }
+  ],
+  "supportCredit": 0,
+  "finalCredit": 0
+}

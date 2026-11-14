@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "status": "CLOSED_CPU_MF_WORD_BOUNDARY_RESEARCH",
+  "nodePortCredit": 0,
+  "sdkChanges": false,
+  "nativeVersion": [
+    5,
+    3,
+    0
+  ],
+  "nativeBuild": "02f0899d78e3",
+  "nativeHost": "darwin-arm64",
+  "stage": "Geometry CPU-MF/Float attribute vs actual CPU compositor FULL EXR32, plus native raw-bit HashValue witnesses. No EEVEE, GPU, generic arithmetic or generic per-node-fold equivalence.",
+  "geometryCases": 32,
+  "imageAndEXRControls": 8,
+  "actualCPUCompositorRenders": 48,
+  "hashWitnessCompositorCases": 16,
+  "conclusions": [
+    "Eight independent raw image/EXR controls and named-attribute field paths preserve raw words.",
+    "Value direct HashValue witness preserves all8words; terminal Float sinks canonicalize -0 and4subnormal words to+0 in both measured contexts.",
+    "Matrix copy HashValue witnesses canonicalize those5words to+0 in both measured contexts; normal/+0 controls remain exact.",
+    "Multiply positive-zero bynegative-one produces negative-zero at Geometry HashValue witness butterminal Float0; terminal agreement cannot justify arbitrary fold cuts.",
+    "Keep existing normal/+0 input/intermediate domain guards. Hash carrier distinguishes8predeclared candidate codes only andisnotgeneric32bitFloat reconstruction."
+  ],
+  "originalFailedCalibration": {
+    "path": "experiments/cpu-mf-attribute-oracle/failed-calibration.json",
+    "sha256": "7a22b6a5e46909dd7602f89f7d18e2759165e96c33b16fd4a8798d79931ed887",
+    "unchanged": true
+  },
+  "observationsSha256": "bd41974c30501f15b52c888bb13a564d0056208c2a28e563152cb83933d0b033",
+  "hashObservationsSha256": "3a12d25539325544510369596ba29f5ea8cd869a709bfef6b9ff34281f68acda",
+  "nativeTransactions": [
+    {
+      "closedReceipt": "artifacts/verification-cpu-mf-word-transport-r1/closed-research.json",
+      "sha256": "8f7351eecc50c3df5a3d289c091c51845e685d5650b43ebeb3729aec0811ed9a",
+      "guardedNativePythonInvocations": 1,
+      "archive": {
+        "pythonInvocations": 1,
+        "finalInvocations": 0,
+        "uniqueCachePrefixes": 1,
+        "numericalCredit": 0
+      },
+      "sourceHashes": {
+        "/private/tmp/scenetoweb-cpu-mf-word-transport-research/experiments/cpu-mf-word-transport/probe.py": "34b0ea15e9ec123165b7a81bf05bdf5e1a6207e472f706a4498a121d5edd2bff",
+        "/private/tmp/scenetoweb-cpu-mf-word-transport-research/experiments/cpu-mf-word-transport/run.mjs": "3eea91dabf8ef4ac4586505aaae515daf81158458d13c5e3681f09a19158800f",
+        "/private/tmp/scenetoweb-cpu-mf-word-transport-research/experiments/cpu-mf-attribute-oracle/oracle.py": "19d181f49f60df2198e1fc207ce797397cf280c90dadcd9d8c41b9b0ef1ab7d1",
+        "/private/tmp/scenetoweb-cpu-mf-word-transport-research/packages/blender-addon/tests/compositor_reference.py": "d52af8d60fec4bbd6f1b977e12a0c913c6f599e0e401b0b962b2bf2b101b5a55"
+      }
+    },
+    {
+      "closedReceipt": "artifacts/verification-cpu-mf-word-hash-r1/closed-research.json",
+      "sha256": "e3fa4375805d020cad2d43b0123ac0d8c7323dc14b50d72e15711ecffffcf054",
+      "guardedNativePythonInvocations": 1,
+      "archive": {
+        "pythonInvocations": 1,
+        "finalInvocations": 0,
+        "uniqueCachePrefixes": 1,
+        "numericalCredit": 0
+      },
+      "sourceHashes": {
+        "/private/tmp/scenetoweb-cpu-mf-word-transport-research/experiments/cpu-mf-word-transport/hash-witness.py": "91a6e91a8e8cd5dcabda8723f645bb9865c5e31f50cd7e1acc11c03b9e76d672",
+        "/private/tmp/scenetoweb-cpu-mf-word-transport-research/experiments/cpu-mf-word-transport/run.mjs": "16722292c578faee364813dcac1dd5257f93fcf144764bcf196b726f14046fd7",
+        "/private/tmp/scenetoweb-cpu-mf-word-transport-research/experiments/cpu-mf-attribute-oracle/oracle.py": "19d181f49f60df2198e1fc207ce797397cf280c90dadcd9d8c41b9b0ef1ab7d1",
+        "/private/tmp/scenetoweb-cpu-mf-word-transport-research/packages/blender-addon/tests/compositor_reference.py": "d52af8d60fec4bbd6f1b977e12a0c913c6f599e0e401b0b962b2bf2b101b5a55"
+      }
+    }
+  ],
+  "futureWork": "Instrument exact native MF compile-unit and constant-materialization boundaries, and independently test a field-dependent attribute destination path before considering any new carrier. Whole typed islands/actual downstream consumers need source-specific native closure; registration or finalRGB agreement isinsufficient."
+}

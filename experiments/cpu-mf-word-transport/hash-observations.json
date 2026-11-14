@@ -1,0 +1,281 @@
+{
+  "status": "CPU_COMPOSITOR_HASH_WORD_WITNESS_RESEARCH",
+  "version": [
+    5,
+    3,
+    0
+  ],
+  "build": "02f0899d78e3",
+  "stage": "Actual CPU compositor native HashValue FLOAT with fixed Seed0; INT output rounded toFloat32 RGBA only to distinguish8predeclared widelyseparated hashcodes. No fullINT32transport or GPU credit.",
+  "cases": [
+    {
+      "producer": "value",
+      "storedSourceWord": 0,
+      "hashInteger": 2755625498,
+      "expectedSourceCarrierWord": 3468132604,
+      "actualRGBAWords": [
+        3468132604,
+        3468132604,
+        3468132604,
+        1065353216
+      ],
+      "matchedInputWords": [
+        0
+      ],
+      "directSourceMatch": true
+    },
+    {
+      "producer": "value",
+      "storedSourceWord": 2147483648,
+      "hashInteger": 3240288103,
+      "expectedSourceCarrierWord": 3464197250,
+      "actualRGBAWords": [
+        3464197250,
+        3464197250,
+        3464197250,
+        1065353216
+      ],
+      "matchedInputWords": [
+        2147483648
+      ],
+      "directSourceMatch": true
+    },
+    {
+      "producer": "value",
+      "storedSourceWord": 1,
+      "hashInteger": 2672271402,
+      "expectedSourceCarrierWord": 3468783808,
+      "actualRGBAWords": [
+        3468783808,
+        3468783808,
+        3468783808,
+        1065353216
+      ],
+      "matchedInputWords": [
+        1
+      ],
+      "directSourceMatch": true
+    },
+    {
+      "producer": "value",
+      "storedSourceWord": 8388607,
+      "hashInteger": 1917356995,
+      "expectedSourceCarrierWord": 1323602200,
+      "actualRGBAWords": [
+        1323602200,
+        1323602200,
+        1323602200,
+        1065353216
+      ],
+      "matchedInputWords": [
+        8388607
+      ],
+      "directSourceMatch": true
+    },
+    {
+      "producer": "value",
+      "storedSourceWord": 2147483649,
+      "hashInteger": 3843582362,
+      "expectedSourceCarrierWord": 3453435059,
+      "actualRGBAWords": [
+        3453435059,
+        3453435059,
+        3453435059,
+        1065353216
+      ],
+      "matchedInputWords": [
+        2147483649
+      ],
+      "directSourceMatch": true
+    },
+    {
+      "producer": "value",
+      "storedSourceWord": 2155872255,
+      "hashInteger": 2800736982,
+      "expectedSourceCarrierWord": 3467780170,
+      "actualRGBAWords": [
+        3467780170,
+        3467780170,
+        3467780170,
+        1065353216
+      ],
+      "matchedInputWords": [
+        2155872255
+      ],
+      "directSourceMatch": true
+    },
+    {
+      "producer": "value",
+      "storedSourceWord": 8388608,
+      "hashInteger": 2963401480,
+      "expectedSourceCarrierWord": 3466509354,
+      "actualRGBAWords": [
+        3466509354,
+        3466509354,
+        3466509354,
+        1065353216
+      ],
+      "matchedInputWords": [
+        8388608
+      ],
+      "directSourceMatch": true
+    },
+    {
+      "producer": "value",
+      "storedSourceWord": 1036831949,
+      "hashInteger": 4292442349,
+      "expectedSourceCarrierWord": 3390708812,
+      "actualRGBAWords": [
+        3390708812,
+        3390708812,
+        3390708812,
+        1065353216
+      ],
+      "matchedInputWords": [
+        1036831949
+      ],
+      "directSourceMatch": true
+    },
+    {
+      "producer": "matrix",
+      "storedSourceWord": 0,
+      "hashInteger": 2755625498,
+      "expectedSourceCarrierWord": 3468132604,
+      "actualRGBAWords": [
+        3468132604,
+        3468132604,
+        3468132604,
+        1065353216
+      ],
+      "matchedInputWords": [
+        0
+      ],
+      "directSourceMatch": true
+    },
+    {
+      "producer": "matrix",
+      "storedSourceWord": 2147483648,
+      "hashInteger": 3240288103,
+      "expectedSourceCarrierWord": 3464197250,
+      "actualRGBAWords": [
+        3468132604,
+        3468132604,
+        3468132604,
+        1065353216
+      ],
+      "matchedInputWords": [
+        0
+      ],
+      "directSourceMatch": false
+    },
+    {
+      "producer": "matrix",
+      "storedSourceWord": 1,
+      "hashInteger": 2672271402,
+      "expectedSourceCarrierWord": 3468783808,
+      "actualRGBAWords": [
+        3468132604,
+        3468132604,
+        3468132604,
+        1065353216
+      ],
+      "matchedInputWords": [
+        0
+      ],
+      "directSourceMatch": false
+    },
+    {
+      "producer": "matrix",
+      "storedSourceWord": 8388607,
+      "hashInteger": 1917356995,
+      "expectedSourceCarrierWord": 1323602200,
+      "actualRGBAWords": [
+        3468132604,
+        3468132604,
+        3468132604,
+        1065353216
+      ],
+      "matchedInputWords": [
+        0
+      ],
+      "directSourceMatch": false
+    },
+    {
+      "producer": "matrix",
+      "storedSourceWord": 2147483649,
+      "hashInteger": 3843582362,
+      "expectedSourceCarrierWord": 3453435059,
+      "actualRGBAWords": [
+        3468132604,
+        3468132604,
+        3468132604,
+        1065353216
+      ],
+      "matchedInputWords": [
+        0
+      ],
+      "directSourceMatch": false
+    },
+    {
+      "producer": "matrix",
+      "storedSourceWord": 2155872255,
+      "hashInteger": 2800736982,
+      "expectedSourceCarrierWord": 3467780170,
+      "actualRGBAWords": [
+        3468132604,
+        3468132604,
+        3468132604,
+        1065353216
+      ],
+      "matchedInputWords": [
+        0
+      ],
+      "directSourceMatch": false
+    },
+    {
+      "producer": "matrix",
+      "storedSourceWord": 8388608,
+      "hashInteger": 2963401480,
+      "expectedSourceCarrierWord": 3466509354,
+      "actualRGBAWords": [
+        3466509354,
+        3466509354,
+        3466509354,
+        1065353216
+      ],
+      "matchedInputWords": [
+        8388608
+      ],
+      "directSourceMatch": true
+    },
+    {
+      "producer": "matrix",
+      "storedSourceWord": 1036831949,
+      "hashInteger": 4292442349,
+      "expectedSourceCarrierWord": 3390708812,
+      "actualRGBAWords": [
+        3390708812,
+        3390708812,
+        3390708812,
+        1065353216
+      ],
+      "matchedInputWords": [
+        1036831949
+      ],
+      "directSourceMatch": true
+    }
+  ],
+  "carrierWords": {
+    "0": 3468132604,
+    "2147483648": 3464197250,
+    "1": 3468783808,
+    "8388607": 1323602200,
+    "2147483649": 3453435059,
+    "2155872255": 3467780170,
+    "8388608": 3466509354,
+    "1036831949": 3390708812
+  },
+  "renders": 16,
+  "gpuInitializationCalls": 0,
+  "nodePortCredit": 0
+}

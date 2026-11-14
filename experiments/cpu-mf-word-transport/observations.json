@@ -1,0 +1,833 @@
+{
+  "schemaVersion": 1,
+  "status": "CPU_MF_WORD_TRANSPORT_RESEARCH_CAPTURED",
+  "version": [
+    5,
+    3,
+    0
+  ],
+  "build": "02f0899d78e3",
+  "stage": "Geometry CPU-MF Float attribute vs actual CPU compositor FULL RGBA32F EXR, no generic port credit",
+  "words": [
+    0,
+    2147483648,
+    1,
+    8388607,
+    2147483649,
+    2155872255,
+    8388608,
+    1036831949
+  ],
+  "geometry": [
+    {
+      "producer": "value",
+      "requestedWord": 0,
+      "storedProducerWord": 0,
+      "storedMeshInputWord": 0,
+      "retainedMeshInputWord": 0,
+      "attributeWord": 0,
+      "hashWitness": 2755625498,
+      "hashMatchesStoredSourceWord": true,
+      "hashMatchesAttributeWord": true
+    },
+    {
+      "producer": "value",
+      "requestedWord": 2147483648,
+      "storedProducerWord": 2147483648,
+      "storedMeshInputWord": 2147483648,
+      "retainedMeshInputWord": 2147483648,
+      "attributeWord": 0,
+      "hashWitness": 3240288103,
+      "hashMatchesStoredSourceWord": true,
+      "hashMatchesAttributeWord": false
+    },
+    {
+      "producer": "value",
+      "requestedWord": 1,
+      "storedProducerWord": 1,
+      "storedMeshInputWord": 1,
+      "retainedMeshInputWord": 1,
+      "attributeWord": 0,
+      "hashWitness": 2672271402,
+      "hashMatchesStoredSourceWord": true,
+      "hashMatchesAttributeWord": false
+    },
+    {
+      "producer": "value",
+      "requestedWord": 8388607,
+      "storedProducerWord": 8388607,
+      "storedMeshInputWord": 8388607,
+      "retainedMeshInputWord": 8388607,
+      "attributeWord": 0,
+      "hashWitness": 1917356995,
+      "hashMatchesStoredSourceWord": true,
+      "hashMatchesAttributeWord": false
+    },
+    {
+      "producer": "value",
+      "requestedWord": 2147483649,
+      "storedProducerWord": 2147483649,
+      "storedMeshInputWord": 2147483649,
+      "retainedMeshInputWord": 2147483649,
+      "attributeWord": 0,
+      "hashWitness": 3843582362,
+      "hashMatchesStoredSourceWord": true,
+      "hashMatchesAttributeWord": false
+    },
+    {
+      "producer": "value",
+      "requestedWord": 2155872255,
+      "storedProducerWord": 2155872255,
+      "storedMeshInputWord": 2155872255,
+      "retainedMeshInputWord": 2155872255,
+      "attributeWord": 0,
+      "hashWitness": 2800736982,
+      "hashMatchesStoredSourceWord": true,
+      "hashMatchesAttributeWord": false
+    },
+    {
+      "producer": "value",
+      "requestedWord": 8388608,
+      "storedProducerWord": 8388608,
+      "storedMeshInputWord": 8388608,
+      "retainedMeshInputWord": 8388608,
+      "attributeWord": 8388608,
+      "hashWitness": 2963401480,
+      "hashMatchesStoredSourceWord": true,
+      "hashMatchesAttributeWord": true
+    },
+    {
+      "producer": "value",
+      "requestedWord": 1036831949,
+      "storedProducerWord": 1036831949,
+      "storedMeshInputWord": 1036831949,
+      "retainedMeshInputWord": 1036831949,
+      "attributeWord": 1036831949,
+      "hashWitness": 4292442349,
+      "hashMatchesStoredSourceWord": true,
+      "hashMatchesAttributeWord": true
+    },
+    {
+      "producer": "matrix",
+      "requestedWord": 0,
+      "storedProducerWord": 0,
+      "storedMeshInputWord": 0,
+      "retainedMeshInputWord": 0,
+      "attributeWord": 0,
+      "hashWitness": 2755625498,
+      "hashMatchesStoredSourceWord": true,
+      "hashMatchesAttributeWord": true
+    },
+    {
+      "producer": "matrix",
+      "requestedWord": 2147483648,
+      "storedProducerWord": 2147483648,
+      "storedMeshInputWord": 2147483648,
+      "retainedMeshInputWord": 2147483648,
+      "attributeWord": 0,
+      "hashWitness": 2755625498,
+      "hashMatchesStoredSourceWord": false,
+      "hashMatchesAttributeWord": true
+    },
+    {
+      "producer": "matrix",
+      "requestedWord": 1,
+      "storedProducerWord": 1,
+      "storedMeshInputWord": 1,
+      "retainedMeshInputWord": 1,
+      "attributeWord": 0,
+      "hashWitness": 2755625498,
+      "hashMatchesStoredSourceWord": false,
+      "hashMatchesAttributeWord": true
+    },
+    {
+      "producer": "matrix",
+      "requestedWord": 8388607,
+      "storedProducerWord": 8388607,
+      "storedMeshInputWord": 8388607,
+      "retainedMeshInputWord": 8388607,
+      "attributeWord": 0,
+      "hashWitness": 2755625498,
+      "hashMatchesStoredSourceWord": false,
+      "hashMatchesAttributeWord": true
+    },
+    {
+      "producer": "matrix",
+      "requestedWord": 2147483649,
+      "storedProducerWord": 2147483649,
+      "storedMeshInputWord": 2147483649,
+      "retainedMeshInputWord": 2147483649,
+      "attributeWord": 0,
+      "hashWitness": 2755625498,
+      "hashMatchesStoredSourceWord": false,
+      "hashMatchesAttributeWord": true
+    },
+    {
+      "producer": "matrix",
+      "requestedWord": 2155872255,
+      "storedProducerWord": 2155872255,
+      "storedMeshInputWord": 2155872255,
+      "retainedMeshInputWord": 2155872255,
+      "attributeWord": 0,
+      "hashWitness": 2755625498,
+      "hashMatchesStoredSourceWord": false,
+      "hashMatchesAttributeWord": true
+    },
+    {
+      "producer": "matrix",
+      "requestedWord": 8388608,
+      "storedProducerWord": 8388608,
+      "storedMeshInputWord": 8388608,
+      "retainedMeshInputWord": 8388608,
+      "attributeWord": 8388608,
+      "hashWitness": 2963401480,
+      "hashMatchesStoredSourceWord": true,
+      "hashMatchesAttributeWord": true
+    },
+    {
+      "producer": "matrix",
+      "requestedWord": 1036831949,
+      "storedProducerWord": 1036831949,
+      "storedMeshInputWord": 1036831949,
+      "retainedMeshInputWord": 1036831949,
+      "attributeWord": 1036831949,
+      "hashWitness": 4292442349,
+      "hashMatchesStoredSourceWord": true,
+      "hashMatchesAttributeWord": true
+    },
+    {
+      "producer": "named",
+      "requestedWord": 0,
+      "storedProducerWord": null,
+      "storedMeshInputWord": 0,
+      "retainedMeshInputWord": 0,
+      "attributeWord": 0,
+      "hashWitness": 2755625498,
+      "hashMatchesStoredSourceWord": true,
+      "hashMatchesAttributeWord": true
+    },
+    {
+      "producer": "named",
+      "requestedWord": 2147483648,
+      "storedProducerWord": null,
+      "storedMeshInputWord": 2147483648,
+      "retainedMeshInputWord": 2147483648,
+      "attributeWord": 2147483648,
+      "hashWitness": 3240288103,
+      "hashMatchesStoredSourceWord": true,
+      "hashMatchesAttributeWord": true
+    },
+    {
+      "producer": "named",
+      "requestedWord": 1,
+      "storedProducerWord": null,
+      "storedMeshInputWord": 1,
+      "retainedMeshInputWord": 1,
+      "attributeWord": 1,
+      "hashWitness": 2672271402,
+      "hashMatchesStoredSourceWord": true,
+      "hashMatchesAttributeWord": true
+    },
+    {
+      "producer": "named",
+      "requestedWord": 8388607,
+      "storedProducerWord": null,
+      "storedMeshInputWord": 8388607,
+      "retainedMeshInputWord": 8388607,
+      "attributeWord": 8388607,
+      "hashWitness": 1917356995,
+      "hashMatchesStoredSourceWord": true,
+      "hashMatchesAttributeWord": true
+    },
+    {
+      "producer": "named",
+      "requestedWord": 2147483649,
+      "storedProducerWord": null,
+      "storedMeshInputWord": 2147483649,
+      "retainedMeshInputWord": 2147483649,
+      "attributeWord": 2147483649,
+      "hashWitness": 3843582362,
+      "hashMatchesStoredSourceWord": true,
+      "hashMatchesAttributeWord": true
+    },
+    {
+      "producer": "named",
+      "requestedWord": 2155872255,
+      "storedProducerWord": null,
+      "storedMeshInputWord": 2155872255,
+      "retainedMeshInputWord": 2155872255,
+      "attributeWord": 2155872255,
+      "hashWitness": 2800736982,
+      "hashMatchesStoredSourceWord": true,
+      "hashMatchesAttributeWord": true
+    },
+    {
+      "producer": "named",
+      "requestedWord": 8388608,
+      "storedProducerWord": null,
+      "storedMeshInputWord": 8388608,
+      "retainedMeshInputWord": 8388608,
+      "attributeWord": 8388608,
+      "hashWitness": 2963401480,
+      "hashMatchesStoredSourceWord": true,
+      "hashMatchesAttributeWord": true
+    },
+    {
+      "producer": "named",
+      "requestedWord": 1036831949,
+      "storedProducerWord": null,
+      "storedMeshInputWord": 1036831949,
+      "retainedMeshInputWord": 1036831949,
+      "attributeWord": 1036831949,
+      "hashWitness": 4292442349,
+      "hashMatchesStoredSourceWord": true,
+      "hashMatchesAttributeWord": true
+    },
+    {
+      "producer": "multiply",
+      "requestedWord": 0,
+      "storedProducerWord": 0,
+      "storedMeshInputWord": 0,
+      "retainedMeshInputWord": 0,
+      "attributeWord": 0,
+      "hashWitness": 3240288103,
+      "hashMatchesStoredSourceWord": false,
+      "hashMatchesAttributeWord": false
+    },
+    {
+      "producer": "multiply",
+      "requestedWord": 2147483648,
+      "storedProducerWord": 2147483648,
+      "storedMeshInputWord": 2147483648,
+      "retainedMeshInputWord": 2147483648,
+      "attributeWord": 0,
+      "hashWitness": 2755625498,
+      "hashMatchesStoredSourceWord": false,
+      "hashMatchesAttributeWord": true
+    },
+    {
+      "producer": "multiply",
+      "requestedWord": 1,
+      "storedProducerWord": 1,
+      "storedMeshInputWord": 1,
+      "retainedMeshInputWord": 1,
+      "attributeWord": 0,
+      "hashWitness": 3240288103,
+      "hashMatchesStoredSourceWord": false,
+      "hashMatchesAttributeWord": false
+    },
+    {
+      "producer": "multiply",
+      "requestedWord": 8388607,
+      "storedProducerWord": 8388607,
+      "storedMeshInputWord": 8388607,
+      "retainedMeshInputWord": 8388607,
+      "attributeWord": 0,
+      "hashWitness": 3240288103,
+      "hashMatchesStoredSourceWord": false,
+      "hashMatchesAttributeWord": false
+    },
+    {
+      "producer": "multiply",
+      "requestedWord": 2147483649,
+      "storedProducerWord": 2147483649,
+      "storedMeshInputWord": 2147483649,
+      "retainedMeshInputWord": 2147483649,
+      "attributeWord": 0,
+      "hashWitness": 2755625498,
+      "hashMatchesStoredSourceWord": false,
+      "hashMatchesAttributeWord": true
+    },
+    {
+      "producer": "multiply",
+      "requestedWord": 2155872255,
+      "storedProducerWord": 2155872255,
+      "storedMeshInputWord": 2155872255,
+      "retainedMeshInputWord": 2155872255,
+      "attributeWord": 0,
+      "hashWitness": 2755625498,
+      "hashMatchesStoredSourceWord": false,
+      "hashMatchesAttributeWord": true
+    },
+    {
+      "producer": "multiply",
+      "requestedWord": 8388608,
+      "storedProducerWord": 8388608,
+      "storedMeshInputWord": 8388608,
+      "retainedMeshInputWord": 8388608,
+      "attributeWord": 2155872256,
+      "hashWitness": 2255931350,
+      "hashMatchesStoredSourceWord": false,
+      "hashMatchesAttributeWord": true
+    },
+    {
+      "producer": "multiply",
+      "requestedWord": 1036831949,
+      "storedProducerWord": 1036831949,
+      "storedMeshInputWord": 1036831949,
+      "retainedMeshInputWord": 1036831949,
+      "attributeWord": 3184315597,
+      "hashWitness": 496724313,
+      "hashMatchesStoredSourceWord": false,
+      "hashMatchesAttributeWord": true
+    }
+  ],
+  "storage": [
+    {
+      "requestedWord": 0,
+      "imageStoredWord": 0,
+      "exrReadWord": 0,
+      "allStoredWordsExact": true,
+      "allExrWordsExact": true
+    },
+    {
+      "requestedWord": 2147483648,
+      "imageStoredWord": 2147483648,
+      "exrReadWord": 2147483648,
+      "allStoredWordsExact": true,
+      "allExrWordsExact": true
+    },
+    {
+      "requestedWord": 1,
+      "imageStoredWord": 1,
+      "exrReadWord": 1,
+      "allStoredWordsExact": true,
+      "allExrWordsExact": true
+    },
+    {
+      "requestedWord": 8388607,
+      "imageStoredWord": 8388607,
+      "exrReadWord": 8388607,
+      "allStoredWordsExact": true,
+      "allExrWordsExact": true
+    },
+    {
+      "requestedWord": 2147483649,
+      "imageStoredWord": 2147483649,
+      "exrReadWord": 2147483649,
+      "allStoredWordsExact": true,
+      "allExrWordsExact": true
+    },
+    {
+      "requestedWord": 2155872255,
+      "imageStoredWord": 2155872255,
+      "exrReadWord": 2155872255,
+      "allStoredWordsExact": true,
+      "allExrWordsExact": true
+    },
+    {
+      "requestedWord": 8388608,
+      "imageStoredWord": 8388608,
+      "exrReadWord": 8388608,
+      "allStoredWordsExact": true,
+      "allExrWordsExact": true
+    },
+    {
+      "requestedWord": 1036831949,
+      "imageStoredWord": 1036831949,
+      "exrReadWord": 1036831949,
+      "allStoredWordsExact": true,
+      "allExrWordsExact": true
+    }
+  ],
+  "compositor": [
+    {
+      "producer": "value",
+      "requestedWord": 0,
+      "storedProducerWord": 0,
+      "rgbaWords": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "value",
+      "requestedWord": 2147483648,
+      "storedProducerWord": 2147483648,
+      "rgbaWords": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "value",
+      "requestedWord": 1,
+      "storedProducerWord": 1,
+      "rgbaWords": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "value",
+      "requestedWord": 8388607,
+      "storedProducerWord": 8388607,
+      "rgbaWords": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "value",
+      "requestedWord": 2147483649,
+      "storedProducerWord": 2147483649,
+      "rgbaWords": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "value",
+      "requestedWord": 2155872255,
+      "storedProducerWord": 2155872255,
+      "rgbaWords": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "value",
+      "requestedWord": 8388608,
+      "storedProducerWord": 8388608,
+      "rgbaWords": [
+        8388608,
+        8388608,
+        8388608,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "value",
+      "requestedWord": 1036831949,
+      "storedProducerWord": 1036831949,
+      "rgbaWords": [
+        1036831949,
+        1036831949,
+        1036831949,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "matrix",
+      "requestedWord": 0,
+      "storedProducerWord": 0,
+      "rgbaWords": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "matrix",
+      "requestedWord": 2147483648,
+      "storedProducerWord": 2147483648,
+      "rgbaWords": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "matrix",
+      "requestedWord": 1,
+      "storedProducerWord": 1,
+      "rgbaWords": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "matrix",
+      "requestedWord": 8388607,
+      "storedProducerWord": 8388607,
+      "rgbaWords": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "matrix",
+      "requestedWord": 2147483649,
+      "storedProducerWord": 2147483649,
+      "rgbaWords": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "matrix",
+      "requestedWord": 2155872255,
+      "storedProducerWord": 2155872255,
+      "rgbaWords": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "matrix",
+      "requestedWord": 8388608,
+      "storedProducerWord": 8388608,
+      "rgbaWords": [
+        8388608,
+        8388608,
+        8388608,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "matrix",
+      "requestedWord": 1036831949,
+      "storedProducerWord": 1036831949,
+      "rgbaWords": [
+        1036831949,
+        1036831949,
+        1036831949,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "multiply",
+      "requestedWord": 0,
+      "storedProducerWord": 0,
+      "rgbaWords": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "multiply",
+      "requestedWord": 2147483648,
+      "storedProducerWord": 2147483648,
+      "rgbaWords": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "multiply",
+      "requestedWord": 1,
+      "storedProducerWord": 1,
+      "rgbaWords": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "multiply",
+      "requestedWord": 8388607,
+      "storedProducerWord": 8388607,
+      "rgbaWords": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "multiply",
+      "requestedWord": 2147483649,
+      "storedProducerWord": 2147483649,
+      "rgbaWords": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "multiply",
+      "requestedWord": 2155872255,
+      "storedProducerWord": 2155872255,
+      "rgbaWords": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "multiply",
+      "requestedWord": 8388608,
+      "storedProducerWord": 8388608,
+      "rgbaWords": [
+        2155872256,
+        2155872256,
+        2155872256,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "multiply",
+      "requestedWord": 1036831949,
+      "storedProducerWord": 1036831949,
+      "rgbaWords": [
+        3184315597,
+        3184315597,
+        3184315597,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "image",
+      "requestedWord": 0,
+      "storedProducerWord": 0,
+      "rgbaWords": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "image",
+      "requestedWord": 2147483648,
+      "storedProducerWord": 2147483648,
+      "rgbaWords": [
+        2147483648,
+        2147483648,
+        2147483648,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "image",
+      "requestedWord": 1,
+      "storedProducerWord": 1,
+      "rgbaWords": [
+        1,
+        1,
+        1,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "image",
+      "requestedWord": 8388607,
+      "storedProducerWord": 8388607,
+      "rgbaWords": [
+        8388607,
+        8388607,
+        8388607,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "image",
+      "requestedWord": 2147483649,
+      "storedProducerWord": 2147483649,
+      "rgbaWords": [
+        2147483649,
+        2147483649,
+        2147483649,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "image",
+      "requestedWord": 2155872255,
+      "storedProducerWord": 2155872255,
+      "rgbaWords": [
+        2155872255,
+        2155872255,
+        2155872255,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "image",
+      "requestedWord": 8388608,
+      "storedProducerWord": 8388608,
+      "rgbaWords": [
+        8388608,
+        8388608,
+        8388608,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    },
+    {
+      "producer": "image",
+      "requestedWord": 1036831949,
+      "storedProducerWord": 1036831949,
+      "rgbaWords": [
+        1036831949,
+        1036831949,
+        1036831949,
+        1065353216
+      ],
+      "allPixelsIdentical": true
+    }
+  ],
+  "hashExpected": {
+    "0": 2755625498,
+    "2147483648": 3240288103,
+    "1": 2672271402,
+    "8388607": 1917356995,
+    "2147483649": 3843582362,
+    "2155872255": 2800736982,
+    "8388608": 2963401480,
+    "1036831949": 4292442349
+  },
+  "gpuInitializationCalls": 0,
+  "nativeCPURenders": 32,
+  "nodePortCredit": 0,
+  "sdkChanges": false
+}

@@ -14267,6 +14267,302 @@
           "limits": "This fresh transaction closes only the static Matrix copy family. All other ports retain their own captured source snapshots."
         }
       }
+    },
+    "compositor:FunctionNodeQuaternionToRotation": {
+      "category": "unsupported",
+      "limits": "No admitted live route outside the explicitly qualified Blender5.3 CPU static quaternion normalization/component-copy slice. Native class availability or MF registration alone grants no numerical support.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [],
+      "modes": {},
+      "compileTime": {
+        "path": "packages/blendlink/blender/compositor_static_rotation.py",
+        "function": "evaluate_output",
+        "nodeSet": "NODES",
+        "callers": [
+          {
+            "path": "packages/blendlink/blender/compositor_graph.py",
+            "anchor": "record=static_rotation.evaluate_output(socket,scene,static_rotation_cache,tuple(reversed(frames)),static_selection.static_selection)"
+          }
+        ]
+      },
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor only. Explicit linked Quaternion to Rotation -> Rotation to Quaternion static islands. Each original W/X/Y/Z Float32 word must be raw positive zero or 2^-16<=abs(value)<=4; public native from_socket copies and homogeneous foreach_get read storage before scalar promotion. Native normalization does not canonicalize quaternion sign: all-zero gives identity(1,+0,+0,+0), signed basis controls preserve sign. Literal Float socket defaults/Value, explicit instance-bound Float/opaque Rotation groups, reroutes, actual same-type native mute bypass and already-qualified static Float selectors only; reachable endpoints must terminate in reviewed Rotation to Quaternion Float outputs. Unlinked Euler-backed ROTATION defaults, implicit casts, computed/recombined components, Rotation selectors, arbitrary arithmetic/context/field producers and source animation/drivers/NLA refuse. ROTATION remains opaque inside Python. A separate extraction-owned flat-ID recipe/source cache uses fixed four-child quaternion keys, source node instances64, source/recipe depth16, source visits2048, recipe records2048 and evaluated islands16; cached source height includes all group/reroute/selector hops. Actual source storage, topology, group ancestry/bindings, selected branch and source scene/frame/CPU context are rechecked. One owned one-point Geometry Nodes CPU-MF graph (fixed8 nodes) evaluates all4 components once per unique quaternion island. Raw output words must be normal Float32 or positive zero before decoding; unexpected -0/subnormal/nonfinite words refuse without repair. Owned Scene/Object/Mesh/NodeTree are removed in finally, preserving source users/active-selection/frame. Existing VALUE operations transport exact components; no new Rotation runtime opcode/kernel/pass/texture/readback or per-frame native work. Exact native CPU compositor FULL EXR32 vs private Geometry MF plus actual WebGPU/WebGL2 via WebGPURenderer on measured Apple Metal and SwiftShader. No shader-tree/EEVEE, GPU-authored compositor, generic MF, Matrix/Quaternion arithmetic chains, dynamic fields, other builds/hosts/versions, legacy WebGLRenderer or whole-scene appearance credit."
+        }
+      },
+      "provenanceRoute": {
+        "nativeClass": "FunctionNodeQuaternionToRotation",
+        "model": "native-static-quaternion-normalize-cpu-53-v1",
+        "serialized": "compileTimeRotations preserves original native class members/instance paths, native version/build, terminal exact Float word/value and evaluation count. Existing value operations retain source.nodeType FunctionNodeRotationToQuaternion and W/X/Y/Z output identifier. Opaque ROTATION is never a runtime value.",
+        "numericalCredit": "Reviewed two-class CPU compositor static normalization/component-copy path only. Shared family totals; no shader context, generic MF or GPU Quaternion kernel credit."
+      },
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; measured Apple Metal and SwiftShader. Existing scalar/color runtime only.",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_static_rotation.py",
+          "anchor": "def evaluate_output("
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_static_matrix.py",
+          "anchor": "class _Evaluator:"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "record=static_rotation.evaluate_output(socket,scene,static_rotation_cache,tuple(reversed(frames)),static_selection.static_selection)"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'value':"
+        },
+        {
+          "path": "experiments/compositor-static-rotation/policy.py"
+        },
+        {
+          "path": "experiments/compositor-static-rotation/reference.py"
+        },
+        {
+          "path": "experiments/compositor-static-rotation/cases.json"
+        },
+        {
+          "path": "experiments/compositor-static-rotation/protocol.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-rotation/export.test.ts"
+        },
+        {
+          "path": "experiments/compositor-static-rotation/browser.js"
+        },
+        {
+          "path": "experiments/compositor-static-rotation/run.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-rotation/verify.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-rotation/matrix.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-rotation/numeric-contract.json"
+        },
+        {
+          "path": "experiments/compositor-static-rotation/sources.json"
+        },
+        {
+          "path": "experiments/compositor-static-rotation/README.md"
+        },
+        {
+          "path": "experiments/compositor-static-rotation/evidence.json"
+        }
+      ],
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeCompositorDevices": [
+          "CPU"
+        ],
+        "nativeNodeEvaluator": "Reviewed Quaternion normalization plus Rotation component-copy callbacks only. Actual CPU compositor FULL EXR32 independently compared with private one-point Geometry Nodes CPU-MF raw Float attribute carrier. Cycles CPU is the scene carrier; no shader/EEVEE/native GPU evaluation credit.",
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "familyNativeGraphs": 72,
+        "familyEndpointComparisons": 144,
+        "familySavedFinalScenes": 12,
+        "familyBrowserCaseRuns": 336,
+        "familyComparedFloat32Words": 21504,
+        "wordMismatches": 0,
+        "contractViolations": 0,
+        "resizeFrames": 48,
+        "lifecycleCycles": 144,
+        "uniqueActualPythonPrefixes": 14,
+        "sourcePolicy": {
+          "positiveInvariants": 14,
+          "refusalCategories": 18,
+          "stableCrossLanguageCaseIds": true,
+          "policyValidatedBeforeReferencesAndFinalExports": true
+        },
+        "numericContract": {
+          "schemaVersion": 1,
+          "model": "native-static-quaternion-normalize-cpu-53-v1",
+          "source": "Pinned Blender5.3 macOSarm64 CPU compositor literal QuaternionToRotation/RotationToQuaternion. Private Geometry Nodes CPU-MF result is independently compared to unchanged actual CPU compositor output. No native GPU or shader claim.",
+          "inputs": "Each original raw Float32 W/X/Y/Z word is +0 or abs>=2^-16 with abs<=4. No unlinked ROTATION defaults/implicit casts, computed/recombined components, fields or animation; ROTATION stays opaque.",
+          "wordContract": "Every native component word, private-MF output, emitted VALUE constant and actual browser RGBA channel must match exactly. Alpha is exact1. No tolerance, sign normalization, epsilon or input quantization.",
+          "zeroAndSignControls": "All-zero quaternion gives identity(1,+0,+0,+0); positive/negative W/X/Y/Z basis vectors at scales2^-16,1,4 use manually declared word goldens. Negative W remains negative; unchanged zeros must remain positive zero.",
+          "normality": "Nonzero squared norm is between2^-32 and64; finite positive length/reciprocal cannot underflow bounded nonzero components. Output raw words are checked before float promotion; unexpected -0/subnormal/nonfinite words refuse.",
+          "runtime": "Existing VALUE constants only; no ROTATION/MATRIX opcode, GPU normalization, runtime texture/readback or new pass."
+        },
+        "numericContractSha256": "af218fd1ed7fbe87eb95b8c24a43acbe7ea5c0124a01867868f724f032038430",
+        "coverageScope": "Shared two-class family totals, not independent per-node counts. All4 endpoint words, signed/scaled bases and manual identity goldens, non-half/mixed-minimum inputs, Float and opaque Rotation group instances, reroutes and literal Float selector routes. CPU static normalization only; no runtime ROTATION transport or Matrix-chain expansion.",
+        "closedReader": {
+          "runtimeFingerprint": "819e83b39bd016d505507cebfc1dff6c47e343669dc2d9f6126dee7d65955499",
+          "verifierSha256": "b6ba17e321a35914871ef3fa958abf95f96312a0eb9283dd95d8b7162ee4c252",
+          "runtimeArchiveHelperSha256": "431b8a4e92a194d63a8db512aa84f3076c9951e083b873885d8115e0caf509ed",
+          "nativeArchiveHelperSha256": "3a2310c94ed3109230d3fa89dc1ac6ea5bed447155e98144a68d52dac568a3da"
+        },
+        "sourceSnapshot": {
+          "sourceInputs": 131,
+          "nativeQualificationSha256": "8fdd0137cde54d8c727f98c0545e69d722d1f785e3e047c3c4a62ab85531ccb0",
+          "finalProofSha256": "bc98225e8e2552e1624a5967efc0de72481a8de3419b1d971058e66c6dcef0bf",
+          "evidence": "experiments/compositor-static-rotation/evidence.json",
+          "limits": "Fresh post-stable-ID transaction closes only this two-class static quaternion family. Earlier native-only pilot and failed scientific-notation policy-ID transaction remain historical zero Final/browser qualification records. Matrix/Box/Ellipse and all other ports retain their own explicit captured source snapshots; shared runtime fingerprint does not refresh other numerical ports."
+        }
+      }
+    },
+    "compositor:FunctionNodeRotationToQuaternion": {
+      "category": "unsupported",
+      "limits": "No admitted live route outside the explicitly qualified Blender5.3 CPU static quaternion normalization/component-copy slice. Native class availability or MF registration alone grants no numerical support.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [],
+      "modes": {},
+      "compileTime": {
+        "path": "packages/blendlink/blender/compositor_static_rotation.py",
+        "function": "evaluate_output",
+        "nodeSet": "NODES",
+        "callers": [
+          {
+            "path": "packages/blendlink/blender/compositor_graph.py",
+            "anchor": "record=static_rotation.evaluate_output(socket,scene,static_rotation_cache,tuple(reversed(frames)),static_selection.static_selection)"
+          }
+        ]
+      },
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor only. Explicit linked Quaternion to Rotation -> Rotation to Quaternion static islands. Each original W/X/Y/Z Float32 word must be raw positive zero or 2^-16<=abs(value)<=4; public native from_socket copies and homogeneous foreach_get read storage before scalar promotion. Native normalization does not canonicalize quaternion sign: all-zero gives identity(1,+0,+0,+0), signed basis controls preserve sign. Literal Float socket defaults/Value, explicit instance-bound Float/opaque Rotation groups, reroutes, actual same-type native mute bypass and already-qualified static Float selectors only; reachable endpoints must terminate in reviewed Rotation to Quaternion Float outputs. Unlinked Euler-backed ROTATION defaults, implicit casts, computed/recombined components, Rotation selectors, arbitrary arithmetic/context/field producers and source animation/drivers/NLA refuse. ROTATION remains opaque inside Python. A separate extraction-owned flat-ID recipe/source cache uses fixed four-child quaternion keys, source node instances64, source/recipe depth16, source visits2048, recipe records2048 and evaluated islands16; cached source height includes all group/reroute/selector hops. Actual source storage, topology, group ancestry/bindings, selected branch and source scene/frame/CPU context are rechecked. One owned one-point Geometry Nodes CPU-MF graph (fixed8 nodes) evaluates all4 components once per unique quaternion island. Raw output words must be normal Float32 or positive zero before decoding; unexpected -0/subnormal/nonfinite words refuse without repair. Owned Scene/Object/Mesh/NodeTree are removed in finally, preserving source users/active-selection/frame. Existing VALUE operations transport exact components; no new Rotation runtime opcode/kernel/pass/texture/readback or per-frame native work. Exact native CPU compositor FULL EXR32 vs private Geometry MF plus actual WebGPU/WebGL2 via WebGPURenderer on measured Apple Metal and SwiftShader. No shader-tree/EEVEE, GPU-authored compositor, generic MF, Matrix/Quaternion arithmetic chains, dynamic fields, other builds/hosts/versions, legacy WebGLRenderer or whole-scene appearance credit."
+        }
+      },
+      "provenanceRoute": {
+        "nativeClass": "FunctionNodeRotationToQuaternion",
+        "model": "native-static-quaternion-normalize-cpu-53-v1",
+        "serialized": "compileTimeRotations preserves original native class members/instance paths, native version/build, terminal exact Float word/value and evaluation count. Existing value operations retain source.nodeType FunctionNodeRotationToQuaternion and W/X/Y/Z output identifier. Opaque ROTATION is never a runtime value.",
+        "numericalCredit": "Reviewed two-class CPU compositor static normalization/component-copy path only. Shared family totals; no shader context, generic MF or GPU Quaternion kernel credit."
+      },
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; measured Apple Metal and SwiftShader. Existing scalar/color runtime only.",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_static_rotation.py",
+          "anchor": "def evaluate_output("
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_static_matrix.py",
+          "anchor": "class _Evaluator:"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "record=static_rotation.evaluate_output(socket,scene,static_rotation_cache,tuple(reversed(frames)),static_selection.static_selection)"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'value':"
+        },
+        {
+          "path": "experiments/compositor-static-rotation/policy.py"
+        },
+        {
+          "path": "experiments/compositor-static-rotation/reference.py"
+        },
+        {
+          "path": "experiments/compositor-static-rotation/cases.json"
+        },
+        {
+          "path": "experiments/compositor-static-rotation/protocol.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-rotation/export.test.ts"
+        },
+        {
+          "path": "experiments/compositor-static-rotation/browser.js"
+        },
+        {
+          "path": "experiments/compositor-static-rotation/run.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-rotation/verify.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-rotation/matrix.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-rotation/numeric-contract.json"
+        },
+        {
+          "path": "experiments/compositor-static-rotation/sources.json"
+        },
+        {
+          "path": "experiments/compositor-static-rotation/README.md"
+        },
+        {
+          "path": "experiments/compositor-static-rotation/evidence.json"
+        }
+      ],
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeCompositorDevices": [
+          "CPU"
+        ],
+        "nativeNodeEvaluator": "Reviewed Quaternion normalization plus Rotation component-copy callbacks only. Actual CPU compositor FULL EXR32 independently compared with private one-point Geometry Nodes CPU-MF raw Float attribute carrier. Cycles CPU is the scene carrier; no shader/EEVEE/native GPU evaluation credit.",
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "familyNativeGraphs": 72,
+        "familyEndpointComparisons": 144,
+        "familySavedFinalScenes": 12,
+        "familyBrowserCaseRuns": 336,
+        "familyComparedFloat32Words": 21504,
+        "wordMismatches": 0,
+        "contractViolations": 0,
+        "resizeFrames": 48,
+        "lifecycleCycles": 144,
+        "uniqueActualPythonPrefixes": 14,
+        "sourcePolicy": {
+          "positiveInvariants": 14,
+          "refusalCategories": 18,
+          "stableCrossLanguageCaseIds": true,
+          "policyValidatedBeforeReferencesAndFinalExports": true
+        },
+        "numericContract": {
+          "schemaVersion": 1,
+          "model": "native-static-quaternion-normalize-cpu-53-v1",
+          "source": "Pinned Blender5.3 macOSarm64 CPU compositor literal QuaternionToRotation/RotationToQuaternion. Private Geometry Nodes CPU-MF result is independently compared to unchanged actual CPU compositor output. No native GPU or shader claim.",
+          "inputs": "Each original raw Float32 W/X/Y/Z word is +0 or abs>=2^-16 with abs<=4. No unlinked ROTATION defaults/implicit casts, computed/recombined components, fields or animation; ROTATION stays opaque.",
+          "wordContract": "Every native component word, private-MF output, emitted VALUE constant and actual browser RGBA channel must match exactly. Alpha is exact1. No tolerance, sign normalization, epsilon or input quantization.",
+          "zeroAndSignControls": "All-zero quaternion gives identity(1,+0,+0,+0); positive/negative W/X/Y/Z basis vectors at scales2^-16,1,4 use manually declared word goldens. Negative W remains negative; unchanged zeros must remain positive zero.",
+          "normality": "Nonzero squared norm is between2^-32 and64; finite positive length/reciprocal cannot underflow bounded nonzero components. Output raw words are checked before float promotion; unexpected -0/subnormal/nonfinite words refuse.",
+          "runtime": "Existing VALUE constants only; no ROTATION/MATRIX opcode, GPU normalization, runtime texture/readback or new pass."
+        },
+        "numericContractSha256": "af218fd1ed7fbe87eb95b8c24a43acbe7ea5c0124a01867868f724f032038430",
+        "coverageScope": "Shared two-class family totals, not independent per-node counts. All4 endpoint words, signed/scaled bases and manual identity goldens, non-half/mixed-minimum inputs, Float and opaque Rotation group instances, reroutes and literal Float selector routes. CPU static normalization only; no runtime ROTATION transport or Matrix-chain expansion.",
+        "closedReader": {
+          "runtimeFingerprint": "819e83b39bd016d505507cebfc1dff6c47e343669dc2d9f6126dee7d65955499",
+          "verifierSha256": "b6ba17e321a35914871ef3fa958abf95f96312a0eb9283dd95d8b7162ee4c252",
+          "runtimeArchiveHelperSha256": "431b8a4e92a194d63a8db512aa84f3076c9951e083b873885d8115e0caf509ed",
+          "nativeArchiveHelperSha256": "3a2310c94ed3109230d3fa89dc1ac6ea5bed447155e98144a68d52dac568a3da"
+        },
+        "sourceSnapshot": {
+          "sourceInputs": 131,
+          "nativeQualificationSha256": "8fdd0137cde54d8c727f98c0545e69d722d1f785e3e047c3c4a62ab85531ccb0",
+          "finalProofSha256": "bc98225e8e2552e1624a5967efc0de72481a8de3419b1d971058e66c6dcef0bf",
+          "evidence": "experiments/compositor-static-rotation/evidence.json",
+          "limits": "Fresh post-stable-ID transaction closes only this two-class static quaternion family. Earlier native-only pilot and failed scientific-notation policy-ID transaction remain historical zero Final/browser qualification records. Matrix/Box/Ellipse and all other ports retain their own explicit captured source snapshots; shared runtime fingerprint does not refresh other numerical ports."
+        }
+      }
     }
   },
   "knownUnsupported": [
@@ -14342,7 +14638,6 @@
     "compositor:FunctionNodeMatrixMultiply",
     "compositor:FunctionNodeMatrixSVD",
     "compositor:FunctionNodeProjectPoint",
-    "compositor:FunctionNodeQuaternionToRotation",
     "compositor:FunctionNodeRandomValue",
     "compositor:FunctionNodeReplaceString",
     "compositor:FunctionNodeReverseString",
@@ -14350,7 +14645,6 @@
     "compositor:FunctionNodeRotateVector",
     "compositor:FunctionNodeRotationToAxisAngle",
     "compositor:FunctionNodeRotationToEuler",
-    "compositor:FunctionNodeRotationToQuaternion",
     "compositor:FunctionNodeSeparateTransform",
     "compositor:FunctionNodeSetStringCase",
     "compositor:FunctionNodeSliceString",

@@ -1428,6 +1428,41 @@
         "typed-field-contracts",
         "image-sampling-lod"
       ]
+    },
+    "compositor:FunctionNodeCombineMatrix": {
+      "priority": "P0 Enablers",
+      "reason": "Prioritize the shared typed static-island infrastructure: Matrix copy evaluation supplies raw-word, group-ancestry and cache-budget controls reused by the bounded Quaternion/Rotation candidate. This is demonstrated engineering reuse, not a usage-frequency or complete field-support claim.",
+      "dependsOn": [
+        "typed-field-contracts"
+      ]
+    },
+    "compositor:FunctionNodeSeparateMatrix": {
+      "priority": "P0 Enablers",
+      "reason": "Prioritize the shared typed static-island infrastructure: Matrix copy evaluation supplies raw-word, group-ancestry and cache-budget controls reused by the bounded Quaternion/Rotation candidate. This is demonstrated engineering reuse, not a usage-frequency or complete field-support claim.",
+      "dependsOn": [
+        "typed-field-contracts"
+      ]
+    },
+    "compositor:FunctionNodeTransposeMatrix": {
+      "priority": "P0 Enablers",
+      "reason": "Prioritize the shared typed static-island infrastructure: Matrix copy evaluation supplies raw-word, group-ancestry and cache-budget controls reused by the bounded Quaternion/Rotation candidate. This is demonstrated engineering reuse, not a usage-frequency or complete field-support claim.",
+      "dependsOn": [
+        "typed-field-contracts"
+      ]
+    },
+    "compositor:FunctionNodeQuaternionToRotation": {
+      "priority": "P0 Enablers",
+      "reason": "Prioritize the shared typed static-island infrastructure: Matrix copy evaluation supplies raw-word, group-ancestry and cache-budget controls reused by the bounded Quaternion/Rotation candidate. This is demonstrated engineering reuse, not a usage-frequency or complete field-support claim.",
+      "dependsOn": [
+        "typed-field-contracts"
+      ]
+    },
+    "compositor:FunctionNodeRotationToQuaternion": {
+      "priority": "P0 Enablers",
+      "reason": "Prioritize the shared typed static-island infrastructure: Matrix copy evaluation supplies raw-word, group-ancestry and cache-budget controls reused by the bounded Quaternion/Rotation candidate. This is demonstrated engineering reuse, not a usage-frequency or complete field-support claim.",
+      "dependsOn": [
+        "typed-field-contracts"
+      ]
     }
   },
   "researchNotes": {
@@ -1446,7 +1481,9 @@
     "shader:GeometryNodeRepeatInput": "Qualified paired static literal-seed Repeat slice; 49native/11Final/240browser family cases. UV phase margins, nonlinear/cross-state assignment and a shared source-frame timeline remain separate blockers. Original animated Mandelbrot has no new acceptance credit.",
     "shader:GeometryNodeRepeatOutput": "Qualified paired static literal-seed Repeat slice; 49native/11Final/240browser family cases. UV phase margins, nonlinear/cross-state assignment and a shared source-frame timeline remain separate blockers. Original animated Mandelbrot has no new acceptance credit.",
     "shader:ShaderNodeBump": "A separate offline Cycles Normal/active Coat Normal route is verified on actual owned Cube wood, with native render geometry, independent PNG/UV/Mikk checks and strict carrier-loading closure. Zero new live Bump coverage; Floor resource limit and Lighting-atlas composition remain refused.",
-    "compositor:ShaderNodeBlackbody": "Closed compositor CPU-MF literal Blackbody proof: 76 native graphs /32 Finals /432 browser cases; RGB within predeclared source-error envelope, exact alpha/calibration. GPU fields and custom color transforms remain separate."
+    "compositor:ShaderNodeBlackbody": "Closed compositor CPU-MF literal Blackbody proof: 76 native graphs /32 Finals /432 browser cases; RGB within predeclared source-error envelope, exact alpha/calibration. GPU fields and custom color transforms remain separate.",
+    "compositor:FunctionNodeQuaternionToRotation": "Reviewed CPU normalization/component-copy callbacks admit a bounded static-island candidate; negative W and positive-zero signs must be preserved. Production qualification is separate from this research.",
+    "compositor:FunctionNodeRotationToQuaternion": "Reviewed CPU normalization/component-copy callbacks admit a bounded static-island candidate; negative W and positive-zero signs must be preserved. Production qualification is separate from this research."
   },
   "observationEvidence": [
     "experiments/official-demo-node-performance/README.md",
@@ -1607,6 +1644,14 @@
     "compositor:ShaderNodeBlackbody": [
       "experiments/compositor-blackbody/README.md",
       "experiments/compositor-blackbody/evidence.json"
+    ],
+    "compositor:FunctionNodeQuaternionToRotation": [
+      "experiments/static-quaternion-rotation/proposal.md",
+      "experiments/static-quaternion-rotation/sources.json"
+    ],
+    "compositor:FunctionNodeRotationToQuaternion": [
+      "experiments/static-quaternion-rotation/proposal.md",
+      "experiments/static-quaternion-rotation/sources.json"
     ]
   },
   "sceneObservations": {

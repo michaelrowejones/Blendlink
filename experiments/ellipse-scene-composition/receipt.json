@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "status": "PASSED_CONTROLLED_SCENE_COMPOSITION_FEASIBILITY",
+  "scope": "Prototype only: real Three ScenePass baseline \u2192 native CPU image-copy/Mix references \u2192 prototype browser composition. Not a production RenderLayers port, saved Final, native Cycles scene/Three PBR equivalence or original demo acceptance.",
+  "baselineImages": 4,
+  "nativeCopyControls": 4,
+  "nativeCompositions": 8,
+  "browserCompositions": 8,
+  "compositionWords": 5408,
+  "wordDifferences": 0,
+  "copyWords": 2704,
+  "copyWordDifferences": 0,
+  "precision": "ScenePass HalfFloatType/noMSAA copied losslessly to Float32; native CPU FULL EXR32; browser Float32 readback",
+  "routes": [
+    "RenderLayers.Image equivalent controlled image",
+    "RenderLayers.Alpha equivalent controlled alpha"
+  ],
+  "mask": "Static literal ADD Mask0 Value1, Rotation+0; exact binary endpoint selection",
+  "foreground": [
+    0.125,
+    0.25,
+    0.5,
+    0.75
+  ],
+  "actualApis": [
+    {
+      "backend": "webgpu",
+      "gpu": {
+        "api": "WebGPU",
+        "vendor": "apple",
+        "architecture": "metal-3",
+        "device": "",
+        "description": ""
+      }
+    },
+    {
+      "backend": "webgl2",
+      "gpu": {
+        "api": "WebGL2",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+      }
+    }
+  ],
+  "artifactDirectory": "artifacts/verification-ellipse-scene-pilot-v1",
+  "records": {
+    "baseline.json": "d59a4f9ebe9f01896bc80ea2f6c48864f05e33620c6ef602b4d5b1ba274ba279",
+    "native.json": "631858d801d1e76bd76b5f2d12ebd6291f13b8c362fc3f8ebcff7eba8e1859d0",
+    "compare.json": "126d2ba37a5d8204607c2b570440588b20499751c2ef3440d15025527911294f",
+    "native-identity.json": "3026e52f8c796061f7ca67fb032c8802a4fa1a769bf0ba107031e1f2a44b6d24"
+  },
+  "supportCredit": 0,
+  "finalCredit": 0
+}

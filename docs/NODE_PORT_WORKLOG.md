@@ -891,3 +891,60 @@ this checkpoint's integration and installation; they do not extend numerical
 coverage. This metadata change adds only the Ellipse5.3 override and exact proof
 lineage. Older entries/versions and all other proof snapshots remain unchanged;
 root owns the retained coverage refresh and spreadsheet publication.
+
+## 2026-11-14 — CPU static Quaternion / Rotation normalization islands
+
+The [fresh root receipt](../experiments/compositor-static-rotation/evidence.json)
+qualifies two partial Blender 5.3 CPU compositor entries: Quaternion to Rotation
+and Rotation to Quaternion, only as an explicit linked static chain with reviewed
+Float endpoints. The transaction closes 72 native graphs, 144 independently
+compared endpoint words, 12 unchanged saved Final scenes, 336 actual browser
+case-runs and 21,504 primary Float32 words with zero word differences or contract
+violations. Actual WebGPU and WebGL2 via WebGPURenderer both pass on measured
+Apple Metal and SwiftShader. Separate checks cover 48 resize/DPR frames, 144 Final
+apply/dispose cycles and 14 fresh native Python cache prefixes.
+
+Each original Float32 component is raw positive zero or has magnitude between
+2^-16 and 4. Native public-API copies preserve scalar words before Python promotion.
+The unchanged native normalization callback is independently checked against CPU
+compositor FULL EXR32; a private one-point Geometry Nodes CPU-MF carrier returns
+all four raw endpoint words once per island. All-zero identity and signed/scaled
+basis vectors have manual word goldens; non-half and mixed-minimum controls cover
+ordinary normalization. Sign canonicalization is not silently introduced. Opaque
+ROTATION and its native Euler-backed unlinked defaults are not runtime values.
+Only literal Float defaults/Value and reviewed instance-bound groups, reroutes,
+actual same-type native bypass and static Float selectors enter this route.
+Computed/recombined components, Rotation selectors, implicit casts, fields,
+animation, GPU-authored compositor and shader/EEVEE contexts remain refused.
+
+The new evaluator reuses the fixed flat-ID traversal/raw-reader/ownership
+infrastructure with a separate profile and cache; Matrix copy-only admission is
+unchanged. Source 64 instances, 16 source/recipe depth, 2048 visits/records and 16
+evaluated-island bounds apply. Cached subtree height includes non-recipe edges.
+The fixed 8-node private carrier is removed in finally, preserves authored
+ownership/frame/selection, and emits existing VALUE constants. No new browser
+Rotation opcode, texture, pass, readback or per-frame native work is introduced.
+
+The first root transaction's numerical phases passed but its reader caught a
+Python/JavaScript Float-format-derived policy ID mismatch. That failed archive
+remains retained with no completed qualification credit. Stable literal
+scale-min/scale-max IDs, actual-producer AST regression and immediate native
+policy validation now precede expensive references/exports; the qualified replay
+captured new inputs and saved sources rather than rewriting old receipts.
+
+The 131-input snapshot closes native/Final hashes
+`8fdd0137cde54d8c727f98c0545e69d722d1f785e3e047c3c4a62ab85531ccb0` /
+`bc98225e8e2552e1624a5967efc0de72481a8de3419b1d971058e66c6dcef0bf`,
+at runtime fingerprint
+`819e83b39bd016d505507cebfc1dff6c47e343669dc2d9f6126dee7d65955499`.
+These totals are shared by the two classes. All prior capability entries,
+versions and Matrix/Box/Ellipse/other-port numerical snapshots remain unchanged;
+a shared runtime fingerprint is not an all-ports freshness claim. P0 priority for
+the five Matrix/Quaternion infrastructure IDs reflects measured implementation
+reuse, not artist-popularity evidence. Root owns retained coverage regeneration
+and tracker publication.
+
+Integrated local checks passed 1,561 SDK tests with 6 optional skips, 98 release
+policy tests, 136 pipeline tests and 8 Python audit tests. The 874-file package,
+fresh empty-cache install and two source-addon registration/preview cycles pass.
+These integration checks grant no additional numerical or whole-scene credit.

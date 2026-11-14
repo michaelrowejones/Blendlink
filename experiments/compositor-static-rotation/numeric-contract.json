@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "model": "native-static-quaternion-normalize-cpu-53-v1",
+  "source": "Pinned Blender5.3 macOSarm64 CPU compositor literal QuaternionToRotation/RotationToQuaternion. Private Geometry Nodes CPU-MF result is independently compared to unchanged actual CPU compositor output. No native GPU or shader claim.",
+  "inputs": "Each original raw Float32 W/X/Y/Z word is +0 or abs>=2^-16 with abs<=4. No unlinked ROTATION defaults/implicit casts, computed/recombined components, fields or animation; ROTATION stays opaque.",
+  "wordContract": "Every native component word, private-MF output, emitted VALUE constant and actual browser RGBA channel must match exactly. Alpha is exact1. No tolerance, sign normalization, epsilon or input quantization.",
+  "zeroAndSignControls": "All-zero quaternion gives identity(1,+0,+0,+0); positive/negative W/X/Y/Z basis vectors at scales2^-16,1,4 use manually declared word goldens. Negative W remains negative; unchanged zeros must remain positive zero.",
+  "normality": "Nonzero squared norm is between2^-32 and64; finite positive length/reciprocal cannot underflow bounded nonzero components. Output raw words are checked before float promotion; unexpected -0/subnormal/nonfinite words refuse.",
+  "runtime": "Existing VALUE constants only; no ROTATION/MATRIX opcode, GPU normalization, runtime texture/readback or new pass."
+}

@@ -42,6 +42,7 @@ def _sibling(name):
 static_selection = _sibling("static_selection")
 static_strings = _sibling("static_strings")
 static_matrix = _sibling("compositor_static_matrix")
+static_rotation = _sibling("compositor_static_rotation")
 normalize_color_operation = _sibling("compositor_color").normalize_color_operation
 native_color_band = _sibling("native_color_band").native_color_band
 normalize_integer_bits = _sibling("compositor_integer_bits").normalize_integer_bits
@@ -100,6 +101,7 @@ validate_static_image_graph = _sibling("compositor_image").validate_image_graph
 TYPES = {
     "FunctionNodeInputBool": "utility-constant",
     "FunctionNodeSeparateMatrix": "value",
+    "FunctionNodeRotationToQuaternion": "value",
     "FunctionNodeFloatToInt": "float-to-int",
     "ShaderNodeVectorMath": "vector-math",
     "ShaderNodeRadialTiling": "radial-segment-width",
@@ -300,6 +302,7 @@ def extract(scene):
     single_values = set()
     static_image_cache = {}
     static_matrix_cache = {}
+    static_rotation_cache = {}
 
     def is_single_value(ref):
         return ref["kind"] == "constant" or (ref["kind"] == "ref" and ref["node"] in single_values) \
@@ -532,7 +535,17 @@ def extract(scene):
                 # shaders. Shared compositor nodes now fold these through CPU
                 # functions, which have distinct curves, Hue and Math rules.
                 op["properties"]["single_value_device"] = "GPU" if device == "GPU" and bpy.app.version < (4, 5, 0) else "CPU"
-                if node.bl_idname == "FunctionNodeSeparateMatrix":
+                if node.bl_idname == "FunctionNodeRotationToQuaternion":
+                    frames=[];current=ctx
+                    while current.get('parent') is not None:
+                        frames.append(current['instance']);current=current['parent']
+                    try:
+                        record=static_rotation.evaluate_output(socket,scene,static_rotation_cache,tuple(reversed(frames)),static_selection.static_selection)
+                    except (static_rotation.StaticRotationUnsupported, RecursionError) as error:
+                        fail('unsupported-static-rotation',path,node,socket,str(error))
+                    op['value']=record['value']
+                    result.setdefault('compileTimeRotations',[]).append(dict(record,path=list(path),node=node.name,output=socket.identifier))
+                elif node.bl_idname == "FunctionNodeSeparateMatrix":
                     frames=[];current=ctx
                     while current.get('parent') is not None:
                         frames.append(current['instance']);current=current['parent']

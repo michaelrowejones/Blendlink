@@ -1,0 +1,62 @@
+{
+  "version": [
+    5,
+    3,
+    0
+  ],
+  "build": "02f0899d78e3",
+  "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "sources": [
+    {
+      "path": "source/blender/nodes/function/nodes/node_fn_hash_value.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/function/nodes/node_fn_hash_value.cc",
+      "sha256": "ec8caf468e1cb2ae49d937ee615448d3f977ae02c62734021c178363946110e3"
+    },
+    {
+      "path": "source/blender/blenlib/intern/noise.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/intern/noise.cc",
+      "sha256": "ad717117a1c191bc5204706fd890e262356fc9a5fac4b8aee77be7e7b9b13df9"
+    },
+    {
+      "path": "source/blender/functions/FN_multi_function_builder.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/functions/FN_multi_function_builder.hh",
+      "sha256": "7484c4d762c756c350a3f0a85a279ca193076a39fc5b488779779235c7552c53"
+    },
+    {
+      "path": "source/blender/blenlib/BLI_hash.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/BLI_hash.hh",
+      "sha256": "e0f9bdd0102f7be1e03d9d0cfd8b79d0270f8f2f2cbd1a5a482ab181e1edbda4"
+    },
+    {
+      "path": "source/blender/blenkernel/intern/geometry_fields.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenkernel/intern/geometry_fields.cc",
+      "sha256": "230a9892239dd19b9a8b0c2e8252b4cb5c471f35f3da65efb2cf48860a3ab880"
+    },
+    {
+      "path": "source/blender/functions/intern/field.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/functions/intern/field.cc",
+      "sha256": "a5476a4def69a1395d92ee5cf93c18cf1f06ee6aa901f729b72745223bd32d54"
+    },
+    {
+      "path": "source/blender/nodes/shader/nodes/node_shader_math.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/shader/nodes/node_shader_math.cc",
+      "sha256": "8f813e7bedadf3c6d768884cc804b26915105f9bf94ec9990ca6e210943f4835"
+    },
+    {
+      "path": "source/blender/nodes/shader/nodes/node_shader_value.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/shader/nodes/node_shader_value.cc",
+      "sha256": "63e6b100aedc7ba40d86c3d522caca6ad0af33edfd96f22b38e4b46d863b1c75"
+    },
+    {
+      "path": "source/blender/compositor/intern/node_tree_evaluator.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/intern/node_tree_evaluator.cc",
+      "sha256": "370c09bdaf564780a208a0a4498b9760830c96f10ef85a4dbb2358f533a5aab2"
+    },
+    {
+      "path": "source/blender/compositor/intern/multi_function_procedure_operation.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/intern/multi_function_procedure_operation.cc",
+      "sha256": "d61a452a55f9d333ea8c5fca6e81bf9604627521b547e59fb4ebfe0a59762ce9"
+    }
+  ],
+  "scope": "CPU-MF producer/consumer/materialization research only; no generic folding, GPU or port support credit. Upstream GPL-2.0-or-later bodies are not shipped into browser/runtime."
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "role": "Binary MIX exceptional-semantics negative research; no production or Final credit",
+  "sources": [
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/nodes/shader/nodes/node_shader_mix.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/shader/nodes/node_shader_mix.cc",
+      "sha256": "e8ce61bd2c5eb84fc2cf598381c2b2ba5f2541a6a619744625906257c298ed3f",
+      "bytes": 23444
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/blenkernel/intern/material.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenkernel/intern/material.cc",
+      "sha256": "2ccc4d979e2d50c3d43b8c17a6ad7d066a8349a2dcdb9a04c875a0d0a10d59b1",
+      "bytes": 68802
+    },
+    {
+      "package": "three",
+      "version": "0.184.0",
+      "path": "src/nodes/display/PassNode.js",
+      "url": "https://raw.githubusercontent.com/mrdoob/three.js/r184/src/nodes/display/PassNode.js",
+      "sha256": "e4547bb6d360cc7b2459bdfa1d1ca53a2f43f47538b37607d19d32c45a7526e5",
+      "bytes": 24020
+    }
+  ]
+}

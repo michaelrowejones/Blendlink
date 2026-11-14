@@ -1,5 +1,5 @@
 {
-  "capabilityMapSha256": "71e9a5cc9e6c8ac1038d48b3eaed31fc09746c069e6244bbd9b53443f6a49a6b",
+  "capabilityMapSha256": "e1466070c17d2e405507f5351a629226ef84970dc4cd40642a2ead0d6be2a096",
   "capabilityValidationFailures": [],
   "classificationRefresh": {
     "catalogSha256": {
@@ -12,7 +12,7 @@
     "nativeInventoryRefreshed": false,
     "reason": "Classification-only refresh against unchanged content-pinned full inventories; no native rediscovery or numerical qualification is performed."
   },
-  "generatedAt": "2026-11-14T08:17:33.581396+00:00",
+  "generatedAt": "2026-11-14T09:07:19.128757+00:00",
   "nativeAvailabilityChanges": [],
   "nativeCatalogSha256": {
     "docs/node-coverage/blender-4.2.0.json": "2f71cb192f6a62e0e343ba5fcb11a2d8e0c6f6af1e8ac663ec6c3350b016b151",
@@ -9599,10 +9599,66 @@
               "category": "unsupported",
               "declaredCategory": "unsupported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def evaluate_output(",
+                  "path": "packages/blendlink/blender/compositor_static_rotation.py"
+                },
+                {
+                  "anchor": "class _Evaluator:",
+                  "path": "packages/blendlink/blender/compositor_static_matrix.py"
+                },
+                {
+                  "anchor": "record=static_rotation.evaluate_output(socket,scene,static_rotation_cache,tuple(reversed(frames)),static_selection.static_selection)",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "anchor": "case 'value':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/policy.py"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/reference.py"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/cases.json"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/export.test.ts"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/browser.js"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/run.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/matrix.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/README.md"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/evidence.json"
+                }
+              ],
               "id": "FunctionNodeQuaternionToRotation",
               "label": "Quaternion to Rotation",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "No admitted live route outside the explicitly qualified Blender5.3 CPU static quaternion normalization/component-copy slice. Native class availability or MF registration alone grants no numerical support.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -9723,10 +9779,66 @@
               "category": "unsupported",
               "declaredCategory": "unsupported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def evaluate_output(",
+                  "path": "packages/blendlink/blender/compositor_static_rotation.py"
+                },
+                {
+                  "anchor": "class _Evaluator:",
+                  "path": "packages/blendlink/blender/compositor_static_matrix.py"
+                },
+                {
+                  "anchor": "record=static_rotation.evaluate_output(socket,scene,static_rotation_cache,tuple(reversed(frames)),static_selection.static_selection)",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "anchor": "case 'value':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/policy.py"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/reference.py"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/cases.json"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/export.test.ts"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/browser.js"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/run.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/matrix.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/README.md"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/evidence.json"
+                }
+              ],
               "id": "FunctionNodeRotationToQuaternion",
               "label": "Rotation to Quaternion",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "No admitted live route outside the explicitly qualified Blender5.3 CPU static quaternion normalization/component-copy slice. Native class availability or MF registration alone grants no numerical support.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -15101,10 +15213,10 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 66,
+            "partial": 68,
             "structural": 7,
             "supported": 24,
-            "unsupported": 90
+            "unsupported": 88
           },
           "enumValueCounts": {
             "partial": 36,
@@ -18890,13 +19002,69 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def evaluate_output(",
+                  "path": "packages/blendlink/blender/compositor_static_rotation.py"
+                },
+                {
+                  "anchor": "class _Evaluator:",
+                  "path": "packages/blendlink/blender/compositor_static_matrix.py"
+                },
+                {
+                  "anchor": "record=static_rotation.evaluate_output(socket,scene,static_rotation_cache,tuple(reversed(frames)),static_selection.static_selection)",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "anchor": "case 'value':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/policy.py"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/reference.py"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/cases.json"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/export.test.ts"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/browser.js"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/run.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/matrix.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/README.md"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/evidence.json"
+                }
+              ],
               "id": "FunctionNodeQuaternionToRotation",
               "label": "Quaternion to Rotation",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor only. Explicit linked Quaternion to Rotation -> Rotation to Quaternion static islands. Each original W/X/Y/Z Float32 word must be raw positive zero or 2^-16<=abs(value)<=4; public native from_socket copies and homogeneous foreach_get read storage before scalar promotion. Native normalization does not canonicalize quaternion sign: all-zero gives identity(1,+0,+0,+0), signed basis controls preserve sign. Literal Float socket defaults/Value, explicit instance-bound Float/opaque Rotation groups, reroutes, actual same-type native mute bypass and already-qualified static Float selectors only; reachable endpoints must terminate in reviewed Rotation to Quaternion Float outputs. Unlinked Euler-backed ROTATION defaults, implicit casts, computed/recombined components, Rotation selectors, arbitrary arithmetic/context/field producers and source animation/drivers/NLA refuse. ROTATION remains opaque inside Python. A separate extraction-owned flat-ID recipe/source cache uses fixed four-child quaternion keys, source node instances64, source/recipe depth16, source visits2048, recipe records2048 and evaluated islands16; cached source height includes all group/reroute/selector hops. Actual source storage, topology, group ancestry/bindings, selected branch and source scene/frame/CPU context are rechecked. One owned one-point Geometry Nodes CPU-MF graph (fixed8 nodes) evaluates all4 components once per unique quaternion island. Raw output words must be normal Float32 or positive zero before decoding; unexpected -0/subnormal/nonfinite words refuse without repair. Owned Scene/Object/Mesh/NodeTree are removed in finally, preserving source users/active-selection/frame. Existing VALUE operations transport exact components; no new Rotation runtime opcode/kernel/pass/texture/readback or per-frame native work. Exact native CPU compositor FULL EXR32 vs private Geometry MF plus actual WebGPU/WebGL2 via WebGPURenderer on measured Apple Metal and SwiftShader. No shader-tree/EEVEE, GPU-authored compositor, generic MF, Matrix/Quaternion arithmetic chains, dynamic fields, other builds/hosts/versions, legacy WebGLRenderer or whole-scene appearance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -19032,13 +19200,69 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def evaluate_output(",
+                  "path": "packages/blendlink/blender/compositor_static_rotation.py"
+                },
+                {
+                  "anchor": "class _Evaluator:",
+                  "path": "packages/blendlink/blender/compositor_static_matrix.py"
+                },
+                {
+                  "anchor": "record=static_rotation.evaluate_output(socket,scene,static_rotation_cache,tuple(reversed(frames)),static_selection.static_selection)",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "anchor": "case 'value':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/policy.py"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/reference.py"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/cases.json"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/export.test.ts"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/browser.js"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/run.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/matrix.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/README.md"
+                },
+                {
+                  "path": "experiments/compositor-static-rotation/evidence.json"
+                }
+              ],
               "id": "FunctionNodeRotationToQuaternion",
               "label": "Rotation to Quaternion",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor only. Explicit linked Quaternion to Rotation -> Rotation to Quaternion static islands. Each original W/X/Y/Z Float32 word must be raw positive zero or 2^-16<=abs(value)<=4; public native from_socket copies and homogeneous foreach_get read storage before scalar promotion. Native normalization does not canonicalize quaternion sign: all-zero gives identity(1,+0,+0,+0), signed basis controls preserve sign. Literal Float socket defaults/Value, explicit instance-bound Float/opaque Rotation groups, reroutes, actual same-type native mute bypass and already-qualified static Float selectors only; reachable endpoints must terminate in reviewed Rotation to Quaternion Float outputs. Unlinked Euler-backed ROTATION defaults, implicit casts, computed/recombined components, Rotation selectors, arbitrary arithmetic/context/field producers and source animation/drivers/NLA refuse. ROTATION remains opaque inside Python. A separate extraction-owned flat-ID recipe/source cache uses fixed four-child quaternion keys, source node instances64, source/recipe depth16, source visits2048, recipe records2048 and evaluated islands16; cached source height includes all group/reroute/selector hops. Actual source storage, topology, group ancestry/bindings, selected branch and source scene/frame/CPU context are rechecked. One owned one-point Geometry Nodes CPU-MF graph (fixed8 nodes) evaluates all4 components once per unique quaternion island. Raw output words must be normal Float32 or positive zero before decoding; unexpected -0/subnormal/nonfinite words refuse without repair. Owned Scene/Object/Mesh/NodeTree are removed in finally, preserving source users/active-selection/frame. Existing VALUE operations transport exact components; no new Rotation runtime opcode/kernel/pass/texture/readback or per-frame native work. Exact native CPU compositor FULL EXR32 vs private Geometry MF plus actual WebGPU/WebGL2 via WebGPURenderer on measured Apple Metal and SwiftShader. No shader-tree/EEVEE, GPU-authored compositor, generic MF, Matrix/Quaternion arithmetic chains, dynamic fields, other builds/hosts/versions, legacy WebGLRenderer or whole-scene appearance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -25434,7 +25658,7 @@
     "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
     "packages/blendlink/blender/compositor_float_coordinates.py": "a300cbfb6e5ea06806e2fb9b9d7795cd2e3b91cb21ada43e4c128ac89d8f0cec",
     "packages/blendlink/blender/compositor_float_to_int.py": "6292f5a5904107b59591c282fcf9def24a5f98dc2ead0a92d950b6219226658d",
-    "packages/blendlink/blender/compositor_graph.py": "d03e1dd7c3be68b0e8df1d2621ee4f9970503ef0681d7669562a03c2fa75e2be",
+    "packages/blendlink/blender/compositor_graph.py": "214651edc9289f8fefd21c6650837a501dd476f38adc408e9261befd939ac9f3",
     "packages/blendlink/blender/compositor_image.py": "55ee3b7800002331c4e30042a7d5da18538267b58ff60c006e03ad238da9e012",
     "packages/blendlink/blender/compositor_image_coordinates.py": "4b796327c579e7c08ed487cce4758c899a1a11be648e93977c22a0536451054a",
     "packages/blendlink/blender/compositor_image_info.py": "92e3f2488f646b8f7f79de67940717c54bd3e4cfc69956090b31ebd9b0e64729",
@@ -25451,6 +25675,7 @@
     "packages/blendlink/blender/compositor_spill.py": "8a7774222b7f126bcc6a42f0a526d953b2fe858b4f47c7018cd741ee94f56269",
     "packages/blendlink/blender/compositor_split.py": "1c25e68653abf9c8c8b2a88c3c7751a324fb4838a5feaacae309fe332e511a08",
     "packages/blendlink/blender/compositor_static_matrix.py": "8e2ba5ad012ef57fbc982e2dad47a4bfc1b73165825c1c50ee9ae45ada8fb1fd",
+    "packages/blendlink/blender/compositor_static_rotation.py": "e012b073782f114dffb631acd59c99f06c94480d8a92718de45e25e886af97c4",
     "packages/blendlink/blender/compositor_transform.py": "2f9ae73eb6e70f05fc53b755b1252e3bce4563ad013b08ed930304a4ae2ac42d",
     "packages/blendlink/blender/compositor_utilities.py": "b92be3bb89c05d9a943a08298bb3114274cf67f14f985ba84e3f5dbc9eddc384",
     "packages/blendlink/blender/compositor_vector_component.py": "8b29742404fa7d80d2bdc661363a052bc1a2680b3306a2a47b20d0d9e5bfe20c",

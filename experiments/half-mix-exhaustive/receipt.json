@@ -1,0 +1,177 @@
+{
+  "status": "CLOSED_EXHAUSTIVE_HALF_BINARY_MIX_PROTOTYPE",
+  "scope": "Research only, actual HalfFloat DataTexture decode and prototype shader; not ScenePass attachment/Final qualification or production admission",
+  "directory": "/tmp/scenetoweb-half-mix-exhaustive-next/artifacts/verification-half-mix-exhaustive-v1",
+  "closedSha256": "95d6a9127588c04440396078ae259a50f1ce25540b06279a3c03690d1e2987fa",
+  "nativeRenders": 14,
+  "halfEncodingsPerChannel": 65536,
+  "rgbaChannels": 4,
+  "browserCaseRuns": 12,
+  "comparedWords": 3145728,
+  "wordDifferences": 0,
+  "classDifferences": 0,
+  "decodeObservations": [
+    {
+      "backend": "webgpu",
+      "decodedSha256": "035c52333ed0826e91c44f74dba54fe57c0843889d2a8c09a7898249a9f684b1",
+      "nanWords": [
+        [
+          2143289344,
+          8184
+        ]
+      ],
+      "positiveZero": 4,
+      "negativeZero": 4,
+      "positiveInfinity": 4,
+      "negativeInfinity": 4,
+      "subnormalF32": 0
+    },
+    {
+      "backend": "webgl2",
+      "decodedSha256": "035c52333ed0826e91c44f74dba54fe57c0843889d2a8c09a7898249a9f684b1",
+      "nanWords": [
+        [
+          2143289344,
+          8184
+        ]
+      ],
+      "positiveZero": 4,
+      "negativeZero": 4,
+      "positiveInfinity": 4,
+      "negativeInfinity": 4,
+      "subnormalF32": 0
+    }
+  ],
+  "browser": {
+    "status": "captured",
+    "phase": "compare",
+    "browserVersion": "158.0.8127.18",
+    "rows": [
+      {
+        "status": "captured",
+        "phase": "compare",
+        "backend": "webgpu",
+        "gpu": {
+          "vendor": "apple",
+          "architecture": "metal-3",
+          "device": "",
+          "description": ""
+        },
+        "decodeStable": {
+          "wordDifferences": 0,
+          "classDifferences": 0,
+          "examples": []
+        },
+        "rows": [
+          {
+            "id": "webgpu-a-b-zero",
+            "words": 262144,
+            "wordDifferences": 0,
+            "classDifferences": 0,
+            "examples": []
+          },
+          {
+            "id": "webgpu-a-b-one",
+            "words": 262144,
+            "wordDifferences": 0,
+            "classDifferences": 0,
+            "examples": []
+          },
+          {
+            "id": "webgpu-a-b-field",
+            "words": 262144,
+            "wordDifferences": 0,
+            "classDifferences": 0,
+            "examples": []
+          },
+          {
+            "id": "webgpu-b-a-zero",
+            "words": 262144,
+            "wordDifferences": 0,
+            "classDifferences": 0,
+            "examples": []
+          },
+          {
+            "id": "webgpu-b-a-one",
+            "words": 262144,
+            "wordDifferences": 0,
+            "classDifferences": 0,
+            "examples": []
+          },
+          {
+            "id": "webgpu-b-a-field",
+            "words": 262144,
+            "wordDifferences": 0,
+            "classDifferences": 0,
+            "examples": []
+          }
+        ],
+        "supportCredit": 0,
+        "finalCredit": 0
+      },
+      {
+        "status": "captured",
+        "phase": "compare",
+        "backend": "webgl2",
+        "gpu": {
+          "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+        },
+        "decodeStable": {
+          "wordDifferences": 0,
+          "classDifferences": 0,
+          "examples": []
+        },
+        "rows": [
+          {
+            "id": "webgl2-a-b-zero",
+            "words": 262144,
+            "wordDifferences": 0,
+            "classDifferences": 0,
+            "examples": []
+          },
+          {
+            "id": "webgl2-a-b-one",
+            "words": 262144,
+            "wordDifferences": 0,
+            "classDifferences": 0,
+            "examples": []
+          },
+          {
+            "id": "webgl2-a-b-field",
+            "words": 262144,
+            "wordDifferences": 0,
+            "classDifferences": 0,
+            "examples": []
+          },
+          {
+            "id": "webgl2-b-a-zero",
+            "words": 262144,
+            "wordDifferences": 0,
+            "classDifferences": 0,
+            "examples": []
+          },
+          {
+            "id": "webgl2-b-a-one",
+            "words": 262144,
+            "wordDifferences": 0,
+            "classDifferences": 0,
+            "examples": []
+          },
+          {
+            "id": "webgl2-b-a-field",
+            "words": 262144,
+            "wordDifferences": 0,
+            "classDifferences": 0,
+            "examples": []
+          }
+        ],
+        "supportCredit": 0,
+        "finalCredit": 0
+      }
+    ],
+    "supportCredit": 0,
+    "finalCredit": 0
+  },
+  "supportCredit": 0,
+  "finalCredit": 0
+}
