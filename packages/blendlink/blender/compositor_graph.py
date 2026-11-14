@@ -43,6 +43,7 @@ static_selection = _sibling("static_selection")
 static_strings = _sibling("static_strings")
 static_matrix = _sibling("compositor_static_matrix")
 static_rotation = _sibling("compositor_static_rotation")
+static_euler = _sibling("compositor_static_euler")
 normalize_color_operation = _sibling("compositor_color").normalize_color_operation
 native_color_band = _sibling("native_color_band").native_color_band
 normalize_integer_bits = _sibling("compositor_integer_bits").normalize_integer_bits
@@ -82,6 +83,7 @@ normalize_relative_to_pixel = _sibling("compositor_relative_to_pixel").normalize
 normalize_image_coordinates = _sibling("compositor_image_coordinates").normalize_image_coordinates
 # Canonical helpers may load under a source-addon package alias. Register the
 # dependency modules before their relative imports, without changing Box math.
+_ellipse_scene_contract = _sibling("compositor_ellipse_scene_mix")
 _mask_domain_contract = _sibling("compositor_mask_domains")
 validate_mask_presentation = _mask_domain_contract.validate_mask_presentation
 normalize_box_mask = _sibling("compositor_box_mask").normalize_box_mask
@@ -303,6 +305,8 @@ def extract(scene):
     static_image_cache = {}
     static_matrix_cache = {}
     static_rotation_cache = {}
+    static_euler_cache = {}
+    source_nodes = {}
 
     def is_single_value(ref):
         return ref["kind"] == "constant" or (ref["kind"] == "ref" and ref["node"] in single_values) \
@@ -541,6 +545,13 @@ def extract(scene):
                         frames.append(current['instance']);current=current['parent']
                     try:
                         record=static_rotation.evaluate_output(socket,scene,static_rotation_cache,tuple(reversed(frames)),static_selection.static_selection)
+                    except static_rotation.EulerProducer as original_error:
+                        try:
+                            record=static_euler.evaluate_output(socket,scene,static_euler_cache,tuple(reversed(frames)),static_selection.static_selection)
+                        except static_euler.NotEulerRoute:
+                            fail('unsupported-static-rotation',path,node,socket,str(original_error))
+                        except (static_rotation.StaticRotationUnsupported, RecursionError) as error:
+                            fail('unsupported-static-rotation',path,node,socket,str(error))
                     except (static_rotation.StaticRotationUnsupported, RecursionError) as error:
                         fail('unsupported-static-rotation',path,node,socket,str(error))
                     op['value']=record['value']
@@ -985,6 +996,7 @@ def extract(scene):
                         lambda code, incoming, message: fail(code, path, node, incoming, message), native_gpu_profile))
                 op["id"] = "n" + str(len(result["ops"]))
                 result["ops"].append(op)
+                source_nodes[op["id"]] = node
                 if single:
                     single_values.add(op["id"])
                 ref = {"kind": "ref", "node": op["id"], "type": op["type"] if op["kind"] in {"image-coordinates", "image-info"} else socket.type}
@@ -1042,6 +1054,10 @@ def extract(scene):
         if not modern and not sink.use_alpha:
             result["outputAlpha"] = "legacy-composite-opaque-v1"
         result["output"] = input_value(terminal, ctx)
+        try:
+            _ellipse_scene_contract.normalize_ellipse_scene_mix(result, scene, source_nodes)
+        except ValueError as error:
+            fail("unsupported-ellipse-scene-mix", ctx["path"], sink, terminal, str(error))
         ellipse_conflict = validate_ellipse_mask_graph(result)
         if ellipse_conflict:
             op, message = ellipse_conflict
@@ -1094,6 +1110,16 @@ def extract(scene):
                 result["diagnostics"].append({"code": "unsupported-image-domain", "path": op["source"]["path"],
                     "node": op["source"]["node"], "socket": op["source"]["output"], "message": message})
                 raise Unsupported()
+        # A later private family evaluation may invoke handlers which mutate an
+        # earlier family's already-emitted source. Close every owned snapshot
+        # together, without another native evaluation, before accepting the IR.
+        for cache in (static_matrix_cache, static_rotation_cache, static_euler_cache):
+            evaluator = cache.get('evaluator')
+            if evaluator is not None:
+                try:
+                    evaluator.check_sources()
+                except (static_matrix.StaticMatrixUnsupported, static_rotation.StaticRotationUnsupported, RecursionError) as error:
+                    fail('static-island-source-changed', ctx['path'], sink, terminal, str(error))
         result["status"] = "extracted"
     except Unsupported:
         result["status"] = "unsupported"

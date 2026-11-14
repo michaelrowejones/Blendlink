@@ -1,0 +1,323 @@
+{
+  "schemaVersion": 1,
+  "status": "NATIVE_EULER_CPU_WITNESS_PILOT_ONLY",
+  "qualificationCredit": 0,
+  "sdkChanges": false,
+  "supportCredit": 0,
+  "FinalCredit": 0,
+  "browserCredit": 0,
+  "nativeProducerGraphs": 58,
+  "componentWordComparisons": 232,
+  "preFloatStoreHashComparisons": 232,
+  "nativeCPURenders": 356,
+  "rawArrayCanaries": [
+    {
+      "producer": "input",
+      "requestedWords": [
+        0,
+        2147483648,
+        1
+      ],
+      "storedWords": [
+        0,
+        2147483648,
+        1
+      ]
+    },
+    {
+      "producer": "input",
+      "requestedWords": [
+        8388607,
+        2147483649,
+        2155872255
+      ],
+      "storedWords": [
+        8388607,
+        2147483649,
+        2155872255
+      ]
+    },
+    {
+      "producer": "input",
+      "requestedWords": [
+        931135488,
+        1036831949,
+        1065353216
+      ],
+      "storedWords": [
+        931135488,
+        1036831949,
+        1065353216
+      ]
+    },
+    {
+      "producer": "convert",
+      "requestedWords": [
+        0,
+        2147483648,
+        1
+      ],
+      "storedWords": [
+        0,
+        2147483648,
+        1
+      ]
+    },
+    {
+      "producer": "convert",
+      "requestedWords": [
+        8388607,
+        2147483649,
+        2155872255
+      ],
+      "storedWords": [
+        8388607,
+        2147483649,
+        2155872255
+      ]
+    },
+    {
+      "producer": "convert",
+      "requestedWords": [
+        931135488,
+        1036831949,
+        1065353216
+      ],
+      "storedWords": [
+        931135488,
+        1036831949,
+        1065353216
+      ]
+    }
+  ],
+  "wordDifferences": 0,
+  "preStoreHashDifferences": 0,
+  "unexpectedNonNormalOrSignedZeroOutputs": 0,
+  "gpuInitializationCalls": 0,
+  "calibration": [
+    {
+      "sourceWord": 0,
+      "geometryFloatWord": 0,
+      "geometryHash": 2755625498,
+      "compositorHash": 2755625498,
+      "manualHash": 2755625498,
+      "carrierWords": [
+        1191320064,
+        3333915136,
+        1123418112,
+        1065353216
+      ]
+    },
+    {
+      "sourceWord": 2147483648,
+      "geometryFloatWord": 0,
+      "geometryHash": 3240288103,
+      "compositorHash": 3240288103,
+      "manualHash": 3240288103,
+      "carrierWords": [
+        1197434624,
+        3329980416,
+        1123418112,
+        1065353216
+      ]
+    },
+    {
+      "sourceWord": 1,
+      "geometryFloatWord": 0,
+      "geometryHash": 2672271402,
+      "compositorHash": 2672271402,
+      "manualHash": 2672271402,
+      "carrierWords": [
+        1193290240,
+        3334566400,
+        1123418112,
+        1065353216
+      ]
+    },
+    {
+      "sourceWord": 8388607,
+      "geometryFloatWord": 0,
+      "geometryHash": 1917356995,
+      "compositorHash": 1917356995,
+      "manualHash": 1917356995,
+      "carrierWords": [
+        1191953152,
+        1189384192,
+        1123418112,
+        1065353216
+      ]
+    },
+    {
+      "sourceWord": 2147483649,
+      "geometryFloatWord": 0,
+      "geometryHash": 3843582362,
+      "compositorHash": 3843582362,
+      "manualHash": 3843582362,
+      "carrierWords": [
+        1188246528,
+        3319218176,
+        1123418112,
+        1065353216
+      ]
+    },
+    {
+      "sourceWord": 2155872255,
+      "geometryFloatWord": 0,
+      "geometryHash": 2800736982,
+      "compositorHash": 2800736982,
+      "manualHash": 2800736982,
+      "carrierWords": [
+        1197135360,
+        3333562880,
+        1123418112,
+        1065353216
+      ]
+    },
+    {
+      "sourceWord": 8388608,
+      "geometryFloatWord": 8388608,
+      "geometryHash": 2963401480,
+      "compositorHash": 2963401480,
+      "manualHash": 2963401480,
+      "carrierWords": [
+        1198196736,
+        3332292096,
+        1123418112,
+        1065353216
+      ]
+    },
+    {
+      "sourceWord": 1036831949,
+      "geometryFloatWord": 1036831949,
+      "geometryHash": 4292442349,
+      "compositorHash": 4292442349,
+      "manualHash": 4292442349,
+      "carrierWords": [
+        1190255104,
+        3256614912,
+        1123418112,
+        1065353216
+      ]
+    }
+  ],
+  "scope": "Pinned 5.3 macOS arm64 CPU Geometry MF versus actual CPU compositor FULL EXR32. 29 Euler settings/routes each for native InputRotation and EulerToRotation. Positive [2^-16,1] or raw+0 source words. No source/SavedFinal/browser admission. The signed-high16/unsigned-low16 carrier preserves full native hash INT32; terminal Float attribute+0 is not treated as signed-zero evidence.",
+  "rawInputRotationReaderLimit": "Owned prototype NodeTree.copy then prune to one copied InputRotation and homogeneous nodes.foreach_get preserves raw property words. This is NOT an approved arbitrary authored-tree reader: any production route must bound the entire containing tree and close all node/storage/copy-callback types before copying, or refuse InputRotation.",
+  "sourceHashes": {
+    "experiments/static-euler-rotation-research/witness.py": "e8b4f736a2cb482fce930f0cf0e56053fa8ee2ef05fe01fb6efc19261ef6e001",
+    "experiments/static-euler-rotation-research/run.mjs": "929fa253d734a3079c9f02630c826dea45ab039e1217311347f4b0b3789ec56f",
+    "experiments/static-euler-rotation-research/sources.json": "2c15313ddb1de2b16b49462a7e27f49f922d2aca4aa3d6f2cf30e76bdae391f3",
+    "packages/blendlink/blender/compositor_static_matrix.py": "8e2ba5ad012ef57fbc982e2dad47a4bfc1b73165825c1c50ee9ae45ada8fb1fd",
+    "packages/blender-addon/tests/compositor_reference.py": "d52af8d60fec4bbd6f1b977e12a0c913c6f599e0e401b0b962b2bf2b101b5a55"
+  },
+  "nativeIdentity": {
+    "kind": "blendlink-proof-native-python-v1",
+    "platform": "darwin",
+    "native": {
+      "path": "/Applications/Blender.app/Contents/MacOS/Blender",
+      "bytes": 210043328,
+      "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da"
+    },
+    "node": {
+      "path": "/Users/michaeljones/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "bytes": 126827136,
+      "sha256": "eb96bdabfd1f6705345bbd459f9308d140c011fa55865efdb4fa8f61d048f55d"
+    },
+    "launcher": {
+      "path": "/private/tmp/scenetoweb-static-euler-source-research/artifacts/verification-static-euler-witness-r3/native-active/native-launcher-yNJi6t/blender-proof",
+      "bytes": 788,
+      "sha256": "66c41f2f8674894fc9f7b546aee9de295c9d568538ff14edb29bcc5c21033c3f"
+    },
+    "configuration": {
+      "path": "/private/tmp/scenetoweb-static-euler-source-research/artifacts/verification-static-euler-witness-r3/native-active/native-launcher-yNJi6t/launcher.json",
+      "bytes": 1299,
+      "sha256": "a29c018f5b146b3318ef1e97b79321fb646f550036b917b8f231608eaf142ce7"
+    },
+    "helper": {
+      "path": "/private/tmp/scenetoweb-static-euler-source-research/artifacts/verification-static-euler-witness-r3/native-active/native-launcher-yNJi6t/lib/node-port-python.mjs",
+      "bytes": 18685,
+      "sha256": "78a134a426314bc7867f82d9f8c9deb274f378ad2099d7d6416743eec8b0a56b"
+    },
+    "bridge": {
+      "path": "/private/tmp/scenetoweb-static-euler-source-research/artifacts/verification-static-euler-witness-r3/native-active/native-launcher-yNJi6t/node-port-blender.mjs",
+      "bytes": 321,
+      "sha256": "3390a410423e0cc921567a97473f6fd67f91cbe2987af7846346cb7cb51e9a8c"
+    },
+    "cachePolicy": "Fresh per-invocation prefix before Python actions; no project/user cache deletion or numerical proof reuse",
+    "limit": "Subsequent imports only. Call dispose after owned commands stop. Whole-job SIGKILL may leave empty owned directories; it cannot run JavaScript cleanup."
+  },
+  "nativePythonProof": {
+    "pythonInvocations": 1,
+    "finalInvocations": 0,
+    "uniqueCachePrefixes": 1,
+    "numericalCredit": 0
+  },
+  "rawArtifacts": {
+    "path": "artifacts/verification-static-euler-witness-r3",
+    "machineLocal": true,
+    "ignored": true,
+    "files": [
+      {
+        "name": "report.json",
+        "sha256": "edf89070f445c66ca2c017b2ce1ac80d793b301b6922b10c591fd9aa34fba8dc"
+      },
+      {
+        "name": "closed-research.json",
+        "sha256": "35ced1f9bea6fa71406518ebc004d23f5641a14149f5321adaa1d14fa1980c00"
+      },
+      {
+        "name": "native-python-proof.json",
+        "sha256": "eb88b313ddf54f2dcdce7fa30237004d8b29fcd9288ebbd4b7a5bf97f973e7ea"
+      },
+      {
+        "name": "native.log",
+        "sha256": "4a2fa9e8acc387d072e2130a6d61135b0f0b117dae9aee8e14faaa48b5f70280"
+      }
+    ],
+    "exrCensus": {
+      "count": 356,
+      "filenameAndContentInventorySha256": "f1eee39f66791aada1e9f40c8132491cf06fe2fd64dd47bd0ab0ef38a66b0103"
+    }
+  },
+  "failedApiProbes": [
+    {
+      "path": "artifacts/verification-static-euler-witness-r1",
+      "reason": "InputRotation.rotation_euler is mathutils.Euler and has no foreach_set",
+      "compositorRenders": 0,
+      "qualificationCredit": 0,
+      "nativeLogSha256": "20221aa1ce622db92ab500cde24526145328f86b6dfb2a3882d9caae30767ac6",
+      "reportSha256": "cee1eb1ca141ce1b9c452175469e2296cf2b04e783cf8cb9600fbb7d9dda6733",
+      "nativeArchiveSha256": "8ab085356e16e01af634b88cc79c41f529b77feb331e48514cdd324e9b778974"
+    },
+    {
+      "path": "artifacts/verification-static-euler-witness-r2",
+      "reason": "EulerToRotation Euler socket default is also mathutils.Euler and has no foreach_set",
+      "compositorRenders": 0,
+      "qualificationCredit": 0,
+      "nativeLogSha256": "8ad83b907f7fa1014018e2bf98a2dda5e72f84838bec3ffe943f5d90c559e499",
+      "reportSha256": "b67c10902d847cbbcb422bab58b2d54962bd6890107d434c6a3879e44fcc4111",
+      "nativeArchiveSha256": "d67ee35e97cf3d7d082f692622f5df1633166cf9a5bce3d28bbff47c3729095b"
+    }
+  ],
+  "witnessSources": [
+    {
+      "path": "source/blender/nodes/function/nodes/node_fn_hash_value.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/function/nodes/node_fn_hash_value.cc",
+      "sha256": "ec8caf468e1cb2ae49d937ee615448d3f977ae02c62734021c178363946110e3"
+    },
+    {
+      "path": "source/blender/blenlib/intern/noise.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/intern/noise.cc",
+      "sha256": "ad717117a1c191bc5204706fd890e262356fc9a5fac4b8aee77be7e7b9b13df9"
+    },
+    {
+      "path": "source/blender/functions/FN_multi_function_builder.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/functions/FN_multi_function_builder.hh",
+      "sha256": "7484c4d762c756c350a3f0a85a279ca193076a39fc5b488779779235c7552c53"
+    },
+    {
+      "path": "source/blender/blenlib/BLI_hash.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/BLI_hash.hh",
+      "sha256": "e0f9bdd0102f7be1e03d9d0cfd8b79d0270f8f2f2cbd1a5a482ab181e1edbda4"
+    }
+  ]
+}

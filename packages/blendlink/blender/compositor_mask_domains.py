@@ -2,6 +2,10 @@
 """Closed source mask domains and conservative Ellipse sampler admission."""
 import math
 import struct
+if __package__:
+    from .compositor_ellipse_scene_mix import ellipse_scene_mix_contract
+else:
+    from compositor_ellipse_scene_mix import ellipse_scene_mix_contract
 FAMILIES = {'CompositorNodeBoxMask': ('box-mask', 'Box Mask', 2048),
             'CompositorNodeEllipseMask': ('ellipse-mask', 'Ellipse Mask', 2048)}
 SPATIAL = frozenset({'translate', 'image-affine', 'image-input', 'image-crop', 'alpha-crop',
@@ -42,7 +46,7 @@ def validate_mask_domains(result, native_class):
     if len(masks) > limit:return masks[0],label+' exceeds its static mask node budget'
     if masks and kind == 'ellipse-mask':
         if ellipse_table_count(result['ops']) > 1:return masks[0],'Ellipse Mask varying row texture budget permits at most one table'
-        if any(op['kind'] not in ELLIPSE_POINTWISE for op in result['ops']):return masks[0],'Ellipse Mask requires closed texture-free pointwise composition; other sampler/domain producers remain unqualified'
+        if any(op['kind'] not in ELLIPSE_POINTWISE for op in result['ops']) and ellipse_scene_mix_contract(result) is None:return masks[0],'Ellipse Mask requires closed texture-free pointwise composition; other sampler/domain producers remain unqualified'
     elif masks and any(op['kind'] in SPATIAL for op in result['ops']):
         return masks[0],label+' currently requires full-frame pointwise consumers; spatial/domain transformations remain unqualified'
     return None
@@ -53,6 +57,6 @@ def validate_mask_presentation(presentation):
     if not masks:return None
     display = presentation.get('display') or {}
     lookups = sum(op.get('type') in DISPLAY_LOOKUPS for op in display.get('ops',[]))
-    if ellipse_table_count(ops)+lookups > 8:
+    if ellipse_table_count(ops)+lookups+(1 if ellipse_scene_mix_contract(graph) else 0) > 8:
         return masks[0],'Ellipse Mask combined row/display lookup budget is eight sampled textures'
     return None

@@ -1,0 +1,183 @@
+{
+  "version": 1,
+  "blenderVersion": "5.3.0",
+  "engine": "CYCLES",
+  "frame": 1,
+  "status": "extracted",
+  "ops": [
+    {
+      "id": "n0",
+      "kind": "ellipse-mask",
+      "source": {
+        "path": [
+          "Owned scene ellipse compositor"
+        ],
+        "node": "Ellipse Mask",
+        "nodeType": "CompositorNodeEllipseMask",
+        "output": "Mask"
+      },
+      "type": "VALUE",
+      "properties": {
+        "evaluation_device": "CPU",
+        "native_gpu_backend": "METAL",
+        "single_value_device": "CPU",
+        "ellipse_mask_model": "cpu-f32-row-integer-intervals-v1",
+        "ellipse_mask_source_profile": "darwin-arm64-53-ellipse-mask-cpu-v1",
+        "ellipse_mask_native_version": [
+          5,
+          3,
+          0
+        ],
+        "ellipse_mask_reference_model": "full-frame-context-zero-offset-v1",
+        "ellipse_mask_precision": "CPU_FLOAT32",
+        "ellipse_mask_scalar_storage": "native-interface-copy-f32-v1",
+        "ellipse_mask_scalar_words": [
+          0,
+          1065353216,
+          0
+        ],
+        "ellipse_mask_literal_model": "zero-or-2^-16-bounded-f32-v1",
+        "ellipse_mask_identity": false,
+        "ellipse_mask_boundary_model": "separate-fmul-fadd-fsqrt-v1",
+        "ellipse_mask_row_model": "rg32i-fixed-256x32-inclusive-v1",
+        "ellipse_mask_requested_precision": "FULL",
+        "ellipse_mask_export_extent": [
+          13,
+          9
+        ],
+        "ellipse_mask_operation": "ADD",
+        "ellipse_mask_position": [
+          0.4000000059604645,
+          0.6000000238418579
+        ],
+        "ellipse_mask_size": [
+          0.800000011920929,
+          0.699999988079071
+        ],
+        "ellipse_mask_mask": 0.0,
+        "ellipse_mask_value": 1.0
+      },
+      "inputs": {}
+    },
+    {
+      "id": "n1",
+      "kind": "render-pass",
+      "source": {
+        "path": [
+          "Owned scene ellipse compositor"
+        ],
+        "node": "Render Layers",
+        "nodeType": "CompositorNodeRLayers",
+        "output": "Image"
+      },
+      "type": "RGBA",
+      "properties": {
+        "evaluation_device": "CPU",
+        "native_gpu_backend": "METAL",
+        "single_value_device": "CPU"
+      },
+      "inputs": {},
+      "pass": {
+        "scene": "Scene",
+        "viewLayer": "ViewLayer",
+        "pass": "Image",
+        "name": "Image",
+        "type": "RGBA",
+        "engine": "CYCLES",
+        "aov": null
+      }
+    },
+    {
+      "id": "n2",
+      "kind": "mix",
+      "source": {
+        "path": [
+          "Owned scene ellipse compositor"
+        ],
+        "node": "Mix",
+        "nodeType": "ShaderNodeMix",
+        "output": "Result_Color"
+      },
+      "type": "RGBA",
+      "properties": {
+        "blend_type": "MIX",
+        "data_type": "RGBA",
+        "factor_mode": "UNIFORM",
+        "clamp_factor": true,
+        "clamp_result": false,
+        "evaluation_device": "CPU",
+        "native_gpu_backend": "METAL",
+        "single_value_device": "CPU",
+        "color_conversion_device": "CPU",
+        "ellipse_scene_mix_model": "native-cpu-binary-half-frame-v1",
+        "ellipse_scene_mix_frame_model": "three-r184-half-msaa0-physical-load-v1",
+        "ellipse_scene_mix_owner": [
+          "Scene",
+          "ViewLayer"
+        ],
+        "ellipse_scene_mix_direction": "A",
+        "ellipse_scene_mix_background_words": [
+          1040187392,
+          1048576000,
+          1056964608,
+          1061158912
+        ]
+      },
+      "inputs": {
+        "Factor_Float": {
+          "name": "Factor",
+          "socketType": "VALUE",
+          "value": {
+            "kind": "ref",
+            "node": "n0",
+            "type": "VALUE"
+          }
+        },
+        "A_Color": {
+          "name": "A",
+          "socketType": "RGBA",
+          "value": {
+            "kind": "ref",
+            "node": "n1",
+            "type": "RGBA"
+          }
+        },
+        "B_Color": {
+          "name": "B",
+          "socketType": "RGBA",
+          "value": {
+            "kind": "constant",
+            "type": "RGBA",
+            "value": [
+              0.125,
+              0.25,
+              0.5,
+              0.75
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "passes": [
+    {
+      "scene": "Scene",
+      "viewLayer": "ViewLayer",
+      "pass": "Image",
+      "name": "Image",
+      "type": "RGBA",
+      "engine": "CYCLES",
+      "aov": null
+    }
+  ],
+  "diagnostics": [],
+  "alphaConvention": "premultiplied",
+  "colorSpace": "scene-linear",
+  "displayTransform": "separate, after authored compositor",
+  "tree": "Owned scene ellipse compositor",
+  "output": {
+    "kind": "ref",
+    "node": "n2",
+    "type": "RGBA"
+  }
+}

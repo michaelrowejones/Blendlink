@@ -49,8 +49,9 @@ export function ellipseMaskRows(w:number,h:number,s:EllipseMaskSettings):Int32Ar
 export function validateEllipseMaskGraph(program:SourceCompositorProgram,fail:(message:string)=>never):void{
  validateStaticMaskDomains(program,'CompositorNodeEllipseMask',fail)
 }
-export function buildCompositorEllipseMask(op:SourceCompositorOperation,ops:readonly SourceCompositorOperation[],resources:{dispose():void}[],fail:(message:string)=>never):TslEffectNode{
- validateStaticMaskDomains({ops:[...ops]} as SourceCompositorProgram,'CompositorNodeEllipseMask',fail)
+export function buildCompositorEllipseMask(op:SourceCompositorOperation,ops:readonly SourceCompositorOperation[],resources:{dispose():void}[],fail:(message:string)=>never,program?:SourceCompositorProgram):TslEffectNode{
+ if(program&&program.ops!==ops)return fail('Ellipse Mask full graph must retain the exact operation-list identity')
+ validateStaticMaskDomains(program??{ops:[...ops]} as SourceCompositorProgram,'CompositorNodeEllipseMask',fail)
  const p=op.properties,index=ops.indexOf(op)
  if(op.kind!=='ellipse-mask'||op.type!=='VALUE'||op.source.nodeType!=='CompositorNodeEllipseMask'||op.source.output!=='Mask'
   ||p?.ellipse_mask_model!=='cpu-f32-row-integer-intervals-v1'||p.ellipse_mask_source_profile!=='darwin-arm64-53-ellipse-mask-cpu-v1'

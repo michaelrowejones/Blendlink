@@ -1,0 +1,4219 @@
+{
+  "status": "CAPTURED_EULER_CPU_HASH_WITNESS_RESEARCH",
+  "credits": {
+    "sdk": 0,
+    "support": 0,
+    "Final": 0,
+    "browser": 0
+  },
+  "canaries": [
+    {
+      "producer": "input",
+      "requestedWords": [
+        0,
+        2147483648,
+        1
+      ],
+      "storedWords": [
+        0,
+        2147483648,
+        1
+      ]
+    },
+    {
+      "producer": "input",
+      "requestedWords": [
+        8388607,
+        2147483649,
+        2155872255
+      ],
+      "storedWords": [
+        8388607,
+        2147483649,
+        2155872255
+      ]
+    },
+    {
+      "producer": "input",
+      "requestedWords": [
+        931135488,
+        1036831949,
+        1065353216
+      ],
+      "storedWords": [
+        931135488,
+        1036831949,
+        1065353216
+      ]
+    },
+    {
+      "producer": "convert",
+      "requestedWords": [
+        0,
+        2147483648,
+        1
+      ],
+      "storedWords": [
+        0,
+        2147483648,
+        1
+      ]
+    },
+    {
+      "producer": "convert",
+      "requestedWords": [
+        8388607,
+        2147483649,
+        2155872255
+      ],
+      "storedWords": [
+        8388607,
+        2147483649,
+        2155872255
+      ]
+    },
+    {
+      "producer": "convert",
+      "requestedWords": [
+        931135488,
+        1036831949,
+        1065353216
+      ],
+      "storedWords": [
+        931135488,
+        1036831949,
+        1065353216
+      ]
+    }
+  ],
+  "calibration": [
+    {
+      "sourceWord": 0,
+      "geometryFloatWord": 0,
+      "geometryHash": 2755625498,
+      "compositorHash": 2755625498,
+      "manualHash": 2755625498,
+      "carrierWords": [
+        1191320064,
+        3333915136,
+        1123418112,
+        1065353216
+      ]
+    },
+    {
+      "sourceWord": 2147483648,
+      "geometryFloatWord": 0,
+      "geometryHash": 3240288103,
+      "compositorHash": 3240288103,
+      "manualHash": 3240288103,
+      "carrierWords": [
+        1197434624,
+        3329980416,
+        1123418112,
+        1065353216
+      ]
+    },
+    {
+      "sourceWord": 1,
+      "geometryFloatWord": 0,
+      "geometryHash": 2672271402,
+      "compositorHash": 2672271402,
+      "manualHash": 2672271402,
+      "carrierWords": [
+        1193290240,
+        3334566400,
+        1123418112,
+        1065353216
+      ]
+    },
+    {
+      "sourceWord": 8388607,
+      "geometryFloatWord": 0,
+      "geometryHash": 1917356995,
+      "compositorHash": 1917356995,
+      "manualHash": 1917356995,
+      "carrierWords": [
+        1191953152,
+        1189384192,
+        1123418112,
+        1065353216
+      ]
+    },
+    {
+      "sourceWord": 2147483649,
+      "geometryFloatWord": 0,
+      "geometryHash": 3843582362,
+      "compositorHash": 3843582362,
+      "manualHash": 3843582362,
+      "carrierWords": [
+        1188246528,
+        3319218176,
+        1123418112,
+        1065353216
+      ]
+    },
+    {
+      "sourceWord": 2155872255,
+      "geometryFloatWord": 0,
+      "geometryHash": 2800736982,
+      "compositorHash": 2800736982,
+      "manualHash": 2800736982,
+      "carrierWords": [
+        1197135360,
+        3333562880,
+        1123418112,
+        1065353216
+      ]
+    },
+    {
+      "sourceWord": 8388608,
+      "geometryFloatWord": 8388608,
+      "geometryHash": 2963401480,
+      "compositorHash": 2963401480,
+      "manualHash": 2963401480,
+      "carrierWords": [
+        1198196736,
+        3332292096,
+        1123418112,
+        1065353216
+      ]
+    },
+    {
+      "sourceWord": 1036831949,
+      "geometryFloatWord": 1036831949,
+      "geometryHash": 4292442349,
+      "compositorHash": 4292442349,
+      "manualHash": 4292442349,
+      "carrierWords": [
+        1190255104,
+        3256614912,
+        1123418112,
+        1065353216
+      ]
+    }
+  ],
+  "rows": [
+    {
+      "case": "input-zero",
+      "producer": "input",
+      "route": "direct",
+      "inputWords": [
+        0,
+        0,
+        0
+      ],
+      "geometryFloatWords": [
+        1065353216,
+        0,
+        0,
+        0
+      ],
+      "compositorFloatWords": [
+        1065353216,
+        0,
+        0,
+        0
+      ],
+      "geometryHashWords": [
+        1413797383,
+        2755625498,
+        2755625498,
+        2755625498
+      ],
+      "compositorHashWords": [
+        1413797383,
+        2755625498,
+        2755625498,
+        2755625498
+      ],
+      "expectedHashOfStoredWords": [
+        1413797383,
+        2755625498,
+        2755625498,
+        2755625498
+      ],
+      "hashCarrierWords": [
+        [
+          1196820224,
+          1185449984,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "input-axis-0-min",
+      "producer": "input",
+      "route": "direct",
+      "inputWords": [
+        931135488,
+        0,
+        0
+      ],
+      "geometryFloatWords": [
+        1065353216,
+        922746880,
+        0,
+        0
+      ],
+      "compositorFloatWords": [
+        1065353216,
+        922746880,
+        0,
+        0
+      ],
+      "geometryHashWords": [
+        1413797383,
+        2592771766,
+        2755625498,
+        2755625498
+      ],
+      "compositorHashWords": [
+        1413797383,
+        2592771766,
+        2755625498,
+        2755625498
+      ],
+      "expectedHashOfStoredWords": [
+        1413797383,
+        2592771766,
+        2755625498,
+        2755625498
+      ],
+      "hashCarrierWords": [
+        [
+          1196820224,
+          1185449984,
+          1123418112,
+          1065353216
+        ],
+        [
+          1192146432,
+          3335187456,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "input-axis-0-next-min",
+      "producer": "input",
+      "route": "direct",
+      "inputWords": [
+        931135489,
+        0,
+        0
+      ],
+      "geometryFloatWords": [
+        1065353216,
+        922746881,
+        0,
+        0
+      ],
+      "compositorFloatWords": [
+        1065353216,
+        922746881,
+        0,
+        0
+      ],
+      "geometryHashWords": [
+        1413797383,
+        3699631290,
+        2755625498,
+        2755625498
+      ],
+      "compositorHashWords": [
+        1413797383,
+        3699631290,
+        2755625498,
+        2755625498
+      ],
+      "expectedHashOfStoredWords": [
+        1413797383,
+        3699631290,
+        2755625498,
+        2755625498
+      ],
+      "hashCarrierWords": [
+        [
+          1196820224,
+          1185449984,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197783552,
+          3322803200,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "input-axis-0-ordinary",
+      "producer": "input",
+      "route": "direct",
+      "inputWords": [
+        1036831949,
+        0,
+        0
+      ],
+      "geometryFloatWords": [
+        1065332249,
+        1028437749,
+        0,
+        0
+      ],
+      "compositorFloatWords": [
+        1065332249,
+        1028437749,
+        0,
+        0
+      ],
+      "geometryHashWords": [
+        1807653686,
+        3560870458,
+        2755625498,
+        2755625498
+      ],
+      "compositorHashWords": [
+        1807653686,
+        3560870458,
+        2755625498,
+        2755625498
+      ],
+      "expectedHashOfStoredWords": [
+        1807653686,
+        3560870458,
+        2755625498,
+        2755625498
+      ],
+      "hashCarrierWords": [
+        [
+          1192965632,
+          1188527104,
+          1123418112,
+          1065353216
+        ],
+        [
+          1192376832,
+          3324971008,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "input-axis-0-max",
+      "producer": "input",
+      "route": "direct",
+      "inputWords": [
+        1065353216,
+        0,
+        0
+      ],
+      "geometryFloatWords": [
+        1063299392,
+        1056274244,
+        0,
+        0
+      ],
+      "compositorFloatWords": [
+        1063299392,
+        1056274244,
+        0,
+        0
+      ],
+      "geometryHashWords": [
+        1770475527,
+        2806319176,
+        2755625498,
+        2755625498
+      ],
+      "compositorHashWords": [
+        1770475527,
+        2806319176,
+        2755625498,
+        2755625498
+      ],
+      "expectedHashOfStoredWords": [
+        1770475527,
+        2806319176,
+        2755625498,
+        2755625498
+      ],
+      "hashCarrierWords": [
+        [
+          1184894464,
+          1188236800,
+          1123418112,
+          1065353216
+        ],
+        [
+          1157922816,
+          3333518848,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "input-axis-1-min",
+      "producer": "input",
+      "route": "direct",
+      "inputWords": [
+        0,
+        931135488,
+        0
+      ],
+      "geometryFloatWords": [
+        1065353216,
+        0,
+        922746880,
+        0
+      ],
+      "compositorFloatWords": [
+        1065353216,
+        0,
+        922746880,
+        0
+      ],
+      "geometryHashWords": [
+        1413797383,
+        2755625498,
+        2592771766,
+        2755625498
+      ],
+      "compositorHashWords": [
+        1413797383,
+        2755625498,
+        2592771766,
+        2755625498
+      ],
+      "expectedHashOfStoredWords": [
+        1413797383,
+        2755625498,
+        2592771766,
+        2755625498
+      ],
+      "hashCarrierWords": [
+        [
+          1196820224,
+          1185449984,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1192146432,
+          3335187456,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "input-axis-1-next-min",
+      "producer": "input",
+      "route": "direct",
+      "inputWords": [
+        0,
+        931135489,
+        0
+      ],
+      "geometryFloatWords": [
+        1065353216,
+        0,
+        922746881,
+        0
+      ],
+      "compositorFloatWords": [
+        1065353216,
+        0,
+        922746881,
+        0
+      ],
+      "geometryHashWords": [
+        1413797383,
+        2755625498,
+        3699631290,
+        2755625498
+      ],
+      "compositorHashWords": [
+        1413797383,
+        2755625498,
+        3699631290,
+        2755625498
+      ],
+      "expectedHashOfStoredWords": [
+        1413797383,
+        2755625498,
+        3699631290,
+        2755625498
+      ],
+      "hashCarrierWords": [
+        [
+          1196820224,
+          1185449984,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197783552,
+          3322803200,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "input-axis-1-ordinary",
+      "producer": "input",
+      "route": "direct",
+      "inputWords": [
+        0,
+        1036831949,
+        0
+      ],
+      "geometryFloatWords": [
+        1065332249,
+        0,
+        1028437749,
+        0
+      ],
+      "compositorFloatWords": [
+        1065332249,
+        0,
+        1028437749,
+        0
+      ],
+      "geometryHashWords": [
+        1807653686,
+        2755625498,
+        3560870458,
+        2755625498
+      ],
+      "compositorHashWords": [
+        1807653686,
+        2755625498,
+        3560870458,
+        2755625498
+      ],
+      "expectedHashOfStoredWords": [
+        1807653686,
+        2755625498,
+        3560870458,
+        2755625498
+      ],
+      "hashCarrierWords": [
+        [
+          1192965632,
+          1188527104,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1192376832,
+          3324971008,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "input-axis-1-max",
+      "producer": "input",
+      "route": "direct",
+      "inputWords": [
+        0,
+        1065353216,
+        0
+      ],
+      "geometryFloatWords": [
+        1063299392,
+        0,
+        1056274244,
+        0
+      ],
+      "compositorFloatWords": [
+        1063299392,
+        0,
+        1056274244,
+        0
+      ],
+      "geometryHashWords": [
+        1770475527,
+        2755625498,
+        2806319176,
+        2755625498
+      ],
+      "compositorHashWords": [
+        1770475527,
+        2755625498,
+        2806319176,
+        2755625498
+      ],
+      "expectedHashOfStoredWords": [
+        1770475527,
+        2755625498,
+        2806319176,
+        2755625498
+      ],
+      "hashCarrierWords": [
+        [
+          1184894464,
+          1188236800,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1157922816,
+          3333518848,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "input-axis-2-min",
+      "producer": "input",
+      "route": "direct",
+      "inputWords": [
+        0,
+        0,
+        931135488
+      ],
+      "geometryFloatWords": [
+        1065353216,
+        0,
+        0,
+        922746880
+      ],
+      "compositorFloatWords": [
+        1065353216,
+        0,
+        0,
+        922746880
+      ],
+      "geometryHashWords": [
+        1413797383,
+        2755625498,
+        2755625498,
+        2592771766
+      ],
+      "compositorHashWords": [
+        1413797383,
+        2755625498,
+        2755625498,
+        2592771766
+      ],
+      "expectedHashOfStoredWords": [
+        1413797383,
+        2755625498,
+        2755625498,
+        2592771766
+      ],
+      "hashCarrierWords": [
+        [
+          1196820224,
+          1185449984,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1192146432,
+          3335187456,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "input-axis-2-next-min",
+      "producer": "input",
+      "route": "direct",
+      "inputWords": [
+        0,
+        0,
+        931135489
+      ],
+      "geometryFloatWords": [
+        1065353216,
+        0,
+        0,
+        922746881
+      ],
+      "compositorFloatWords": [
+        1065353216,
+        0,
+        0,
+        922746881
+      ],
+      "geometryHashWords": [
+        1413797383,
+        2755625498,
+        2755625498,
+        3699631290
+      ],
+      "compositorHashWords": [
+        1413797383,
+        2755625498,
+        2755625498,
+        3699631290
+      ],
+      "expectedHashOfStoredWords": [
+        1413797383,
+        2755625498,
+        2755625498,
+        3699631290
+      ],
+      "hashCarrierWords": [
+        [
+          1196820224,
+          1185449984,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197783552,
+          3322803200,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "input-axis-2-ordinary",
+      "producer": "input",
+      "route": "direct",
+      "inputWords": [
+        0,
+        0,
+        1036831949
+      ],
+      "geometryFloatWords": [
+        1065332249,
+        0,
+        0,
+        1028437749
+      ],
+      "compositorFloatWords": [
+        1065332249,
+        0,
+        0,
+        1028437749
+      ],
+      "geometryHashWords": [
+        1807653686,
+        2755625498,
+        2755625498,
+        3560870458
+      ],
+      "compositorHashWords": [
+        1807653686,
+        2755625498,
+        2755625498,
+        3560870458
+      ],
+      "expectedHashOfStoredWords": [
+        1807653686,
+        2755625498,
+        2755625498,
+        3560870458
+      ],
+      "hashCarrierWords": [
+        [
+          1192965632,
+          1188527104,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1192376832,
+          3324971008,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "input-axis-2-max",
+      "producer": "input",
+      "route": "direct",
+      "inputWords": [
+        0,
+        0,
+        1065353216
+      ],
+      "geometryFloatWords": [
+        1063299392,
+        0,
+        0,
+        1056274244
+      ],
+      "compositorFloatWords": [
+        1063299392,
+        0,
+        0,
+        1056274244
+      ],
+      "geometryHashWords": [
+        1770475527,
+        2755625498,
+        2755625498,
+        2806319176
+      ],
+      "compositorHashWords": [
+        1770475527,
+        2755625498,
+        2755625498,
+        2806319176
+      ],
+      "expectedHashOfStoredWords": [
+        1770475527,
+        2755625498,
+        2755625498,
+        2806319176
+      ],
+      "hashCarrierWords": [
+        [
+          1184894464,
+          1188236800,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1157922816,
+          3333518848,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "input-asymmetric",
+      "producer": "input",
+      "route": "direct",
+      "inputWords": [
+        1036831949,
+        1045220557,
+        1050253722
+      ],
+      "geometryFloatWords": [
+        1065073833,
+        1024221066,
+        1037640008,
+        1041433750
+      ],
+      "compositorFloatWords": [
+        1065073833,
+        1024221066,
+        1037640008,
+        1041433750
+      ],
+      "geometryHashWords": [
+        640420798,
+        1528223953,
+        1427757364,
+        3110986681
+      ],
+      "compositorHashWords": [
+        640420798,
+        1528223953,
+        1427757364,
+        3110986681
+      ],
+      "expectedHashOfStoredWords": [
+        640420798,
+        1528223953,
+        1427757364,
+        3110986681
+      ],
+      "hashCarrierWords": [
+        [
+          1161551872,
+          1176023040,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197003008,
+          1186343936,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197028352,
+          1185559040,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197717760,
+          3331139072,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "input-all-min",
+      "producer": "input",
+      "route": "direct",
+      "inputWords": [
+        931135488,
+        931135488,
+        931135488
+      ],
+      "geometryFloatWords": [
+        1065353216,
+        922746752,
+        922746944,
+        922746752
+      ],
+      "compositorFloatWords": [
+        1065353216,
+        922746752,
+        922746944,
+        922746752
+      ],
+      "geometryHashWords": [
+        1413797383,
+        1024145631,
+        2174858563,
+        1024145631
+      ],
+      "compositorHashWords": [
+        1413797383,
+        1024145631,
+        2174858563,
+        1024145631
+      ],
+      "expectedHashOfStoredWords": [
+        1413797383,
+        1024145631,
+        2174858563,
+        1024145631
+      ],
+      "hashCarrierWords": [
+        [
+          1196820224,
+          1185449984,
+          1123418112,
+          1065353216
+        ],
+        [
+          1180924928,
+          1182018560,
+          1123418112,
+          1065353216
+        ],
+        [
+          1194672896,
+          3338452480,
+          1123418112,
+          1065353216
+        ],
+        [
+          1180924928,
+          1182018560,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "input-all-max",
+      "producer": "input",
+      "route": "direct",
+      "inputWords": [
+        1065353216,
+        1065353216,
+        1065353216
+      ],
+      "geometryFloatWords": [
+        1061764009,
+        1043040780,
+        1058154808,
+        1043040780
+      ],
+      "compositorFloatWords": [
+        1061764009,
+        1043040780,
+        1058154808,
+        1043040780
+      ],
+      "geometryHashWords": [
+        2445538501,
+        59458439,
+        2523627015,
+        59458439
+      ],
+      "compositorHashWords": [
+        2445538501,
+        59458439,
+        2523627015,
+        59458439
+      ],
+      "expectedHashOfStoredWords": [
+        2445538501,
+        59458439,
+        2523627015,
+        59458439
+      ],
+      "hashCarrierWords": [
+        [
+          1198834944,
+          3336337920,
+          1123418112,
+          1065353216
+        ],
+        [
+          1183256064,
+          1147322368,
+          1123418112,
+          1065353216
+        ],
+        [
+          1190923776,
+          3335727616,
+          1123418112,
+          1065353216
+        ],
+        [
+          1183256064,
+          1147322368,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "input-symmetric",
+      "producer": "input",
+      "route": "direct",
+      "inputWords": [
+        1056964608,
+        1056964608,
+        1056964608
+      ],
+      "geometryFloatWords": [
+        1064090727,
+        1043405584,
+        1049970743,
+        1043405584
+      ],
+      "compositorFloatWords": [
+        1064090727,
+        1043405584,
+        1049970743,
+        1043405584
+      ],
+      "geometryHashWords": [
+        2823736069,
+        3877734293,
+        2101879206,
+        3877734293
+      ],
+      "compositorHashWords": [
+        2823736069,
+        3877734293,
+        2101879206,
+        3877734293
+      ],
+      "expectedHashOfStoredWords": [
+        2823736069,
+        3877734293,
+        2101879206,
+        3877734293
+      ],
+      "hashCarrierWords": [
+        [
+          1196098816,
+          3333383168,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191679232,
+          3318151168,
+          1123418112,
+          1065353216
+        ],
+        [
+          1174837248,
+          1190825984,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191679232,
+          3318151168,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "input-mixed",
+      "producer": "input",
+      "route": "direct",
+      "inputWords": [
+        931135488,
+        1065353216,
+        1036831949
+      ],
+      "geometryFloatWords": [
+        1063280995,
+        3166977138,
+        1056254151,
+        1026794393
+      ],
+      "compositorFloatWords": [
+        1063280995,
+        3166977138,
+        1056254151,
+        1026794393
+      ],
+      "geometryHashWords": [
+        2039930316,
+        3026521518,
+        2292540021,
+        2338411294
+      ],
+      "compositorHashWords": [
+        2039930316,
+        3026521518,
+        2292540021,
+        2338411294
+      ],
+      "expectedHashOfStoredWords": [
+        2039930316,
+        3026521518,
+        2292540021,
+        2338411294
+      ],
+      "hashCarrierWords": [
+        [
+          1197329408,
+          1190341632,
+          1123418112,
+          1065353216
+        ],
+        [
+          1163583488,
+          3331798528,
+          1123418112,
+          1065353216
+        ],
+        [
+          1187310080,
+          3337532928,
+          1123418112,
+          1065353216
+        ],
+        [
+          1185299456,
+          3337174528,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "input-zero-x",
+      "producer": "input",
+      "route": "direct",
+      "inputWords": [
+        0,
+        1056964608,
+        1061158912
+      ],
+      "geometryFloatWords": [
+        1063702009,
+        3183056269,
+        1047248001,
+        1052095391
+      ],
+      "compositorFloatWords": [
+        1063702009,
+        3183056269,
+        1047248001,
+        1052095391
+      ],
+      "geometryHashWords": [
+        83335741,
+        571969054,
+        4214968151,
+        486641267
+      ],
+      "compositorHashWords": [
+        83335741,
+        571969054,
+        4214968151,
+        486641267
+      ],
+      "expectedHashOfStoredWords": [
+        83335741,
+        571969054,
+        4214968151,
+        486641267
+      ],
+      "hashCarrierWords": [
+        [
+          1192901888,
+          1151262720,
+          1123418112,
+          1065353216
+        ],
+        [
+          1192107520,
+          1174952960,
+          1123418112,
+          1065353216
+        ],
+        [
+          1184804352,
+          3298336768,
+          1123418112,
+          1065353216
+        ],
+        [
+          1192129280,
+          1172834304,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "input-zero-y",
+      "producer": "input",
+      "route": "direct",
+      "inputWords": [
+        1056964608,
+        0,
+        1061158912
+      ],
+      "geometryFloatWords": [
+        1063702009,
+        1047248001,
+        1035572621,
+        1052095391
+      ],
+      "compositorFloatWords": [
+        1063702009,
+        1047248001,
+        1035572621,
+        1052095391
+      ],
+      "geometryHashWords": [
+        83335741,
+        4214968151,
+        538119358,
+        486641267
+      ],
+      "compositorHashWords": [
+        83335741,
+        4214968151,
+        538119358,
+        486641267
+      ],
+      "expectedHashOfStoredWords": [
+        83335741,
+        4214968151,
+        538119358,
+        486641267
+      ],
+      "hashCarrierWords": [
+        [
+          1192901888,
+          1151262720,
+          1123418112,
+          1065353216
+        ],
+        [
+          1184804352,
+          3298336768,
+          1123418112,
+          1065353216
+        ],
+        [
+          1162600448,
+          1174424576,
+          1123418112,
+          1065353216
+        ],
+        [
+          1192129280,
+          1172834304,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "input-zero-z",
+      "producer": "input",
+      "route": "direct",
+      "inputWords": [
+        1056964608,
+        1061158912,
+        0
+      ],
+      "geometryFloatWords": [
+        1063702009,
+        1047248001,
+        1052095391,
+        3183056269
+      ],
+      "compositorFloatWords": [
+        1063702009,
+        1047248001,
+        1052095391,
+        3183056269
+      ],
+      "geometryHashWords": [
+        83335741,
+        4214968151,
+        486641267,
+        571969054
+      ],
+      "compositorHashWords": [
+        83335741,
+        4214968151,
+        486641267,
+        571969054
+      ],
+      "expectedHashOfStoredWords": [
+        83335741,
+        4214968151,
+        486641267,
+        571969054
+      ],
+      "hashCarrierWords": [
+        [
+          1192901888,
+          1151262720,
+          1123418112,
+          1065353216
+        ],
+        [
+          1184804352,
+          3298336768,
+          1123418112,
+          1065353216
+        ],
+        [
+          1192129280,
+          1172834304,
+          1123418112,
+          1065353216
+        ],
+        [
+          1192107520,
+          1174952960,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "input-cancel-x--1",
+      "producer": "input",
+      "route": "direct",
+      "inputWords": [
+        1045243769,
+        1056964608,
+        1061158912
+      ],
+      "geometryFloatWords": [
+        1063778220,
+        2994733056,
+        1049064141,
+        1051263192
+      ],
+      "compositorFloatWords": [
+        1063778220,
+        2994733056,
+        1049064141,
+        1051263192
+      ],
+      "geometryHashWords": [
+        3485473350,
+        1014622241,
+        2019681974,
+        2264052991
+      ],
+      "compositorHashWords": [
+        3485473350,
+        1014622241,
+        2019681974,
+        2264052991
+      ],
+      "expectedHashOfStoredWords": [
+        3485473350,
+        1014622241,
+        2019681974,
+        2264052991
+      ],
+      "hashCarrierWords": [
+        [
+          1171402752,
+          3326148608,
+          1123418112,
+          1065353216
+        ],
+        [
+          1198006528,
+          1181869056,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197913600,
+          1190183424,
+          1123418112,
+          1065353216
+        ],
+        [
+          1194655488,
+          3337755648,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "input-cancel-z--1",
+      "producer": "input",
+      "route": "direct",
+      "inputWords": [
+        1061158912,
+        1056964608,
+        1045243769
+      ],
+      "geometryFloatWords": [
+        1063778220,
+        1051263192,
+        1049064141,
+        2994733056
+      ],
+      "compositorFloatWords": [
+        1063778220,
+        1051263192,
+        1049064141,
+        2994733056
+      ],
+      "geometryHashWords": [
+        3485473350,
+        2264052991,
+        2019681974,
+        1014622241
+      ],
+      "compositorHashWords": [
+        3485473350,
+        2264052991,
+        2019681974,
+        1014622241
+      ],
+      "expectedHashOfStoredWords": [
+        3485473350,
+        2264052991,
+        2019681974,
+        1014622241
+      ],
+      "hashCarrierWords": [
+        [
+          1171402752,
+          3326148608,
+          1123418112,
+          1065353216
+        ],
+        [
+          1194655488,
+          3337755648,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197913600,
+          1190183424,
+          1123418112,
+          1065353216
+        ],
+        [
+          1198006528,
+          1181869056,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "input-cancel-x-0",
+      "producer": "input",
+      "route": "direct",
+      "inputWords": [
+        1045243770,
+        1056964608,
+        1061158912
+      ],
+      "geometryFloatWords": [
+        1063778220,
+        2986344448,
+        1049064141,
+        1051263192
+      ],
+      "compositorFloatWords": [
+        1063778220,
+        2986344448,
+        1049064141,
+        1051263192
+      ],
+      "geometryHashWords": [
+        3485473350,
+        51828139,
+        2019681974,
+        2264052991
+      ],
+      "compositorHashWords": [
+        3485473350,
+        51828139,
+        2019681974,
+        2264052991
+      ],
+      "expectedHashOfStoredWords": [
+        3485473350,
+        51828139,
+        2019681974,
+        2264052991
+      ],
+      "hashCarrierWords": [
+        [
+          1171402752,
+          3326148608,
+          1123418112,
+          1065353216
+        ],
+        [
+          1196796672,
+          1145405440,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197913600,
+          1190183424,
+          1123418112,
+          1065353216
+        ],
+        [
+          1194655488,
+          3337755648,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "input-cancel-z-0",
+      "producer": "input",
+      "route": "direct",
+      "inputWords": [
+        1061158912,
+        1056964608,
+        1045243770
+      ],
+      "geometryFloatWords": [
+        1063778220,
+        1051263192,
+        1049064141,
+        2986344448
+      ],
+      "compositorFloatWords": [
+        1063778220,
+        1051263192,
+        1049064141,
+        2986344448
+      ],
+      "geometryHashWords": [
+        3485473350,
+        2264052991,
+        2019681974,
+        51828139
+      ],
+      "compositorHashWords": [
+        3485473350,
+        2264052991,
+        2019681974,
+        51828139
+      ],
+      "expectedHashOfStoredWords": [
+        3485473350,
+        2264052991,
+        2019681974,
+        51828139
+      ],
+      "hashCarrierWords": [
+        [
+          1171402752,
+          3326148608,
+          1123418112,
+          1065353216
+        ],
+        [
+          1194655488,
+          3337755648,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197913600,
+          1190183424,
+          1123418112,
+          1065353216
+        ],
+        [
+          1196796672,
+          1145405440,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "input-cancel-x-1",
+      "producer": "input",
+      "route": "direct",
+      "inputWords": [
+        1045243771,
+        1056964608,
+        1061158912
+      ],
+      "geometryFloatWords": [
+        1063778220,
+        2986344448,
+        1049064141,
+        1051263192
+      ],
+      "compositorFloatWords": [
+        1063778220,
+        2986344448,
+        1049064141,
+        1051263192
+      ],
+      "geometryHashWords": [
+        3485473350,
+        51828139,
+        2019681974,
+        2264052991
+      ],
+      "compositorHashWords": [
+        3485473350,
+        51828139,
+        2019681974,
+        2264052991
+      ],
+      "expectedHashOfStoredWords": [
+        3485473350,
+        51828139,
+        2019681974,
+        2264052991
+      ],
+      "hashCarrierWords": [
+        [
+          1171402752,
+          3326148608,
+          1123418112,
+          1065353216
+        ],
+        [
+          1196796672,
+          1145405440,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197913600,
+          1190183424,
+          1123418112,
+          1065353216
+        ],
+        [
+          1194655488,
+          3337755648,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "input-cancel-z-1",
+      "producer": "input",
+      "route": "direct",
+      "inputWords": [
+        1061158912,
+        1056964608,
+        1045243771
+      ],
+      "geometryFloatWords": [
+        1063778220,
+        1051263192,
+        1049064141,
+        2986344448
+      ],
+      "compositorFloatWords": [
+        1063778220,
+        1051263192,
+        1049064141,
+        2986344448
+      ],
+      "geometryHashWords": [
+        3485473350,
+        2264052991,
+        2019681974,
+        51828139
+      ],
+      "compositorHashWords": [
+        3485473350,
+        2264052991,
+        2019681974,
+        51828139
+      ],
+      "expectedHashOfStoredWords": [
+        3485473350,
+        2264052991,
+        2019681974,
+        51828139
+      ],
+      "hashCarrierWords": [
+        [
+          1171402752,
+          3326148608,
+          1123418112,
+          1065353216
+        ],
+        [
+          1194655488,
+          3337755648,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197913600,
+          1190183424,
+          1123418112,
+          1065353216
+        ],
+        [
+          1196796672,
+          1145405440,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "input-group-0",
+      "producer": "input",
+      "route": "group-0",
+      "inputWords": [
+        1036831949,
+        1045220557,
+        1050253722
+      ],
+      "geometryFloatWords": [
+        1065073833,
+        1024221066,
+        1037640008,
+        1041433750
+      ],
+      "compositorFloatWords": [
+        1065073833,
+        1024221066,
+        1037640008,
+        1041433750
+      ],
+      "geometryHashWords": [
+        640420798,
+        1528223953,
+        1427757364,
+        3110986681
+      ],
+      "compositorHashWords": [
+        640420798,
+        1528223953,
+        1427757364,
+        3110986681
+      ],
+      "expectedHashOfStoredWords": [
+        640420798,
+        1528223953,
+        1427757364,
+        3110986681
+      ],
+      "hashCarrierWords": [
+        [
+          1161551872,
+          1176023040,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197003008,
+          1186343936,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197028352,
+          1185559040,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197717760,
+          3331139072,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "input-group-1",
+      "producer": "input",
+      "route": "group-1",
+      "inputWords": [
+        1065353216,
+        931135488,
+        1056964608
+      ],
+      "geometryFloatWords": [
+        1062841692,
+        1055774087,
+        1039330851,
+        1046369048
+      ],
+      "compositorFloatWords": [
+        1062841692,
+        1055774087,
+        1039330851,
+        1046369048
+      ],
+      "geometryHashWords": [
+        2762657110,
+        2134759679,
+        774533675,
+        3535387661
+      ],
+      "compositorHashWords": [
+        2762657110,
+        2134759679,
+        774533675,
+        3535387661
+      ],
+      "expectedHashOfStoredWords": [
+        2762657110,
+        2134759679,
+        774533675,
+        3535387661
+      ],
+      "hashCarrierWords": [
+        [
+          1196250624,
+          3333860352,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197014784,
+          1191082496,
+          1123418112,
+          1065353216
+        ],
+        [
+          1189369344,
+          1178118144,
+          1123418112,
+          1065353216
+        ],
+        [
+          1195117824,
+          3325369344,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "convert-zero",
+      "producer": "convert",
+      "route": "direct",
+      "inputWords": [
+        0,
+        0,
+        0
+      ],
+      "geometryFloatWords": [
+        1065353216,
+        0,
+        0,
+        0
+      ],
+      "compositorFloatWords": [
+        1065353216,
+        0,
+        0,
+        0
+      ],
+      "geometryHashWords": [
+        1413797383,
+        2755625498,
+        2755625498,
+        2755625498
+      ],
+      "compositorHashWords": [
+        1413797383,
+        2755625498,
+        2755625498,
+        2755625498
+      ],
+      "expectedHashOfStoredWords": [
+        1413797383,
+        2755625498,
+        2755625498,
+        2755625498
+      ],
+      "hashCarrierWords": [
+        [
+          1196820224,
+          1185449984,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "convert-axis-0-min",
+      "producer": "convert",
+      "route": "direct",
+      "inputWords": [
+        931135488,
+        0,
+        0
+      ],
+      "geometryFloatWords": [
+        1065353216,
+        922746880,
+        0,
+        0
+      ],
+      "compositorFloatWords": [
+        1065353216,
+        922746880,
+        0,
+        0
+      ],
+      "geometryHashWords": [
+        1413797383,
+        2592771766,
+        2755625498,
+        2755625498
+      ],
+      "compositorHashWords": [
+        1413797383,
+        2592771766,
+        2755625498,
+        2755625498
+      ],
+      "expectedHashOfStoredWords": [
+        1413797383,
+        2592771766,
+        2755625498,
+        2755625498
+      ],
+      "hashCarrierWords": [
+        [
+          1196820224,
+          1185449984,
+          1123418112,
+          1065353216
+        ],
+        [
+          1192146432,
+          3335187456,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "convert-axis-0-next-min",
+      "producer": "convert",
+      "route": "direct",
+      "inputWords": [
+        931135489,
+        0,
+        0
+      ],
+      "geometryFloatWords": [
+        1065353216,
+        922746881,
+        0,
+        0
+      ],
+      "compositorFloatWords": [
+        1065353216,
+        922746881,
+        0,
+        0
+      ],
+      "geometryHashWords": [
+        1413797383,
+        3699631290,
+        2755625498,
+        2755625498
+      ],
+      "compositorHashWords": [
+        1413797383,
+        3699631290,
+        2755625498,
+        2755625498
+      ],
+      "expectedHashOfStoredWords": [
+        1413797383,
+        3699631290,
+        2755625498,
+        2755625498
+      ],
+      "hashCarrierWords": [
+        [
+          1196820224,
+          1185449984,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197783552,
+          3322803200,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "convert-axis-0-ordinary",
+      "producer": "convert",
+      "route": "direct",
+      "inputWords": [
+        1036831949,
+        0,
+        0
+      ],
+      "geometryFloatWords": [
+        1065332249,
+        1028437749,
+        0,
+        0
+      ],
+      "compositorFloatWords": [
+        1065332249,
+        1028437749,
+        0,
+        0
+      ],
+      "geometryHashWords": [
+        1807653686,
+        3560870458,
+        2755625498,
+        2755625498
+      ],
+      "compositorHashWords": [
+        1807653686,
+        3560870458,
+        2755625498,
+        2755625498
+      ],
+      "expectedHashOfStoredWords": [
+        1807653686,
+        3560870458,
+        2755625498,
+        2755625498
+      ],
+      "hashCarrierWords": [
+        [
+          1192965632,
+          1188527104,
+          1123418112,
+          1065353216
+        ],
+        [
+          1192376832,
+          3324971008,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "convert-axis-0-max",
+      "producer": "convert",
+      "route": "direct",
+      "inputWords": [
+        1065353216,
+        0,
+        0
+      ],
+      "geometryFloatWords": [
+        1063299392,
+        1056274244,
+        0,
+        0
+      ],
+      "compositorFloatWords": [
+        1063299392,
+        1056274244,
+        0,
+        0
+      ],
+      "geometryHashWords": [
+        1770475527,
+        2806319176,
+        2755625498,
+        2755625498
+      ],
+      "compositorHashWords": [
+        1770475527,
+        2806319176,
+        2755625498,
+        2755625498
+      ],
+      "expectedHashOfStoredWords": [
+        1770475527,
+        2806319176,
+        2755625498,
+        2755625498
+      ],
+      "hashCarrierWords": [
+        [
+          1184894464,
+          1188236800,
+          1123418112,
+          1065353216
+        ],
+        [
+          1157922816,
+          3333518848,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "convert-axis-1-min",
+      "producer": "convert",
+      "route": "direct",
+      "inputWords": [
+        0,
+        931135488,
+        0
+      ],
+      "geometryFloatWords": [
+        1065353216,
+        0,
+        922746880,
+        0
+      ],
+      "compositorFloatWords": [
+        1065353216,
+        0,
+        922746880,
+        0
+      ],
+      "geometryHashWords": [
+        1413797383,
+        2755625498,
+        2592771766,
+        2755625498
+      ],
+      "compositorHashWords": [
+        1413797383,
+        2755625498,
+        2592771766,
+        2755625498
+      ],
+      "expectedHashOfStoredWords": [
+        1413797383,
+        2755625498,
+        2592771766,
+        2755625498
+      ],
+      "hashCarrierWords": [
+        [
+          1196820224,
+          1185449984,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1192146432,
+          3335187456,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "convert-axis-1-next-min",
+      "producer": "convert",
+      "route": "direct",
+      "inputWords": [
+        0,
+        931135489,
+        0
+      ],
+      "geometryFloatWords": [
+        1065353216,
+        0,
+        922746881,
+        0
+      ],
+      "compositorFloatWords": [
+        1065353216,
+        0,
+        922746881,
+        0
+      ],
+      "geometryHashWords": [
+        1413797383,
+        2755625498,
+        3699631290,
+        2755625498
+      ],
+      "compositorHashWords": [
+        1413797383,
+        2755625498,
+        3699631290,
+        2755625498
+      ],
+      "expectedHashOfStoredWords": [
+        1413797383,
+        2755625498,
+        3699631290,
+        2755625498
+      ],
+      "hashCarrierWords": [
+        [
+          1196820224,
+          1185449984,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197783552,
+          3322803200,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "convert-axis-1-ordinary",
+      "producer": "convert",
+      "route": "direct",
+      "inputWords": [
+        0,
+        1036831949,
+        0
+      ],
+      "geometryFloatWords": [
+        1065332249,
+        0,
+        1028437749,
+        0
+      ],
+      "compositorFloatWords": [
+        1065332249,
+        0,
+        1028437749,
+        0
+      ],
+      "geometryHashWords": [
+        1807653686,
+        2755625498,
+        3560870458,
+        2755625498
+      ],
+      "compositorHashWords": [
+        1807653686,
+        2755625498,
+        3560870458,
+        2755625498
+      ],
+      "expectedHashOfStoredWords": [
+        1807653686,
+        2755625498,
+        3560870458,
+        2755625498
+      ],
+      "hashCarrierWords": [
+        [
+          1192965632,
+          1188527104,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1192376832,
+          3324971008,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "convert-axis-1-max",
+      "producer": "convert",
+      "route": "direct",
+      "inputWords": [
+        0,
+        1065353216,
+        0
+      ],
+      "geometryFloatWords": [
+        1063299392,
+        0,
+        1056274244,
+        0
+      ],
+      "compositorFloatWords": [
+        1063299392,
+        0,
+        1056274244,
+        0
+      ],
+      "geometryHashWords": [
+        1770475527,
+        2755625498,
+        2806319176,
+        2755625498
+      ],
+      "compositorHashWords": [
+        1770475527,
+        2755625498,
+        2806319176,
+        2755625498
+      ],
+      "expectedHashOfStoredWords": [
+        1770475527,
+        2755625498,
+        2806319176,
+        2755625498
+      ],
+      "hashCarrierWords": [
+        [
+          1184894464,
+          1188236800,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1157922816,
+          3333518848,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "convert-axis-2-min",
+      "producer": "convert",
+      "route": "direct",
+      "inputWords": [
+        0,
+        0,
+        931135488
+      ],
+      "geometryFloatWords": [
+        1065353216,
+        0,
+        0,
+        922746880
+      ],
+      "compositorFloatWords": [
+        1065353216,
+        0,
+        0,
+        922746880
+      ],
+      "geometryHashWords": [
+        1413797383,
+        2755625498,
+        2755625498,
+        2592771766
+      ],
+      "compositorHashWords": [
+        1413797383,
+        2755625498,
+        2755625498,
+        2592771766
+      ],
+      "expectedHashOfStoredWords": [
+        1413797383,
+        2755625498,
+        2755625498,
+        2592771766
+      ],
+      "hashCarrierWords": [
+        [
+          1196820224,
+          1185449984,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1192146432,
+          3335187456,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "convert-axis-2-next-min",
+      "producer": "convert",
+      "route": "direct",
+      "inputWords": [
+        0,
+        0,
+        931135489
+      ],
+      "geometryFloatWords": [
+        1065353216,
+        0,
+        0,
+        922746881
+      ],
+      "compositorFloatWords": [
+        1065353216,
+        0,
+        0,
+        922746881
+      ],
+      "geometryHashWords": [
+        1413797383,
+        2755625498,
+        2755625498,
+        3699631290
+      ],
+      "compositorHashWords": [
+        1413797383,
+        2755625498,
+        2755625498,
+        3699631290
+      ],
+      "expectedHashOfStoredWords": [
+        1413797383,
+        2755625498,
+        2755625498,
+        3699631290
+      ],
+      "hashCarrierWords": [
+        [
+          1196820224,
+          1185449984,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197783552,
+          3322803200,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "convert-axis-2-ordinary",
+      "producer": "convert",
+      "route": "direct",
+      "inputWords": [
+        0,
+        0,
+        1036831949
+      ],
+      "geometryFloatWords": [
+        1065332249,
+        0,
+        0,
+        1028437749
+      ],
+      "compositorFloatWords": [
+        1065332249,
+        0,
+        0,
+        1028437749
+      ],
+      "geometryHashWords": [
+        1807653686,
+        2755625498,
+        2755625498,
+        3560870458
+      ],
+      "compositorHashWords": [
+        1807653686,
+        2755625498,
+        2755625498,
+        3560870458
+      ],
+      "expectedHashOfStoredWords": [
+        1807653686,
+        2755625498,
+        2755625498,
+        3560870458
+      ],
+      "hashCarrierWords": [
+        [
+          1192965632,
+          1188527104,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1192376832,
+          3324971008,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "convert-axis-2-max",
+      "producer": "convert",
+      "route": "direct",
+      "inputWords": [
+        0,
+        0,
+        1065353216
+      ],
+      "geometryFloatWords": [
+        1063299392,
+        0,
+        0,
+        1056274244
+      ],
+      "compositorFloatWords": [
+        1063299392,
+        0,
+        0,
+        1056274244
+      ],
+      "geometryHashWords": [
+        1770475527,
+        2755625498,
+        2755625498,
+        2806319176
+      ],
+      "compositorHashWords": [
+        1770475527,
+        2755625498,
+        2755625498,
+        2806319176
+      ],
+      "expectedHashOfStoredWords": [
+        1770475527,
+        2755625498,
+        2755625498,
+        2806319176
+      ],
+      "hashCarrierWords": [
+        [
+          1184894464,
+          1188236800,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191320064,
+          3333915136,
+          1123418112,
+          1065353216
+        ],
+        [
+          1157922816,
+          3333518848,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "convert-asymmetric",
+      "producer": "convert",
+      "route": "direct",
+      "inputWords": [
+        1036831949,
+        1045220557,
+        1050253722
+      ],
+      "geometryFloatWords": [
+        1065073833,
+        1024221066,
+        1037640008,
+        1041433750
+      ],
+      "compositorFloatWords": [
+        1065073833,
+        1024221066,
+        1037640008,
+        1041433750
+      ],
+      "geometryHashWords": [
+        640420798,
+        1528223953,
+        1427757364,
+        3110986681
+      ],
+      "compositorHashWords": [
+        640420798,
+        1528223953,
+        1427757364,
+        3110986681
+      ],
+      "expectedHashOfStoredWords": [
+        640420798,
+        1528223953,
+        1427757364,
+        3110986681
+      ],
+      "hashCarrierWords": [
+        [
+          1161551872,
+          1176023040,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197003008,
+          1186343936,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197028352,
+          1185559040,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197717760,
+          3331139072,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "convert-all-min",
+      "producer": "convert",
+      "route": "direct",
+      "inputWords": [
+        931135488,
+        931135488,
+        931135488
+      ],
+      "geometryFloatWords": [
+        1065353216,
+        922746752,
+        922746944,
+        922746752
+      ],
+      "compositorFloatWords": [
+        1065353216,
+        922746752,
+        922746944,
+        922746752
+      ],
+      "geometryHashWords": [
+        1413797383,
+        1024145631,
+        2174858563,
+        1024145631
+      ],
+      "compositorHashWords": [
+        1413797383,
+        1024145631,
+        2174858563,
+        1024145631
+      ],
+      "expectedHashOfStoredWords": [
+        1413797383,
+        1024145631,
+        2174858563,
+        1024145631
+      ],
+      "hashCarrierWords": [
+        [
+          1196820224,
+          1185449984,
+          1123418112,
+          1065353216
+        ],
+        [
+          1180924928,
+          1182018560,
+          1123418112,
+          1065353216
+        ],
+        [
+          1194672896,
+          3338452480,
+          1123418112,
+          1065353216
+        ],
+        [
+          1180924928,
+          1182018560,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "convert-all-max",
+      "producer": "convert",
+      "route": "direct",
+      "inputWords": [
+        1065353216,
+        1065353216,
+        1065353216
+      ],
+      "geometryFloatWords": [
+        1061764009,
+        1043040780,
+        1058154808,
+        1043040780
+      ],
+      "compositorFloatWords": [
+        1061764009,
+        1043040780,
+        1058154808,
+        1043040780
+      ],
+      "geometryHashWords": [
+        2445538501,
+        59458439,
+        2523627015,
+        59458439
+      ],
+      "compositorHashWords": [
+        2445538501,
+        59458439,
+        2523627015,
+        59458439
+      ],
+      "expectedHashOfStoredWords": [
+        2445538501,
+        59458439,
+        2523627015,
+        59458439
+      ],
+      "hashCarrierWords": [
+        [
+          1198834944,
+          3336337920,
+          1123418112,
+          1065353216
+        ],
+        [
+          1183256064,
+          1147322368,
+          1123418112,
+          1065353216
+        ],
+        [
+          1190923776,
+          3335727616,
+          1123418112,
+          1065353216
+        ],
+        [
+          1183256064,
+          1147322368,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "convert-symmetric",
+      "producer": "convert",
+      "route": "direct",
+      "inputWords": [
+        1056964608,
+        1056964608,
+        1056964608
+      ],
+      "geometryFloatWords": [
+        1064090727,
+        1043405584,
+        1049970743,
+        1043405584
+      ],
+      "compositorFloatWords": [
+        1064090727,
+        1043405584,
+        1049970743,
+        1043405584
+      ],
+      "geometryHashWords": [
+        2823736069,
+        3877734293,
+        2101879206,
+        3877734293
+      ],
+      "compositorHashWords": [
+        2823736069,
+        3877734293,
+        2101879206,
+        3877734293
+      ],
+      "expectedHashOfStoredWords": [
+        2823736069,
+        3877734293,
+        2101879206,
+        3877734293
+      ],
+      "hashCarrierWords": [
+        [
+          1196098816,
+          3333383168,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191679232,
+          3318151168,
+          1123418112,
+          1065353216
+        ],
+        [
+          1174837248,
+          1190825984,
+          1123418112,
+          1065353216
+        ],
+        [
+          1191679232,
+          3318151168,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "convert-mixed",
+      "producer": "convert",
+      "route": "direct",
+      "inputWords": [
+        931135488,
+        1065353216,
+        1036831949
+      ],
+      "geometryFloatWords": [
+        1063280995,
+        3166977138,
+        1056254151,
+        1026794393
+      ],
+      "compositorFloatWords": [
+        1063280995,
+        3166977138,
+        1056254151,
+        1026794393
+      ],
+      "geometryHashWords": [
+        2039930316,
+        3026521518,
+        2292540021,
+        2338411294
+      ],
+      "compositorHashWords": [
+        2039930316,
+        3026521518,
+        2292540021,
+        2338411294
+      ],
+      "expectedHashOfStoredWords": [
+        2039930316,
+        3026521518,
+        2292540021,
+        2338411294
+      ],
+      "hashCarrierWords": [
+        [
+          1197329408,
+          1190341632,
+          1123418112,
+          1065353216
+        ],
+        [
+          1163583488,
+          3331798528,
+          1123418112,
+          1065353216
+        ],
+        [
+          1187310080,
+          3337532928,
+          1123418112,
+          1065353216
+        ],
+        [
+          1185299456,
+          3337174528,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "convert-zero-x",
+      "producer": "convert",
+      "route": "direct",
+      "inputWords": [
+        0,
+        1056964608,
+        1061158912
+      ],
+      "geometryFloatWords": [
+        1063702009,
+        3183056269,
+        1047248001,
+        1052095391
+      ],
+      "compositorFloatWords": [
+        1063702009,
+        3183056269,
+        1047248001,
+        1052095391
+      ],
+      "geometryHashWords": [
+        83335741,
+        571969054,
+        4214968151,
+        486641267
+      ],
+      "compositorHashWords": [
+        83335741,
+        571969054,
+        4214968151,
+        486641267
+      ],
+      "expectedHashOfStoredWords": [
+        83335741,
+        571969054,
+        4214968151,
+        486641267
+      ],
+      "hashCarrierWords": [
+        [
+          1192901888,
+          1151262720,
+          1123418112,
+          1065353216
+        ],
+        [
+          1192107520,
+          1174952960,
+          1123418112,
+          1065353216
+        ],
+        [
+          1184804352,
+          3298336768,
+          1123418112,
+          1065353216
+        ],
+        [
+          1192129280,
+          1172834304,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "convert-zero-y",
+      "producer": "convert",
+      "route": "direct",
+      "inputWords": [
+        1056964608,
+        0,
+        1061158912
+      ],
+      "geometryFloatWords": [
+        1063702009,
+        1047248001,
+        1035572621,
+        1052095391
+      ],
+      "compositorFloatWords": [
+        1063702009,
+        1047248001,
+        1035572621,
+        1052095391
+      ],
+      "geometryHashWords": [
+        83335741,
+        4214968151,
+        538119358,
+        486641267
+      ],
+      "compositorHashWords": [
+        83335741,
+        4214968151,
+        538119358,
+        486641267
+      ],
+      "expectedHashOfStoredWords": [
+        83335741,
+        4214968151,
+        538119358,
+        486641267
+      ],
+      "hashCarrierWords": [
+        [
+          1192901888,
+          1151262720,
+          1123418112,
+          1065353216
+        ],
+        [
+          1184804352,
+          3298336768,
+          1123418112,
+          1065353216
+        ],
+        [
+          1162600448,
+          1174424576,
+          1123418112,
+          1065353216
+        ],
+        [
+          1192129280,
+          1172834304,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "convert-zero-z",
+      "producer": "convert",
+      "route": "direct",
+      "inputWords": [
+        1056964608,
+        1061158912,
+        0
+      ],
+      "geometryFloatWords": [
+        1063702009,
+        1047248001,
+        1052095391,
+        3183056269
+      ],
+      "compositorFloatWords": [
+        1063702009,
+        1047248001,
+        1052095391,
+        3183056269
+      ],
+      "geometryHashWords": [
+        83335741,
+        4214968151,
+        486641267,
+        571969054
+      ],
+      "compositorHashWords": [
+        83335741,
+        4214968151,
+        486641267,
+        571969054
+      ],
+      "expectedHashOfStoredWords": [
+        83335741,
+        4214968151,
+        486641267,
+        571969054
+      ],
+      "hashCarrierWords": [
+        [
+          1192901888,
+          1151262720,
+          1123418112,
+          1065353216
+        ],
+        [
+          1184804352,
+          3298336768,
+          1123418112,
+          1065353216
+        ],
+        [
+          1192129280,
+          1172834304,
+          1123418112,
+          1065353216
+        ],
+        [
+          1192107520,
+          1174952960,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "convert-cancel-x--1",
+      "producer": "convert",
+      "route": "direct",
+      "inputWords": [
+        1045243769,
+        1056964608,
+        1061158912
+      ],
+      "geometryFloatWords": [
+        1063778220,
+        2994733056,
+        1049064141,
+        1051263192
+      ],
+      "compositorFloatWords": [
+        1063778220,
+        2994733056,
+        1049064141,
+        1051263192
+      ],
+      "geometryHashWords": [
+        3485473350,
+        1014622241,
+        2019681974,
+        2264052991
+      ],
+      "compositorHashWords": [
+        3485473350,
+        1014622241,
+        2019681974,
+        2264052991
+      ],
+      "expectedHashOfStoredWords": [
+        3485473350,
+        1014622241,
+        2019681974,
+        2264052991
+      ],
+      "hashCarrierWords": [
+        [
+          1171402752,
+          3326148608,
+          1123418112,
+          1065353216
+        ],
+        [
+          1198006528,
+          1181869056,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197913600,
+          1190183424,
+          1123418112,
+          1065353216
+        ],
+        [
+          1194655488,
+          3337755648,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "convert-cancel-z--1",
+      "producer": "convert",
+      "route": "direct",
+      "inputWords": [
+        1061158912,
+        1056964608,
+        1045243769
+      ],
+      "geometryFloatWords": [
+        1063778220,
+        1051263192,
+        1049064141,
+        2994733056
+      ],
+      "compositorFloatWords": [
+        1063778220,
+        1051263192,
+        1049064141,
+        2994733056
+      ],
+      "geometryHashWords": [
+        3485473350,
+        2264052991,
+        2019681974,
+        1014622241
+      ],
+      "compositorHashWords": [
+        3485473350,
+        2264052991,
+        2019681974,
+        1014622241
+      ],
+      "expectedHashOfStoredWords": [
+        3485473350,
+        2264052991,
+        2019681974,
+        1014622241
+      ],
+      "hashCarrierWords": [
+        [
+          1171402752,
+          3326148608,
+          1123418112,
+          1065353216
+        ],
+        [
+          1194655488,
+          3337755648,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197913600,
+          1190183424,
+          1123418112,
+          1065353216
+        ],
+        [
+          1198006528,
+          1181869056,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "convert-cancel-x-0",
+      "producer": "convert",
+      "route": "direct",
+      "inputWords": [
+        1045243770,
+        1056964608,
+        1061158912
+      ],
+      "geometryFloatWords": [
+        1063778220,
+        2986344448,
+        1049064141,
+        1051263192
+      ],
+      "compositorFloatWords": [
+        1063778220,
+        2986344448,
+        1049064141,
+        1051263192
+      ],
+      "geometryHashWords": [
+        3485473350,
+        51828139,
+        2019681974,
+        2264052991
+      ],
+      "compositorHashWords": [
+        3485473350,
+        51828139,
+        2019681974,
+        2264052991
+      ],
+      "expectedHashOfStoredWords": [
+        3485473350,
+        51828139,
+        2019681974,
+        2264052991
+      ],
+      "hashCarrierWords": [
+        [
+          1171402752,
+          3326148608,
+          1123418112,
+          1065353216
+        ],
+        [
+          1196796672,
+          1145405440,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197913600,
+          1190183424,
+          1123418112,
+          1065353216
+        ],
+        [
+          1194655488,
+          3337755648,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "convert-cancel-z-0",
+      "producer": "convert",
+      "route": "direct",
+      "inputWords": [
+        1061158912,
+        1056964608,
+        1045243770
+      ],
+      "geometryFloatWords": [
+        1063778220,
+        1051263192,
+        1049064141,
+        2986344448
+      ],
+      "compositorFloatWords": [
+        1063778220,
+        1051263192,
+        1049064141,
+        2986344448
+      ],
+      "geometryHashWords": [
+        3485473350,
+        2264052991,
+        2019681974,
+        51828139
+      ],
+      "compositorHashWords": [
+        3485473350,
+        2264052991,
+        2019681974,
+        51828139
+      ],
+      "expectedHashOfStoredWords": [
+        3485473350,
+        2264052991,
+        2019681974,
+        51828139
+      ],
+      "hashCarrierWords": [
+        [
+          1171402752,
+          3326148608,
+          1123418112,
+          1065353216
+        ],
+        [
+          1194655488,
+          3337755648,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197913600,
+          1190183424,
+          1123418112,
+          1065353216
+        ],
+        [
+          1196796672,
+          1145405440,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "convert-cancel-x-1",
+      "producer": "convert",
+      "route": "direct",
+      "inputWords": [
+        1045243771,
+        1056964608,
+        1061158912
+      ],
+      "geometryFloatWords": [
+        1063778220,
+        2986344448,
+        1049064141,
+        1051263192
+      ],
+      "compositorFloatWords": [
+        1063778220,
+        2986344448,
+        1049064141,
+        1051263192
+      ],
+      "geometryHashWords": [
+        3485473350,
+        51828139,
+        2019681974,
+        2264052991
+      ],
+      "compositorHashWords": [
+        3485473350,
+        51828139,
+        2019681974,
+        2264052991
+      ],
+      "expectedHashOfStoredWords": [
+        3485473350,
+        51828139,
+        2019681974,
+        2264052991
+      ],
+      "hashCarrierWords": [
+        [
+          1171402752,
+          3326148608,
+          1123418112,
+          1065353216
+        ],
+        [
+          1196796672,
+          1145405440,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197913600,
+          1190183424,
+          1123418112,
+          1065353216
+        ],
+        [
+          1194655488,
+          3337755648,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "convert-cancel-z-1",
+      "producer": "convert",
+      "route": "direct",
+      "inputWords": [
+        1061158912,
+        1056964608,
+        1045243771
+      ],
+      "geometryFloatWords": [
+        1063778220,
+        1051263192,
+        1049064141,
+        2986344448
+      ],
+      "compositorFloatWords": [
+        1063778220,
+        1051263192,
+        1049064141,
+        2986344448
+      ],
+      "geometryHashWords": [
+        3485473350,
+        2264052991,
+        2019681974,
+        51828139
+      ],
+      "compositorHashWords": [
+        3485473350,
+        2264052991,
+        2019681974,
+        51828139
+      ],
+      "expectedHashOfStoredWords": [
+        3485473350,
+        2264052991,
+        2019681974,
+        51828139
+      ],
+      "hashCarrierWords": [
+        [
+          1171402752,
+          3326148608,
+          1123418112,
+          1065353216
+        ],
+        [
+          1194655488,
+          3337755648,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197913600,
+          1190183424,
+          1123418112,
+          1065353216
+        ],
+        [
+          1196796672,
+          1145405440,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "convert-group-0",
+      "producer": "convert",
+      "route": "group-0",
+      "inputWords": [
+        1036831949,
+        1045220557,
+        1050253722
+      ],
+      "geometryFloatWords": [
+        1065073833,
+        1024221066,
+        1037640008,
+        1041433750
+      ],
+      "compositorFloatWords": [
+        1065073833,
+        1024221066,
+        1037640008,
+        1041433750
+      ],
+      "geometryHashWords": [
+        640420798,
+        1528223953,
+        1427757364,
+        3110986681
+      ],
+      "compositorHashWords": [
+        640420798,
+        1528223953,
+        1427757364,
+        3110986681
+      ],
+      "expectedHashOfStoredWords": [
+        640420798,
+        1528223953,
+        1427757364,
+        3110986681
+      ],
+      "hashCarrierWords": [
+        [
+          1161551872,
+          1176023040,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197003008,
+          1186343936,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197028352,
+          1185559040,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197717760,
+          3331139072,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    },
+    {
+      "case": "convert-group-1",
+      "producer": "convert",
+      "route": "group-1",
+      "inputWords": [
+        1065353216,
+        931135488,
+        1056964608
+      ],
+      "geometryFloatWords": [
+        1062841692,
+        1055774087,
+        1039330851,
+        1046369048
+      ],
+      "compositorFloatWords": [
+        1062841692,
+        1055774087,
+        1039330851,
+        1046369048
+      ],
+      "geometryHashWords": [
+        2762657110,
+        2134759679,
+        774533675,
+        3535387661
+      ],
+      "compositorHashWords": [
+        2762657110,
+        2134759679,
+        774533675,
+        3535387661
+      ],
+      "expectedHashOfStoredWords": [
+        2762657110,
+        2134759679,
+        774533675,
+        3535387661
+      ],
+      "hashCarrierWords": [
+        [
+          1196250624,
+          3333860352,
+          1123418112,
+          1065353216
+        ],
+        [
+          1197014784,
+          1191082496,
+          1123418112,
+          1065353216
+        ],
+        [
+          1189369344,
+          1178118144,
+          1123418112,
+          1065353216
+        ],
+        [
+          1195117824,
+          3325369344,
+          1123418112,
+          1065353216
+        ]
+      ],
+      "floatWordsExact": true,
+      "preStoreHashesExact": true,
+      "allOutputsNormalOrPositiveZero": true
+    }
+  ],
+  "gpuInitializationCalls": 0,
+  "assumptions": "Pinned native build; round-to-nearest and XYZ source polynomial. Float-store agreement alone is not signed-zero evidence. Integer HashValue witness precedes Float storage; compositor INT hash transported as exact signed-high16/unsigned-low16 Float channels.",
+  "sourceHashes": {
+    "experiments/static-euler-rotation-research/witness.py": "e8b4f736a2cb482fce930f0cf0e56053fa8ee2ef05fe01fb6efc19261ef6e001",
+    "experiments/static-euler-rotation-research/run.mjs": "929fa253d734a3079c9f02630c826dea45ab039e1217311347f4b0b3789ec56f",
+    "experiments/static-euler-rotation-research/sources.json": "2c15313ddb1de2b16b49462a7e27f49f922d2aca4aa3d6f2cf30e76bdae391f3",
+    "packages/blendlink/blender/compositor_static_matrix.py": "8e2ba5ad012ef57fbc982e2dad47a4bfc1b73165825c1c50ee9ae45ada8fb1fd",
+    "packages/blender-addon/tests/compositor_reference.py": "d52af8d60fec4bbd6f1b977e12a0c913c6f599e0e401b0b962b2bf2b101b5a55"
+  },
+  "version": [
+    5,
+    3,
+    0
+  ],
+  "build": "02f0899d78e3",
+  "sceneEngine": "CYCLES",
+  "compositorDevice": "CPU",
+  "compositorPrecision": "FULL",
+  "nativeCPURenders": 356,
+  "failures": []
+}

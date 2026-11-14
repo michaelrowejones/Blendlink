@@ -1,3 +1,5 @@
+import {ellipseSceneMixContract} from './tslCompositorEllipseSceneMix.js'
+import {prepareEllipseSceneDecoder,createEllipseSceneFrameBinding,disposeEllipseSceneFrameBinding,type EllipseSceneDecoder,type EllipseSceneFrameBinding} from './tslCompositorSceneFrame.js'
 import {validateEllipsePresentation} from './tslCompositorMaskDomains.js'
 /**
  * Phase 4 Track B: the WebGPU post pipeline behind the unchanged
@@ -139,6 +141,8 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
   private sourceDisplay: ReturnType<typeof buildSourceDisplay> | null = null
   private sourceCompositor: ReturnType<typeof buildSourceCompositor> | null = null
   private scenePass: TslEffectNode = null
+  private sceneDecoder: EllipseSceneDecoder | undefined
+  private sceneFrame: EllipseSceneFrameBinding | undefined
   private edgeAntialiasingPresetState: PostEdgeAntialiasingPreset = 'off'
   private edgeAntialiasingActive = false
   private finalized = false
@@ -162,6 +166,8 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
       options.signal?.throwIfAborted()
       const pipeline = new ThreeWebgpuPostPipelineService(n8ao, options)
       pipeline.preparedImages = preparedImages
+      if(graph&&ellipseSceneMixContract(graph))pipeline.sceneDecoder=await prepareEllipseSceneDecoder(options.renderer,options.signal)
+      options.signal?.throwIfAborted()
       return pipeline
     } catch (error) { preparedImages?.dispose(); throw error }
   }
@@ -214,13 +220,18 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
       .sort((left, right) => phaseRank(left.phase) - phaseRank(right.phase)
         || left.id.localeCompare(right.id))
 
-    validateEllipsePresentation(this.options.sourcePresentation, registrations.filter(entry => entry.phase === 'post-ldr').length, message => { throw new SourceCompositorUnsupported(message) })
+    validateEllipsePresentation(this.options.sourcePresentation, registrations.filter(entry => entry.phase === 'post-ldr').length, message => { throw new SourceCompositorUnsupported(message) }, registrations.filter(entry => entry.phase !== 'post-ldr').length)
     const scene = this.options.scene
     const camera = this.options.camera
-    const scenePass = pass(scene, camera)
+    const graph=this.options.sourcePresentation?.compositor,sceneMix=graph&&ellipseSceneMixContract(graph)
+    const scenePass = pass(scene, camera, sceneMix?{samples:0}:undefined)
     const mrtTargets = this.plannedMrtTargets()
     if (mrtTargets) scenePass.setMRT(mrtTargets)
     this.scenePass = scenePass
+    if(sceneMix){
+      if(!this.sceneDecoder)throw new SourceCompositorUnsupported('Ellipse scene composition requires its owned decoder calibration')
+      this.sceneFrame=createEllipseSceneFrameBinding(this.options.renderer,scenePass,this.sceneDecoder)
+    }
 
     const context: ChainContext = {
       scenePass,
@@ -273,7 +284,7 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
             return buildSourceDepth(scenePass.getTextureNode('depth'), () => this.options.camera)
           }
           return null
-        }, { preparedImages: this.preparedImages, resolvePassExtent: (_request, renderer) => {
+        }, { sceneFrame: this.sceneFrame, preparedImages: this.preparedImages, resolvePassExtent: (_request, renderer) => {
           // Registered color effects represent the full physical scene image,
           // even when their result is a field expression rather than a texture.
           renderer.getDrawingBufferSize(compositorExtent)
@@ -383,6 +394,7 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
     try { this.scenePass?.dispose?.() } catch (error) { errors.push(error) }
     try { this.sourceDisplay?.dispose() } catch (error) { errors.push(error) }
     try { this.sourceCompositor?.dispose() } catch (error) { errors.push(error) }
+    try { if(this.sceneFrame)disposeEllipseSceneFrameBinding(this.sceneFrame) } catch(error){errors.push(error)}
     if (errors.length > 0) {
       throw new Error(
         `SceneToWeb post-pipeline disposal failed: ${errors

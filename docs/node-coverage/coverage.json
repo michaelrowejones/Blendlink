@@ -1,5 +1,5 @@
 {
-  "capabilityMapSha256": "e1466070c17d2e405507f5351a629226ef84970dc4cd40642a2ead0d6be2a096",
+  "capabilityMapSha256": "3108cb2c03b3df9b5a614b10763d5a4722898fded0ed7acca569a7f772b5c72b",
   "capabilityValidationFailures": [],
   "classificationRefresh": {
     "catalogSha256": {
@@ -12,7 +12,7 @@
     "nativeInventoryRefreshed": false,
     "reason": "Classification-only refresh against unchanged content-pinned full inventories; no native rediscovery or numerical qualification is performed."
   },
-  "generatedAt": "2026-11-14T09:07:19.128757+00:00",
+  "generatedAt": "2026-11-14T10:34:19.994306+00:00",
   "nativeAvailabilityChanges": [],
   "nativeCatalogSha256": {
     "docs/node-coverage/blender-4.2.0.json": "2f71cb192f6a62e0e343ba5fcb11a2d8e0c6f6af1e8ac663ec6c3350b016b151",
@@ -1297,6 +1297,30 @@
                 },
                 {
                   "path": "experiments/compositor-ellipse-mask/evidence.json"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_ellipse_scene_mix.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorEllipseSceneMix.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorSceneFrame.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_ellipse_scene_mix_check.py"
+                },
+                {
+                  "path": "experiments/compositor-ellipse-scene-mix/README.md"
+                },
+                {
+                  "path": "experiments/compositor-ellipse-scene-mix/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-ellipse-scene-mix/verify-admission.mjs"
+                },
+                {
+                  "path": "experiments/compositor-ellipse-scene-mix/raw-display-sources.json"
                 }
               ],
               "id": "CompositorNodeEllipseMask",
@@ -7562,6 +7586,30 @@
                 },
                 {
                   "path": "experiments/compositor-ellipse-mask/evidence.json"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_ellipse_scene_mix.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorEllipseSceneMix.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorSceneFrame.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_ellipse_scene_mix_check.py"
+                },
+                {
+                  "path": "experiments/compositor-ellipse-scene-mix/README.md"
+                },
+                {
+                  "path": "experiments/compositor-ellipse-scene-mix/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-ellipse-scene-mix/verify-admission.mjs"
+                },
+                {
+                  "path": "experiments/compositor-ellipse-scene-mix/raw-display-sources.json"
                 }
               ],
               "id": "CompositorNodeEllipseMask",
@@ -9241,10 +9289,69 @@
               "category": "unsupported",
               "declaredCategory": "unsupported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def evaluate_output(",
+                  "path": "packages/blendlink/blender/compositor_static_euler.py"
+                },
+                {
+                  "anchor": "class EulerProducer(",
+                  "path": "packages/blendlink/blender/compositor_static_rotation.py"
+                },
+                {
+                  "anchor": "record=static_euler.evaluate_output(socket,scene,static_euler_cache,tuple(reversed(frames)),static_selection.static_selection)",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "anchor": "case 'value':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/policy.py"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/reference.py"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/cases.json"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/export.test.ts"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/browser.js"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/run.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/matrix.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/README.md"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/evidence.json"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_static_euler_check.py"
+                }
+              ],
               "id": "FunctionNodeEulerToRotation",
               "label": "Euler to Rotation",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "No live route outside the explicitly qualified Blender5.3 CPU positive literal EulerXYZ construction slice. Native MF registration alone is not numerical support.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -9834,6 +9941,60 @@
                 },
                 {
                   "path": "experiments/compositor-static-rotation/evidence.json"
+                },
+                {
+                  "anchor": "def evaluate_output(",
+                  "path": "packages/blendlink/blender/compositor_static_euler.py"
+                },
+                {
+                  "anchor": "class EulerProducer(",
+                  "path": "packages/blendlink/blender/compositor_static_rotation.py"
+                },
+                {
+                  "anchor": "record=static_euler.evaluate_output(socket,scene,static_euler_cache,tuple(reversed(frames)),static_selection.static_selection)",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/policy.py"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/reference.py"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/cases.json"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/export.test.ts"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/browser.js"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/run.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/matrix.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/README.md"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/evidence.json"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_static_euler_check.py"
                 }
               ],
               "id": "FunctionNodeRotationToQuaternion",
@@ -10891,6 +11052,30 @@
                 },
                 {
                   "path": "packages/blender-addon/tests/compositor_mix_check.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_ellipse_scene_mix.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorEllipseSceneMix.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorSceneFrame.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_ellipse_scene_mix_check.py"
+                },
+                {
+                  "path": "experiments/compositor-ellipse-scene-mix/README.md"
+                },
+                {
+                  "path": "experiments/compositor-ellipse-scene-mix/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-ellipse-scene-mix/verify-admission.mjs"
+                },
+                {
+                  "path": "experiments/compositor-ellipse-scene-mix/raw-display-sources.json"
                 }
               ],
               "id": "ShaderNodeMix",
@@ -15213,10 +15398,10 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 68,
+            "partial": 69,
             "structural": 7,
             "supported": 24,
-            "unsupported": 88
+            "unsupported": 87
           },
           "enumValueCounts": {
             "partial": 36,
@@ -16572,11 +16757,35 @@
                 },
                 {
                   "path": "experiments/compositor-ellipse-mask/evidence.json"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_ellipse_scene_mix.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorEllipseSceneMix.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorSceneFrame.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_ellipse_scene_mix_check.py"
+                },
+                {
+                  "path": "experiments/compositor-ellipse-scene-mix/README.md"
+                },
+                {
+                  "path": "experiments/compositor-ellipse-scene-mix/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-ellipse-scene-mix/verify-admission.mjs"
+                },
+                {
+                  "path": "experiments/compositor-ellipse-scene-mix/raw-display-sources.json"
                 }
               ],
               "id": "CompositorNodeEllipseMask",
               "label": "Ellipse Mask",
-              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor only. Static unlinked literal Position[-2,2], Size[0,2], Mask/Value[0,1], each component zero or abs>=2^-16, with raw Rotation positive zero. All four Operation values Add/Subtract/Multiply/Not; raw native vector/scalar storage checks refuse negative zero, subnormals, nonfinite/out-of-bound values, links, animation and rotation. Zero-offset square-pixel full-frame context, physical extents2..8192. Native ordered Float32 division/subtraction/aspect/radius/products/sum/sqrt classify monotone integer row intervals in O(width+height log width) only on valid extent changes. Shader integer lookup/comparison selects precomputed branch values; no floating boundary, epsilon, quantization or full CPU pixel image. One fixed256x32 RG32I64KiB table per varying mask; at most one varying table per graph. Zero Size shares scalar Mask and remains single-valued for all operations; equal-valued nonzero masks remain fields, with no table allocation. Closed texture-free pointwise compositor kinds only: Render Layers/Image, curves/ramps and spatial/domain consumers remain excluded. Combined row plus display Lut1D/Lut3D budget8; additional post-LDR registrations refuse pending sampler accounting. Actual first-draw/resize/DPR, invalid-resize recovery, table identity/version/data, optimized constant guards and Final disposal are checked. All RGBA Float32 words, including scalar-to-RGBA alpha1 and strict edges, require exact equality. Reference is native CPU compositor with Cycles CPU carrier, not EEVEE shader/material or native GPU evaluation. Actual WebGPU/WebGL2 via WebGPURenderer measured on Apple Metal and SwiftShader. Legacy WebGLRenderer, other versions/builds/hosts, field/animated/rotated masks, arbitrary scene compositing and whole-scene appearance remain unqualified.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor only. Static unlinked literal Position[-2,2], Size[0,2], Mask/Value[0,1], each component zero or abs>=2^-16, with raw Rotation positive zero. All four Operation values Add/Subtract/Multiply/Not; raw native vector/scalar storage checks refuse negative zero, subnormals, nonfinite/out-of-bound values, links, animation and rotation. Zero-offset square-pixel full-frame context, physical extents2..8192. Native ordered Float32 division/subtraction/aspect/radius/products/sum/sqrt classify monotone integer row intervals in O(width+height log width) only on valid extent changes. Shader integer lookup/comparison selects precomputed branch values; no floating boundary, epsilon, quantization or full CPU pixel image. One fixed256x32 RG32I64KiB table per varying mask; at most one varying table per graph. Zero Size shares scalar Mask and remains single-valued for all operations; equal-valued nonzero masks remain fields, with no table allocation. Closed texture-free pointwise compositor kinds only: Render Layers/Image, curves/ramps and spatial/domain consumers remain excluded. Combined row plus display Lut1D/Lut3D budget8; additional post-LDR registrations refuse pending sampler accounting. Actual first-draw/resize/DPR, invalid-resize recovery, table identity/version/data, optimized constant guards and Final disposal are checked. All RGBA Float32 words, including scalar-to-RGBA alpha1 and strict edges, require exact equality. Reference is native CPU compositor with Cycles CPU carrier, not EEVEE shader/material or native GPU evaluation. Actual WebGPU/WebGL2 via WebGPURenderer measured on Apple Metal and SwiftShader. Legacy WebGLRenderer, other versions/builds/hosts, field/animated/rotated masks, arbitrary scene compositing and whole-scene appearance remain unqualified. Separately qualified Blender5.3.0 build02f0899d78e3 macOS arm64 CPU current-frame exception: one direct current Scene/ViewLayer RenderLayers Image or Alpha, one static binary Add Ellipse Mask0/Value1, and one terminal modern RGBA/MIX, either operand side. Background is an unlinked raw positive-zero/positive-normal F32 RGBA literal≤1. Actual renderer-owned HalfFloat RGBA/MSAA0 physical-texel frame requires a lifecycle-bound decoder calibration; unknown decoders refuse before installation. One frame sampler plus one varying row plus at most6 display lookups, total8; no registered pre-HDR/post-LDR effects. Exact linear words are qualified on observed Metal WebGPU/WebGL2; both SwiftShader APIs named-refuse the NaN decoder model and receive zero credit for this exception. Raw display is separately audited under the existing clamp01 3e-5 projection contract with exact alpha/nonfinite classes; no bit-exact/zero-bit display claim, global display promotion, native GPU compositor, whole-scene PBR equivalence or demo acceptance.",
               "runtimeOps": [
                 "ellipse-mask"
               ],
@@ -18423,13 +18632,72 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def evaluate_output(",
+                  "path": "packages/blendlink/blender/compositor_static_euler.py"
+                },
+                {
+                  "anchor": "class EulerProducer(",
+                  "path": "packages/blendlink/blender/compositor_static_rotation.py"
+                },
+                {
+                  "anchor": "record=static_euler.evaluate_output(socket,scene,static_euler_cache,tuple(reversed(frames)),static_selection.static_selection)",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "anchor": "case 'value':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/policy.py"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/reference.py"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/cases.json"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/export.test.ts"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/browser.js"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/run.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/matrix.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/README.md"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/evidence.json"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_static_euler_check.py"
+                }
+              ],
               "id": "FunctionNodeEulerToRotation",
               "label": "Euler to Rotation",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor static EulerToRotation -> RotationToQuaternion Float endpoints only. Euler3 input must be unlinked literal; each original raw Float32 component is positive zero or positive [2^-16,1] radians. Native homogeneous one-input socket collection foreach_get reads the mathutils.Euler storage before scalar promotion; there is no authored NodeTree copy. The unchanged native EulerXYZ half-angle trig polynomial does not normalize(), canonicalize() or wrap. W is strictly positive; X/Z may be negative or cancel. Literal producer groups, opaque Rotation groups, Float endpoint groups and reroutes only. InputRotation remains unsupported because its raw property-copy container is not safely bounded. Linked/computed vectors, negative/wide angles, -0/subnormal/nonfinite sources, unlinked Euler-backed ROTATION defaults, implicit casts, fields, animation/drivers/NLA, generic Rotation/Quaternion arithmetic, shader-tree/EEVEE and GPU-authored compositor refuse. ROTATION remains opaque in Python and terminal components use existing VALUE constants. Separate Euler model/cache with shared fixed flat-ID traversal, actual ancestry/bindings, topology, source node instances64, source/recipe depth16, visits/records2048 and evaluated islands16. All active Matrix/Quaternion/Euler snapshots are jointly rechecked before whole-graph acceptance; only a typed unsupported Euler producer before native evaluation may switch from the Quaternion resolver. Old-route source/ownership/budget/native errors never fall through. One fixed16-node private one-point Geometry CPU-MF graph yields all4 Float words and4 pre-Float-store native HashValue INT witnesses once per unique island. Normal/+0 word classification and all4 pinned hash checks finish before tuple/cache commit; no zero-sign repair. Shared normality argument is bounded to positive half-angle Float32 XYZ arithmetic under pinned libm/compiler/RNE assumptions, supported by independent pre-store witnesses and actual CPU compositor FULL EXR32. Owned Scene/Object/Mesh/NodeTree restore users/frame/selection and are removed in finally. No new browser Rotation/Hash opcode, pass, texture, readback or per-frame native evaluation. Actual WebGPU/WebGL2 via WebGPURenderer measured on Apple Metal and SwiftShader. No other build/platform/version, legacy WebGLRenderer, arbitrary scene composition or whole-scene appearance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -19258,11 +19526,65 @@
                 },
                 {
                   "path": "experiments/compositor-static-rotation/evidence.json"
+                },
+                {
+                  "anchor": "def evaluate_output(",
+                  "path": "packages/blendlink/blender/compositor_static_euler.py"
+                },
+                {
+                  "anchor": "class EulerProducer(",
+                  "path": "packages/blendlink/blender/compositor_static_rotation.py"
+                },
+                {
+                  "anchor": "record=static_euler.evaluate_output(socket,scene,static_euler_cache,tuple(reversed(frames)),static_selection.static_selection)",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/policy.py"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/reference.py"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/cases.json"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/export.test.ts"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/browser.js"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/run.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/matrix.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/README.md"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/evidence.json"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_static_euler_check.py"
                 }
               ],
               "id": "FunctionNodeRotationToQuaternion",
               "label": "Rotation to Quaternion",
-              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor only. Explicit linked Quaternion to Rotation -> Rotation to Quaternion static islands. Each original W/X/Y/Z Float32 word must be raw positive zero or 2^-16<=abs(value)<=4; public native from_socket copies and homogeneous foreach_get read storage before scalar promotion. Native normalization does not canonicalize quaternion sign: all-zero gives identity(1,+0,+0,+0), signed basis controls preserve sign. Literal Float socket defaults/Value, explicit instance-bound Float/opaque Rotation groups, reroutes, actual same-type native mute bypass and already-qualified static Float selectors only; reachable endpoints must terminate in reviewed Rotation to Quaternion Float outputs. Unlinked Euler-backed ROTATION defaults, implicit casts, computed/recombined components, Rotation selectors, arbitrary arithmetic/context/field producers and source animation/drivers/NLA refuse. ROTATION remains opaque inside Python. A separate extraction-owned flat-ID recipe/source cache uses fixed four-child quaternion keys, source node instances64, source/recipe depth16, source visits2048, recipe records2048 and evaluated islands16; cached source height includes all group/reroute/selector hops. Actual source storage, topology, group ancestry/bindings, selected branch and source scene/frame/CPU context are rechecked. One owned one-point Geometry Nodes CPU-MF graph (fixed8 nodes) evaluates all4 components once per unique quaternion island. Raw output words must be normal Float32 or positive zero before decoding; unexpected -0/subnormal/nonfinite words refuse without repair. Owned Scene/Object/Mesh/NodeTree are removed in finally, preserving source users/active-selection/frame. Existing VALUE operations transport exact components; no new Rotation runtime opcode/kernel/pass/texture/readback or per-frame native work. Exact native CPU compositor FULL EXR32 vs private Geometry MF plus actual WebGPU/WebGL2 via WebGPURenderer on measured Apple Metal and SwiftShader. No shader-tree/EEVEE, GPU-authored compositor, generic MF, Matrix/Quaternion arithmetic chains, dynamic fields, other builds/hosts/versions, legacy WebGLRenderer or whole-scene appearance credit.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor only. Explicit linked Quaternion to Rotation -> Rotation to Quaternion static islands. Each original W/X/Y/Z Float32 word must be raw positive zero or 2^-16<=abs(value)<=4; public native from_socket copies and homogeneous foreach_get read storage before scalar promotion. Native normalization does not canonicalize quaternion sign: all-zero gives identity(1,+0,+0,+0), signed basis controls preserve sign. Literal Float socket defaults/Value, explicit instance-bound Float/opaque Rotation groups, reroutes, actual same-type native mute bypass and already-qualified static Float selectors only; reachable endpoints must terminate in reviewed Rotation to Quaternion Float outputs. Unlinked Euler-backed ROTATION defaults, implicit casts, computed/recombined components, Rotation selectors, arbitrary arithmetic/context/field producers and source animation/drivers/NLA refuse. ROTATION remains opaque inside Python. A separate extraction-owned flat-ID recipe/source cache uses fixed four-child quaternion keys, source node instances64, source/recipe depth16, source visits2048, recipe records2048 and evaluated islands16; cached source height includes all group/reroute/selector hops. Actual source storage, topology, group ancestry/bindings, selected branch and source scene/frame/CPU context are rechecked. One owned one-point Geometry Nodes CPU-MF graph (fixed8 nodes) evaluates all4 components once per unique quaternion island. Raw output words must be normal Float32 or positive zero before decoding; unexpected -0/subnormal/nonfinite words refuse without repair. Owned Scene/Object/Mesh/NodeTree are removed in finally, preserving source users/active-selection/frame. Existing VALUE operations transport exact components; no new Rotation runtime opcode/kernel/pass/texture/readback or per-frame native work. Exact native CPU compositor FULL EXR32 vs private Geometry MF plus actual WebGPU/WebGL2 via WebGPURenderer on measured Apple Metal and SwiftShader. No shader-tree/EEVEE, GPU-authored compositor, generic MF, Matrix/Quaternion arithmetic chains, dynamic fields, other builds/hosts/versions, legacy WebGLRenderer or whole-scene appearance credit. Additional independently qualified Euler construction route: Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor static EulerToRotation -> RotationToQuaternion Float endpoints only. Euler3 input must be unlinked literal; each original raw Float32 component is positive zero or positive [2^-16,1] radians. Native homogeneous one-input socket collection foreach_get reads the mathutils.Euler storage before scalar promotion; there is no authored NodeTree copy. The unchanged native EulerXYZ half-angle trig polynomial does not normalize(), canonicalize() or wrap. W is strictly positive; X/Z may be negative or cancel. Literal producer groups, opaque Rotation groups, Float endpoint groups and reroutes only. InputRotation remains unsupported because its raw property-copy container is not safely bounded. Linked/computed vectors, negative/wide angles, -0/subnormal/nonfinite sources, unlinked Euler-backed ROTATION defaults, implicit casts, fields, animation/drivers/NLA, generic Rotation/Quaternion arithmetic, shader-tree/EEVEE and GPU-authored compositor refuse. ROTATION remains opaque in Python and terminal components use existing VALUE constants. Separate Euler model/cache with shared fixed flat-ID traversal, actual ancestry/bindings, topology, source node instances64, source/recipe depth16, visits/records2048 and evaluated islands16. All active Matrix/Quaternion/Euler snapshots are jointly rechecked before whole-graph acceptance; only a typed unsupported Euler producer before native evaluation may switch from the Quaternion resolver. Old-route source/ownership/budget/native errors never fall through. One fixed16-node private one-point Geometry CPU-MF graph yields all4 Float words and4 pre-Float-store native HashValue INT witnesses once per unique island. Normal/+0 word classification and all4 pinned hash checks finish before tuple/cache commit; no zero-sign repair. Shared normality argument is bounded to positive half-angle Float32 XYZ arithmetic under pinned libm/compiler/RNE assumptions, supported by independent pre-store witnesses and actual CPU compositor FULL EXR32. Owned Scene/Object/Mesh/NodeTree restore users/frame/selection and are removed in finally. No new browser Rotation/Hash opcode, pass, texture, readback or per-frame native evaluation. Actual WebGPU/WebGL2 via WebGPURenderer measured on Apple Metal and SwiftShader. No other build/platform/version, legacy WebGLRenderer, arbitrary scene composition or whole-scene appearance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -20478,11 +20800,35 @@
                 },
                 {
                   "path": "packages/blender-addon/tests/compositor_mix_check.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_ellipse_scene_mix.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorEllipseSceneMix.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorSceneFrame.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_ellipse_scene_mix_check.py"
+                },
+                {
+                  "path": "experiments/compositor-ellipse-scene-mix/README.md"
+                },
+                {
+                  "path": "experiments/compositor-ellipse-scene-mix/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-ellipse-scene-mix/verify-admission.mjs"
+                },
+                {
+                  "path": "experiments/compositor-ellipse-scene-mix/raw-display-sources.json"
                 }
               ],
               "id": "ShaderNodeMix",
               "label": "Mix",
-              "limits": "FLOAT/VECTOR/RGBA, uniform/nonuniform factors and all 19 RGB blend modes with native factor/result clamping and color alpha behavior. ROTATION explicitly refuses pending verified quaternion transport.",
+              "limits": "FLOAT/VECTOR/RGBA, uniform/nonuniform factors and all 19 RGB blend modes with native factor/result clamping and color alpha behavior. ROTATION explicitly refuses pending verified quaternion transport. Separately qualified Blender5.3.0 build02f0899d78e3 macOS arm64 CPU current-frame exception: one direct current Scene/ViewLayer RenderLayers Image or Alpha, one static binary Add Ellipse Mask0/Value1, and one terminal modern RGBA/MIX, either operand side. Background is an unlinked raw positive-zero/positive-normal F32 RGBA literal≤1. Actual renderer-owned HalfFloat RGBA/MSAA0 physical-texel frame requires a lifecycle-bound decoder calibration; unknown decoders refuse before installation. One frame sampler plus one varying row plus at most6 display lookups, total8; no registered pre-HDR/post-LDR effects. Exact linear words are qualified on observed Metal WebGPU/WebGL2; both SwiftShader APIs named-refuse the NaN decoder model and receive zero credit for this exception. Raw display is separately audited under the existing clamp01 3e-5 projection contract with exact alpha/nonfinite classes; no bit-exact/zero-bit display claim, global display promotion, native GPU compositor, whole-scene PBR equivalence or demo acceptance.",
               "runtimeOps": [
                 "mix"
               ],
@@ -25655,10 +26001,11 @@
     "packages/blendlink/blender/compositor_difference_key.py": "4fce4d4ed1c082b3a2e7410dad2073672da8f2add7752f3b15883f82d3ed8c05",
     "packages/blendlink/blender/compositor_distance_key.py": "132faffadf13bcc49db7556a7442ff039a06ab5a777d8b2effa74bcd5ec8adf9",
     "packages/blendlink/blender/compositor_ellipse_mask.py": "655933483b76b29bbe6f88968052faca74fb73ffd5d99841ef74b9cde5fc2039",
+    "packages/blendlink/blender/compositor_ellipse_scene_mix.py": "fd10620ef42a6149fcc6debdf32d5b5de5aedab44e31164653d5f098e72fa269",
     "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
     "packages/blendlink/blender/compositor_float_coordinates.py": "a300cbfb6e5ea06806e2fb9b9d7795cd2e3b91cb21ada43e4c128ac89d8f0cec",
     "packages/blendlink/blender/compositor_float_to_int.py": "6292f5a5904107b59591c282fcf9def24a5f98dc2ead0a92d950b6219226658d",
-    "packages/blendlink/blender/compositor_graph.py": "214651edc9289f8fefd21c6650837a501dd476f38adc408e9261befd939ac9f3",
+    "packages/blendlink/blender/compositor_graph.py": "005047c5782d8155ca730817c04483cb4a2ce4978c1addb61d17dfb22f38ff13",
     "packages/blendlink/blender/compositor_image.py": "55ee3b7800002331c4e30042a7d5da18538267b58ff60c006e03ad238da9e012",
     "packages/blendlink/blender/compositor_image_coordinates.py": "4b796327c579e7c08ed487cce4758c899a1a11be648e93977c22a0536451054a",
     "packages/blendlink/blender/compositor_image_info.py": "92e3f2488f646b8f7f79de67940717c54bd3e4cfc69956090b31ebd9b0e64729",
@@ -25666,7 +26013,7 @@
     "packages/blendlink/blender/compositor_luminance_key.py": "5391ac3ca522590a0bffa0a2ef3ca25c8be44d0218381fa9f3bc48ab14edb3cd",
     "packages/blendlink/blender/compositor_map_value.py": "784d1ba979b02e2e665b41818d4efd8912c5fe35ae821ea39135912fda3fe5fe",
     "packages/blendlink/blender/compositor_map_value_domain.py": "ff43991bf956ed131835b671f9d44c0a80e23b9888c53903f6486c5a287448eb",
-    "packages/blendlink/blender/compositor_mask_domains.py": "6e5d83b8b8341ba17ad9c0a92a8f8e8ba96bf06b8f09c54cdec4ded33338193e",
+    "packages/blendlink/blender/compositor_mask_domains.py": "c1abdfb39d9ee61155ea656ec111b6de806bb5eff04c46ba80f68fcf737d02f7",
     "packages/blendlink/blender/compositor_normal.py": "9dcd0e53d674560bb7c060a2a6a2b5ccdec361235ae67620c587a29136d2c94d",
     "packages/blendlink/blender/compositor_pixelate.py": "607f738a09fc75f15facb9cb0c261bfb72800663d5908826e5d105d980800b3d",
     "packages/blendlink/blender/compositor_procedural_texture.py": "70d34a56ea67a67aecd899fb05e66716746865c190e9d9f2bd4289b6df2bf025",
@@ -25674,8 +26021,9 @@
     "packages/blendlink/blender/compositor_relative_to_pixel.py": "a276d2e5fa7b0743b26c5e6fdba67cff3f884f2535f88c01ca0c536a8ce85870",
     "packages/blendlink/blender/compositor_spill.py": "8a7774222b7f126bcc6a42f0a526d953b2fe858b4f47c7018cd741ee94f56269",
     "packages/blendlink/blender/compositor_split.py": "1c25e68653abf9c8c8b2a88c3c7751a324fb4838a5feaacae309fe332e511a08",
+    "packages/blendlink/blender/compositor_static_euler.py": "e387d5dd7f3bd981e4977b023ec49a1a7d6c3186db07183a40885456a3ff7b54",
     "packages/blendlink/blender/compositor_static_matrix.py": "8e2ba5ad012ef57fbc982e2dad47a4bfc1b73165825c1c50ee9ae45ada8fb1fd",
-    "packages/blendlink/blender/compositor_static_rotation.py": "e012b073782f114dffb631acd59c99f06c94480d8a92718de45e25e886af97c4",
+    "packages/blendlink/blender/compositor_static_rotation.py": "76a1ec4405ec41cb860cdef619be234529dc561cb770b33dbf746a9160fa7373",
     "packages/blendlink/blender/compositor_transform.py": "2f9ae73eb6e70f05fc53b755b1252e3bce4563ad013b08ed930304a4ae2ac42d",
     "packages/blendlink/blender/compositor_utilities.py": "b92be3bb89c05d9a943a08298bb3114274cf67f14f985ba84e3f5dbc9eddc384",
     "packages/blendlink/blender/compositor_vector_component.py": "8b29742404fa7d80d2bdc661363a052bc1a2680b3306a2a47b20d0d9e5bfe20c",
@@ -25693,7 +26041,7 @@
     "packages/blendlink/src/sceneDiagnostics.ts": "48b8d220ad2b5216f496694ef1b29c19903e90cc65fc9ce01bda77e21c84dc0e",
     "packages/blendlink/src/staticNoise4d.ts": "0677ad1169801c601d74b8a5658d98691415bf313081ca0b4fa88ec762e62a76",
     "packages/blendlink/src/threeRuntime.ts": "4ca05fb2b46239e30a434591c3ecfa42531b179c20e946828921a419e64db3b4",
-    "packages/blendlink/src/threeWebgpuPostPipeline.ts": "8136bb004425bca22b2fb0fa6eef0710c96b2a8b1acf9b9bf8c4eabdb99a6bc8",
+    "packages/blendlink/src/threeWebgpuPostPipeline.ts": "fbd4b506c5df5c5764ab34e0f534e61ff1abc92df24fb163219a124ec5a5fc08",
     "packages/blendlink/src/tslBlackbodyCoefficients.ts": "39d17f54a1bb7f394bae6393200badb5faa756e9772ea4d4ef92f878ff4fac18",
     "packages/blendlink/src/tslBrickNodes.ts": "5b61f5565af2b818d3a507b3cc0b408f1ef3537d5d8cb64517280f8473afde9b",
     "packages/blendlink/src/tslBumpHeight.ts": "3c8622196e1fcdbbbdafcd76a85f42a545e05a54fc8ad61002e5a259d2fd2f8f",
@@ -25721,7 +26069,8 @@
     "packages/blendlink/src/tslCompositorCropResize.ts": "21ca914dc474a31f5e6527543b9e2853d7d66ba5d9b09d838d00a5a355a0b642",
     "packages/blendlink/src/tslCompositorDifferenceKey.ts": "4604b8aa1de7300739d602eec4a94e04cfe660491beea34dea23c690fd00b4de",
     "packages/blendlink/src/tslCompositorDistanceKey.ts": "8a2aebf7105274f8d02fd9b68b358bdb3cb89a6b43a60edda00a0fd30a5aa2fa",
-    "packages/blendlink/src/tslCompositorEllipseMask.ts": "a260ed83bda49a85fe33c58165bea804efc684cee2223d54df6fb5dd0b5402f8",
+    "packages/blendlink/src/tslCompositorEllipseMask.ts": "bcbcf7be97750ec105df27d98c2239d2ef9e41b010d84462b2ee9f8e57e3da07",
+    "packages/blendlink/src/tslCompositorEllipseSceneMix.ts": "d6a341d036004450963fc97c2e122290126d54b01d439a2266f8fe8ebc2397be",
     "packages/blendlink/src/tslCompositorFilter.ts": "a03e7e652c3d86daf3f29ac930688f9d2a282cdd50b4b89f8ab87e1c86262227",
     "packages/blendlink/src/tslCompositorFloatCoordinates.ts": "473b117bb7dc3872761f2c098e58cdf7dab1262a2e1f47fdf9e1286ba4e8ada9",
     "packages/blendlink/src/tslCompositorFloatToInt.ts": "8e39857c7d79d0233e4f29163052f6dcc3ef14585ee05425be3405d924989aac",
@@ -25734,11 +26083,12 @@
     "packages/blendlink/src/tslCompositorLuminanceKey.ts": "3858b364150d9dc847ea05ee4ef768cb9b2ef5fae3c0ece240f3c3c1016e23c4",
     "packages/blendlink/src/tslCompositorMapValue.ts": "a3ec846d3af2a2e91e234a0c425c192f3dbaacad0319af11a4414f42baa7e538",
     "packages/blendlink/src/tslCompositorMapValueDomain.ts": "325637bd5fb107ff49ce5aa8b45aa954be7a4411e9daf8cb79b4bb64ffa9ad0a",
-    "packages/blendlink/src/tslCompositorMaskDomains.ts": "d9f129d8d1db4fa65d22949f1470cae02fac462e0bcbf4e8d680717516d5ee89",
+    "packages/blendlink/src/tslCompositorMaskDomains.ts": "34a79b4a6975acab97158dc85660b68e0e86a218a9e6d9c3688d28679db90ef7",
     "packages/blendlink/src/tslCompositorPixelate.ts": "20feecc95d60c471e11428474bbcd3c214133652ecaafabc6b81a0486bc28b21",
     "packages/blendlink/src/tslCompositorProceduralTexture.ts": "6c53d01b82960c77bb624bcefdb261805244363d4ffb7e70b1d45d1004d8cb9a",
     "packages/blendlink/src/tslCompositorRelativeToPixel.ts": "0594bfe77a71f54c5526abc520b5ef6a9f59a864db07f1554c39133bf4153646",
     "packages/blendlink/src/tslCompositorResampling.ts": "6ff79d9bb5f31bee831e2491fe5cfb89582584c80026b1a3c0c302985377a1d6",
+    "packages/blendlink/src/tslCompositorSceneFrame.ts": "af0194722a24225c6ac65acae56f79f3e6bb323af371cbd113ef0a6d03990c76",
     "packages/blendlink/src/tslCompositorSpatial.ts": "9cf2dbf99faca6d063e978a5f0463d26c43473b96ddffb543849e1733162806c",
     "packages/blendlink/src/tslCompositorSpill.ts": "df6393b864834cfb8a386c88ce52d3b45ed169df94b4c8724b501272d148903d",
     "packages/blendlink/src/tslCompositorSplit.ts": "662a552d1b3f1201871bbfa06b84418426d30e614b8df290374bba7c3fc96cc7",
@@ -25776,7 +26126,7 @@
     "packages/blendlink/src/tslRadialWidth.ts": "9ffc9e3a7e32b3d0676b2a90fffad64e2578cd30d160ddaf00278d2d9ff43719",
     "packages/blendlink/src/tslRepeat.ts": "4d7925f09220e54973155c6af8c41c98e3b32e141f5acbdc6d29741c701d9a93",
     "packages/blendlink/src/tslSharedUtilities.ts": "1f21b06a4d60a439b0549b7c6716c66945b4cce3cc00fc6e965acbe77c80d9b9",
-    "packages/blendlink/src/tslSourceCompositor.ts": "f554a9e79c1dfab83e2eadc838f3a77d9434309724e710cf28737e3ac4fa9438",
+    "packages/blendlink/src/tslSourceCompositor.ts": "eec874123a131975e933a39688a17908aa0066b4b2990632b97613da40ace893",
     "packages/blendlink/src/tslSpectralNodes.ts": "10719a4f7ceef71f80a9b3492561c382cd0904de209e0e93f9f578b5af529bf2",
     "packages/blendlink/src/tslSqueeze.ts": "14a56aa219ca2bb2dace54d512e8b9cfda754ea83991a92a1c270a1122ea492b",
     "packages/blendlink/src/tslTangentNodes.ts": "fb7ad452300be3e96a9f01b4f82f9ce59cb8577cf68e056df994876321cffcc1",

@@ -3895,6 +3895,30 @@
         },
         {
           "path": "packages/blender-addon/tests/compositor_mix_check.py"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_ellipse_scene_mix.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorEllipseSceneMix.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorSceneFrame.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_ellipse_scene_mix_check.py"
+        },
+        {
+          "path": "experiments/compositor-ellipse-scene-mix/README.md"
+        },
+        {
+          "path": "experiments/compositor-ellipse-scene-mix/evidence.json"
+        },
+        {
+          "path": "experiments/compositor-ellipse-scene-mix/verify-admission.mjs"
+        },
+        {
+          "path": "experiments/compositor-ellipse-scene-mix/raw-display-sources.json"
         }
       ],
       "verification": {
@@ -3907,7 +3931,101 @@
         "runtimeBackends": [
           "WebGPU",
           "WebGL2 via WebGPURenderer"
-        ]
+        ],
+        "sceneFrameComposition": {
+          "status": "QUALIFIED_EXACT_LINEAR_ELLIPSE_SCENE_MIX",
+          "evidence": "experiments/compositor-ellipse-scene-mix/evidence.json",
+          "nativeVersion": "5.3.0",
+          "nativeBuild": "02f0899d78e3",
+          "nativeHost": "darwin-arm64",
+          "nativeEvaluator": "CPU compositor; actual same-Three-frame native Image oracles, not Three PBR versus Cycles",
+          "savedFinalScenes": 8,
+          "capturedNativeImageOracles": 64,
+          "actualNativeRenders": 192,
+          "creditedBrowserCases": 32,
+          "preDisplayWords": 37440,
+          "installedFinalLinearWords": 224640,
+          "exactLinearWordDifferences": 0,
+          "lifecycleCycles": 96,
+          "uniqueActualPythonPrefixes": 10,
+          "admittedRuntimeTuples": [
+            "observed Apple Metal WebGPU",
+            "observed Apple Metal WebGL2 via WebGPURenderer"
+          ],
+          "refusedRuntimeTuples": [
+            {
+              "backend": "webgpu",
+              "admitted": false,
+              "gpu": {
+                "api": "WebGPU",
+                "vendor": "google",
+                "architecture": "swiftshader",
+                "device": "",
+                "description": ""
+              },
+              "error": "Error: Ellipse scene frame: unqualified HalfFloat decoder: NaN/sign/encoding words differ from the closed model",
+              "witness": {
+                "index": 0,
+                "rawHalf": 31745,
+                "expectedDecodedF32": 2143289344,
+                "actualDecodedF32": 2139103232
+              },
+              "numericalCases": 0
+            },
+            {
+              "backend": "webgl2",
+              "admitted": false,
+              "gpu": {
+                "api": "WebGL2",
+                "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+              },
+              "error": "Error: Ellipse scene frame: unqualified HalfFloat decoder: NaN/sign/encoding words differ from the closed model",
+              "witness": {
+                "index": 0,
+                "rawHalf": 31745,
+                "expectedDecodedF32": 2143289344,
+                "actualDecodedF32": 2139103232
+              },
+              "numericalCases": 0
+            }
+          ],
+          "displayAudit": {
+            "model": "cpu-reciprocal-f32-identity-ocio-audit-v1",
+            "wordDifferences": 11838,
+            "maxUlps": 8388608,
+            "maxUnclampedAbsoluteError": 7.450580596923828e-09,
+            "maxClampedAbsoluteError": 7.450580596923828e-09,
+            "projectionLimit": 3e-05,
+            "alphaWordDifferences": 0,
+            "zeroWordDifferences": 10530,
+            "nonfiniteClassDifferences": 0,
+            "bitExactDisplayClaim": false,
+            "zeroBitExactClaim": false
+          },
+          "displayCountScope": "Word-difference counts include six repeated display audits per source frame; maximum ULP is large for finite minimum-normal-to-zero underflow, while maximum absolute error remains7.450580596923828e-9. These are display audit observations, not compositor errors.",
+          "coverageScope": "Separately qualified Blender5.3.0 build02f0899d78e3 macOS arm64 CPU current-frame exception: one direct current Scene/ViewLayer RenderLayers Image or Alpha, one static binary Add Ellipse Mask0/Value1, and one terminal modern RGBA/MIX, either operand side. Background is an unlinked raw positive-zero/positive-normal F32 RGBA literal\u22641. Actual renderer-owned HalfFloat RGBA/MSAA0 physical-texel frame requires a lifecycle-bound decoder calibration; unknown decoders refuse before installation. One frame sampler plus one varying row plus at most6 display lookups, total8; no registered pre-HDR/post-LDR effects. Exact linear words are qualified on observed Metal WebGPU/WebGL2; both SwiftShader APIs named-refuse the NaN decoder model and receive zero credit for this exception. Raw display is separately audited under the existing clamp01 3e-5 projection contract with exact alpha/nonfinite classes; no bit-exact/zero-bit display claim, global display promotion, native GPU compositor, whole-scene PBR equivalence or demo acceptance.",
+          "costScope": {
+            "decoder": "Once per actual renderer/device/context/allocation epoch; no per-frame readback; temporary resources disposed before install; warm certificate reuse",
+            "nominalTransientBytes": 4194304,
+            "qualifiedRunObservedCalibrationMilliseconds": {
+              "MetalWebGPU": 7,
+              "MetalWebGL2": 16.399999976158142
+            },
+            "timingLimits": "Observed after an independent scene baseline with driver shader caches warm; not rendering/export latency or general cold-start guarantee.",
+            "rowTextureBytes": 65536,
+            "samplers": "frame1 + varyingrow1 + display\u22646; closed source shape and zero extra registered effects"
+          },
+          "closedReader": {
+            "runtimeFingerprint": "2e72581650184e9702bb19f1fbe96157c25157bc39e8d76db366bae0df083c5d",
+            "verifierSha256": "4bdf584479b6536e16b350db13fab2553a26a556800b2fe616bc0648cb41b584"
+          }
+        }
+      },
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "FLOAT/VECTOR/RGBA, uniform/nonuniform factors and all 19 RGB blend modes with native factor/result clamping and color alpha behavior. ROTATION explicitly refuses pending verified quaternion transport. Separately qualified Blender5.3.0 build02f0899d78e3 macOS arm64 CPU current-frame exception: one direct current Scene/ViewLayer RenderLayers Image or Alpha, one static binary Add Ellipse Mask0/Value1, and one terminal modern RGBA/MIX, either operand side. Background is an unlinked raw positive-zero/positive-normal F32 RGBA literal\u22641. Actual renderer-owned HalfFloat RGBA/MSAA0 physical-texel frame requires a lifecycle-bound decoder calibration; unknown decoders refuse before installation. One frame sampler plus one varying row plus at most6 display lookups, total8; no registered pre-HDR/post-LDR effects. Exact linear words are qualified on observed Metal WebGPU/WebGL2; both SwiftShader APIs named-refuse the NaN decoder model and receive zero credit for this exception. Raw display is separately audited under the existing clamp01 3e-5 projection contract with exact alpha/nonfinite classes; no bit-exact/zero-bit display claim, global display promotion, native GPU compositor, whole-scene PBR equivalence or demo acceptance."
+        }
       }
     },
     "compositor:CompositorNodeAlphaOver": {
@@ -13683,6 +13801,30 @@
         },
         {
           "path": "experiments/compositor-ellipse-mask/evidence.json"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_ellipse_scene_mix.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorEllipseSceneMix.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorSceneFrame.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_ellipse_scene_mix_check.py"
+        },
+        {
+          "path": "experiments/compositor-ellipse-scene-mix/README.md"
+        },
+        {
+          "path": "experiments/compositor-ellipse-scene-mix/evidence.json"
+        },
+        {
+          "path": "experiments/compositor-ellipse-scene-mix/verify-admission.mjs"
+        },
+        {
+          "path": "experiments/compositor-ellipse-scene-mix/raw-display-sources.json"
         }
       ],
       "verification": {
@@ -13742,12 +13884,100 @@
           "finalProofSha256": "3beada59f6fe59a770a23128c0019c11c70b5083174f97cab9affded5a2e1659",
           "evidence": "experiments/compositor-ellipse-mask/evidence.json",
           "limits": "Fresh post-budget-fix root union proof closes this CPU Ellipse slice only. Other entries retain their own captured snapshots; no all-ports freshness claim."
+        },
+        "sceneFrameComposition": {
+          "status": "QUALIFIED_EXACT_LINEAR_ELLIPSE_SCENE_MIX",
+          "evidence": "experiments/compositor-ellipse-scene-mix/evidence.json",
+          "nativeVersion": "5.3.0",
+          "nativeBuild": "02f0899d78e3",
+          "nativeHost": "darwin-arm64",
+          "nativeEvaluator": "CPU compositor; actual same-Three-frame native Image oracles, not Three PBR versus Cycles",
+          "savedFinalScenes": 8,
+          "capturedNativeImageOracles": 64,
+          "actualNativeRenders": 192,
+          "creditedBrowserCases": 32,
+          "preDisplayWords": 37440,
+          "installedFinalLinearWords": 224640,
+          "exactLinearWordDifferences": 0,
+          "lifecycleCycles": 96,
+          "uniqueActualPythonPrefixes": 10,
+          "admittedRuntimeTuples": [
+            "observed Apple Metal WebGPU",
+            "observed Apple Metal WebGL2 via WebGPURenderer"
+          ],
+          "refusedRuntimeTuples": [
+            {
+              "backend": "webgpu",
+              "admitted": false,
+              "gpu": {
+                "api": "WebGPU",
+                "vendor": "google",
+                "architecture": "swiftshader",
+                "device": "",
+                "description": ""
+              },
+              "error": "Error: Ellipse scene frame: unqualified HalfFloat decoder: NaN/sign/encoding words differ from the closed model",
+              "witness": {
+                "index": 0,
+                "rawHalf": 31745,
+                "expectedDecodedF32": 2143289344,
+                "actualDecodedF32": 2139103232
+              },
+              "numericalCases": 0
+            },
+            {
+              "backend": "webgl2",
+              "admitted": false,
+              "gpu": {
+                "api": "WebGL2",
+                "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+              },
+              "error": "Error: Ellipse scene frame: unqualified HalfFloat decoder: NaN/sign/encoding words differ from the closed model",
+              "witness": {
+                "index": 0,
+                "rawHalf": 31745,
+                "expectedDecodedF32": 2143289344,
+                "actualDecodedF32": 2139103232
+              },
+              "numericalCases": 0
+            }
+          ],
+          "displayAudit": {
+            "model": "cpu-reciprocal-f32-identity-ocio-audit-v1",
+            "wordDifferences": 11838,
+            "maxUlps": 8388608,
+            "maxUnclampedAbsoluteError": 7.450580596923828e-09,
+            "maxClampedAbsoluteError": 7.450580596923828e-09,
+            "projectionLimit": 3e-05,
+            "alphaWordDifferences": 0,
+            "zeroWordDifferences": 10530,
+            "nonfiniteClassDifferences": 0,
+            "bitExactDisplayClaim": false,
+            "zeroBitExactClaim": false
+          },
+          "displayCountScope": "Word-difference counts include six repeated display audits per source frame; maximum ULP is large for finite minimum-normal-to-zero underflow, while maximum absolute error remains7.450580596923828e-9. These are display audit observations, not compositor errors.",
+          "coverageScope": "Separately qualified Blender5.3.0 build02f0899d78e3 macOS arm64 CPU current-frame exception: one direct current Scene/ViewLayer RenderLayers Image or Alpha, one static binary Add Ellipse Mask0/Value1, and one terminal modern RGBA/MIX, either operand side. Background is an unlinked raw positive-zero/positive-normal F32 RGBA literal\u22641. Actual renderer-owned HalfFloat RGBA/MSAA0 physical-texel frame requires a lifecycle-bound decoder calibration; unknown decoders refuse before installation. One frame sampler plus one varying row plus at most6 display lookups, total8; no registered pre-HDR/post-LDR effects. Exact linear words are qualified on observed Metal WebGPU/WebGL2; both SwiftShader APIs named-refuse the NaN decoder model and receive zero credit for this exception. Raw display is separately audited under the existing clamp01 3e-5 projection contract with exact alpha/nonfinite classes; no bit-exact/zero-bit display claim, global display promotion, native GPU compositor, whole-scene PBR equivalence or demo acceptance.",
+          "costScope": {
+            "decoder": "Once per actual renderer/device/context/allocation epoch; no per-frame readback; temporary resources disposed before install; warm certificate reuse",
+            "nominalTransientBytes": 4194304,
+            "qualifiedRunObservedCalibrationMilliseconds": {
+              "MetalWebGPU": 7,
+              "MetalWebGL2": 16.399999976158142
+            },
+            "timingLimits": "Observed after an independent scene baseline with driver shader caches warm; not rendering/export latency or general cold-start guarantee.",
+            "rowTextureBytes": 65536,
+            "samplers": "frame1 + varyingrow1 + display\u22646; closed source shape and zero extra registered effects"
+          },
+          "closedReader": {
+            "runtimeFingerprint": "2e72581650184e9702bb19f1fbe96157c25157bc39e8d76db366bae0df083c5d",
+            "verifierSha256": "4bdf584479b6536e16b350db13fab2553a26a556800b2fe616bc0648cb41b584"
+          }
         }
       },
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor only. Static unlinked literal Position[-2,2], Size[0,2], Mask/Value[0,1], each component zero or abs>=2^-16, with raw Rotation positive zero. All four Operation values Add/Subtract/Multiply/Not; raw native vector/scalar storage checks refuse negative zero, subnormals, nonfinite/out-of-bound values, links, animation and rotation. Zero-offset square-pixel full-frame context, physical extents2..8192. Native ordered Float32 division/subtraction/aspect/radius/products/sum/sqrt classify monotone integer row intervals in O(width+height log width) only on valid extent changes. Shader integer lookup/comparison selects precomputed branch values; no floating boundary, epsilon, quantization or full CPU pixel image. One fixed256x32 RG32I64KiB table per varying mask; at most one varying table per graph. Zero Size shares scalar Mask and remains single-valued for all operations; equal-valued nonzero masks remain fields, with no table allocation. Closed texture-free pointwise compositor kinds only: Render Layers/Image, curves/ramps and spatial/domain consumers remain excluded. Combined row plus display Lut1D/Lut3D budget8; additional post-LDR registrations refuse pending sampler accounting. Actual first-draw/resize/DPR, invalid-resize recovery, table identity/version/data, optimized constant guards and Final disposal are checked. All RGBA Float32 words, including scalar-to-RGBA alpha1 and strict edges, require exact equality. Reference is native CPU compositor with Cycles CPU carrier, not EEVEE shader/material or native GPU evaluation. Actual WebGPU/WebGL2 via WebGPURenderer measured on Apple Metal and SwiftShader. Legacy WebGLRenderer, other versions/builds/hosts, field/animated/rotated masks, arbitrary scene compositing and whole-scene appearance remain unqualified.",
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor only. Static unlinked literal Position[-2,2], Size[0,2], Mask/Value[0,1], each component zero or abs>=2^-16, with raw Rotation positive zero. All four Operation values Add/Subtract/Multiply/Not; raw native vector/scalar storage checks refuse negative zero, subnormals, nonfinite/out-of-bound values, links, animation and rotation. Zero-offset square-pixel full-frame context, physical extents2..8192. Native ordered Float32 division/subtraction/aspect/radius/products/sum/sqrt classify monotone integer row intervals in O(width+height log width) only on valid extent changes. Shader integer lookup/comparison selects precomputed branch values; no floating boundary, epsilon, quantization or full CPU pixel image. One fixed256x32 RG32I64KiB table per varying mask; at most one varying table per graph. Zero Size shares scalar Mask and remains single-valued for all operations; equal-valued nonzero masks remain fields, with no table allocation. Closed texture-free pointwise compositor kinds only: Render Layers/Image, curves/ramps and spatial/domain consumers remain excluded. Combined row plus display Lut1D/Lut3D budget8; additional post-LDR registrations refuse pending sampler accounting. Actual first-draw/resize/DPR, invalid-resize recovery, table identity/version/data, optimized constant guards and Final disposal are checked. All RGBA Float32 words, including scalar-to-RGBA alpha1 and strict edges, require exact equality. Reference is native CPU compositor with Cycles CPU carrier, not EEVEE shader/material or native GPU evaluation. Actual WebGPU/WebGL2 via WebGPURenderer measured on Apple Metal and SwiftShader. Legacy WebGLRenderer, other versions/builds/hosts, field/animated/rotated masks, arbitrary scene compositing and whole-scene appearance remain unqualified. Separately qualified Blender5.3.0 build02f0899d78e3 macOS arm64 CPU current-frame exception: one direct current Scene/ViewLayer RenderLayers Image or Alpha, one static binary Add Ellipse Mask0/Value1, and one terminal modern RGBA/MIX, either operand side. Background is an unlinked raw positive-zero/positive-normal F32 RGBA literal\u22641. Actual renderer-owned HalfFloat RGBA/MSAA0 physical-texel frame requires a lifecycle-bound decoder calibration; unknown decoders refuse before installation. One frame sampler plus one varying row plus at most6 display lookups, total8; no registered pre-HDR/post-LDR effects. Exact linear words are qualified on observed Metal WebGPU/WebGL2; both SwiftShader APIs named-refuse the NaN decoder model and receive zero credit for this exception. Raw display is separately audited under the existing clamp01 3e-5 projection contract with exact alpha/nonfinite classes; no bit-exact/zero-bit display claim, global display promotion, native GPU compositor, whole-scene PBR equivalence or demo acceptance.",
           "modes": {
             "inputs:Operation": {
               "supported": [
@@ -14436,7 +14666,7 @@
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor only. Explicit linked Quaternion to Rotation -> Rotation to Quaternion static islands. Each original W/X/Y/Z Float32 word must be raw positive zero or 2^-16<=abs(value)<=4; public native from_socket copies and homogeneous foreach_get read storage before scalar promotion. Native normalization does not canonicalize quaternion sign: all-zero gives identity(1,+0,+0,+0), signed basis controls preserve sign. Literal Float socket defaults/Value, explicit instance-bound Float/opaque Rotation groups, reroutes, actual same-type native mute bypass and already-qualified static Float selectors only; reachable endpoints must terminate in reviewed Rotation to Quaternion Float outputs. Unlinked Euler-backed ROTATION defaults, implicit casts, computed/recombined components, Rotation selectors, arbitrary arithmetic/context/field producers and source animation/drivers/NLA refuse. ROTATION remains opaque inside Python. A separate extraction-owned flat-ID recipe/source cache uses fixed four-child quaternion keys, source node instances64, source/recipe depth16, source visits2048, recipe records2048 and evaluated islands16; cached source height includes all group/reroute/selector hops. Actual source storage, topology, group ancestry/bindings, selected branch and source scene/frame/CPU context are rechecked. One owned one-point Geometry Nodes CPU-MF graph (fixed8 nodes) evaluates all4 components once per unique quaternion island. Raw output words must be normal Float32 or positive zero before decoding; unexpected -0/subnormal/nonfinite words refuse without repair. Owned Scene/Object/Mesh/NodeTree are removed in finally, preserving source users/active-selection/frame. Existing VALUE operations transport exact components; no new Rotation runtime opcode/kernel/pass/texture/readback or per-frame native work. Exact native CPU compositor FULL EXR32 vs private Geometry MF plus actual WebGPU/WebGL2 via WebGPURenderer on measured Apple Metal and SwiftShader. No shader-tree/EEVEE, GPU-authored compositor, generic MF, Matrix/Quaternion arithmetic chains, dynamic fields, other builds/hosts/versions, legacy WebGLRenderer or whole-scene appearance credit."
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor only. Explicit linked Quaternion to Rotation -> Rotation to Quaternion static islands. Each original W/X/Y/Z Float32 word must be raw positive zero or 2^-16<=abs(value)<=4; public native from_socket copies and homogeneous foreach_get read storage before scalar promotion. Native normalization does not canonicalize quaternion sign: all-zero gives identity(1,+0,+0,+0), signed basis controls preserve sign. Literal Float socket defaults/Value, explicit instance-bound Float/opaque Rotation groups, reroutes, actual same-type native mute bypass and already-qualified static Float selectors only; reachable endpoints must terminate in reviewed Rotation to Quaternion Float outputs. Unlinked Euler-backed ROTATION defaults, implicit casts, computed/recombined components, Rotation selectors, arbitrary arithmetic/context/field producers and source animation/drivers/NLA refuse. ROTATION remains opaque inside Python. A separate extraction-owned flat-ID recipe/source cache uses fixed four-child quaternion keys, source node instances64, source/recipe depth16, source visits2048, recipe records2048 and evaluated islands16; cached source height includes all group/reroute/selector hops. Actual source storage, topology, group ancestry/bindings, selected branch and source scene/frame/CPU context are rechecked. One owned one-point Geometry Nodes CPU-MF graph (fixed8 nodes) evaluates all4 components once per unique quaternion island. Raw output words must be normal Float32 or positive zero before decoding; unexpected -0/subnormal/nonfinite words refuse without repair. Owned Scene/Object/Mesh/NodeTree are removed in finally, preserving source users/active-selection/frame. Existing VALUE operations transport exact components; no new Rotation runtime opcode/kernel/pass/texture/readback or per-frame native work. Exact native CPU compositor FULL EXR32 vs private Geometry MF plus actual WebGPU/WebGL2 via WebGPURenderer on measured Apple Metal and SwiftShader. No shader-tree/EEVEE, GPU-authored compositor, generic MF, Matrix/Quaternion arithmetic chains, dynamic fields, other builds/hosts/versions, legacy WebGLRenderer or whole-scene appearance credit. Additional independently qualified Euler construction route: Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor static EulerToRotation -> RotationToQuaternion Float endpoints only. Euler3 input must be unlinked literal; each original raw Float32 component is positive zero or positive [2^-16,1] radians. Native homogeneous one-input socket collection foreach_get reads the mathutils.Euler storage before scalar promotion; there is no authored NodeTree copy. The unchanged native EulerXYZ half-angle trig polynomial does not normalize(), canonicalize() or wrap. W is strictly positive; X/Z may be negative or cancel. Literal producer groups, opaque Rotation groups, Float endpoint groups and reroutes only. InputRotation remains unsupported because its raw property-copy container is not safely bounded. Linked/computed vectors, negative/wide angles, -0/subnormal/nonfinite sources, unlinked Euler-backed ROTATION defaults, implicit casts, fields, animation/drivers/NLA, generic Rotation/Quaternion arithmetic, shader-tree/EEVEE and GPU-authored compositor refuse. ROTATION remains opaque in Python and terminal components use existing VALUE constants. Separate Euler model/cache with shared fixed flat-ID traversal, actual ancestry/bindings, topology, source node instances64, source/recipe depth16, visits/records2048 and evaluated islands16. All active Matrix/Quaternion/Euler snapshots are jointly rechecked before whole-graph acceptance; only a typed unsupported Euler producer before native evaluation may switch from the Quaternion resolver. Old-route source/ownership/budget/native errors never fall through. One fixed16-node private one-point Geometry CPU-MF graph yields all4 Float words and4 pre-Float-store native HashValue INT witnesses once per unique island. Normal/+0 word classification and all4 pinned hash checks finish before tuple/cache commit; no zero-sign repair. Shared normality argument is bounded to positive half-angle Float32 XYZ arithmetic under pinned libm/compiler/RNE assumptions, supported by independent pre-store witnesses and actual CPU compositor FULL EXR32. Owned Scene/Object/Mesh/NodeTree restore users/frame/selection and are removed in finally. No new browser Rotation/Hash opcode, pass, texture, readback or per-frame native evaluation. Actual WebGPU/WebGL2 via WebGPURenderer measured on Apple Metal and SwiftShader. No other build/platform/version, legacy WebGLRenderer, arbitrary scene composition or whole-scene appearance credit."
         }
       },
       "provenanceRoute": {
@@ -14501,6 +14731,60 @@
         },
         {
           "path": "experiments/compositor-static-rotation/evidence.json"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_static_euler.py",
+          "anchor": "def evaluate_output("
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_static_rotation.py",
+          "anchor": "class EulerProducer("
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "record=static_euler.evaluate_output(socket,scene,static_euler_cache,tuple(reversed(frames)),static_selection.static_selection)"
+        },
+        {
+          "path": "experiments/compositor-static-euler/policy.py"
+        },
+        {
+          "path": "experiments/compositor-static-euler/reference.py"
+        },
+        {
+          "path": "experiments/compositor-static-euler/cases.json"
+        },
+        {
+          "path": "experiments/compositor-static-euler/protocol.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-euler/export.test.ts"
+        },
+        {
+          "path": "experiments/compositor-static-euler/browser.js"
+        },
+        {
+          "path": "experiments/compositor-static-euler/run.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-euler/verify.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-euler/matrix.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-euler/numeric-contract.json"
+        },
+        {
+          "path": "experiments/compositor-static-euler/sources.json"
+        },
+        {
+          "path": "experiments/compositor-static-euler/README.md"
+        },
+        {
+          "path": "experiments/compositor-static-euler/evidence.json"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_static_euler_check.py"
         }
       ],
       "verification": {
@@ -14562,6 +14846,246 @@
           "evidence": "experiments/compositor-static-rotation/evidence.json",
           "limits": "Fresh post-stable-ID transaction closes only this two-class static quaternion family. Earlier native-only pilot and failed scientific-notation policy-ID transaction remain historical zero Final/browser qualification records. Matrix/Box/Ellipse and all other ports retain their own explicit captured source snapshots; shared runtime fingerprint does not refresh other numerical ports."
         }
+      },
+      "eulerCompileTime": {
+        "path": "packages/blendlink/blender/compositor_static_euler.py",
+        "function": "evaluate_output",
+        "nodeSet": "NODES",
+        "callers": [
+          {
+            "path": "packages/blendlink/blender/compositor_graph.py",
+            "anchor": "record=static_euler.evaluate_output(socket,scene,static_euler_cache,tuple(reversed(frames)),static_selection.static_selection)"
+          }
+        ]
+      },
+      "eulerVerification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeCompositorDevices": [
+          "CPU"
+        ],
+        "nativeNodeEvaluator": "Unchanged EulerXYZ construction and RotationToQuaternion component-copy CPU callbacks only; no normalization/canonicalization. Private Geometry MF Float+pre-store Hash INT results independently checked against actual CPU compositor FULL EXR32 image and exact high16/low16 hash carriers. Cycles CPU scene carrier; no shader/EEVEE/native GPU credit.",
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "familyNativeGraphs": 62,
+        "nativeCPURenders": 194,
+        "familyEndpointComparisons": 124,
+        "preFloatStoreHashComparisons": 124,
+        "hashCalibrationControls": 8,
+        "familySavedFinalScenes": 12,
+        "familyBrowserCaseRuns": 296,
+        "familyComparedFloat32Words": 18944,
+        "wordMismatches": 0,
+        "contractViolations": 0,
+        "resizeFrames": 48,
+        "lifecycleCycles": 144,
+        "uniqueActualPythonPrefixes": 14,
+        "sourcePolicy": {
+          "positiveInvariants": 11,
+          "refusalCategories": 24,
+          "hardErrorsCannotSwitchProducerDomain": true,
+          "hashFailureBeforeCacheCommit": true,
+          "crossFamilyFinalSourceSnapshots": true
+        },
+        "numericContract": {
+          "schemaVersion": 1,
+          "model": "native-static-euler-xyz-cpu-53-v1",
+          "source": "Pinned Blender5.3 build02f0899d78e3 macOS arm64 CPU compositor unlinked literal EulerToRotation\u2192RotationToQuaternion. No InputRotation or shader context.",
+          "inputs": "Each original raw Euler3 component is +0 or positive [2^-16,1] radians. No linked/computed vectors, negative/wide angles, animation, implicit casts or unlinked ROTATION defaults.",
+          "operation": "Unchanged native EulerXYZ half-angle trig polynomial; no normalize(), canonicalize(), wrapping or JS arithmetic emulation. X/Z can be negative or cancel despite positive angles; W stays positive.",
+          "wordContract": "Every component word, emitted VALUE and actual browser RGBA channel must be exact uint32 equality. Alpha1 and identity positive zeros exact. No tolerance/output repair/input quantization.",
+          "preStoreGuard": "Fixed16-node private Geometry MF graph returns4 Float attributes plus4 pre-Float-store native HashValue INT witnesses. All4 normal/+0 words and manual pinned hash comparisons must pass before native tuple/cache commit. Independent actual CPU compositor hash high16/low16 channels preserve every32 bits and calibrate +0/-0/subnormal source words.",
+          "normalityAssumptions": "For +0 or [2^-16,1], half angles positive [2^-17,.5]; coarse native sine>2^-18/cosine>.5 bounds and XYZ Float32 lattice give nonzero X/Z cancellation \u22652^-106, above minnormal2^-126. Requires pinned compiler/libm and round-to-nearest operation structure, supported by pre-store signed-zero witnesses; no universal libm or unbounded-angle claim.",
+          "runtime": "Existing VALUE constants only; no runtime ROTATION, Hash, texture/pass/readback or per-frame native work.",
+          "snapshot": "All active Matrix/Q/Euler evaluator raw/topology/context snapshots rechecked together before whole extraction accepts."
+        },
+        "numericContractSha256": "aaf4ad7fb443439ff22b5d6d55eea06d60b93db0ff1d1f6d59612958ca42d25a",
+        "coverageScope": "Shared EulerToRotation/RotationToQuaternion family totals, not additive per-node counts or a refresh of earlier Quaternion normalization. All4 endpoints and independent pre-store hashes; positive axis, non-half/asymmetric, min/max, zero-axis and cancellation-neighbor triples; literal/opaque/endpoint groups and reroutes. Terminal existing VALUE transport only.",
+        "closedReader": {
+          "runtimeFingerprint": "2b416afc8b42ff311cbc73107f21f76ddf04e34ac1e77847bae113e48895b8c1",
+          "verifierSha256": "468a1f65ab9c3c3929acf17462a7f316111751e6974c42d006b1436c6d804f24",
+          "runtimeArchiveHelperSha256": "431b8a4e92a194d63a8db512aa84f3076c9951e083b873885d8115e0caf509ed",
+          "nativeArchiveHelperSha256": "3a2310c94ed3109230d3fa89dc1ac6ea5bed447155e98144a68d52dac568a3da"
+        },
+        "sourceSnapshot": {
+          "sourceInputs": 133,
+          "nativeQualificationSha256": "668c9ecd8720514a6b7329ca2200589dff75b330c2d2c65c71c6d3fe0851e625",
+          "finalProofSha256": "90ad07abed41922517fc3e2762a75d60e7f7f9d8dd40c53c1b88b2415a72d9ed",
+          "evidence": "experiments/compositor-static-euler/evidence.json",
+          "limits": "Fresh Euler family transaction only. Quaternion normalization retains its prior verification receipt/model/source snapshot; Matrix/Box/Ellipse/other ports retain their own captured lineages. Earlier source/API/witness/native-only pilots remain research and are not promoted to saved Final/browser support."
+        }
+      },
+      "eulerProvenanceRoute": {
+        "nativeClass": "FunctionNodeRotationToQuaternion",
+        "model": "native-static-euler-xyz-cpu-53-v1",
+        "serialized": "compileTimeRotations retains original EulerToRotation and RotationToQuaternion class/instance members, exact Euler3 input words, native build/model, terminal Float word and preFloatStoreHashGuard flag. Existing value operations retain native RotationToQuaternion W/X/Y/Z endpoint identity. Opaque ROTATION never enters runtime.",
+        "numericalCredit": "Bounded positive literal CPU EulerXYZ construction only; independent pre-Float-store witnesses plus actual CPU compositor comparison. Shared two-class endpoint totals. Distinct from the earlier Quaternion normalization family."
+      }
+    },
+    "compositor:FunctionNodeEulerToRotation": {
+      "category": "unsupported",
+      "limits": "No live route outside the explicitly qualified Blender5.3 CPU positive literal EulerXYZ construction slice. Native MF registration alone is not numerical support.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [],
+      "modes": {},
+      "compileTime": {
+        "path": "packages/blendlink/blender/compositor_static_euler.py",
+        "function": "evaluate_output",
+        "nodeSet": "NODES",
+        "callers": [
+          {
+            "path": "packages/blendlink/blender/compositor_graph.py",
+            "anchor": "record=static_euler.evaluate_output(socket,scene,static_euler_cache,tuple(reversed(frames)),static_selection.static_selection)"
+          }
+        ]
+      },
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor static EulerToRotation -> RotationToQuaternion Float endpoints only. Euler3 input must be unlinked literal; each original raw Float32 component is positive zero or positive [2^-16,1] radians. Native homogeneous one-input socket collection foreach_get reads the mathutils.Euler storage before scalar promotion; there is no authored NodeTree copy. The unchanged native EulerXYZ half-angle trig polynomial does not normalize(), canonicalize() or wrap. W is strictly positive; X/Z may be negative or cancel. Literal producer groups, opaque Rotation groups, Float endpoint groups and reroutes only. InputRotation remains unsupported because its raw property-copy container is not safely bounded. Linked/computed vectors, negative/wide angles, -0/subnormal/nonfinite sources, unlinked Euler-backed ROTATION defaults, implicit casts, fields, animation/drivers/NLA, generic Rotation/Quaternion arithmetic, shader-tree/EEVEE and GPU-authored compositor refuse. ROTATION remains opaque in Python and terminal components use existing VALUE constants. Separate Euler model/cache with shared fixed flat-ID traversal, actual ancestry/bindings, topology, source node instances64, source/recipe depth16, visits/records2048 and evaluated islands16. All active Matrix/Quaternion/Euler snapshots are jointly rechecked before whole-graph acceptance; only a typed unsupported Euler producer before native evaluation may switch from the Quaternion resolver. Old-route source/ownership/budget/native errors never fall through. One fixed16-node private one-point Geometry CPU-MF graph yields all4 Float words and4 pre-Float-store native HashValue INT witnesses once per unique island. Normal/+0 word classification and all4 pinned hash checks finish before tuple/cache commit; no zero-sign repair. Shared normality argument is bounded to positive half-angle Float32 XYZ arithmetic under pinned libm/compiler/RNE assumptions, supported by independent pre-store witnesses and actual CPU compositor FULL EXR32. Owned Scene/Object/Mesh/NodeTree restore users/frame/selection and are removed in finally. No new browser Rotation/Hash opcode, pass, texture, readback or per-frame native evaluation. Actual WebGPU/WebGL2 via WebGPURenderer measured on Apple Metal and SwiftShader. No other build/platform/version, legacy WebGLRenderer, arbitrary scene composition or whole-scene appearance credit."
+        }
+      },
+      "provenanceRoute": {
+        "nativeClass": "FunctionNodeEulerToRotation",
+        "model": "native-static-euler-xyz-cpu-53-v1",
+        "serialized": "compileTimeRotations retains original EulerToRotation and RotationToQuaternion class/instance members, exact Euler3 input words, native build/model, terminal Float word and preFloatStoreHashGuard flag. Existing value operations retain native RotationToQuaternion W/X/Y/Z endpoint identity. Opaque ROTATION never enters runtime.",
+        "numericalCredit": "Bounded positive literal CPU EulerXYZ construction only; independent pre-Float-store witnesses plus actual CPU compositor comparison. Shared two-class endpoint totals. Distinct from the earlier Quaternion normalization family."
+      },
+      "renderer": "Existing VALUE/color operations in WebGPURenderer actual WebGPU/WebGL2; measured Apple Metal/SwiftShader. No new Rotation or Hash runtime installer.",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_static_euler.py",
+          "anchor": "def evaluate_output("
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_static_rotation.py",
+          "anchor": "class EulerProducer("
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "record=static_euler.evaluate_output(socket,scene,static_euler_cache,tuple(reversed(frames)),static_selection.static_selection)"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'value':"
+        },
+        {
+          "path": "experiments/compositor-static-euler/policy.py"
+        },
+        {
+          "path": "experiments/compositor-static-euler/reference.py"
+        },
+        {
+          "path": "experiments/compositor-static-euler/cases.json"
+        },
+        {
+          "path": "experiments/compositor-static-euler/protocol.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-euler/export.test.ts"
+        },
+        {
+          "path": "experiments/compositor-static-euler/browser.js"
+        },
+        {
+          "path": "experiments/compositor-static-euler/run.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-euler/verify.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-euler/matrix.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-euler/numeric-contract.json"
+        },
+        {
+          "path": "experiments/compositor-static-euler/sources.json"
+        },
+        {
+          "path": "experiments/compositor-static-euler/README.md"
+        },
+        {
+          "path": "experiments/compositor-static-euler/evidence.json"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_static_euler_check.py"
+        }
+      ],
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeCompositorDevices": [
+          "CPU"
+        ],
+        "nativeNodeEvaluator": "Unchanged EulerXYZ construction and RotationToQuaternion component-copy CPU callbacks only; no normalization/canonicalization. Private Geometry MF Float+pre-store Hash INT results independently checked against actual CPU compositor FULL EXR32 image and exact high16/low16 hash carriers. Cycles CPU scene carrier; no shader/EEVEE/native GPU credit.",
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "familyNativeGraphs": 62,
+        "nativeCPURenders": 194,
+        "familyEndpointComparisons": 124,
+        "preFloatStoreHashComparisons": 124,
+        "hashCalibrationControls": 8,
+        "familySavedFinalScenes": 12,
+        "familyBrowserCaseRuns": 296,
+        "familyComparedFloat32Words": 18944,
+        "wordMismatches": 0,
+        "contractViolations": 0,
+        "resizeFrames": 48,
+        "lifecycleCycles": 144,
+        "uniqueActualPythonPrefixes": 14,
+        "sourcePolicy": {
+          "positiveInvariants": 11,
+          "refusalCategories": 24,
+          "hardErrorsCannotSwitchProducerDomain": true,
+          "hashFailureBeforeCacheCommit": true,
+          "crossFamilyFinalSourceSnapshots": true
+        },
+        "numericContract": {
+          "schemaVersion": 1,
+          "model": "native-static-euler-xyz-cpu-53-v1",
+          "source": "Pinned Blender5.3 build02f0899d78e3 macOS arm64 CPU compositor unlinked literal EulerToRotation\u2192RotationToQuaternion. No InputRotation or shader context.",
+          "inputs": "Each original raw Euler3 component is +0 or positive [2^-16,1] radians. No linked/computed vectors, negative/wide angles, animation, implicit casts or unlinked ROTATION defaults.",
+          "operation": "Unchanged native EulerXYZ half-angle trig polynomial; no normalize(), canonicalize(), wrapping or JS arithmetic emulation. X/Z can be negative or cancel despite positive angles; W stays positive.",
+          "wordContract": "Every component word, emitted VALUE and actual browser RGBA channel must be exact uint32 equality. Alpha1 and identity positive zeros exact. No tolerance/output repair/input quantization.",
+          "preStoreGuard": "Fixed16-node private Geometry MF graph returns4 Float attributes plus4 pre-Float-store native HashValue INT witnesses. All4 normal/+0 words and manual pinned hash comparisons must pass before native tuple/cache commit. Independent actual CPU compositor hash high16/low16 channels preserve every32 bits and calibrate +0/-0/subnormal source words.",
+          "normalityAssumptions": "For +0 or [2^-16,1], half angles positive [2^-17,.5]; coarse native sine>2^-18/cosine>.5 bounds and XYZ Float32 lattice give nonzero X/Z cancellation \u22652^-106, above minnormal2^-126. Requires pinned compiler/libm and round-to-nearest operation structure, supported by pre-store signed-zero witnesses; no universal libm or unbounded-angle claim.",
+          "runtime": "Existing VALUE constants only; no runtime ROTATION, Hash, texture/pass/readback or per-frame native work.",
+          "snapshot": "All active Matrix/Q/Euler evaluator raw/topology/context snapshots rechecked together before whole extraction accepts."
+        },
+        "numericContractSha256": "aaf4ad7fb443439ff22b5d6d55eea06d60b93db0ff1d1f6d59612958ca42d25a",
+        "coverageScope": "Shared EulerToRotation/RotationToQuaternion family totals, not additive per-node counts or a refresh of earlier Quaternion normalization. All4 endpoints and independent pre-store hashes; positive axis, non-half/asymmetric, min/max, zero-axis and cancellation-neighbor triples; literal/opaque/endpoint groups and reroutes. Terminal existing VALUE transport only.",
+        "closedReader": {
+          "runtimeFingerprint": "2b416afc8b42ff311cbc73107f21f76ddf04e34ac1e77847bae113e48895b8c1",
+          "verifierSha256": "468a1f65ab9c3c3929acf17462a7f316111751e6974c42d006b1436c6d804f24",
+          "runtimeArchiveHelperSha256": "431b8a4e92a194d63a8db512aa84f3076c9951e083b873885d8115e0caf509ed",
+          "nativeArchiveHelperSha256": "3a2310c94ed3109230d3fa89dc1ac6ea5bed447155e98144a68d52dac568a3da"
+        },
+        "sourceSnapshot": {
+          "sourceInputs": 133,
+          "nativeQualificationSha256": "668c9ecd8720514a6b7329ca2200589dff75b330c2d2c65c71c6d3fe0851e625",
+          "finalProofSha256": "90ad07abed41922517fc3e2762a75d60e7f7f9d8dd40c53c1b88b2415a72d9ed",
+          "evidence": "experiments/compositor-static-euler/evidence.json",
+          "limits": "Fresh Euler family transaction only. Quaternion normalization retains its prior verification receipt/model/source snapshot; Matrix/Box/Ellipse/other ports retain their own captured lineages. Earlier source/API/witness/native-only pilots remain research and are not promoted to saved Final/browser support."
+        }
       }
     }
   },
@@ -14622,7 +15146,6 @@
     "compositor:FunctionNodeAxisAngleToRotation",
     "compositor:FunctionNodeBitMath",
     "compositor:FunctionNodeCombineTransform",
-    "compositor:FunctionNodeEulerToRotation",
     "compositor:FunctionNodeFindInString",
     "compositor:FunctionNodeFormatString",
     "compositor:FunctionNodeHashValue",

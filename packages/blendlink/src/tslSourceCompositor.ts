@@ -1,3 +1,5 @@
+import {ellipseSceneMixContract,buildEllipseSceneBinaryMix} from './tslCompositorEllipseSceneMix.js'
+import {assertEllipseSceneFrameBinding,resolveEllipseSceneFrame,type EllipseSceneFrameBinding} from './tslCompositorSceneFrame.js'
 import {buildCompositorEllipseMask,validateEllipseMaskGraph} from './tslCompositorEllipseMask.js'
 import {buildCompositorBoxMask,validateBoxMaskGraph} from './tslCompositorBoxMask.js'
 import {buildCompositorBlackbody} from './tslCompositorBlackbody.js'
@@ -487,7 +489,7 @@ function buildCompositorCurves(op: SourceCompositorOperation,
 export function buildSourceCompositor(
   program: SourceCompositorProgram,
   resolvePass: (pass: NonNullable<SourceCompositorOperation['pass']>) => TslEffectNode | null,
-  options: { preparedImages?: PreparedStaticCompositorImages; resolvePassExtent?: (pass: NonNullable<SourceCompositorOperation['pass']>, renderer: TslEffectNode) => readonly [number, number] } = {},
+  options: { sceneFrame?: EllipseSceneFrameBinding; preparedImages?: PreparedStaticCompositorImages; resolvePassExtent?: (pass: NonNullable<SourceCompositorOperation['pass']>, renderer: TslEffectNode) => readonly [number, number] } = {},
 ): BuiltSourceCompositor {
   // A stale/cancelled preparation is an installation failure, never permission
   // to silently bypass the authored compositor and replace the last good view.
@@ -512,6 +514,8 @@ export function buildSourceCompositor(
     if (program.outputAlpha !== undefined && program.outputAlpha !== 'legacy-composite-opaque-v1')
       throw new SourceCompositorUnsupported('Composite output has an unknown alpha model')
     validateEllipseMaskGraph(program, message => { throw new SourceCompositorUnsupported(message) })
+    const sceneMix=ellipseSceneMixContract(program)
+    if(sceneMix) assertEllipseSceneFrameBinding(options.sceneFrame)
     validateBoxMaskGraph(program, message => { throw new SourceCompositorUnsupported(message) })
     validateTextureFieldGraph(program, message => { throw new SourceCompositorUnsupported(message) })
     validateImageCoordinateGraph(program, message => { throw new SourceCompositorUnsupported(message) })
@@ -660,7 +664,7 @@ export function buildSourceCompositor(
             node = sharedTypedConstant(op.type, op.value)
             break
           case 'ellipse-mask':
-            node = buildCompositorEllipseMask(op,program.ops,resources,domainFail)
+            node = buildCompositorEllipseMask(op,program.ops,resources,domainFail,program)
             break
           case 'box-mask':
             node = buildCompositorBoxMask(op,program.ops,domainFail)
@@ -830,7 +834,7 @@ export function buildSourceCompositor(
           }
           case 'render-pass': {
             if (!op.pass) throw new SourceCompositorUnsupported('Missing render pass identity')
-            node = resolvePass(op.pass)
+            node = sceneMix ? resolveEllipseSceneFrame(options.sceneFrame!,op.pass) : resolvePass(op.pass)
             if (!node)
               throw new SourceCompositorUnsupported(
                 `Render pass ${op.pass.viewLayer} / ${op.pass.name} needs a runtime pass provider`,
@@ -1179,6 +1183,7 @@ export function buildSourceCompositor(
               const single = Object.values(op.inputs).every(input => isSingleValue(input.value))
               const device = compositorEvaluationDevice(op, single)
               const mode = String(op.properties.blend_type)
+              if(sceneMix?.mix.id===op.id){node=buildEllipseSceneBinaryMix(sceneMix.side==='A'?a:b,sceneMix.side==='A'?b:a,factor,sceneMix.side);break}
               const rgb = compositorBlend(mode, device, legacy)(a.rgb, b.rgb, factor)
               const alpha = mode === 'MIX' && (modern || (!legacy && device === 'CPU')) ? mix(a.a, b.a, factor) : a.a
               node = vec4(rgb, alpha)

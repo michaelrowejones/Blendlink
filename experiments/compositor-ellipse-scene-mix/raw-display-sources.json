@@ -1,0 +1,11 @@
+{
+ "revision":"02f0899d78e374b63e7181d9061e1f7ab03419cc",
+ "model":"cpu-reciprocal-f32-identity-ocio-audit-v1",
+ "sources":[
+  {"path":"source/blender/imbuf/opencolorio/intern/libocio/libocio_cpu_processor.cc","url":"https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/imbuf/opencolorio/intern/libocio/libocio_cpu_processor.cc","sha256":"6df9d6997b4ea5a2f5ba63b7990ed308f832337c531fe79baae1f78c297c507c","lines":"33-53 single-pixel; 71-111 packed-image predivide/identity processor/re-premultiply"},
+  {"path":"source/blender/imbuf/opencolorio/shaders/gpu_shader_display_transform_frag.glsl","url":"https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/imbuf/opencolorio/shaders/gpu_shader_display_transform_frag.glsl","sha256":"ae62916d302cbb0900f0d2a1932fa6f4411541fdc7151e0cce2d9f77a17cc32e","lines":"149-160 GPU predivide for 0<alpha<1; 208-217 conditional OUTPUT_PREMULTIPLIED"},
+  {"path":"source/blender/imbuf/intern/colormanagement.cc","url":"https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/imbuf/intern/colormanagement.cc","sha256":"df734890f0456801f9d4cf522fbffc1e7c86ecf194f31297ca62d51b9d8bed50","lines":"4056-4065 pixel wrapper; 4100-4135 packed-image dispatch; 4216-4242 GPU display parameters"}
+ ],
+ "displayProjectionGate":{"existingContract":"experiments/eevee-look-differential/README.md","maxAbsoluteRGBErrorAfterClamp01":0.00003,"unclampedHDR":"audit only; report separately","alpha":"exact raw words","finiteZeroBehavior":"measured audit only; no zero-bit equivalence claim"},
+ "limits":"Source-derived CPU reciprocal wrapper plus an actual identity OCIO processor call. No direct call to Blender C++ display wrapper or native GPU display draw. No bit-exact Final display claim. Native compositor before display remains exact."
+}

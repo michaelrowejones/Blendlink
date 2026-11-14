@@ -1,0 +1,70 @@
+{
+  "version": [
+    5,
+    3,
+    0
+  ],
+  "build": "02f0899d78e3",
+  "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "native": [
+    {
+      "path": "source/blender/nodes/shader/nodes/node_shader_vertex_color.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/shader/nodes/node_shader_vertex_color.cc",
+      "sha256": "9d231e77813f2a8c9d82d0abb8d1b0e41bde3d872df0f0cf388493ecfe7ca09c",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/gpu/shaders/material/gpu_shader_material_vertex_color.bsl.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shaders/material/gpu_shader_material_vertex_color.bsl.hh",
+      "sha256": "e924573242d23d0c16bf8d704f6690f0f5fabdcd7fe9f622e9c01b5af14ac7d6",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/draw/intern/mesh_extractors/extract_mesh_vbo_attributes.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/draw/intern/mesh_extractors/extract_mesh_vbo_attributes.cc",
+      "sha256": "c634b011c092247a6f63cff12089412138c2bb90e68354a19c85ef077b50e26b",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/draw/intern/attribute_convert.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/draw/intern/attribute_convert.hh",
+      "sha256": "59d9275af397a5b2697d8586bb462d8ec938a438856cfbc8f83299a1d815817e",
+      "license": "GPL-2.0-or-later"
+    }
+  ],
+  "installedExporter": [
+    {
+      "path": "/Applications/Blender.app/Contents/Resources/5.3/scripts/addons_core/io_scene_gltf2/blender/exp/primitive_extract.py",
+      "sha256": "60f243d20c07c5b1efeffa7b7fd7e1eba06d243c3ce2ce3acf872aa9e7665a02",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "/Applications/Blender.app/Contents/Resources/5.3/scripts/addons_core/io_scene_gltf2/blender/exp/primitive_attributes.py",
+      "sha256": "815331d39cdf06e73ae110e9921ebfc8cb37825290843cbcbf4d1a7559899e5d",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "/Applications/Blender.app/Contents/Resources/5.3/scripts/addons_core/io_scene_gltf2/blender/exp/attribute_utils.py",
+      "sha256": "e337a3fdfc6bc67735d141d9726906fa21af362c4f7c059471db06dab1e7817c",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "/Applications/Blender.app/Contents/Resources/5.3/scripts/addons_core/io_scene_gltf2/blender/com/conversion.py",
+      "sha256": "0176bf247aff4467c0f843d03708f95b486babbbd2394db0238f719bacf663db",
+      "license": "Apache-2.0"
+    }
+  ],
+  "three": [
+    {
+      "path": "/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/examples/jsm/loaders/GLTFLoader.js",
+      "sha256": "97642d720f16cc9a0c9844934198e4d0c023bea8e89576d0f7545d03b2d103d2",
+      "license": "MIT"
+    },
+    {
+      "path": "/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/src/nodes/core/AttributeNode.js",
+      "sha256": "8d3478b9d788efc4d8fa3b312a62b7b68d8303868cfd60af6ea4925b78fa744c",
+      "license": "MIT"
+    }
+  ],
+  "portCredit": 0
+}

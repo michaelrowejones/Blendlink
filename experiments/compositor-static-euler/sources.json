@@ -1,0 +1,226 @@
+{
+  "schemaVersion": 1,
+  "status": "PRIMARY_SOURCE_RESEARCH_ONLY",
+  "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "sources": [
+    {
+      "path": "source/blender/nodes/function/nodes/node_fn_input_rotation.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/function/nodes/node_fn_input_rotation.cc",
+      "sha256": "f85d26ac88eca8e34484ead2333dcb75af5340d8b28b68a084f08be6f8e2186e",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/nodes/function/nodes/node_fn_euler_to_rotation.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/function/nodes/node_fn_euler_to_rotation.cc",
+      "sha256": "f45a672f30151c3cd97960f79b96170fbe7c6017218389060b177d7451bebe84",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/blenlib/BLI_math_euler.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/BLI_math_euler.hh",
+      "sha256": "91596c17076201c065454570c29ae011688b8d80bfb845595ba1d3ed8e257a08",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/blenlib/BLI_math_euler_types.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/BLI_math_euler_types.hh",
+      "sha256": "4cc9f07fd895d0d095aa409a168258678d65bca8ee5138637a339089615bb1bc",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/blenlib/BLI_math_angle_types.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/BLI_math_angle_types.hh",
+      "sha256": "4f3863d44f769c718a6cecea67e1ec8dcdb173282252f32bf999fca9a28d2e3d",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/blenlib/BLI_math_base.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/BLI_math_base.hh",
+      "sha256": "cd6bc90176a7070134377a276dc702a06355832d79947840033610cc6218d7e4",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/makesrna/intern/rna_nodetree.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/makesrna/intern/rna_nodetree.cc",
+      "sha256": "0cee9b386d2a79e0bd310b0f4fe56f913bda2390ad0076e07fc900b3804176a7",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/makesdna/DNA_node_types.h",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/makesdna/DNA_node_types.h",
+      "sha256": "e1b9c3a2d63c5120e16d7d8e24525e75c1b3da4e433685da0063699672ebf029",
+      "license": "GPL-2.0-or-later"
+    }
+  ],
+  "catalog": {
+    "path": "docs/node-coverage/blender-5.3.0.json",
+    "sha256": "09f4e0473e1d6dfe6f978df418de82df7d8bca22b0ad665d0a7cbcdf916c6544",
+    "nodes": {
+      "FunctionNodeEulerToRotation": {
+        "booleanDefaults": {},
+        "contextSocketSchemas": {
+          "group": "480cb66d226a0169906c",
+          "root": "480cb66d226a0169906c"
+        },
+        "contexts": [
+          "root",
+          "group"
+        ],
+        "defaultSocketSchema": "480cb66d226a0169906c",
+        "enumStateExploration": {
+          "failures": [],
+          "representativeStates": [
+            {
+              "settings": {},
+              "socketSchema": "480cb66d226a0169906c"
+            }
+          ],
+          "scope": "Reachable enum, active MENU socket and semantic writable node/color-ramp/mapping boolean states in the first creatable context; editor flags and structural mute do not multiply menu states. Other context defaults recorded separately. Inactive socket menu cross-products, numeric/socket-boolean values, authored group interfaces, ID bindings and point handles are not enumerated. All states are counted/digested; representative states cover distinct socket schemas.",
+          "stateBudget": 2048,
+          "stateCount": 1,
+          "stateDigest": "3671de203b59fe79c89a72e567a356721a11985d5c35bcd81ddac300a342ba83",
+          "status": "complete",
+          "transitionBudget": 100000,
+          "transitions": 0
+        },
+        "enums": {},
+        "id": "FunctionNodeEulerToRotation",
+        "label": "Euler to Rotation",
+        "structuralDefaults": {
+          "mute": false
+        }
+      },
+      "FunctionNodeInputRotation": {
+        "booleanDefaults": {},
+        "contextSocketSchemas": {
+          "group": "363915c903c8514a818b",
+          "root": "363915c903c8514a818b"
+        },
+        "contexts": [
+          "root",
+          "group"
+        ],
+        "defaultSocketSchema": "363915c903c8514a818b",
+        "enumStateExploration": {
+          "failures": [],
+          "representativeStates": [
+            {
+              "settings": {},
+              "socketSchema": "363915c903c8514a818b"
+            }
+          ],
+          "scope": "Reachable enum, active MENU socket and semantic writable node/color-ramp/mapping boolean states in the first creatable context; editor flags and structural mute do not multiply menu states. Other context defaults recorded separately. Inactive socket menu cross-products, numeric/socket-boolean values, authored group interfaces, ID bindings and point handles are not enumerated. All states are counted/digested; representative states cover distinct socket schemas.",
+          "stateBudget": 2048,
+          "stateCount": 1,
+          "stateDigest": "1ee1e9ae5fd81fba06b3be98fd83785a1341d4f5957f57c42f98c9d3edbf6b0d",
+          "status": "complete",
+          "transitionBudget": 100000,
+          "transitions": 0
+        },
+        "enums": {},
+        "id": "FunctionNodeInputRotation",
+        "label": "Rotation",
+        "structuralDefaults": {
+          "mute": false
+        }
+      }
+    },
+    "schemas": {
+      "480cb66d226a0169906c": {
+        "inputs": [
+          {
+            "default": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "enabled": true,
+            "identifier": "Euler",
+            "name": "Euler",
+            "socketClass": "NodeSocketVectorEuler",
+            "type": "VECTOR",
+            "unavailable": false
+          }
+        ],
+        "outputs": [
+          {
+            "default": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "enabled": true,
+            "identifier": "Rotation",
+            "name": "Rotation",
+            "socketClass": "NodeSocketRotation",
+            "type": "ROTATION",
+            "unavailable": false
+          }
+        ]
+      },
+      "363915c903c8514a818b": {
+        "inputs": [],
+        "outputs": [
+          {
+            "default": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "enabled": true,
+            "identifier": "Rotation",
+            "name": "Rotation",
+            "socketClass": "NodeSocketRotation",
+            "type": "ROTATION",
+            "unavailable": false
+          }
+        ]
+      }
+    },
+    "limits": "Retained native 5.3 catalog; no fresh schema probe or numerical job in this research."
+  },
+  "proposedDomain": {
+    "sourceContext": "Pinned Blender5.3 macOS arm64 CPU compositor only",
+    "eulerComponents": "Raw positive zero or positive [2^-16,1] radians; no negative angles or negative zero",
+    "terminal": "Existing reviewed RotationToQuaternion Float endpoints; opaque ROTATION is not serialized",
+    "unqualified": [
+      "InputRotation raw property foreach_get storage probe",
+      "native pre-storage signed-zero hash witness",
+      "Geometry CPU-MF vs actual CPU compositor normalization/trig words",
+      "saved Final/browser/resize/ownership matrix"
+    ]
+  },
+  "credits": {
+    "sdk": 0,
+    "nativeNumerical": 0,
+    "savedFinal": 0,
+    "browser": 0,
+    "support": 0
+  },
+  "hashGuardSources": [
+    {
+      "path": "source/blender/nodes/function/nodes/node_fn_hash_value.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/function/nodes/node_fn_hash_value.cc",
+      "sha256": "ec8caf468e1cb2ae49d937ee615448d3f977ae02c62734021c178363946110e3",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/blenlib/intern/noise.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/intern/noise.cc",
+      "sha256": "ad717117a1c191bc5204706fd890e262356fc9a5fac4b8aee77be7e7b9b13df9",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/functions/FN_multi_function_builder.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/functions/FN_multi_function_builder.hh",
+      "sha256": "7484c4d762c756c350a3f0a85a279ca193076a39fc5b488779779235c7552c53",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/blenlib/BLI_hash.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/BLI_hash.hh",
+      "sha256": "e0f9bdd0102f7be1e03d9d0cfd8b79d0270f8f2f2cbd1a5a482ab181e1edbda4",
+      "license": "GPL-2.0-or-later"
+    }
+  ]
+}

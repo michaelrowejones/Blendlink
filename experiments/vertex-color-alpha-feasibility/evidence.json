@@ -1,0 +1,303 @@
+{
+  "status": "CLOSED_VERTEX_ALPHA_SAVED_SCALAR_TRANSPORT_RESEARCH",
+  "portCredit": 0,
+  "nativeShaderCredit": 0,
+  "browserCredit": 0,
+  "sourceHashes": {
+    "/private/tmp/scenetoweb-vertex-color-alpha-feasibility/experiments/vertex-color-alpha-feasibility/probe.py": "adfee245308eb14b23e8b59d0c661eae5d4386e5cf6b2b21c7776f6e834db185",
+    "/private/tmp/scenetoweb-vertex-color-alpha-feasibility/experiments/vertex-color-alpha-feasibility/saved-scalar.py": "c08c9be791a7eae601ba690fc481de75868dbac3f9ef3c0ef69e5851342fc6d9",
+    "/private/tmp/scenetoweb-vertex-color-alpha-feasibility/experiments/vertex-color-alpha-feasibility/run.mjs": "30ab7b930dca3a7e369cc812989b62f59102c1de0995a4bfb9f4c839d19830ed",
+    "/private/tmp/scenetoweb-vertex-color-alpha-feasibility/experiments/vertex-color-alpha-feasibility/sources.json": "2eb5bfaf47857bc156d1ace4d59c8b7a1760dc3f091d9b5a19f8f3e75145c28d"
+  },
+  "sourcePins": {
+    "version": [
+      5,
+      3,
+      0
+    ],
+    "build": "02f0899d78e3",
+    "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+    "native": [
+      {
+        "path": "source/blender/nodes/shader/nodes/node_shader_vertex_color.cc",
+        "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/shader/nodes/node_shader_vertex_color.cc",
+        "sha256": "9d231e77813f2a8c9d82d0abb8d1b0e41bde3d872df0f0cf388493ecfe7ca09c",
+        "license": "GPL-2.0-or-later"
+      },
+      {
+        "path": "source/blender/gpu/shaders/material/gpu_shader_material_vertex_color.bsl.hh",
+        "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shaders/material/gpu_shader_material_vertex_color.bsl.hh",
+        "sha256": "e924573242d23d0c16bf8d704f6690f0f5fabdcd7fe9f622e9c01b5af14ac7d6",
+        "license": "GPL-2.0-or-later"
+      },
+      {
+        "path": "source/blender/draw/intern/mesh_extractors/extract_mesh_vbo_attributes.cc",
+        "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/draw/intern/mesh_extractors/extract_mesh_vbo_attributes.cc",
+        "sha256": "c634b011c092247a6f63cff12089412138c2bb90e68354a19c85ef077b50e26b",
+        "license": "GPL-2.0-or-later"
+      },
+      {
+        "path": "source/blender/draw/intern/attribute_convert.hh",
+        "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/draw/intern/attribute_convert.hh",
+        "sha256": "59d9275af397a5b2697d8586bb462d8ec938a438856cfbc8f83299a1d815817e",
+        "license": "GPL-2.0-or-later"
+      }
+    ],
+    "installedExporter": [
+      {
+        "path": "/Applications/Blender.app/Contents/Resources/5.3/scripts/addons_core/io_scene_gltf2/blender/exp/primitive_extract.py",
+        "sha256": "60f243d20c07c5b1efeffa7b7fd7e1eba06d243c3ce2ce3acf872aa9e7665a02",
+        "license": "Apache-2.0"
+      },
+      {
+        "path": "/Applications/Blender.app/Contents/Resources/5.3/scripts/addons_core/io_scene_gltf2/blender/exp/primitive_attributes.py",
+        "sha256": "815331d39cdf06e73ae110e9921ebfc8cb37825290843cbcbf4d1a7559899e5d",
+        "license": "Apache-2.0"
+      },
+      {
+        "path": "/Applications/Blender.app/Contents/Resources/5.3/scripts/addons_core/io_scene_gltf2/blender/exp/attribute_utils.py",
+        "sha256": "e337a3fdfc6bc67735d141d9726906fa21af362c4f7c059471db06dab1e7817c",
+        "license": "Apache-2.0"
+      },
+      {
+        "path": "/Applications/Blender.app/Contents/Resources/5.3/scripts/addons_core/io_scene_gltf2/blender/com/conversion.py",
+        "sha256": "0176bf247aff4467c0f843d03708f95b486babbbd2394db0238f719bacf663db",
+        "license": "Apache-2.0"
+      }
+    ],
+    "three": [
+      {
+        "path": "/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/examples/jsm/loaders/GLTFLoader.js",
+        "sha256": "97642d720f16cc9a0c9844934198e4d0c023bea8e89576d0f7545d03b2d103d2",
+        "license": "MIT"
+      },
+      {
+        "path": "/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/src/nodes/core/AttributeNode.js",
+        "sha256": "8d3478b9d788efc4d8fa3b312a62b7b68d8303868cfd60af6ea4925b78fa744c",
+        "license": "MIT"
+      }
+    ],
+    "portCredit": 0
+  },
+  "nativePythonProof": {
+    "pythonInvocations": 2,
+    "finalInvocations": 0,
+    "uniqueCachePrefixes": 2,
+    "numericalCredit": 0
+  },
+  "stock": {
+    "status": "VERTEX_COLOR_ALPHA_GLTF_FEASIBILITY_CAPTURED",
+    "nativeVersion": [
+      5,
+      3,
+      0
+    ],
+    "nativeBuild": "02f0899d78e3",
+    "sourceRGBA": [
+      0.10000000149011612,
+      0.20000000298023224,
+      0.30000001192092896,
+      0,
+      0.4000000059604645,
+      0.5,
+      0.6000000238418579,
+      0.10000000149011612,
+      0.699999988079071,
+      0.800000011920929,
+      0.8999999761581421,
+      0.3333333432674408,
+      0.125,
+      0.25,
+      0.5,
+      1
+    ],
+    "sourceWords": [
+      1036831949,
+      1045220557,
+      1050253722,
+      0,
+      1053609165,
+      1056964608,
+      1058642330,
+      1036831949,
+      1060320051,
+      1061997773,
+      1063675494,
+      1051372203,
+      1040187392,
+      1048576000,
+      1056964608,
+      1065353216
+    ],
+    "rows": [
+      {
+        "case": "material-alpha-only",
+        "attributes": [
+          {}
+        ],
+        "sha256": "745409ddcd169954db17fbdbe7c98329bcedcf00e0559f762bc86946cd229dbf",
+        "bytes": 1120
+      },
+      {
+        "case": "material-color-and-alpha",
+        "attributes": [
+          {
+            "COLOR_0": {
+              "type": "VEC4",
+              "componentType": 5123,
+              "normalized": true,
+              "count": 4,
+              "values": [
+                [
+                  6554,
+                  13107,
+                  19661,
+                  0
+                ],
+                [
+                  26214,
+                  32768,
+                  39321,
+                  6554
+                ],
+                [
+                  45875,
+                  52428,
+                  58982,
+                  21845
+                ],
+                [
+                  8192,
+                  16384,
+                  32768,
+                  65535
+                ]
+              ]
+            }
+          }
+        ],
+        "sha256": "dd4d108c8a8c91f9a8ebc1a1b0f9c8f877dc7fcee143510813df8573e97e0279",
+        "bytes": 1228
+      },
+      {
+        "case": "forced-active-alpha",
+        "attributes": [
+          {}
+        ],
+        "sha256": "745409ddcd169954db17fbdbe7c98329bcedcf00e0559f762bc86946cd229dbf",
+        "bytes": 1120
+      },
+      {
+        "case": "private-float-alpha",
+        "attributes": [
+          {
+            "_SCENETOWEB_TEST_RGBA": {
+              "type": "VEC4",
+              "componentType": 5126,
+              "normalized": false,
+              "count": 4,
+              "values": [
+                [
+                  0.10000000149011612,
+                  0.20000000298023224,
+                  0.30000001192092896,
+                  0
+                ],
+                [
+                  0.4000000059604645,
+                  0.5,
+                  0.6000000238418579,
+                  0.10000000149011612
+                ],
+                [
+                  0.699999988079071,
+                  0.800000011920929,
+                  0.8999999761581421,
+                  0.3333333432674408
+                ],
+                [
+                  0.125,
+                  0.25,
+                  0.5,
+                  1
+                ]
+              ]
+            }
+          }
+        ],
+        "sha256": "d47f17f9b0b1c86c317aa7a5da94af922c59b1861b61842872db214e2d8d5890",
+        "bytes": 1332
+      }
+    ],
+    "renders": 0,
+    "gpuInitializationCalls": 0,
+    "nodePortCredit": 0
+  },
+  "saved": {
+    "status": "SAVED_VERTEX_ALPHA_SCALAR_TRANSPORT_PASSED",
+    "version": [
+      5,
+      3,
+      0
+    ],
+    "build": "02f0899d78e3",
+    "source": "artist-vertex-alpha.blend",
+    "sourceSha256": "4f9fb90561cb50b84b9b37aaca33a05bbe5babc6106e89eb028cb0a3c1a17cbf",
+    "sourcePreserved": true,
+    "sourceOwnershipRestored": true,
+    "sourceRGBAWords": [
+      1036831949,
+      1045220557,
+      1050253722,
+      0,
+      1053609165,
+      1056964608,
+      1058642330,
+      1036831949,
+      1060320051,
+      1061997773,
+      1063675494,
+      1051372203,
+      1040187392,
+      1048576000,
+      1056964608,
+      1065353216
+    ],
+    "alphaWords": [
+      0,
+      1036831949,
+      1051372203,
+      1065353216
+    ],
+    "glb": "artist-vertex-alpha.glb",
+    "glbSha256": "aefb1c517c811b61dbd1e7e7d1cd2cbcaecc08169ec1faaa91fa2303e5fb6604",
+    "accessor": {
+      "semantic": "_SCENETOWEB_VCOL_ALPHA",
+      "type": "SCALAR",
+      "componentType": 5126,
+      "normalized": false,
+      "count": 4,
+      "wordValues": [
+        0,
+        1036831949,
+        1051372203,
+        1065353216
+      ],
+      "positionCount": 4
+    },
+    "renders": 0,
+    "gpuInitializationCalls": 0,
+    "nativeShaderCredit": 0,
+    "browserCredit": 0,
+    "nodePortCredit": 0
+  },
+  "actualGLTFLoaderBindings": [
+    {
+      "attribute": "_scenetoweb_vcol_alpha",
+      "itemSize": 1,
+      "normalized": false,
+      "count": 4,
+      "arrayType": "Float32Array"
+    }
+  ]
+}

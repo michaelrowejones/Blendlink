@@ -1,0 +1,10 @@
+[
+ {"case":"image-A-dyadic","route":"Image","side":"A","background":[0.125,0.25,0.5,0.75]},
+ {"case":"image-B-dyadic","route":"Image","side":"B","background":[0.125,0.25,0.5,0.75]},
+ {"case":"alpha-A-dyadic","route":"Alpha","side":"A","background":[0.125,0.25,0.5,0.75]},
+ {"case":"alpha-B-dyadic","route":"Alpha","side":"B","background":[0.125,0.25,0.5,0.75]},
+ {"case":"image-A-zero","route":"Image","side":"A","background":[0,0,0,0]},
+ {"case":"alpha-B-zero","route":"Alpha","side":"B","background":[0,0,0,0]},
+ {"case":"image-A-minnormal","route":"Image","side":"A","background":[1.1754943508222875e-38,1.1754943508222875e-38,1.1754943508222875e-38,1.1754943508222875e-38]},
+ {"case":"alpha-B-minnormal","route":"Alpha","side":"B","background":[1.1754943508222875e-38,1.1754943508222875e-38,1.1754943508222875e-38,1.1754943508222875e-38]}
+]

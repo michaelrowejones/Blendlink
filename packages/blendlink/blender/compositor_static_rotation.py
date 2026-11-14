@@ -16,6 +16,10 @@ COMPONENTS=('W','X','Y','Z')
 class StaticRotationUnsupported(ValueError):
     pass
 
+class EulerProducer(StaticRotationUnsupported):
+    """Typed source-domain routing signal, emitted only before native evaluation."""
+    pass
+
 
 def _literal(socket):
     word=shared._raw_scalar(socket)
@@ -78,6 +82,7 @@ class _Evaluator(shared._Evaluator):
         if kind in {'ShaderNodeValue','CompositorNodeValue'}and socket.type=='VALUE'and socket.identifier=='Value':
             word=_literal(socket);self.source_reads[socket.as_pointer()]=(socket,word)
             return self.recipe('float',word)
+        if kind=='FunctionNodeEulerToRotation':raise EulerProducer('Static Quaternion encountered an Euler constructor before native evaluation')
         if kind not in NODES:raise StaticRotationUnsupported('Static Quaternion requires reviewed literal normalization/component-copy producers; fields, context, arithmetic and Matrix producers refuse')
         self.members[(node.as_pointer(),tuple(instance.as_pointer()for instance in stack))]={'nodeType':kind,'node':node.name,'tree':node.id_data.name,'instances':[instance.name for instance in stack]}
         if kind=='FunctionNodeQuaternionToRotation':

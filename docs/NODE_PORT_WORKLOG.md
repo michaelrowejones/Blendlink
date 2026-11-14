@@ -948,3 +948,145 @@ Integrated local checks passed 1,561 SDK tests with 6 optional skips, 98 release
 policy tests, 136 pipeline tests and 8 Python audit tests. The 874-file package,
 fresh empty-cache install and two source-addon registration/preview cycles pass.
 These integration checks grant no additional numerical or whole-scene credit.
+
+### Integrated Euler and scene-frame transaction, 2026-11-14
+
+The new positive literal EulerXYZ construction route uses Blender's actual CPU
+callback, an opaque Rotation island and existing scalar runtime constants. A
+fresh closed transaction at
+`artifacts/verification-next11c-static-euler/qualified.json` records 62 native
+graphs, 124 component comparisons and 124 independent pre-Float-store hash
+comparisons, eight pathology calibrations, 194 tiny CPU renders, 12 unchanged
+saved Final sources, 296 actual browser cases, 18,944 primary words, 48 resize
+frames and 144 apply/dispose cycles across Metal and SwiftShader WebGPU/WebGL2.
+Every compared word matches. Fourteen fresh Python prefixes closed. This is
+partial Blender 5.3.0 build `02f0899d78e3`, macOS arm64 CPU compositor support;
+Input Rotation, linked/computed Euler inputs, fields and other source profiles
+remain unqualified. Original quaternion normalization keeps its separate proof.
+
+The final source-closure check now rereads all extraction-owned static-family
+caches before accepting a graph, catching a later private evaluator's handler
+mutating an already-emitted earlier family. Native policy checks include these
+cross-family mutations. The rebuilt Matrix regression passed 14 native graphs,
+six saved Final exports and 80 browser cases/5,120 exact words. Quaternion
+regression passed 72 native graphs, 12 Final exports and 336 browser cases/21,504
+exact words. Their new local receipts are
+`artifacts/verification-next11b-matrix-regression/qualified.json` and
+`artifacts/verification-next11c-quaternion-regression/qualified.json`; historical
+checked-in family receipts retain their original captured source lineages.
+
+Proof failures are retained rather than repaired in place. The first staged
+scene-frame run completed native image references but collided with its earlier
+source archive directory. Its successor used separate archives and then caught
+a production inner Ellipse validator discarding complete graph context; neither
+run earns scene-frame qualification. Closed readers also now reject missing or
+mismatched API/profile attestation and altered frame dimensions. Resource
+baselines begin before direct port allocation so a leaked texture cannot become
+an accepted baseline. A quaternion regression interrupted by an overlapping
+root build is retained as failed; the fresh frozen `next11c` transaction above
+passed. Build/artifact mutations must wait for open transactions to close.
+
+Renderer calibration lifecycle tests cover saved original dispose functions,
+texture-manager allocation-epoch resets and replacement of a still-live manager.
+Certificates expire on device/context/dispose/manager changes, and retained
+physical allocations are destroyed manually only when the captured original
+manager lost its allocation epoch. This avoids both stranded resources and
+double destruction. These lifecycle checks do not grant numerical port credit.
+
+The scene-frame investigation separates the new linear compositor contract from
+the existing display projection contract. The `next11r3` attempt found that an
+exact CPU To Straight/division witness is not an exact GPU Raw-display oracle.
+Pinned Blender display source instead uses reciprocal/multiply stages around
+OCIO; the actual Raw OCIO processor is a no-op, but its alpha wrapper is not a
+word no-op. No production identity shortcut or integer division kernel was
+introduced. `raw-display-sources.json` records the exact upstream revision,
+paths and hashes. The source-derived reciprocal audit retains the earlier
+actual-native division witness as a diagnostic, rather than replacing its
+bytes or claiming a direct C++ display-wrapper call.
+
+`next11r4` retained an additional failed exact-zero display gate: the difference
+was only 1.1754943508222875e-38 with exact alpha. Exact finite-zero display bits
+exceed the existing display projection contract. The new transaction keeps
+all direct and actual installed linear compositor words exact, and separately
+audits display against the pre-existing clamped RGB maximum absolute error
+3e-5 from the EEVEE look suite. Display word/zero differences, unclamped error
+and ULP distance remain visible; they do not become zero in the receipt.
+The actual installed compositor node is sampled after each Final frame by an
+owned test-only quad, preserving that frame's cached ScenePass. This adds no
+production pass or readback.
+
+The `next11r5` Metal measurements pass both browser APIs: 32 saved-Final cases,
+37,440 direct and 224,640 installed linear words with zero differences, plus
+96 installation/disposal cycles. Raw display has 11,838 differing words across
+its repeated audits, including 10,530 finite-zero differences; maximum absolute
+error is 7.450580596923828e-9. Maximum ULP distance is 8,388,608 because of the
+tiny finite/zero cases, not a bit-exact display result. The software WebGPU
+phase refuses its HalfFloat decoder because NaN/sign/encoding words differ
+from the declared model. A positive Metal result is not software coverage.
+
+The final optional-full-graph Ellipse ABI also passes the fresh standalone
+regression at `artifacts/verification-next11d-ellipse-regression/qualified.json`:
+108 native graphs, 16 Final exports, 496 browser cases, 235,856 primary exact
+words, 144 resize frames and 192 lifecycle cycles. Packaging at that build
+contains 886 files, 2,717,586 packed and 12,291,523 unpacked bytes; independent
+Vanilla/R3F tarball consumers and the package-identity check pass. Focused
+mask/frame tests pass 26 cases with one optional native skip. These are local
+validation records, not a release or an all-ports freshness claim.
+
+
+### Exact current-frame Ellipse composition and decoder admission, 2026-11-14
+
+The fresh closed admission transaction at
+`artifacts/verification-next11r5-scene-mix/qualified-admission.json` qualifies a
+bounded artist workflow: one direct current-scene/view-layer Image or Alpha,
+one static binary Add Ellipse0/1 and one modern Color/MIX with an unlinked raw
+positive-zero/normal≤1 RGBA background. Either Mix operand side is covered.
+The current HalfFloat/MSAA0 physical frame is renderer-owned, with no extra
+registered effects and a frame1 + row1 + display≤6 sampler budget. Native
+source remains the unchanged RenderLayers graph; actual Three frame words
+enter a separate owned CPU Image oracle. This proves composition of the same
+Three frame, not Three PBR versus Cycles or original-demo acceptance.
+
+Eight saved Final sources and64 captured CPU image oracles/192 actual renders
+close10 fresh Python prefixes. The32 credited Metal WebGPU/WebGL2 cases
+compare37,440 direct and224,640 actual installed-Final pre-display F32 words
+exactly, with zero differences and96 apply/dispose cycles. Test-only sampling
+of the installed private compositor node retains its real current ScenePass;
+no product node or pixels are patched. Source materials/callbacks and the
+independent pre-port texture identities are preserved.
+
+Both SwiftShader APIs explicitly refuse the admitted HalfFloat NaN decoder
+model: raw half0x7c01 becomes F32 0x7f802000 rather than0x7fc00000. The separate
+negative archive attests each actual API/profile and closes prior-state, prior-
+pixel and texture cleanup controls. These tuples receive zero numerical or
+support credit for scene-frame composition. Existing standalone integer-row
+Ellipse support on SwiftShader retains its separate historical proof.
+
+Display precision remains separate. Primary pinned Blender5.3 CPU display
+source uses a rounded reciprocal/multiply wrapper, unlike the initial synthetic
+ToStraight component-division witness. The corrected source-derived witness
+calls the actual asserted-identity OCIO CPU processor but is not a direct call
+to Blender's C++/GPU display wrapper. The repeated Raw audit records11,838 word
+differences,10,530 finite-zero differences, maximum8,388,608 ULP and maximum
+absolute/clamped error7.450580596923828e-9, under the pre-existing clamped
+OCIO/PNG3e-5 display projection contract. Alpha and nonfinite classes match.
+No bit-exact or zero-bit Final display claim or global display promotion is
+made, and every linear compositor word stays exact. The old strict r3 display
+failure and r4 finite-underflow restriction failure remain retained.
+
+One-time renderer/device/context/manager-epoch calibration owns temporary
+resources and restores borrowed state before awaiting readback. It does not
+read pixels per frame. The qualified run observed7ms/16.4ms Metal WebGPU/WebGL2
+calibration after an independent scene baseline with warm driver caches, at
+4MiB nominal transient storage; this is not rendering or export latency. The
+row table remains64KiB. Saved-original disposal, manager resets/replacement,
+map failure, cancellation and double-destroy controls close separately.
+
+Earlier failed transactions remain intact: shared-stage archive collision;
+inner Ellipse validation losing full-graph context; synthetic exact Raw display
+rounding; then an overly strict finite-zero display audit. No receipt was
+patched to pass. The closed evidence is checked in separately at
+`experiments/compositor-ellipse-scene-mix/evidence.json`. Capability updates
+append this workflow only to Ellipse and modern compositor Mix; old categories,
+versions, standalone counts and receipts are preserved. All-node porting is
+still unfinished.
