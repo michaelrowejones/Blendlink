@@ -1,3 +1,5 @@
+import {OwnedCompositorRtt} from './tslCompositorRttOwner.js'
+import { OwnedCompositorDataTexture, bindCompositorDataTextures } from './tslCompositorDataTextureOwner.js'
 import { DataTexture, FloatType, RGBAFormat, Vector2, Vector4 } from 'three'
 import { RendererUtils } from 'three/webgpu'
 import * as TSL from 'three/tsl'
@@ -31,14 +33,7 @@ function blurImageExtent(image: TslEffectNode, renderer: TslEffectNode, size: Ve
 /** Three 0.184 RTTNode.dispose only emits a Node event. Its target and quad
  * material need explicit ownership; the quad's shared geometry must stay alive. */
 export function ownBlurRtt(node: TslEffectNode): { dispose(): void } {
-  let disposed = false
-  return { dispose() {
-    if (disposed) return
-    disposed = true
-    node.renderTarget.dispose()
-    node._quadMesh.material.dispose()
-    node.dispose()
-  } }
+  return new OwnedCompositorRtt(node)
 }
 
 export function buildNativeCompositorBlur(op: SourceCompositorOperation, input: TslEffectNode,
@@ -170,8 +165,8 @@ export function buildNativeCompositorBlur(op: SourceCompositorOperation, input: 
     taps.forEach((weight, index) => { coefficients[index * 4] = weight })
     const table = new DataTexture(coefficients, 129, 1, RGBAFormat, FloatType)
     table.needsUpdate = true
-    let tableDisposed = false
-    resources.push({ dispose() { if (!tableDisposed) { tableDisposed = true; table.dispose() } } })
+    const tableOwner = new OwnedCompositorDataTexture(table)
+    resources.push(tableOwner)
     const count = uniform(taps.length, 'int')
     if (relative) liveTables.push({ coefficients, table, count })
     const weight = (index: TslEffectNode): TslEffectNode => textureLoad(table, ivec2(index, 0)).r
@@ -206,6 +201,7 @@ export function buildNativeCompositorBlur(op: SourceCompositorOperation, input: 
     })()
     node = rtt(filtered, null, null, { type: FloatType, depthBuffer: false })
     resources.push(ownBlurRtt(node))
+    bindCompositorDataTextures(node, [tableOwner])
     if (relative) { livePasses.push(node); relativeExtents.set(node, readExtent); wrapRelative(node) }
   }
   if (gamma !== undefined) {

@@ -1,0 +1,56 @@
+{
+  "status": "RESEARCH_CONFIRMED_ROW_CLEANUP_EDGE_FAILURES",
+  "supportCredit": 0,
+  "gpuJobs": 0,
+  "nativeJobs": 0,
+  "sourceCommit": "0bd2e7e",
+  "model": "Actual row owner + Three Textures/Info/WebGPUTextureUtils, CPU handle counters",
+  "sourcePins": {
+    "experiments/research/row-upload-retry/late-cleanup-probe.mjs": "1852627428a0b599d5dc66f173db65fa917cd27c6410ac1bd81ee663719e1c4c",
+    "packages/blendlink/src/tslCompositorRowTable.ts": "ddd0361586be2d7b7c6848c72044b1d585f33c40f9b283e4846b854f15bd9980",
+    "node_modules/three/src/renderers/common/Textures.js": "28faf9665bfdcbc063be31cd7725fa4e5d2d1ee822e890bbb6b6c204d88978a4",
+    "node_modules/three/src/renderers/common/Info.js": "f57050b6d6865f6c80504deb2d7c91c002ed89f65ea25e6792e2335e06eaeef7",
+    "node_modules/three/src/renderers/webgpu/utils/WebGPUTextureUtils.js": "5f241b35187e26b1d1b56279330df466d55f62bdce4a53e0106835cacba06ce1"
+  },
+  "rows": [
+    {
+      "case": "late-partial-replaced-context",
+      "originalDeletes": 0,
+      "replacementDeletes": 1,
+      "destroys": [
+        1
+      ]
+    },
+    {
+      "case": "webgpu-post-native-manager-reset",
+      "destroys": [
+        2
+      ]
+    },
+    {
+      "case": "webgl2-post-native-manager-reset",
+      "destroys": [
+        2
+      ]
+    },
+    {
+      "case": "added-borrowed-msaa",
+      "destroys": [
+        1
+      ],
+      "borrowedDestroys": 1
+    },
+    {
+      "case": "mutated-default-flag",
+      "destroys": [
+        0
+      ]
+    }
+  ],
+  "rawReport": {
+    "machineLocal": true,
+    "path": "artifacts/verification-row-late-cleanup-negative-r1/report.json",
+    "bytes": 1497,
+    "sha256": "f5ce5a233400a223d79a5b706de1bb740b24f567730e4ee31d51fe52783f32ad"
+  }
+}

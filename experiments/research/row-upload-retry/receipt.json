@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "status": "RESEARCH_CONFIRMED_ROW_PRE_ONUPDATE_PARTIAL_LEAK",
+  "supportCredit": 0,
+  "gpuJobs": 0,
+  "nativeJobs": 0,
+  "sourceCommit": "e9f36a1",
+  "node": {
+    "version": "v24.22.1",
+    "execution": "--experimental-strip-types; direct unchanged production source import"
+  },
+  "rawReport": {
+    "machineLocal": true,
+    "path": "artifacts/verification-row-upload-retry-r1/report.json",
+    "bytes": 5399,
+    "sha256": "e96a475f41dd6a8229d843f9897449a8ce233a48211c289437dd8992d33a3f97"
+  },
+  "sourcePins": {
+    "experiments/research/row-upload-retry/probe.mjs": "265b8c7dc5c4dca0e63d6239b072ad4d3b1b5e8668c72d122a65600d1a56c7ba",
+    "packages/blendlink/src/tslCompositorRowTable.ts": "03ee44ba3b7040f80c204ca74aebc1a8cb81ba160331304d082fc695b9c1897f",
+    "node_modules/three/src/renderers/common/Textures.js": "28faf9665bfdcbc063be31cd7725fa4e5d2d1ee822e890bbb6b6c204d88978a4",
+    "node_modules/three/src/renderers/common/Info.js": "f57050b6d6865f6c80504deb2d7c91c002ed89f65ea25e6792e2335e06eaeef7",
+    "node_modules/three/package.json": "8308e43d6d6dd4c636c2dfe2e724da07dcd9fe4349bba6afb56f2c5ba6625391"
+  },
+  "cases": [
+    {
+      "case": "webgpu-none-dispose",
+      "allocated": 1,
+      "destroys": [
+        1
+      ],
+      "leaked": 0,
+      "textureCounter": 0
+    },
+    {
+      "case": "webgpu-none-retry",
+      "allocated": 1,
+      "destroys": [
+        1
+      ],
+      "leaked": 0,
+      "textureCounter": 0
+    },
+    {
+      "case": "webgpu-create-dispose",
+      "allocated": 1,
+      "destroys": [
+        0
+      ],
+      "leaked": 1,
+      "textureCounter": 0
+    },
+    {
+      "case": "webgpu-create-retry",
+      "allocated": 2,
+      "destroys": [
+        0,
+        1
+      ],
+      "leaked": 1,
+      "textureCounter": 0
+    },
+    {
+      "case": "webgpu-upload-dispose",
+      "allocated": 1,
+      "destroys": [
+        0
+      ],
+      "leaked": 1,
+      "textureCounter": 0
+    },
+    {
+      "case": "webgpu-upload-retry",
+      "allocated": 1,
+      "destroys": [
+        1
+      ],
+      "leaked": 0,
+      "textureCounter": 0
+    },
+    {
+      "case": "webgl2-none-dispose",
+      "allocated": 1,
+      "destroys": [
+        1
+      ],
+      "leaked": 0,
+      "textureCounter": 0
+    },
+    {
+      "case": "webgl2-none-retry",
+      "allocated": 1,
+      "destroys": [
+        1
+      ],
+      "leaked": 0,
+      "textureCounter": 0
+    },
+    {
+      "case": "webgl2-create-dispose",
+      "allocated": 1,
+      "destroys": [
+        0
+      ],
+      "leaked": 1,
+      "textureCounter": 0
+    },
+    {
+      "case": "webgl2-create-retry",
+      "allocated": 2,
+      "destroys": [
+        0,
+        1
+      ],
+      "leaked": 1,
+      "textureCounter": 0
+    },
+    {
+      "case": "webgl2-upload-dispose",
+      "allocated": 1,
+      "destroys": [
+        0
+      ],
+      "leaked": 1,
+      "textureCounter": 0
+    },
+    {
+      "case": "webgl2-upload-retry",
+      "allocated": 1,
+      "destroys": [
+        1
+      ],
+      "leaked": 0,
+      "textureCounter": 0
+    }
+  ],
+  "limitations": [
+    "No real GPU allocation or rendering credit",
+    "No SDK edits; original backend exception retained",
+    "Callback-validation failures after onUpdate are a different already-tested path"
+  ]
+}

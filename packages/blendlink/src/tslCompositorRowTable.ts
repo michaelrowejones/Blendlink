@@ -6,7 +6,7 @@ import type {TslEffectNode} from './tslPostEffects.js'
 export function validateCompositorRowExtent(width:number,height:number,fail:(message:string)=>never):void{
  if(!Number.isInteger(width)||!Number.isInteger(height)||width<4||height<4||width>8192||height>8192)fail('physical extents must be integers in [4,8192]')
 }
-type Physical={api:'webgpu'|'webgl2';gl?:any;handle:any;backend:any;backendRecord:any;manager:any;managerRecord:any;epoch:unknown}
+type Physical={api:'webgpu'|'webgl2';gl?:any;handle:any;backend:any;backendRecord:any;manager:any;managerRecord:any;epoch:WeakMap<object,any>}
 /** No public texture/data access. Traversing a built Three node remains subject
  * to the same immutable schema/version checks as other owned resources. */
 export class OwnedCompositorRowTable {
@@ -56,6 +56,7 @@ export class OwnedCompositorRowTable {
   const manager=physical?.manager,record=physical&&manager.data===physical.epoch?manager.data.get(this.#texture):undefined
   const backendRecord=physical?.backend.has(this.#texture)?physical.backend.get(this.#texture):undefined
   const sameAllocation=!!physical&&backendRecord===physical.backendRecord
+   &&physical.managerRecord.isDefaultTexture!==true&&backendRecord.msaaTexture===undefined&&backendRecord.renderTarget===undefined
    &&(physical.api==='webgpu'?backendRecord.texture===physical.handle:backendRecord.textureGPU===physical.handle&&physical.backend.gl===physical.gl)
   const delegated=sameAllocation&&record===physical?.managerRecord&&typeof record?.onDispose==='function'&&this.#texture.hasEventListener('dispose',record.onDispose)
   // A changed backend record may point at a foreign allocation. Prevent the
@@ -67,7 +68,9 @@ export class OwnedCompositorRowTable {
     // Three registers onDispose only AFTER the first onUpdate returns. A
     // refusing first upload therefore owns an allocation with no listener and
     // no info.createTexture count. Never call _destroyTexture on that partial.
-    const handled=delegated&&manager.data===physical.epoch&&current===undefined
+    // A later public observer may reset the manager after native cleanup.
+    // The retained original map records whether native consumed this handle.
+    const handled=delegated&&!physical.epoch.has(this.#texture)
     if(!handled){
      if(physical.api==='webgpu')physical.handle.destroy()
      else physical.gl.deleteTexture(physical.handle)
@@ -78,19 +81,32 @@ export class OwnedCompositorRowTable {
      }
      // Do not create a new backend/manager map entry while disposing, and do
      // not remove a replacement allocation we never owned.
-     if(sameAllocation&&physical.backend.has(this.#texture)&&physical.backend.get(this.#texture)===physical.backendRecord)physical.backend.delete(this.#texture)
+     if(physical.backend.has(this.#texture)&&physical.backend.get(this.#texture)===physical.backendRecord){
+      const key=physical.api==='webgpu'?'texture':'textureGPU'
+      if(backendRecord[key]===physical.handle)delete backendRecord[key]
+      if(!backendRecord.texture&&!backendRecord.textureGPU&&!backendRecord.msaaTexture&&!backendRecord.renderTarget)physical.backend.delete(this.#texture)
+     }
     }
    }
   }
  }
+ #captureOwnership():Physical|undefined{
+  if(this.#physical||!this.#backend||!this.#manager)return this.#physical
+  const backend=this.#backend,manager=this.#manager,managerRecord=this.#epoch?.get(this.#texture)
+  const data=backend.has?.(this.#texture)?backend.get(this.#texture):undefined
+  const handle=backend.isWebGPUBackend?data?.texture:data?.textureGPU
+  // Creation/upload can throw before onUpdate and before isDefaultTexture or
+  // initialized is assigned. Keep this ownership-only: partials have no native
+  // disposal listener/count, and an epoch reset must not redirect the lookup.
+  if(managerRecord&&managerRecord.isDefaultTexture!==true&&handle)this.#physical={api:backend.isWebGPUBackend?'webgpu':'webgl2',gl:backend.isWebGLBackend?this.#token:undefined,handle,backend,backendRecord:data,manager,managerRecord,epoch:this.#epoch}
+  return this.#physical
+ }
  #capture():void{
+  this.#captureOwnership()
   const renderer=this.#renderer,backend=this.#backend,manager=this.#manager
   const managerRecord=manager?.data.get(this.#texture)
   const data=backend?.has(this.#texture)?backend.get(this.#texture):undefined
   const handle=backend?.isWebGPUBackend?data?.texture:data?.textureGPU
-  // Capture the actual nondefault owned allocation before any refusing schema
-  // check. Default placeholders are shared and must never be destroyed here.
-  if(managerRecord?.isDefaultTexture===false&&handle)this.#physical={api:backend.isWebGPUBackend?'webgpu':'webgl2',gl:backend.isWebGLBackend?backend.gl:undefined,handle,backend,backendRecord:data,manager,managerRecord,epoch:manager.data}
   try{
    if(this.#dead)this.#refuse('pipeline resources were disposed')
    this.#schema()
@@ -123,6 +139,9 @@ export class OwnedCompositorRowTable {
    if(!Number.isFinite(ratio)||ratio<=0||this.#viewport.x!==0||this.#viewport.y!==0||Math.floor(this.#viewport.z*ratio)!==width||Math.floor(this.#viewport.w*ratio)!==height||renderer.getScissorTest())this.#refuse('zero-origin full physical viewport including DPR required')
   }
   if(!this.#renderer){this.#renderer=renderer;this.#backend=backend;this.#token=token;this.#manager=manager;this.#epoch=manager.data;if(backend.isWebGPUBackend&&token.lost?.then){const lost=OwnedCompositorRowTable.#lostCallback(new WeakRef(this));void token.lost.then(lost,lost)}}
+  // A prior create/upload may have allocated and thrown before onUpdate.
+  // Retire it before another native create can overwrite its only handle.
+  if(!this.#physical){const partial=this.#captureOwnership();if(partial&&partial.managerRecord.initialized!==true)this.#release()}
   if(width!==this.#width||height!==this.#height){
    // Complete every potentially refusing computation before replacing the
    // current valid allocation. Invalid extents never allocate or poison cache.
@@ -140,6 +159,7 @@ export class OwnedCompositorRowTable {
  }
  dispose():void{
   if(this.#dead)return
+  this.#captureOwnership()
   this.#dead=true
   try{this.#release()}finally{this.#renderer=this.#backend=this.#token=this.#manager=this.#epoch=undefined;this.#data=new Float32Array();this.#image=undefined}
  }

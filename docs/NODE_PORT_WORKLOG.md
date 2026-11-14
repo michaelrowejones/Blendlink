@@ -1510,3 +1510,51 @@ original/copy hashes match. Six guarded launcher invocations include three actua
 Python runs with distinct cleaned prefixes. Earlier missing-package and bytecode-
 mutating diagnostic namespaces retain zero qualification credit. The guarded
 rerun preserves the full file census instead of excluding Python cache files.
+
+### Compositor resource lifetime and installation regression, 2026-11-14
+
+The compositor's private render targets, Blur coefficient tables, and resampling
+maps now retain their actual original texture handles, renderer allocation maps,
+and WebGL contexts. Cleanup survives renderer disposal, partial creation/upload
+failure, retry, and disposal observers that reset the renderer's managers. Native
+cleanup is delegated only when its complete destructor inputs still belong to
+the owner. Added borrowed attachments and substituted contexts remain untouched.
+Shared fullscreen geometry remains borrowed; numerical kernels and row data are
+unchanged.
+
+Independent review reproduced three additional shared-row defects: a partial
+allocation could be deleted through a replacement GL context; a manager-reset
+observer after native disposal could cause double destruction; and a mutated
+default flag or added MSAA field could skip the owned handle or destroy borrowed
+storage. The corrected implementation passes the original reviewer repros. The
+fresh actual four-tuple controls close 46 cases and 54 owned handles, each retired
+exactly once. Earlier failed receipts remain separate and grant no support credit.
+
+Fresh CPU references and saved Finals then pass the existing strict browser and
+independent raw-word readers on the resource-only SDK. White Noise retains its
+54 production graphs, nine native controls, eight saved Finals, 248 browser case
+runs, 7,943,520 exact primary words, 336 resize frames and 96 installation cycles.
+Wave retains 140 graphs, nine controls, 20 saved Finals, 640 browser case runs,
+10,876,288 exact words, 384 resize frames and 240 cycles. All four actual
+Metal/SwiftShader WebGPU/WebGL2 tuples pass. Fresh native Blender 5.3 CPU Blur
+references additionally pass 161 cases on each tuple at the unchanged 2e-5
+budget, including texture cleanup and compound renderer-state controls. These
+are regressions of existing declared slices; they expand no node coverage.
+
+The resource-only SDK passes 1,772 unit tests (seven optional skips), 98 release
+policy checks, 169 Node pipeline tests (three platform skips), and 11 Python
+coverage audits. Its 938-file archive is 2,791,186 packed and 12,705,572 unpacked
+bytes. Vanilla/R3F consumers compile; content-addressed package identity and an
+independent empty-cache installation, CLI, root import and browser build pass.
+The main workspace rebuild produces the exact same retained archive SHA-256:
+`370391707a67aa97873b54a6ace656987a690f65cb4653ef28474092054892d5`.
+
+Noise and constant-displacement Displace remain isolated candidates while their
+complete native/Final/browser transactions run. Noise's bounded CPU compositor
+precision work now preserves explicit private Perlin/FBM Float32 stages, without
+changing the established shader/Cycles functions or relaxing either tolerance.
+Its dense stress comparison passes all four actual tuples; this diagnostic alone
+is not a complete port qualification. Displace's source checks and 16 actual
+saved Final exports pass; its pixel-oracle and installed-browser close remain
+separate gates. The retained catalog remains 46 supported, 134 partial, 138
+unsupported and 14 structural. No hosted workflows or public release ran.

@@ -1,0 +1,742 @@
+{
+  "schemaVersion": 1,
+  "status": "CLOSED_RESOURCE_ONLY_COMPOSITOR_REGRESSIONS",
+  "supportPromotion": false,
+  "newNodeSupportCredit": 0,
+  "sdkFreeze": "c0c64b4",
+  "executionJournal": {
+    "machineLocal": true,
+    "path": "../../../tmp/scenetoweb-resource-regression-journal.json",
+    "bytes": 7031,
+    "sha256": "1288698040f8df5d6ea911e99d6c895299ecaf7e5679ada687bbd83892ce17e3"
+  },
+  "packetComparison": {
+    "equalFields": [
+      "schemaVersion",
+      "name",
+      "version",
+      "bytes",
+      "sha256",
+      "integrity",
+      "treeFingerprint"
+    ],
+    "resource": {
+      "receipt": {
+        "machineLocal": true,
+        "file": "/tmp/scenetoweb-resource-next43-install.json",
+        "path": "../../../tmp/scenetoweb-resource-next43-install.json",
+        "bytes": 674,
+        "sha256": "eab7895a690005e89313a3445ac00971aabc0789195d0edc6ea95c10707f1974"
+      },
+      "schemaVersion": 1,
+      "archive": "/tmp/scenetoweb-resource-next43-install/scenetoweb-0.9.0-370391707a67aa97873b54a6ace656987a690f65cb4653ef28474092054892d5.tgz",
+      "name": "scenetoweb",
+      "version": "0.9.0",
+      "bytes": 2791186,
+      "sha256": "370391707a67aa97873b54a6ace656987a690f65cb4653ef28474092054892d5",
+      "integrity": "sha512-+S4314Y2FHXCp5rszCWBFmVNFimBO0NXhSJnLdSxkUDwabyMDfIWSBhvd4DGGrGg/j0ZIA/pF2oAeFkSHORNlw==",
+      "treeFingerprint": "47ad51e63d9a94fda2d9a0c0f35057a7363dadaad838942eb3b71a7ed83f6a8c"
+    },
+    "primary": {
+      "receipt": {
+        "machineLocal": true,
+        "file": "/tmp/scenetoweb-primary-resource-next43-install.json",
+        "path": "../../../tmp/scenetoweb-primary-resource-next43-install.json",
+        "bytes": 690,
+        "sha256": "c975f779161d2d856ba848540ad39d3a43a174b85b352bf1043881fa23b82ad5"
+      },
+      "schemaVersion": 1,
+      "archive": "/tmp/scenetoweb-primary-resource-next43-install/scenetoweb-0.9.0-370391707a67aa97873b54a6ace656987a690f65cb4653ef28474092054892d5.tgz",
+      "name": "scenetoweb",
+      "version": "0.9.0",
+      "bytes": 2791186,
+      "sha256": "370391707a67aa97873b54a6ace656987a690f65cb4653ef28474092054892d5",
+      "integrity": "sha512-+S4314Y2FHXCp5rszCWBFmVNFimBO0NXhSJnLdSxkUDwabyMDfIWSBhvd4DGGrGg/j0ZIA/pF2oAeFkSHORNlw==",
+      "treeFingerprint": "47ad51e63d9a94fda2d9a0c0f35057a7363dadaad838942eb3b71a7ed83f6a8c"
+    },
+    "rerunClaim": "The primary tarball is byte-identical to the tested resource-only tarball. Tests ran in the resource worktree; no separate primary GPU/native rerun is claimed."
+  },
+  "runtimeFingerprint": "5c16cb5d9739989ef2ec6b5eeb22a24223a95ab65fd926ae4801aec47a7c0b42",
+  "scope": "Resource-only owned RTT/DataTexture/row allocation cleanup. Fresh existing White Noise and Wave native/source/Final/browser proofs plus native CPU Blur consumer regressions on Metal and SwiftShader, WebGPU and WebGL2. No unqualified Noise or Displace prototype, new node admission, whole-scene equivalence or all-other-port freshness claim.",
+  "families": [
+    {
+      "family": "white-noise",
+      "receipt": {
+        "path": "artifacts/verification-resource-next43-white-noise/qualified.json",
+        "bytes": 48490,
+        "sha256": "ecddae0a0ce990fc8a16a6c5b34a7c03863bd64c263e3143208065c4e544e283"
+      },
+      "nativeGraphs": 54,
+      "nativeOracleControls": 9,
+      "savedFinalScenes": 8,
+      "browserCaseRuns": 248,
+      "primaryFloat32Words": 7943520,
+      "exactWordMismatches": 0,
+      "contractViolations": 0,
+      "resizeFrames": 336,
+      "lifecycleCycles": 96,
+      "uniqueActualPythonPrefixes": 10,
+      "runtimeFingerprint": "5c16cb5d9739989ef2ec6b5eeb22a24223a95ab65fd926ae4801aec47a7c0b42",
+      "runs": [
+        {
+          "path": "../../../tmp/scenetoweb-compositor-resource-polish-next/artifacts/verification-resource-next43-white-noise/cpu/browser-raw-metal/report.json",
+          "sha256": "b5d0a18ce265556d6cff9831b633ced743b3ec0fd7e9e9c5e5c92ad088fef06e",
+          "profile": "metal",
+          "phase": "raw",
+          "browserVersion": "158.0.8127.18",
+          "actualApis": [
+            {
+              "backend": "webgpu",
+              "gpu": {
+                "api": "WebGPU",
+                "vendor": "apple",
+                "architecture": "metal-3",
+                "device": "",
+                "description": ""
+              },
+              "cases": 54,
+              "savedDispose": {
+                "error": "Error: White Noise exact axes: renderer/device/context/allocation epoch changed",
+                "physicalDestroys": 1,
+                "externalDevice": true,
+                "remainingOwnedTextures": 0,
+                "idempotentDisposal": true,
+                "ownerRoute": "buildSourceCompositor"
+              }
+            },
+            {
+              "backend": "webgl2",
+              "gpu": {
+                "api": "WebGL2",
+                "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+              },
+              "cases": 54,
+              "savedDispose": {
+                "error": "Error: White Noise exact axes: actual available renderer/device/context required",
+                "physicalDestroys": 1,
+                "externalDevice": false,
+                "remainingOwnedTextures": 0,
+                "idempotentDisposal": true,
+                "ownerRoute": "buildSourceCompositor"
+              }
+            }
+          ]
+        },
+        {
+          "path": "../../../tmp/scenetoweb-compositor-resource-polish-next/artifacts/verification-resource-next43-white-noise/cpu/browser-final-metal/report.json",
+          "sha256": "443d820d4b4cf68763611a45d2b1ffee3e49fcc5a07f10a22e0c0be37f07b4fb",
+          "profile": "metal",
+          "phase": "final",
+          "browserVersion": "158.0.8127.18",
+          "actualApis": [
+            {
+              "backend": "webgpu",
+              "gpu": {
+                "api": "WebGPU",
+                "vendor": "apple",
+                "architecture": "metal-3",
+                "device": "",
+                "description": ""
+              },
+              "cases": 8,
+              "savedDispose": {
+                "error": "Error: White Noise exact axes: renderer/device/context/allocation epoch changed",
+                "physicalDestroys": 1,
+                "externalDevice": true,
+                "remainingOwnedTextures": 0,
+                "idempotentDisposal": true,
+                "ownerRoute": "buildSourceCompositor"
+              }
+            },
+            {
+              "backend": "webgl2",
+              "gpu": {
+                "api": "WebGL2",
+                "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+              },
+              "cases": 8,
+              "savedDispose": {
+                "error": "Error: White Noise exact axes: actual available renderer/device/context required",
+                "physicalDestroys": 1,
+                "externalDevice": false,
+                "remainingOwnedTextures": 0,
+                "idempotentDisposal": true,
+                "ownerRoute": "buildSourceCompositor"
+              }
+            }
+          ]
+        },
+        {
+          "path": "../../../tmp/scenetoweb-compositor-resource-polish-next/artifacts/verification-resource-next43-white-noise/cpu/browser-raw-software/report.json",
+          "sha256": "fc4c53fcc2407d90aa2ad9dbf892483f8b2c2b1e9ca9309e73f89c90fa16ccf0",
+          "profile": "software",
+          "phase": "raw",
+          "browserVersion": "158.0.8127.18",
+          "actualApis": [
+            {
+              "backend": "webgpu",
+              "gpu": {
+                "api": "WebGPU",
+                "vendor": "google",
+                "architecture": "swiftshader",
+                "device": "",
+                "description": ""
+              },
+              "cases": 54,
+              "savedDispose": {
+                "error": "Error: White Noise exact axes: renderer/device/context/allocation epoch changed",
+                "physicalDestroys": 1,
+                "externalDevice": true,
+                "remainingOwnedTextures": 0,
+                "idempotentDisposal": true,
+                "ownerRoute": "buildSourceCompositor"
+              }
+            },
+            {
+              "backend": "webgl2",
+              "gpu": {
+                "api": "WebGL2",
+                "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+              },
+              "cases": 54,
+              "savedDispose": {
+                "error": "Error: White Noise exact axes: actual available renderer/device/context required",
+                "physicalDestroys": 1,
+                "externalDevice": false,
+                "remainingOwnedTextures": 0,
+                "idempotentDisposal": true,
+                "ownerRoute": "buildSourceCompositor"
+              }
+            }
+          ]
+        },
+        {
+          "path": "../../../tmp/scenetoweb-compositor-resource-polish-next/artifacts/verification-resource-next43-white-noise/cpu/browser-final-software/report.json",
+          "sha256": "f17326312e506c9c90315e4cf5f298ba4b0f8270c354472f07d0af045cd24f65",
+          "profile": "software",
+          "phase": "final",
+          "browserVersion": "158.0.8127.18",
+          "actualApis": [
+            {
+              "backend": "webgpu",
+              "gpu": {
+                "api": "WebGPU",
+                "vendor": "google",
+                "architecture": "swiftshader",
+                "device": "",
+                "description": ""
+              },
+              "cases": 8,
+              "savedDispose": {
+                "error": "Error: White Noise exact axes: renderer/device/context/allocation epoch changed",
+                "physicalDestroys": 1,
+                "externalDevice": true,
+                "remainingOwnedTextures": 0,
+                "idempotentDisposal": true,
+                "ownerRoute": "buildSourceCompositor"
+              }
+            },
+            {
+              "backend": "webgl2",
+              "gpu": {
+                "api": "WebGL2",
+                "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+              },
+              "cases": 8,
+              "savedDispose": {
+                "error": "Error: White Noise exact axes: actual available renderer/device/context required",
+                "physicalDestroys": 1,
+                "externalDevice": false,
+                "remainingOwnedTextures": 0,
+                "idempotentDisposal": true,
+                "ownerRoute": "buildSourceCompositor"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "family": "wave",
+      "receipt": {
+        "path": "artifacts/verification-resource-next43-wave/qualified.json",
+        "bytes": 78558,
+        "sha256": "3cc892bdb16c9cfc1601c6a9e9dff17cf887855ee4c025b601fb0979dc2dfda1"
+      },
+      "nativeGraphs": 140,
+      "nativeOracleControls": 9,
+      "savedFinalScenes": 20,
+      "browserCaseRuns": 640,
+      "primaryFloat32Words": 10876288,
+      "exactWordMismatches": 0,
+      "contractViolations": 0,
+      "resizeFrames": 384,
+      "lifecycleCycles": 240,
+      "uniqueActualPythonPrefixes": 22,
+      "runtimeFingerprint": "5c16cb5d9739989ef2ec6b5eeb22a24223a95ab65fd926ae4801aec47a7c0b42",
+      "runs": [
+        {
+          "path": "../../../tmp/scenetoweb-compositor-resource-polish-next/artifacts/verification-resource-next43-wave/cpu/browser-raw-metal/report.json",
+          "sha256": "785e4adb12524ccd59d56f30bd329fa82888a2f4730352c3d64cb89f5f87246f",
+          "profile": "metal",
+          "phase": "raw",
+          "browserVersion": "158.0.8127.18",
+          "actualApis": [
+            {
+              "backend": "webgpu",
+              "gpu": {
+                "api": "WebGPU",
+                "vendor": "apple",
+                "architecture": "metal-3",
+                "device": "",
+                "description": ""
+              },
+              "cases": 140,
+              "savedDispose": {
+                "error": "Error: Wave axis: renderer/device/context/allocation epoch changed",
+                "physicalDestroys": 1,
+                "externalDevice": true,
+                "remainingOwnedTextures": 0,
+                "idempotentDisposal": true,
+                "ownerRoute": "buildSourceCompositor",
+                "bindingControls": [
+                  {
+                    "kind": "value",
+                    "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                    "borrowedUploads": 0,
+                    "borrowedDisposals": 0
+                  },
+                  {
+                    "kind": "reference",
+                    "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                    "borrowedUploads": 0,
+                    "borrowedDisposals": 0
+                  },
+                  {
+                    "kind": "uv",
+                    "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                    "borrowedUploads": 0,
+                    "borrowedDisposals": 0
+                  }
+                ]
+              }
+            },
+            {
+              "backend": "webgl2",
+              "gpu": {
+                "api": "WebGL2",
+                "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+              },
+              "cases": 140,
+              "savedDispose": {
+                "error": "Error: Wave axis: actual available renderer/device/context required",
+                "physicalDestroys": 1,
+                "externalDevice": false,
+                "remainingOwnedTextures": 0,
+                "idempotentDisposal": true,
+                "ownerRoute": "buildSourceCompositor",
+                "bindingControls": [
+                  {
+                    "kind": "value",
+                    "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                    "borrowedUploads": 0,
+                    "borrowedDisposals": 0
+                  },
+                  {
+                    "kind": "reference",
+                    "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                    "borrowedUploads": 0,
+                    "borrowedDisposals": 0
+                  },
+                  {
+                    "kind": "uv",
+                    "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                    "borrowedUploads": 0,
+                    "borrowedDisposals": 0
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "path": "../../../tmp/scenetoweb-compositor-resource-polish-next/artifacts/verification-resource-next43-wave/cpu/browser-final-metal/report.json",
+          "sha256": "4e828a526715ab4756fa0744bfd6095201ad8b8bf0fc72b3b0e56afc46a0e7de",
+          "profile": "metal",
+          "phase": "final",
+          "browserVersion": "158.0.8127.18",
+          "actualApis": [
+            {
+              "backend": "webgpu",
+              "gpu": {
+                "api": "WebGPU",
+                "vendor": "apple",
+                "architecture": "metal-3",
+                "device": "",
+                "description": ""
+              },
+              "cases": 20,
+              "savedDispose": {
+                "error": "Error: Wave axis: renderer/device/context/allocation epoch changed",
+                "physicalDestroys": 1,
+                "externalDevice": true,
+                "remainingOwnedTextures": 0,
+                "idempotentDisposal": true,
+                "ownerRoute": "buildSourceCompositor",
+                "bindingControls": [
+                  {
+                    "kind": "value",
+                    "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                    "borrowedUploads": 0,
+                    "borrowedDisposals": 0
+                  },
+                  {
+                    "kind": "reference",
+                    "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                    "borrowedUploads": 0,
+                    "borrowedDisposals": 0
+                  },
+                  {
+                    "kind": "uv",
+                    "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                    "borrowedUploads": 0,
+                    "borrowedDisposals": 0
+                  }
+                ]
+              }
+            },
+            {
+              "backend": "webgl2",
+              "gpu": {
+                "api": "WebGL2",
+                "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+              },
+              "cases": 20,
+              "savedDispose": {
+                "error": "Error: Wave axis: actual available renderer/device/context required",
+                "physicalDestroys": 1,
+                "externalDevice": false,
+                "remainingOwnedTextures": 0,
+                "idempotentDisposal": true,
+                "ownerRoute": "buildSourceCompositor",
+                "bindingControls": [
+                  {
+                    "kind": "value",
+                    "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                    "borrowedUploads": 0,
+                    "borrowedDisposals": 0
+                  },
+                  {
+                    "kind": "reference",
+                    "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                    "borrowedUploads": 0,
+                    "borrowedDisposals": 0
+                  },
+                  {
+                    "kind": "uv",
+                    "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                    "borrowedUploads": 0,
+                    "borrowedDisposals": 0
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "path": "../../../tmp/scenetoweb-compositor-resource-polish-next/artifacts/verification-resource-next43-wave/cpu/browser-raw-software/report.json",
+          "sha256": "032b6912b5f0307410daab9028c82e2e7dea0e618cf8f30b74504deb68247a8f",
+          "profile": "software",
+          "phase": "raw",
+          "browserVersion": "158.0.8127.18",
+          "actualApis": [
+            {
+              "backend": "webgpu",
+              "gpu": {
+                "api": "WebGPU",
+                "vendor": "google",
+                "architecture": "swiftshader",
+                "device": "",
+                "description": ""
+              },
+              "cases": 140,
+              "savedDispose": {
+                "error": "Error: Wave axis: renderer/device/context/allocation epoch changed",
+                "physicalDestroys": 1,
+                "externalDevice": true,
+                "remainingOwnedTextures": 0,
+                "idempotentDisposal": true,
+                "ownerRoute": "buildSourceCompositor",
+                "bindingControls": [
+                  {
+                    "kind": "value",
+                    "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                    "borrowedUploads": 0,
+                    "borrowedDisposals": 0
+                  },
+                  {
+                    "kind": "reference",
+                    "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                    "borrowedUploads": 0,
+                    "borrowedDisposals": 0
+                  },
+                  {
+                    "kind": "uv",
+                    "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                    "borrowedUploads": 0,
+                    "borrowedDisposals": 0
+                  }
+                ]
+              }
+            },
+            {
+              "backend": "webgl2",
+              "gpu": {
+                "api": "WebGL2",
+                "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+              },
+              "cases": 140,
+              "savedDispose": {
+                "error": "Error: Wave axis: actual available renderer/device/context required",
+                "physicalDestroys": 1,
+                "externalDevice": false,
+                "remainingOwnedTextures": 0,
+                "idempotentDisposal": true,
+                "ownerRoute": "buildSourceCompositor",
+                "bindingControls": [
+                  {
+                    "kind": "value",
+                    "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                    "borrowedUploads": 0,
+                    "borrowedDisposals": 0
+                  },
+                  {
+                    "kind": "reference",
+                    "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                    "borrowedUploads": 0,
+                    "borrowedDisposals": 0
+                  },
+                  {
+                    "kind": "uv",
+                    "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                    "borrowedUploads": 0,
+                    "borrowedDisposals": 0
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "path": "../../../tmp/scenetoweb-compositor-resource-polish-next/artifacts/verification-resource-next43-wave/cpu/browser-final-software/report.json",
+          "sha256": "92c8fc8b0ef99797f5ae045dede70c951cec5f5f8ae5576964a219e200668089",
+          "profile": "software",
+          "phase": "final",
+          "browserVersion": "158.0.8127.18",
+          "actualApis": [
+            {
+              "backend": "webgpu",
+              "gpu": {
+                "api": "WebGPU",
+                "vendor": "google",
+                "architecture": "swiftshader",
+                "device": "",
+                "description": ""
+              },
+              "cases": 20,
+              "savedDispose": {
+                "error": "Error: Wave axis: renderer/device/context/allocation epoch changed",
+                "physicalDestroys": 1,
+                "externalDevice": true,
+                "remainingOwnedTextures": 0,
+                "idempotentDisposal": true,
+                "ownerRoute": "buildSourceCompositor",
+                "bindingControls": [
+                  {
+                    "kind": "value",
+                    "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                    "borrowedUploads": 0,
+                    "borrowedDisposals": 0
+                  },
+                  {
+                    "kind": "reference",
+                    "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                    "borrowedUploads": 0,
+                    "borrowedDisposals": 0
+                  },
+                  {
+                    "kind": "uv",
+                    "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                    "borrowedUploads": 0,
+                    "borrowedDisposals": 0
+                  }
+                ]
+              }
+            },
+            {
+              "backend": "webgl2",
+              "gpu": {
+                "api": "WebGL2",
+                "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+              },
+              "cases": 20,
+              "savedDispose": {
+                "error": "Error: Wave axis: actual available renderer/device/context required",
+                "physicalDestroys": 1,
+                "externalDevice": false,
+                "remainingOwnedTextures": 0,
+                "idempotentDisposal": true,
+                "ownerRoute": "buildSourceCompositor",
+                "bindingControls": [
+                  {
+                    "kind": "value",
+                    "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                    "borrowedUploads": 0,
+                    "borrowedDisposals": 0
+                  },
+                  {
+                    "kind": "reference",
+                    "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                    "borrowedUploads": 0,
+                    "borrowedDisposals": 0
+                  },
+                  {
+                    "kind": "uv",
+                    "error": "Error: Wave axis: owned texture-node binding or sampling schema changed",
+                    "borrowedUploads": 0,
+                    "borrowedDisposals": 0
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "blur": {
+    "nativeCases": 161,
+    "nativeSourceInventory": "Exact legacy declaration: canonical SDK Python and two test helpers; no complete addon-root import census claim",
+    "nativeArchive": {
+      "path": "artifacts/verification-resource-next43-blur-native-r2/native-archive.json",
+      "bytes": 12865,
+      "sha256": "b486cfc5087508b5dd27f55044bbdc6ca3e9c1893996303d2461be794705de2f"
+    },
+    "archive": {
+      "pythonInvocations": 1,
+      "finalInvocations": 0,
+      "uniqueCachePrefixes": 1,
+      "numericalCredit": 0
+    },
+    "index": {
+      "path": "artifacts/verification-resource-next43-blur-native-r2/cpu/index.json",
+      "bytes": 10757,
+      "sha256": "52fd91198d1e8324b9d73305f58ebe14eb29aaee829fd13d7238f40dde709564"
+    },
+    "gate": 0.00002,
+    "wordExactClaim": false,
+    "runs": [
+      {
+        "profile": "metal",
+        "results": {
+          "path": "artifacts/verification-resource-next43-blur-metal/results.json",
+          "bytes": 375612,
+          "sha256": "9a07aec27432aedf42d87314e38ba3756580aecce3fff4ba8b1713ffe3ec67f9"
+        },
+        "provenance": {
+          "path": "artifacts/verification-resource-next43-blur-metal/provenance.json",
+          "bytes": 174733,
+          "sha256": "cf8dd3596212cb49df8667ef98ba845b5fd61591b2cce262620a12e7e2a5b3b6"
+        },
+        "browserVersion": "158.0.8127.18",
+        "caseRuns": 322,
+        "maxAbsoluteError": 0.000003814697265625,
+        "limit": 0.00002,
+        "remainingTextures": 0,
+        "shaderErrors": 0,
+        "resizeFrames": 0,
+        "shaderCost": {
+          "measured": false,
+          "reason": "Fresh legacy Blur cases did not request shader/pass budget instrumentation"
+        },
+        "apis": [
+          {
+            "backend": "webgl2",
+            "gpu": {
+              "vendor": "Google Inc. (Apple)",
+              "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+            },
+            "cases": 161
+          },
+          {
+            "backend": "webgpu",
+            "gpu": {
+              "vendor": "apple",
+              "architecture": "metal-3",
+              "device": "",
+              "description": "",
+              "isFallbackAdapter": false
+            },
+            "cases": 161
+          }
+        ],
+        "sourceReferencesSha256": "cdfd45e2e9513f15c7485e1035166fbe52484048493154863aa17ee6f68a157f"
+      },
+      {
+        "profile": "software",
+        "results": {
+          "path": "artifacts/verification-resource-next43-blur-software/results.json",
+          "bytes": 325460,
+          "sha256": "411c5d35a637bdd91522f33ac1090c9e871a59e2bacb5b35920c52936ba6815b"
+        },
+        "provenance": {
+          "path": "artifacts/verification-resource-next43-blur-software/provenance.json",
+          "bytes": 174801,
+          "sha256": "16dcebb95aa2243e50aa5513fbe5d35608bc524ae32c704b9a7f752957961656"
+        },
+        "browserVersion": "158.0.8127.18",
+        "caseRuns": 322,
+        "maxAbsoluteError": 9.238719940185547e-7,
+        "limit": 0.00002,
+        "remainingTextures": 0,
+        "shaderErrors": 0,
+        "resizeFrames": 0,
+        "shaderCost": {
+          "measured": false,
+          "reason": "Fresh legacy Blur cases did not request shader/pass budget instrumentation"
+        },
+        "apis": [
+          {
+            "backend": "webgl2",
+            "gpu": {
+              "vendor": "Google Inc. (Google)",
+              "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+            },
+            "cases": 161
+          },
+          {
+            "backend": "webgpu",
+            "gpu": {
+              "vendor": "google",
+              "architecture": "swiftshader",
+              "device": "",
+              "description": "",
+              "isFallbackAdapter": true
+            },
+            "cases": 161
+          }
+        ],
+        "sourceReferencesSha256": "cdfd45e2e9513f15c7485e1035166fbe52484048493154863aa17ee6f68a157f"
+      }
+    ]
+  },
+  "reader": {
+    "path": "experiments/compositor-resource-cleanup-regression/close.mjs",
+    "sha256": "4d6e6dbcfdbb393b19d9637acc2749647086517f2231108a758e7a29626a580d"
+  },
+  "rawArtifacts": {
+    "machineLocal": true,
+    "ignored": true,
+    "base": "artifacts/verification-resource-next43-*"
+  }
+}

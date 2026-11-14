@@ -2,6 +2,7 @@ import { DataTexture, FloatType, RGBAFormat, Vector2, Vector4 } from 'three'
 import { RendererUtils } from 'three/webgpu'
 import * as TSL from 'three/tsl'
 import type { TslEffectNode } from './tslPostEffects.js'
+import { OwnedCompositorDataTexture, bindCompositorDataTextures } from './tslCompositorDataTextureOwner.js'
 import { ownBlurRtt } from './tslCompositorBlur.js'
 import { compositorFma32 } from './tslCompositorFma.js'
 export { compositorFma32 } from './tslCompositorFma.js'
@@ -71,10 +72,11 @@ export function resampleCompositorField(input: TslEffectNode, from: readonly [nu
     const data = new Float32Array(COMPOSITOR_RESAMPLE_MAX_EXTENT * 4)
     const texture = new DataTexture(data, 256, COMPOSITOR_RESAMPLE_MAX_EXTENT / 256, RGBAFormat, FloatType)
     texture.needsUpdate = true
-    let disposed = false
-    resources.push({ dispose() { if (!disposed) { disposed = true; texture.dispose() } } })
-    return { data, texture }
+    const owner = new OwnedCompositorDataTexture(texture)
+    resources.push(owner)
+    return { data, texture, owner }
   })
+  bindCompositorDataTextures(image, tables.map(table => table.owner))
   let lastWidth = 0, lastHeight = 0
   const updateBefore = image.updateBefore.bind(image), size = new Vector2(), viewport = new Vector4(), scissor = new Vector4()
   image.updateBefore = (frame: TslEffectNode): void => {

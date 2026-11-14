@@ -1,0 +1,341 @@
+{
+  "schemaVersion": 1,
+  "status": "RESEARCH_CLOSED_ACTUAL_ROW_PARTIAL_ALLOCATION_CONTROLS",
+  "supportCredit": 0,
+  "productionSourceCommit": "0bd2e7e",
+  "sourceBase": "e9f36a1",
+  "actualCases": 28,
+  "physicalHandles": 36,
+  "physicalDestructionCounts": "Every actual handle exactly once",
+  "nativeJobs": 0,
+  "numericScope": "Constant .25/.25/.25/1 recovery control only; no new node/field numerical qualification",
+  "rawReport": {
+    "machineLocal": true,
+    "path": "artifacts/verification-row-partial-actual-r1/report.json",
+    "bytes": 194454,
+    "sha256": "a69e62f89a9ae30eac436cbd4f84958418401b0ed8cdb0cf6f8293c6529d5cba"
+  },
+  "closedReader": {
+    "runtimeFingerprint": "1a0fc13a9023ae18a92e7de44f2f9c2804eb388da0533e13299af0c436206570",
+    "runnerSha256": "aedfa71db64d5a97ae8d1c274285cc5c9bc28cbd41f01fe0b47db0f70a7ef827"
+  },
+  "sourcePins": {
+    "packages/blendlink/src/tslCompositorRowTable.ts": "ddd0361586be2d7b7c6848c72044b1d585f33c40f9b283e4846b854f15bd9980",
+    "packages/blendlink/src/tslCompositorRowTable.test.ts": "68b85d9a3f5a9bb714380a4e6168254bde4c74014cbabd44032408e303139b2d",
+    "experiments/research/row-upload-retry/browser.js": "2d59a51870fb8f1ed0b44d7527d5aa3dbeab71adb1e4171284a278f22276bcb7",
+    "experiments/research/row-upload-retry/gpu-control.mjs": "aedfa71db64d5a97ae8d1c274285cc5c9bc28cbd41f01fe0b47db0f70a7ef827",
+    "experiments/research/row-upload-retry/index.html": "d9424939fa396b2f15234674d2b71d03d7ddd0c5e01d3310cfdd8f67c0fe0ae8"
+  },
+  "runs": [
+    {
+      "profile": "metal",
+      "backend": "webgpu",
+      "gpu": {
+        "api": "WebGPU",
+        "vendor": "apple",
+        "architecture": "metal-3",
+        "description": "",
+        "device": ""
+      },
+      "browserVersion": "158.0.8127.18",
+      "cases": [
+        {
+          "case": "none-dispose",
+          "allocated": 1,
+          "destroys": [
+            1
+          ],
+          "recovered": false,
+          "error": null
+        },
+        {
+          "case": "none-retry",
+          "allocated": 1,
+          "destroys": [
+            1
+          ],
+          "recovered": true,
+          "error": null
+        },
+        {
+          "case": "create-dispose",
+          "allocated": 1,
+          "destroys": [
+            1
+          ],
+          "recovered": false,
+          "error": "Error: CONTROL allocated then create threw before onUpdate"
+        },
+        {
+          "case": "create-retry",
+          "allocated": 2,
+          "destroys": [
+            1,
+            1
+          ],
+          "recovered": true,
+          "error": "Error: CONTROL allocated then create threw before onUpdate"
+        },
+        {
+          "case": "upload-dispose",
+          "allocated": 1,
+          "destroys": [
+            1
+          ],
+          "recovered": false,
+          "error": "Error: CONTROL upload threw before onUpdate"
+        },
+        {
+          "case": "upload-retry",
+          "allocated": 2,
+          "destroys": [
+            1,
+            1
+          ],
+          "recovered": true,
+          "error": "Error: CONTROL upload threw before onUpdate"
+        },
+        {
+          "case": "create-saved-dispose",
+          "allocated": 1,
+          "destroys": [
+            1
+          ],
+          "error": "Error: CONTROL allocated then create threw before onUpdate"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "profile": "metal",
+      "backend": "webgl2",
+      "gpu": {
+        "api": "WebGL2",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+      },
+      "browserVersion": "158.0.8127.18",
+      "cases": [
+        {
+          "case": "none-dispose",
+          "allocated": 1,
+          "destroys": [
+            1
+          ],
+          "recovered": false,
+          "error": null
+        },
+        {
+          "case": "none-retry",
+          "allocated": 1,
+          "destroys": [
+            1
+          ],
+          "recovered": true,
+          "error": null
+        },
+        {
+          "case": "create-dispose",
+          "allocated": 1,
+          "destroys": [
+            1
+          ],
+          "recovered": false,
+          "error": "Error: CONTROL allocated then create threw before onUpdate"
+        },
+        {
+          "case": "create-retry",
+          "allocated": 2,
+          "destroys": [
+            1,
+            1
+          ],
+          "recovered": true,
+          "error": "Error: CONTROL allocated then create threw before onUpdate"
+        },
+        {
+          "case": "upload-dispose",
+          "allocated": 1,
+          "destroys": [
+            1
+          ],
+          "recovered": false,
+          "error": "Error: CONTROL upload threw before onUpdate"
+        },
+        {
+          "case": "upload-retry",
+          "allocated": 2,
+          "destroys": [
+            1,
+            1
+          ],
+          "recovered": true,
+          "error": "Error: CONTROL upload threw before onUpdate"
+        },
+        {
+          "case": "create-saved-dispose",
+          "allocated": 1,
+          "destroys": [
+            1
+          ],
+          "error": "Error: CONTROL allocated then create threw before onUpdate"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "profile": "software",
+      "backend": "webgpu",
+      "gpu": {
+        "api": "WebGPU",
+        "vendor": "google",
+        "architecture": "swiftshader",
+        "description": "",
+        "device": ""
+      },
+      "browserVersion": "158.0.8127.18",
+      "cases": [
+        {
+          "case": "none-dispose",
+          "allocated": 1,
+          "destroys": [
+            1
+          ],
+          "recovered": false,
+          "error": null
+        },
+        {
+          "case": "none-retry",
+          "allocated": 1,
+          "destroys": [
+            1
+          ],
+          "recovered": true,
+          "error": null
+        },
+        {
+          "case": "create-dispose",
+          "allocated": 1,
+          "destroys": [
+            1
+          ],
+          "recovered": false,
+          "error": "Error: CONTROL allocated then create threw before onUpdate"
+        },
+        {
+          "case": "create-retry",
+          "allocated": 2,
+          "destroys": [
+            1,
+            1
+          ],
+          "recovered": true,
+          "error": "Error: CONTROL allocated then create threw before onUpdate"
+        },
+        {
+          "case": "upload-dispose",
+          "allocated": 1,
+          "destroys": [
+            1
+          ],
+          "recovered": false,
+          "error": "Error: CONTROL upload threw before onUpdate"
+        },
+        {
+          "case": "upload-retry",
+          "allocated": 2,
+          "destroys": [
+            1,
+            1
+          ],
+          "recovered": true,
+          "error": "Error: CONTROL upload threw before onUpdate"
+        },
+        {
+          "case": "create-saved-dispose",
+          "allocated": 1,
+          "destroys": [
+            1
+          ],
+          "error": "Error: CONTROL allocated then create threw before onUpdate"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "profile": "software",
+      "backend": "webgl2",
+      "gpu": {
+        "api": "WebGL2",
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+      },
+      "browserVersion": "158.0.8127.18",
+      "cases": [
+        {
+          "case": "none-dispose",
+          "allocated": 1,
+          "destroys": [
+            1
+          ],
+          "recovered": false,
+          "error": null
+        },
+        {
+          "case": "none-retry",
+          "allocated": 1,
+          "destroys": [
+            1
+          ],
+          "recovered": true,
+          "error": null
+        },
+        {
+          "case": "create-dispose",
+          "allocated": 1,
+          "destroys": [
+            1
+          ],
+          "recovered": false,
+          "error": "Error: CONTROL allocated then create threw before onUpdate"
+        },
+        {
+          "case": "create-retry",
+          "allocated": 2,
+          "destroys": [
+            1,
+            1
+          ],
+          "recovered": true,
+          "error": "Error: CONTROL allocated then create threw before onUpdate"
+        },
+        {
+          "case": "upload-dispose",
+          "allocated": 1,
+          "destroys": [
+            1
+          ],
+          "recovered": false,
+          "error": "Error: CONTROL upload threw before onUpdate"
+        },
+        {
+          "case": "upload-retry",
+          "allocated": 2,
+          "destroys": [
+            1,
+            1
+          ],
+          "recovered": true,
+          "error": "Error: CONTROL upload threw before onUpdate"
+        },
+        {
+          "case": "create-saved-dispose",
+          "allocated": 1,
+          "destroys": [
+            1
+          ],
+          "error": "Error: CONTROL allocated then create threw before onUpdate"
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

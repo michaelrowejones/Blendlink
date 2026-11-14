@@ -49,11 +49,13 @@ native, saved Final and actual browser proofs still determine the supported slic
    refusal and ownership checks. Record inputs, actual identities, logs and a
    result. Update capability claims after the evidence is reviewed.
 
-The execution registry includes **Squeeze** and the bounded **Float to Integer**
-compositor port. Each adapter owns its source identity, native receipts, actual
-saved Final sources and browser census. Float to Integer records its CPU-MF
-evaluator explicitly, including single values in GPU-authored compositing; it
-does not claim a native GPU numerical backend. Unknown adapters refuse.
+The execution registry includes **Squeeze**, bounded **Float to Integer**,
+fixed/default-field **White Noise**, **mono Switch View**, and CPU **Wave axis**
+transactions. Each adapter owns its source identity, native receipts, actual
+saved Final sources and browser census. These are separately qualified slices,
+not complete node or cross-backend coverage. Float to Integer records its CPU-MF
+evaluator explicitly, including single values in GPU-authored compositing;
+this does not qualify native GPU numerical execution. Unknown adapters refuse.
 
 Native implementation and actual fixture dependencies are pinned separately.
 Editing an unrelated add-on test does not invalidate the Float to Integer
@@ -65,6 +67,32 @@ Pair each port's numerical proof with the [performance protocol](NODE_PORT_PERFO
 bounded structural analysis, actual scene coverage, observed browser timings,
 and repeated install/dispose checks. These remain separate evidence; neither a
 small graph nor a fast fallback carrier qualifies a port's source appearance.
+
+## Catch fixture errors before expensive proof
+
+Start with actual no-render RNA controls. Use the retained native catalog to
+check socket/menu/precision names, then exercise the real stored defaults and
+refusals with a fresh guarded Python prefix. Guard render/GPU entry points when
+claiming a no-render policy. Host mocks alone do not establish Blender's schema.
+
+Validate every captured native program's hash and semantic schema before Final
+export, then validate actual exported program schemas before browser work.
+JSON member order is not part of that schema: compare exact key sets and reject
+missing/extra fields. The Wave capture/export stages implement this ordering.
+Independent closing readers must still repeat the complete checks.
+
+Select and inspect the actual browser profile before a large matrix. On the
+pinned current macOS setup, the established Metal runners set
+`BLENDLINK_TEST_CHROMIUM_CHANNEL=chromium`; the default Playwright headless shell
+can expose SwiftShader. Software runs explicitly select SwiftShader and clear
+that channel override. Requested flags never substitute for observed adapter/API
+identity. Preserve a mismatched run as failed and use a fresh namespace.
+
+Keep GPU jobs serial. Independent CPU-only source policies can run concurrently
+when each owns its native launcher, import prefix, source snapshot and outputs,
+and demonstrates that it does not initialize a GPU or render. Freeze each
+candidate's inputs before numerical capture; merge shared-owner changes in
+batches and run affected family regressions on the union.
 
 ## Commands
 
