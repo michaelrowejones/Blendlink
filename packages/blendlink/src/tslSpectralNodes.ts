@@ -15,6 +15,15 @@ type Node = any
 const { ceil, clamp, float, floor, max, mix, select, vec3 } = TSL as unknown as Record<
   'ceil' | 'clamp' | 'float' | 'floor' | 'max' | 'mix' | 'select' | 'vec3', (...args: Node[]) => Node
 >
+/** Shared source polynomial, with explicit primitive ordering per native evaluator.
+ * Existing shader models retain direct division; IMB CPU MF stages 1/T first. */
+export function buildBlackbodyPolynomial(temperature:Node,index:number,red:readonly number[],green:readonly number[],blue:readonly number[],stage:'direct-division'|'native-reciprocal'='direct-division'):Node {
+  const r=red.slice(index*3,index*3+3),g=green.slice(index*3,index*3+3),b=blue.slice(index*4,index*4+4)
+  const inverse=stage==='native-reciprocal'?float(1).div(temperature).toVar():null
+  return vec3((inverse?inverse.mul(r[0]):float(r[0]!).div(temperature)).add(temperature.mul(r[1])).add(r[2]),
+    (inverse?inverse.mul(g[0]):float(g[0]!).div(temperature)).add(temperature.mul(g[1])).add(g[2]),
+    temperature.mul(b[0]).add(b[1]).mul(temperature).add(b[2]).mul(temperature).add(b[3]))
+}
 export function buildTslSpectralNode(
   expression: TslIrExpression,
   input: TslExpression,
@@ -49,13 +58,7 @@ export function buildTslSpectralNode(
     // Guard inactive branches too: WGSL constant folding rejects division by
     // zero even when a select chooses the below-range native endpoint.
     const temperature = clamp(value, 800, 12000)
-    const polynomial = (index: number): Node => {
-      const r = red.slice(index * 3, index * 3 + 3), g = green.slice(index * 3, index * 3 + 3)
-      const b = blue.slice(index * 4, index * 4 + 4)
-      return vec3(float(r[0]!).div(temperature).add(temperature.mul(r[1])).add(r[2]),
-        float(g[0]!).div(temperature).add(temperature.mul(g[1])).add(g[2]),
-        temperature.mul(b[0]).add(b[1]).mul(temperature).add(b[2]).mul(temperature).add(b[3]))
-    }
+    const polynomial = (index: number): Node => buildBlackbodyPolynomial(temperature,index,red,green,blue)
     let color = polynomial(0)
     for (const [index, boundary] of [965, 1167, 1449, 1902, 3315, 6365].entries())
       color = select(value.greaterThanEqual(boundary), polynomial(index + 1), color)

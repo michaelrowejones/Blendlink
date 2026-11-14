@@ -1,0 +1,310 @@
+[
+  {
+    "case": "calibration",
+    "kind": "control",
+    "expectedRGBA": [
+      0.12345670163631439,
+      0.8765432238578796,
+      1.567891240119934,
+      1.0
+    ],
+    "route": "rgb-control",
+    "saved": true
+  },
+  {
+    "case": "default-6500",
+    "temperature": 6500,
+    "route": "default",
+    "saved": true,
+    "temperatureBits": 1170939904,
+    "kind": "blackbody"
+  },
+  {
+    "case": "boundary-800-at",
+    "temperature": 800.0,
+    "route": "value",
+    "saved": true,
+    "temperatureBits": 1145569280,
+    "kind": "blackbody"
+  },
+  {
+    "case": "boundary-800-above",
+    "temperature": 800.0000610351562,
+    "route": "value",
+    "saved": false,
+    "temperatureBits": 1145569281,
+    "kind": "blackbody"
+  },
+  {
+    "case": "boundary-965-below",
+    "temperature": 964.9999389648438,
+    "route": "value",
+    "saved": false,
+    "temperatureBits": 1148272639,
+    "kind": "blackbody"
+  },
+  {
+    "case": "boundary-965-at",
+    "temperature": 965.0,
+    "route": "value",
+    "saved": true,
+    "temperatureBits": 1148272640,
+    "kind": "blackbody"
+  },
+  {
+    "case": "boundary-965-above",
+    "temperature": 965.0000610351562,
+    "route": "value",
+    "saved": false,
+    "temperatureBits": 1148272641,
+    "kind": "blackbody"
+  },
+  {
+    "case": "boundary-1167-below",
+    "temperature": 1166.9998779296875,
+    "route": "value",
+    "saved": false,
+    "temperatureBits": 1150410751,
+    "kind": "blackbody"
+  },
+  {
+    "case": "boundary-1167-at",
+    "temperature": 1167.0,
+    "route": "value",
+    "saved": true,
+    "temperatureBits": 1150410752,
+    "kind": "blackbody"
+  },
+  {
+    "case": "boundary-1167-above",
+    "temperature": 1167.0001220703125,
+    "route": "value",
+    "saved": false,
+    "temperatureBits": 1150410753,
+    "kind": "blackbody"
+  },
+  {
+    "case": "boundary-1449-below",
+    "temperature": 1448.9998779296875,
+    "route": "value",
+    "saved": false,
+    "temperatureBits": 1152720895,
+    "kind": "blackbody"
+  },
+  {
+    "case": "boundary-1449-at",
+    "temperature": 1449.0,
+    "route": "value",
+    "saved": true,
+    "temperatureBits": 1152720896,
+    "kind": "blackbody"
+  },
+  {
+    "case": "boundary-1449-above",
+    "temperature": 1449.0001220703125,
+    "route": "value",
+    "saved": false,
+    "temperatureBits": 1152720897,
+    "kind": "blackbody"
+  },
+  {
+    "case": "boundary-1902-below",
+    "temperature": 1901.9998779296875,
+    "route": "value",
+    "saved": false,
+    "temperatureBits": 1156431871,
+    "kind": "blackbody"
+  },
+  {
+    "case": "boundary-1902-at",
+    "temperature": 1902.0,
+    "route": "value",
+    "saved": true,
+    "temperatureBits": 1156431872,
+    "kind": "blackbody"
+  },
+  {
+    "case": "boundary-1902-above",
+    "temperature": 1902.0001220703125,
+    "route": "value",
+    "saved": false,
+    "temperatureBits": 1156431873,
+    "kind": "blackbody"
+  },
+  {
+    "case": "boundary-3315-below",
+    "temperature": 3314.999755859375,
+    "route": "value",
+    "saved": false,
+    "temperatureBits": 1162817535,
+    "kind": "blackbody"
+  },
+  {
+    "case": "boundary-3315-at",
+    "temperature": 3315.0,
+    "route": "value",
+    "saved": true,
+    "temperatureBits": 1162817536,
+    "kind": "blackbody"
+  },
+  {
+    "case": "boundary-3315-above",
+    "temperature": 3315.000244140625,
+    "route": "value",
+    "saved": false,
+    "temperatureBits": 1162817537,
+    "kind": "blackbody"
+  },
+  {
+    "case": "boundary-6365-below",
+    "temperature": 6364.99951171875,
+    "route": "value",
+    "saved": false,
+    "temperatureBits": 1170663423,
+    "kind": "blackbody"
+  },
+  {
+    "case": "boundary-6365-at",
+    "temperature": 6365.0,
+    "route": "value",
+    "saved": true,
+    "temperatureBits": 1170663424,
+    "kind": "blackbody"
+  },
+  {
+    "case": "boundary-6365-above",
+    "temperature": 6365.00048828125,
+    "route": "value",
+    "saved": false,
+    "temperatureBits": 1170663425,
+    "kind": "blackbody"
+  },
+  {
+    "case": "boundary-12000-below",
+    "temperature": 11999.9990234375,
+    "route": "value",
+    "saved": false,
+    "temperatureBits": 1178304511,
+    "kind": "blackbody"
+  },
+  {
+    "case": "boundary-12000-at",
+    "temperature": 12000.0,
+    "route": "value",
+    "saved": true,
+    "temperatureBits": 1178304512,
+    "kind": "blackbody"
+  },
+  {
+    "case": "artist-0",
+    "temperature": 800.5999755859375,
+    "route": "default",
+    "saved": false,
+    "temperatureBits": 1145579110,
+    "kind": "blackbody"
+  },
+  {
+    "case": "artist-1",
+    "temperature": 1000.0999755859375,
+    "route": "default",
+    "saved": false,
+    "temperatureBits": 1148847718,
+    "kind": "blackbody"
+  },
+  {
+    "case": "artist-2",
+    "temperature": 1800.25,
+    "route": "default",
+    "saved": false,
+    "temperatureBits": 1155598336,
+    "kind": "blackbody"
+  },
+  {
+    "case": "artist-3",
+    "temperature": 2700.10009765625,
+    "route": "default",
+    "saved": true,
+    "temperatureBits": 1160298906,
+    "kind": "blackbody"
+  },
+  {
+    "case": "artist-4",
+    "temperature": 3200.300048828125,
+    "route": "default",
+    "saved": false,
+    "temperatureBits": 1162347725,
+    "kind": "blackbody"
+  },
+  {
+    "case": "artist-5",
+    "temperature": 4500.7001953125,
+    "route": "default",
+    "saved": false,
+    "temperatureBits": 1166845338,
+    "kind": "blackbody"
+  },
+  {
+    "case": "artist-6",
+    "temperature": 5600.2001953125,
+    "route": "default",
+    "saved": true,
+    "temperatureBits": 1169097114,
+    "kind": "blackbody"
+  },
+  {
+    "case": "artist-7",
+    "temperature": 6500.10009765625,
+    "route": "default",
+    "saved": true,
+    "temperatureBits": 1170940109,
+    "kind": "blackbody"
+  },
+  {
+    "case": "artist-8",
+    "temperature": 8000.2998046875,
+    "route": "default",
+    "saved": false,
+    "temperatureBits": 1174012518,
+    "kind": "blackbody"
+  },
+  {
+    "case": "artist-9",
+    "temperature": 10000.099609375,
+    "route": "default",
+    "saved": false,
+    "temperatureBits": 1176256614,
+    "kind": "blackbody"
+  },
+  {
+    "case": "artist-10",
+    "temperature": 11999.900390625,
+    "route": "default",
+    "saved": false,
+    "temperatureBits": 1178304410,
+    "kind": "blackbody"
+  },
+  {
+    "case": "route-value",
+    "temperature": 6500.10009765625,
+    "route": "value",
+    "saved": true,
+    "temperatureBits": 1170940109,
+    "kind": "blackbody"
+  },
+  {
+    "case": "route-reroute",
+    "temperature": 6500.10009765625,
+    "route": "reroute",
+    "saved": true,
+    "temperatureBits": 1170940109,
+    "kind": "blackbody"
+  },
+  {
+    "case": "route-group",
+    "temperature": 6500.10009765625,
+    "route": "group",
+    "saved": true,
+    "temperatureBits": 1170940109,
+    "kind": "blackbody"
+  }
+]

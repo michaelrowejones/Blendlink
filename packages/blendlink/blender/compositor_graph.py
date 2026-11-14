@@ -72,6 +72,7 @@ normalize_vector_component = _sibling("compositor_vector_component").normalize_v
 normalize_float_to_int = _sibling("compositor_float_to_int").normalize_float_to_int
 normalize_vector_math = _sibling("compositor_vector_math").normalize_vector_math
 normalize_radial_width = _sibling("compositor_radial_width").normalize_radial_width
+normalize_blackbody = _sibling("compositor_blackbody").normalize_blackbody
 resolve_vector_math_literal = _sibling("compositor_procedural_texture").literal
 normalize_procedural_texture = _sibling("compositor_procedural_texture").normalize_procedural_texture
 validate_texture_field_graph = _sibling("compositor_procedural_texture").validate_texture_field_graph
@@ -92,6 +93,7 @@ TYPES = {
     "FunctionNodeFloatToInt": "float-to-int",
     "ShaderNodeVectorMath": "vector-math",
     "ShaderNodeRadialTiling": "radial-segment-width",
+    "ShaderNodeBlackbody": "blackbody-color",
     "ShaderNodeTexGradient": "gradient-texture",
     "ShaderNodeTexChecker": "checker-texture",
     "CompositorNodeRelativeToPixel": "relative-to-pixel",
@@ -545,6 +547,9 @@ def extract(scene):
                 elif node.bl_idname in ("FunctionNodeBitMath", "FunctionNodeHashValue"):
                     normalize_integer_bits(node, socket, op, lambda incoming: input_value(incoming, ctx), result["ops"],
                         lambda incoming, message: fail("unsupported-integer-bits", path, node, incoming, message))
+                elif node.bl_idname == "ShaderNodeBlackbody":
+                    normalize_blackbody(node, socket, op, lambda incoming: input_value(incoming, ctx), result["ops"],
+                        lambda incoming, message: fail("unsupported-blackbody", path, node, incoming, message), resolve_vector_math_literal)
                 elif node.bl_idname == "ShaderNodeRadialTiling":
                     normalize_radial_width(node, socket, op, lambda incoming: input_value(incoming, ctx), result["ops"],
                         lambda incoming, message: fail("unsupported-radial-width", path, node, incoming, message), resolve_vector_math_literal)

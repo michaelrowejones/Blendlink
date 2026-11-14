@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "model": "imb-blackbody-literal-forward-error-53-v1",
+  "declaredBeforeNativeAndBrowserCapture": true,
+  "nativePath": "node_shader_blackbody.cc build_multi_function -> IMB_colormanagement_blackbody_temperature_to_rgb -> native Rec709 bypass -> clamp[0,FLT_MAX],alpha1. Single-value compositor units execute MF on CPU even when authored device is GPU. GPU field LUT is not claimed.",
+  "domain": "Every exact stored Float32 Temperature800..12000 through literal/Value/reroute/bound group provenance. No sixteenth-grid restriction or computed/field temperatures. Source build02f0899d78e3 macOSarm64; default bundled config hash and lin_rec709_scene only.",
+  "workingSpace": "Native scene_linear_is_rec709 bypass copies channels without multiplying an approximate identity matrix. Other working spaces/configs require independent native transform proof and refuse.",
+  "forwardEnvelope": {
+    "unitRoundoff": 5.960464477539063e-08,
+    "pairCoefficient": 32,
+    "S_rg": "abs(a)/T+abs(b)*T+abs(c), with exact stored Float32 coefficients from selected native source interval",
+    "S_b": "abs(a)*T^3+abs(b)*T^2+abs(c)*T+abs(d)",
+    "gate": "For every RGB word abs(browser-native)<=32*u*S_channel(T) AND abs(browser-native)<=2^-15. Alpha Float32 exactly1. ULP/word differences reported separately; no fixed ULP promise near true cancellation zeros.",
+    "maxAbsoluteError": 3.0517578125e-05,
+    "sourceDerivation": "WGSL15.7.4 and GLSLES3.00sec4.5.1 permit at most2.5ULP for reciprocal/division on this normal denominator domain; use relative5u. A correctly-rounded result may select either adjacent float, so conservatively budget relative2u for each GPU add/multiply. Red/green longest term path is reciprocal5u +multiply2u +two additions4u =11u; cubic Horner has6primitive rounds at2u =12u. Native CPU round-to-nearest/FMA paths have no greater bound. Thus each evaluator is bounded by gamma12*S, gamma12=12u/(1-12u); two errors sum to<=2gamma12*S<32u*S. Source interval monotonic absolute-term bounds establish S<16 over800..12000, so32u*S<2^-15. Fused operations require fewer roundings. Final nonnegative clamp is1-Lipschitz; branch index is exact from storedF32 input; alpha authored1. All intermediates normal or zero in this domain. No post-measurement gate widening.",
+    "upperEndpoint": "T==12000 source constant channels; S is abs(stored endpoint channel), with exact native alpha. Explicit endpoints and adjacent Float32 inputs exercise piecewise selection.",
+    "standards": [
+      {
+        "url": "https://www.w3.org/TR/2026/CRD-WGSL-20261106/#floating-point-accuracy",
+        "section": "15.7.4; adjacent result rounding,2.5ULP division"
+      },
+      {
+        "url": "https://registry.khronos.org/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf",
+        "section": "4.5.1, pp57-58; highp32accuracy,2.5ULP division"
+      }
+    ]
+  },
+  "carrier": "Native compositor FULL precision and32bit EXR RGBA are read directly, no EEVEE emission/HDR beauty carrier. Independently controlled calibration/alpha confirms storage before numerical credit. Actual saved Final graph retains native Blackbody and Principled plate.",
+  "performance": "Only selected static polynomial is constructed from validated literal input; no7-way per-fragment branch/select, no LUT/texture/target allocation, no per-frame readback. Generated shader operation count and lifecycle still need actual future browser evidence.",
+  "qualificationCredit": 0
+}

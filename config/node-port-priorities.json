@@ -1420,6 +1420,14 @@
         "typed-field-contracts",
         "bounded-graph-execution"
       ]
+    },
+    "compositor:ShaderNodeBlackbody": {
+      "priority": "P2 Completion",
+      "reason": "Qualified practical literal Blackbody slice. Remaining work is GPU-field LUT/sample precision and independently qualified working-space transforms; user frequency is unmeasured.",
+      "dependsOn": [
+        "typed-field-contracts",
+        "image-sampling-lod"
+      ]
     }
   },
   "researchNotes": {
@@ -1437,7 +1445,8 @@
     "compositor:CompositorNodeImageInfo": "Qualified partial identity full-frame current-scene Render Layers metadata: five native outputs and explicit RGBA/padded-vector edges exact, dimensions live through resize/DPR with real PassNode dependency. Separately labelled existing width/height DIVIDE examples have their own bounded consumer contract; Aspect is not a native output. Next P0 gaps: nonidentity/static/computed image domains, metadata scalar/int/Boolean conversions and independently qualified composed-domain algebra. Image Info is absent from the three official demo physical inventories, so triage adds no new-port numerical/Final/browser/performance credit.",
     "shader:GeometryNodeRepeatInput": "Qualified paired static literal-seed Repeat slice; 49native/11Final/240browser family cases. UV phase margins, nonlinear/cross-state assignment and a shared source-frame timeline remain separate blockers. Original animated Mandelbrot has no new acceptance credit.",
     "shader:GeometryNodeRepeatOutput": "Qualified paired static literal-seed Repeat slice; 49native/11Final/240browser family cases. UV phase margins, nonlinear/cross-state assignment and a shared source-frame timeline remain separate blockers. Original animated Mandelbrot has no new acceptance credit.",
-    "shader:ShaderNodeBump": "A separate offline Cycles Normal/active Coat Normal route is verified on actual owned Cube wood, with native render geometry, independent PNG/UV/Mikk checks and strict carrier-loading closure. Zero new live Bump coverage; Floor resource limit and Lighting-atlas composition remain refused."
+    "shader:ShaderNodeBump": "A separate offline Cycles Normal/active Coat Normal route is verified on actual owned Cube wood, with native render geometry, independent PNG/UV/Mikk checks and strict carrier-loading closure. Zero new live Bump coverage; Floor resource limit and Lighting-atlas composition remain refused.",
+    "compositor:ShaderNodeBlackbody": "Closed compositor CPU-MF literal Blackbody proof: 76 native graphs /32 Finals /432 browser cases; RGB within predeclared source-error envelope, exact alpha/calibration. GPU fields and custom color transforms remain separate."
   },
   "observationEvidence": [
     "experiments/official-demo-node-performance/README.md",
@@ -1594,6 +1603,10 @@
     "shader:ShaderNodeBump": [
       "experiments/cycles-normal-bake/README.md",
       "experiments/cycles-normal-bake/evidence.json"
+    ],
+    "compositor:ShaderNodeBlackbody": [
+      "experiments/compositor-blackbody/README.md",
+      "experiments/compositor-blackbody/evidence.json"
     ]
   },
   "sceneObservations": {

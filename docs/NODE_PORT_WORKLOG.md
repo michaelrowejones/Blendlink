@@ -565,3 +565,36 @@ All22new context/node entries are5.3-only partial overrides. Only the8measured
 Case/Find menu values acquire5.3partial enum scope;4.2/5.2categories and enum
 coverage remain unchanged. Target totals are46supported,114partial,14structural,
 158unsupported (332target nodes); no full-node completion claim.
+
+
+## 2026-11-13 — Practical compositor Blackbody source reuse
+
+The new compositor Blackbody route uses the actual native IMB CPU-MF path for
+all single-value units, including GPU-authored compositor settings. Every stored
+Float32 literal/Value/reroute/group temperature800..12000 is admitted; no artificial
+input grid. The actual bundled Linear Rec709 configuration and coefficient
+registry are hash-pinned, and the native identity color-transform bypass is
+retained. Fields, arbitrary computed/animated temperatures and other working
+spaces remain named refusals. Existing shader spectral behavior retains direct
+division/LUT staging; the new route explicitly stages1/T before multiplication.
+
+The predeclared source-error envelope is32u*S(T) AND absolute2^-15, with exact
+alpha1 and independent non-half-exact HDR calibration. It accounts for permitted
+GPU primitive rounding and cancellation, rather than claiming a fixed ULP error
+near real zeros. The complete integrated matrix closed76native graphs
+(74production),32saved Finals,432browser cases/110592words and35fresh Python
+prefixes.3840exact-word differences, max2350ULP near cancellation and maximum
+absolute1.1920928955078125e-7, satisfy both gates with zero violations.48resize/DPR
+frames and actual Metal/SwiftShader WebGPU/WebGL2 are included. The selected
+polynomial produces no shader loops or port-owned textures/targets;3actual Final
+lifecycle cycles restore caller ownership and the independently warmed DFG cache.
+Runtime fingerprint11e35e06803acf14dcac865edc6e670fb267e4d7af2b2779c2b11477ee674611.
+
+Shared native script censuses and runtime transactions were reused. Realistic
+stripped Final records, host-only backend metadata, independent AST artifact
+closure and exact source/profile/working-space refusals run before expensive
+proof phases. The shared spectral refactor passes all1533SDK tests plus5optional
+skips and98release-policy checks. One5.3-only compositor entry becomes partial:
+46supported,115partial,14structural,157unsupported. Existing numeric receipts
+remain observations at their own source/runtime snapshots; this new receipt
+does not relabel all retained ports as freshly replayed.

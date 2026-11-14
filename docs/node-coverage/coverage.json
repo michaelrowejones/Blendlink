@@ -1,5 +1,5 @@
 {
-  "capabilityMapSha256": "affc89d4600342a0e357a8fb85e0ceefb94cfa2ce5fe99325bbc930d5d595be5",
+  "capabilityMapSha256": "8f4cba32e30741a8167915d77d643dbfa49d5ff83fba55807b2f70438d7601bf",
   "capabilityValidationFailures": [],
   "classificationRefresh": {
     "catalogSha256": {
@@ -12,7 +12,7 @@
     "nativeInventoryRefreshed": false,
     "reason": "Classification-only refresh against unchanged content-pinned full inventories; no native rediscovery or numerical qualification is performed."
   },
-  "generatedAt": "2026-11-14T02:12:02.110605+00:00",
+  "generatedAt": "2026-11-14T03:01:58.086494+00:00",
   "nativeAvailabilityChanges": [],
   "nativeCatalogSha256": {
     "docs/node-coverage/blender-4.2.0.json": "2f71cb192f6a62e0e343ba5fcb11a2d8e0c6f6af1e8ac663ec6c3350b016b151",
@@ -9955,11 +9955,44 @@
               "category": "unsupported",
               "declaredCategory": "unsupported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_blackbody.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorBlackbody.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslBlackbodyCoefficients.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSpectralNodes.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "experiments/compositor-blackbody/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-blackbody/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/compositor-blackbody/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-blackbody/evidence.json"
+                }
+              ],
               "id": "ShaderNodeBlackbody",
               "label": "Blackbody",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "No admitted route outside the explicitly qualified version/build/working-space slice.",
+              "runtimeOps": [
+                "blackbody-color"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -14535,10 +14568,10 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 57,
+            "partial": 58,
             "structural": 7,
             "supported": 24,
-            "unsupported": 99
+            "unsupported": 98
           },
           "enumValueCounts": {
             "partial": 31,
@@ -19005,14 +19038,47 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_blackbody.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorBlackbody.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslBlackbodyCoefficients.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSpectralNodes.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "experiments/compositor-blackbody/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-blackbody/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/compositor-blackbody/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-blackbody/evidence.json"
+                }
+              ],
               "id": "ShaderNodeBlackbody",
               "label": "Blackbody",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Blender 5.3.0 build02f0899d78e3 macOS arm64 compositor CPU-MF Blackbody, including GPU-authored single-value units. Exact stored Float32 literal/Value/reroute/bound-group Temperature800..12000, without an artificial input grid. Default bundled Linear Rec709 working space/configuration and coefficient hashes are required; native identity color-transform bypass retained. RGB uses the predeclared cancellation-aware32u*S(T) AND absolute2^-15 gate; alpha1 and independent non-half HDR calibration are exact. Source reciprocal1/T staging is separate from the existing shader direct-division/LUT models. Fields/GPU LUTs, arbitrary computed or animated temperature, custom/failed/missing OCIO transforms, other source profiles and Cycles shader parity remain unqualified. Only selected static polynomial is built; no per-fragment7-way selection, LUT/port-owned texture, target or per-frame readback.",
+              "runtimeOps": [
+                "blackbody-color"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -24376,6 +24442,7 @@
     "packages/blendlink/blender/camera_axes.py": "18360ba667a42691b0dc66b4827108e6bdfad00fdb246d61e9838f3bef596ff2",
     "packages/blendlink/blender/compositor_affine.py": "7df4327f10d8cb0d223cd4b2e5c67b2f62721e246831ce4a6fd98ec4653b03e4",
     "packages/blendlink/blender/compositor_alpha_conversion.py": "990390afa0f4d021d616802c9425dc0ab2ec706ce49b72327a1d22b16cdeb0db",
+    "packages/blendlink/blender/compositor_blackbody.py": "9646898a1b0b9b9e1dbfe97adf73b3a463e624f49f68a7d786b3255bbdf42424",
     "packages/blendlink/blender/compositor_blur.py": "d86ffd87271a97563facacfedab6bcc3888ea0bff69926f12d32146736aff014",
     "packages/blendlink/blender/compositor_channel_key.py": "a00e0f67b92ab817a401340c654758177eadc1b07d7a0ae92258b16760dc46dc",
     "packages/blendlink/blender/compositor_chroma_key.py": "d304626d3aba0ed4bd560a11134f627536bb9dfe3e01d608a40fe677759512e5",
@@ -24387,7 +24454,7 @@
     "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
     "packages/blendlink/blender/compositor_float_coordinates.py": "a300cbfb6e5ea06806e2fb9b9d7795cd2e3b91cb21ada43e4c128ac89d8f0cec",
     "packages/blendlink/blender/compositor_float_to_int.py": "6292f5a5904107b59591c282fcf9def24a5f98dc2ead0a92d950b6219226658d",
-    "packages/blendlink/blender/compositor_graph.py": "d06737f0250d1015b1d4e794c762c7b2977cb3c94c38b7260869679749f5bf4a",
+    "packages/blendlink/blender/compositor_graph.py": "f6a75472a0c69500455b8798d41644aea3010526c689b28ba8f16ef8d2ea088e",
     "packages/blendlink/blender/compositor_image.py": "55ee3b7800002331c4e30042a7d5da18538267b58ff60c006e03ad238da9e012",
     "packages/blendlink/blender/compositor_image_coordinates.py": "4b796327c579e7c08ed487cce4758c899a1a11be648e93977c22a0536451054a",
     "packages/blendlink/blender/compositor_image_info.py": "92e3f2488f646b8f7f79de67940717c54bd3e4cfc69956090b31ebd9b0e64729",
@@ -24418,6 +24485,7 @@
     "packages/blendlink/src/sceneDiagnostics.ts": "48b8d220ad2b5216f496694ef1b29c19903e90cc65fc9ce01bda77e21c84dc0e",
     "packages/blendlink/src/staticNoise4d.ts": "0677ad1169801c601d74b8a5658d98691415bf313081ca0b4fa88ec762e62a76",
     "packages/blendlink/src/threeRuntime.ts": "4ca05fb2b46239e30a434591c3ecfa42531b179c20e946828921a419e64db3b4",
+    "packages/blendlink/src/tslBlackbodyCoefficients.ts": "39d17f54a1bb7f394bae6393200badb5faa756e9772ea4d4ef92f878ff4fac18",
     "packages/blendlink/src/tslBrickNodes.ts": "5b61f5565af2b818d3a507b3cc0b408f1ef3537d5d8cb64517280f8473afde9b",
     "packages/blendlink/src/tslBumpHeight.ts": "3c8622196e1fcdbbbdafcd76a85f42a545e05a54fc8ad61002e5a259d2fd2f8f",
     "packages/blendlink/src/tslBumpPassthrough.ts": "33607d6c8638df6490950c56375a7c004ac737d2241b40b5db1da71ccbc6ffb9",
@@ -24426,6 +24494,7 @@
     "packages/blendlink/src/tslColorConversion.ts": "1c2186bff30ee2d46bb6867285db835a10c307004236276085ab7a9a7ce92671",
     "packages/blendlink/src/tslCompositorAffine.ts": "8b2ce8dbe3468882fbbf9f5077d8c2d4bb3dfc0cb48e221b1a36d4688045b2e3",
     "packages/blendlink/src/tslCompositorAlphaConversion.ts": "54fde14082f2882a067055a84f2c3493b8c6fa19688df8ed68b4e0713ded9dba",
+    "packages/blendlink/src/tslCompositorBlackbody.ts": "f3d156204aee2e81c055df785a209338e5f9f2b6b9b13f27184fc895f4811e33",
     "packages/blendlink/src/tslCompositorBlur.ts": "269ee8832695f28616f840d5a377fbbc0310ba3fa907c5bbb25ec9858636571a",
     "packages/blendlink/src/tslCompositorChannelKey.ts": "8b46848f5ec32dc99051c23fef97f0afedaa98fac1f0d8f2e566e727f7b53ffb",
     "packages/blendlink/src/tslCompositorChromaKey.ts": "f69481feb37448ad02f7873091a540eb18bf1564620489e2a0d7010fd0fc6875",
@@ -24492,8 +24561,8 @@
     "packages/blendlink/src/tslRadialWidth.ts": "9ffc9e3a7e32b3d0676b2a90fffad64e2578cd30d160ddaf00278d2d9ff43719",
     "packages/blendlink/src/tslRepeat.ts": "4d7925f09220e54973155c6af8c41c98e3b32e141f5acbdc6d29741c701d9a93",
     "packages/blendlink/src/tslSharedUtilities.ts": "1f21b06a4d60a439b0549b7c6716c66945b4cce3cc00fc6e965acbe77c80d9b9",
-    "packages/blendlink/src/tslSourceCompositor.ts": "b45914eeb788af9449c49097b5300619fa9bfda6b224ffa5cdc4dc0dec0e6d3d",
-    "packages/blendlink/src/tslSpectralNodes.ts": "0b3b12601a937d51544168acdde2ee721a25a926a4890d41b2c63b5b09013200",
+    "packages/blendlink/src/tslSourceCompositor.ts": "4bf9d7e8f0861765778590a30d9519453cedfe9a36af08b01451422d67a089aa",
+    "packages/blendlink/src/tslSpectralNodes.ts": "10719a4f7ceef71f80a9b3492561c382cd0904de209e0e93f9f578b5af529bf2",
     "packages/blendlink/src/tslSqueeze.ts": "14a56aa219ca2bb2dace54d512e8b9cfda754ea83991a92a1c270a1122ea492b",
     "packages/blendlink/src/tslTangentNodes.ts": "fb7ad452300be3e96a9f01b4f82f9ce59cb8577cf68e056df994876321cffcc1",
     "packages/blendlink/src/tslTangentNormalMap.ts": "c4eebac717ecb6a4e9a1963f280346d9575be6c7c12d8a502c209bac2775e346",

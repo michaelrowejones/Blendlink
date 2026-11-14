@@ -1,3 +1,4 @@
+import {buildCompositorBlackbody} from './tslCompositorBlackbody.js'
 import {buildCompositorRadialWidth} from './tslRadialWidth.js'
 import {buildCompositorVectorMath} from './tslCompositorVectorMath.js'
 import {buildCompositorImageInfo,buildImageInfoConversion,imageInfoConversionSource} from './tslCompositorImageInfo.js'
@@ -662,6 +663,9 @@ export function buildSourceCompositor(
             break
           case 'relative-to-pixel':
             node = buildCompositorRelativeToPixel(op, program.ops, value, domainFail)
+            break
+          case 'blackbody-color':
+            node = buildCompositorBlackbody(op,program.ops,domainFail)
             break
           case 'radial-segment-width':
             node = buildCompositorRadialWidth(op, program.ops, input, domainFail)

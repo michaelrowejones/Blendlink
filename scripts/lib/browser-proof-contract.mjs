@@ -6,6 +6,7 @@ import {pathToFileURL} from 'node:url'
 import ts from 'typescript'
 
 export const browserProofFamilies=Object.freeze({
+ 'compositor-blackbody':Object.freeze({schemaVersion:1,family:'compositor-blackbody',nativeStatus:'CAPTURED_COMPOSITOR_BLACKBODY',finalStatus:'PUBLISHED_COMPOSITOR_BLACKBODY',browserStatus:'PASSED_COMPOSITOR_BLACKBODY_BUILT_PROOF'}),
  'compositor-image-coordinates':Object.freeze({schemaVersion:1,family:'pixel-int2',nativeStatus:'native-pixel-int2-qualified',finalStatus:'published-pixel-candidate',browserStatus:'PASSED_PIXEL_BUILT_PROOF'}),
  'compositor-float-coordinates':Object.freeze({schemaVersion:1,family:'float2-coordinates',nativeStatus:'native-float-coordinate-qualified',finalStatus:'published-float-coordinate-candidate',browserStatus:'PASSED_FLOAT_COORDINATE_BUILT_PROOF'}),
  // Historical Texture reports intentionally retain Float's status token. Family and census remain distinct.

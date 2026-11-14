@@ -12513,6 +12513,114 @@
         "evidence": "experiments/shader-static-repeat/evidence.json"
       },
       "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured"
+    },
+    "compositor:ShaderNodeBlackbody": {
+      "category": "unsupported",
+      "limits": "No admitted route outside the explicitly qualified version/build/working-space slice.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "blackbody-color"
+      ],
+      "modes": {},
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Blender 5.3.0 build02f0899d78e3 macOS arm64 compositor CPU-MF Blackbody, including GPU-authored single-value units. Exact stored Float32 literal/Value/reroute/bound-group Temperature800..12000, without an artificial input grid. Default bundled Linear Rec709 working space/configuration and coefficient hashes are required; native identity color-transform bypass retained. RGB uses the predeclared cancellation-aware32u*S(T) AND absolute2^-15 gate; alpha1 and independent non-half HDR calibration are exact. Source reciprocal1/T staging is separate from the existing shader direct-division/LUT models. Fields/GPU LUTs, arbitrary computed or animated temperature, custom/failed/missing OCIO transforms, other source profiles and Cycles shader parity remain unqualified. Only selected static polynomial is built; no per-fragment7-way selection, LUT/port-owned texture, target or per-frame readback."
+        }
+      },
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_blackbody.py"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorBlackbody.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslBlackbodyCoefficients.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslSpectralNodes.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts"
+        },
+        {
+          "path": "experiments/compositor-blackbody/sources.json"
+        },
+        {
+          "path": "experiments/compositor-blackbody/numeric-contract.json"
+        },
+        {
+          "path": "experiments/compositor-blackbody/verify.mjs"
+        },
+        {
+          "path": "experiments/compositor-blackbody/evidence.json"
+        }
+      ],
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeNodeEvaluator": "CPU-MF single values for both CPU/GPU-authored compositor settings; no native GPU-field claim",
+        "familyNativeGraphs": 76,
+        "familyProductionNativeGraphs": 74,
+        "familySavedFinalScenes": 32,
+        "familyBrowserCaseRuns": 432,
+        "comparedFloat32Words": 110592,
+        "wordMismatches": 3840,
+        "maxUlps": 2350,
+        "maxAbsoluteError": 1.1920928955078125e-07,
+        "contractViolations": 0,
+        "resizeFrames": 48,
+        "uniqueActualPythonPrefixes": 35,
+        "runtimeFingerprint": "11e35e06803acf14dcac865edc6e670fb267e4d7af2b2779c2b11477ee674611",
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "numericContract": {
+          "schemaVersion": 1,
+          "model": "imb-blackbody-literal-forward-error-53-v1",
+          "declaredBeforeNativeAndBrowserCapture": true,
+          "nativePath": "node_shader_blackbody.cc build_multi_function -> IMB_colormanagement_blackbody_temperature_to_rgb -> native Rec709 bypass -> clamp[0,FLT_MAX],alpha1. Single-value compositor units execute MF on CPU even when authored device is GPU. GPU field LUT is not claimed.",
+          "domain": "Every exact stored Float32 Temperature800..12000 through literal/Value/reroute/bound group provenance. No sixteenth-grid restriction or computed/field temperatures. Source build02f0899d78e3 macOSarm64; default bundled config hash and lin_rec709_scene only.",
+          "workingSpace": "Native scene_linear_is_rec709 bypass copies channels without multiplying an approximate identity matrix. Other working spaces/configs require independent native transform proof and refuse.",
+          "forwardEnvelope": {
+            "unitRoundoff": 5.960464477539063e-08,
+            "pairCoefficient": 32,
+            "S_rg": "abs(a)/T+abs(b)*T+abs(c), with exact stored Float32 coefficients from selected native source interval",
+            "S_b": "abs(a)*T^3+abs(b)*T^2+abs(c)*T+abs(d)",
+            "gate": "For every RGB word abs(browser-native)<=32*u*S_channel(T) AND abs(browser-native)<=2^-15. Alpha Float32 exactly1. ULP/word differences reported separately; no fixed ULP promise near true cancellation zeros.",
+            "maxAbsoluteError": 3.0517578125e-05,
+            "sourceDerivation": "WGSL15.7.4 and GLSLES3.00sec4.5.1 permit at most2.5ULP for reciprocal/division on this normal denominator domain; use relative5u. A correctly-rounded result may select either adjacent float, so conservatively budget relative2u for each GPU add/multiply. Red/green longest term path is reciprocal5u +multiply2u +two additions4u =11u; cubic Horner has6primitive rounds at2u =12u. Native CPU round-to-nearest/FMA paths have no greater bound. Thus each evaluator is bounded by gamma12*S, gamma12=12u/(1-12u); two errors sum to<=2gamma12*S<32u*S. Source interval monotonic absolute-term bounds establish S<16 over800..12000, so32u*S<2^-15. Fused operations require fewer roundings. Final nonnegative clamp is1-Lipschitz; branch index is exact from storedF32 input; alpha authored1. All intermediates normal or zero in this domain. No post-measurement gate widening.",
+            "upperEndpoint": "T==12000 source constant channels; S is abs(stored endpoint channel), with exact native alpha. Explicit endpoints and adjacent Float32 inputs exercise piecewise selection.",
+            "standards": [
+              {
+                "url": "https://www.w3.org/TR/2026/CRD-WGSL-20261106/#floating-point-accuracy",
+                "section": "15.7.4; adjacent result rounding,2.5ULP division"
+              },
+              {
+                "url": "https://registry.khronos.org/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf",
+                "section": "4.5.1, pp57-58; highp32accuracy,2.5ULP division"
+              }
+            ]
+          },
+          "carrier": "Native compositor FULL precision and32bit EXR RGBA are read directly, no EEVEE emission/HDR beauty carrier. Independently controlled calibration/alpha confirms storage before numerical credit. Actual saved Final graph retains native Blackbody and Principled plate.",
+          "performance": "Only selected static polynomial is constructed from validated literal input; no7-way per-fragment branch/select, no LUT/texture/target allocation, no per-frame readback. Generated shader operation count and lifecycle still need actual future browser evidence.",
+          "qualificationCredit": 0
+        },
+        "coverageScope": "One compositor node; native calibration cases are excluded from production counts. Near-cancellation ULP differences are reported, not hidden under a fixed-ULP promise. No arbitrary composition/working-space or whole-scene parity claim."
+      }
     }
   },
   "knownUnsupported": [
