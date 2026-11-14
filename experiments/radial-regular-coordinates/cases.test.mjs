@@ -1,0 +1,5 @@
+import assert from'node:assert/strict'
+import test from'node:test'
+import{regularCases,wordf32,f32word}from'./cases.mjs'
+test('exact input census preserves native controls and explicit normalization channel',()=>{const cases=regularCases();assert.equal(cases.length,440);assert.equal(new Set(cases.map(row=>row.case)).size,440);for(const row of cases){assert.equal(row.inputWords.length,4);assert.equal(wordf32(row.inputWords[2]),row.sides);assert.equal(wordf32(row.inputWords[3]),row.normalize?1:0);assert.equal(row.roundness,1);assert.ok([3,8,12].includes(row.sides))}for(const sides of [3,8,12])for(const normalize of [false,true]){const origins=cases.filter(row=>row.sides===sides&&row.normalize===normalize&&row.family==='signed-zero-origin');assert.equal(origins.length,4);assert.deepEqual(new Set(origins.flatMap(row=>row.inputWords.slice(0,2))),new Set([0,0x80000000]))}})
+test('word transport preserves negative zero and adjacent Float32 values',()=>{assert.equal(f32word(-0),0x80000000);assert.ok(Object.is(wordf32(0x80000000),-0));assert.notEqual(wordf32(0x3f800001),1)})

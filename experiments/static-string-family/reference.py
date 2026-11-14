@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 ROOT=Path(__file__).resolve().parents[2];sys.path[:0]=[str(ROOT/'packages/blendlink/dist/blender'),str(ROOT/'packages/blendlink/dist/addon'),str(Path(__file__).parent)]
 import tsl_ir,compositor_graph,static_strings
-from cases import cases,build,encode
+from cases import cases,build,encode,parser_witness_endpoints
 from artifact_closure import native_artifact_closure
 OUT=Path(os.environ['SCENETOWEB_STRINGS_REFERENCES']).resolve();OUT.mkdir(parents=True,exist_ok=True);CONTEXT=os.environ['SCENETOWEB_STRINGS_CONTEXT'];assert CONTEXT in ['shader','CPU','GPU']
 sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
@@ -51,8 +51,17 @@ for spec in cases(CONTEXT):
     else:
         tree=bpy.data.node_groups.new('Static string '+name,'CompositorNodeTree');tree.interface.new_socket(name='Image',in_out='OUTPUT',socket_type='NodeSocketColor');scene.compositing_node_group=tree;sink=tree.nodes.new('NodeGroupOutput');target=sink.inputs[0]
     scalar,text=build(tree,spec,CONTEXT);entry=dict(spec,context=CONTEXT)
+    if spec['kind']=='parse':
+        raw,consumed=parser_witness_endpoints(scalar,text,spec['witness'])
+        record=static_strings.evaluate_output(raw);length_record=static_strings.evaluate_output(consumed)
+        assert record['type']=='INT'and record['value']==spec['expectedValue']and length_record['value']==spec['expectedLength'],(name,record,length_record)
+        entry.update(helperValue=record['value'],helperConsumed=length_record['value'],helperType=record['type'],helperSources=record['sources'])
     if text:
         record=static_strings.evaluate_output(text);assert record['value']==spec['expectedString'],(name,record,spec['expectedString']);entry.update(helperText=record['value'],helperSources=record['sources'])
+    elif spec['kind']=='match':
+        original=scalar.node.inputs['Switch'].links[0].from_socket;record=static_strings.evaluate_output(original)
+        assert record['type']=='BOOLEAN' and record['value'] is spec['expectedBool'],(name,record,spec['expectedBool'])
+        entry.update(helperBoolean=record['value'],helperType=record['type'],helperSources=record['sources'])
     elif spec['kind']=='scalar':
         record=static_strings.evaluate_output(scalar);assert record['value']==spec['expectedInt'];entry.update(helperScalar=record['value'],helperSources=record['sources'])
     elif spec['kind']=='selector':

@@ -485,7 +485,7 @@ def extract(scene):
                 result.setdefault('compileTimeSelections', []).append(dict(selected['metadata'], path=list(path), node=node.name))
             elif node.bl_idname in static_strings.SCALAR_NODES:
                 record = static_string_value(socket, ctx)
-                ref = {'kind': 'constant', 'type': 'INT', 'value': record['value']}
+                ref = {'kind': 'constant', 'type': record['type'], 'value': record['value']}
             elif node.bl_idname not in TYPES:
                 fail(
                     "unsupported-node",

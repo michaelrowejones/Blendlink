@@ -1,0 +1,699 @@
+{
+  "schemaVersion": 1,
+  "status": "REGULAR_RADIAL_RESEARCH_CLOSED_WITH_CROSS_PROFILE_COUNTEREXAMPLES",
+  "scope": "Isolated source-derived integerSides3/8/12,Roundness1 SegmentCoordinates candidate; no production admission",
+  "contractSha256": "2b08dae83261cea3c137c7862d266f37e3cecf52a0b7d23e8fdd77ad21983236",
+  "caseCount": 440,
+  "sourceSubnormalControls": 12,
+  "signedZeroOrigins": 24,
+  "nativeStage": {
+    "directory": "/tmp/scenetoweb-compositor-blackbody-next/artifacts/verification-radial-f32-oracle-r2",
+    "reportSha256": "6d2c0b6ebbb37528a3aa0640c64e19720eaa3b1f982f05c660f612cdf914f83d",
+    "model": "blender53-python-glsl-native-shared-radial-rgba32f-v1",
+    "stage": "Unchanged native shared GLSL function under PythonGPU GLSL frontend/native Metal compiler; independently assembled aliases/helpers. Not actual EEVEE material/film.",
+    "backend": {
+      "backend": "METAL",
+      "renderer": "Metal API",
+      "vendor": "Apple M5 Pro",
+      "version": "1.2"
+    },
+    "cases": 440,
+    "sourceManifestSha256": "a9a68002c0c45c800b33c081b9ff685882ede6ba9762d88d83882c79cd4e4b54"
+  },
+  "rawPins": {
+    "comparison": {
+      "path": "/private/tmp/scenetoweb-radial-transpiler-next/artifacts/verification-radial-transpiler/regular-comparison-r2.json",
+      "sha256": "a7033747b2eca8be283f9fda4ba9ecae00ec4974c28592eadc4753d4b2447f1c"
+    },
+    "nativeReport": {
+      "path": "/tmp/scenetoweb-compositor-blackbody-next/artifacts/verification-radial-f32-oracle-r2/report.json",
+      "sha256": "6d2c0b6ebbb37528a3aa0640c64e19720eaa3b1f982f05c660f612cdf914f83d"
+    },
+    "nativeClosed": {
+      "path": "/tmp/scenetoweb-compositor-blackbody-next/artifacts/verification-radial-f32-oracle-r2/closed-research.json",
+      "sha256": "2b8a0ee24ef2fea25868ab80196af277e3c68a2f370129464b87675322d0c887"
+    },
+    "materialReport": {
+      "path": "/private/tmp/scenetoweb-radial-transpiler-next/artifacts/verification-radial-transpiler/actual-material-r2/capture/report.json",
+      "sha256": "4f8b00a6af91a2dccba93757502c1f76a1eee10c4f2d6d1ee3db9b1045ff5525"
+    },
+    "materialClosed": {
+      "path": "/private/tmp/scenetoweb-radial-transpiler-next/artifacts/verification-radial-transpiler/actual-material-r2/closed-research.json",
+      "sha256": "61ce2fc4ac10799128569a8acf45c3ff8a54848965d52a9c2e34a863383dddda"
+    }
+  },
+  "rows": [
+    {
+      "directory": "artifacts/verification-radial-transpiler/regular-metal-r1",
+      "reportSha256": "918f8d5088bc1ddc7ed8a892fe7761b42d89c69070efbfefecb6841dcc9363d2",
+      "profile": "metal",
+      "backend": "webgpu",
+      "gpu": {
+        "api": "WebGPU",
+        "vendor": "apple",
+        "architecture": "metal-3",
+        "description": ""
+      },
+      "candidateScope": "full-native-branch-structure",
+      "samples": 440,
+      "inputWordMismatches": 0,
+      "rawWordDifferences": 0,
+      "projectedCoordinateWordDifferences": 0,
+      "diagnosticWordDifferences": 0,
+      "maxRadiusAbs": 0,
+      "maxRadiusUlp": 0,
+      "maxPhaseAbs": 0,
+      "maxPhaseUlp": 0,
+      "maxHalfWidthAbs": 0,
+      "maxHalfWidthUlp": 0,
+      "nonfiniteAuxiliaryOriginRotation": 24,
+      "subnormalInputControls": 12,
+      "shaderBytes": [
+        {
+          "stage": "input-storage",
+          "bytes": 593,
+          "buildCompileMs": 167.80000001192093
+        },
+        {
+          "stage": "atan2-radius",
+          "bytes": 728,
+          "buildCompileMs": 65.09999996423721
+        },
+        {
+          "stage": "radial-kernel",
+          "bytes": 21419,
+          "buildCompileMs": 92.89999997615814
+        }
+      ],
+      "diagnosticGatesPass": true,
+      "branchDisagreementCount": 0,
+      "gateViolationCount": 0,
+      "nonSubnormalBranchDisagreements": 0
+    },
+    {
+      "directory": "artifacts/verification-radial-transpiler/regular-metal-r1",
+      "reportSha256": "918f8d5088bc1ddc7ed8a892fe7761b42d89c69070efbfefecb6841dcc9363d2",
+      "profile": "metal",
+      "backend": "webgl2",
+      "gpu": {
+        "api": "WebGL2",
+        "vendor": "Google Inc. (Apple)",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+      },
+      "candidateScope": "full-native-branch-structure",
+      "samples": 440,
+      "inputWordMismatches": 0,
+      "rawWordDifferences": 12,
+      "projectedCoordinateWordDifferences": 10,
+      "diagnosticWordDifferences": 0,
+      "maxRadiusAbs": 0,
+      "maxRadiusUlp": 0,
+      "maxPhaseAbs": 0.9999997615814209,
+      "maxPhaseUlp": 2097943840,
+      "maxHalfWidthAbs": 0,
+      "maxHalfWidthUlp": 0,
+      "nonfiniteAuxiliaryOriginRotation": 24,
+      "subnormalInputControls": 12,
+      "shaderBytes": [
+        {
+          "stage": "input-storage",
+          "bytes": 1326,
+          "buildCompileMs": 97
+        },
+        {
+          "stage": "atan2-radius",
+          "bytes": 1455,
+          "buildCompileMs": 49.59999996423721
+        },
+        {
+          "stage": "radial-kernel",
+          "bytes": 21547,
+          "buildCompileMs": 83.29999995231628
+        }
+      ],
+      "diagnosticGatesPass": false,
+      "branchDisagreementCount": 2,
+      "gateViolationCount": 2,
+      "nonSubnormalBranchDisagreements": 2,
+      "firstBranchCounterexample": {
+        "case": "s12-raw-296",
+        "family": "sector-nearby",
+        "inputWords": [
+          1056964608,
+          1063105494,
+          1094713344,
+          0
+        ],
+        "nativeWords": [
+          0,
+          1048971918,
+          1048971922,
+          1061752795
+        ],
+        "actualWords": [
+          0,
+          3196455570,
+          1048971922,
+          1067945270
+        ],
+        "nativeSector": 1,
+        "actualSector": 2,
+        "subnormalInputControl": false
+      },
+      "firstGateCounterexample": {
+        "case": "s12-raw-296",
+        "family": "sector-nearby",
+        "errors": [
+          "budget-Phase",
+          "sector-branch"
+        ],
+        "inputWords": [
+          1056964608,
+          1063105494,
+          1094713344,
+          0
+        ],
+        "nativeWords": [
+          0,
+          1048971918,
+          1048971922,
+          1061752795
+        ],
+        "actualWords": [
+          0,
+          3196455570,
+          1048971922,
+          1067945270
+        ],
+        "subnormalInputControl": false
+      }
+    },
+    {
+      "directory": "artifacts/verification-radial-transpiler/regular-software-r1",
+      "reportSha256": "6a806c03c4bf1440c578d38bc138576054f9c80b7c49ceac94dcc64170876e29",
+      "profile": "software",
+      "backend": "webgpu",
+      "gpu": {
+        "api": "WebGPU",
+        "vendor": "google",
+        "architecture": "swiftshader",
+        "description": ""
+      },
+      "candidateScope": "full-native-branch-structure",
+      "samples": 440,
+      "inputWordMismatches": 0,
+      "rawWordDifferences": 380,
+      "projectedCoordinateWordDifferences": 272,
+      "diagnosticWordDifferences": 190,
+      "maxRadiusAbs": 5.960464477539063e-8,
+      "maxRadiusUlp": 864026624,
+      "maxPhaseAbs": 0.9999997913837433,
+      "maxPhaseUlp": 2106728370,
+      "maxHalfWidthAbs": 0,
+      "maxHalfWidthUlp": 0,
+      "nonfiniteAuxiliaryOriginRotation": 24,
+      "subnormalInputControls": 12,
+      "shaderBytes": [
+        {
+          "stage": "input-storage",
+          "bytes": 593,
+          "buildCompileMs": 21
+        },
+        {
+          "stage": "atan2-radius",
+          "bytes": 728,
+          "buildCompileMs": 2.799999952316284
+        },
+        {
+          "stage": "radial-kernel",
+          "bytes": 21419,
+          "buildCompileMs": 29.099999964237213
+        }
+      ],
+      "diagnosticGatesPass": false,
+      "branchDisagreementCount": 24,
+      "gateViolationCount": 54,
+      "nonSubnormalBranchDisagreements": 18,
+      "firstBranchCounterexample": {
+        "case": "s8-raw-121",
+        "family": "dyadic-grid",
+        "inputWords": [
+          1065353216,
+          1065353216,
+          1090519040,
+          0
+        ],
+        "nativeWords": [
+          1054086092,
+          1053364185,
+          1053364187,
+          1053364187
+        ],
+        "actualWords": [
+          1054086092,
+          3200847833,
+          1053364187,
+          1066847204
+        ],
+        "nativeSector": 0,
+        "actualSector": 1,
+        "subnormalInputControl": false
+      },
+      "firstGateCounterexample": {
+        "case": "s3-raw-34",
+        "family": "sector-nearby",
+        "errors": [
+          "budget-Radius"
+        ],
+        "inputWords": [
+          1065353215,
+          0,
+          1077936128,
+          0
+        ],
+        "nativeWords": [
+          0,
+          3213232786,
+          1065749138,
+          1065749138
+        ],
+        "actualWords": [
+          3011510272,
+          3213232786,
+          1065749138,
+          1065749138
+        ],
+        "subnormalInputControl": false
+      }
+    },
+    {
+      "directory": "artifacts/verification-radial-transpiler/regular-software-r1",
+      "reportSha256": "6a806c03c4bf1440c578d38bc138576054f9c80b7c49ceac94dcc64170876e29",
+      "profile": "software",
+      "backend": "webgl2",
+      "gpu": {
+        "api": "WebGL2",
+        "vendor": "Google Inc. (Google)",
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+      },
+      "candidateScope": "full-native-branch-structure",
+      "samples": 440,
+      "inputWordMismatches": 0,
+      "rawWordDifferences": 380,
+      "projectedCoordinateWordDifferences": 272,
+      "diagnosticWordDifferences": 190,
+      "maxRadiusAbs": 5.960464477539063e-8,
+      "maxRadiusUlp": 864026624,
+      "maxPhaseAbs": 0.9999997913837433,
+      "maxPhaseUlp": 2106728370,
+      "maxHalfWidthAbs": 0,
+      "maxHalfWidthUlp": 0,
+      "nonfiniteAuxiliaryOriginRotation": 24,
+      "subnormalInputControls": 12,
+      "shaderBytes": [
+        {
+          "stage": "input-storage",
+          "bytes": 1326,
+          "buildCompileMs": 10.600000023841858
+        },
+        {
+          "stage": "atan2-radius",
+          "bytes": 1455,
+          "buildCompileMs": 1.7000000476837158
+        },
+        {
+          "stage": "radial-kernel",
+          "bytes": 21547,
+          "buildCompileMs": 12
+        }
+      ],
+      "diagnosticGatesPass": false,
+      "branchDisagreementCount": 24,
+      "gateViolationCount": 54,
+      "nonSubnormalBranchDisagreements": 18,
+      "firstBranchCounterexample": {
+        "case": "s8-raw-121",
+        "family": "dyadic-grid",
+        "inputWords": [
+          1065353216,
+          1065353216,
+          1090519040,
+          0
+        ],
+        "nativeWords": [
+          1054086092,
+          1053364185,
+          1053364187,
+          1053364187
+        ],
+        "actualWords": [
+          1054086092,
+          3200847833,
+          1053364187,
+          1066847204
+        ],
+        "nativeSector": 0,
+        "actualSector": 1,
+        "subnormalInputControl": false
+      },
+      "firstGateCounterexample": {
+        "case": "s3-raw-34",
+        "family": "sector-nearby",
+        "errors": [
+          "budget-Radius"
+        ],
+        "inputWords": [
+          1065353215,
+          0,
+          1077936128,
+          0
+        ],
+        "nativeWords": [
+          0,
+          3213232786,
+          1065749138,
+          1065749138
+        ],
+        "actualWords": [
+          3011510272,
+          3213232786,
+          1065749138,
+          1065749138
+        ],
+        "subnormalInputControl": false
+      }
+    },
+    {
+      "directory": "artifacts/verification-radial-transpiler/regular-specialized-metal-r2",
+      "reportSha256": "5e5486450e56ef1e1ba79a5ebbf9d38d2785209243e4ac16428203adcf0a0c3a",
+      "profile": "metal",
+      "backend": "webgpu",
+      "gpu": {
+        "api": "WebGPU",
+        "vendor": "apple",
+        "architecture": "metal-3",
+        "description": ""
+      },
+      "candidateScope": "regular-full-roundness-preconditioned",
+      "samples": 440,
+      "inputWordMismatches": 0,
+      "rawWordDifferences": 0,
+      "projectedCoordinateWordDifferences": 0,
+      "diagnosticWordDifferences": 0,
+      "maxRadiusAbs": 0,
+      "maxRadiusUlp": 0,
+      "maxPhaseAbs": 0,
+      "maxPhaseUlp": 0,
+      "maxHalfWidthAbs": 0,
+      "maxHalfWidthUlp": 0,
+      "nonfiniteAuxiliaryOriginRotation": 24,
+      "subnormalInputControls": 12,
+      "shaderBytes": [
+        {
+          "stage": "input-storage",
+          "bytes": 593,
+          "buildCompileMs": 7.599999964237213
+        },
+        {
+          "stage": "atan2-radius",
+          "bytes": 728,
+          "buildCompileMs": 1.5
+        },
+        {
+          "stage": "radial-kernel",
+          "bytes": 2073,
+          "buildCompileMs": 98.40000003576279
+        }
+      ],
+      "diagnosticGatesPass": true,
+      "branchDisagreementCount": 0,
+      "gateViolationCount": 0,
+      "nonSubnormalBranchDisagreements": 0
+    },
+    {
+      "directory": "artifacts/verification-radial-transpiler/regular-specialized-metal-r2",
+      "reportSha256": "5e5486450e56ef1e1ba79a5ebbf9d38d2785209243e4ac16428203adcf0a0c3a",
+      "profile": "metal",
+      "backend": "webgl2",
+      "gpu": {
+        "api": "WebGL2",
+        "vendor": "Google Inc. (Apple)",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+      },
+      "candidateScope": "regular-full-roundness-preconditioned",
+      "samples": 440,
+      "inputWordMismatches": 0,
+      "rawWordDifferences": 0,
+      "projectedCoordinateWordDifferences": 0,
+      "diagnosticWordDifferences": 0,
+      "maxRadiusAbs": 0,
+      "maxRadiusUlp": 0,
+      "maxPhaseAbs": 0,
+      "maxPhaseUlp": 0,
+      "maxHalfWidthAbs": 0,
+      "maxHalfWidthUlp": 0,
+      "nonfiniteAuxiliaryOriginRotation": 24,
+      "subnormalInputControls": 12,
+      "shaderBytes": [
+        {
+          "stage": "input-storage",
+          "bytes": 1326,
+          "buildCompileMs": 12.100000023841858
+        },
+        {
+          "stage": "atan2-radius",
+          "bytes": 1455,
+          "buildCompileMs": 16.5
+        },
+        {
+          "stage": "radial-kernel",
+          "bytes": 2724,
+          "buildCompileMs": 66.59999996423721
+        }
+      ],
+      "diagnosticGatesPass": true,
+      "branchDisagreementCount": 0,
+      "gateViolationCount": 0,
+      "nonSubnormalBranchDisagreements": 0
+    },
+    {
+      "directory": "artifacts/verification-radial-transpiler/regular-specialized-software-r2",
+      "reportSha256": "9474f617b75966697d36a84032d314f1e49f0a4aa0026383405401038a1bdcc5",
+      "profile": "software",
+      "backend": "webgpu",
+      "gpu": {
+        "api": "WebGPU",
+        "vendor": "google",
+        "architecture": "swiftshader",
+        "description": ""
+      },
+      "candidateScope": "regular-full-roundness-preconditioned",
+      "samples": 440,
+      "inputWordMismatches": 0,
+      "rawWordDifferences": 380,
+      "projectedCoordinateWordDifferences": 272,
+      "diagnosticWordDifferences": 190,
+      "maxRadiusAbs": 5.960464477539063e-8,
+      "maxRadiusUlp": 864026624,
+      "maxPhaseAbs": 0.9999997913837433,
+      "maxPhaseUlp": 2106728370,
+      "maxHalfWidthAbs": 0,
+      "maxHalfWidthUlp": 0,
+      "nonfiniteAuxiliaryOriginRotation": 24,
+      "subnormalInputControls": 12,
+      "shaderBytes": [
+        {
+          "stage": "input-storage",
+          "bytes": 593,
+          "buildCompileMs": 7.899999976158142
+        },
+        {
+          "stage": "atan2-radius",
+          "bytes": 728,
+          "buildCompileMs": 2.700000047683716
+        },
+        {
+          "stage": "radial-kernel",
+          "bytes": 2073,
+          "buildCompileMs": 5.399999976158142
+        }
+      ],
+      "diagnosticGatesPass": false,
+      "branchDisagreementCount": 24,
+      "gateViolationCount": 54,
+      "nonSubnormalBranchDisagreements": 18,
+      "firstBranchCounterexample": {
+        "case": "s8-raw-121",
+        "family": "dyadic-grid",
+        "inputWords": [
+          1065353216,
+          1065353216,
+          1090519040,
+          0
+        ],
+        "nativeWords": [
+          1054086092,
+          1053364185,
+          1053364187,
+          1053364187
+        ],
+        "actualWords": [
+          1054086092,
+          3200847833,
+          1053364187,
+          1066847204
+        ],
+        "nativeSector": 0,
+        "actualSector": 1,
+        "subnormalInputControl": false
+      },
+      "firstGateCounterexample": {
+        "case": "s3-raw-34",
+        "family": "sector-nearby",
+        "errors": [
+          "budget-Radius"
+        ],
+        "inputWords": [
+          1065353215,
+          0,
+          1077936128,
+          0
+        ],
+        "nativeWords": [
+          0,
+          3213232786,
+          1065749138,
+          1065749138
+        ],
+        "actualWords": [
+          3011510272,
+          3213232786,
+          1065749138,
+          1065749138
+        ],
+        "subnormalInputControl": false
+      }
+    },
+    {
+      "directory": "artifacts/verification-radial-transpiler/regular-specialized-software-r2",
+      "reportSha256": "9474f617b75966697d36a84032d314f1e49f0a4aa0026383405401038a1bdcc5",
+      "profile": "software",
+      "backend": "webgl2",
+      "gpu": {
+        "api": "WebGL2",
+        "vendor": "Google Inc. (Google)",
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+      },
+      "candidateScope": "regular-full-roundness-preconditioned",
+      "samples": 440,
+      "inputWordMismatches": 0,
+      "rawWordDifferences": 380,
+      "projectedCoordinateWordDifferences": 272,
+      "diagnosticWordDifferences": 190,
+      "maxRadiusAbs": 5.960464477539063e-8,
+      "maxRadiusUlp": 864026624,
+      "maxPhaseAbs": 0.9999997913837433,
+      "maxPhaseUlp": 2106728370,
+      "maxHalfWidthAbs": 0,
+      "maxHalfWidthUlp": 0,
+      "nonfiniteAuxiliaryOriginRotation": 24,
+      "subnormalInputControls": 12,
+      "shaderBytes": [
+        {
+          "stage": "input-storage",
+          "bytes": 1326,
+          "buildCompileMs": 6.300000011920929
+        },
+        {
+          "stage": "atan2-radius",
+          "bytes": 1455,
+          "buildCompileMs": 1.600000023841858
+        },
+        {
+          "stage": "radial-kernel",
+          "bytes": 2724,
+          "buildCompileMs": 2.800000011920929
+        }
+      ],
+      "diagnosticGatesPass": false,
+      "branchDisagreementCount": 24,
+      "gateViolationCount": 54,
+      "nonSubnormalBranchDisagreements": 18,
+      "firstBranchCounterexample": {
+        "case": "s8-raw-121",
+        "family": "dyadic-grid",
+        "inputWords": [
+          1065353216,
+          1065353216,
+          1090519040,
+          0
+        ],
+        "nativeWords": [
+          1054086092,
+          1053364185,
+          1053364187,
+          1053364187
+        ],
+        "actualWords": [
+          1054086092,
+          3200847833,
+          1053364187,
+          1066847204
+        ],
+        "nativeSector": 0,
+        "actualSector": 1,
+        "subnormalInputControl": false
+      },
+      "firstGateCounterexample": {
+        "case": "s3-raw-34",
+        "family": "sector-nearby",
+        "errors": [
+          "budget-Radius"
+        ],
+        "inputWords": [
+          1065353215,
+          0,
+          1077936128,
+          0
+        ],
+        "nativeWords": [
+          0,
+          3213232786,
+          1065749138,
+          1065749138
+        ],
+        "actualWords": [
+          3011510272,
+          3213232786,
+          1065749138,
+          1065749138
+        ],
+        "subnormalInputControl": false
+      }
+    }
+  ],
+  "actualMaterialControls": {
+    "stage": "Actual EEVEE material/film with independent calibrated half-safe digit carrier; separately labeled from PythonGPU directF32 kernel. Literal origin/+X controls only, no field or Final qualification.",
+    "logicalSettings": 12,
+    "coordinateMagnitudes": 24,
+    "negativeSignWitnesses": 24,
+    "gridResidueWitnesses": 24,
+    "independentCarrierControls": 2,
+    "allCorrespondingNativeF32WordsExact": true,
+    "qualificationCredit": 0
+  },
+  "conclusion": "Whole-branch AST specialization removes observed MetalWebGL optimizer-context mismatch and is bitexact bothMetalAPIs for440inputs. Software remains outside fixed gates due sector selection and raw-radius cancellation. No epsilon, output repair, scene mutation, input quantization or tolerance widening.",
+  "supportCredit": 0,
+  "numericQualificationCredit": 0,
+  "finalExports": 0,
+  "officialSceneAcceptance": false,
+  "productionAdmission": false,
+  "remainingGates": [
+    "Production metadata/type/domain and named backend refusals require a separately reviewed support decision.",
+    "No actual saved Final/publication or live field/resize/resource qualification was performed.",
+    "Unmodified original demo acceptance remains unproven.",
+    "Direct PythonGPU source-kernel stage is distinct from actual material/film controls.",
+    "440inputs including nearby cuts are bounded samples, not a universal Metal equivalence proof.",
+    "Generated derivative licensing must be reviewed before any runtime distribution."
+  ]
+}

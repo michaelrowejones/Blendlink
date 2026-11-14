@@ -1231,7 +1231,7 @@
     },
     "shader:FunctionNodeMatchString": {
       "priority": "P3 Later",
-      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "reason": "Retain P3 after the qualified bounded host static Boolean match control slice. General runtime text and unqualified producer/field workflows remain. Relative artist demand is unknown; this evidence does not establish popularity.",
       "dependsOn": [
         "typed-field-contracts",
         "bounded-graph-execution"
@@ -1279,7 +1279,7 @@
     },
     "shader:FunctionNodeStringToValue": {
       "priority": "P3 Later",
-      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "reason": "Retain P3 after the qualified bounded host static INT conversion control slice. FLOAT conversion, general runtime text and arbitrary numeric/field producers remain; qualified fixed static-string producer chains are covered. Relative artist demand is unknown; this evidence does not establish popularity.",
       "dependsOn": [
         "typed-field-contracts",
         "bounded-graph-execution"
@@ -1295,7 +1295,7 @@
     },
     "shader:FunctionNodeValueToString": {
       "priority": "P3 Later",
-      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "reason": "Retain P3 after the qualified bounded host static INT conversion control slice. FLOAT conversion, general runtime text and arbitrary numeric/field producers remain; qualified fixed static-string producer chains are covered. Relative artist demand is unknown; this evidence does not establish popularity.",
       "dependsOn": [
         "typed-field-contracts",
         "bounded-graph-execution"
@@ -1335,7 +1335,7 @@
     },
     "compositor:FunctionNodeMatchString": {
       "priority": "P3 Later",
-      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "reason": "Retain P3 after the qualified bounded host static Boolean match control slice. General runtime text and unqualified producer/field workflows remain. Relative artist demand is unknown; this evidence does not establish popularity.",
       "dependsOn": [
         "typed-field-contracts",
         "bounded-graph-execution"
@@ -1383,7 +1383,7 @@
     },
     "compositor:FunctionNodeStringToValue": {
       "priority": "P3 Later",
-      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "reason": "Retain P3 after the qualified bounded host static INT conversion control slice. FLOAT conversion, general runtime text and arbitrary numeric/field producers remain; qualified fixed static-string producer chains are covered. Relative artist demand is unknown; this evidence does not establish popularity.",
       "dependsOn": [
         "typed-field-contracts",
         "bounded-graph-execution"
@@ -1399,7 +1399,7 @@
     },
     "compositor:FunctionNodeValueToString": {
       "priority": "P3 Later",
-      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "reason": "Retain P3 after the qualified bounded host static INT conversion control slice. FLOAT conversion, general runtime text and arbitrary numeric/field producers remain; qualified fixed static-string producer chains are covered. Relative artist demand is unknown; this evidence does not establish popularity.",
       "dependsOn": [
         "typed-field-contracts",
         "bounded-graph-execution"

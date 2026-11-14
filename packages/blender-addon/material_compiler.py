@@ -5842,6 +5842,7 @@ def _ir_runtime_needs(value, needs) -> None:
             ("squeeze_native", "eevee-squeeze-f32-v1"),
             ("tex_magic_native", "eevee-magic-f32-v1"),
             ("radial_segment_width", "regular-full-roundness-segment-width-v1"),
+            ("radial_segment_coordinates", "regular-full-roundness-segment-coordinates-webgl2-m5pro-v1"),
             ("repeat_static", "eevee-static-repeat-53-v1"),
         ):
             needs["requiresNodeRendererPrograms"].add((op, value["model"]))

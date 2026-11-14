@@ -1266,7 +1266,7 @@ def _emit_output(node, from_socket, stack=()):
     idname = node.bl_idname
     socket_name = from_socket.name
 
-    if idname in {'FunctionNodeStringLength', 'FunctionNodeFindInString'}:
+    if idname in {'FunctionNodeStringLength', 'FunctionNodeFindInString', 'FunctionNodeMatchString', 'FunctionNodeStringToValue'}:
         if __package__:
             from .static_strings import evaluate_output, StaticStringUnsupported
         else:
@@ -1275,7 +1275,7 @@ def _emit_output(node, from_socket, stack=()):
             record = evaluate_output(from_socket, stack)
         except StaticStringUnsupported as error:
             _refuse(str(error))
-        return {'op': 'typed_const', 'type': 'INT', 'value': record['value']}
+        return {'op': 'typed_const', 'type': record['type'], 'value': record['value']}
 
     if getattr(node, "mute", False):
         # A muted node bypasses per its OWN internal_links -- Blender's
@@ -1880,6 +1880,16 @@ def _emit_output(node, from_socket, stack=()):
         }
 
     if idname == "ShaderNodeRadialTiling":
+        if getattr(from_socket, "identifier", socket_name) == "Segment Coordinates":
+            if __package__:
+                from .radial_coordinates_ir import emit_radial_coordinates
+            else:
+                from radial_coordinates_ir import emit_radial_coordinates
+            return emit_radial_coordinates(node, from_socket,
+                scalar=lambda incoming: emit_input(incoming, stack=stack),
+                vector=lambda incoming: emit_input(incoming, stack=stack, as_vector=True),
+                refuse=_refuse, evaluation_engine=get_evaluation_engine(),
+                source=_socket_source, matching=_matching_socket, stack=stack)
         if __package__:
             from .radial_width_ir import emit_radial_width
         else:
@@ -2924,6 +2934,13 @@ def _emit_output(node, from_socket, stack=()):
     _refuse(f"{idname} has no proven TSL mapping")
 
 
+if __package__:
+    from .radial_coordinates_ir import coordinate_channel_boundary
+else:
+    from radial_coordinates_ir import coordinate_channel_boundary
+
+
+@coordinate_channel_boundary(_socket_source, _convert_link)
 def emit_channel(socket, stack=(), *, evaluation_engine=None) -> dict:
     """Complete IR document for one channel input socket.
 

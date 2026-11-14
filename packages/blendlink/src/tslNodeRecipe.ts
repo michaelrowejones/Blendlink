@@ -1,3 +1,4 @@
+import {buildTslRadialCoordinates} from './tslRadialCoordinates.js'
 import { buildNativeVector2 } from './tslShaderVector2.js'
 import {buildTslRadialWidth} from './tslRadialWidth.js'
 import {buildStaticRepeat,buildRepeatReference,staticRepeatCost} from './tslRepeat.js'
@@ -1246,6 +1247,8 @@ function build(expression: TslIrExpression): TslExpression {
       // Cycles saturates the gradient before both outputs.
       return tslClamp(result, 0.0, 1.0)
     }
+    case 'radial_segment_coordinates':
+      return buildTslRadialCoordinates(expression, build, fail)
     case 'radial_segment_width':
       return buildTslRadialWidth(expression, build, fail)
     case 'tex_magic_native':

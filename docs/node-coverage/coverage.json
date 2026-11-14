@@ -1,5 +1,5 @@
 {
-  "capabilityMapSha256": "8f4cba32e30741a8167915d77d643dbfa49d5ff83fba55807b2f70438d7601bf",
+  "capabilityMapSha256": "838fbeb2ad99bdc753b48e1b156b30b29ab3c1b56a3e13e73969a48b7d0dce87",
   "capabilityValidationFailures": [],
   "classificationRefresh": {
     "catalogSha256": {
@@ -12,7 +12,7 @@
     "nativeInventoryRefreshed": false,
     "reason": "Classification-only refresh against unchanged content-pinned full inventories; no native rediscovery or numerical qualification is performed."
   },
-  "generatedAt": "2026-11-14T03:21:35.878823+00:00",
+  "generatedAt": "2026-11-14T04:19:56.270182+00:00",
   "nativeAvailabilityChanges": [],
   "nativeCatalogSha256": {
     "docs/node-coverage/blender-4.2.0.json": "2f71cb192f6a62e0e343ba5fcb11a2d8e0c6f6af1e8ac663ec6c3350b016b151",
@@ -9197,10 +9197,28 @@
                   "Starts With": "unsupported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "kind == 'FunctionNodeMatchString'",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeMatchString",
               "label": "Match String",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -9493,10 +9511,28 @@
                   "INT": "unsupported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "if kind in {'FunctionNodeStringToValue', 'FunctionNodeValueToString'}:",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeStringToValue",
               "label": "String to Value",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -9574,10 +9610,28 @@
                   "INT": "unsupported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "if kind in {'FunctionNodeStringToValue', 'FunctionNodeValueToString'}:",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeValueToString",
               "label": "Value to String",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -13099,13 +13153,38 @@
                 },
                 {
                   "path": "experiments/radial-segment-width/evidence.json"
+                },
+                {
+                  "path": "packages/blender-addon/radial_coordinates_ir.py"
+                },
+                {
+                  "path": "packages/blender-addon/shader_vector2_ir.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslRadialCoordinates.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslRadialRegularNative.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslMetalRendererGuard.ts"
+                },
+                {
+                  "path": "experiments/radial-coordinates-static/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/radial-coordinates-static/verify.mjs"
+                },
+                {
+                  "path": "experiments/radial-coordinates-static/evidence.json"
                 }
               ],
               "id": "ShaderNodeRadialTiling",
               "label": "Radial Tiling",
               "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
               "runtimeOps": [
-                "radial_segment_width"
+                "radial_segment_width",
+                "radial_segment_coordinates"
               ],
               "unreviewedCapability": false
             },
@@ -14568,16 +14647,16 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 58,
+            "partial": 61,
             "structural": 7,
             "supported": 24,
-            "unsupported": 98
+            "unsupported": 95
           },
           "enumValueCounts": {
-            "partial": 31,
+            "partial": 36,
             "structural": 3,
             "supported": 279,
-            "unsupported": 619
+            "unsupported": 614
           },
           "nodes": [
             {
@@ -17625,7 +17704,7 @@
               ],
               "id": "FunctionNodeFindInString",
               "label": "Find in String",
-              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Length and Find First Found/Count yield exact INT constants consumed by existing typed scalar controls. Find uses codepoint offsets, nonoverlapping Count and measured native empty/no-match semantics. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Length and Find First Found/Count yield exact INT constants consumed by existing typed scalar controls. Find uses codepoint offsets, nonoverlapping Count and measured native empty/no-match semantics. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -17942,7 +18021,7 @@
               ],
               "id": "FunctionNodeInputSpecialCharacters",
               "label": "Special Characters",
-              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -17974,7 +18053,7 @@
               ],
               "id": "FunctionNodeInputString",
               "label": "String",
-              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -18082,19 +18161,37 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "inputs:Operation": {
-                  "Contains": "unsupported",
-                  "Ends With": "unsupported",
-                  "Starts With": "unsupported"
+                  "Contains": "partial",
+                  "Ends With": "partial",
+                  "Starts With": "partial"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "kind == 'FunctionNodeMatchString'",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeMatchString",
               "label": "Match String",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static text only: valid Unicode scalar inputs without embedded NUL, <=4096 UTF8 bytes per input/output,128 visits/depth16, typed fixed producers and bound group/reroute/native mute routes. Source tree animation/drivers/NLA refuse. Exact BOOLEAN Result for fixed Starts With/Ends With/Contains menus, comparing native UTF8 bytes without normalization or case folding. Direct typed Boolean transport and fixed Boolean selectors only. Arbitrary runtime text, computed/unqualified text/menu producers and other builds/platforms remain unqualified. No GPU string payload/opcode/kernel performance credit or original-demo acceptance.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -18199,7 +18296,7 @@
               ],
               "id": "FunctionNodeReplaceString",
               "label": "Replace String",
-              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -18231,7 +18328,7 @@
               ],
               "id": "FunctionNodeReverseString",
               "label": "Reverse String",
-              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -18350,7 +18447,7 @@
               ],
               "id": "FunctionNodeSetStringCase",
               "label": "Set String Case",
-              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -18382,7 +18479,7 @@
               ],
               "id": "FunctionNodeSliceString",
               "label": "Slice String",
-              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -18414,23 +18511,41 @@
               ],
               "id": "FunctionNodeStringLength",
               "label": "String Length",
-              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Length and Find First Found/Count yield exact INT constants consumed by existing typed scalar controls. Find uses codepoint offsets, nonoverlapping Count and measured native empty/no-match semantics. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Length and Find First Found/Count yield exact INT constants consumed by existing typed scalar controls. Find uses codepoint offsets, nonoverlapping Count and measured native empty/no-match semantics. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "data_type": {
                   "FLOAT": "unsupported",
-                  "INT": "unsupported"
+                  "INT": "partial"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "if kind in {'FunctionNodeStringToValue', 'FunctionNodeValueToString'}:",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeStringToValue",
               "label": "String to Value",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static text only: valid Unicode scalar inputs without embedded NUL, <=4096 UTF8 bytes per input/output,128 visits/depth16, typed fixed producers and bound group/reroute/native mute routes. Source tree animation/drivers/NLA refuse. INT mode only. Value and consumed Length follow native signed int32 ASCII prefix parsing in base2..36: optional minus, no leading plus/whitespace or inferred base prefix; invalid base, no-match and signed32 overflow yield Value0/Length0. Parsed prefix is ASCII, so consumed byte/codepoint counts coincide. Base and text must use qualified fixed typed producers; numeric controls may use literal/InputInt or already qualified static-string INT outputs. FLOAT mode/fast_float semantics, runtime parsing and arbitrary numeric arithmetic and field inputs remain unqualified. No GPU string payload/opcode/kernel performance credit or original-demo acceptance.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -18495,23 +18610,41 @@
               ],
               "id": "FunctionNodeTrimString",
               "label": "Trim String",
-              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "data_type": {
                   "FLOAT": "unsupported",
-                  "INT": "unsupported"
+                  "INT": "partial"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "if kind in {'FunctionNodeStringToValue', 'FunctionNodeValueToString'}:",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeValueToString",
               "label": "Value to String",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static text only: valid Unicode scalar inputs without embedded NUL, <=4096 UTF8 bytes per input/output,128 visits/depth16, typed fixed producers and bound group/reroute/native mute routes. Source tree animation/drivers/NLA refuse. INT mode only. Exact signed int32 lowercase base2..36 output, zero-padding after minus with total width including sign; invalid base produces empty text, negative padding behaves as0, and output bound is checked before allocation. Value/Base/Padding must be literal/InputInt or already qualified fixed static-string int32 producers; qualified StringLength/Find and conversion chains stay compiler-only. Text is consumed inside the compiler by qualified static string consumers only. FLOAT formatting/locale/precision/runtime text and arbitrary numeric arithmetic and field inputs remain unqualified. No GPU string payload/opcode/kernel performance credit or original-demo acceptance.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -20064,16 +20197,16 @@
         "shader": {
           "counts": {
             "bake-only": 0,
-            "partial": 57,
+            "partial": 60,
             "structural": 7,
             "supported": 22,
-            "unsupported": 59
+            "unsupported": 56
           },
           "enumValueCounts": {
-            "partial": 29,
+            "partial": 34,
             "structural": 3,
             "supported": 258,
-            "unsupported": 151
+            "unsupported": 146
           },
           "nodes": [
             {
@@ -20154,7 +20287,7 @@
               ],
               "id": "FunctionNodeFindInString",
               "label": "Find in String",
-              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Length and Find First Found/Count yield exact INT constants consumed by existing typed scalar controls. Find uses codepoint offsets, nonoverlapping Count and measured native empty/no-match semantics. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Length and Find First Found/Count yield exact INT constants consumed by existing typed scalar controls. Find uses codepoint offsets, nonoverlapping Count and measured native empty/no-match semantics. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -20341,7 +20474,7 @@
               ],
               "id": "FunctionNodeInputSpecialCharacters",
               "label": "Special Characters",
-              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -20373,7 +20506,7 @@
               ],
               "id": "FunctionNodeInputString",
               "label": "String",
-              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -20459,19 +20592,37 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "inputs:Operation": {
-                  "Contains": "unsupported",
-                  "Ends With": "unsupported",
-                  "Starts With": "unsupported"
+                  "Contains": "partial",
+                  "Ends With": "partial",
+                  "Starts With": "partial"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "kind == 'FunctionNodeMatchString'",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = evaluate_output(from_socket, stack)",
+                  "path": "packages/blender-addon/tsl_ir.py"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeMatchString",
               "label": "Match String",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static text only: valid Unicode scalar inputs without embedded NUL, <=4096 UTF8 bytes per input/output,128 visits/depth16, typed fixed producers and bound group/reroute/native mute routes. Source tree animation/drivers/NLA refuse. Exact BOOLEAN Result for fixed Starts With/Ends With/Contains menus, comparing native UTF8 bytes without normalization or case folding. Direct typed Boolean transport and fixed Boolean selectors only. Arbitrary runtime text, computed/unqualified text/menu producers and other builds/platforms remain unqualified. No GPU string payload/opcode/kernel performance credit or original-demo acceptance.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -20503,7 +20654,7 @@
               ],
               "id": "FunctionNodeReplaceString",
               "label": "Replace String",
-              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -20535,7 +20686,7 @@
               ],
               "id": "FunctionNodeReverseString",
               "label": "Reverse String",
-              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -20572,7 +20723,7 @@
               ],
               "id": "FunctionNodeSetStringCase",
               "label": "Set String Case",
-              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -20604,7 +20755,7 @@
               ],
               "id": "FunctionNodeSliceString",
               "label": "Slice String",
-              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -20636,23 +20787,41 @@
               ],
               "id": "FunctionNodeStringLength",
               "label": "String Length",
-              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Length and Find First Found/Count yield exact INT constants consumed by existing typed scalar controls. Find uses codepoint offsets, nonoverlapping Count and measured native empty/no-match semantics. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Length and Find First Found/Count yield exact INT constants consumed by existing typed scalar controls. Find uses codepoint offsets, nonoverlapping Count and measured native empty/no-match semantics. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "data_type": {
                   "FLOAT": "unsupported",
-                  "INT": "unsupported"
+                  "INT": "partial"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "if kind in {'FunctionNodeStringToValue', 'FunctionNodeValueToString'}:",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = evaluate_output(from_socket, stack)",
+                  "path": "packages/blender-addon/tsl_ir.py"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeStringToValue",
               "label": "String to Value",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static text only: valid Unicode scalar inputs without embedded NUL, <=4096 UTF8 bytes per input/output,128 visits/depth16, typed fixed producers and bound group/reroute/native mute routes. Source tree animation/drivers/NLA refuse. INT mode only. Value and consumed Length follow native signed int32 ASCII prefix parsing in base2..36: optional minus, no leading plus/whitespace or inferred base prefix; invalid base, no-match and signed32 overflow yield Value0/Length0. Parsed prefix is ASCII, so consumed byte/codepoint counts coincide. Base and text must use qualified fixed typed producers; numeric controls may use literal/InputInt or already qualified static-string INT outputs. FLOAT mode/fast_float semantics, runtime parsing and arbitrary numeric arithmetic and field inputs remain unqualified. No GPU string payload/opcode/kernel performance credit or original-demo acceptance.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -20684,23 +20853,41 @@
               ],
               "id": "FunctionNodeTrimString",
               "label": "Trim String",
-              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "data_type": {
                   "FLOAT": "unsupported",
-                  "INT": "unsupported"
+                  "INT": "partial"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "if kind in {'FunctionNodeStringToValue', 'FunctionNodeValueToString'}:",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = evaluate_output(from_socket, stack)",
+                  "path": "packages/blender-addon/tsl_ir.py"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeValueToString",
               "label": "Value to String",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static text only: valid Unicode scalar inputs without embedded NUL, <=4096 UTF8 bytes per input/output,128 visits/depth16, typed fixed producers and bound group/reroute/native mute routes. Source tree animation/drivers/NLA refuse. INT mode only. Exact signed int32 lowercase base2..36 output, zero-padding after minus with total width including sign; invalid base produces empty text, negative padding behaves as0, and output bound is checked before allocation. Value/Base/Padding must be literal/InputInt or already qualified fixed static-string int32 producers; qualified StringLength/Find and conversion chains stay compiler-only. Text is consumed inside the compiler by qualified static string consumers only. FLOAT formatting/locale/precision/runtime text and arbitrary numeric arithmetic and field inputs remain unqualified. No GPU string payload/opcode/kernel performance credit or original-demo acceptance.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -22921,13 +23108,38 @@
                 },
                 {
                   "path": "experiments/radial-segment-width/evidence.json"
+                },
+                {
+                  "path": "packages/blender-addon/radial_coordinates_ir.py"
+                },
+                {
+                  "path": "packages/blender-addon/shader_vector2_ir.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslRadialCoordinates.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslRadialRegularNative.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslMetalRendererGuard.ts"
+                },
+                {
+                  "path": "experiments/radial-coordinates-static/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/radial-coordinates-static/verify.mjs"
+                },
+                {
+                  "path": "experiments/radial-coordinates-static/evidence.json"
                 }
               ],
               "id": "ShaderNodeRadialTiling",
               "label": "Radial Tiling",
-              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 Segment Width only, literal integer Sides2..64 and Roundness exactly1. Vector and Normalize are pruned only because this selected regular/full-roundness Width is source-proven independent of them. EEVEE Metal shader only; Cycles live remains unqualified. Predeclared <=2ULP AND absolute error<=2^-22; exact-word differences reported separately. Other outputs (Segment Coordinates/ID/Rotation), fractional or computed Sides, partial roundness, other profiles and the unchanged official Radial demo (computed Sides and Segment Coordinates transport) remain unqualified. No port-owned textures/targets/readback.",
+              "limits": "Segment Width retains its previously qualified Blender5.3.0 build02f0899d78e3 macOS arm64 EEVEE Metal slice: literal integer Sides2..64, Roundness1, Vector/Normalize pruned only by the selected Width dependency invariant, <=2ULP AND absolute error<=2^-22; its prior runtime profiles and verification are unchanged. Shader Segment Coordinates additionally admits actual native Apple M5 Pro EEVEE Metal source and actual WebGL2 ANGLE Apple M5 Pro Metal runtime only: literal Sides3/8/12, Roundness1, both Normalize states, static finite normal/+0 Float32 literal XY[-2,2] read from raw RNA storage; explicit native float2 input boundaries, native float3 phase/radius/Z0 output. Raw negative-zero/subnormal XY, images/fields, UV/Object/arithmetic vectors and computed Sides refuse. Predeclared phase absolute error<=2^-18 with native exact0/1 retained, radius<=8ULP AND absolute error<=2^-20. Built raw/Final words were exact to the independent GPU-kernel reference; separate actual EEVEE material phase error was3.5762786865234375e-7. WebGPU privacy/identity, software and unknown adapters named-refuse; Preview Studio needs explicit ?backend=webgl2 and its default WebGPU path is not accepted. Segment ID/Rotation, other branches/profiles, Cycles live and unchanged official Radial demo acceptance remain unqualified. No port-owned textures/targets/readback.",
               "runtimeOps": [
-                "radial_segment_width"
+                "radial_segment_width",
+                "radial_segment_coordinates"
               ],
               "unreviewedCapability": false
             },
@@ -24411,7 +24623,7 @@
     "packages/blender-addon/legacy_ramp_data.py": "8aa2a2cafdc0d46abb00633a97c65315bc8e93274e5ba0d3e0cb77ac5f8e36e0",
     "packages/blender-addon/magic_bounds.py": "9a15236ab29aac815e19688d3d054a474fd39ee880e076746b8cb693f494b9b8",
     "packages/blender-addon/magic_ir.py": "0acb99dc9a916679a8f23e2e79ec01a646e5dd9b6b9b7ccb5f8159dd700df46d",
-    "packages/blender-addon/material_compiler.py": "a2d4b5aca87341116b14127bd4105f51ee0886928efe996ec4837b9d4629b923",
+    "packages/blender-addon/material_compiler.py": "35364acb0eaa7b46c2f7099a1251f090f2b17dba103bd196c2dd8623406357ce",
     "packages/blender-addon/math_modulo_native_ir.py": "89ee9a91f0a754ca9b7e3702085b8e90115ac993a3499946e5573f24b913ee63",
     "packages/blender-addon/noise_field_ir.py": "5f0a8bb9b209d1ffbcc695d879a229ee688f1e24dae2d66680f0176c005455f4",
     "packages/blender-addon/noise_fractal_ir.py": "363c03bec9b463f582bd0014bca6ff54dba146e737e87d4f4367c4770bb44457",
@@ -24424,17 +24636,19 @@
     "packages/blender-addon/normal_map_tangent_ir.py": "44bf4a455b32489d632b6e2d5dd98c10e716b7df6aaf54817b086d34fad9375c",
     "packages/blender-addon/normal_noise_bounds.py": "af58552f1d0df0fa363d900d7995b1117e116c1e1702c974d93fc78cf94faa4f",
     "packages/blender-addon/procedural.py": "dd5419b4313f3102d6f7161789592f4648babcad01543272416c80d58016926f",
+    "packages/blender-addon/radial_coordinates_ir.py": "afd12fcd54371185ef9396f4f76d495c9f0a8e449a0397c1c8fb09ec7201578d",
     "packages/blender-addon/radial_width_ir.py": "bac7aeee78bad23d28b6bafe62abd2675aa652adc24e29ebe32af729c1cc27e6",
     "packages/blender-addon/ramps_ir.py": "fc9f2fd95a6e650a3bacde298fe92f2a63e85185763f17204d4e328a90c9ea96",
     "packages/blender-addon/repeat_ir.py": "f2027e55c03d1c7a8e018e82c9ce0d5d8a35af528632173d1cdde0dfa293ed71",
     "packages/blender-addon/shader_color_band.py": "dc9bf6130aaf4d972787aa5a7779500fb5ed6718b199d7c5069578d5bdc10508",
+    "packages/blender-addon/shader_vector2_ir.py": "16c61afa4ab3557ae6f2b92a23fb83441a628437636d13ff7d3fbe70568ae4f3",
     "packages/blender-addon/spectral_ir.py": "fc084f57b018234ea0d3af607b5944b5ff10f510362cc3a040373c8bad3c930b",
     "packages/blender-addon/squeeze_ir.py": "426a76ec167e8c8c216f79e563b85a7fdc5072fb55c1dd54a9058de6321a4d64",
-    "packages/blender-addon/static_selection.py": "e6fe8cf41a462287e9b6a967cef2d215796c2df413e739b131e349bf1dbbf852",
+    "packages/blender-addon/static_selection.py": "7eb707e250e80f43029849a18ce8b75176db4c263e6fd00b105b27e911936a09",
     "packages/blender-addon/static_string_case_data.json": "8fb83c1d86ae27a49e80bdbdbb8dddc5b66f155dac196d71ea033f3410139360",
-    "packages/blender-addon/static_strings.py": "9ef353746157c72d47576706875d77a82781505d2d9b09737edb4074a7dec3d4",
+    "packages/blender-addon/static_strings.py": "548314291e889724e93763cd9f37bcab372726788e09296496b4883c50435c18",
     "packages/blender-addon/tangent_ir.py": "1aecd4299717841db15ec5a129cdaef44bbc5853fdd4d7c96e21ddcde2910d7d",
-    "packages/blender-addon/tsl_ir.py": "f5199d77e13c830bccea168ddb229718a088046d9f38069f1efbd9465bddb198",
+    "packages/blender-addon/tsl_ir.py": "c8661394ac6c1970f98c88941d47211012aadeb8efb86c086c03409a234f8688",
     "packages/blender-addon/tsl_object_info.py": "beb2efc9684b53b1229b743d7b4206eb87f6206b9288d9454d4dd1c9d37d9f22",
     "packages/blender-addon/utility_ir.py": "d077031f6d9aec9e242bd3e7559753807dcbf29de53883b1c7bafc57fe2e97c5",
     "packages/blender-addon/vector_component_ir.py": "bb4d7ed8e35f112e511056ce8968be269d0bcb2993f3dbc41ce47aa3497f7b4a",
@@ -24454,7 +24668,7 @@
     "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
     "packages/blendlink/blender/compositor_float_coordinates.py": "a300cbfb6e5ea06806e2fb9b9d7795cd2e3b91cb21ada43e4c128ac89d8f0cec",
     "packages/blendlink/blender/compositor_float_to_int.py": "6292f5a5904107b59591c282fcf9def24a5f98dc2ead0a92d950b6219226658d",
-    "packages/blendlink/blender/compositor_graph.py": "f6a75472a0c69500455b8798d41644aea3010526c689b28ba8f16ef8d2ea088e",
+    "packages/blendlink/blender/compositor_graph.py": "41fad5723ee5ac95576b87724be0346a564edc435432ff69fc75664af7087f32",
     "packages/blendlink/blender/compositor_image.py": "55ee3b7800002331c4e30042a7d5da18538267b58ff60c006e03ad238da9e012",
     "packages/blendlink/blender/compositor_image_coordinates.py": "4b796327c579e7c08ed487cce4758c899a1a11be648e93977c22a0536451054a",
     "packages/blendlink/blender/compositor_image_info.py": "92e3f2488f646b8f7f79de67940717c54bd3e4cfc69956090b31ebd9b0e64729",
@@ -24481,7 +24695,7 @@
     "packages/blendlink/src/compiledMaterialPrograms.ts": "3a054779d78a4b7e8361653c5d980b5bb8324544c539a0b0ed691ffb66a8c173",
     "packages/blendlink/src/compiledSceneAudit.ts": "52bce41d9b3afee724a00d06981ebec1e68cc0748da41cec1c09cdb834b60c57",
     "packages/blendlink/src/materialProgramDocument.ts": "39ec3435678480a0c1074f55b3fee1340ec91710d384b76b0e9757ef0d181e63",
-    "packages/blendlink/src/materialProgramRendererRequirements.ts": "6e4024648013626e7a84b96392fe3d660970bae005a68b7bfb24f24ab06fc7a1",
+    "packages/blendlink/src/materialProgramRendererRequirements.ts": "195165c20815796fc0a29b663cbc52ce689f759df4dfdf7e785d720ceeb456bb",
     "packages/blendlink/src/sceneDiagnostics.ts": "48b8d220ad2b5216f496694ef1b29c19903e90cc65fc9ce01bda77e21c84dc0e",
     "packages/blendlink/src/staticNoise4d.ts": "0677ad1169801c601d74b8a5658d98691415bf313081ca0b4fa88ec762e62a76",
     "packages/blendlink/src/threeRuntime.ts": "4ca05fb2b46239e30a434591c3ecfa42531b179c20e946828921a419e64db3b4",
@@ -24544,11 +24758,12 @@
     "packages/blendlink/src/tslMaterialProgram.ts": "e46f8b8d25a2644b9b507a132b12aea75e36ec3fb326c8beaf9d29adeceeea89",
     "packages/blendlink/src/tslMaterialRuntime.ts": "0059cf7561e5c3abc2aeecb0cb828bc6f6a5182257b1488d770a9701c8be1c96",
     "packages/blendlink/src/tslMathModuloNative.ts": "f56ae4c332f93d0f597242607d02fdc8938af1d877392da3f4e3481b2e030da2",
+    "packages/blendlink/src/tslMetalRendererGuard.ts": "90e181caec45f22b79c18bf5fa5c7862d5de0782e3f1b7bbcaccb0cb65e5bc94",
     "packages/blendlink/src/tslMfNoiseCoordinates.ts": "3d697e3dd7a01418263fa7edac3154db127b669f4212cf533b15c94ed53046a7",
     "packages/blendlink/src/tslNativeColorBand.ts": "71727e4ad3d5498f35d56b875e1475361a1a3a0adf62f7e7fd98b1581f308c92",
     "packages/blendlink/src/tslNativeNoisePrecision.ts": "7b64b75c45d38815d7d0cb9c1f74b4abae9352612edd2d7c6b615e4df1c495dd",
     "packages/blendlink/src/tslNativeVaryingNoise.ts": "f9d1268c168cbf5d486b1560454567565ecee3649332e556f2415455165248b7",
-    "packages/blendlink/src/tslNodeRecipe.ts": "7c6cce9fc77a0644645dce802a04aca0f4a57afcbb6356d26aa0bebe84ad3e97",
+    "packages/blendlink/src/tslNodeRecipe.ts": "5a7f7e2bcca3bf4eb8dca87c8a57a1030ca23598b11739e1bf6187a23e84e2b5",
     "packages/blendlink/src/tslNoiseCoordinates.ts": "f0eb9e256f75be2915f0d2d78509fe3d638fbcb0936fc6c79099b19a1472f9f4",
     "packages/blendlink/src/tslNoiseFieldBarrier.ts": "9dcbd46802101108eeb3ae5fffc78d64317f48c832406e6b713bc129335295bf",
     "packages/blendlink/src/tslNoiseFields.ts": "a66cf44b0298add1ab3db195085629788060a9005df14757d283228e703416d1",
@@ -24558,6 +24773,8 @@
     "packages/blendlink/src/tslNormalNoiseBounds.ts": "d077612c85a079e3f0cbc337510b241753744d4896cadf0f7c373015453bbc1c",
     "packages/blendlink/src/tslObjectInfo.ts": "4bbb381d9b1b75d59aefbc969d9b8a3c16c84720f876eb87f46903ecdfaddd81",
     "packages/blendlink/src/tslPortableTrig.ts": "f477ca37bfd09a058e2cd837cfa3a00b239b828019295d6a46c595d13ae5aef1",
+    "packages/blendlink/src/tslRadialCoordinates.ts": "0a4715beae4d369d2db814cbb1a1fdf353410dc62c61ebbb6120e07ec41c8ff7",
+    "packages/blendlink/src/tslRadialRegularNative.ts": "e7f6e72eb90c7e3d3047f6afd8b22fb5972e56ae835b64ac65f65b4fc4846870",
     "packages/blendlink/src/tslRadialWidth.ts": "9ffc9e3a7e32b3d0676b2a90fffad64e2578cd30d160ddaf00278d2d9ff43719",
     "packages/blendlink/src/tslRepeat.ts": "4d7925f09220e54973155c6af8c41c98e3b32e141f5acbdc6d29741c701d9a93",
     "packages/blendlink/src/tslSharedUtilities.ts": "1f21b06a4d60a439b0549b7c6716c66945b4cce3cc00fc6e965acbe77c80d9b9",

@@ -1,0 +1,9 @@
+# Radial runtime/source admission research
+
+The initial broad Apple Metal guard pilot is historical research only. The bounded candidate now admits **actual WebGL2 ANGLE Apple M5 Pro Metal only**. WebGPU explicitly refuses because its device/description are privacy-redacted on the measured machine; a payload model or generic apple/metal-3 marker cannot establish the measured hardware identity. Actual software adapters and unbranded fake renderer objects refuse. This is not a portable GPU claim.
+
+The draw guard materializes the result variable before attaching its onRenderUpdate hook; a constant JoinNode's hook was otherwise removed by Three's constant-join optimization. The materialized hook adds no floating arithmetic or shader parameters. Full native/Final qualification must replay the production kernel with this hook, not promote the historical broad-guard pilot.
+
+The public RNA array API solves a separate input-fidelity issue: `default_value.foreach_get(array('f'))` transfers stored Float32 words without float→double promotion. `rna-storage.py` set source bits `[0x00000001,0x80000001]` via foreach_set, observed the same raw words both before and after gpu.init, while ordinary list(RNA) changed them to `[+0,-0]` after initialization. This research is not node qualification. The candidate classifies raw exponent/sign bits through bounded actual array defaults/Vector/Color literals and group/reroute/native bypasses; it refuses subnormal/negative-zero XY before promoted values can masquerade as +0. No ctypes, DNA offset guessing or FPU-state manipulation is used.
+
+`write-runtime.mjs` preserves the mechanically selected native arithmetic and Apache-2.0 attribution while adding TypeScript declarations. Distribution/license notices explicitly identify the native derivative. The first scope excludes images, UV/Object fields, arithmetic vectors, computed Sides and other unqualified inputs.

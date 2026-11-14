@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "model": "blender-53-scene-time-source-research-v1",
+  "role": "Source research only. No implementation, live-node support, native/render differential, saved Final or appearance qualification.",
+  "supportCredit": 0,
+  "numericalQualificationCredit": 0,
+  "productionImplementation": false,
+  "sources": [
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/nodes/geometry/nodes/node_geo_input_scene_time.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/geometry/nodes/node_geo_input_scene_time.cc",
+      "bytes": 2080,
+      "sha256": "d1da61eac637f42ca07ea42d15bab920a52ef6efd834e82367ecec85b8e0ead2"
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/nodes/composite/nodes/node_composite_scene_time.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/composite/nodes/node_composite_scene_time.cc",
+      "bytes": 1738,
+      "sha256": "763e046bfe37c814b989fc77f2b467781f068e431cb15b7a1c1a28f83f3455c3"
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/compositor/intern/context.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/intern/context.cc",
+      "bytes": 3094,
+      "sha256": "6d04e0813242d4a3294205438a7157713a1dd5223b0fc4502daa01e6dadc4651"
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/blenkernel/intern/scene.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenkernel/intern/scene.cc",
+      "bytes": 138298,
+      "sha256": "9033737c3fe87245788dc9b75bd4b3ef7f4aea3fac184138252eb91f7b516f07"
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/draw/engines/eevee/eevee_material.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/draw/engines/eevee/eevee_material.cc",
+      "bytes": 17148,
+      "sha256": "8f573b01f742ca6a090a30bff400c9c88f452f25c11007f3c94fedbb5947907d"
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/draw/engines/eevee/shaders/eevee_nodetree_lib.bsl.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/draw/engines/eevee/shaders/eevee_nodetree_lib.bsl.hh",
+      "bytes": 47560,
+      "sha256": "a802cf032dc9fe05f9c91cf5fedb1dd1713d651e735c166f3531851c8b58f583"
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/gpu/shaders/material/gpu_shader_material_scene_time.bsl.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shaders/material/gpu_shader_material_scene_time.bsl.hh",
+      "bytes": 308,
+      "sha256": "53be2f6294b18c7d90caf7b88b536e213806d7afc56086c82fa28591f2e6da6b"
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/makesdna/DNA_scene_types.h",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/makesdna/DNA_scene_types.h",
+      "bytes": 91351,
+      "sha256": "14e415693b9696735b8b6a7042245b89e17b68a533b14ffd69de10e949ef76ea"
+    }
+  ]
+}

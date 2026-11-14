@@ -1,11 +1,50 @@
 {
-  "schemaVersion":1,
-  "model":"native-static-strings-53-v1",
-  "native":"Blender5.3.0 build02f0899d78e3 macOSarm64 host static strings; shader/CPU/GPU labels qualify encoded scalar transport, not GPU text arithmetic.",
-  "logicalText":"Manually authored expectedString literals. For each nonempty text case, actual native Length equals Unicode codepoint length of expectedString AND actual native Find(actualString,expectedString).Count equals1. Empty outputs require native Length0. Independently helper-resolved actual text must equal the authored expectedString. Witness render pairs count as one logical string case.",
-  "scalarCarrier":{"minimumInteger":0,"maximumInteger":4096,"R":"(n %256)/256","G":"floor(n/256)/256","B":0.25,"alpha":1,"encodedFloat32Words":"exact","decodedInteger":"exact","nativeOperatorUnmodified":true,"arithmetic":"Exact nonnegative integer MODULO/DIVIDE extract the bytes before the power-of-two Float32 scale; string operators and scalar values remain unchanged."},
-  "sourcePreservation":"Native operators and inputs remain authored. Only an owned temporary Emission output exposes the predeclared byte carrier during shader capture; actual saved Final retains the Principled source graph and native string classes.",
-  "scope":"Input String, Special Characters, Reverse, Trim, Slice, Replace, pinned native BLI one-codepoint Unicode Uppercase/Lowercase, Length, Find; typed groups/reroutes/native mute bypass; bounded static Compare/IndexSwitch controls. UTF8 codepoints, not graphemes. All666upper/669lower mappings and neighboring unmapped identities have literal expected-string controls; this is not Python Unicode casing or grapheme conversion.",
-  "performanceCredit":0,
-  "predeclaredBeforeBrowser":true
+  "schemaVersion": 1,
+  "model": "native-static-strings-53-v1",
+  "native": "Blender5.3.0 build02f0899d78e3 macOSarm64 host static strings; shader/CPU/GPU labels qualify encoded scalar transport, not GPU text arithmetic.",
+  "logicalText": "Manually authored expectedString literals. For each nonempty text case, actual native Length equals Unicode codepoint length of expectedString AND actual native Find(actualString,expectedString).Count equals1. Empty outputs require native Length0. Independently helper-resolved actual text must equal the authored expectedString. Witness render pairs count as one logical string case.",
+  "scalarCarrier": {
+    "minimumInteger": 0,
+    "maximumInteger": 4096,
+    "R": "(n %256)/256",
+    "G": "floor(n/256)/256",
+    "B": 0.25,
+    "alpha": 1,
+    "encodedFloat32Words": "exact",
+    "decodedInteger": "exact",
+    "nativeOperatorUnmodified": true,
+    "arithmetic": "Exact nonnegative integer MODULO/DIVIDE extract the bytes before the power-of-two Float32 scale; string operators and scalar values remain unchanged."
+  },
+  "sourcePreservation": "Native operators and inputs remain authored. Only an owned temporary Emission output exposes the predeclared byte carrier during shader capture; actual saved Final retains the Principled source graph and native string classes.",
+  "scope": "Input String, Special Characters, Reverse, Trim, Slice, Replace, pinned native BLI one-codepoint Unicode Uppercase/Lowercase, Length, Find; typed groups/reroutes/native mute bypass; bounded static Compare/IndexSwitch controls. UTF8 codepoints, not graphemes. All666upper/669lower mappings and neighboring unmapped identities have literal expected-string controls; this is not Python Unicode casing or grapheme conversion. Match String Result BOOLEAN: Starts With/Ends With/Contains compare exact bounded valid UTF8 bytes, case-sensitive without normalization; static literal/producer/menu/group/reroute routes. Native unchanged Boolean Result drives an explicit Boolean Switch with INT false0/true1 before the independent byte carrier, with no new implicit cast or runtime text operation.",
+  "performanceCredit": 0,
+  "predeclaredBeforeBrowser": true,
+  "matchPrimarySources": [
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/nodes/function/nodes/node_fn_match_string.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/function/nodes/node_fn_match_string.cc",
+      "sha256": "29a3522e13ae5f28c8ac8d2aefba02be946540493d579494b7e2cf160e8c996f"
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/blenlib/BLI_string_ref.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/BLI_string_ref.hh",
+      "sha256": "ffde44b8ed292657017ece73550eda75a2362cc1a000978b17802904e65bc771"
+    }
+  ],
+  "integerConversions": "INT modes only. StringToValue uses exact signed32 ASCII prefix parsing in bases2..36: optional minus, no whitespace/plus/prefix inference; errors including overflow map Value0/Length0. Consumed Length is native UTF8 codepoint length of the ASCII matched prefix. ValueToString uses lowercase digits and minus, padding width includes minus and zeros follow it; invalid base yields empty before padding. Every input/intermediate/output remains within4096UTF8 bytes; arbitrary numeric math and FLOAT modes refuse. Qualified INT producers include existing StringLength/Find and new parser chains, literals and InputInt, with source group bindings and static guards.",
+  "integerConversionWitness": "Parser raw helper value/type and consumed Length are independently checked against authored signed32 goldens. Actual unchanged parser Value feeds native INT ValueToString decimal with Padding0, then independent Length and wholeFind.Count witnesses; no full signed32 value is sent through the narrow scalar pixel carrier. Standalone formatter INT_MIN/MAX witnesses prevent parse/format error cancellation.",
+  "integerConversionPrimarySources": [
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/nodes/function/nodes/node_fn_string_to_value.cc",
+      "sha256": "3f9d99d24bde839598f8dd0c74394899cb7f2380731cfa9fb7be460da3052d6a"
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/nodes/function/nodes/node_fn_value_to_string.cc",
+      "sha256": "da299de40316cdcf496a750b0928a6b5d7f184a40ecac4084f979f030b6da6c5"
+    }
+  ]
 }

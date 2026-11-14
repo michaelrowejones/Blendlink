@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "readerSha256": "98a2bd03e424a3f0aa541d770569aabda3b35c62bcc6e4bbf1c1f2e0b8732c51",
+  "nativeSubmittedShaderRolesChecked": 5,
+  "status": "QUALIFIED_STATIC_RADIAL_M5PRO_WEBGL_COORDINATES",
+  "directory": "artifacts/verification-next6-radial-static-union-r2",
+  "nativeKernelStage": "Unchanged native shared GLSL function under PythonGPU GLSL frontend/native Metal compiler; independently assembled aliases/helpers. Not actual EEVEE material/film.",
+  "nativeKernelCases": 440,
+  "sourceIRCases": 410,
+  "sourceRefusals": 13,
+  "savedFinals": 8,
+  "actualMaterial": {
+    "logicalSettings": 8,
+    "magnitudeValues": 16,
+    "signWitnesses": 16,
+    "residueWitnesses": 16,
+    "independentCarrierControls": 2,
+    "maxPhaseAbs": 3.5762786865234375e-7,
+    "maxRadiusAbs": 0,
+    "stage": "Actual EEVEE material/film with independent calibrated half-safe digit carrier for the ordinary/group settings in the pinned plan; separately labeled from PythonGPU directF32 kernel. No field or full-scene qualification."
+  },
+  "positiveRaw": 410,
+  "positiveFinal": 8,
+  "adapterRefusals": 6,
+  "resizeFrames": 3,
+  "comparedWords": 112596,
+  "wordDifferences": 0,
+  "contractViolations": 0,
+  "browser": [
+    {
+      "profile": "metal",
+      "backend": "webgpu",
+      "gpu": {
+        "api": "WebGPU",
+        "vendor": "apple",
+        "architecture": "metal-3",
+        "device": "",
+        "description": ""
+      },
+      "positive": false,
+      "raw": 1,
+      "Final": 1,
+      "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959"
+    },
+    {
+      "profile": "metal",
+      "backend": "webgl2",
+      "gpu": {
+        "api": "WebGL2",
+        "vendor": "Google Inc. (Apple)",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+      },
+      "positive": true,
+      "raw": 410,
+      "Final": 8,
+      "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959"
+    },
+    {
+      "profile": "software",
+      "backend": "webgpu",
+      "gpu": {
+        "api": "WebGPU",
+        "vendor": "google",
+        "architecture": "swiftshader",
+        "device": "",
+        "description": ""
+      },
+      "positive": false,
+      "raw": 1,
+      "Final": 1,
+      "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959"
+    },
+    {
+      "profile": "software",
+      "backend": "webgl2",
+      "gpu": {
+        "api": "WebGL2",
+        "vendor": "Google Inc. (Google)",
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+      },
+      "positive": false,
+      "raw": 1,
+      "Final": 1,
+      "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959"
+    }
+  ],
+  "nativeArchives": [
+    {
+      "pythonInvocations": 1,
+      "finalInvocations": 0,
+      "uniqueCachePrefixes": 1,
+      "numericalCredit": 0
+    },
+    {
+      "pythonInvocations": 1,
+      "finalInvocations": 0,
+      "uniqueCachePrefixes": 1,
+      "numericalCredit": 0
+    },
+    {
+      "pythonInvocations": 9,
+      "finalInvocations": 8,
+      "uniqueCachePrefixes": 9,
+      "numericalCredit": 0
+    }
+  ],
+  "pins": {
+    "native-f32/kernel.glsl": "dc0ea960a36abcc4fa6f5df96aaada4f7f8e9580b64fd10d85724f2c82984cc0",
+    "native-f32/diagnostic.glsl": "987ba34d254c0d891a09d8985b313397cc4129b5e2797e97b6a7ff919c73bfb1",
+    "native-f32/angle.glsl": "5f9e0e08e00ae47ced2faba46d014a37f2cc332e4f681735514fcd133539f396",
+    "native-f32/phase.glsl": "e1b7922238e45f760cdd245f6581c8b9e0586b8e81e4ae135c7c44d0ff2a721e",
+    "native-f32/input.glsl": "6e234748872c57164e28728104672a644b2d22e98a1e0cc76e9d1be16d0dadc4",
+    "native-f32/input.rgba32f": "ac737017f9fa66802180555bdfc18627e6540b7044c8eeb01c8b486a17a30d11",
+    "native-f32/diagnostic.rgba32f": "963168ea082949e80f7337a0028e67c049bca3606682cbd81777c3c886a0a6fd",
+    "native-f32/angle.rgba32f": "351e37cd56463280769a0c8afdc518c4ead11c8a47d67acaeed2ab5c611c8031",
+    "native-f32/phase.rgba32f": "aded54d464046037f3d7e8e1f2bfb7459d94d12f38203589d0941102ca8415e9",
+    "native-f32/kernel.rgba32f": "a9aa0fc318a418bd3663f4aa48b595c59ce7d8aaef3ed02c82f02d5d5291640d",
+    "native-f32/native-python-proof.json": "8a0ba9666ae1470b3bbaf3f9373d56d9b95834d04e580d176a5892fcea74f87d",
+    "actual-material/native-python-proof.json": "c0c2082d95685502f225ef1fdbd7de3f83498ddaa938e7789afa25674a3aab6c",
+    "native-python-proof.json": "93e73ac68ac57a6b9d173cd983da952222fdf4101ede23b19c23e73dd0fafea5",
+    "browser-metal/report.json": "66c6d4b3f55b3f43650fda5a483aaa00d08ff8b33321cfcf93ba82a4081c1171",
+    "browser-software/report.json": "1ca0cd4fd987659c1a3208e2fbb8114e034f0a021f30db3f6d357a580e956015",
+    "qualification.json": "43511902d9ddce36b88c072433de68c758d8a35d10ffcb6da9488e0f526757c2",
+    "final-proof.json": "33efec442320680cfc274cd1b7ad58d3ffb525d782c80df06320c82fa6d5e737",
+    "native-f32/report.json": "e346876635b4136d009d23443202230849e57560abbf6652e0287ebfa245558a",
+    "actual-material/capture/report.json": "de84359620de626fcd39c878a01da7dc5bc2037e2a2f578503aab0b4b77f4ec9",
+    "plan.json": "4847acd23a6e2287484cf652fce50d00512c00e3486469cdf8d7baa2f48b38a4",
+    "cases.json": "629aed5e16e3ee4a7d125bd3dec8fc3edf599bd63185d3ce8b2bb3f89e61d5df"
+  },
+  "scope": "Static normal/+0 literalXY[-2,2],Sides3/8/12,Roundness1,bothNormalize; actualAppleM5ProWebGL2 only. Image/UV/Object/arithmetic/computedSides refused.",
+  "limits": [
+    "PreviewStudio defaultsWebGPU: that path namedrefuses; explicit ?backend=webgl2 is required for this measuredM5Pro route. No default-preview acceptance credit.",
+    "ActualFinal proof installs saved live material programs on actualGLTF meshes and exposes their installedcolorNode as fragment output for channel acceptance; no generalPBR/fullscenevisualclaim.",
+    "IndependentnativeF32kernel stage and8actualEEVEEmaterialcontrolsettings remain distinct.",
+    "OriginalofficialRadialdemo computedSTEPPEDroute remains unsupported; no sceneacceptancecredit."
+  ],
+  "officialSceneAcceptance": false,
+  "defaultPreviewAcceptance": false
+}

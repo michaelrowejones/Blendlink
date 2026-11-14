@@ -78,6 +78,14 @@ The first-party bounded EEVEE Squeeze runtime `dist/tslSqueeze.js` and its
 source TypeScript are Apache-2.0, as marked by the file-level header, using
 the complete Apache license text linked above.
 
+The mechanically selected regular/full-roundness Radial kernel `dist/tslRadialRegularNative.js`
+and its source TypeScript are derivatives of Blender's Apache-2.0
+`gpu_shader_material_radial_tiling_shared.glsl`, copyright 2024-2025 Blender Authors,
+at commit `02f0899d78e374b63e7181d9061e1f7ab03419cc`. Native AST branch selection
+under fixed input preconditions and TSL/TypeScript interface translation are
+modifications; retained arithmetic is unchanged. The complete Apache license
+text linked above applies. The separate source extraction adapters are GPL-marked.
+
 `dist/vendor/n8ao-webgpu/` contains the unchanged runtime from
 `n8ao-webgpu@0.1.0`, licensed CC0-1.0. Its complete `LICENSE`, upstream
 `NOTICE.md`, and original package metadata ship in that directory. The build

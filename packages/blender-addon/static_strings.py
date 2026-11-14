@@ -15,8 +15,9 @@ MODEL = 'native-static-strings-53-v1'
 NODES = {'FunctionNodeInputString', 'FunctionNodeInputSpecialCharacters',
          'FunctionNodeReverseString', 'FunctionNodeTrimString', 'FunctionNodeSliceString',
          'FunctionNodeReplaceString', 'FunctionNodeSetStringCase',
-         'FunctionNodeStringLength', 'FunctionNodeFindInString'}
-SCALAR_NODES = {'FunctionNodeStringLength', 'FunctionNodeFindInString'}
+         'FunctionNodeStringLength', 'FunctionNodeFindInString', 'FunctionNodeMatchString',
+         'FunctionNodeStringToValue', 'FunctionNodeValueToString'}
+SCALAR_NODES = {'FunctionNodeStringLength', 'FunctionNodeFindInString', 'FunctionNodeMatchString', 'FunctionNodeStringToValue'}
 MAX_BYTES = 4096
 CASE_DATA_SHA256 = '8fb83c1d86ae27a49e80bdbdbb8dddc5b66f155dac196d71ea033f3410139360'
 _CASE_MAPS = None
@@ -24,6 +25,51 @@ _CASE_MAPS = None
 
 class StaticStringUnsupported(ValueError):
     pass
+
+
+def _int32(value):
+    if not isinstance(value, int) or isinstance(value, bool) or not -2147483648 <= value <= 2147483647:
+        raise StaticStringUnsupported('Static string conversion requires a qualified native int32 producer')
+    return value
+
+
+def _active_socket(sockets, identifier, kind):
+    matches = [item for item in sockets if item.identifier == identifier and item.type == kind
+               and item.enabled and not item.is_unavailable]
+    if len(matches) != 1:
+        raise StaticStringUnsupported('Static integer string conversion active socket schema changed')
+    return matches[0]
+
+
+def _parse_int(source, base):
+    # std::from_chars signed int: ASCII prefix, optional minus only, no
+    # whitespace/plus or prefix inference. Blender maps every error to (0,0).
+    if not 2 <= base <= 36:return 0, 0
+    negative = source.startswith('-')
+    start = 1 if negative else 0
+    limit, value, cursor = (2147483648 if negative else 2147483647), 0, start
+    for character in source[start:]:
+        code = ord(character)
+        digit = code - 48 if 48 <= code <= 57 else code - 65 + 10 if 65 <= code <= 90 else code - 97 + 10 if 97 <= code <= 122 else 36
+        if digit >= base:break
+        if value > (limit - digit) // base:return 0, 0
+        value = value * base + digit;cursor += 1
+    if cursor == start:return 0, 0
+    return (-value if negative else value), cursor
+
+
+def _format_int(value, base, padding):
+    if not 2 <= base <= 36:return ''
+    magnitude, digits = abs(value), ''
+    while magnitude:
+        magnitude, digit = divmod(magnitude, base)
+        digits = '0123456789abcdefghijklmnopqrstuvwxyz'[digit] + digits
+    digits = digits or '0'
+    sign = '-' if value < 0 else ''
+    width = max(len(sign) + len(digits), max(0, padding))
+    if width > MAX_BYTES:
+        raise StaticStringUnsupported('Static integer string Padding exceeds the 4096-byte output bound')
+    return sign + '0' * (width - len(sign) - len(digits)) + digits
 
 
 def _native_case(value, mode):
@@ -120,7 +166,24 @@ def _evaluate(socket, stack, budget, seen, trace, depth=0):
         raise StaticStringUnsupported('Static string needs a qualified fixed producer; fields and computed numeric inputs remain unqualified')
     incoming = lambda name: resolve(node.inputs[name])
     text = lambda name: _text(incoming(name))
-    if kind == 'FunctionNodeInputString' and socket.type == 'STRING' and socket.identifier == 'String':
+    if kind in {'FunctionNodeStringToValue', 'FunctionNodeValueToString'}:
+        if node.data_type != 'INT':
+            raise StaticStringUnsupported('Static string numeric FLOAT mode is unqualified; exact INT mode only')
+        expected_type = 'INT' if kind == 'FunctionNodeStringToValue' else 'STRING'
+        if _active_socket(node.outputs, socket.identifier, expected_type) != socket:
+            raise StaticStringUnsupported('Static integer string conversion output schema changed')
+        integer = lambda name: _int32(resolve(_active_socket(node.inputs, name, 'INT')))
+        base = integer('Base')
+        if kind == 'FunctionNodeStringToValue':
+            if socket.identifier not in {'Value', 'Length'}:
+                raise StaticStringUnsupported('Static integer parser output schema changed')
+            parsed, consumed = _parse_int(_text(resolve(_active_socket(node.inputs, 'String', 'STRING'))), base)
+            value = parsed if socket.identifier == 'Value' else consumed
+        else:
+            if socket.identifier != 'String':
+                raise StaticStringUnsupported('Static integer formatter output schema changed')
+            value = _text(_format_int(integer('Value'), base, integer('Padding')))
+    elif kind == 'FunctionNodeInputString' and socket.type == 'STRING' and socket.identifier == 'String':
         value = _text(node.string)
     elif kind == 'FunctionNodeInputSpecialCharacters' and socket.type == 'STRING' and socket.identifier in {'Line Break', 'Tab'}:
         value = '\n' if socket.identifier == 'Line Break' else '\t'
@@ -152,6 +215,18 @@ def _evaluate(socket, stack, budget, seen, trace, depth=0):
                 raise StaticStringUnsupported('Static string Case requires a fixed native Uppercase/Lowercase menu')
             value = _native_case(source, mode)
         value = _text(value)
+    elif kind == 'FunctionNodeMatchString' and socket.type == 'BOOLEAN' and socket.identifier == 'Result':
+        # Native StringRef operations compare UTF-8 bytes, without casing or
+        # normalization. Both strings already passed valid-scalar/NUL/size gates.
+        source, key, mode = text('String').encode('utf-8'), text('Key').encode('utf-8'), incoming('Operation')
+        if mode == 'Starts With':
+            value = source.startswith(key)
+        elif mode == 'Ends With':
+            value = source.endswith(key)
+        elif mode == 'Contains':
+            value = source.find(key) != -1
+        else:
+            raise StaticStringUnsupported('Static string Match needs a fixed native Starts With/Ends With/Contains menu')
     elif kind == 'FunctionNodeStringLength' and socket.type == 'INT' and socket.identifier == 'Length':
         value = len(text('String'))
     elif kind == 'FunctionNodeFindInString' and socket.type == 'INT' and socket.identifier in {'First Found', 'Count'}:

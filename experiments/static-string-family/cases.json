@@ -702,5 +702,487 @@
       "Case": "Lowercase"
     },
     "expectedString": "iııi"
+  },
+  {
+    "id": "match-starts-with-ascii-yes",
+    "kind": "match",
+    "nodeType": "FunctionNodeMatchString",
+    "inputs": {
+      "String": "SceneToWeb",
+      "Operation": "Starts With",
+      "Key": "Scene"
+    },
+    "output": "Result",
+    "expectedBool": true,
+    "expectedInt": 1,
+    "saved": true,
+    "route": "match-group",
+    "groupInstance": "ascii-yes"
+  },
+  {
+    "id": "match-starts-with-case-no",
+    "kind": "match",
+    "nodeType": "FunctionNodeMatchString",
+    "inputs": {
+      "String": "scenetoweb",
+      "Operation": "Starts With",
+      "Key": "Scene"
+    },
+    "output": "Result",
+    "expectedBool": false,
+    "expectedInt": 0,
+    "route": "match-group",
+    "groupInstance": "case-no"
+  },
+  {
+    "id": "match-starts-with-empty-both",
+    "kind": "match",
+    "nodeType": "FunctionNodeMatchString",
+    "inputs": {
+      "String": "",
+      "Operation": "Starts With",
+      "Key": ""
+    },
+    "output": "Result",
+    "expectedBool": true,
+    "expectedInt": 1
+  },
+  {
+    "id": "match-starts-with-empty-key",
+    "kind": "match",
+    "nodeType": "FunctionNodeMatchString",
+    "inputs": {
+      "String": "SceneToWeb",
+      "Operation": "Starts With",
+      "Key": ""
+    },
+    "output": "Result",
+    "expectedBool": true,
+    "expectedInt": 1
+  },
+  {
+    "id": "match-ends-with-ascii-yes",
+    "kind": "match",
+    "nodeType": "FunctionNodeMatchString",
+    "inputs": {
+      "String": "SceneToWeb",
+      "Operation": "Ends With",
+      "Key": "Web"
+    },
+    "output": "Result",
+    "expectedBool": true,
+    "expectedInt": 1,
+    "saved": true,
+    "route": "reroute"
+  },
+  {
+    "id": "match-ends-with-case-no",
+    "kind": "match",
+    "nodeType": "FunctionNodeMatchString",
+    "inputs": {
+      "String": "scenetoweb",
+      "Operation": "Ends With",
+      "Key": "Web"
+    },
+    "output": "Result",
+    "expectedBool": false,
+    "expectedInt": 0
+  },
+  {
+    "id": "match-ends-with-empty-both",
+    "kind": "match",
+    "nodeType": "FunctionNodeMatchString",
+    "inputs": {
+      "String": "",
+      "Operation": "Ends With",
+      "Key": ""
+    },
+    "output": "Result",
+    "expectedBool": true,
+    "expectedInt": 1
+  },
+  {
+    "id": "match-ends-with-empty-key",
+    "kind": "match",
+    "nodeType": "FunctionNodeMatchString",
+    "inputs": {
+      "String": "SceneToWeb",
+      "Operation": "Ends With",
+      "Key": ""
+    },
+    "output": "Result",
+    "expectedBool": true,
+    "expectedInt": 1
+  },
+  {
+    "id": "match-contains-ascii-yes",
+    "kind": "match",
+    "nodeType": "FunctionNodeMatchString",
+    "inputs": {
+      "String": "SceneToWeb",
+      "Operation": "Contains",
+      "Key": "To"
+    },
+    "output": "Result",
+    "expectedBool": true,
+    "expectedInt": 1,
+    "saved": true,
+    "menuSource": true
+  },
+  {
+    "id": "match-contains-case-no",
+    "kind": "match",
+    "nodeType": "FunctionNodeMatchString",
+    "inputs": {
+      "String": "scenetoweb",
+      "Operation": "Contains",
+      "Key": "To"
+    },
+    "output": "Result",
+    "expectedBool": false,
+    "expectedInt": 0
+  },
+  {
+    "id": "match-contains-empty-both",
+    "kind": "match",
+    "nodeType": "FunctionNodeMatchString",
+    "inputs": {
+      "String": "",
+      "Operation": "Contains",
+      "Key": ""
+    },
+    "output": "Result",
+    "expectedBool": true,
+    "expectedInt": 1
+  },
+  {
+    "id": "match-contains-empty-key",
+    "kind": "match",
+    "nodeType": "FunctionNodeMatchString",
+    "inputs": {
+      "String": "SceneToWeb",
+      "Operation": "Contains",
+      "Key": ""
+    },
+    "output": "Result",
+    "expectedBool": true,
+    "expectedInt": 1
+  },
+  {
+    "id": "match-unicode-start",
+    "kind": "match",
+    "nodeType": "FunctionNodeMatchString",
+    "inputs": {
+      "String": "é🙂tail",
+      "Operation": "Starts With",
+      "Key": "é🙂"
+    },
+    "output": "Result",
+    "expectedBool": true,
+    "expectedInt": 1,
+    "saved": false
+  },
+  {
+    "id": "match-unicode-end",
+    "kind": "match",
+    "nodeType": "FunctionNodeMatchString",
+    "inputs": {
+      "String": "headé🙂",
+      "Operation": "Ends With",
+      "Key": "é🙂"
+    },
+    "output": "Result",
+    "expectedBool": true,
+    "expectedInt": 1,
+    "saved": false
+  },
+  {
+    "id": "match-unicode-interior",
+    "kind": "match",
+    "nodeType": "FunctionNodeMatchString",
+    "inputs": {
+      "String": "Né🙂X",
+      "Operation": "Contains",
+      "Key": "🙂"
+    },
+    "output": "Result",
+    "expectedBool": true,
+    "expectedInt": 1,
+    "saved": true
+  },
+  {
+    "id": "match-combining-distinct",
+    "kind": "match",
+    "nodeType": "FunctionNodeMatchString",
+    "inputs": {
+      "String": "é",
+      "Operation": "Contains",
+      "Key": "é"
+    },
+    "output": "Result",
+    "expectedBool": false,
+    "expectedInt": 0,
+    "saved": true
+  },
+  {
+    "id": "match-overlap",
+    "kind": "match",
+    "nodeType": "FunctionNodeMatchString",
+    "inputs": {
+      "String": "ababa",
+      "Operation": "Contains",
+      "Key": "aba"
+    },
+    "output": "Result",
+    "expectedBool": true,
+    "expectedInt": 1,
+    "saved": false
+  },
+  {
+    "id": "match-utf8-boundary",
+    "kind": "match",
+    "nodeType": "FunctionNodeMatchString",
+    "inputs": {
+      "String": "éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé",
+      "Operation": "Contains",
+      "Key": "é"
+    },
+    "output": "Result",
+    "expectedBool": true,
+    "expectedInt": 1,
+    "saved": true
+  },
+  {
+    "id": "match-empty-source",
+    "kind": "match",
+    "nodeType": "FunctionNodeMatchString",
+    "inputs": {
+      "String": "",
+      "Operation": "Contains",
+      "Key": "key"
+    },
+    "output": "Result",
+    "expectedBool": false,
+    "expectedInt": 0,
+    "saved": true
+  },
+  {
+    "id": "int-parse-binary",
+    "kind": "parse",
+    "nodeType": "FunctionNodeStringToValue",
+    "inputs": {
+      "String": "101101é",
+      "Base": 2
+    },
+    "expectedValue": 45,
+    "expectedLength": 6,
+    "saved": true
+  },
+  {
+    "id": "int-parse-hex-min",
+    "kind": "parse",
+    "nodeType": "FunctionNodeStringToValue",
+    "inputs": {
+      "String": "-80000000🙂",
+      "Base": 16
+    },
+    "expectedValue": -2147483648,
+    "expectedLength": 9,
+    "saved": true,
+    "route": "conversion-group",
+    "groupInstance": "First"
+  },
+  {
+    "id": "int-parse-decimal-max",
+    "kind": "parse",
+    "nodeType": "FunctionNodeStringToValue",
+    "inputs": {
+      "String": "2147483647",
+      "Base": 10
+    },
+    "expectedValue": 2147483647,
+    "expectedLength": 10,
+    "saved": true,
+    "route": "conversion-group",
+    "groupInstance": "Second"
+  },
+  {
+    "id": "int-parse-positive-overflow",
+    "kind": "parse",
+    "nodeType": "FunctionNodeStringToValue",
+    "inputs": {
+      "String": "2147483648",
+      "Base": 10
+    },
+    "expectedValue": 0,
+    "expectedLength": 0
+  },
+  {
+    "id": "int-parse-negative-overflow",
+    "kind": "parse",
+    "nodeType": "FunctionNodeStringToValue",
+    "inputs": {
+      "String": "-2147483649",
+      "Base": 10
+    },
+    "expectedValue": 0,
+    "expectedLength": 0
+  },
+  {
+    "id": "int-parse-base36",
+    "kind": "parse",
+    "nodeType": "FunctionNodeStringToValue",
+    "inputs": {
+      "String": "Zz!",
+      "Base": 36
+    },
+    "expectedValue": 1295,
+    "expectedLength": 2,
+    "route": "reroute"
+  },
+  {
+    "id": "int-parse-unicode-prefix",
+    "kind": "parse",
+    "nodeType": "FunctionNodeStringToValue",
+    "inputs": {
+      "String": "é12",
+      "Base": 10
+    },
+    "expectedValue": 0,
+    "expectedLength": 0
+  },
+  {
+    "id": "int-parse-invalid-base",
+    "kind": "parse",
+    "nodeType": "FunctionNodeStringToValue",
+    "inputs": {
+      "String": "12",
+      "Base": 1
+    },
+    "expectedValue": 0,
+    "expectedLength": 0
+  },
+  {
+    "id": "int-parse-prefix-not-inferred",
+    "kind": "parse",
+    "nodeType": "FunctionNodeStringToValue",
+    "inputs": {
+      "String": "0x10",
+      "Base": 16
+    },
+    "expectedValue": 0,
+    "expectedLength": 1
+  },
+  {
+    "id": "int-parse-roundtrip",
+    "kind": "parse",
+    "nodeType": "FunctionNodeStringToValue",
+    "inputs": {
+      "String": "-000ff",
+      "Base": 16
+    },
+    "expectedValue": -255,
+    "expectedLength": 6,
+    "saved": true,
+    "formatInput": {
+      "Value": -255,
+      "Base": 16,
+      "Padding": 6
+    }
+  },
+  {
+    "id": "int-format-binary-min",
+    "kind": "text",
+    "nodeType": "FunctionNodeValueToString",
+    "dataType": "INT",
+    "inputs": {
+      "Value": -2147483648,
+      "Base": 2,
+      "Padding": 0
+    },
+    "expectedString": "-10000000000000000000000000000000",
+    "saved": true
+  },
+  {
+    "id": "int-format-hex-max",
+    "kind": "text",
+    "nodeType": "FunctionNodeValueToString",
+    "dataType": "INT",
+    "inputs": {
+      "Value": 2147483647,
+      "Base": 16,
+      "Padding": 0
+    },
+    "expectedString": "7fffffff",
+    "saved": true
+  },
+  {
+    "id": "int-format-negative-pad",
+    "kind": "text",
+    "nodeType": "FunctionNodeValueToString",
+    "dataType": "INT",
+    "inputs": {
+      "Value": -255,
+      "Base": 16,
+      "Padding": 7
+    },
+    "expectedString": "-0000ff",
+    "saved": true
+  },
+  {
+    "id": "int-format-negative-padding",
+    "kind": "text",
+    "nodeType": "FunctionNodeValueToString",
+    "dataType": "INT",
+    "inputs": {
+      "Value": 0,
+      "Base": 36,
+      "Padding": -1
+    },
+    "expectedString": "0",
+    "inputInts": true
+  },
+  {
+    "id": "int-format-invalid-base",
+    "kind": "text",
+    "nodeType": "FunctionNodeValueToString",
+    "dataType": "INT",
+    "inputs": {
+      "Value": 17,
+      "Base": 1,
+      "Padding": 2147483647
+    },
+    "expectedString": "",
+    "inputInts": true
+  },
+  {
+    "id": "int-format-derived-controls",
+    "kind": "text",
+    "nodeType": "FunctionNodeValueToString",
+    "dataType": "INT",
+    "inputs": {
+      "Value": 10,
+      "Base": 16,
+      "Padding": 6
+    },
+    "expectedString": "00000a",
+    "sourceLengths": {
+      "Value": "SceneToWeb",
+      "Base": "abcdefghijklmnop",
+      "Padding": "......"
+    },
+    "saved": true
+  },
+  {
+    "id": "int-format-padding-boundary",
+    "kind": "text",
+    "nodeType": "FunctionNodeValueToString",
+    "dataType": "INT",
+    "inputs": {
+      "Value": -1,
+      "Base": 2,
+      "Padding": 4096
+    },
+    "expectedString": "-000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001"
   }
 ]

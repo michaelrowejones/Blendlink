@@ -1,0 +1,18 @@
+import*as THREE from'three'
+import{WebGPURenderer,NodeMaterial,QuadMesh}from'three/webgpu'
+import{atan,bool,float,floor,ivec2,screenCoordinate,sqrt,textureLoad,vec4}from'three/tsl'
+import{calculate_out_variables}from'./candidate.js'
+window.runRegularRadialResearch=async({backend:wanted,inputWords,count,ceilings})=>{
+const webgl=wanted==='webgl2',adapter=webgl?undefined:await navigator.gpu?.requestAdapter({powerPreference:'high-performance'});if(!webgl&&!adapter)throw Error('Actual WebGPU adapter required')
+const supplied=await adapter?.requestDevice({requiredFeatures:[...adapter.features]}),renderer=new WebGPURenderer({forceWebGL:webgl,...(supplied?{device:supplied}:{})});await renderer.init();const backend=renderer.backend.isWebGPUBackend?'webgpu':'webgl2';if(backend!==wanted)throw Error('Renderer fallback refused')
+const gl=renderer.backend.gl,debug=gl?.getExtension('WEBGL_debug_renderer_info'),info=adapter?.info??renderer.backend.device?.adapterInfo,gpu=info?{api:'WebGPU',vendor:info.vendor,architecture:info.architecture,description:info.description}:{api:'WebGL2',vendor:gl.getParameter(debug?.UNMASKED_VENDOR_WEBGL??gl.VENDOR),renderer:gl.getParameter(debug?.UNMASKED_RENDERER_WEBGL??gl.RENDERER)}
+renderer.setSize(count,1);renderer.setPixelRatio(1);renderer.toneMapping=THREE.NoToneMapping;renderer.outputColorSpace=THREE.LinearSRGBColorSpace
+let remainingTextures;const data=new Float32Array(new Uint32Array(inputWords).buffer),image=new THREE.DataTexture(data,count,1,THREE.RGBAFormat,THREE.FloatType);image.colorSpace=THREE.NoColorSpace;image.needsUpdate=true
+const sample=textureLoad(image,ivec2(floor(screenCoordinate.x),0)),point=sample.xy,sides=sample.z,normalize=sample.w.greaterThan(.5),uncaptured=[],rows=[];renderer.backend.device?.addEventListener('uncapturederror',event=>uncaptured.push(String(event.error)))
+try{for(const stage of ['input-storage','atan2-radius','radial-kernel']){const material=new NodeMaterial(),target=new THREE.RenderTarget(count,1,{type:THREE.FloatType,depthBuffer:false});target.texture.colorSpace=THREE.NoColorSpace
+material.fragmentNode=stage==='input-storage'?sample:stage==='atan2-radius'?vec4(atan(point.y,point.x),sqrt(point.x.mul(point.x).add(point.y.mul(point.y))),0,1):calculate_out_variables(bool(true),bool(false),normalize,sides,float(1),point)
+const quad=new QuadMesh(material),device=renderer.backend.device;device?.pushErrorScope('validation');let timer;const start=performance.now(),shaders=await Promise.race([renderer.debug.getShaderAsync(quad,quad.camera,quad),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Build/compile ceiling exceeded')),ceilings.buildCompileMillisecondsPerProgram)})]).finally(()=>clearTimeout(timer)),buildCompileMs=performance.now()-start,fragmentBytes=new TextEncoder().encode(shaders.fragmentShader).length;if(fragmentBytes>ceilings.fragmentShaderBytesPerProgram)throw Error('Shader byte ceiling exceeded')
+renderer.setRenderTarget(target);quad.render(renderer);const pixels=await renderer.readRenderTargetPixelsAsync(target,0,0,count,1);if(!(pixels instanceof Float32Array)||pixels.length!==count*4)throw Error('Unexpected exact Float32 row layout');const row={stage,buildCompileMs,fragmentBytes,vertexShader:shaders.vertexShader,fragmentShader:shaders.fragmentShader,words:Array.from(new Uint32Array(pixels.buffer,pixels.byteOffset,count*4)),validation:await device?.popErrorScope()};if(row.validation)throw Error(String(row.validation.message));rows.push(row);renderer.setRenderTarget(null);target.dispose();material.dispose()
+}}finally{image.dispose();remainingTextures=renderer.info.memory.textures;renderer.dispose();supplied?.destroy()}
+return{backend,gpu,rows,uncaptured,remainingTextures,supportCredit:0}
+}

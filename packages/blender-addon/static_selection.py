@@ -43,7 +43,7 @@ def _literal(socket, stack, budget, seen=(), depth=0):
             return bool(node.boolean)
         if node.bl_idname == 'FunctionNodeInputInt' and socket.identifier == 'Integer' and socket.type == 'INT':
             return int(node.integer)
-        if node.bl_idname in {'FunctionNodeStringLength', 'FunctionNodeFindInString'} and socket.type == 'INT':
+        if node.bl_idname in {'FunctionNodeStringLength', 'FunctionNodeFindInString', 'FunctionNodeMatchString'} and socket.type in {'INT', 'BOOLEAN'}:
             if __package__:
                 from .static_strings import evaluate_output, StaticStringUnsupported
             else:

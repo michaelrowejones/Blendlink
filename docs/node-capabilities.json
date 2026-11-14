@@ -2595,7 +2595,7 @@
           "fieldAndControlReadbacksPerBackendPerVersion": 4536,
           "maximumEncodedRgbError": 0.0004943609237670898,
           "tolerance": "Unchanged fixed2e-5 raster allowance plus independently calibrated native final half-float ULP",
-          "scope": "Separate27-case corpus:1D\u20134D Object/Generated/constant inputs, lowStrengthColor and FacStrength, static signed controls, animated/shared/reflected owners, both exported bases, allfour Mikk profiles. Source/installer/actualGLB/draw guards enforce the narrower dynamic frequency domain and nonzero-normal certificate. Widerstresscases remain refused."
+          "scope": "Separate27-case corpus:1D–4D Object/Generated/constant inputs, lowStrengthColor and FacStrength, static signed controls, animated/shared/reflected owners, both exported bases, allfour Mikk profiles. Source/installer/actualGLB/draw guards enforce the narrower dynamic frequency domain and nonzero-normal certificate. Widerstresscases remain refused."
         }
       }
     },
@@ -2768,7 +2768,7 @@
     },
     "shader:ShaderNodeVectorTransform": {
       "category": "partial",
-      "limits": "All 27 World/Object/Camera \u00d7 Point/Vector/Normal combinations use actual per-draw authored owner and active camera matrices, explicit exported Y-up/Z-up bases, and live transform animation. Camera scale magnitudes are ignored while reflections are preserved. Cycles uses inverse-transpose normals and identity passthrough; EEVEE always normalizes, uses camera direction legs, and before 5.2 also uses object direction legs. Normalization requires a verified nonzero literal normal; required object inverses and finite float32 matrices are checked at source, Final audit, install and draw boundaries. Generated/GPU instances, native 5.3 Light space, undefined normalization, and nonidentity transforms feeding frequency-bounded procedural textures refuse. This certifies channel functions, not matching lighting rigs or complete BSDF appearance.",
+      "limits": "All 27 World/Object/Camera × Point/Vector/Normal combinations use actual per-draw authored owner and active camera matrices, explicit exported Y-up/Z-up bases, and live transform animation. Camera scale magnitudes are ignored while reflections are preserved. Cycles uses inverse-transpose normals and identity passthrough; EEVEE always normalizes, uses camera direction legs, and before 5.2 also uses object direction legs. Normalization requires a verified nonzero literal normal; required object inverses and finite float32 matrices are checked at source, Final audit, install and draw boundaries. Generated/GPU instances, native 5.3 Light space, undefined normalization, and nonidentity transforms feeding frequency-bounded procedural textures refuse. This certifies channel functions, not matching lighting rigs or complete BSDF appearance.",
       "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
       "runtimeOps": [
         "vector_transform"
@@ -4013,7 +4013,7 @@
     },
     "compositor:CompositorNodeColorBalance": {
       "category": "partial",
-      "limits": "LGG and ASC-CDL with linked grades/factor; legacy4.2 LGG uses sRGB adaptation. Native White Point is available52/53 with fixed mode, proven temperature1800..100000/tint\u00b1150 bounds and a source-LMS interval certificate excluding adaptation poles. Constant versus linked GPU paths, RGB working-space matrices and exact alpha are preserved. Nonlinear/offset OCIO roles, ambiguous zero-crossing bounds and animated selectors refuse.",
+      "limits": "LGG and ASC-CDL with linked grades/factor; legacy4.2 LGG uses sRGB adaptation. Native White Point is available52/53 with fixed mode, proven temperature1800..100000/tint±150 bounds and a source-LMS interval certificate excluding adaptation poles. Constant versus linked GPU paths, RGB working-space matrices and exact alpha are preserved. Nonlinear/offset OCIO roles, ambiguous zero-crossing bounds and animated selectors refuse.",
       "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
       "runtimeOps": [
         "color-balance"
@@ -8968,11 +8968,11 @@
               },
               "upperX": "min(1,maximumX+2^-22+2^-24)",
               "requiredEndpointGap": "1-upperX^2*(3-2*upperX) > 8*2^-24",
-              "derivation": "Ordered r\u00b2,3t,2tr,subtraction have <=7u absolute Float32 error on[0,1]; coordinateuncertainty included beforetesting,8u leaves admissioncushion. Preservesexactnativeonewithoutrepair. Safeportrait4x8192 remains admitted; landscape8192x4 refused.",
+              "derivation": "Ordered r²,3t,2tr,subtraction have <=7u absolute Float32 error on[0,1]; coordinateuncertainty included beforetesting,8u leaves admissioncushion. Preservesexactnativeonewithoutrepair. Safeportrait4x8192 remains admitted; landscape8192x4 refused.",
               "counterexample": "NativeCPU Easing exactone became0.9999999403953552 onactualMetal WebGPU/WebGL2 at8192x4. No acceptance limit widened."
             }
           },
-          "coverageScope": "Per-node admitted field-output scope only; familyTotals are shared across Gradient/Checker and not additional counts. Blender 5.3.0 build02f0899d78e3 macOS arm64, separate native CPU multi-function fields and native Metal GPU shader fields. Actual WebGPU and WebGL2 via WebGPURenderer on Metal and SwiftShader. Identity texture mapping, full-frame square-pixel domains without borders; physical extent4..8192 peraxis rechecked during resize/DPR changes. Implicit Uniform default Vector and direct qualified RLayers ImageCoordinates Uniform/Normalized via fresh FLOAT_VECTOR2 padded to VECTOR3. Other computed coordinate provenance, transformed/static references and spatial/neighborhood graphs remain unsupported. Evidence is per-field-output contracts and synthetic real saved Final pipelines, not every composed pointwise graph. Existing literal contracts remain separate and bitexact. LINEAR/QUADRATIC fields and admitted EASING/Normalized DIAGONAL use8ULP AND abs2^-20 with exact native zero/one/alpha controls. Uniform DIAGONAL requires a power-of-two maxphysicalextent and exactwords, including resize. EASING requires1-upperX\u00b2*(3-2upperX)>8*2^-24, upperX=min(1,rmax+2^-22+2^-24), rmax=(width-1)/max(width,height) forUniform or1-.5/width forNormalized. Native CPU correctly-rounded coordinate anchor and nativeGPU/browser bounded error are distinct. DefaultUniformEasing1920x1080 and portrait4x8192 admit; landscape8192x4 refuses.",
+          "coverageScope": "Per-node admitted field-output scope only; familyTotals are shared across Gradient/Checker and not additional counts. Blender 5.3.0 build02f0899d78e3 macOS arm64, separate native CPU multi-function fields and native Metal GPU shader fields. Actual WebGPU and WebGL2 via WebGPURenderer on Metal and SwiftShader. Identity texture mapping, full-frame square-pixel domains without borders; physical extent4..8192 peraxis rechecked during resize/DPR changes. Implicit Uniform default Vector and direct qualified RLayers ImageCoordinates Uniform/Normalized via fresh FLOAT_VECTOR2 padded to VECTOR3. Other computed coordinate provenance, transformed/static references and spatial/neighborhood graphs remain unsupported. Evidence is per-field-output contracts and synthetic real saved Final pipelines, not every composed pointwise graph. Existing literal contracts remain separate and bitexact. LINEAR/QUADRATIC fields and admitted EASING/Normalized DIAGONAL use8ULP AND abs2^-20 with exact native zero/one/alpha controls. Uniform DIAGONAL requires a power-of-two maxphysicalextent and exactwords, including resize. EASING requires1-upperX²*(3-2upperX)>8*2^-24, upperX=min(1,rmax+2^-22+2^-24), rmax=(width-1)/max(width,height) forUniform or1-.5/width forNormalized. Native CPU correctly-rounded coordinate anchor and nativeGPU/browser bounded error are distinct. DefaultUniformEasing1920x1080 and portrait4x8192 admit; landscape8192x4 refuses.",
           "resizeFrames": 544,
           "nativeStageBreakdown": {
             "cpu": {
@@ -9159,7 +9159,7 @@
               },
               "upperX": "min(1,maximumX+2^-22+2^-24)",
               "requiredEndpointGap": "1-upperX^2*(3-2*upperX) > 8*2^-24",
-              "derivation": "Ordered r\u00b2,3t,2tr,subtraction have <=7u absolute Float32 error on[0,1]; coordinateuncertainty included beforetesting,8u leaves admissioncushion. Preservesexactnativeonewithoutrepair. Safeportrait4x8192 remains admitted; landscape8192x4 refused.",
+              "derivation": "Ordered r²,3t,2tr,subtraction have <=7u absolute Float32 error on[0,1]; coordinateuncertainty included beforetesting,8u leaves admissioncushion. Preservesexactnativeonewithoutrepair. Safeportrait4x8192 remains admitted; landscape8192x4 refused.",
               "counterexample": "NativeCPU Easing exactone became0.9999999403953552 onactualMetal WebGPU/WebGL2 at8192x4. No acceptance limit widened."
             }
           },
@@ -9903,7 +9903,7 @@
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Measured Blender5.3.0 build02f0899d78e3 macOSarm64 compositor only. Full signed32 input/output bit patterns. Typed int32 socket literals, InputInt producers, flattened group defaults/reroutes and bounded qualified own-family chains only; all implicit conversions, fields/other computed inputs, animation/drivers and unmeasured native builds/platforms refuse. Authored CPU and GPU compositor single values execute through native CPU multi-functions; no native spatialGPU credit. Runtime independently rederives prefix-only provenance bounded to2048operations/64visits/depth8. No port-ownedtextures/RTTs or perframeGPUreadbacks. Actual savedGLTF no-compositor DFG_LUT exactidentitybaseline restored through3productionpipelinecycles. Integer hash/casts never pass through float reinterpretation. Proof stores raw[low16,byte2,byte3,1] integerFloat32 channels, independent IntegerMath transport calibrations and INT Compare consumers. Synthetic admitted-scope proof; no general demo-scene claim. Shared BitMath\u2192Hash chain appears in both per-node counts; do not sum per-node totals. Isolated transaction; root integration requires fresh current-profile replay."
+          "limits": "Measured Blender5.3.0 build02f0899d78e3 macOSarm64 compositor only. Full signed32 input/output bit patterns. Typed int32 socket literals, InputInt producers, flattened group defaults/reroutes and bounded qualified own-family chains only; all implicit conversions, fields/other computed inputs, animation/drivers and unmeasured native builds/platforms refuse. Authored CPU and GPU compositor single values execute through native CPU multi-functions; no native spatialGPU credit. Runtime independently rederives prefix-only provenance bounded to2048operations/64visits/depth8. No port-ownedtextures/RTTs or perframeGPUreadbacks. Actual savedGLTF no-compositor DFG_LUT exactidentitybaseline restored through3productionpipelinecycles. Integer hash/casts never pass through float reinterpretation. Proof stores raw[low16,byte2,byte3,1] integerFloat32 channels, independent IntegerMath transport calibrations and INT Compare consumers. Synthetic admitted-scope proof; no general demo-scene claim. Shared BitMath→Hash chain appears in both per-node counts; do not sum per-node totals. Isolated transaction; root integration requires fresh current-profile replay."
         }
       }
     },
@@ -9992,7 +9992,7 @@
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Measured Blender5.3.0 build02f0899d78e3 macOSarm64 compositor only. Full signed32 input/output bit patterns. Typed int32 socket literals, InputInt producers, flattened group defaults/reroutes and bounded qualified own-family chains only; all implicit conversions, fields/other computed inputs, animation/drivers and unmeasured native builds/platforms refuse. Authored CPU and GPU compositor single values execute through native CPU multi-functions; no native spatialGPU credit. Runtime independently rederives prefix-only provenance bounded to2048operations/64visits/depth8. No port-ownedtextures/RTTs or perframeGPUreadbacks. Actual savedGLTF no-compositor DFG_LUT exactidentitybaseline restored through3productionpipelinecycles. Integer hash/casts never pass through float reinterpretation. Proof stores raw[low16,byte2,byte3,1] integerFloat32 channels, independent IntegerMath transport calibrations and INT Compare consumers. Synthetic admitted-scope proof; no general demo-scene claim. Shared BitMath\u2192Hash chain appears in both per-node counts; do not sum per-node totals. Isolated transaction; root integration requires fresh current-profile replay."
+          "limits": "Measured Blender5.3.0 build02f0899d78e3 macOSarm64 compositor only. Full signed32 input/output bit patterns. Typed int32 socket literals, InputInt producers, flattened group defaults/reroutes and bounded qualified own-family chains only; all implicit conversions, fields/other computed inputs, animation/drivers and unmeasured native builds/platforms refuse. Authored CPU and GPU compositor single values execute through native CPU multi-functions; no native spatialGPU credit. Runtime independently rederives prefix-only provenance bounded to2048operations/64visits/depth8. No port-ownedtextures/RTTs or perframeGPUreadbacks. Actual savedGLTF no-compositor DFG_LUT exactidentitybaseline restored through3productionpipelinecycles. Integer hash/casts never pass through float reinterpretation. Proof stores raw[low16,byte2,byte3,1] integerFloat32 channels, independent IntegerMath transport calibrations and INT Compare consumers. Synthetic admitted-scope proof; no general demo-scene claim. Shared BitMath→Hash chain appears in both per-node counts; do not sum per-node totals. Isolated transaction; root integration requires fresh current-profile replay."
         }
       }
     },
@@ -10640,7 +10640,7 @@
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit."
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit."
         }
       },
       "compileTime": {
@@ -10696,21 +10696,21 @@
           "Apple Metal",
           "SwiftShader"
         ],
-        "runtimeFingerprint": "8c855569c8cff23d65d829c4c34427f4b0d6d1b3b602245b21b67bd7a9552627",
-        "familyNativeGraphs": 272,
-        "familyProductionNativeGraphs": 269,
-        "familySavedFinalScenes": 55,
-        "familyBrowserCaseRuns": 1308,
-        "familyComparedFloat32Words": 334848,
+        "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959",
+        "familyNativeGraphs": 458,
+        "familyProductionNativeGraphs": 455,
+        "familySavedFinalScenes": 112,
+        "familyBrowserCaseRuns": 2280,
+        "familyComparedFloat32Words": 583680,
         "wordMismatches": 0,
         "logicalTargetCasesByContext": {
           "shader": 3,
           "CPU": 3,
           "GPU": 3
         },
-        "uniqueActualPythonPrefixes": 59,
-        "sourceStage": "Native host static text; CPU-MF compositor scalar carrier for both authored settings, actual EEVEE Metal shader scalar carrier. No GPU string kernel.",
-        "coverageScope": "Shared family totals, not per-node or additive witness counts; 36 logical text cases per source context have independent Length/whole-Find witnesses.",
+        "uniqueActualPythonPrefixes": 116,
+        "sourceStage": "Native host static strings; compositor CPU-MF scalar carrier for both authored settings, EEVEE Metal shader scalar carrier. No GPU text kernel.",
+        "coverageScope": "Shared full-family totals, not per-entry counts. Target logical counts use authored native-class specs, excluding repeated Length/Find/decimal-formatter witnesses. Twelve static string classes per source context; compositor Compare controls are separate existing consumers.",
         "evidence": "experiments/static-string-family/evidence.json"
       },
       "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured"
@@ -10724,7 +10724,7 @@
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit."
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit."
         }
       },
       "compileTime": {
@@ -10780,21 +10780,21 @@
           "Apple Metal",
           "SwiftShader"
         ],
-        "runtimeFingerprint": "8c855569c8cff23d65d829c4c34427f4b0d6d1b3b602245b21b67bd7a9552627",
-        "familyNativeGraphs": 272,
-        "familyProductionNativeGraphs": 269,
-        "familySavedFinalScenes": 55,
-        "familyBrowserCaseRuns": 1308,
-        "familyComparedFloat32Words": 334848,
+        "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959",
+        "familyNativeGraphs": 458,
+        "familyProductionNativeGraphs": 455,
+        "familySavedFinalScenes": 112,
+        "familyBrowserCaseRuns": 2280,
+        "familyComparedFloat32Words": 583680,
         "wordMismatches": 0,
         "logicalTargetCasesByContext": {
           "shader": 2,
           "CPU": 2,
           "GPU": 2
         },
-        "uniqueActualPythonPrefixes": 59,
-        "sourceStage": "Native host static text; CPU-MF compositor scalar carrier for both authored settings, actual EEVEE Metal shader scalar carrier. No GPU string kernel.",
-        "coverageScope": "Shared family totals, not per-node or additive witness counts; 36 logical text cases per source context have independent Length/whole-Find witnesses.",
+        "uniqueActualPythonPrefixes": 116,
+        "sourceStage": "Native host static strings; compositor CPU-MF scalar carrier for both authored settings, EEVEE Metal shader scalar carrier. No GPU text kernel.",
+        "coverageScope": "Shared full-family totals, not per-entry counts. Target logical counts use authored native-class specs, excluding repeated Length/Find/decimal-formatter witnesses. Twelve static string classes per source context; compositor Compare controls are separate existing consumers.",
         "evidence": "experiments/static-string-family/evidence.json"
       },
       "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured"
@@ -10808,7 +10808,7 @@
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit."
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit."
         }
       },
       "compileTime": {
@@ -10864,21 +10864,21 @@
           "Apple Metal",
           "SwiftShader"
         ],
-        "runtimeFingerprint": "8c855569c8cff23d65d829c4c34427f4b0d6d1b3b602245b21b67bd7a9552627",
-        "familyNativeGraphs": 272,
-        "familyProductionNativeGraphs": 269,
-        "familySavedFinalScenes": 55,
-        "familyBrowserCaseRuns": 1308,
-        "familyComparedFloat32Words": 334848,
+        "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959",
+        "familyNativeGraphs": 458,
+        "familyProductionNativeGraphs": 455,
+        "familySavedFinalScenes": 112,
+        "familyBrowserCaseRuns": 2280,
+        "familyComparedFloat32Words": 583680,
         "wordMismatches": 0,
         "logicalTargetCasesByContext": {
           "shader": 6,
           "CPU": 6,
           "GPU": 6
         },
-        "uniqueActualPythonPrefixes": 59,
-        "sourceStage": "Native host static text; CPU-MF compositor scalar carrier for both authored settings, actual EEVEE Metal shader scalar carrier. No GPU string kernel.",
-        "coverageScope": "Shared family totals, not per-node or additive witness counts; 36 logical text cases per source context have independent Length/whole-Find witnesses.",
+        "uniqueActualPythonPrefixes": 116,
+        "sourceStage": "Native host static strings; compositor CPU-MF scalar carrier for both authored settings, EEVEE Metal shader scalar carrier. No GPU text kernel.",
+        "coverageScope": "Shared full-family totals, not per-entry counts. Target logical counts use authored native-class specs, excluding repeated Length/Find/decimal-formatter witnesses. Twelve static string classes per source context; compositor Compare controls are separate existing consumers.",
         "evidence": "experiments/static-string-family/evidence.json"
       },
       "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured"
@@ -10892,7 +10892,7 @@
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit."
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit."
         }
       },
       "compileTime": {
@@ -10948,21 +10948,21 @@
           "Apple Metal",
           "SwiftShader"
         ],
-        "runtimeFingerprint": "8c855569c8cff23d65d829c4c34427f4b0d6d1b3b602245b21b67bd7a9552627",
-        "familyNativeGraphs": 272,
-        "familyProductionNativeGraphs": 269,
-        "familySavedFinalScenes": 55,
-        "familyBrowserCaseRuns": 1308,
-        "familyComparedFloat32Words": 334848,
+        "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959",
+        "familyNativeGraphs": 458,
+        "familyProductionNativeGraphs": 455,
+        "familySavedFinalScenes": 112,
+        "familyBrowserCaseRuns": 2280,
+        "familyComparedFloat32Words": 583680,
         "wordMismatches": 0,
         "logicalTargetCasesByContext": {
           "shader": 7,
           "CPU": 7,
           "GPU": 7
         },
-        "uniqueActualPythonPrefixes": 59,
-        "sourceStage": "Native host static text; CPU-MF compositor scalar carrier for both authored settings, actual EEVEE Metal shader scalar carrier. No GPU string kernel.",
-        "coverageScope": "Shared family totals, not per-node or additive witness counts; 36 logical text cases per source context have independent Length/whole-Find witnesses.",
+        "uniqueActualPythonPrefixes": 116,
+        "sourceStage": "Native host static strings; compositor CPU-MF scalar carrier for both authored settings, EEVEE Metal shader scalar carrier. No GPU text kernel.",
+        "coverageScope": "Shared full-family totals, not per-entry counts. Target logical counts use authored native-class specs, excluding repeated Length/Find/decimal-formatter witnesses. Twelve static string classes per source context; compositor Compare controls are separate existing consumers.",
         "evidence": "experiments/static-string-family/evidence.json"
       },
       "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured"
@@ -10976,7 +10976,7 @@
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit."
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit."
         }
       },
       "compileTime": {
@@ -11032,21 +11032,21 @@
           "Apple Metal",
           "SwiftShader"
         ],
-        "runtimeFingerprint": "8c855569c8cff23d65d829c4c34427f4b0d6d1b3b602245b21b67bd7a9552627",
-        "familyNativeGraphs": 272,
-        "familyProductionNativeGraphs": 269,
-        "familySavedFinalScenes": 55,
-        "familyBrowserCaseRuns": 1308,
-        "familyComparedFloat32Words": 334848,
+        "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959",
+        "familyNativeGraphs": 458,
+        "familyProductionNativeGraphs": 455,
+        "familySavedFinalScenes": 112,
+        "familyBrowserCaseRuns": 2280,
+        "familyComparedFloat32Words": 583680,
         "wordMismatches": 0,
         "logicalTargetCasesByContext": {
           "shader": 5,
           "CPU": 5,
           "GPU": 5
         },
-        "uniqueActualPythonPrefixes": 59,
-        "sourceStage": "Native host static text; CPU-MF compositor scalar carrier for both authored settings, actual EEVEE Metal shader scalar carrier. No GPU string kernel.",
-        "coverageScope": "Shared family totals, not per-node or additive witness counts; 36 logical text cases per source context have independent Length/whole-Find witnesses.",
+        "uniqueActualPythonPrefixes": 116,
+        "sourceStage": "Native host static strings; compositor CPU-MF scalar carrier for both authored settings, EEVEE Metal shader scalar carrier. No GPU text kernel.",
+        "coverageScope": "Shared full-family totals, not per-entry counts. Target logical counts use authored native-class specs, excluding repeated Length/Find/decimal-formatter witnesses. Twelve static string classes per source context; compositor Compare controls are separate existing consumers.",
         "evidence": "experiments/static-string-family/evidence.json"
       },
       "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured"
@@ -11060,7 +11060,7 @@
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit."
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit."
         }
       },
       "compileTime": {
@@ -11116,21 +11116,21 @@
           "Apple Metal",
           "SwiftShader"
         ],
-        "runtimeFingerprint": "8c855569c8cff23d65d829c4c34427f4b0d6d1b3b602245b21b67bd7a9552627",
-        "familyNativeGraphs": 272,
-        "familyProductionNativeGraphs": 269,
-        "familySavedFinalScenes": 55,
-        "familyBrowserCaseRuns": 1308,
-        "familyComparedFloat32Words": 334848,
+        "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959",
+        "familyNativeGraphs": 458,
+        "familyProductionNativeGraphs": 455,
+        "familySavedFinalScenes": 112,
+        "familyBrowserCaseRuns": 2280,
+        "familyComparedFloat32Words": 583680,
         "wordMismatches": 0,
         "logicalTargetCasesByContext": {
           "shader": 4,
           "CPU": 4,
           "GPU": 4
         },
-        "uniqueActualPythonPrefixes": 59,
-        "sourceStage": "Native host static text; CPU-MF compositor scalar carrier for both authored settings, actual EEVEE Metal shader scalar carrier. No GPU string kernel.",
-        "coverageScope": "Shared family totals, not per-node or additive witness counts; 36 logical text cases per source context have independent Length/whole-Find witnesses.",
+        "uniqueActualPythonPrefixes": 116,
+        "sourceStage": "Native host static strings; compositor CPU-MF scalar carrier for both authored settings, EEVEE Metal shader scalar carrier. No GPU text kernel.",
+        "coverageScope": "Shared full-family totals, not per-entry counts. Target logical counts use authored native-class specs, excluding repeated Length/Find/decimal-formatter witnesses. Twelve static string classes per source context; compositor Compare controls are separate existing consumers.",
         "evidence": "experiments/static-string-family/evidence.json"
       },
       "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured"
@@ -11144,7 +11144,7 @@
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
           "modes": {
             "inputs:Case": {
               "partial": [
@@ -11208,21 +11208,21 @@
           "Apple Metal",
           "SwiftShader"
         ],
-        "runtimeFingerprint": "8c855569c8cff23d65d829c4c34427f4b0d6d1b3b602245b21b67bd7a9552627",
-        "familyNativeGraphs": 272,
-        "familyProductionNativeGraphs": 269,
-        "familySavedFinalScenes": 55,
-        "familyBrowserCaseRuns": 1308,
-        "familyComparedFloat32Words": 334848,
+        "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959",
+        "familyNativeGraphs": 458,
+        "familyProductionNativeGraphs": 455,
+        "familySavedFinalScenes": 112,
+        "familyBrowserCaseRuns": 2280,
+        "familyComparedFloat32Words": 583680,
         "wordMismatches": 0,
         "logicalTargetCasesByContext": {
           "shader": 9,
           "CPU": 9,
           "GPU": 9
         },
-        "uniqueActualPythonPrefixes": 59,
-        "sourceStage": "Native host static text; CPU-MF compositor scalar carrier for both authored settings, actual EEVEE Metal shader scalar carrier. No GPU string kernel.",
-        "coverageScope": "Shared family totals, not per-node or additive witness counts; 36 logical text cases per source context have independent Length/whole-Find witnesses.",
+        "uniqueActualPythonPrefixes": 116,
+        "sourceStage": "Native host static strings; compositor CPU-MF scalar carrier for both authored settings, EEVEE Metal shader scalar carrier. No GPU text kernel.",
+        "coverageScope": "Shared full-family totals, not per-entry counts. Target logical counts use authored native-class specs, excluding repeated Length/Find/decimal-formatter witnesses. Twelve static string classes per source context; compositor Compare controls are separate existing consumers.",
         "evidence": "experiments/static-string-family/evidence.json"
       },
       "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured"
@@ -11236,7 +11236,7 @@
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Length and Find First Found/Count yield exact INT constants consumed by existing typed scalar controls. Find uses codepoint offsets, nonoverlapping Count and measured native empty/no-match semantics. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit."
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Length and Find First Found/Count yield exact INT constants consumed by existing typed scalar controls. Find uses codepoint offsets, nonoverlapping Count and measured native empty/no-match semantics. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit."
         }
       },
       "compileTime": {
@@ -11292,21 +11292,21 @@
           "Apple Metal",
           "SwiftShader"
         ],
-        "runtimeFingerprint": "8c855569c8cff23d65d829c4c34427f4b0d6d1b3b602245b21b67bd7a9552627",
-        "familyNativeGraphs": 272,
-        "familyProductionNativeGraphs": 269,
-        "familySavedFinalScenes": 55,
-        "familyBrowserCaseRuns": 1308,
-        "familyComparedFloat32Words": 334848,
+        "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959",
+        "familyNativeGraphs": 458,
+        "familyProductionNativeGraphs": 455,
+        "familySavedFinalScenes": 112,
+        "familyBrowserCaseRuns": 2280,
+        "familyComparedFloat32Words": 583680,
         "wordMismatches": 0,
         "logicalTargetCasesByContext": {
           "shader": 8,
           "CPU": 8,
           "GPU": 8
         },
-        "uniqueActualPythonPrefixes": 59,
-        "sourceStage": "Native host static text; CPU-MF compositor scalar carrier for both authored settings, actual EEVEE Metal shader scalar carrier. No GPU string kernel.",
-        "coverageScope": "Shared family totals, not per-node or additive witness counts; 36 logical text cases per source context have independent Length/whole-Find witnesses.",
+        "uniqueActualPythonPrefixes": 116,
+        "sourceStage": "Native host static strings; compositor CPU-MF scalar carrier for both authored settings, EEVEE Metal shader scalar carrier. No GPU text kernel.",
+        "coverageScope": "Shared full-family totals, not per-entry counts. Target logical counts use authored native-class specs, excluding repeated Length/Find/decimal-formatter witnesses. Twelve static string classes per source context; compositor Compare controls are separate existing consumers.",
         "evidence": "experiments/static-string-family/evidence.json"
       },
       "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured"
@@ -11320,7 +11320,7 @@
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Length and Find First Found/Count yield exact INT constants consumed by existing typed scalar controls. Find uses codepoint offsets, nonoverlapping Count and measured native empty/no-match semantics. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Length and Find First Found/Count yield exact INT constants consumed by existing typed scalar controls. Find uses codepoint offsets, nonoverlapping Count and measured native empty/no-match semantics. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
           "modes": {
             "inputs:Mode": {
               "partial": [
@@ -11384,21 +11384,21 @@
           "Apple Metal",
           "SwiftShader"
         ],
-        "runtimeFingerprint": "8c855569c8cff23d65d829c4c34427f4b0d6d1b3b602245b21b67bd7a9552627",
-        "familyNativeGraphs": 272,
-        "familyProductionNativeGraphs": 269,
-        "familySavedFinalScenes": 55,
-        "familyBrowserCaseRuns": 1308,
-        "familyComparedFloat32Words": 334848,
+        "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959",
+        "familyNativeGraphs": 458,
+        "familyProductionNativeGraphs": 455,
+        "familySavedFinalScenes": 112,
+        "familyBrowserCaseRuns": 2280,
+        "familyComparedFloat32Words": 583680,
         "wordMismatches": 0,
         "logicalTargetCasesByContext": {
           "shader": 13,
           "CPU": 13,
           "GPU": 13
         },
-        "uniqueActualPythonPrefixes": 59,
-        "sourceStage": "Native host static text; CPU-MF compositor scalar carrier for both authored settings, actual EEVEE Metal shader scalar carrier. No GPU string kernel.",
-        "coverageScope": "Shared family totals, not per-node or additive witness counts; 36 logical text cases per source context have independent Length/whole-Find witnesses.",
+        "uniqueActualPythonPrefixes": 116,
+        "sourceStage": "Native host static strings; compositor CPU-MF scalar carrier for both authored settings, EEVEE Metal shader scalar carrier. No GPU text kernel.",
+        "coverageScope": "Shared full-family totals, not per-entry counts. Target logical counts use authored native-class specs, excluding repeated Length/Find/decimal-formatter witnesses. Twelve static string classes per source context; compositor Compare controls are separate existing consumers.",
         "evidence": "experiments/static-string-family/evidence.json"
       },
       "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured"
@@ -11412,7 +11412,7 @@
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit."
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit."
         }
       },
       "compileTime": {
@@ -11468,21 +11468,21 @@
           "Apple Metal",
           "SwiftShader"
         ],
-        "runtimeFingerprint": "8c855569c8cff23d65d829c4c34427f4b0d6d1b3b602245b21b67bd7a9552627",
-        "familyNativeGraphs": 272,
-        "familyProductionNativeGraphs": 269,
-        "familySavedFinalScenes": 55,
-        "familyBrowserCaseRuns": 1308,
-        "familyComparedFloat32Words": 334848,
+        "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959",
+        "familyNativeGraphs": 458,
+        "familyProductionNativeGraphs": 455,
+        "familySavedFinalScenes": 112,
+        "familyBrowserCaseRuns": 2280,
+        "familyComparedFloat32Words": 583680,
         "wordMismatches": 0,
         "logicalTargetCasesByContext": {
           "shader": 3,
           "CPU": 3,
           "GPU": 3
         },
-        "uniqueActualPythonPrefixes": 59,
-        "sourceStage": "Native host static text; CPU-MF compositor scalar carrier for both authored settings, actual EEVEE Metal shader scalar carrier. No GPU string kernel.",
-        "coverageScope": "Shared family totals, not per-node or additive witness counts; 36 logical text cases per source context have independent Length/whole-Find witnesses.",
+        "uniqueActualPythonPrefixes": 116,
+        "sourceStage": "Native host static strings; compositor CPU-MF scalar carrier for both authored settings, EEVEE Metal shader scalar carrier. No GPU text kernel.",
+        "coverageScope": "Shared full-family totals, not per-entry counts. Target logical counts use authored native-class specs, excluding repeated Length/Find/decimal-formatter witnesses. Twelve static string classes per source context; compositor Compare controls are separate existing consumers.",
         "evidence": "experiments/static-string-family/evidence.json"
       },
       "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured"
@@ -11496,7 +11496,7 @@
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit."
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit."
         }
       },
       "compileTime": {
@@ -11552,21 +11552,21 @@
           "Apple Metal",
           "SwiftShader"
         ],
-        "runtimeFingerprint": "8c855569c8cff23d65d829c4c34427f4b0d6d1b3b602245b21b67bd7a9552627",
-        "familyNativeGraphs": 272,
-        "familyProductionNativeGraphs": 269,
-        "familySavedFinalScenes": 55,
-        "familyBrowserCaseRuns": 1308,
-        "familyComparedFloat32Words": 334848,
+        "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959",
+        "familyNativeGraphs": 458,
+        "familyProductionNativeGraphs": 455,
+        "familySavedFinalScenes": 112,
+        "familyBrowserCaseRuns": 2280,
+        "familyComparedFloat32Words": 583680,
         "wordMismatches": 0,
         "logicalTargetCasesByContext": {
           "shader": 2,
           "CPU": 2,
           "GPU": 2
         },
-        "uniqueActualPythonPrefixes": 59,
-        "sourceStage": "Native host static text; CPU-MF compositor scalar carrier for both authored settings, actual EEVEE Metal shader scalar carrier. No GPU string kernel.",
-        "coverageScope": "Shared family totals, not per-node or additive witness counts; 36 logical text cases per source context have independent Length/whole-Find witnesses.",
+        "uniqueActualPythonPrefixes": 116,
+        "sourceStage": "Native host static strings; compositor CPU-MF scalar carrier for both authored settings, EEVEE Metal shader scalar carrier. No GPU text kernel.",
+        "coverageScope": "Shared full-family totals, not per-entry counts. Target logical counts use authored native-class specs, excluding repeated Length/Find/decimal-formatter witnesses. Twelve static string classes per source context; compositor Compare controls are separate existing consumers.",
         "evidence": "experiments/static-string-family/evidence.json"
       },
       "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured"
@@ -11580,7 +11580,7 @@
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit."
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit."
         }
       },
       "compileTime": {
@@ -11636,21 +11636,21 @@
           "Apple Metal",
           "SwiftShader"
         ],
-        "runtimeFingerprint": "8c855569c8cff23d65d829c4c34427f4b0d6d1b3b602245b21b67bd7a9552627",
-        "familyNativeGraphs": 272,
-        "familyProductionNativeGraphs": 269,
-        "familySavedFinalScenes": 55,
-        "familyBrowserCaseRuns": 1308,
-        "familyComparedFloat32Words": 334848,
+        "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959",
+        "familyNativeGraphs": 458,
+        "familyProductionNativeGraphs": 455,
+        "familySavedFinalScenes": 112,
+        "familyBrowserCaseRuns": 2280,
+        "familyComparedFloat32Words": 583680,
         "wordMismatches": 0,
         "logicalTargetCasesByContext": {
           "shader": 6,
           "CPU": 6,
           "GPU": 6
         },
-        "uniqueActualPythonPrefixes": 59,
-        "sourceStage": "Native host static text; CPU-MF compositor scalar carrier for both authored settings, actual EEVEE Metal shader scalar carrier. No GPU string kernel.",
-        "coverageScope": "Shared family totals, not per-node or additive witness counts; 36 logical text cases per source context have independent Length/whole-Find witnesses.",
+        "uniqueActualPythonPrefixes": 116,
+        "sourceStage": "Native host static strings; compositor CPU-MF scalar carrier for both authored settings, EEVEE Metal shader scalar carrier. No GPU text kernel.",
+        "coverageScope": "Shared full-family totals, not per-entry counts. Target logical counts use authored native-class specs, excluding repeated Length/Find/decimal-formatter witnesses. Twelve static string classes per source context; compositor Compare controls are separate existing consumers.",
         "evidence": "experiments/static-string-family/evidence.json"
       },
       "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured"
@@ -11664,7 +11664,7 @@
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit."
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit."
         }
       },
       "compileTime": {
@@ -11720,21 +11720,21 @@
           "Apple Metal",
           "SwiftShader"
         ],
-        "runtimeFingerprint": "8c855569c8cff23d65d829c4c34427f4b0d6d1b3b602245b21b67bd7a9552627",
-        "familyNativeGraphs": 272,
-        "familyProductionNativeGraphs": 269,
-        "familySavedFinalScenes": 55,
-        "familyBrowserCaseRuns": 1308,
-        "familyComparedFloat32Words": 334848,
+        "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959",
+        "familyNativeGraphs": 458,
+        "familyProductionNativeGraphs": 455,
+        "familySavedFinalScenes": 112,
+        "familyBrowserCaseRuns": 2280,
+        "familyComparedFloat32Words": 583680,
         "wordMismatches": 0,
         "logicalTargetCasesByContext": {
           "shader": 7,
           "CPU": 7,
           "GPU": 7
         },
-        "uniqueActualPythonPrefixes": 59,
-        "sourceStage": "Native host static text; CPU-MF compositor scalar carrier for both authored settings, actual EEVEE Metal shader scalar carrier. No GPU string kernel.",
-        "coverageScope": "Shared family totals, not per-node or additive witness counts; 36 logical text cases per source context have independent Length/whole-Find witnesses.",
+        "uniqueActualPythonPrefixes": 116,
+        "sourceStage": "Native host static strings; compositor CPU-MF scalar carrier for both authored settings, EEVEE Metal shader scalar carrier. No GPU text kernel.",
+        "coverageScope": "Shared full-family totals, not per-entry counts. Target logical counts use authored native-class specs, excluding repeated Length/Find/decimal-formatter witnesses. Twelve static string classes per source context; compositor Compare controls are separate existing consumers.",
         "evidence": "experiments/static-string-family/evidence.json"
       },
       "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured"
@@ -11748,7 +11748,7 @@
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit."
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit."
         }
       },
       "compileTime": {
@@ -11804,21 +11804,21 @@
           "Apple Metal",
           "SwiftShader"
         ],
-        "runtimeFingerprint": "8c855569c8cff23d65d829c4c34427f4b0d6d1b3b602245b21b67bd7a9552627",
-        "familyNativeGraphs": 272,
-        "familyProductionNativeGraphs": 269,
-        "familySavedFinalScenes": 55,
-        "familyBrowserCaseRuns": 1308,
-        "familyComparedFloat32Words": 334848,
+        "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959",
+        "familyNativeGraphs": 458,
+        "familyProductionNativeGraphs": 455,
+        "familySavedFinalScenes": 112,
+        "familyBrowserCaseRuns": 2280,
+        "familyComparedFloat32Words": 583680,
         "wordMismatches": 0,
         "logicalTargetCasesByContext": {
           "shader": 5,
           "CPU": 5,
           "GPU": 5
         },
-        "uniqueActualPythonPrefixes": 59,
-        "sourceStage": "Native host static text; CPU-MF compositor scalar carrier for both authored settings, actual EEVEE Metal shader scalar carrier. No GPU string kernel.",
-        "coverageScope": "Shared family totals, not per-node or additive witness counts; 36 logical text cases per source context have independent Length/whole-Find witnesses.",
+        "uniqueActualPythonPrefixes": 116,
+        "sourceStage": "Native host static strings; compositor CPU-MF scalar carrier for both authored settings, EEVEE Metal shader scalar carrier. No GPU text kernel.",
+        "coverageScope": "Shared full-family totals, not per-entry counts. Target logical counts use authored native-class specs, excluding repeated Length/Find/decimal-formatter witnesses. Twelve static string classes per source context; compositor Compare controls are separate existing consumers.",
         "evidence": "experiments/static-string-family/evidence.json"
       },
       "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured"
@@ -11832,7 +11832,7 @@
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit."
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit."
         }
       },
       "compileTime": {
@@ -11888,21 +11888,21 @@
           "Apple Metal",
           "SwiftShader"
         ],
-        "runtimeFingerprint": "8c855569c8cff23d65d829c4c34427f4b0d6d1b3b602245b21b67bd7a9552627",
-        "familyNativeGraphs": 272,
-        "familyProductionNativeGraphs": 269,
-        "familySavedFinalScenes": 55,
-        "familyBrowserCaseRuns": 1308,
-        "familyComparedFloat32Words": 334848,
+        "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959",
+        "familyNativeGraphs": 458,
+        "familyProductionNativeGraphs": 455,
+        "familySavedFinalScenes": 112,
+        "familyBrowserCaseRuns": 2280,
+        "familyComparedFloat32Words": 583680,
         "wordMismatches": 0,
         "logicalTargetCasesByContext": {
           "shader": 4,
           "CPU": 4,
           "GPU": 4
         },
-        "uniqueActualPythonPrefixes": 59,
-        "sourceStage": "Native host static text; CPU-MF compositor scalar carrier for both authored settings, actual EEVEE Metal shader scalar carrier. No GPU string kernel.",
-        "coverageScope": "Shared family totals, not per-node or additive witness counts; 36 logical text cases per source context have independent Length/whole-Find witnesses.",
+        "uniqueActualPythonPrefixes": 116,
+        "sourceStage": "Native host static strings; compositor CPU-MF scalar carrier for both authored settings, EEVEE Metal shader scalar carrier. No GPU text kernel.",
+        "coverageScope": "Shared full-family totals, not per-entry counts. Target logical counts use authored native-class specs, excluding repeated Length/Find/decimal-formatter witnesses. Twelve static string classes per source context; compositor Compare controls are separate existing consumers.",
         "evidence": "experiments/static-string-family/evidence.json"
       },
       "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured"
@@ -11916,7 +11916,7 @@
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
           "modes": {
             "inputs:Case": {
               "partial": [
@@ -11980,21 +11980,21 @@
           "Apple Metal",
           "SwiftShader"
         ],
-        "runtimeFingerprint": "8c855569c8cff23d65d829c4c34427f4b0d6d1b3b602245b21b67bd7a9552627",
-        "familyNativeGraphs": 272,
-        "familyProductionNativeGraphs": 269,
-        "familySavedFinalScenes": 55,
-        "familyBrowserCaseRuns": 1308,
-        "familyComparedFloat32Words": 334848,
+        "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959",
+        "familyNativeGraphs": 458,
+        "familyProductionNativeGraphs": 455,
+        "familySavedFinalScenes": 112,
+        "familyBrowserCaseRuns": 2280,
+        "familyComparedFloat32Words": 583680,
         "wordMismatches": 0,
         "logicalTargetCasesByContext": {
           "shader": 9,
           "CPU": 9,
           "GPU": 9
         },
-        "uniqueActualPythonPrefixes": 59,
-        "sourceStage": "Native host static text; CPU-MF compositor scalar carrier for both authored settings, actual EEVEE Metal shader scalar carrier. No GPU string kernel.",
-        "coverageScope": "Shared family totals, not per-node or additive witness counts; 36 logical text cases per source context have independent Length/whole-Find witnesses.",
+        "uniqueActualPythonPrefixes": 116,
+        "sourceStage": "Native host static strings; compositor CPU-MF scalar carrier for both authored settings, EEVEE Metal shader scalar carrier. No GPU text kernel.",
+        "coverageScope": "Shared full-family totals, not per-entry counts. Target logical counts use authored native-class specs, excluding repeated Length/Find/decimal-formatter witnesses. Twelve static string classes per source context; compositor Compare controls are separate existing consumers.",
         "evidence": "experiments/static-string-family/evidence.json"
       },
       "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured"
@@ -12008,7 +12008,7 @@
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Length and Find First Found/Count yield exact INT constants consumed by existing typed scalar controls. Find uses codepoint offsets, nonoverlapping Count and measured native empty/no-match semantics. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit."
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Length and Find First Found/Count yield exact INT constants consumed by existing typed scalar controls. Find uses codepoint offsets, nonoverlapping Count and measured native empty/no-match semantics. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit."
         }
       },
       "compileTime": {
@@ -12064,21 +12064,21 @@
           "Apple Metal",
           "SwiftShader"
         ],
-        "runtimeFingerprint": "8c855569c8cff23d65d829c4c34427f4b0d6d1b3b602245b21b67bd7a9552627",
-        "familyNativeGraphs": 272,
-        "familyProductionNativeGraphs": 269,
-        "familySavedFinalScenes": 55,
-        "familyBrowserCaseRuns": 1308,
-        "familyComparedFloat32Words": 334848,
+        "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959",
+        "familyNativeGraphs": 458,
+        "familyProductionNativeGraphs": 455,
+        "familySavedFinalScenes": 112,
+        "familyBrowserCaseRuns": 2280,
+        "familyComparedFloat32Words": 583680,
         "wordMismatches": 0,
         "logicalTargetCasesByContext": {
           "shader": 8,
           "CPU": 8,
           "GPU": 8
         },
-        "uniqueActualPythonPrefixes": 59,
-        "sourceStage": "Native host static text; CPU-MF compositor scalar carrier for both authored settings, actual EEVEE Metal shader scalar carrier. No GPU string kernel.",
-        "coverageScope": "Shared family totals, not per-node or additive witness counts; 36 logical text cases per source context have independent Length/whole-Find witnesses.",
+        "uniqueActualPythonPrefixes": 116,
+        "sourceStage": "Native host static strings; compositor CPU-MF scalar carrier for both authored settings, EEVEE Metal shader scalar carrier. No GPU text kernel.",
+        "coverageScope": "Shared full-family totals, not per-entry counts. Target logical counts use authored native-class specs, excluding repeated Length/Find/decimal-formatter witnesses. Twelve static string classes per source context; compositor Compare controls are separate existing consumers.",
         "evidence": "experiments/static-string-family/evidence.json"
       },
       "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured"
@@ -12092,7 +12092,7 @@
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Length and Find First Found/Count yield exact INT constants consumed by existing typed scalar controls. Find uses codepoint offsets, nonoverlapping Count and measured native empty/no-match semantics. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Length and Find First Found/Count yield exact INT constants consumed by existing typed scalar controls. Find uses codepoint offsets, nonoverlapping Count and measured native empty/no-match semantics. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, unqualified numeric-position producers (arbitrary IntegerMath or fields), animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
           "modes": {
             "inputs:Mode": {
               "partial": [
@@ -12156,21 +12156,21 @@
           "Apple Metal",
           "SwiftShader"
         ],
-        "runtimeFingerprint": "8c855569c8cff23d65d829c4c34427f4b0d6d1b3b602245b21b67bd7a9552627",
-        "familyNativeGraphs": 272,
-        "familyProductionNativeGraphs": 269,
-        "familySavedFinalScenes": 55,
-        "familyBrowserCaseRuns": 1308,
-        "familyComparedFloat32Words": 334848,
+        "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959",
+        "familyNativeGraphs": 458,
+        "familyProductionNativeGraphs": 455,
+        "familySavedFinalScenes": 112,
+        "familyBrowserCaseRuns": 2280,
+        "familyComparedFloat32Words": 583680,
         "wordMismatches": 0,
         "logicalTargetCasesByContext": {
           "shader": 13,
           "CPU": 13,
           "GPU": 13
         },
-        "uniqueActualPythonPrefixes": 59,
-        "sourceStage": "Native host static text; CPU-MF compositor scalar carrier for both authored settings, actual EEVEE Metal shader scalar carrier. No GPU string kernel.",
-        "coverageScope": "Shared family totals, not per-node or additive witness counts; 36 logical text cases per source context have independent Length/whole-Find witnesses.",
+        "uniqueActualPythonPrefixes": 116,
+        "sourceStage": "Native host static strings; compositor CPU-MF scalar carrier for both authored settings, EEVEE Metal shader scalar carrier. No GPU text kernel.",
+        "coverageScope": "Shared full-family totals, not per-entry counts. Target logical counts use authored native-class specs, excluding repeated Length/Find/decimal-formatter witnesses. Twelve static string classes per source context; compositor Compare controls are separate existing consumers.",
         "evidence": "experiments/static-string-family/evidence.json"
       },
       "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured"
@@ -12180,13 +12180,14 @@
       "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
       "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
       "runtimeOps": [
-        "radial_segment_width"
+        "radial_segment_width",
+        "radial_segment_coordinates"
       ],
       "modes": {},
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 Segment Width only, literal integer Sides2..64 and Roundness exactly1. Vector and Normalize are pruned only because this selected regular/full-roundness Width is source-proven independent of them. EEVEE Metal shader only; Cycles live remains unqualified. Predeclared <=2ULP AND absolute error<=2^-22; exact-word differences reported separately. Other outputs (Segment Coordinates/ID/Rotation), fractional or computed Sides, partial roundness, other profiles and the unchanged official Radial demo (computed Sides and Segment Coordinates transport) remain unqualified. No port-owned textures/targets/readback."
+          "limits": "Segment Width retains its previously qualified Blender5.3.0 build02f0899d78e3 macOS arm64 EEVEE Metal slice: literal integer Sides2..64, Roundness1, Vector/Normalize pruned only by the selected Width dependency invariant, <=2ULP AND absolute error<=2^-22; its prior runtime profiles and verification are unchanged. Shader Segment Coordinates additionally admits actual native Apple M5 Pro EEVEE Metal source and actual WebGL2 ANGLE Apple M5 Pro Metal runtime only: literal Sides3/8/12, Roundness1, both Normalize states, static finite normal/+0 Float32 literal XY[-2,2] read from raw RNA storage; explicit native float2 input boundaries, native float3 phase/radius/Z0 output. Raw negative-zero/subnormal XY, images/fields, UV/Object/arithmetic vectors and computed Sides refuse. Predeclared phase absolute error<=2^-18 with native exact0/1 retained, radius<=8ULP AND absolute error<=2^-20. Built raw/Final words were exact to the independent GPU-kernel reference; separate actual EEVEE material phase error was3.5762786865234375e-7. WebGPU privacy/identity, software and unknown adapters named-refuse; Preview Studio needs explicit ?backend=webgl2 and its default WebGPU path is not accepted. Segment ID/Rotation, other branches/profiles, Cycles live and unchanged official Radial demo acceptance remain unqualified. No port-owned textures/targets/readback."
         }
       },
       "rendererNeeds": {
@@ -12196,9 +12197,25 @@
           {
             "op": "radial_segment_width",
             "model": "regular-full-roundness-segment-width-v1"
+          },
+          {
+            "op": "radial_segment_coordinates",
+            "model": "regular-full-roundness-segment-coordinates-webgl2-m5pro-v1"
           }
         ],
-        "actualPrimitiveRequired": true
+        "actualPrimitiveRequired": true,
+        "coordinateProfile": {
+          "sourceProfile": "darwin-arm64-53-eevee-metal-m5pro-radial-coordinates-v1",
+          "actualRuntimeBackend": "WebGL2 via WebGPURenderer",
+          "actualRuntimeRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)",
+          "attestation": "Actual source Metal vendor and branded runtime WebGL2 context parameters; payload markers cannot grant hardware admission.",
+          "refusedRuntimeProfiles": [
+            "WebGPU privacy-redacted device identity",
+            "SwiftShader/software",
+            "Unknown/unmeasured adapters"
+          ],
+          "previewChoice": "?backend=webgl2; default WebGPU named-refuses"
+        }
       },
       "evidence": [
         {
@@ -12215,6 +12232,30 @@
         },
         {
           "path": "experiments/radial-segment-width/evidence.json"
+        },
+        {
+          "path": "packages/blender-addon/radial_coordinates_ir.py"
+        },
+        {
+          "path": "packages/blender-addon/shader_vector2_ir.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslRadialCoordinates.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslRadialRegularNative.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslMetalRendererGuard.ts"
+        },
+        {
+          "path": "experiments/radial-coordinates-static/numeric-contract.json"
+        },
+        {
+          "path": "experiments/radial-coordinates-static/verify.mjs"
+        },
+        {
+          "path": "experiments/radial-coordinates-static/evidence.json"
         }
       ],
       "verification": {
@@ -12264,7 +12305,100 @@
         "coverageScope": "Each browser case independently checks compositor and shader paths; family metrics are shared by both node/context entries. Measured exact-word differences stay within the predeclared conjunction; no scene acceptance.",
         "evidence": "experiments/radial-segment-width/evidence.json"
       },
-      "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured"
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured",
+      "coordinateVerification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeSourceBackend": "Metal API / Apple M5 Pro",
+        "sourceInputModel": "literal-vector2-f32-normal-plus-zero-v1",
+        "nativeInputWidth": 2,
+        "nativeOutputWidth": 3,
+        "actualRuntimeBackends": [
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "ANGLE Apple M5 Pro Metal"
+        ],
+        "actualRefusedBackends": [
+          "Metal WebGPU",
+          "SwiftShader WebGPU",
+          "SwiftShader WebGL2"
+        ],
+        "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959",
+        "nativeKernelCases": 440,
+        "sourceIRCases": 410,
+        "sourceRefusals": 13,
+        "actualSavedFinalScenes": 8,
+        "actualMaterial": {
+          "logicalSettings": 8,
+          "magnitudeValues": 16,
+          "signWitnesses": 16,
+          "residueWitnesses": 16,
+          "independentCarrierControls": 2,
+          "maxPhaseAbs": 3.5762786865234375e-07,
+          "maxRadiusAbs": 0,
+          "stage": "Actual EEVEE material/film with independent calibrated half-safe digit carrier for the ordinary/group settings in the pinned plan; separately labeled from PythonGPU directF32 kernel. No field or full-scene qualification."
+        },
+        "positiveRawCases": 410,
+        "positiveFinalScenes": 8,
+        "finalInstallDisposeCycles": 3,
+        "resizeFrames": 3,
+        "primaryFloat32Words": 112596,
+        "wordMismatches": 0,
+        "contractViolations": 0,
+        "namedAdapterRefusals": 6,
+        "uniqueActualPythonPrefixes": 11,
+        "nativeSubmittedShaderRolesChecked": 5,
+        "numericContract": {
+          "schemaVersion": 1,
+          "model": "regular-full-roundness-segment-coordinates-webgl2-m5pro-v1",
+          "sourceProfile": "darwin-arm64-53-eevee-metal-m5pro-radial-coordinates-v1",
+          "scope": "Shader Segment Coordinates only: Blender5.3.0 build02f0899d78e3 macOS arm64 EEVEE on native Apple M5 Pro Metal; literal Sides3/8/12, Roundness1, both Normalize states; static finite Float32 normal/+0 literal XY in[-2,2]. Actual WebGL2 ANGLE Apple M5 Pro Metal renderer only.",
+          "literalTypeSource": "Actual NodeSocketVector2D input storage is read through bpy_prop_array.foreach_get into a Float32 buffer and classified by uint32 exponent/sign bits before float promotion. Negative-zero/subnormal XY is refused. Bounded actual array defaults, Vector/Color literals, bound groups, reroutes and native bypasses retain exact XY; no scalar CombineXYZ or arithmetic route is admitted.",
+          "representation": "Native float2 input with explicit native_vector2 padded-vector boundary; native float3 output=(phase,radius,0). Unchanged literal Float32 coordinates and controls upload as uniforms, without artist-input quantization. Direct/group vector-to-scalar mean remains refused; qualified SeparateXYZ component reads retain their own scalar type.",
+          "referenceCases": {
+            "nativeKernelInputs": 440,
+            "admittedSourceIRCases": 410,
+            "actualSavedFinalScenes": 8,
+            "actualEeveeMaterialSettings": 8,
+            "sourceRefusals": 13
+          },
+          "referenceStages": {
+            "kernel": "Independent unchanged pinned native shared function and explicitly adapted ABI/helpers through Blender PythonGPU GLSL frontend/native Metal compiler into RGBA32F. Not an EEVEE material/film oracle.",
+            "material": "Actual EEVEE material/film for all8 ordinary/group Final settings. Independently calibrated half-safe digit carrier provides16 coordinate magnitudes,16 negative-sign witnesses and16 exact-grid residue witnesses, plus2 independent non-half controls. Preserved native operator inputs/body; no SDK kernel supplies these material pixels.",
+            "browserFinal": "Built programs from actual saved Final publication install on actual GLTF meshes. Their installed colorNode is exposed as fragment output for channel acceptance; this is not general PBR/full-scene appearance proof. Source material/callback ownership, exact actual renderer baseline identities and physical resize/DPR are checked."
+          },
+          "phase": {
+            "maximumAbsoluteError": 3.814697265625e-06,
+            "finiteRequired": true,
+            "nativeExactZeroAndOneRemainExact": true
+          },
+          "radius": {
+            "maximumUlps": 8,
+            "maximumAbsoluteError": 9.5367431640625e-07,
+            "bothRequired": true,
+            "finiteRequired": true
+          },
+          "exactControls": "Projected output Z0 and readback alpha1 require exact Float32 words. Input storage and independent carrier controls are exact. All112596 observed built raw/Final/resize words match the native F32 reference; actual EEVEE material stage is separately bounded, not relabelled bit-exact.",
+          "predeclaredGateReference": "experiments/radial-regular-coordinates/contract.json; original phase2^-18 and radius8ULP AND2^-20 gates were retained without widening after research failures.",
+          "rendererAdmission": "Actual branded WebGL2 context must report vendor Google Inc. (Apple) and renderer ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version). A material payload or generic Apple/metal-3 claim cannot grant admission. Result-variable onRenderUpdate checks actual draw renderer without adding floating arithmetic.",
+          "preview": "Preview Studio defaults to WebGPU, which named-refuses because the measured device identity is privacy-redacted. Explicit ?backend=webgl2 is required for this M5 Pro route. No default-preview acceptance credit.",
+          "exclusions": "Images/fields, UV/Object/generated coordinates, arithmetic vectors, negative-zero/subnormal XY, computed/fractional/other Sides, other Roundness, scalar mean conversion, compositor Coordinates, other source builds/devices, WebGPU, software/unknown adapters, Segment ID/Rotation, arbitrary downstream composition and unchanged official Radial demo acceptance.",
+          "runtimeResources": "No port-owned textures, render targets or pixel readback. Verification alone reads pixels; exact zero-or-one known16x16 renderer-owned DFG baseline identities are restored after install/dispose cycles.",
+          "oldWidthScopeUnchanged": true
+        },
+        "evidence": "experiments/radial-coordinates-static/evidence.json",
+        "reader": "experiments/radial-coordinates-static/verify.mjs",
+        "sourceAdapter": "packages/blender-addon/radial_coordinates_ir.py",
+        "runtimeAdapter": "packages/blendlink/src/tslRadialCoordinates.ts",
+        "nativeDerivative": "packages/blendlink/src/tslRadialRegularNative.ts",
+        "coverageScope": "Extends the existing partial shader entry only. Native F32-kernel and actual EEVEE material/film stages are distinct; no compositor Coordinates, default-preview, portable-device or original-scene acceptance credit.",
+        "officialSceneAcceptance": false,
+        "defaultPreviewAcceptance": false
+      }
     },
     "compositor:ShaderNodeRadialTiling": {
       "category": "unsupported",
@@ -12620,6 +12754,550 @@
           "qualificationCredit": 0
         },
         "coverageScope": "One compositor node; native calibration cases are excluded from production counts. Near-cancellation ULP differences are reported, not hidden under a fixed-ULP promise. No arbitrary composition/working-space or whole-scene parity claim."
+      }
+    },
+    "shader:FunctionNodeMatchString": {
+      "category": "unsupported",
+      "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [],
+      "modes": {},
+      "compileTime": {
+        "path": "packages/blender-addon/static_strings.py",
+        "function": "evaluate_output",
+        "nodeSet": "NODES",
+        "callers": [
+          {
+            "path": "packages/blender-addon/tsl_ir.py",
+            "anchor": "record = evaluate_output(from_socket, stack)"
+          }
+        ]
+      },
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured",
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static text only: valid Unicode scalar inputs without embedded NUL, <=4096 UTF8 bytes per input/output,128 visits/depth16, typed fixed producers and bound group/reroute/native mute routes. Source tree animation/drivers/NLA refuse. Exact BOOLEAN Result for fixed Starts With/Ends With/Contains menus, comparing native UTF8 bytes without normalization or case folding. Direct typed Boolean transport and fixed Boolean selectors only. Arbitrary runtime text, computed/unqualified text/menu producers and other builds/platforms remain unqualified. No GPU string payload/opcode/kernel performance credit or original-demo acceptance.",
+          "modes": {
+            "inputs:Operation": {
+              "partial": [
+                "Starts With",
+                "Ends With",
+                "Contains"
+              ]
+            }
+          }
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/static_strings.py",
+          "anchor": "kind == 'FunctionNodeMatchString'"
+        },
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "record = evaluate_output(from_socket, stack)"
+        },
+        {
+          "path": "experiments/static-string-family/numeric-contract.json"
+        },
+        {
+          "path": "experiments/static-string-family/verify.mjs"
+        },
+        {
+          "path": "experiments/static-string-family/evidence.json"
+        }
+      ],
+      "provenanceRoute": {
+        "nativeClass": "FunctionNodeMatchString",
+        "model": "native-static-strings-53-v1",
+        "serialized": "Direct scalar outputs become typed_const BOOLEAN; text intermediates stay compiler-only. Shader IR omits per-node helper trace.",
+        "numericalCredit": "Native host folding and exact existing scalar transport only. Family totals are shared; parser decimal-format and text witnesses are not independent extra node ports."
+      },
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959",
+        "familyNativeGraphs": 458,
+        "familyProductionNativeGraphs": 455,
+        "familySavedFinalScenes": 112,
+        "familyBrowserCaseRuns": 2280,
+        "familyComparedFloat32Words": 583680,
+        "wordMismatches": 0,
+        "logicalTargetCasesByContext": {
+          "shader": 19,
+          "CPU": 19,
+          "GPU": 19
+        },
+        "uniqueActualPythonPrefixes": 116,
+        "sourceStage": "Native host static strings; compositor CPU-MF scalar carrier for both authored settings, EEVEE Metal shader scalar carrier. No GPU text kernel.",
+        "coverageScope": "Shared full-family totals, not per-entry counts. Target logical counts use authored native-class specs, excluding repeated Length/Find/decimal-formatter witnesses. Twelve static string classes per source context; compositor Compare controls are separate existing consumers.",
+        "evidence": "experiments/static-string-family/evidence.json"
+      }
+    },
+    "shader:FunctionNodeStringToValue": {
+      "category": "unsupported",
+      "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [],
+      "modes": {},
+      "compileTime": {
+        "path": "packages/blender-addon/static_strings.py",
+        "function": "evaluate_output",
+        "nodeSet": "NODES",
+        "callers": [
+          {
+            "path": "packages/blender-addon/tsl_ir.py",
+            "anchor": "record = evaluate_output(from_socket, stack)"
+          }
+        ]
+      },
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured",
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static text only: valid Unicode scalar inputs without embedded NUL, <=4096 UTF8 bytes per input/output,128 visits/depth16, typed fixed producers and bound group/reroute/native mute routes. Source tree animation/drivers/NLA refuse. INT mode only. Value and consumed Length follow native signed int32 ASCII prefix parsing in base2..36: optional minus, no leading plus/whitespace or inferred base prefix; invalid base, no-match and signed32 overflow yield Value0/Length0. Parsed prefix is ASCII, so consumed byte/codepoint counts coincide. Base and text must use qualified fixed typed producers; numeric controls may use literal/InputInt or already qualified static-string INT outputs. FLOAT mode/fast_float semantics, runtime parsing and arbitrary numeric arithmetic and field inputs remain unqualified. No GPU string payload/opcode/kernel performance credit or original-demo acceptance.",
+          "modes": {
+            "data_type": {
+              "partial": [
+                "INT"
+              ],
+              "unsupported": [
+                "FLOAT"
+              ]
+            }
+          }
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/static_strings.py",
+          "anchor": "if kind in {'FunctionNodeStringToValue', 'FunctionNodeValueToString'}:"
+        },
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "record = evaluate_output(from_socket, stack)"
+        },
+        {
+          "path": "experiments/static-string-family/numeric-contract.json"
+        },
+        {
+          "path": "experiments/static-string-family/verify.mjs"
+        },
+        {
+          "path": "experiments/static-string-family/evidence.json"
+        }
+      ],
+      "provenanceRoute": {
+        "nativeClass": "FunctionNodeStringToValue",
+        "model": "native-static-strings-53-v1",
+        "serialized": "Direct scalar outputs become typed_const INT; text intermediates stay compiler-only. Shader IR omits per-node helper trace.",
+        "numericalCredit": "Native host folding and exact existing scalar transport only. Family totals are shared; parser decimal-format and text witnesses are not independent extra node ports."
+      },
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959",
+        "familyNativeGraphs": 458,
+        "familyProductionNativeGraphs": 455,
+        "familySavedFinalScenes": 112,
+        "familyBrowserCaseRuns": 2280,
+        "familyComparedFloat32Words": 583680,
+        "wordMismatches": 0,
+        "logicalTargetCasesByContext": {
+          "shader": 10,
+          "CPU": 10,
+          "GPU": 10
+        },
+        "uniqueActualPythonPrefixes": 116,
+        "sourceStage": "Native host static strings; compositor CPU-MF scalar carrier for both authored settings, EEVEE Metal shader scalar carrier. No GPU text kernel.",
+        "coverageScope": "Shared full-family totals, not per-entry counts. Target logical counts use authored native-class specs, excluding repeated Length/Find/decimal-formatter witnesses. Twelve static string classes per source context; compositor Compare controls are separate existing consumers.",
+        "evidence": "experiments/static-string-family/evidence.json"
+      }
+    },
+    "shader:FunctionNodeValueToString": {
+      "category": "unsupported",
+      "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [],
+      "modes": {},
+      "compileTime": {
+        "path": "packages/blender-addon/static_strings.py",
+        "function": "evaluate_output",
+        "nodeSet": "NODES",
+        "callers": [
+          {
+            "path": "packages/blender-addon/tsl_ir.py",
+            "anchor": "record = evaluate_output(from_socket, stack)"
+          }
+        ]
+      },
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured",
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static text only: valid Unicode scalar inputs without embedded NUL, <=4096 UTF8 bytes per input/output,128 visits/depth16, typed fixed producers and bound group/reroute/native mute routes. Source tree animation/drivers/NLA refuse. INT mode only. Exact signed int32 lowercase base2..36 output, zero-padding after minus with total width including sign; invalid base produces empty text, negative padding behaves as0, and output bound is checked before allocation. Value/Base/Padding must be literal/InputInt or already qualified fixed static-string int32 producers; qualified StringLength/Find and conversion chains stay compiler-only. Text is consumed inside the compiler by qualified static string consumers only. FLOAT formatting/locale/precision/runtime text and arbitrary numeric arithmetic and field inputs remain unqualified. No GPU string payload/opcode/kernel performance credit or original-demo acceptance.",
+          "modes": {
+            "data_type": {
+              "partial": [
+                "INT"
+              ],
+              "unsupported": [
+                "FLOAT"
+              ]
+            }
+          }
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/static_strings.py",
+          "anchor": "if kind in {'FunctionNodeStringToValue', 'FunctionNodeValueToString'}:"
+        },
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "record = evaluate_output(from_socket, stack)"
+        },
+        {
+          "path": "experiments/static-string-family/numeric-contract.json"
+        },
+        {
+          "path": "experiments/static-string-family/verify.mjs"
+        },
+        {
+          "path": "experiments/static-string-family/evidence.json"
+        }
+      ],
+      "provenanceRoute": {
+        "nativeClass": "FunctionNodeValueToString",
+        "model": "native-static-strings-53-v1",
+        "serialized": "Compiler-only STRING intermediate; qualified downstream scalar consumers emit typed_const INT/BOOLEAN. Shader IR omits per-node helper trace.",
+        "numericalCredit": "Native host folding and exact existing scalar transport only. Family totals are shared; parser decimal-format and text witnesses are not independent extra node ports."
+      },
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959",
+        "familyNativeGraphs": 458,
+        "familyProductionNativeGraphs": 455,
+        "familySavedFinalScenes": 112,
+        "familyBrowserCaseRuns": 2280,
+        "familyComparedFloat32Words": 583680,
+        "wordMismatches": 0,
+        "logicalTargetCasesByContext": {
+          "shader": 7,
+          "CPU": 7,
+          "GPU": 7
+        },
+        "uniqueActualPythonPrefixes": 116,
+        "sourceStage": "Native host static strings; compositor CPU-MF scalar carrier for both authored settings, EEVEE Metal shader scalar carrier. No GPU text kernel.",
+        "coverageScope": "Shared full-family totals, not per-entry counts. Target logical counts use authored native-class specs, excluding repeated Length/Find/decimal-formatter witnesses. Twelve static string classes per source context; compositor Compare controls are separate existing consumers.",
+        "evidence": "experiments/static-string-family/evidence.json"
+      }
+    },
+    "compositor:FunctionNodeMatchString": {
+      "category": "unsupported",
+      "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [],
+      "modes": {},
+      "compileTime": {
+        "path": "packages/blender-addon/static_strings.py",
+        "function": "evaluate_output",
+        "nodeSet": "NODES",
+        "callers": [
+          {
+            "path": "packages/blendlink/blender/compositor_graph.py",
+            "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))"
+          }
+        ]
+      },
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured",
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static text only: valid Unicode scalar inputs without embedded NUL, <=4096 UTF8 bytes per input/output,128 visits/depth16, typed fixed producers and bound group/reroute/native mute routes. Source tree animation/drivers/NLA refuse. Exact BOOLEAN Result for fixed Starts With/Ends With/Contains menus, comparing native UTF8 bytes without normalization or case folding. Direct typed Boolean transport and fixed Boolean selectors only. Arbitrary runtime text, computed/unqualified text/menu producers and other builds/platforms remain unqualified. No GPU string payload/opcode/kernel performance credit or original-demo acceptance.",
+          "modes": {
+            "inputs:Operation": {
+              "partial": [
+                "Starts With",
+                "Ends With",
+                "Contains"
+              ]
+            }
+          }
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/static_strings.py",
+          "anchor": "kind == 'FunctionNodeMatchString'"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))"
+        },
+        {
+          "path": "experiments/static-string-family/numeric-contract.json"
+        },
+        {
+          "path": "experiments/static-string-family/verify.mjs"
+        },
+        {
+          "path": "experiments/static-string-family/evidence.json"
+        }
+      ],
+      "provenanceRoute": {
+        "nativeClass": "FunctionNodeMatchString",
+        "model": "native-static-strings-53-v1",
+        "serialized": "compileTimeStrings records model/type/sources with exact Boolean/int32 values or UTF8 byte count/SHA256 for text; selected branches use compileTimeSelections without claiming a per-node string trace.",
+        "numericalCredit": "Native host folding and exact existing scalar transport only. Family totals are shared; parser decimal-format and text witnesses are not independent extra node ports."
+      },
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959",
+        "familyNativeGraphs": 458,
+        "familyProductionNativeGraphs": 455,
+        "familySavedFinalScenes": 112,
+        "familyBrowserCaseRuns": 2280,
+        "familyComparedFloat32Words": 583680,
+        "wordMismatches": 0,
+        "logicalTargetCasesByContext": {
+          "shader": 19,
+          "CPU": 19,
+          "GPU": 19
+        },
+        "uniqueActualPythonPrefixes": 116,
+        "sourceStage": "Native host static strings; compositor CPU-MF scalar carrier for both authored settings, EEVEE Metal shader scalar carrier. No GPU text kernel.",
+        "coverageScope": "Shared full-family totals, not per-entry counts. Target logical counts use authored native-class specs, excluding repeated Length/Find/decimal-formatter witnesses. Twelve static string classes per source context; compositor Compare controls are separate existing consumers.",
+        "evidence": "experiments/static-string-family/evidence.json"
+      }
+    },
+    "compositor:FunctionNodeStringToValue": {
+      "category": "unsupported",
+      "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [],
+      "modes": {},
+      "compileTime": {
+        "path": "packages/blender-addon/static_strings.py",
+        "function": "evaluate_output",
+        "nodeSet": "NODES",
+        "callers": [
+          {
+            "path": "packages/blendlink/blender/compositor_graph.py",
+            "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))"
+          }
+        ]
+      },
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured",
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static text only: valid Unicode scalar inputs without embedded NUL, <=4096 UTF8 bytes per input/output,128 visits/depth16, typed fixed producers and bound group/reroute/native mute routes. Source tree animation/drivers/NLA refuse. INT mode only. Value and consumed Length follow native signed int32 ASCII prefix parsing in base2..36: optional minus, no leading plus/whitespace or inferred base prefix; invalid base, no-match and signed32 overflow yield Value0/Length0. Parsed prefix is ASCII, so consumed byte/codepoint counts coincide. Base and text must use qualified fixed typed producers; numeric controls may use literal/InputInt or already qualified static-string INT outputs. FLOAT mode/fast_float semantics, runtime parsing and arbitrary numeric arithmetic and field inputs remain unqualified. No GPU string payload/opcode/kernel performance credit or original-demo acceptance.",
+          "modes": {
+            "data_type": {
+              "partial": [
+                "INT"
+              ],
+              "unsupported": [
+                "FLOAT"
+              ]
+            }
+          }
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/static_strings.py",
+          "anchor": "if kind in {'FunctionNodeStringToValue', 'FunctionNodeValueToString'}:"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))"
+        },
+        {
+          "path": "experiments/static-string-family/numeric-contract.json"
+        },
+        {
+          "path": "experiments/static-string-family/verify.mjs"
+        },
+        {
+          "path": "experiments/static-string-family/evidence.json"
+        }
+      ],
+      "provenanceRoute": {
+        "nativeClass": "FunctionNodeStringToValue",
+        "model": "native-static-strings-53-v1",
+        "serialized": "compileTimeStrings records model/type/sources with exact Boolean/int32 values or UTF8 byte count/SHA256 for text; selected branches use compileTimeSelections without claiming a per-node string trace.",
+        "numericalCredit": "Native host folding and exact existing scalar transport only. Family totals are shared; parser decimal-format and text witnesses are not independent extra node ports."
+      },
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959",
+        "familyNativeGraphs": 458,
+        "familyProductionNativeGraphs": 455,
+        "familySavedFinalScenes": 112,
+        "familyBrowserCaseRuns": 2280,
+        "familyComparedFloat32Words": 583680,
+        "wordMismatches": 0,
+        "logicalTargetCasesByContext": {
+          "shader": 10,
+          "CPU": 10,
+          "GPU": 10
+        },
+        "uniqueActualPythonPrefixes": 116,
+        "sourceStage": "Native host static strings; compositor CPU-MF scalar carrier for both authored settings, EEVEE Metal shader scalar carrier. No GPU text kernel.",
+        "coverageScope": "Shared full-family totals, not per-entry counts. Target logical counts use authored native-class specs, excluding repeated Length/Find/decimal-formatter witnesses. Twelve static string classes per source context; compositor Compare controls are separate existing consumers.",
+        "evidence": "experiments/static-string-family/evidence.json"
+      }
+    },
+    "compositor:FunctionNodeValueToString": {
+      "category": "unsupported",
+      "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [],
+      "modes": {},
+      "compileTime": {
+        "path": "packages/blender-addon/static_strings.py",
+        "function": "evaluate_output",
+        "nodeSet": "NODES",
+        "callers": [
+          {
+            "path": "packages/blendlink/blender/compositor_graph.py",
+            "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))"
+          }
+        ]
+      },
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured",
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static text only: valid Unicode scalar inputs without embedded NUL, <=4096 UTF8 bytes per input/output,128 visits/depth16, typed fixed producers and bound group/reroute/native mute routes. Source tree animation/drivers/NLA refuse. INT mode only. Exact signed int32 lowercase base2..36 output, zero-padding after minus with total width including sign; invalid base produces empty text, negative padding behaves as0, and output bound is checked before allocation. Value/Base/Padding must be literal/InputInt or already qualified fixed static-string int32 producers; qualified StringLength/Find and conversion chains stay compiler-only. Text is consumed inside the compiler by qualified static string consumers only. FLOAT formatting/locale/precision/runtime text and arbitrary numeric arithmetic and field inputs remain unqualified. No GPU string payload/opcode/kernel performance credit or original-demo acceptance.",
+          "modes": {
+            "data_type": {
+              "partial": [
+                "INT"
+              ],
+              "unsupported": [
+                "FLOAT"
+              ]
+            }
+          }
+        }
+      },
+      "evidence": [
+        {
+          "path": "packages/blender-addon/static_strings.py",
+          "anchor": "if kind in {'FunctionNodeStringToValue', 'FunctionNodeValueToString'}:"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))"
+        },
+        {
+          "path": "experiments/static-string-family/numeric-contract.json"
+        },
+        {
+          "path": "experiments/static-string-family/verify.mjs"
+        },
+        {
+          "path": "experiments/static-string-family/evidence.json"
+        }
+      ],
+      "provenanceRoute": {
+        "nativeClass": "FunctionNodeValueToString",
+        "model": "native-static-strings-53-v1",
+        "serialized": "compileTimeStrings records model/type/sources with exact Boolean/int32 values or UTF8 byte count/SHA256 for text; selected branches use compileTimeSelections without claiming a per-node string trace.",
+        "numericalCredit": "Native host folding and exact existing scalar transport only. Family totals are shared; parser decimal-format and text witnesses are not independent extra node ports."
+      },
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "runtimeFingerprint": "fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959",
+        "familyNativeGraphs": 458,
+        "familyProductionNativeGraphs": 455,
+        "familySavedFinalScenes": 112,
+        "familyBrowserCaseRuns": 2280,
+        "familyComparedFloat32Words": 583680,
+        "wordMismatches": 0,
+        "logicalTargetCasesByContext": {
+          "shader": 7,
+          "CPU": 7,
+          "GPU": 7
+        },
+        "uniqueActualPythonPrefixes": 116,
+        "sourceStage": "Native host static strings; compositor CPU-MF scalar carrier for both authored settings, EEVEE Metal shader scalar carrier. No GPU text kernel.",
+        "coverageScope": "Shared full-family totals, not per-entry counts. Target logical counts use authored native-class specs, excluding repeated Length/Find/decimal-formatter witnesses. Twelve static string classes per source context; compositor Compare controls are separate existing consumers.",
+        "evidence": "experiments/static-string-family/evidence.json"
       }
     }
   },

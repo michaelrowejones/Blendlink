@@ -43,6 +43,7 @@
     "normal_view_native",
     "object_coords",
     "object_info",
+    "radial_segment_coordinates",
     "radial_segment_width",
     "ramp_alpha",
     "ramp_lut",

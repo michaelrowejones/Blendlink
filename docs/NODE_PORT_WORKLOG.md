@@ -598,3 +598,94 @@ skips and98release-policy checks. One5.3-only compositor entry becomes partial:
 46supported,115partial,14structural,157unsupported. Existing numeric receipts
 remain observations at their own source/runtime snapshots; this new receipt
 does not relabel all retained ports as freshly replayed.
+
+
+## 2026-11-13 — Exact Match String and bounded INT text conversions
+
+The combined frozen ROOT string transaction adds three native classes in each
+shader/compositor context: Match String, String to Value in INT mode, and Value
+to String in INT mode. All six entries are partial overrides for the pinned
+Blender5.3.0 build02f0899d78e3 macOS arm64 source profile. Earlier version
+classifications and enum coverage are unchanged. Match's three menus and each
+conversion's INT mode acquire only partial enum scope; FLOAT modes stay refused.
+
+Match compares exact UTF8 bytes with Starts With/Ends With/Contains, preserving
+case and combining-mark distinctions. Nineteen logical cases cover native menus,
+empty text/key, the4096-byte boundary, separately bound groups and reroutes.
+Its unchanged native Boolean Result drives an existing explicit Boolean Switch
+with INT false0/true1 before the independent byte carrier.
+
+Ten parser and seven standalone formatter cases cover bases2..36, signed32
+endpoints and overflow, UTF8 suffix/prefix behavior, literal and shared producer
+chains, native group bindings, sign-aware zero padding and the4096-byte output
+boundary. Parser Value remains exact typed INT: its actual connected endpoint
+feeds a native decimal formatter and independent Length/whole-Find witnesses;
+consumed Length is a separate bounded witness. Standalone formatter endpoints
+prevent parse/format errors from cancelling. No approximate Float32 carrier,
+golden-driven rewrite, new Compare route or runtime text opcode is introduced.
+Source tree animation, fields, unqualified computed inputs, implicit casts and
+FLOAT modes retain named refusals.
+
+The [fresh full-family receipt](../experiments/static-string-family/evidence.json)
+closes458native graphs (455production),112actual saved Final exports,
+2280built-browser case-runs,583680Float32 words and116fresh guarded Python
+prefixes with zero word differences. All twelve static string classes were
+replayed:150shader graphs/36Finals,154CPU-authored compositor graphs/38Finals,
+and154GPU-authored compositor graphs/38Finals. Native host evaluation and
+CPU-MF compositor scalar transport are distinct from the actual EEVEE Metal
+shader scalar carrier. Actual Metal and SwiftShader WebGPU/WebGL2 paths,
+caller resource ownership, adapter refusal and stripped Final artifact bindings
+are checked. The independently re-emitted runtime fingerprint is
+`fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959`.
+
+All eighteen prior static-string entries now reference this same current
+full-family receipt and fingerprint; their previously admitted limits and modes
+remain intact. Counts are family totals, not per-entry or per-witness node credit.
+The six new entries bring the retained5.3 classification to46supported,
+121partial,14structural and151unsupported context/node pairs out of332.
+The metadata-only audit preserves all4.2/5.2 classifications and native enums.
+The separate Radial Segment Coordinates candidate is still pending its own
+closed numerical transaction and receives no support or original-demo credit
+from this string matrix. Artist-useful fields, general runtime strings and
+complete node parity remain unfinished.
+
+## 2026-11-13 — Static Radial Segment Coordinates on measured M5 Pro WebGL2
+
+The existing partial shader Radial entry now adds Segment Coordinates for the
+pinned Blender5.3.0 build02f0899d78e3 macOS arm64 EEVEE Apple M5 Pro Metal source.
+The runtime scope is actual WebGL2 ANGLE Apple M5 Pro Metal, static normal/+0
+Float32 literal XY in[-2,2], literal Sides3/8/12, Roundness1 and both Normalize
+states. No node count changes: compositor Coordinates, prior versions and the
+older Width profiles/verification remain unchanged.
+
+The native input is two-component; its output is three-component
+`(phase,radius,0)`. Group/reroute boundaries preserve explicit width semantics.
+A public RNA Float32 foreach_get buffer preserves raw subnormal words across
+GPU initialization even when ordinary promoted reads become zero. The new
+source guard checks those raw sign/exponent bits and rejects negative-zero or
+subnormal XY. Scalar means, image/UV/Object fields, arithmetic vectors and
+computed Sides remain named refusals.
+
+The [closed receipt](../experiments/radial-coordinates-static/evidence.json)
+records410 raw cases, eight actual saved Final scenes, three install/dispose
+cycles per Final and three physical resize/DPR frames. All112596 observed
+browser words match the independent native F32 kernel reference. Actual EEVEE
+material/film controls separately cover the eight ordinary/group settings,
+with16 coordinate magnitudes,16 sign witnesses,16 grid-residue witnesses and
+two independent carrier controls. Material phase differs by at most
+3.5762786865234375e-7 within the predeclared2^-18 gate; radius difference is zero.
+This material stage is not relabelled bit-exact. Eleven fresh native Python
+prefixes and all five submitted GLSL role pins close with the independently
+emitted runtime fingerprint
+`fc842bc653dd7505aa2c54a0e0ac54dd28131f197f76eb1291484f9c29204959`.
+
+Actual Final tests verify shipped programs, install them on the actual GLTF
+meshes and expose their installed colorNode for channel acceptance. Source
+materials/callbacks and exact actual zero-or-known-DFG baseline identities are
+restored. These checks do not establish general PBR or full-scene appearance.
+WebGPU and both software API paths have six raw/Final named refusals. Preview
+Studio defaults to WebGPU, so this measured path needs explicit
+`?backend=webgl2`; no default-preview acceptance is claimed. The original
+Radial demo's computed STEPPED Sides and field coordinates remain unsupported.
+The new receipt supersedes the earlier pending-candidate note for this static
+slice only; the broader cross-profile/seam counterexamples stay research.

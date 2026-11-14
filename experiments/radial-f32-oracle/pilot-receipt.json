@@ -1,0 +1,233 @@
+{
+  "schemaVersion": 1,
+  "status": "CAPTURED_RADIAL_F32_ORACLE_RESEARCH_ONLY",
+  "model": "blender53-python-glsl-native-shared-radial-rgba32f-v1",
+  "version": [
+    5,
+    3,
+    0
+  ],
+  "build": "02f0899d78e3",
+  "backend": {
+    "backend": "METAL",
+    "renderer": "Metal API",
+    "vendor": "Apple M5 Pro",
+    "version": "1.2"
+  },
+  "sourceStage": "Unchanged native shared GLSL function under PythonGPU GLSL frontend/native Metal compiler; independently assembled aliases/helpers. Not actual EEVEE material/film.",
+  "qualificationCredit": {
+    "node": 0,
+    "actualMaterial": 0,
+    "fullScene": 0
+  },
+  "caseCount": 440,
+  "caseCensusSha256": "87f2e872cfe4f8f4610efc28218756f26a61f4834452efd82d91eb117219dfbc",
+  "inputWordMismatches": 0,
+  "inputWords": 1760,
+  "subnormalControls": 12,
+  "allCoordinateWidthTriplesFinite": true,
+  "finiteFullReturnRows": 416,
+  "undefinedOriginRotationRows": 24,
+  "calibration": {
+    "cases": 5,
+    "comparedWords": 8800,
+    "wordMismatches": 0
+  },
+  "assembly": {
+    "rawSharedSha256": "adab763a5772baca55f40e9ad0aa0cc1942b8bee87f898fe3e4aaa0601ebeeb3",
+    "rawSharedBytes": 57296,
+    "squareDeclarationSha256": "7d09387f73621872015dc7d52c580ca4e65b8d4017c6820a3390cf3bc6be193e",
+    "atan2DeclarationSha256": "be4174f1b7e2f289f339de1c3803e700210eb249b006ef25d6a3e9c369bbb8c0",
+    "constantHeaderSha256": "a00f4e5720354343c0e98602ceca8b7905de64178c2fa344f5bccc97567d3ecd",
+    "aliasesSha256": "f907a7791672809e3bdfab47122b65409a431687c41b55bdeec0680055e5a820",
+    "assembledKernelSha256": "dc0ea960a36abcc4fa6f5df96aaada4f7f8e9580b64fd10d85724f2c82984cc0",
+    "diagnosticSha256": "987ba34d254c0d891a09d8985b313397cc4129b5e2797e97b6a7ff919c73bfb1",
+    "regularSourceStatementsSha256": "a8a4624bc7eb7c3b8e73a1243b0e9ee3e94accb9d62648d5583840ef39462c8f",
+    "angleDiagnosticSha256": "5f9e0e08e00ae47ced2faba46d014a37f2cc332e4f681735514fcd133539f396",
+    "phaseDiagnosticSha256": "e1b7922238e45f760cdd245f6581c8b9e0586b8e81e4ae135c7c44d0ff2a721e"
+  },
+  "adaptation": "Entire shared GLSL source unmodified; external float2/3/4 ABI aliases, exact native constant header and scalar square/_atan2 declarations; default GLSL macros. Direct calculate_out_variables(true,false,normalize,Sides,1,coord), raw returnRGBA. No arithmetic-body rewrite, no generated TSL candidate used.",
+  "sourcePins": [
+    {
+      "path": "source/blender/draw/engines/eevee/eevee_film.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/draw/engines/eevee/eevee_film.cc",
+      "sha256": "a6c5d9a70408e930c83ebc23c304c6d0c705b043e3b0a23ddb3a2cc1cd3f438f"
+    },
+    {
+      "path": "source/blender/draw/engines/eevee/eevee_renderbuffers.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/draw/engines/eevee/eevee_renderbuffers.cc",
+      "sha256": "f12a6a4627ec5649bfb6b56c9131fec3dff880b5639371ea1b48780025ad8018"
+    },
+    {
+      "path": "source/blender/python/gpu/gpu_py_framebuffer.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/python/gpu/gpu_py_framebuffer.cc",
+      "sha256": "c6927535e874259480297c694f63b2e81e1d9b1d08d2fb981782ab758e5196fd"
+    },
+    {
+      "path": "source/blender/python/gpu/gpu_py_shader_create_info.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/python/gpu/gpu_py_shader_create_info.cc",
+      "sha256": "ab0ca3ded6efd4f066dc6c1d9b2084b659bca7444727a50829dc9bdafd0e6230"
+    },
+    {
+      "path": "source/blender/python/gpu/gpu_py_shader.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/python/gpu/gpu_py_shader.cc",
+      "sha256": "407b66febdf6e2304dfdc25ef8670bd36e43871a031ab06219584ed2325c2d17"
+    },
+    {
+      "path": "source/blender/gpu/intern/gpu_shader.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/intern/gpu_shader.cc",
+      "sha256": "87acec9fbb29b37234971957a8e336dae99787cfc24fd6611fe2233d2d5ca589"
+    },
+    {
+      "path": "source/blender/gpu/intern/gpu_shader_dependency.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/intern/gpu_shader_dependency.cc",
+      "sha256": "33b09b53470eb775e511cec776529159802396bdc18658f96b2d40fa7af9fb67"
+    },
+    {
+      "path": "source/blender/gpu/metal/mtl_shader.mm",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/metal/mtl_shader.mm",
+      "sha256": "4ceff7474af3d25d2bdbcf68f64af2eae3c526c598acb977461f8cf37bc6e229"
+    },
+    {
+      "path": "source/blender/gpu/metal/mtl_shader_generate.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/metal/mtl_shader_generate.cc",
+      "sha256": "bf5ec45bd85c6686833057cb1f748921968338bd06c23e523123eead153b0cfb"
+    },
+    {
+      "path": "source/blender/draw/engines/eevee/eevee_renderbuffers.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/draw/engines/eevee/eevee_renderbuffers.hh",
+      "sha256": "c9d8f564c4abc3b4b6b37c36d529a659144505cfe0c682e52c10a61afd6d0df3"
+    },
+    {
+      "path": "source/blender/gpu/shader_tool/processor.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shader_tool/processor.cc",
+      "sha256": "c6e64687abc0c49a0cb41d750ad0e3eb620323fe7b02e1078fab24105552bb58"
+    },
+    {
+      "path": "source/blender/gpu/shader_tool/processor.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shader_tool/processor.hh",
+      "sha256": "0a10d97bdd168a41b2acb554156358b7bc42069007f5ce3769e14955feab37fc"
+    },
+    {
+      "path": "source/blender/gpu/shaders/material/gpu_shader_material_vector_math.bsl.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shaders/material/gpu_shader_material_vector_math.bsl.hh",
+      "sha256": "70a387963272a0fbfa3489e7efccaf9dd5448136bf6c9005ab12d2c803d4d734"
+    },
+    {
+      "path": "source/blender/gpu/shaders/material/gpu_shader_material_output_aov.bsl.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shaders/material/gpu_shader_material_output_aov.bsl.hh",
+      "sha256": "544afe3a6021094fd55f65188643d6d2e3c18b4ab04f6b8c5be74f44c394d7f1"
+    },
+    {
+      "path": "source/blender/python/gpu/gpu_py_api.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/python/gpu/gpu_py_api.cc",
+      "sha256": "3274ac11eb635474a08aadde7b93fc55aee376db8cf756c5919575d4b47edeaf"
+    },
+    {
+      "path": "source/blender/python/gpu/gpu_py.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/python/gpu/gpu_py.cc",
+      "sha256": "cee60c8ee8c11ebb44996a736053c3036f667076614d11623bd23a398c446091"
+    },
+    {
+      "path": "source/blender/python/gpu/gpu_py_offscreen.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/python/gpu/gpu_py_offscreen.cc",
+      "sha256": "dd49baafd47c941be894adf962e7bcc704fd763e9037cad79e9e3296d4db6bd9"
+    },
+    {
+      "path": "source/blender/python/gpu/gpu_py_texture.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/python/gpu/gpu_py_texture.cc",
+      "sha256": "30179325f8aebb8155f932010bf32475af12e8e53f47dfcf54d0ad4e3e22165e"
+    },
+    {
+      "path": "source/blender/gpu/shaders/common/gpu_shader_math_base.bsl.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shaders/common/gpu_shader_math_base.bsl.hh",
+      "sha256": "ad4a45c901efcee0ab5498e8f19ca36a2b98cf2a6a8c4af873fa0098f116ec19"
+    },
+    {
+      "path": "source/blender/gpu/shaders/common/gpu_shader_math_constants.bsl.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shaders/common/gpu_shader_math_constants.bsl.hh",
+      "sha256": "a00f4e5720354343c0e98602ceca8b7905de64178c2fa344f5bccc97567d3ecd"
+    },
+    {
+      "path": "source/blender/gpu/shaders/material/gpu_shader_material_radial_tiling_shared.glsl",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shaders/material/gpu_shader_material_radial_tiling_shared.glsl",
+      "sha256": "adab763a5772baca55f40e9ad0aa0cc1942b8bee87f898fe3e4aaa0601ebeeb3"
+    },
+    {
+      "path": "source/blender/gpu/shaders/material/gpu_shader_material_radial_tiling.bsl.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shaders/material/gpu_shader_material_radial_tiling.bsl.hh",
+      "sha256": "1778c33dc8a1b75f0afa875caa51c38b385d946e716643b17a68b2a76f82f4ae"
+    }
+  ],
+  "sourceManifestSha256": "a9a68002c0c45c800b33c081b9ff685882ede6ba9762d88d83882c79cd4e4b54",
+  "prototypePins": {
+    "experiments/radial-f32-oracle/capture.py": "1dc6febe0682797dc145f14349d4a9ae0c1bb20eef6c8a6099945b7eff6e7411",
+    "experiments/radial-f32-oracle/adapter.py": "26868a2629fdfdd220c9b843d33ac6313ff67d715aa8c20f3f2ee1fa542de66f",
+    "experiments/native-f32-oracle-research/framebuffer_oracle.py": "fe5f9e3778d24cf3abfa940014aca12a59171e398caba9498d63da6291ff7601"
+  },
+  "sourceFlags": {
+    "origin": "Pinned gpu_shader.cc/mtl_shader.mm; no runtime flag introspection",
+    "frontEnd": "PythonGPU SourceProcessor(Language::GLSL)",
+    "metalFastMathEnabled": true,
+    "metalPreserveInvariance": true,
+    "sameMaterialCreateInfoOrGeneratedShader": false
+  },
+  "nativePythonProof": {
+    "pythonInvocations": 1,
+    "finalInvocations": 0,
+    "uniqueCachePrefixes": 1,
+    "numericalCredit": 0
+  },
+  "milliseconds": 1415,
+  "runs": [
+    {
+      "name": "input",
+      "pixelFile": "input.rgba32f",
+      "pixelSha256": "ac737017f9fa66802180555bdfc18627e6540b7044c8eeb01c8b486a17a30d11",
+      "words": 1760,
+      "finiteWords": 1760
+    },
+    {
+      "name": "diagnostic",
+      "pixelFile": "diagnostic.rgba32f",
+      "pixelSha256": "963168ea082949e80f7337a0028e67c049bca3606682cbd81777c3c886a0a6fd",
+      "words": 1760,
+      "finiteWords": 1736
+    },
+    {
+      "name": "angle",
+      "pixelFile": "angle.rgba32f",
+      "pixelSha256": "351e37cd56463280769a0c8afdc518c4ead11c8a47d67acaeed2ab5c611c8031",
+      "words": 1760,
+      "finiteWords": 1688
+    },
+    {
+      "name": "phase",
+      "pixelFile": "phase.rgba32f",
+      "pixelSha256": "aded54d464046037f3d7e8e1f2bfb7459d94d12f38203589d0941102ca8415e9",
+      "words": 1760,
+      "finiteWords": 1712
+    },
+    {
+      "name": "kernel",
+      "pixelFile": "kernel.rgba32f",
+      "pixelSha256": "a9aa0fc318a418bd3663f4aa48b595c59ce7d8aaef3ed02c82f02d5d5291640d",
+      "words": 1760,
+      "finiteWords": 1736
+    }
+  ],
+  "r1Preserved": {
+    "kernelOutputSha256": "a9aa0fc318a418bd3663f4aa48b595c59ce7d8aaef3ed02c82f02d5d5291640d",
+    "r2KernelOutputIdentical": true,
+    "caseCensusIdentical": true,
+    "erratum": "R1 floating subnormal metadata classifier gave0 after GPU initialization; unchanged source input words contain12 such controls. R2 uses bitwise classification. No numerical artifact or old receipt was patched."
+  },
+  "rawArtifacts": {
+    "machineLocal": true,
+    "ignored": true,
+    "path": "artifacts/verification-radial-f32-oracle-r2",
+    "reportSha256": "6d2c0b6ebbb37528a3aa0640c64e19720eaa3b1f982f05c660f612cdf914f83d",
+    "closedResearchSha256": "2b8a0ee24ef2fea25868ab80196af277e3c68a2f370129464b87675322d0c887"
+  },
+  "actualMaterialCrosscheckStatus": "Not executed by this oracle; separate experiment owns actual-material controls."
+}
