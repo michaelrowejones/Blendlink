@@ -1,5 +1,5 @@
 {
-  "capabilityMapSha256": "d12d5690cdc7b370a118e1b0911b5db1bb8a03fc4b5bdcbedb5950d7d667b286",
+  "capabilityMapSha256": "e3e3a56d93637d72603dc9f102ad9086884bdaf2c7b4b6e626c7bbfa8a5812fd",
   "capabilityValidationFailures": [],
   "classificationRefresh": {
     "catalogSha256": {
@@ -12,7 +12,7 @@
     "nativeInventoryRefreshed": false,
     "reason": "Classification-only refresh against unchanged content-pinned full inventories; no native rediscovery or numerical qualification is performed."
   },
-  "generatedAt": "2026-11-13T23:38:49.328766+00:00",
+  "generatedAt": "2026-11-14T02:01:19.047209+00:00",
   "nativeAvailabilityChanges": [],
   "nativeCatalogSha256": {
     "docs/node-coverage/blender-4.2.0.json": "2f71cb192f6a62e0e343ba5fcb11a2d8e0c6f6af1e8ac663ec6c3350b016b151",
@@ -3450,6 +3450,15 @@
                 },
                 {
                   "path": "experiments/normal-node-differential/preview-height-recovery.mjs"
+                },
+                {
+                  "path": "packages/blendlink/blender/normal_bake_transport.py"
+                },
+                {
+                  "path": "experiments/cycles-normal-bake/evidence.json"
+                },
+                {
+                  "path": "experiments/cycles-normal-bake/README.md"
                 }
               ],
               "id": "ShaderNodeBump",
@@ -8908,10 +8917,31 @@
                   "From Start": "unsupported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "kind == 'FunctionNodeFindInString'",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blender-addon/static_string_case_data.json"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeFindInString",
               "label": "Find in String",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -9048,10 +9078,31 @@
               "category": "unsupported",
               "declaredCategory": "unsupported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "kind == 'FunctionNodeInputSpecialCharacters'",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blender-addon/static_string_case_data.json"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeInputSpecialCharacters",
               "label": "Special Characters",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -9059,10 +9110,31 @@
               "category": "unsupported",
               "declaredCategory": "unsupported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "kind == 'FunctionNodeInputString'",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blender-addon/static_string_case_data.json"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeInputString",
               "label": "String",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -9180,10 +9252,31 @@
               "category": "unsupported",
               "declaredCategory": "unsupported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "FunctionNodeReplaceString",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blender-addon/static_string_case_data.json"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeReplaceString",
               "label": "Replace String",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -9191,10 +9284,31 @@
               "category": "unsupported",
               "declaredCategory": "unsupported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "FunctionNodeReverseString",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blender-addon/static_string_case_data.json"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeReverseString",
               "label": "Reverse String",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -9278,10 +9392,31 @@
                   "Uppercase": "unsupported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "FunctionNodeSetStringCase",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blender-addon/static_string_case_data.json"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeSetStringCase",
               "label": "Set String Case",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -9289,10 +9424,31 @@
               "category": "unsupported",
               "declaredCategory": "unsupported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "FunctionNodeSliceString",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blender-addon/static_string_case_data.json"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeSliceString",
               "label": "Slice String",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -9300,10 +9456,31 @@
               "category": "unsupported",
               "declaredCategory": "unsupported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "kind == 'FunctionNodeStringLength'",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blender-addon/static_string_case_data.json"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeStringLength",
               "label": "String Length",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -9360,10 +9537,31 @@
               "category": "unsupported",
               "declaredCategory": "unsupported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "FunctionNodeTrimString",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blender-addon/static_string_case_data.json"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeTrimString",
               "label": "Trim String",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -10154,11 +10352,29 @@
               "category": "unsupported",
               "declaredCategory": "unsupported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_radial_width.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslRadialWidth.ts"
+                },
+                {
+                  "path": "experiments/radial-segment-width/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/radial-segment-width/verify.mjs"
+                },
+                {
+                  "path": "experiments/radial-segment-width/evidence.json"
+                }
+              ],
               "id": "ShaderNodeRadialTiling",
               "label": "Radial Tiling",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
+              "runtimeOps": [
+                "radial-segment-width"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -10937,22 +11153,77 @@
               "category": "unsupported",
               "declaredCategory": "unsupported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blender-addon/repeat_ir.py"
+                },
+                {
+                  "path": "packages/blender-addon/procedural.py"
+                },
+                {
+                  "path": "packages/blender-addon/material_compiler.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslRepeat.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/materialProgramRendererRequirements.ts"
+                },
+                {
+                  "path": "experiments/shader-static-repeat/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/shader-static-repeat/verify.mjs"
+                },
+                {
+                  "path": "experiments/shader-static-repeat/evidence.json"
+                }
+              ],
               "id": "GeometryNodeRepeatInput",
               "label": "Repeat Input",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
+              "runtimeOps": [
+                "repeat_state",
+                "repeat_iteration"
+              ],
               "unreviewedCapability": false
             },
             {
               "category": "unsupported",
               "declaredCategory": "unsupported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blender-addon/repeat_ir.py"
+                },
+                {
+                  "path": "packages/blender-addon/procedural.py"
+                },
+                {
+                  "path": "packages/blender-addon/material_compiler.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslRepeat.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/materialProgramRendererRequirements.ts"
+                },
+                {
+                  "path": "experiments/shader-static-repeat/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/shader-static-repeat/verify.mjs"
+                },
+                {
+                  "path": "experiments/shader-static-repeat/evidence.json"
+                }
+              ],
               "id": "GeometryNodeRepeatOutput",
               "label": "Repeat Output",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
+              "runtimeOps": [
+                "repeat_static"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -11568,6 +11839,15 @@
                 },
                 {
                   "path": "experiments/normal-node-differential/preview-height-recovery.mjs"
+                },
+                {
+                  "path": "packages/blendlink/blender/normal_bake_transport.py"
+                },
+                {
+                  "path": "experiments/cycles-normal-bake/evidence.json"
+                },
+                {
+                  "path": "experiments/cycles-normal-bake/README.md"
                 }
               ],
               "id": "ShaderNodeBump",
@@ -12771,11 +13051,29 @@
               "category": "unsupported",
               "declaredCategory": "unsupported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blender-addon/radial_width_ir.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslRadialWidth.ts"
+                },
+                {
+                  "path": "experiments/radial-segment-width/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/radial-segment-width/verify.mjs"
+                },
+                {
+                  "path": "experiments/radial-segment-width/evidence.json"
+                }
+              ],
               "id": "ShaderNodeRadialTiling",
               "label": "Radial Tiling",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 build/platform slice. Native availability alone does not establish numerical support.",
+              "runtimeOps": [
+                "radial_segment_width"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -14237,10 +14535,10 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 47,
+            "partial": 57,
             "structural": 7,
             "supported": 24,
-            "unsupported": 109
+            "unsupported": 99
           },
           "enumValueCounts": {
             "partial": 27,
@@ -17228,11 +17526,22 @@
                 },
                 {
                   "path": "packages/blender-addon/tests/shared_utility_check.py"
+                },
+                {
+                  "anchor": "constant_string(socket)",
+                  "path": "packages/blendlink/blender/compositor_utilities.py"
+                },
+                {
+                  "anchor": "def static_string_value",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
                 }
               ],
               "id": "FunctionNodeCompare",
               "label": "Compare",
-              "limits": "Live Float/Integer six operations, Vector five modes times six operations, and Color Equal/NotEqual/Brighter/Darker. Color equality ignores alpha; native luminance controls brightness. Authored unlinked String/Object/Font equality is folded statically; linked string/ID identity transport refuses and is not counted as a live mode. Keyed/driven trees and unmodeled conversions refuse. Blender 5.3 compositor creation only.",
+              "limits": "Live Float/Integer six operations, Vector five modes times six operations, and Color Equal/NotEqual/Brighter/Darker. Color equality ignores alpha; native luminance controls brightness. Authored unlinked String/Object/Font equality is folded statically; linked string/ID identity transport refuses and is not counted as a live mode. Keyed/driven trees and unmodeled conversions refuse. Blender 5.3 compositor creation only. Linked STRING inputs may additionally fold from the qualified bounded host static-string helper for EQUAL/NOT_EQUAL only; arbitrary runtime string/ID transport remains unqualified. Compositor compileTimeStrings retains model/source traces and string digest/byte count, while the operator becomes utility-constant Boolean. Existing numeric/Vector/Color and unlinked Object/Font scopes remain separate.",
               "runtimeOps": [
                 "compare",
                 "utility-constant"
@@ -17251,18 +17560,39 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "inputs:Mode": {
                   "From End": "unsupported",
                   "From Start": "unsupported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "kind == 'FunctionNodeFindInString'",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blender-addon/static_string_case_data.json"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeFindInString",
               "label": "Find in String",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Length and Find First Found/Count yield exact INT constants consumed by existing typed scalar controls. Find uses codepoint offsets, nonoverlapping Count and measured native empty/no-match semantics. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -17552,24 +17882,66 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "kind == 'FunctionNodeInputSpecialCharacters'",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blender-addon/static_string_case_data.json"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeInputSpecialCharacters",
               "label": "Special Characters",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "kind == 'FunctionNodeInputString'",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blender-addon/static_string_case_data.json"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeInputString",
               "label": "String",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -17767,24 +18139,66 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "FunctionNodeReplaceString",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blender-addon/static_string_case_data.json"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeReplaceString",
               "label": "Replace String",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "FunctionNodeReverseString",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blender-addon/static_string_case_data.json"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeReverseString",
               "label": "Reverse String",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -17871,40 +18285,103 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "inputs:Case": {
                   "Lowercase": "unsupported",
                   "Uppercase": "unsupported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "FunctionNodeSetStringCase",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blender-addon/static_string_case_data.json"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeSetStringCase",
               "label": "Set String Case",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "FunctionNodeSliceString",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blender-addon/static_string_case_data.json"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeSliceString",
               "label": "Slice String",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "kind == 'FunctionNodeStringLength'",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blender-addon/static_string_case_data.json"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeStringLength",
               "label": "String Length",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Length and Find First Found/Count yield exact INT constants consumed by existing typed scalar controls. Find uses codepoint offsets, nonoverlapping Count and measured native empty/no-match semantics. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -17958,13 +18435,34 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "FunctionNodeTrimString",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = static_strings.evaluate_input(socket, tuple(reversed(frames)))",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blender-addon/static_string_case_data.json"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeTrimString",
               "label": "Trim String",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -18904,14 +19402,32 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_radial_width.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslRadialWidth.ts"
+                },
+                {
+                  "path": "experiments/radial-segment-width/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/radial-segment-width/verify.mjs"
+                },
+                {
+                  "path": "experiments/radial-segment-width/evidence.json"
+                }
+              ],
               "id": "ShaderNodeRadialTiling",
               "label": "Radial Tiling",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 Segment Width only, literal integer Sides2..64 and Roundness exactly1. Vector and Normalize are pruned only because this selected regular/full-roundness Width is source-proven independent of them. Separate CPU and native Metal GPU compositor anchors retain their distinct CPU-double-PI versus GPU-Float32-PI staging. Predeclared <=2ULP AND absolute error<=2^-22; exact-word differences reported separately. Other outputs (Segment Coordinates/ID/Rotation), fractional or computed Sides, partial roundness, other profiles and the unchanged official Radial demo (computed Sides and Segment Coordinates transport) remain unqualified. No port-owned textures/targets/readback.",
+              "runtimeOps": [
+                "radial-segment-width"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -19482,10 +19998,10 @@
         "shader": {
           "counts": {
             "bake-only": 0,
-            "partial": 45,
+            "partial": 57,
             "structural": 7,
             "supported": 22,
-            "unsupported": 71
+            "unsupported": 59
           },
           "enumValueCounts": {
             "partial": 25,
@@ -19540,18 +20056,39 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "inputs:Mode": {
                   "From End": "unsupported",
                   "From Start": "unsupported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "kind == 'FunctionNodeFindInString'",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = evaluate_output(from_socket, stack)",
+                  "path": "packages/blender-addon/tsl_ir.py"
+                },
+                {
+                  "path": "packages/blender-addon/static_string_case_data.json"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeFindInString",
               "label": "Find in String",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Length and Find First Found/Count yield exact INT constants consumed by existing typed scalar controls. Find uses codepoint offsets, nonoverlapping Count and measured native empty/no-match semantics. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -19711,24 +20248,66 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "kind == 'FunctionNodeInputSpecialCharacters'",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = evaluate_output(from_socket, stack)",
+                  "path": "packages/blender-addon/tsl_ir.py"
+                },
+                {
+                  "path": "packages/blender-addon/static_string_case_data.json"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeInputSpecialCharacters",
               "label": "Special Characters",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "kind == 'FunctionNodeInputString'",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = evaluate_output(from_socket, stack)",
+                  "path": "packages/blender-addon/tsl_ir.py"
+                },
+                {
+                  "path": "packages/blender-addon/static_string_case_data.json"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeInputString",
               "label": "String",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -19831,62 +20410,167 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "FunctionNodeReplaceString",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = evaluate_output(from_socket, stack)",
+                  "path": "packages/blender-addon/tsl_ir.py"
+                },
+                {
+                  "path": "packages/blender-addon/static_string_case_data.json"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeReplaceString",
               "label": "Replace String",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "FunctionNodeReverseString",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = evaluate_output(from_socket, stack)",
+                  "path": "packages/blender-addon/tsl_ir.py"
+                },
+                {
+                  "path": "packages/blender-addon/static_string_case_data.json"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeReverseString",
               "label": "Reverse String",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "inputs:Case": {
                   "Lowercase": "unsupported",
                   "Uppercase": "unsupported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "FunctionNodeSetStringCase",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = evaluate_output(from_socket, stack)",
+                  "path": "packages/blender-addon/tsl_ir.py"
+                },
+                {
+                  "path": "packages/blender-addon/static_string_case_data.json"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeSetStringCase",
               "label": "Set String Case",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "FunctionNodeSliceString",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = evaluate_output(from_socket, stack)",
+                  "path": "packages/blender-addon/tsl_ir.py"
+                },
+                {
+                  "path": "packages/blender-addon/static_string_case_data.json"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeSliceString",
               "label": "Slice String",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "kind == 'FunctionNodeStringLength'",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = evaluate_output(from_socket, stack)",
+                  "path": "packages/blender-addon/tsl_ir.py"
+                },
+                {
+                  "path": "packages/blender-addon/static_string_case_data.json"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeStringLength",
               "label": "String Length",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Length and Find First Found/Count yield exact INT constants consumed by existing typed scalar controls. Find uses codepoint offsets, nonoverlapping Count and measured native empty/no-match semantics. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -19907,13 +20591,34 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "FunctionNodeTrimString",
+                  "path": "packages/blender-addon/static_strings.py"
+                },
+                {
+                  "anchor": "record = evaluate_output(from_socket, stack)",
+                  "path": "packages/blender-addon/tsl_ir.py"
+                },
+                {
+                  "path": "packages/blender-addon/static_string_case_data.json"
+                },
+                {
+                  "path": "experiments/static-string-family/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/static-string-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/static-string-family/evidence.json"
+                }
+              ],
               "id": "FunctionNodeTrimString",
               "label": "Trim String",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -20059,25 +20764,80 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blender-addon/repeat_ir.py"
+                },
+                {
+                  "path": "packages/blender-addon/procedural.py"
+                },
+                {
+                  "path": "packages/blender-addon/material_compiler.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslRepeat.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/materialProgramRendererRequirements.ts"
+                },
+                {
+                  "path": "experiments/shader-static-repeat/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/shader-static-repeat/verify.mjs"
+                },
+                {
+                  "path": "experiments/shader-static-repeat/evidence.json"
+                }
+              ],
               "id": "GeometryNodeRepeatInput",
               "label": "Repeat Input",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 EEVEE Metal shader source profile darwin-arm64-eevee-metal-repeat-53-v1 only. Fixed typed Integer count0..64;1..4 independent FLOAT/VECTOR3 states. Own-state copy/add/sub with bounded sixteenth-grid literal or native Iteration steps. Bounded literal seeds only for positive counts, including assembled literal vector components. All UV field seeds, including authored clamp+SNAP.25, refuse pending checked producer phase margin; no changes to original scenes. Exact dyadic arithmetic within proven abs<=2048. Count0 forwards selected initial state under existing upstream qualification and prunes inactive body, while owner animation policy remains global. Bound source emission2048 visits/depth64/group-depth16; body256 serialized ops; per-channel max8 unique loops and8192 weighted body operations. Deferred IR snapshot owned, prebuild cancellation, staged state updates and actual generated loop-count guards. Cross-state aliases/constant overwrites, nonlinear/nested/chained/dynamic zones, unrounded UV, textures/derivatives, animation/drivers and Cycles live remain unqualified. Independent source-frame seek/pause/playback transport remains required for unchanged official Mandelbrot Grow; static capture or elapsed renderer time is not live animation.",
+              "runtimeOps": [
+                "repeat_state",
+                "repeat_iteration"
+              ],
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blender-addon/repeat_ir.py"
+                },
+                {
+                  "path": "packages/blender-addon/procedural.py"
+                },
+                {
+                  "path": "packages/blender-addon/material_compiler.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslRepeat.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/materialProgramRendererRequirements.ts"
+                },
+                {
+                  "path": "experiments/shader-static-repeat/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/shader-static-repeat/verify.mjs"
+                },
+                {
+                  "path": "experiments/shader-static-repeat/evidence.json"
+                }
+              ],
               "id": "GeometryNodeRepeatOutput",
               "label": "Repeat Output",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 EEVEE Metal shader source profile darwin-arm64-eevee-metal-repeat-53-v1 only. Fixed typed Integer count0..64;1..4 independent FLOAT/VECTOR3 states. Own-state copy/add/sub with bounded sixteenth-grid literal or native Iteration steps. Bounded literal seeds only for positive counts, including assembled literal vector components. All UV field seeds, including authored clamp+SNAP.25, refuse pending checked producer phase margin; no changes to original scenes. Exact dyadic arithmetic within proven abs<=2048. Count0 forwards selected initial state under existing upstream qualification and prunes inactive body, while owner animation policy remains global. Bound source emission2048 visits/depth64/group-depth16; body256 serialized ops; per-channel max8 unique loops and8192 weighted body operations. Deferred IR snapshot owned, prebuild cancellation, staged state updates and actual generated loop-count guards. Cross-state aliases/constant overwrites, nonlinear/nested/chained/dynamic zones, unrounded UV, textures/derivatives, animation/drivers and Cycles live remain unqualified. Independent source-frame seek/pause/playback transport remains required for unchanged official Mandelbrot Grow; static capture or elapsed renderer time is not live animation.",
+              "runtimeOps": [
+                "repeat_static"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -20808,11 +21568,20 @@
                 },
                 {
                   "path": "experiments/normal-node-differential/preview-height-recovery.mjs"
+                },
+                {
+                  "path": "packages/blendlink/blender/normal_bake_transport.py"
+                },
+                {
+                  "path": "experiments/cycles-normal-bake/evidence.json"
+                },
+                {
+                  "path": "experiments/cycles-normal-bake/README.md"
                 }
               ],
               "id": "ShaderNodeBump",
               "label": "Bump",
-              "limits": "EEVEE no-height identity remains independent: unlinked Height copies linked Normal without normalization or uses the verified primary geometry normal; its Strength/Distance/Filter Width/Invert are inactive. Fresh bump_height_native additionally supports a literal or bounded affine Add/Subtract/Multiply tree of one actual active-render/named UV source, using measured Metal EEVEE source profiles in Blender 4.2, 5.2 and 5.3. It reevaluates the original function at offset UVs; modern C6g derivative width is distinct from the Float32 denominator. Static Strength[-1,2], Distance[-1,1], unlinked FilterWidth[.1,10] (legacy implicit1), UV[-2,2], literal controls[-1,1], slope components<=1 and source Height[-2,2]; planar flat-normal primary triangles only, finite owner/world magnitude64, effective world slope*Distance*max(1,Strength)<=.1. Actual topology/UV/normal/matrix and per-draw camera/physical-viewport/shifted-evaluation/cancellation budgets validate independently. Small-amplitude legacy Distance1 is earned; tiny FW, large Distance/bias, close/grazing views, curved surfaces, linked controls and arbitrary textured/nonlinear Height remain refused. Direct unit output supports Normal/Coat Normal; no arbitrary downstream normal graph, ray/deformation/generated-instance or Cycles expansion. Actual Final source/readback proof and real Preview orbit/resize/retry proof are reproducible in the normal-node experiment; no general height-image/mip/derivative-scope port claimed.",
+              "limits": "EEVEE no-height identity remains independent: unlinked Height copies linked Normal without normalization or uses the verified primary geometry normal; its Strength/Distance/Filter Width/Invert are inactive. Fresh bump_height_native additionally supports a literal or bounded affine Add/Subtract/Multiply tree of one actual active-render/named UV source, using measured Metal EEVEE source profiles in Blender 4.2, 5.2 and 5.3. It reevaluates the original function at offset UVs; modern C6g derivative width is distinct from the Float32 denominator. Static Strength[-1,2], Distance[-1,1], unlinked FilterWidth[.1,10] (legacy implicit1), UV[-2,2], literal controls[-1,1], slope components<=1 and source Height[-2,2]; planar flat-normal primary triangles only, finite owner/world magnitude64, effective world slope*Distance*max(1,Strength)<=.1. Actual topology/UV/normal/matrix and per-draw camera/physical-viewport/shifted-evaluation/cancellation budgets validate independently. Small-amplitude legacy Distance1 is earned; tiny FW, large Distance/bias, close/grazing views, curved surfaces, linked controls and arbitrary textured/nonlinear Height remain refused. Direct unit output supports Normal/Coat Normal; no arbitrary downstream normal graph, ray/deformation/generated-instance or Cycles expansion. Actual Final source/readback proof and real Preview orbit/resize/retry proof are reproducible in the normal-node experiment; no general height-image/mip/derivative-scope port claimed. Separate bounded offline Cycles Normal/active Coat Normal channel baking is verified on actual static single-slot render-evaluated owners, with per-owner UV/Mikk/PNG/binding checks and source restoration. This earns no new live Bump or enum coverage. Deforming/instanced/unproved receivers, Lighting-atlas composition, meshes over the 2M-triangle budget, filtering/LOD and whole-scene lighting remain unqualified.",
               "runtimeOps": [
                 "bump_height_native",
                 "bump_passthrough_native"
@@ -22068,14 +22837,32 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blender-addon/radial_width_ir.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslRadialWidth.ts"
+                },
+                {
+                  "path": "experiments/radial-segment-width/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/radial-segment-width/verify.mjs"
+                },
+                {
+                  "path": "experiments/radial-segment-width/evidence.json"
+                }
+              ],
               "id": "ShaderNodeRadialTiling",
               "label": "Radial Tiling",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 Segment Width only, literal integer Sides2..64 and Roundness exactly1. Vector and Normalize are pruned only because this selected regular/full-roundness Width is source-proven independent of them. EEVEE Metal shader only; Cycles live remains unqualified. Predeclared <=2ULP AND absolute error<=2^-22; exact-word differences reported separately. Other outputs (Segment Coordinates/ID/Rotation), fractional or computed Sides, partial roundness, other profiles and the unchanged official Radial demo (computed Sides and Segment Coordinates transport) remain unqualified. No port-owned textures/targets/readback.",
+              "runtimeOps": [
+                "radial_segment_width"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -23553,12 +24340,12 @@
     "packages/blender-addon/camera_data_ir.py": "956a074bad662f2a643335666ec62823643f955d6da8c75d056fa5f75928f1c8",
     "packages/blender-addon/color_ir.py": "0b6fd4f61a5ce22d5fe84135b2fbdd484b5bc805889ff952e87e573053797e69",
     "packages/blender-addon/curves_ir.py": "8448897e0f3fa19761080c366e211b711051f0468025516e1eb3a8fdf1548ad5",
-    "packages/blender-addon/engine_fallback.py": "c5f9c9a31f5b26f4dc7929e672b1b03835d6eda1f3882de738d87cfafd622037",
+    "packages/blender-addon/engine_fallback.py": "50cd190a34a0e2ff8df7e15a830b9a7d2af0f7fd0e527d84ba41390934ae97c3",
     "packages/blender-addon/geometry_ir.py": "78853507cbf569d01e7cb4c25b0cbfa543a73df4d134f593171b64bd2caf6205",
     "packages/blender-addon/legacy_ramp_data.py": "8aa2a2cafdc0d46abb00633a97c65315bc8e93274e5ba0d3e0cb77ac5f8e36e0",
     "packages/blender-addon/magic_bounds.py": "9a15236ab29aac815e19688d3d054a474fd39ee880e076746b8cb693f494b9b8",
     "packages/blender-addon/magic_ir.py": "0acb99dc9a916679a8f23e2e79ec01a646e5dd9b6b9b7ccb5f8159dd700df46d",
-    "packages/blender-addon/material_compiler.py": "a2bd3b7cfdcb1cebb98c462200a89f0a260526d16e6f31d92ae2c066cc4ab694",
+    "packages/blender-addon/material_compiler.py": "4872f764d5a9cb254eacfd2625b954cc162c883943f385c12945646c22441ca5",
     "packages/blender-addon/math_modulo_native_ir.py": "89ee9a91f0a754ca9b7e3702085b8e90115ac993a3499946e5573f24b913ee63",
     "packages/blender-addon/noise_field_ir.py": "5f0a8bb9b209d1ffbcc695d879a229ee688f1e24dae2d66680f0176c005455f4",
     "packages/blender-addon/noise_fractal_ir.py": "363c03bec9b463f582bd0014bca6ff54dba146e737e87d4f4367c4770bb44457",
@@ -23570,14 +24357,18 @@
     "packages/blender-addon/normal_ir.py": "5884980ca27e5a12bbf239cd69bed3b5295ba80ad3b728b9011580f2c6ef3899",
     "packages/blender-addon/normal_map_tangent_ir.py": "44bf4a455b32489d632b6e2d5dd98c10e716b7df6aaf54817b086d34fad9375c",
     "packages/blender-addon/normal_noise_bounds.py": "af58552f1d0df0fa363d900d7995b1117e116c1e1702c974d93fc78cf94faa4f",
-    "packages/blender-addon/procedural.py": "953104e0888e4e4054a31dbe3a2f7f2d0dd60a5e0dfd1eb5ae33973543307548",
+    "packages/blender-addon/procedural.py": "dd5419b4313f3102d6f7161789592f4648babcad01543272416c80d58016926f",
+    "packages/blender-addon/radial_width_ir.py": "bac7aeee78bad23d28b6bafe62abd2675aa652adc24e29ebe32af729c1cc27e6",
     "packages/blender-addon/ramps_ir.py": "fc9f2fd95a6e650a3bacde298fe92f2a63e85185763f17204d4e328a90c9ea96",
+    "packages/blender-addon/repeat_ir.py": "f2027e55c03d1c7a8e018e82c9ce0d5d8a35af528632173d1cdde0dfa293ed71",
     "packages/blender-addon/shader_color_band.py": "dc9bf6130aaf4d972787aa5a7779500fb5ed6718b199d7c5069578d5bdc10508",
     "packages/blender-addon/spectral_ir.py": "fc084f57b018234ea0d3af607b5944b5ff10f510362cc3a040373c8bad3c930b",
     "packages/blender-addon/squeeze_ir.py": "426a76ec167e8c8c216f79e563b85a7fdc5072fb55c1dd54a9058de6321a4d64",
-    "packages/blender-addon/static_selection.py": "4d2631406029bedae51f7dfe90c821dac3d5cf7391148fb44635cbd4ce9f812b",
+    "packages/blender-addon/static_selection.py": "e6fe8cf41a462287e9b6a967cef2d215796c2df413e739b131e349bf1dbbf852",
+    "packages/blender-addon/static_string_case_data.json": "8fb83c1d86ae27a49e80bdbdbb8dddc5b66f155dac196d71ea033f3410139360",
+    "packages/blender-addon/static_strings.py": "9ef353746157c72d47576706875d77a82781505d2d9b09737edb4074a7dec3d4",
     "packages/blender-addon/tangent_ir.py": "1aecd4299717841db15ec5a129cdaef44bbc5853fdd4d7c96e21ddcde2910d7d",
-    "packages/blender-addon/tsl_ir.py": "842a2370673d2545bf789e6a847dc6c74f14d901116b3e4ff6cbc9133df0bd36",
+    "packages/blender-addon/tsl_ir.py": "6acb2946e1f1682aaf1c4597246740d936d43eccaad3f8ea4dd42b843daba826",
     "packages/blender-addon/tsl_object_info.py": "beb2efc9684b53b1229b743d7b4206eb87f6206b9288d9454d4dd1c9d37d9f22",
     "packages/blender-addon/utility_ir.py": "d077031f6d9aec9e242bd3e7559753807dcbf29de53883b1c7bafc57fe2e97c5",
     "packages/blender-addon/vector_component_ir.py": "bb4d7ed8e35f112e511056ce8968be269d0bcb2993f3dbc41ce47aa3497f7b4a",
@@ -23596,7 +24387,7 @@
     "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
     "packages/blendlink/blender/compositor_float_coordinates.py": "a300cbfb6e5ea06806e2fb9b9d7795cd2e3b91cb21ada43e4c128ac89d8f0cec",
     "packages/blendlink/blender/compositor_float_to_int.py": "6292f5a5904107b59591c282fcf9def24a5f98dc2ead0a92d950b6219226658d",
-    "packages/blendlink/blender/compositor_graph.py": "3cd091a6aa0e2a834255c74d7581b7c0426f73779a673470fecc0e96254b9210",
+    "packages/blendlink/blender/compositor_graph.py": "d06737f0250d1015b1d4e794c762c7b2977cb3c94c38b7260869679749f5bf4a",
     "packages/blendlink/blender/compositor_image.py": "55ee3b7800002331c4e30042a7d5da18538267b58ff60c006e03ad238da9e012",
     "packages/blendlink/blender/compositor_image_coordinates.py": "4b796327c579e7c08ed487cce4758c899a1a11be648e93977c22a0536451054a",
     "packages/blendlink/blender/compositor_image_info.py": "92e3f2488f646b8f7f79de67940717c54bd3e4cfc69956090b31ebd9b0e64729",
@@ -23607,21 +24398,23 @@
     "packages/blendlink/blender/compositor_normal.py": "9dcd0e53d674560bb7c060a2a6a2b5ccdec361235ae67620c587a29136d2c94d",
     "packages/blendlink/blender/compositor_pixelate.py": "607f738a09fc75f15facb9cb0c261bfb72800663d5908826e5d105d980800b3d",
     "packages/blendlink/blender/compositor_procedural_texture.py": "70d34a56ea67a67aecd899fb05e66716746865c190e9d9f2bd4289b6df2bf025",
+    "packages/blendlink/blender/compositor_radial_width.py": "4b572924063f901030e779ac0c78a6a75229b22efc4df0741c55463a1f27d172",
     "packages/blendlink/blender/compositor_relative_to_pixel.py": "a276d2e5fa7b0743b26c5e6fdba67cff3f884f2535f88c01ca0c536a8ce85870",
     "packages/blendlink/blender/compositor_spill.py": "8a7774222b7f126bcc6a42f0a526d953b2fe858b4f47c7018cd741ee94f56269",
     "packages/blendlink/blender/compositor_split.py": "1c25e68653abf9c8c8b2a88c3c7751a324fb4838a5feaacae309fe332e511a08",
     "packages/blendlink/blender/compositor_transform.py": "2f9ae73eb6e70f05fc53b755b1252e3bce4563ad013b08ed930304a4ae2ac42d",
-    "packages/blendlink/blender/compositor_utilities.py": "b8dc1399f92a02618a11c217b1869a896a893a4ef0070fadfed098f36d4fbbb9",
+    "packages/blendlink/blender/compositor_utilities.py": "b92be3bb89c05d9a943a08298bb3114274cf67f14f985ba84e3f5dbc9eddc384",
     "packages/blendlink/blender/compositor_vector_component.py": "8b29742404fa7d80d2bdc661363a052bc1a2680b3306a2a47b20d0d9e5bfe20c",
     "packages/blendlink/blender/compositor_vector_math.py": "94a78be4e19d1b824b046665250fccb801e363b2339253a7f047c2e76532e0f9",
     "packages/blendlink/blender/compositor_whitepoint.py": "a2beb2b16a1f7fbf6b02a31cb4690d0c98e23e144748e5962a0d4f755922d2e5",
-    "packages/blendlink/blender/geometry_export.py": "2f4e136f3d15b2ce1b77d8db6f7190893cd3e2f7dcfdbc9e8c6e0f55c5df855d",
+    "packages/blendlink/blender/geometry_export.py": "3d147a218ee96f0bf72ffeb5add773396347fc39224501eb62d5d7f67551fd2d",
     "packages/blendlink/blender/native_color_band.py": "23aa27b056846d42cdb96919da968d04f9e8e44d794ffa10c80871f786bfc8d4",
+    "packages/blendlink/blender/normal_bake_transport.py": "1e6211bb197f6e015262f80937112ec594e70977945fc1259133aa8ffd36429e",
     "packages/blendlink/blender/tangent_export.py": "4815854bd825e910009b42de73ecf5aa9cc0bb07966bb2d688731e5df12b514e",
     "packages/blendlink/src/compiledMaterialPrograms.ts": "3a054779d78a4b7e8361653c5d980b5bb8324544c539a0b0ed691ffb66a8c173",
     "packages/blendlink/src/compiledSceneAudit.ts": "52bce41d9b3afee724a00d06981ebec1e68cc0748da41cec1c09cdb834b60c57",
     "packages/blendlink/src/materialProgramDocument.ts": "39ec3435678480a0c1074f55b3fee1340ec91710d384b76b0e9757ef0d181e63",
-    "packages/blendlink/src/materialProgramRendererRequirements.ts": "314789847bdbad525d98e46613258527424cbafa4679437e2cb92c2996f11376",
+    "packages/blendlink/src/materialProgramRendererRequirements.ts": "6e4024648013626e7a84b96392fe3d660970bae005a68b7bfb24f24ab06fc7a1",
     "packages/blendlink/src/sceneDiagnostics.ts": "48b8d220ad2b5216f496694ef1b29c19903e90cc65fc9ce01bda77e21c84dc0e",
     "packages/blendlink/src/staticNoise4d.ts": "0677ad1169801c601d74b8a5658d98691415bf313081ca0b4fa88ec762e62a76",
     "packages/blendlink/src/threeRuntime.ts": "4ca05fb2b46239e30a434591c3ecfa42531b179c20e946828921a419e64db3b4",
@@ -23680,13 +24473,13 @@
     "packages/blendlink/src/tslMagicBounds.ts": "f5ef0d1c3d5ef83a5d427d6a185d838226b201fe40d4dcdafb1e0001894a8614",
     "packages/blendlink/src/tslMagicNodes.ts": "58d4cb15216d438225438ae06ed5784a20c85c73bc205cd2f63b8ba6771a4cb1",
     "packages/blendlink/src/tslMaterialProgram.ts": "e46f8b8d25a2644b9b507a132b12aea75e36ec3fb326c8beaf9d29adeceeea89",
-    "packages/blendlink/src/tslMaterialRuntime.ts": "902e17bb5865e0bb5ef755f30d62007de376c3d4913c3765102bed1902eed7ba",
+    "packages/blendlink/src/tslMaterialRuntime.ts": "0059cf7561e5c3abc2aeecb0cb828bc6f6a5182257b1488d770a9701c8be1c96",
     "packages/blendlink/src/tslMathModuloNative.ts": "f56ae4c332f93d0f597242607d02fdc8938af1d877392da3f4e3481b2e030da2",
     "packages/blendlink/src/tslMfNoiseCoordinates.ts": "3d697e3dd7a01418263fa7edac3154db127b669f4212cf533b15c94ed53046a7",
     "packages/blendlink/src/tslNativeColorBand.ts": "71727e4ad3d5498f35d56b875e1475361a1a3a0adf62f7e7fd98b1581f308c92",
     "packages/blendlink/src/tslNativeNoisePrecision.ts": "7b64b75c45d38815d7d0cb9c1f74b4abae9352612edd2d7c6b615e4df1c495dd",
     "packages/blendlink/src/tslNativeVaryingNoise.ts": "f9d1268c168cbf5d486b1560454567565ecee3649332e556f2415455165248b7",
-    "packages/blendlink/src/tslNodeRecipe.ts": "1069cc89c2c153dde63b30cce88a639eb4f6065bf0eb36d355e08bbe8d7fbf8c",
+    "packages/blendlink/src/tslNodeRecipe.ts": "db6ebd50c89194cddad1218483d0ffc8286d9f5815d10edf8f255bc6128eeedf",
     "packages/blendlink/src/tslNoiseCoordinates.ts": "f0eb9e256f75be2915f0d2d78509fe3d638fbcb0936fc6c79099b19a1472f9f4",
     "packages/blendlink/src/tslNoiseFieldBarrier.ts": "9dcbd46802101108eeb3ae5fffc78d64317f48c832406e6b713bc129335295bf",
     "packages/blendlink/src/tslNoiseFields.ts": "a66cf44b0298add1ab3db195085629788060a9005df14757d283228e703416d1",
@@ -23696,8 +24489,10 @@
     "packages/blendlink/src/tslNormalNoiseBounds.ts": "d077612c85a079e3f0cbc337510b241753744d4896cadf0f7c373015453bbc1c",
     "packages/blendlink/src/tslObjectInfo.ts": "4bbb381d9b1b75d59aefbc969d9b8a3c16c84720f876eb87f46903ecdfaddd81",
     "packages/blendlink/src/tslPortableTrig.ts": "f477ca37bfd09a058e2cd837cfa3a00b239b828019295d6a46c595d13ae5aef1",
+    "packages/blendlink/src/tslRadialWidth.ts": "9ffc9e3a7e32b3d0676b2a90fffad64e2578cd30d160ddaf00278d2d9ff43719",
+    "packages/blendlink/src/tslRepeat.ts": "4d7925f09220e54973155c6af8c41c98e3b32e141f5acbdc6d29741c701d9a93",
     "packages/blendlink/src/tslSharedUtilities.ts": "1f21b06a4d60a439b0549b7c6716c66945b4cce3cc00fc6e965acbe77c80d9b9",
-    "packages/blendlink/src/tslSourceCompositor.ts": "fe9975635fc75e8282cc54315c34f8e266cab372bab60df7c401d498d8dcbb53",
+    "packages/blendlink/src/tslSourceCompositor.ts": "b45914eeb788af9449c49097b5300619fa9bfda6b224ffa5cdc4dc0dec0e6d3d",
     "packages/blendlink/src/tslSpectralNodes.ts": "0b3b12601a937d51544168acdde2ee721a25a926a4890d41b2c63b5b09013200",
     "packages/blendlink/src/tslSqueeze.ts": "14a56aa219ca2bb2dace54d512e8b9cfda754ea83991a92a1c270a1122ea492b",
     "packages/blendlink/src/tslTangentNodes.ts": "fb7ad452300be3e96a9f01b4f82f9ce59cb8577cf68e056df994876321cffcc1",

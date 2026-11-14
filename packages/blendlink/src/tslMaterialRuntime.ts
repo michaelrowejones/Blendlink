@@ -631,7 +631,7 @@ export async function installTslMaterials(
               { ...buildOptionsFor(
                 extras, resources, source, programTextures?.resolver,
                 objectAttribute,
-              ), preparedNoiseFields: preparation, validateMagicCoordinates:expression=>validateMagicCoordinates(expression,mesh,magicOptions??{}), normalMapBasis, ...(info ? { objectInfo: createObjectInfoResolver(
+              ), ...(options.signal?{signal:options.signal}:{}), preparedNoiseFields: preparation, validateMagicCoordinates:expression=>validateMagicCoordinates(expression,mesh,magicOptions??{}), normalMapBasis, ...(info ? { objectInfo: createObjectInfoResolver(
                 owner.userData?.blendlink_tsl_object, material.userData?.blendlink_tsl_material,
               ) } : {}) },
             )

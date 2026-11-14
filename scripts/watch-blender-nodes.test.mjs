@@ -41,9 +41,16 @@ async function fixture(t, controls = {}) {
       if (operation[0] === 'status') stdout = controls.dirty ? ' M altered.cc\n' : ''
     } else if (args[0].endsWith('/discover-blender-build.mjs')) await writeJson(args[args.indexOf('--output') + 1], found)
     else if (args[0].endsWith('/acquire-blender-build.mjs')) {
-      const work = args[args.indexOf('--work-dir') + 1], executable = join(work, 'unit-fixture', 'blender'); await mkdir(dirname(executable), { recursive: true }); await writeFile(executable, 'not a real Blender binary')
+      const work = args[args.indexOf('--work-dir') + 1], executable = join(work, 'unit-fixture', 'blender'); await mkdir(dirname(executable), { recursive: true })
+      // Exercise the real launcher/supervisor against an explicit non-Blender
+      // fixture. This proves process ordering and receipts, not Python or nodes.
+      await writeFile(executable, '#!' + process.execPath + '\n' +
+        'const fs=require("node:fs");const args=process.argv.slice(2);const first=args.findIndex(x=>["--python","--python-expr","-P"].includes(x));' +
+        'if(args[first]!=="--python-expr"||!args[first+1].startsWith("import sys; sys.pycache_prefix=")||!args[first+1].endsWith("; sys.dont_write_bytecode=True"))process.exit(9);' +
+        'const prefix=JSON.parse(args[first+1].slice("import sys; sys.pycache_prefix=".length,-"; sys.dont_write_bytecode=True".length));if(!fs.existsSync(prefix))process.exit(10);' +
+        'fs.writeFileSync(args[args.indexOf("--catalog-output")+1],JSON.stringify(' + JSON.stringify(catalog(found.source.commit, controls.wrongCatalog ? [9, 0, 0] : found.build.versionTuple)) + '));\n', { mode: 0o700 })
       await writeJson(args[args.indexOf('--output') + 1], { ...found, kind: 'blender-build-acquisition', native: { versionTuple: found.build.versionTuple, buildHash: found.build.hash, executable } })
-    } else if (args.includes('--catalog-output')) await writeJson(args[args.indexOf('--catalog-output') + 1], catalog(found.source.commit, controls.wrongCatalog ? [9, 0, 0] : found.build.versionTuple))
+    } else if (args.includes('--catalog-output')) return executeWatchCommand(file, args, options)
     else if (args[0].endsWith('/node-ports.mjs') && args[1] === 'snapshot') {
       const directory = args[args.indexOf('--source-dir') + 1], base = directory.endsWith('baseline-source'), cat = args.includes('--catalog') ? JSON.parse(await readFile(args[args.indexOf('--catalog') + 1], 'utf8')) : null
       const value = { schemaVersion: 1, collectorVersion: 1, kind: 'blendlink-blender-node-source-snapshot-v1', sourceRevision: base ? baselineCommit : found.source.commit, watchScope: ['unit-fixture'], files: { [source]: 'unchanged-watched-source-bytes' }, nodeSources: { ShaderNodeSqueeze: [source] }, sourceDependencies: {}, catalogIdentity: cat ? { version: cat.blenderVersionTuple, build: cat.blenderBuildHash } : null, catalogNodes: cat ? catalogNodes(cat) : null }
@@ -69,6 +76,12 @@ test('new source revision always gets actual native capture even when all watche
   assert.equal(value.calls.filter(call => call.args[0]?.endsWith('/discover-blender-build.mjs')).length, 1)
   assert.equal(value.calls.filter(call => call.args[0]?.endsWith('/acquire-blender-build.mjs')).length, 1)
   assert.equal(value.calls.filter(call => call.args.includes('--catalog-output')).length, 1)
+  const proof = report.nativeCatalogPython.proof
+  assert.equal(proof.complete, true); assert.equal(proof.numericalCredit, false); assert.equal(proof.pythonInvocations, 1)
+  const invocation = proof.invocations[0].result
+  assert.equal(invocation.pythonGuardApplied, true); assert.equal(invocation.cacheDisposed, true)
+  await assert.rejects(readFile(invocation.cacheDirectory), { code: 'ENOENT' })
+  assert.ok((await readdir(join(value.output, 'native-python-proof'))).includes('launcher.json'))
   const preliminary = JSON.parse(await readFile(join(value.output, 'source-only.workqueue.json'), 'utf8'))
   assert.equal(preliminary.nativeCatalogCompared, false); assert.ok(preliminary.items.every(item => item.reasons.every(reason => reason.kind !== 'native-node-removed')))
   const queue = JSON.parse(await readFile(join(value.output, 'workqueue.json'), 'utf8')); assert.deepEqual(queue.changedFiles, []); assert.deepEqual(queue.affectedManifestIds, ['squeeze'])
@@ -95,12 +108,16 @@ test('checkout commit drift and dirty source fail before acquisition, with retai
 })
 
 test('native version mismatch and subprocess failure retain source-only evidence and never emit final success', async t => {
-  for (const controls of [{ wrongCatalog: true }, { failStep: 'fetch' }]) {
+  for (const controls of [{ wrongCatalog: true }, { failStep: 'fetch' }, { failStep: '--catalog-output' }]) {
     const value = await fixture(t, controls)
     await assert.rejects(watchBlenderNodes(value, { run: value.run }))
     const report = JSON.parse(await readFile(join(value.output, 'watch-report.json'), 'utf8')); assert.equal(report.status, 'failed'); assert.equal(report.supportPromotion, false)
     if (controls.wrongCatalog) assert.ok((await readdir(value.output)).includes('source-only.workqueue.json'))
     assert.ok(!(await readdir(value.output)).includes('workqueue.json'))
+    if (controls.failStep === '--catalog-output') {
+      assert.equal(report.nativeCatalogPython.proof.complete, false)
+      assert.equal(report.nativeCatalogPython.proof.numericalCredit, false)
+    }
   }
 })
 

@@ -1,0 +1,101 @@
+{
+  "status": "VALIDATED_RADIAL_WIDTH_CPU_METAL_PILOT",
+  "matrixComplete": false,
+  "nativeGraphs": 134,
+  "nativeShaderAtlasCases": 126,
+  "savedFinalScenes": 9,
+  "browserCaseRuns": 286,
+  "primaryFloat32Words": 73216,
+  "shaderFloat32Words": 73216,
+  "wordMismatches": 12672,
+  "shaderWordMismatches": 11520,
+  "maxUlps": 1,
+  "maxAbsoluteError": 2.9802322387695312e-08,
+  "contractViolations": 0,
+  "resizeFrames": 12,
+  "uniqueActualPythonPrefixes": 10,
+  "scope": "Blender5.3.0 02f0899d78e3 macOSarm64 Radial Segment Width only, integer literal Sides2..64 and Roundness exactly1, both Normalize states. Shader source EEVEE Metal; compositor authored CPU/GPU. The pinned regular/full-roundness output is independent of Vector and Normalize; only that dependency is pruned. CPU MF double-PI and GPU Float32-PI staging remain distinct native anchors. All other Radial outputs/branches, Cycles live shader, general computed Sides and other builds/platforms remain unqualified. The official demo uses fractional Sides and Segment Coordinates and is not unlocked or visually accepted by this slice.",
+  "resources": "No port-owned textures/render targets or per-frame readback. Three actual saved Final compositor pipeline cycles restore original material/callback ownership and the exact independent renderer-owned DFG_LUT baseline. Three additional actual material-program installation/disposal cycles draw the actual saved plane using its live Base Color under an explicitly named fragment diagnostic; these test the kernel/program transport, not Principled lighting parity.",
+  "closedReader": {
+    "runtimeFingerprint": "231f967c7daf71e3e80dd5706385208e8f982d6e52069f373379a7a94e3f27c9",
+    "verifierSha256": "9859c4275273e4bbc724292e408602dde1c9269749ffb66a7969c91b059de890",
+    "runtimeArchiveHelperSha256": "431b8a4e92a194d63a8db512aa84f3076c9951e083b873885d8115e0caf509ed"
+  },
+  "schemaVersion": 1,
+  "role": "Isolated CPU-source/physical-Metal pilot only. Native-GPU-authored compositor and software browser profiles still require the full integrated matrix before promotion.",
+  "rawReceipt": {
+    "machineLocal": true,
+    "path": "artifacts/verification-radial-next/pilot-closed.json",
+    "sha256": "9c11312250a38ef59fca240e2d0eb253f9d129189106d3dc55810c6934e23cf7"
+  },
+  "rawNative": {
+    "path": "artifacts/verification-radial-next/pilot-cpu/qualification.json",
+    "sha256": "ab6d11f6ad6c284b793cf21ff43987049854258ff58d647658f0a0ec8548864f"
+  },
+  "rawFinal": {
+    "path": "artifacts/verification-radial-next/pilot-cpu/final-proof.json",
+    "sha256": "da7cf670db027fb4f11f87527f921c1b25319ed18ee6356ee19f7f70a28518fe"
+  },
+  "runs": [
+    {
+      "path": "artifacts/verification-radial-next/pilot-cpu/browser-raw-metal/report.json",
+      "sha256": "f60d971fab1c9d0044c8efa44acf01239369bb25e5426ae92f88ebf97dea60ba",
+      "sourceDevice": "CPU",
+      "profile": "metal",
+      "phase": "raw",
+      "browserVersion": "158.0.8127.18",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 134
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 134
+        }
+      ]
+    },
+    {
+      "path": "artifacts/verification-radial-next/pilot-cpu/browser-final-metal/report.json",
+      "sha256": "da111b1b963a9371ac4f0b8b798aecac15b1c3a6c70e437efbf073b209d4df6b",
+      "sourceDevice": "CPU",
+      "profile": "metal",
+      "phase": "final",
+      "browserVersion": "158.0.8127.18",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 9
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 9
+        }
+      ]
+    }
+  ]
+}

@@ -20,7 +20,7 @@ def socket_bounds(socket, seen=()):
         if a and b and a[0] + b[0] >= -2147483648 and a[1] + b[1] <= 2147483647: return a[0] + b[0], a[1] + b[1]
     return None
 
-def normalize_utility(node, op, input_value, fail, device):
+def normalize_utility(node, op, input_value, fail, device, constant_string=None):
     if node.bl_idname in {"FunctionNodeInputBool", "FunctionNodeInputInt"}:
         op["value"] = bool(node.boolean) if node.bl_idname == "FunctionNodeInputBool" else int(node.integer)
         return
@@ -28,9 +28,14 @@ def normalize_utility(node, op, input_value, fail, device):
         op["properties"].update({"data_type": node.data_type, "operation": node.operation, "mode": node.mode})
         if node.data_type in {"STRING", "OBJECT", "FONT"}:
             active = [socket for socket in node.inputs if socket.enabled and not getattr(socket, "is_unavailable", False)]
-            if node.operation not in {"EQUAL", "NOT_EQUAL"} or len(active) != 2 or any(socket.is_linked for socket in active):
+            if node.operation not in {"EQUAL", "NOT_EQUAL"} or len(active) != 2:
                 fail("Linked string or data-block comparisons require live identity transport")
-            a, b = (socket.default_value for socket in active)
+            if any(socket.is_linked for socket in active):
+                if node.data_type != 'STRING' or constant_string is None:
+                    fail("Linked string or data-block comparisons require qualified static string or live identity transport")
+                a, b = (constant_string(socket) for socket in active)
+            else:
+                a, b = (socket.default_value for socket in active)
             op["kind"] = "utility-constant"
             op["value"] = (a == b) if node.operation == "EQUAL" else (a != b)
             return

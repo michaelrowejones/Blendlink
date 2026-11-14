@@ -20,12 +20,12 @@ def _sibling(name):
         # A source extension can load this canonical file under its own package
         # name; installed extensions put all helpers directly beside it.
         source = Path(__file__).with_name(name + ".py")
-        if name == "static_selection" and not source.is_file():
+        if name in {"static_selection", "static_strings"} and not source.is_file():
             # This shared policy is authored with the addon. Standalone source
             # probes only add the canonical Blender directory to sys.path;
             # packaged SDK/extension builds put the derived import closure
             # beside this file, so they never need the source-layout fallback.
-            source = Path(__file__).resolve().parents[2] / "blender-addon" / "static_selection.py"
+            source = Path(__file__).resolve().parents[2] / "blender-addon" / (name + ".py")
         if not source.is_file():
             raise
         spec = importlib.util.spec_from_file_location(qualified, source)
@@ -40,6 +40,7 @@ def _sibling(name):
 
 
 static_selection = _sibling("static_selection")
+static_strings = _sibling("static_strings")
 normalize_color_operation = _sibling("compositor_color").normalize_color_operation
 native_color_band = _sibling("native_color_band").native_color_band
 normalize_integer_bits = _sibling("compositor_integer_bits").normalize_integer_bits
@@ -70,6 +71,7 @@ normalize_static_image = _sibling("compositor_image").normalize_image
 normalize_vector_component = _sibling("compositor_vector_component").normalize_vector_component
 normalize_float_to_int = _sibling("compositor_float_to_int").normalize_float_to_int
 normalize_vector_math = _sibling("compositor_vector_math").normalize_vector_math
+normalize_radial_width = _sibling("compositor_radial_width").normalize_radial_width
 resolve_vector_math_literal = _sibling("compositor_procedural_texture").literal
 normalize_procedural_texture = _sibling("compositor_procedural_texture").normalize_procedural_texture
 validate_texture_field_graph = _sibling("compositor_procedural_texture").validate_texture_field_graph
@@ -89,6 +91,7 @@ TYPES = {
     "FunctionNodeInputBool": "utility-constant",
     "FunctionNodeFloatToInt": "float-to-int",
     "ShaderNodeVectorMath": "vector-math",
+    "ShaderNodeRadialTiling": "radial-segment-width",
     "ShaderNodeTexGradient": "gradient-texture",
     "ShaderNodeTexChecker": "checker-texture",
     "CompositorNodeRelativeToPixel": "relative-to-pixel",
@@ -325,6 +328,26 @@ def extract(scene):
             "value": value(getattr(socket, "default_value", None)),
         }
 
+    def static_string_value(socket, ctx):
+        frames = []
+        current = ctx
+        while current.get('parent') is not None:
+            frames.append(current['instance'])
+            current = current['parent']
+        try:
+            record = static_strings.evaluate_input(socket, tuple(reversed(frames)))
+        except static_strings.StaticStringUnsupported as error:
+            fail('unsupported-static-string', ctx['path'], socket.node, socket, str(error))
+        public_record = {key: value for key, value in record.items() if key != 'value'}
+        if isinstance(record['value'], str):
+            import hashlib
+            encoded = record['value'].encode('utf-8')
+            public_record.update(utf8Bytes=len(encoded), valueSha256=hashlib.sha256(encoded).hexdigest())
+        else:
+            public_record['value'] = record['value']
+        result.setdefault('compileTimeStrings', []).append(dict(public_record, path=list(ctx['path']), node=socket.node.name))
+        return record
+
     def input_value(socket, ctx):
         require_static(socket.node, socket, ctx)
         links = [
@@ -458,6 +481,9 @@ def extract(scene):
                 else:
                     ref = input_value(selected['input'], ctx)
                 result.setdefault('compileTimeSelections', []).append(dict(selected['metadata'], path=list(path), node=node.name))
+            elif node.bl_idname in static_strings.SCALAR_NODES:
+                record = static_string_value(socket, ctx)
+                ref = {'kind': 'constant', 'type': 'INT', 'value': record['value']}
             elif node.bl_idname not in TYPES:
                 fail(
                     "unsupported-node",
@@ -514,10 +540,14 @@ def extract(scene):
                 elif node.bl_idname in ("FunctionNodeInputBool", "FunctionNodeInputInt", "FunctionNodeBooleanMath", "FunctionNodeIntegerMath", "FunctionNodeCompare"):
                     normalize_utility(node, op, lambda incoming: input_value(incoming, ctx),
                                       lambda message: fail("unsupported-utility-mode", path, node, socket, message),
-                                      getattr(scene.render, "compositor_device", "CPU"))
+                                      getattr(scene.render, "compositor_device", "CPU"),
+                                      constant_string=lambda incoming: static_string_value(incoming, ctx)['value'])
                 elif node.bl_idname in ("FunctionNodeBitMath", "FunctionNodeHashValue"):
                     normalize_integer_bits(node, socket, op, lambda incoming: input_value(incoming, ctx), result["ops"],
                         lambda incoming, message: fail("unsupported-integer-bits", path, node, incoming, message))
+                elif node.bl_idname == "ShaderNodeRadialTiling":
+                    normalize_radial_width(node, socket, op, lambda incoming: input_value(incoming, ctx), result["ops"],
+                        lambda incoming, message: fail("unsupported-radial-width", path, node, incoming, message), resolve_vector_math_literal)
                 elif node.bl_idname == "ShaderNodeVectorMath":
                     normalize_vector_math(node, socket, op, lambda incoming: input_value(incoming, ctx), result["ops"],
                         lambda incoming, message: fail("unsupported-vector-math", path, node, incoming, message), resolve_vector_math_literal)

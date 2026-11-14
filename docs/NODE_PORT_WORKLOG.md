@@ -490,3 +490,78 @@ image domain/window/origin algebra, remaining native casts and independently
 budgeted composed fields remain reusable prerequisites. Subsequent ports should
 keep new provenance/admission decisions ahead of the source freeze and run
 cheap assembly/schema checks before the serial native/browser proof queue.
+
+## 2026-11-13 — Static string controls, regular Radial Width, bounded Repeat and Cycles normal carriers
+
+All four independent integrated closures share runtime fingerprint
+`8c855569c8cff23d65d829c4c34427f4b0d6d1b3b602245b21b67bd7a9552627`.
+These are bounded qualifications, not complete implementations of every native
+node mode or arbitrary composed scenes. Blender5.3 remains the exact
+`02f0899d78e3` macOSarm64 source profile. The retained full native inventory was
+not recaptured by this classification refresh.
+
+- Static strings: nine classes in each shader/compositor context, host-only
+  UTF8 folding feeding exact scalar controls,4096-byte/128-visit/depth16 bounds.
+  Full pinned one-codepoint Unicode casing (666upper/669lower changes), typed
+  groups/reroutes/mutes, empty/missing/nonoverlapping Find and source-layout
+  imports are checked.272native graphs (269production),55actual saved Finals,
+  1308browser cases,334848Float32 words and59fresh Python prefixes closed with
+  zero word differences.36logical text cases per source context use separate
+  native Length and whole-Find witnesses; these are not separate covered nodes.
+  CPU/GPU-authored compositor constants report CPU-MF and null GPU metadata;
+  actual shader scalar transport reports EEVEE Metal. No runtime GPU string
+  payload, glyph/layout, implicit numeric-position or animation credit.
+- Radial: shader/compositor Segment Width only, literal integer Sides2..64,
+  Roundness1 and both Normalize states; only the proven irrelevant Vector
+  dependency is pruned.268native compositor graphs,252actual shader-atlas cases,
+  18saved Finals and1144browser case pairs closed. Each pair independently
+  compares256words in each path:292864words/path.50688compositor and46080shader
+  exact-word differences remain within the predeclared2ULP AND absolute2^-22
+  gate; measured maximum1ULP/2.9802322387695312e-8, zero violations.20fresh Python
+  prefixes, actual APIs/profiles, resize and ownership checks closed.
+- Repeat: paired shader Input/Output, exact fixed counts0..64 and1..4independent
+  Float/Vector states; own-state copy/add/sub and literal/native-counter steps.
+  Positive counts require bounded literal seeds.49native graphs,11saved Finals,
+  240browser cases/61440words and13fresh Python prefixes closed with zero word
+  differences. Actual shaders have one loop for positive counts, zero for count0,
+  and stay within128KB. Source/profile/type/cost/cancellation/deep/cyclic guards
+  run before deferred graph work. UV fields, including authored clamp+SNAP, remain
+  refused: small producer differences can cross SNAP boundaries. Cross-state
+  native assignments, nonlinear/dynamic loops and real material timeline
+  transport remain independent work; the original Mandelbrot is unchanged.
+- Cycles baking: actual owned Cube wood plus an explicitly labelled active-coat
+  derivative,2material exports/3normal fields,5bake calls,8browser cases and
+  12direction diagnostics. Separate Normal/Coat PNG bindings, native render-
+  evaluated owner geometry, exact nonzero Mikk/UV triangle association and source
+  restoration are checked. Actual zero-margin surface masks gate direction;
+  expanded margins retain the full data quantization gate. Independent PNG CRC/
+  filter decode and producer artifact manifests close the actual GLB/program/
+  native/report bytes against both Metal/SwiftShader APIs and fresh runtime
+  emission. Maximum Normal/Coat surface errors remain0.3251/0.3363degrees.
+  This earns zero live-node credit. Floor exceeds the2M-triangle receiver budget;
+  Lighting-atlas composition refuses before mutation. Full-scene lighting,
+  filtering/LOD and original Cube acceptance remain unqualified.
+
+The source/RNA/topology-only [Radial correction](../experiments/radial-segment-width/demo-controls.md)
+shows its Map Range is STEPPED, Steps1: map=4+4*floor(2*r), followed by
+sides=(map>4?map:3). The authored mesh bounds imply discrete Sides3/8/12.
+The earlier inference of a linear/fractional field was incorrect. Width-only
+admission still does not cover computed Sides or Segment Coordinates. This
+zero-render derivation earns no numerical or scene acceptance credit.
+
+Pipeline fixes reject extra Python actions, declare exact per-family native
+script censuses, guard automatic native catalog observation, and move schema
+preflight before output/native work. Radial/Repeat matrices share explicitly
+pinned runtime transactions and retain fresh closing emissions. Unicode table
+regeneration has a read-only check. Realistic stripped Final projections and
+uninitialized-GPU host metadata failures are now regression controls. A float
+modulo carrier signed zero was caught and replaced with existing integer
+arithmetic outside the string operators; no output tolerance was widened.
+
+The source tree passes1530SDK tests with5optional skips,98release-policy checks,
+123Node pipeline tests plus7Python audit tests, and local packed/Vanilla/R3F and
+fresh-cache install checks. Later metadata-only changes receive focused checks.
+All22new context/node entries are5.3-only partial overrides. Only the8measured
+Case/Find menu values acquire5.3partial enum scope;4.2/5.2categories and enum
+coverage remain unchanged. Target totals are46supported,114partial,14structural,
+158unsupported (332target nodes); no full-node completion claim.

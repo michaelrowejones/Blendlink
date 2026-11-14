@@ -1,0 +1,332 @@
+{
+  "status": "VERIFIED_BOUNDED_CYCLES_NORMAL_CARRIERS",
+  "liveNodeCredit": 0,
+  "wholeSceneFinalAccepted": false,
+  "ownedMaterialExports": 2,
+  "normalFieldChannels": 3,
+  "normalBakeCalls": 5,
+  "uniquePythonPrefixes": 2,
+  "browserCaseRuns": 8,
+  "directionDiagnosticFrames": 12,
+  "scope": "Actual owned Cube wood material and explicit active-coat derivative. Native surface/PNG/basis/carrier + companion-IR loading only; no whole-material lighting/filtering/LOD parity or full original Cube acceptance. Floor remains a named resource refusal.",
+  "native": [
+    {
+      "manifestSha256": "5450d90eaadc662c384ab9c2405fffdcb4c895ea60f440fe95a38a278745243d",
+      "glb": {
+        "path": "material.glb",
+        "bytes": 433436,
+        "sha256": "c2224dddb33d2b25178c4e103d41ea8c8ec6b7ce81130e98f95271726c971e8f"
+      },
+      "sourceHash": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e",
+      "rows": [
+        {
+          "channel": "Wood 6 Normal channel",
+          "maxEncodedError": 0.0019608139991760254,
+          "maxAngularDegrees": 0.3250574469566345,
+          "expandedCoveredTexels": 157910,
+          "actualSurfaceTexels": 25278,
+          "minimumSurfaceNormalLength": 0.9999799132347107,
+          "deviceClass": "gpu",
+          "backend": "metal",
+          "sha256": "dc86094c0a9591dd6c706b7ee1bed82b7de7ec25da5848ce38b091d067f4b665",
+          "size": [
+            1024,
+            1024
+          ]
+        }
+      ],
+      "stateRestored": true
+    },
+    {
+      "manifestSha256": "2b0e6a77acdd45aed74ab547a72feb96fc62443538edc492155558589eb1c454",
+      "glb": {
+        "path": "material.glb",
+        "bytes": 670952,
+        "sha256": "cd2534ed1209e5230c5284cfdf00dc6511c817e52f9523a313d2ee553d010973"
+      },
+      "sourceHash": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e",
+      "rows": [
+        {
+          "channel": "OwnedActiveCoatCubeWood Normal channel",
+          "maxEncodedError": 0.0019608139991760254,
+          "maxAngularDegrees": 0.3250574469566345,
+          "expandedCoveredTexels": 157910,
+          "actualSurfaceTexels": 25278,
+          "minimumSurfaceNormalLength": 0.9999799132347107,
+          "deviceClass": "gpu",
+          "backend": "metal",
+          "sha256": "dc86094c0a9591dd6c706b7ee1bed82b7de7ec25da5848ce38b091d067f4b665",
+          "size": [
+            1024,
+            1024
+          ]
+        },
+        {
+          "channel": "OwnedActiveCoatCubeWood Coat Normal channel",
+          "maxEncodedError": 0.0019608139991760254,
+          "maxAngularDegrees": 0.336300253868103,
+          "expandedCoveredTexels": 157910,
+          "actualSurfaceTexels": 25278,
+          "minimumSurfaceNormalLength": 0.9999798536300659,
+          "deviceClass": "gpu",
+          "backend": "metal",
+          "sha256": "f8b5070da90451624aca7366995812b1921e388d35bcaabca3003652e2b880dc",
+          "size": [
+            1024,
+            1024
+          ]
+        }
+      ],
+      "stateRestored": true
+    }
+  ],
+  "pixelChecks": [
+    {
+      "status": "VERIFIED_NATIVE_NORMAL_PNG_ARCHIVE",
+      "rows": [
+        {
+          "channel": "Normal",
+          "model": "cycles-normal-png-encoding-v2",
+          "maxEncodedError": 0.0019608139991760254,
+          "maxSurfaceAngularDegrees": 0.3250574469566345,
+          "deliveryTexels": 157910,
+          "actualSurfaceTexels": 25278,
+          "minimumSurfaceNormalLength": 0.9999799132347107,
+          "scope": "Surface direction and full delivery quantization only; no margin-direction/filtering/LOD or whole-material lighting claim"
+        }
+      ],
+      "liveNodeCredit": 0
+    },
+    {
+      "status": "VERIFIED_NATIVE_NORMAL_PNG_ARCHIVE",
+      "rows": [
+        {
+          "channel": "Normal",
+          "model": "cycles-normal-png-encoding-v2",
+          "maxEncodedError": 0.0019608139991760254,
+          "maxSurfaceAngularDegrees": 0.3250574469566345,
+          "deliveryTexels": 157910,
+          "actualSurfaceTexels": 25278,
+          "minimumSurfaceNormalLength": 0.9999799132347107,
+          "scope": "Surface direction and full delivery quantization only; no margin-direction/filtering/LOD or whole-material lighting claim"
+        },
+        {
+          "channel": "Coat Normal",
+          "model": "cycles-normal-png-encoding-v2",
+          "maxEncodedError": 0.0019608139991760254,
+          "maxSurfaceAngularDegrees": 0.336300253868103,
+          "deliveryTexels": 157910,
+          "actualSurfaceTexels": 25278,
+          "minimumSurfaceNormalLength": 0.9999798536300659,
+          "scope": "Surface direction and full delivery quantization only; no margin-direction/filtering/LOD or whole-material lighting claim"
+        }
+      ],
+      "liveNodeCredit": 0
+    }
+  ],
+  "browsers": [
+    {
+      "profile": "metal",
+      "reportDirectory": "/Users/michaeljones/Documents/GitHub/Blendlink/artifacts/verification-next3-normal-browser-metal",
+      "reportSha256": "7c309017dbaca3757f052af9d51a80ec6b6be0abcc3dcd3e57ad791189b4f556",
+      "runtimeFingerprint": "8c855569c8cff23d65d829c4c34427f4b0d6d1b3b602245b21b67bd7a9552627",
+      "rows": [
+        {
+          "status": "PASSED_CYCLES_NORMAL_CARRIER_LOADING",
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "rows": [
+            {
+              "case": "verification-next3-normal-wood",
+              "installed": 1,
+              "channels": [
+                {
+                  "channel": "Normal",
+                  "visiblePixels": 346,
+                  "sha256": "0661dc6e518f7473b534022e27b35a18d42e90e25533d1d8010e724e47ae2dc7"
+                }
+              ],
+              "sourceRestored": true,
+              "normalCarrierRetained": true
+            },
+            {
+              "case": "verification-next3-normal-coat",
+              "installed": 1,
+              "channels": [
+                {
+                  "channel": "Normal",
+                  "visiblePixels": 346,
+                  "sha256": "0661dc6e518f7473b534022e27b35a18d42e90e25533d1d8010e724e47ae2dc7"
+                },
+                {
+                  "channel": "Coat Normal",
+                  "visiblePixels": 346,
+                  "sha256": "4bd22a260885770cd3c145e5b6b6ba827b604593ae834078b60dc6e8dd683693"
+                }
+              ],
+              "sourceRestored": true,
+              "normalCarrierRetained": true
+            }
+          ],
+          "errors": [],
+          "scope": "Actual native PNG/basis carrier loading, installed companion IR, normal-map preservation and nonblank finite normal diagnostics; no cross-renderer lighting parity claim"
+        },
+        {
+          "status": "PASSED_CYCLES_NORMAL_CARRIER_LOADING",
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "rows": [
+            {
+              "case": "verification-next3-normal-wood",
+              "installed": 1,
+              "channels": [
+                {
+                  "channel": "Normal",
+                  "visiblePixels": 346,
+                  "sha256": "8ad498cfb586dc02145a7617a922e0e76fdd00163ff61b8d2cfc1d05915bd5c5"
+                }
+              ],
+              "sourceRestored": true,
+              "normalCarrierRetained": true
+            },
+            {
+              "case": "verification-next3-normal-coat",
+              "installed": 1,
+              "channels": [
+                {
+                  "channel": "Normal",
+                  "visiblePixels": 346,
+                  "sha256": "8ad498cfb586dc02145a7617a922e0e76fdd00163ff61b8d2cfc1d05915bd5c5"
+                },
+                {
+                  "channel": "Coat Normal",
+                  "visiblePixels": 346,
+                  "sha256": "de9d5eeca3f85c15567d9680ef1da24ded4bb8f236c3137533c18d42c3e3de96"
+                }
+              ],
+              "sourceRestored": true,
+              "normalCarrierRetained": true
+            }
+          ],
+          "errors": [],
+          "scope": "Actual native PNG/basis carrier loading, installed companion IR, normal-map preservation and nonblank finite normal diagnostics; no cross-renderer lighting parity claim"
+        }
+      ]
+    },
+    {
+      "profile": "software",
+      "reportDirectory": "/Users/michaeljones/Documents/GitHub/Blendlink/artifacts/verification-next3-normal-browser-software",
+      "reportSha256": "19655888db10c9166216e12191270e9b0698324b58d2dd54697630fd6f44c2e4",
+      "runtimeFingerprint": "8c855569c8cff23d65d829c4c34427f4b0d6d1b3b602245b21b67bd7a9552627",
+      "rows": [
+        {
+          "status": "PASSED_CYCLES_NORMAL_CARRIER_LOADING",
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "rows": [
+            {
+              "case": "verification-next3-normal-wood",
+              "installed": 1,
+              "channels": [
+                {
+                  "channel": "Normal",
+                  "visiblePixels": 345,
+                  "sha256": "aa0db99addaf7417665046a6c1c58d9ab22c08b8262571649f9ca36fbb5e5781"
+                }
+              ],
+              "sourceRestored": true,
+              "normalCarrierRetained": true
+            },
+            {
+              "case": "verification-next3-normal-coat",
+              "installed": 1,
+              "channels": [
+                {
+                  "channel": "Normal",
+                  "visiblePixels": 345,
+                  "sha256": "aa0db99addaf7417665046a6c1c58d9ab22c08b8262571649f9ca36fbb5e5781"
+                },
+                {
+                  "channel": "Coat Normal",
+                  "visiblePixels": 345,
+                  "sha256": "dcc2e0b1e9137b795c8ccf36c78e4db134729dfd1bba995c12449e449de62731"
+                }
+              ],
+              "sourceRestored": true,
+              "normalCarrierRetained": true
+            }
+          ],
+          "errors": [],
+          "scope": "Actual native PNG/basis carrier loading, installed companion IR, normal-map preservation and nonblank finite normal diagnostics; no cross-renderer lighting parity claim"
+        },
+        {
+          "status": "PASSED_CYCLES_NORMAL_CARRIER_LOADING",
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Google)",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "rows": [
+            {
+              "case": "verification-next3-normal-wood",
+              "installed": 1,
+              "channels": [
+                {
+                  "channel": "Normal",
+                  "visiblePixels": 345,
+                  "sha256": "7f10e9d8d6a0e0007e6fff37cbf4a727a666575305756eaa3384d71d8760523c"
+                }
+              ],
+              "sourceRestored": true,
+              "normalCarrierRetained": true
+            },
+            {
+              "case": "verification-next3-normal-coat",
+              "installed": 1,
+              "channels": [
+                {
+                  "channel": "Normal",
+                  "visiblePixels": 345,
+                  "sha256": "7f10e9d8d6a0e0007e6fff37cbf4a727a666575305756eaa3384d71d8760523c"
+                },
+                {
+                  "channel": "Coat Normal",
+                  "visiblePixels": 345,
+                  "sha256": "bb18a4bdd6cca5347cbcf719927186f7c75c69e5aaa2c98f90f2c9d9f901d980"
+                }
+              ],
+              "sourceRestored": true,
+              "normalCarrierRetained": true
+            }
+          ],
+          "errors": [],
+          "scope": "Actual native PNG/basis carrier loading, installed companion IR, normal-map preservation and nonblank finite normal diagnostics; no cross-renderer lighting parity claim"
+        }
+      ]
+    }
+  ],
+  "closure": {
+    "independentlyEmittedAtClose": true,
+    "runtimeFingerprint": "8c855569c8cff23d65d829c4c34427f4b0d6d1b3b602245b21b67bd7a9552627",
+    "decoderSha256": "abe188ef245a17f6feddd4f6096e72c1e4de1ff82db8b2923f652c521559a606",
+    "verifierSha256": "cc51c4c868af3e03ec161646578babfd08f1d13c766bc0a66cd992009ad5549e",
+    "archiveHelperSha256": "913c0131391d3c97f6731e7ba11ad9c1009cda5961ab2fa115b6faf745e562f5"
+  }
+}

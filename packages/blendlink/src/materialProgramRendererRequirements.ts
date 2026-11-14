@@ -11,7 +11,9 @@ export type MaterialProgramRendererRequirement = NodeRendererRequirement | Legac
 
 const SQUEEZE = { op: 'squeeze_native', model: 'eevee-squeeze-f32-v1' }
 const MAGIC = { op: 'tex_magic_native', model: 'eevee-magic-f32-v1' }
-const freshPrograms = [SQUEEZE, MAGIC]
+const RADIAL_WIDTH = {op:'radial_segment_width',model:'regular-full-roundness-segment-width-v1'}
+const REPEAT = {op:'repeat_static',model:'eevee-static-repeat-53-v1'}
+const freshPrograms = [SQUEEZE, MAGIC, RADIAL_WIDTH, REPEAT]
 const record = (value: unknown): value is Record<string, unknown> => !!value && typeof value === 'object' && !Array.isArray(value)
 const key = (value: NodeRendererProgramSelector): string => JSON.stringify([value.op, value.model])
 
@@ -31,7 +33,7 @@ export function matchingNodeRendererPrograms(value: unknown, selectors: readonly
 
 export function nodeRendererProgramLabel(programs: readonly NodeRendererProgramSelector[]): string {
   return [...new Set(programs.map(program => program.op === SQUEEZE.op ? 'Squeeze Value'
-    : program.op === MAGIC.op ? 'Magic Texture' : 'live material program'))].join(' and ') || 'Live material program'
+    : program.op === MAGIC.op ? 'Magic Texture' : program.op === RADIAL_WIDTH.op ? 'Radial Tiling Segment Width' : program.op === REPEAT.op ? 'Repeat Zone' : 'live material program'))].join(' and ') || 'Live material program'
 }
 
 /** No Three import: ordinary unmarked portable scenes retain their no-fetch

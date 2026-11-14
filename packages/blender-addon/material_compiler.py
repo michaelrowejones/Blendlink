@@ -50,6 +50,10 @@ GENERATED_MATERIAL_PREFIX = "BLENDLINK_WEB."
 PRIVATE_COLOR_PREFIX = "_BLENDLINK_WEB_"
 STATIC_SHADE_FLOOR_MODEL = "selected-intrinsic-static-shade-floor-v1"
 MATERIAL_BAKE_PROPERTY = "blendlink_material_bake"
+NORMAL_BAKE_TRIANGLE_BUDGET = 2_000_000
+NORMAL_BAKE_STATIC_MODIFIERS = frozenset({
+    "BEVEL", "DECIMATE", "SUBSURF", "TRIANGULATE", "WEIGHTED_NORMAL", "NORMAL_EDIT",
+})
 TSL_IR_PROPERTY = "blendlink_tsl_ir"
 TSL_IR_BYTE_BUDGET = 262144
 CHANNEL_PLAN_MODEL = "principled-channel-plan-v1"
@@ -573,6 +577,7 @@ _MATERIALIZED_FIELD_NODES = frozenset({
     "ShaderNodeTexGradient",
     "ShaderNodeTexImage",
     "ShaderNodeTexMagic",
+    "ShaderNodeRadialTiling",
     "ShaderNodeTexNoise",
     "ShaderNodeTexVoronoi",
     "ShaderNodeTexWave",
@@ -1487,6 +1492,7 @@ def _materialized_binding_issues(
     material, raw_bindings, *,
     deforming_receivers: bool = False,
     slot_scoped: bool = False,
+    evaluated_static: bool = False,
 ) -> list[MaterialIssue]:
     """Shared per-binding constraints for baked receivers.
 
@@ -1560,6 +1566,7 @@ def _materialized_binding_issues(
     modifiers = [
         modifier.name for modifier in obj.modifiers
         if not (deforming_receivers and modifier.type in _DEFORMING_MODIFIERS)
+        and not evaluated_static
     ]
     if modifiers:
         issues.append(MaterialIssue(
@@ -2375,20 +2382,27 @@ def _plan_selected_material(
                     needs_program = True
                 if needs_program:
                     program = _plan_tsl_program(material, raw_bindings, binding_issues, purpose=purpose, target='EEVEE', automatic=True)
-                    if program.outcome == "blocked":
+                    with tsl_ir.emission_context(tree=tree, target='EEVEE') as source_engine:
+                        cycles_normals = source_engine == 'CYCLES' and bool(program.issues) and all(
+                            issue.code == 'material.normal-map-program-unproven' for issue in program.issues)
+                    if program.outcome == "blocked" and not cycles_normals:
                         return program
                     live_plan = program.channel_plan or {}
                     # Reuse the proven static channel baker only for a shared
                     # EEVEE/Cycles Principled root. EEVEE-only lighting graphs
                     # must never be flattened by a Cycles field bake.
                     try:
-                        eevee_root, _ = tsl_ir.find_principled_root(tree, target='EEVEE')
+                        eevee_root, eevee_stack = tsl_ir.find_principled_root(tree, target='EEVEE')
                         # The legacy classifier can select a tree-order root;
                         # the fallback must compare the actual engine outputs.
-                        cycles_root, _, _ = tsl_ir._active_surface_link(tree, 'CYCLES')
-                        shared_root = eevee_root == cycles_root
+                        if cycles_normals:
+                            cycles_root, _cycles_stack = tsl_ir.find_principled_root(tree, target='CYCLES')
+                            shared_root = eevee_root == cycles_root and eevee_stack == _cycles_stack
+                        else:
+                            cycles_root, _, _ = tsl_ir._active_surface_link(tree, 'CYCLES')
+                            shared_root = eevee_root == cycles_root
                         translated = {entry['channel'] for entry in live_plan.get('channels', ()) if 'tslIr' in entry}
-                        bakeable = {'Base Color', 'Metallic', 'Roughness', 'Alpha', 'Emission', 'Normal'}
+                        bakeable = {'Base Color', 'Metallic', 'Roughness', 'Alpha', 'Emission', 'Normal'} | ({'Coat Normal'} if cycles_normals else set())
                         aliases = {'Emission Color': 'Emission', 'Emission Strength': 'Emission',
                                    'Sheen Tint': 'Sheen', 'Sheen Weight': 'Sheen'}
                         shared_root = shared_root and all(
@@ -2401,7 +2415,7 @@ def _plan_selected_material(
                                            for entry in live_plan.get('channels', ())):
                         hybrid = _plan_material_bake(material, raw_bindings, binding_issues,
                                                      purpose=purpose, live_plan=live_plan)
-                        if any(issue.code == "material.automatic-fallback-engine-unproven" for issue in hybrid.issues):
+                        if cycles_normals or any(issue.code == "material.automatic-fallback-engine-unproven" for issue in hybrid.issues):
                             return hybrid
                         if hybrid.outcome != 'blocked' and any(entry.get('route') == 'bake'
                                                               for entry in (hybrid.channel_plan or {}).get('channels', ())):
@@ -3439,12 +3453,20 @@ def _plan_material_bake(
     object_names = tuple(sorted({obj.name for obj, _slot in raw_bindings}))
     issues = list(binding_issues)
     tree, root = _principled_root_of(material)
-    routing = (
+    root_stack = ()
+    try:
+        root, root_stack = tsl_ir.find_principled_root(tree, target='CYCLES')
+    except (tsl_ir.TslIrRefusal, RecursionError, AttributeError):
+        pass
+    routing = ({'model': procedural.CHANNEL_ROUTING_MODEL, 'surfaceRoot': 'principled',
+                'channels': [procedural._classify_channel(name, root.inputs[name], group_stack=root_stack)
+                             for name in (*procedural._CHANNEL_ROUTING_INPUTS, 'Coat Normal') if root.inputs.get(name) is not None]}
+               if root is not None else (
         procedural.material_channel_routing(
             tree, procedural.reachable_surface_nodes(tree),
         )
         if tree is not None else None
-    )
+    ))
     if root is None or routing is None or routing["surfaceRoot"] != "principled":
         # Mix-Shader fold (user-approved 2026-07-28): a surface-resolvable
         # closure tree plans through the SAME pipeline with synthesized
@@ -3536,6 +3558,8 @@ def _plan_material_bake(
                     if "UV-bake ray context" in reason else "material.automatic-fallback-engine-unproven"))
                 return None
         routing_kind = entry.get("routing")
+        if channel_name in {'Normal', 'Coat Normal'} and routing_kind not in _CHANNEL_REFUSED_ROUTINGS:
+            routing_kind = 'unique'
         if routing_kind in _CHANNEL_REFUSED_ROUTINGS:
             refuse(channel_name, entry)
             return None
@@ -3658,9 +3682,16 @@ def _plan_material_bake(
             route_bake("Emission", merged, "srgb")
 
     # --- Normal (tangent-space NORMAL pass) ---
-    normal_entry = routed.get("Normal")
-    if normal_entry is not None and normal_entry["linked"]:
-        route_bake("Normal", normal_entry, "data", bake_pass="NORMAL")
+    for normal_name in ('Normal', 'Coat Normal'):
+        normal_entry = routed.get(normal_name)
+        coat_weight = root.inputs.get('Coat Weight') if root is not None else None
+        coat_literal = ((live_channels.get('Coat Weight') or {}).get('tslIr') or {}).get('output') or {}
+        if normal_name == 'Coat Normal' and coat_literal.get('op') == 'const_float' and coat_literal.get('value') == 0:
+            continue
+        if normal_name == 'Coat Normal' and coat_weight is not None and not coat_weight.is_linked and coat_weight.default_value == 0:
+            continue
+        if normal_entry is not None and normal_entry["linked"]:
+            route_bake(normal_name, normal_entry, "data", bake_pass="NORMAL")
 
     # Per-object attributes make every baked field object-dependent: tile
     # bakes evaluate on a shared proxy carrying no per-object properties,
@@ -3686,6 +3717,29 @@ def _plan_material_bake(
             "optimization."
         )
 
+    evaluated_normal = any(record.get('route') == 'bake' and record.get('pass') == 'NORMAL' for record in channels)
+    if evaluated_normal and any(procedural._animated_id(owner) for owner in (root.id_data, *(instance.id_data for instance in root_stack))):
+        issues.append(MaterialIssue('material.normal-bake-tree-animated', material.name,
+            'Static normal baking cannot freeze an animated outer/inner artist group.',
+            'Keep this response live or explicitly capture one reviewed static frame.', object_names))
+    if evaluated_normal:
+        for obj, slot in raw_bindings:
+            estimated_triangles = len(obj.data.loops) - 2 * len(obj.data.polygons)
+            for modifier in obj.modifiers:
+                if modifier.type == 'SUBSURF' and modifier.show_render:
+                    estimated_triangles *= 4 ** modifier.render_levels
+            if estimated_triangles > NORMAL_BAKE_TRIANGLE_BUDGET:
+                issues.append(MaterialIssue('material.normal-bake-geometry-budget', material.name,
+                    f'Object "{obj.name}" has a conservative render-subdivision estimate of {estimated_triangles:,} triangles; the static normal receiver budget is {NORMAL_BAKE_TRIANGLE_BUDGET:,}.',
+                    'Use an explicitly reviewed lower-resolution coincident receiver or reduce redundant static subdivision; SceneToWeb will not silently bake viewport geometry or omit the normal.', (obj.name,)))
+            animated = procedural._animated_id(obj) or procedural._animated_id(obj.data) or obj.data.shape_keys is not None
+            supported = all(mod.type in NORMAL_BAKE_STATIC_MODIFIERS
+                            and not procedural._animated_id(mod.id_data) for mod in obj.modifiers)
+            if animated or not supported or len(obj.material_slots) != 1 or slot != 0 or obj.constraints or obj.instance_type != 'NONE':
+                issues.append(MaterialIssue('material.normal-bake-static-context-unproven', material.name,
+                    f'Object "{obj.name}" requires a static single-slot evaluated normal receiver; pose, animation, instancing and other modifiers are unqualified.',
+                    'Use one static mesh binding with the supported modifier set, or choose a reviewed native appearance capture.', (obj.name,)))
+
     # --- Per-binding resolution and UV validation ---
     planned_bindings = []
     tile_resolution = None
@@ -3706,19 +3760,23 @@ def _plan_material_bake(
                     object_names,
                 ))
         if needs_unique:
-            issues.extend(_materialized_binding_issues(
-                material, raw_bindings,
-                deforming_receivers=True,
-                slot_scoped=True,
-            ))
+            if evaluated_normal:
+                for raw_binding in raw_bindings:
+                    issues.extend(_materialized_binding_issues(
+                        material, [raw_binding], deforming_receivers=True,
+                        slot_scoped=True, evaluated_static=True))
+            else:
+                issues.extend(_materialized_binding_issues(
+                    material, raw_bindings, deforming_receivers=True, slot_scoped=True))
     if not issues:
         for obj, slot in raw_bindings:
             resolution_plan = None
             source_hash = None
             if needs_unique:
-                source_hash = _materialized_binding_hash(
-                    obj, rest_basis=_deforming_receiver(obj),
-                )
+                has_normal_bake = any(record.get('route') == 'bake' and record.get('pass') == 'NORMAL' for record in channels)
+                source_hash = _materialized_binding_hash(obj, rest_basis=False if has_normal_bake else _deforming_receiver(obj))
+                if has_normal_bake:
+                    source_hash = hashlib.sha256((source_hash + '\0' + obj.name + ':' + str(slot)).encode()).hexdigest()
                 if object_attribute_names:
                     # Bindings with different per-object attribute values
                     # must never share a bake variant.
@@ -3829,6 +3887,7 @@ def _plan_material_bake(
         _attach_tsl_ir(tree, channels, surface_resolved=surface_resolved)
     channel_plan = {
         "model": CHANNEL_PLAN_MODEL,
+        **({'evaluatedStaticNormal': True} if evaluated_normal else {}),
         **({'automatic': True, 'sourceTarget': 'EEVEE'} if live_plan is not None else {}),
         "channels": channels,
         **({"surfaceResolved": True} if surface_resolved else {}),
@@ -3906,13 +3965,16 @@ def _material_bake_channel_material(
     created_materials.append(material)
     material.name = f"{PRIVATE_CHANNEL_PREFIX}{kind}.{decision.material_name}"
     material["blendlink_private_materialization"] = "cyclesEmit"
-    tree, root = _principled_root_of(material)
+    tree = bakelib.active_shader_node_tree(material)
+    _privatize_surface_groups(tree)
+    root, root_stack = tsl_ir.find_principled_root(tree, target='CYCLES')
     if tree is None or root is None:
         raise MaterialCompileError(
             f'Private channel copy of "{decision.material_name}" lost its '
             "Principled root."
         )
 
+    tap_builder = _SurfaceTapBuilder(tree)
     def channel_source(name):
         socket = procedural._node_input(root, name)
         if socket is None or not socket.is_linked:
@@ -3923,7 +3985,11 @@ def _material_bake_channel_material(
                 else tuple(socket.default_value)
                 if socket is not None else None
             )
-        return socket.links[0].from_socket, None
+        source = socket.links[0].from_socket
+        if root_stack:
+            socket_type = 'NodeSocketVector' if source.type == 'VECTOR' else 'NodeSocketColor' if source.type == 'RGBA' else 'NodeSocketFloat'
+            source = tap_builder.thread(source, root_stack, socket_type=socket_type)
+        return source, None
 
     sources = {}
     if kind == "baseColor":
@@ -3941,8 +4007,8 @@ def _material_bake_channel_material(
         sources["strength"], sources["strengthConstant"] = channel_source(
             "Emission Strength",
         )
-    elif kind == "normal":
-        sources["normal"], _ = channel_source("Normal")
+    elif kind in {"normal", "coatNormal"}:
+        sources["normal"], _ = channel_source("Normal" if kind == 'normal' else 'Coat Normal')
     else:
         raise MaterialCompileError(f"unsupported channel bake kind {kind!r}")
 
@@ -3956,7 +4022,7 @@ def _material_bake_channel_material(
     if hasattr(output, "is_active_output"):
         output.is_active_output = True
 
-    if kind == "normal":
+    if kind in {"normal", "coatNormal"}:
         if sources["normal"] is None:
             raise MaterialCompileError(
                 f'Channel bake for "{decision.material_name}" has no linked '
@@ -4238,6 +4304,10 @@ def exporter_overrides(plan: MaterialPlan) -> dict:
     therefore the transport carrier; unrelated authored color layers are not.
     The finished GLB is rewritten back to ordinary ``COLOR_0`` and attested.
     """
+    if any(any(row.get('pass') == 'NORMAL' and row.get('route') == 'bake'
+               for row in (decision.channel_plan or {}).get('channels', ())) for decision in plan.lowerings):
+        return {'export_tangents': True, **({'export_attributes': True, 'export_all_vertex_colors': False}
+                if any(decision.transport == 'vertexColor' for decision in plan.lowerings) else {})}
     if any(decision.transport == "vertexColor" for decision in plan.lowerings):
         return {
             "export_attributes": True,
@@ -5380,6 +5450,7 @@ def _attest_material_bake_channels(
         "baseColor": pbr.get("baseColorTexture"),
         "orm": pbr.get("metallicRoughnessTexture"),
         "normal": emitted.get("normalTexture"),
+        "coatNormal": ((emitted.get('extensions') or {}).get('KHR_materials_clearcoat') or {}).get('clearcoatNormalTexture'),
         "emissive": emitted.get("emissiveTexture"),
     }
     for kind, texture_info in slots.items():
@@ -5397,6 +5468,18 @@ def _attest_material_bake_channels(
         rect_evidence = attest_page_rect(kind, image_fact, texture_info)
         if rect_evidence is not None:
             channel_evidence[kind].update(rect_evidence)
+    normal_basis = None
+    if fact.get('normalBasis') is not None:
+        import normal_bake_transport
+        for kind in ('normal','coatNormal'):
+            if planned.get(kind) is None:continue
+            texture_info = slots[kind]
+            if int(texture_info.get('texCoord',0)) != int(fact['normalBasis']['texCoord']) or float(texture_info.get('scale',1)) != 1:
+                raise MaterialCompileError('Normal bake texture changed its exact UV basis or unit strength')
+        try:
+            normal_basis = normal_bake_transport.attest(document,binary,primitive_entries,fact['normalBasis'],_accessor_values,_hash_sorted_triangle_digests)
+        except ValueError as error:
+            raise MaterialCompileError(str(error)) from error
     if emitted.get("occlusionTexture") is not None:
         raise MaterialCompileError(
             f'Material output mismatch for "{fact["source"]}": an unplanned '
@@ -5461,6 +5544,7 @@ def _attest_material_bake_channels(
             "channels": bake.get("channels"),
             "gates": bake.get("gates"),
             "textures": channel_evidence,
+            **({'normalBasis': normal_basis} if normal_basis is not None else {}),
             **({
                 "uvEvidence": bake["uvEvidence"],
             } if bake.get("uvEvidence") else {}),
@@ -5669,6 +5753,8 @@ def _ir_runtime_needs(value, needs) -> None:
         if (op, value.get("model")) in (
             ("squeeze_native", "eevee-squeeze-f32-v1"),
             ("tex_magic_native", "eevee-magic-f32-v1"),
+            ("radial_segment_width", "regular-full-roundness-segment-width-v1"),
+            ("repeat_static", "eevee-static-repeat-53-v1"),
         ):
             needs["requiresNodeRendererPrograms"].add((op, value["model"]))
         if op == "uv_active":
@@ -6566,6 +6652,7 @@ def _privatize_surface_groups(tree) -> None:
         nested = getattr(node, "node_tree", None)
         if node.bl_idname == "ShaderNodeGroup" and nested is not None:
             node.node_tree = nested.copy()
+            node.node_tree['blendlink_private_export_group'] = True
             _privatize_surface_groups(node.node_tree)
 
 
@@ -6578,13 +6665,13 @@ class _SurfaceTapBuilder:
         self.tree = tree
         self.counter = 0
 
-    def thread(self, socket, stack):
+    def thread(self, socket, stack, *, socket_type="NodeSocketColor"):
         for instance in reversed(list(stack)):
             inner_tree = instance.node_tree
             name = f"TSL_TAP.{self.counter}"
             self.counter += 1
             inner_tree.interface.new_socket(
-                name, in_out="OUTPUT", socket_type="NodeSocketColor",
+                name, in_out="OUTPUT", socket_type=socket_type,
             )
             group_output = next(
                 (item for item in inner_tree.nodes
@@ -7383,27 +7470,18 @@ def _bake_material_channels_inner(
                 "strength": strength,
             }
 
-    normal_record = records.get("Normal")
-    if normal_record is not None and normal_record.get("route") == "bake":
-        normal_material = _material_bake_channel_material(
-            decision, "normal", created_materials,
-        )
-        resolution = resolution_of(normal_record)
-        result = bake_once(
-            normal_record, normal_material, resolution, allow_hdr=False,
-        )
-        saved = bakelib.save_channel_png(
-            result["pixels"], result["coverage"],
-            os.path.join(temporary_directory, f"channel-{token}-normal.png"),
-            colorspace="data",
-            label=f"{decision.material_name} normal channel",
-        )
-        images["normal"] = {
-            "saved": saved,
-            "image": load_image(saved, "normal", "data"),
-            "uv": normal_record.get("uv"),
-            "uvMaps": normal_record.get("uvMaps") or [],
-        }
+    for normal_name, normal_kind in (('Normal', 'normal'), ('Coat Normal', 'coatNormal')):
+        normal_record = records.get(normal_name)
+        if normal_record is None or normal_record.get('route') != 'bake':
+            continue
+        normal_material = _material_bake_channel_material(decision, normal_kind, created_materials)
+        result = bake_once(normal_record, normal_material, resolution_of(normal_record), allow_hdr=False)
+        saved = bakelib.save_tangent_normal_png(result,
+            os.path.join(temporary_directory, f'channel-{token}-{normal_kind}.png'),
+            label=f'{decision.material_name} {normal_name} channel')
+        gates.setdefault(normal_name, {})['normalEncoding'] = saved['normalEncoding']
+        images[normal_kind] = {'saved': saved, 'image': load_image(saved, normal_kind, 'data'),
+            'uv': normal_record.get('uv'), 'uvMaps': normal_record.get('uvMaps') or []}
 
     return {
         "token": token,
@@ -7414,7 +7492,7 @@ def _bake_material_channels_inner(
     }
 
 
-MATERIAL_PAGE_KINDS = ("baseColor", "orm", "emissive", "normal")
+MATERIAL_PAGE_KINDS = ("baseColor", "orm", "emissive", "normal", "coatNormal")
 # VRAM ceiling per page. The first live measurement (ellie, 2026-07-31)
 # let a single page grow to 8192px to fit every member at scale >= 1 and
 # the GPU texture budget quintupled -- PNG compresses empty page area,
@@ -7694,6 +7772,8 @@ def _generated_material_bake(
     # A generated channel carrier must retain unrelated physical constants.
     # Linked physical channels on the automatic route have proven live IR.
     _source_tree, source_root = _principled_root_of(source_material)
+    try:source_root, _source_stack = tsl_ir.find_principled_root(_source_tree, target='CYCLES')
+    except (tsl_ir.TslIrRefusal, RecursionError, AttributeError):pass
     managed = {'Base Color', 'Metallic', 'Roughness', 'Alpha', 'Normal',
                'Emission Color', 'Emission Strength'}
     if source_root is not None:
@@ -7702,6 +7782,14 @@ def _generated_material_bake(
             if socket.name not in managed and not socket.is_linked and destination is not None \
                     and hasattr(socket, 'default_value'):
                 destination.default_value = socket.default_value
+
+    # Native group defaults may be linked inside the Principled but fold to
+    # exact scalar programs. Preserve their stock glTF physical factors too.
+    for channel_name in ('Coat Weight', 'Coat Roughness', 'Transmission Weight', 'IOR', 'Sheen Roughness'):
+        expression = ((plan_records.get(channel_name) or {}).get('tslIr') or {}).get('output') or {}
+        destination = principled.inputs.get(channel_name)
+        if destination is not None and expression.get('op') == 'const_float':
+            destination.default_value = float(expression['value'])
 
     def image_node(entry, name):
         node = tree.nodes.new("ShaderNodeTexImage")
@@ -7814,19 +7902,20 @@ def _generated_material_bake(
                     strength,
                 )
 
-    normal_entry = images.get("normal")
-    if normal_entry is not None:
-        node = image_node(normal_entry, "BLENDLINK_CHANNEL_NORMAL")
-        normal_map = tree.nodes.new("ShaderNodeNormalMap")
-        normal_map.inputs["Strength"].default_value = 1.0
-        if normal_entry.get("uv") == "unique" and products.get("uvEvidence"):
-            normal_map.uv_map = str(products["uvEvidence"]["uvName"])
-        elif normal_entry.get("uvMaps"):
-            normal_map.uv_map = str(normal_entry["uvMaps"][0])
-        tree.links.new(node.outputs["Color"], normal_map.inputs["Color"])
-        tree.links.new(
-            normal_map.outputs["Normal"], principled.inputs["Normal"],
-        )
+    for normal_kind, normal_name in (("normal", "Normal"), ("coatNormal", "Coat Normal")):
+        normal_entry = images.get(normal_kind)
+        if normal_entry is not None:
+            node = image_node(normal_entry, "BLENDLINK_CHANNEL_" + normal_kind.upper())
+            normal_map = tree.nodes.new("ShaderNodeNormalMap")
+            normal_map.inputs["Strength"].default_value = 1.0
+            if normal_entry.get("uv") == "unique" and products.get("uvEvidence"):
+                normal_map.uv_map = str(products["uvEvidence"]["uvName"])
+            elif normal_entry.get("uvMaps"):
+                normal_map.uv_map = str(normal_entry["uvMaps"][0])
+            tree.links.new(node.outputs["Color"], normal_map.inputs["Color"])
+            tree.links.new(
+                normal_map.outputs["Normal"], principled.inputs[normal_name],
+            )
 
     if uses_alpha:
         if hasattr(generated, "surface_render_method"):
@@ -7876,6 +7965,9 @@ def with_compiled_materials(
     carrier_installs = {}
     binding_entries = []
     data_swaps = []
+    frozen_normal_modifiers = []
+    evaluated_normal_meshes = {}
+    existing_group_ids = {group.as_pointer() for group in bpy.data.node_groups}
     installed_bindings = []
     installed_binding_keys = set()
     temporary_directory = None
@@ -7915,6 +8007,41 @@ def with_compiled_materials(
                         (layer.name for layer in obj.data.uv_layers if layer.active_render), None)},
                 })
 
+        # Freeze only the proved static-normal population, without renaming
+        # owners or deleting source modifiers. This preserves Object Info Random
+        # and the original Generated texture-space transform.
+        normal_owners = sorted({entry['binding'].object_name for entry in binding_entries
+                              if (entry['decision'].channel_plan or {}).get('evaluatedStaticNormal')})
+        render_evaluation = []
+        try:
+            for owner in normal_owners:
+                for modifier in bpy.data.objects[owner].modifiers:
+                    render_evaluation.append((modifier, modifier.show_viewport, getattr(modifier,'levels',None)))
+                    modifier.show_viewport = modifier.show_render
+                    if modifier.type == 'SUBSURF':modifier.levels = modifier.render_levels
+            bpy.context.view_layer.update()
+            depsgraph = bpy.context.evaluated_depsgraph_get()
+            for owner in normal_owners:
+                obj = bpy.data.objects[owner]
+                mesh = bpy.data.meshes.new_from_object(obj.evaluated_get(depsgraph),
+                    preserve_all_data_layers=True, depsgraph=depsgraph)
+                mesh.use_auto_texspace = False
+                mesh.texspace_location = obj.data.texspace_location
+                mesh.texspace_size = obj.data.texspace_size
+                evaluated_normal_meshes[owner] = mesh
+                if len(mesh.loops) - 2 * len(mesh.polygons) > NORMAL_BAKE_TRIANGLE_BUDGET:
+                    raise MaterialCompileError(f'Normal bake evaluated mesh budget exceeded for "{owner}"; use a reviewed lower-resolution receiver.')
+        finally:
+            for modifier, show_viewport, levels in reversed(render_evaluation):
+                modifier.show_viewport = show_viewport
+                if levels is not None:modifier.levels = levels
+            bpy.context.view_layer.update()
+        for owner in normal_owners:
+            for modifier in bpy.data.objects[owner].modifiers:
+                frozen_normal_modifiers.append((modifier, modifier.show_viewport, modifier.show_render))
+                modifier.show_viewport = False
+                modifier.show_render = False
+
         # Preserve instancing: objects that shared one source Mesh and require
         # the same complete slot substitution share one private Mesh copy.
         entries_by_object = {}
@@ -7944,7 +8071,8 @@ def with_compiled_materials(
         ):
             original_data = group["original"]
             try:
-                private_data = original_data.copy()
+                frozen = evaluated_normal_meshes.get(group['objects'][0])
+                private_data = frozen if frozen is not None else original_data.copy()
             except (AttributeError, ReferenceError, RuntimeError, TypeError) as error:
                 raise MaterialCompileError(
                     f'Cannot create a private export mesh from "{original_data.name}": {error}'
@@ -8509,6 +8637,7 @@ def with_compiled_materials(
                 variant = _variant_key(entry["decision"], entry["binding"])
                 products = material_bake_products[variant]
                 if not products.get("uvEvidence") \
+                        or (entry['decision'].channel_plan or {}).get('evaluatedStaticNormal') \
                         or variant in unique_variants:
                     continue
                 orm_entry = products["images"].get("orm")
@@ -8553,7 +8682,7 @@ def with_compiled_materials(
                 )
                 page_colorspaces = {
                     "baseColor": "sRGB", "emissive": "sRGB",
-                    "orm": "Non-Color", "normal": "Non-Color",
+                    "orm": "Non-Color", "normal": "Non-Color", "coatNormal": "Non-Color",
                 }
                 page_bpy_images = {}
                 for kind, saved in saved_pages.items():
@@ -8816,7 +8945,18 @@ def with_compiled_materials(
         )
         os.close(descriptor)
         os.unlink(staged_glb)
-        value = emit(staged_glb)
+        import normal_bake_transport, tangent_export, geometry_export
+        normal_bindings = {}
+        for fact in generated_facts.values():
+            if not {'normal','coatNormal'} & set((fact.get('materialBake') or {}).get('images') or {}):continue
+            if len(fact['bindings']) != 1:raise MaterialCompileError('Normal bake dedupe needs one proved actual owner binding')
+            owner, slot = next(iter(fact['bindings']))
+            obj = bpy.data.objects[owner]
+            uv_name = fact['materialBake']['uvEvidence']['uvName']
+            fact['normalBasis'] = normal_bake_transport.capture(obj, uv_name, _hash_sorted_triangle_digests)
+            normal_bindings[obj.data.name] = uv_name
+        with tangent_export.exact_tangents(normal_bindings), geometry_export.exact_normals(plan, additional_targets=normal_bindings):
+            value = emit(staged_glb)
         _rewrite_private_color_carriers(
             staged_glb, generated_facts, preserve_custom_attributes,
         )
@@ -8884,6 +9024,27 @@ def with_compiled_materials(
             bpy.data.meshes.remove(private_data)
         except (AttributeError, ReferenceError, RuntimeError, TypeError) as error:
             cleanup_errors.append(f'private Mesh cleanup failed: {error}')
+    for modifier, show_viewport, show_render in reversed(frozen_normal_modifiers):
+        try:
+            modifier.show_viewport = show_viewport
+            modifier.show_render = show_render
+        except (ReferenceError, RuntimeError, TypeError) as error:
+            cleanup_errors.append(f'normal receiver modifier restore failed: {error}')
+    for mesh in evaluated_normal_meshes.values():
+        try:
+            if mesh.users == 0 and bpy.data.meshes.get(mesh.name) == mesh:
+                bpy.data.meshes.remove(mesh)
+        except ReferenceError:
+            pass  # Its installed private data swap already removed it.
+    owned_groups = []
+    owned_group_ids = set()
+    def collect_owned_groups(tree):
+        if tree is None:return
+        for node in tree.nodes:
+            group = getattr(node, 'node_tree', None)
+            if group is None or group.as_pointer() in existing_group_ids or not group.get('blendlink_private_export_group') or group.as_pointer() in owned_group_ids:continue
+            owned_group_ids.add(group.as_pointer());owned_groups.append(group);collect_owned_groups(group)
+    for generated in created_materials:collect_owned_groups(bakelib.active_shader_node_tree(generated))
     for generated in reversed(created_materials):
         try:
             generated_name = generated.name
@@ -8891,6 +9052,12 @@ def with_compiled_materials(
                 bpy.data.materials.remove(generated, do_unlink=True)
         except (AttributeError, ReferenceError, RuntimeError, TypeError) as error:
             cleanup_errors.append(f'generated material cleanup failed: {error}')
+    for group in owned_groups:
+        try:
+            if group.users != 0:raise RuntimeError(f'private group still has {group.users} users')
+            bpy.data.node_groups.remove(group)
+        except (ReferenceError, RuntimeError) as error:
+            cleanup_errors.append(f'private channel group cleanup failed: {error}')
     for image in reversed(created_images):
         try:
             image_name = image.name

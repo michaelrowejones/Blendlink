@@ -1,0 +1,26 @@
+[
+  {
+    "build": "02f0899d78e3",
+    "path": "source/blender/nodes/shader/nodes/node_shader_radial_tiling.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/shader/nodes/node_shader_radial_tiling.cc",
+    "sha256": "2a223c3326cfb4d2b4f6f364e7337c75f3c2352696e06e24ba4ec5eff17a7097"
+  },
+  {
+    "build": "02f0899d78e3",
+    "path": "source/blender/gpu/shaders/material/gpu_shader_material_radial_tiling_shared.glsl",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shaders/material/gpu_shader_material_radial_tiling_shared.glsl",
+    "sha256": "adab763a5772baca55f40e9ad0aa0cc1942b8bee87f898fe3e4aaa0601ebeeb3"
+  },
+  {
+    "build": "02f0899d78e3",
+    "path": "source/blender/blenlib/intern/radial_tiling_shared.hh",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/intern/radial_tiling_shared.hh",
+    "sha256": "00651ad6e30e716fe904176336715807016bb2497a7f0aad995bea7028d85f38"
+  },
+  {
+    "build": "02f0899d78e3",
+    "path": "source/blender/gpu/shaders/material/gpu_shader_material_radial_tiling.bsl.hh",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shaders/material/gpu_shader_material_radial_tiling.bsl.hh",
+    "sha256": "1778c33dc8a1b75f0afa875caa51c38b385d946e716643b17a68b2a76f82f4ae"
+  }
+]

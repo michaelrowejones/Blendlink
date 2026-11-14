@@ -1,6 +1,7 @@
 # Field proof compiler attestation throughput
 
-Pixel INT2, floating Image Coordinates and compositor texture-field matrices now
+Pixel INT2, floating Image Coordinates, compositor texture-field and Radial
+Segment Width matrices now
 capture one fresh explicitly pinned runtime transaction before their native
 queue. Each of the eight CPU/GPU × Metal/SwiftShader × raw/Final browser children
 loads that manifest through the existing `loadRuntimeTransaction` helper. The
@@ -55,7 +56,7 @@ node --test scripts/lib/field-proof-throughput.test.mjs \
   scripts/lib/browser-proof-contract.test.mjs
 ```
 
-The new runner-level tests execute real setup against a synthetic tiny SDK and
+The runner-level tests execute real setup against a synthetic tiny SDK and
 schema packet, with Vite and Playwright hard-stubbed before any browser startup.
 They prove explicit selection, default standalone behavior despite an existing
 valid snapshot, missing/wrong pins and manifest refusals, source drift and source
@@ -63,7 +64,10 @@ mode refusal. Synthetic reports deliberately end in `failed` and earn no
 qualification. Existing helper tests cover changed/missing declarations,
 package/config/build/source/dist/maps/vendor/snapshot bytes, added modules and
 resolution shadowing, missing pins and reused directories. The pipeline includes
-the runner tests.
+the runner tests. Radial adds its complete native schema and paired shader/
+compositor input pins to the same explicit-selection, standalone and refusal
+controls. This extension does not add a second timing measurement or reuse the
+original numerical captures; its fresh integrated matrix must close separately.
 
 Freeze all production source/dist/compiler/package/helper and numerical fixture
 inputs before starting a matrix; keep them unchanged through its closing reader.

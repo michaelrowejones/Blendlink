@@ -4,6 +4,21 @@ import {validateNodePortIdentityTransaction} from './node-port-python.mjs'
 import {cp,readdir,realpath,readFile,stat} from 'node:fs/promises'
 import {join,relative,sep} from 'node:path'
 import {nodePortHash,nodePortFileIdentity} from './node-port-contract.mjs'
+
+/** One guarded prefix followed by one reviewed script; script arguments are opaque. */
+export function assertGuardedNativeScript(args,prefix){
+ assert.ok(Array.isArray(args)&&args.every(arg=>typeof arg==='string'))
+ assert.ok(typeof prefix==='string'&&prefix.length>0,'Native Python needs an owned cache prefix')
+ const delimiter=args.indexOf('--'),end=delimiter<0?args.length:delimiter
+ const actions=args.flatMap((arg,index)=>index<end&&['--python','-P','--python-expr','--python-text','--python-console'].includes(arg)?[{arg,index}]:[])
+ assert.equal(actions.length,2,'Native census requires one guarded prefix and one Python script per invocation')
+ assert.equal(actions[0].arg,'--python-expr')
+ assert.equal(args[actions[0].index+1],'import sys; sys.pycache_prefix='+JSON.stringify(prefix)+'; sys.dont_write_bytecode=True')
+ assert.ok(['--python','-P'].includes(actions[1].arg),'Native census cannot substitute an expression or text block for a reviewed script')
+ const path=args[actions[1].index+1]
+ assert.ok(typeof path==='string'&&path.length>0&&actions[1].index+1<end,'Native census script path is missing')
+ return path
+}
 export async function archiveNativeLauncher(launcher, evidence, requireComplete) {
   const directory = join(evidence, 'native-python-proof'), active = await realpath(launcher.directory)
   await cp(active, directory, { recursive: true, errorOnExist: true, force: false })
@@ -65,7 +80,20 @@ export async function archiveNativeLauncher(launcher, evidence, requireComplete)
 }
 
 /** Recheck the archived bytes and every guarded call without depending on deleted active paths. */
-export async function validateNativeArchive(record,evidence,{expectedFinalSources,referenceScript,policyScript,helperInputs}){
+export async function validateNativeArchive(record,evidence,{expectedFinalSources,referenceScript,policyScript,helperInputs,expectedScripts}){
+ // New families declare their complete non-Final Python census. Keep the
+ // historical three-reference/one-policy contract for retained readers.
+ const scriptCounts=expectedScripts===undefined?null:new Map()
+ if(scriptCounts){
+  assert.ok(Array.isArray(expectedScripts)&&expectedScripts.length>0,'Native script census must be a nonempty array')
+  for(const row of expectedScripts){
+   assert.deepEqual(Object.keys(row).sort(),['invocations','path'])
+   assert.ok(typeof row.path==='string'&&row.path.length>0&&!scriptCounts.has(row.path),'Native script census needs unique script paths')
+   assert.ok(Number.isSafeInteger(row.invocations)&&row.invocations>0,'Native script census counts must be positive safe integers')
+   assert.ok(!row.path.endsWith('/export_scene.py'),'Final scripts are counted by their saved source census')
+   scriptCounts.set(row.path,{expected:row.invocations,actual:0})
+  }
+ }
  const{identity,proof}=record,directory=await realpath(join(evidence,'native-python-proof'))
  assert.equal(proof.complete,true);assert.equal(proof.numericalCredit,false);assert.equal(await realpath(proof.directory),directory)
  const files=[]
@@ -90,11 +118,21 @@ export async function validateNativeArchive(record,evidence,{expectedFinalSource
   if(action<0||version>=0&&version<action){assert.equal(r.pythonGuardApplied,false);continue}
   python++;assert.equal(r.pythonGuardApplied,true);assert.ok(typeof r.cacheDirectory==='string'&&!prefixes.has(r.cacheDirectory));prefixes.add(r.cacheDirectory)
   assert.equal(args[action],'--python-expr');assert.equal(args[action+1],'import sys; sys.pycache_prefix='+JSON.stringify(r.cacheDirectory)+'; sys.dont_write_bytecode=True')
+  if(scriptCounts){
+   const path=assertGuardedNativeScript(args,r.cacheDirectory)
+   if(!path.endsWith('/export_scene.py')){
+    const count=scriptCounts.get(path);assert.ok(count,'Unexpected native Python script: '+path);count.actual++
+   }
+  }
   const script=args.findIndex((x,i)=>i<end&&x==='--python'&&args[i+1]?.endsWith('/export_scene.py'))
   if(script>=0){const background=args.findIndex(x=>['-b','--background'].includes(x));assert.ok(background>=0);sources.push(await realpath(args[background+1]))}
   if(args.some((x,i)=>i<end&&x==='--python'&&args[i+1]===referenceScript))references.push(call)
   if(args.some((x,i)=>i<end&&x==='--python'&&args[i+1]===policyScript))policies.push(call)
  }
- assert.equal(python,proof.pythonInvocations);assert.equal(sources.length,proof.finalInvocations);assert.deepEqual([...sources].sort(),[...proof.finalSources].sort());assert.deepEqual([...sources].sort(),[...expectedFinalSources].sort());assert.equal(references.length,3);assert.equal(policies.length,1);assert.equal(python,expectedFinalSources.length+4)
+ assert.equal(python,proof.pythonInvocations);assert.equal(sources.length,proof.finalInvocations);assert.deepEqual([...sources].sort(),[...proof.finalSources].sort());assert.deepEqual([...sources].sort(),[...expectedFinalSources].sort())
+ if(scriptCounts){
+  for(const[path,count]of scriptCounts)assert.equal(count.actual,count.expected,'Native script invocation census differs: '+path)
+  assert.equal(python,expectedFinalSources.length+[...scriptCounts.values()].reduce((sum,count)=>sum+count.expected,0))
+ }else{assert.equal(references.length,3);assert.equal(policies.length,1);assert.equal(python,expectedFinalSources.length+4)}
  assert.ok(!files.some(x=>x.path.split('/').some(part=>part.startsWith('python-cache-'))));return{pythonInvocations:python,finalInvocations:sources.length,uniqueCachePrefixes:prefixes.size,numericalCredit:0,...(identityTransaction?{identityTransaction}:{})}
 }

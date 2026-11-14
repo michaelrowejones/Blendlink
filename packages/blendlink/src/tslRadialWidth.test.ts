@@ -1,0 +1,17 @@
+import {describe,expect,it} from 'vitest'
+import {buildTslScalarNode} from './tslNodeRecipe.js'
+import {buildSourceCompositor} from './tslSourceCompositor.js'
+import {validateNodeRendererRequirement} from './materialProgramRendererRequirements.js'
+import {RADIAL_WIDTH_MODEL as model,RADIAL_WIDTH_PROFILE as sourceProfile} from './tslRadialWidth.js'
+const expression=()=>({op:'radial_segment_width',model,sourceProfile,nativeVersion:[5,3,0],sourceEngine:'EEVEE',nativeGpuBackend:'METAL',dependencyModel:'width-independent-of-vector-and-normalize-v1',sides:{op:'const_float',value:5},roundness:{op:'const_float',value:1}})
+const op=()=>({id:'radial',kind:'radial-segment-width',type:'VALUE',source:{path:[],node:'Artist Radial',nodeType:'ShaderNodeRadialTiling',output:'Segment Width'},properties:{radial_width_model:model,radial_width_profile:sourceProfile,radial_width_version:[5,3,0],radial_width_dependency:'width-independent-of-vector-and-normalize-v1',evaluation_device:'CPU',single_value_device:'CPU'},inputs:Object.fromEntries([['Sides',5],['Roundness',1]].map(([name,value])=>[name,{name,socketType:'VALUE',value:{kind:'constant',type:'VALUE',value}}]))})
+function compositor(source:any){return buildSourceCompositor({version:1,status:'extracted',ops:[source],passes:[],diagnostics:[],output:{kind:'convert',fromType:'VALUE',type:'RGBA',input:{kind:'ref',node:source.id,type:'VALUE'}}},()=>null)}
+describe('output-invariant Radial Segment Width',()=>{
+ it('builds all63integer sides through shader and compositor production dispatch',()=>{for(let sides=2;sides<=64;sides++){const e=expression();e.sides.value=sides;expect(buildTslScalarNode({schemaVersion:1,model:'blendlink-tsl-ir-v1',output:e} as any).isNode).toBe(true);const source=op();source.inputs.Sides.value.value=sides;const built=compositor(source);expect(built.node.isNode).toBe(true);built.dispose();built.dispose()}})
+ it('refuses wrong source/model/schema and any unqualified branch before building',()=>{for(const patch of[{model:'other'},{sourceProfile:'other'},{nativeVersion:[5,2,0]},{sourceEngine:'CYCLES'},{nativeGpuBackend:'OPENGL'},{dependencyModel:'unknown'},{vector:{op:'const_vec3',value:[0,0,0]}}])expect(()=>buildTslScalarNode({schemaVersion:1,model:'blendlink-tsl-ir-v1',output:{...expression(),...patch}}as any)).toThrow(/Radial Tiling/)
+ for(const value of[1,2.5,65,Infinity,NaN]){const e=expression();e.sides.value=value;expect(()=>buildTslScalarNode({schemaVersion:1,model:'blendlink-tsl-ir-v1',output:e}as any)).toThrow(/Radial Tiling/);const source=op();source.inputs.Sides.value.value=value;expect(()=>compositor(source)).toThrow(/Radial Tiling/)}
+ for(const output of['Segment Coordinates','Segment ID','Segment Rotation']){const source=op();source.source.output=output;expect(()=>compositor(source)).toThrow(/Radial Tiling/)}
+ const source=op();source.inputs.Roundness.value.value=0;expect(()=>compositor(source)).toThrow(/Radial Tiling/)
+ })
+ it('requires a real renderer declaration on actual material programs',()=>{const value=expression();expect(validateNodeRendererRequirement({roughness:value},undefined).issue).toMatch(/Radial Tiling Segment Width/);expect(validateNodeRendererRequirement({roughness:value},{schemaVersion:1,model:'live-material-programs-v1',programs:[{op:value.op,model:value.model}]}).issue).toBeUndefined();expect(validateNodeRendererRequirement({}, {schemaVersion:1,model:'live-material-programs-v1',programs:[{op:value.op,model:value.model}]}).required).toEqual([])})
+})

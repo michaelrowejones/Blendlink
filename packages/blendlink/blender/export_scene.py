@@ -6359,6 +6359,34 @@ def plan_export_materials(
             "Website material compilation blocked:\n"
             + material_compiler.format_plan_errors(material_plan)
         )
+    if settings.get("mode") == "baked":
+        # Lighting owners survive compilation, but atlas preparation later
+        # replaces their evaluated mesh/UVs and clears modifiers inside emit.
+        # Static normal carriers prove one exact receiver/basis and retain
+        # source modifier ownership for restoration: that composition is not
+        # qualified. Appearance owners were already excluded above; Realtime
+        # survivors are not touched by atlas preparation and remain eligible.
+        baked_names = {
+            obj.name for obj in export_objects
+            if obj.as_pointer() in baked_pointers
+        }
+        normal_atlas_owners = sorted({
+            binding.object_name
+            for decision in material_plan.lowerings
+            if (decision.channel_plan or {}).get("evaluatedStaticNormal")
+            for binding in decision.bindings
+            if binding.object_name in baked_names
+        })
+        if normal_atlas_owners:
+            raise SystemExit(
+                "Website material compilation blocked:\n  - "
+                "material.normal-bake-lighting-atlas-unproven: static Normal "
+                "carriers cannot yet compose with Lighting-atlas geometry and "
+                "UV preparation on " + ", ".join(normal_atlas_owners) + ". "
+                "Mark these objects Realtime to retain companion shading and "
+                "the normal bake, or clear explicit material intent and use "
+                "an Appearance atlas to capture the complete surface."
+            )
     if any(
         decision.transport in {"image", "channels"}
         for decision in material_plan.lowerings

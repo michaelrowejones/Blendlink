@@ -299,6 +299,22 @@ def reachable_surface_nodes(tree, output_type="OUTPUT_MATERIAL"):
                         if link.is_valid and not getattr(link, 'is_muted', False):
                             visit_output(link.from_node, link.from_socket, group_stack)
                 return
+        if node.bl_idname == 'GeometryNodeRepeatOutput':
+            try:
+                if __package__:
+                    from .repeat_ir import dependencies
+                else:
+                    from repeat_ir import dependencies
+                repeat_inputs = dependencies(node, output_socket, group_stack)
+            except ValueError:
+                pass
+            else:
+                reachable.append(node)
+                for incoming in repeat_inputs:
+                    for link in incoming.links:
+                        if link.is_valid and not getattr(link, 'is_muted', False):
+                            visit_output(link.from_node, link.from_socket, group_stack)
+                return
         if node.bl_idname == 'NodeGroupInput' and group_stack:
             outer = _matching_socket(group_stack[-1].inputs, output_socket)
             if outer is not None:
@@ -1069,6 +1085,20 @@ def _walk_channel_upstream(socket, *, group_stack=()):
                                  for link in selected['input'].links
                                  if link.is_valid and not getattr(link, 'is_muted', False))
                 continue
+        if idname == "GeometryNodeRepeatOutput":
+            try:
+                if __package__:
+                    from .repeat_ir import dependencies
+                else:
+                    from repeat_ir import dependencies
+                repeat_inputs = dependencies(node, from_socket, group_stack)
+            except ValueError:
+                pass
+            else:
+                visited.append((node, from_socket))
+                stack.extend((link.from_node, link.from_socket, group_stack) for incoming in repeat_inputs
+                             for link in incoming.links if link.is_valid and not getattr(link, "is_muted", False))
+                continue
         visited.append((node, from_socket))
         stack.extend(
             (link.from_node, link.from_socket, group_stack)
@@ -1091,7 +1121,7 @@ def _channel_constant_value(socket):
             return None
 
 
-def _classify_channel(name, socket):
+def _classify_channel(name, socket, *, group_stack=()):
     """One JSON-safe routing record for one Principled input."""
     if not socket.is_linked:
         return {
@@ -1110,7 +1140,7 @@ def _classify_channel(name, socket):
     unique_notes = []
     animated_sources = set()
 
-    visited = _walk_channel_upstream(socket)
+    visited = _walk_channel_upstream(socket, group_stack=group_stack)
     for node, from_socket in visited:
         owner = getattr(node, "id_data", None)
         if owner is not None and _animated_id(owner):

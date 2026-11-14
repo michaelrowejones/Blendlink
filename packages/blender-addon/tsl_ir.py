@@ -17,6 +17,11 @@ from __future__ import annotations
 from contextlib import contextmanager
 from contextvars import ContextVar
 
+if __package__:
+    from .repeat_ir import guarded_emission
+else:
+    from repeat_ir import guarded_emission
+
 IR_MODEL = "blendlink-tsl-ir-v1"
 
 _evaluation_engine = ContextVar("blendlink_tsl_evaluation_engine", default=None)
@@ -1179,6 +1184,7 @@ def _require_static_tree(node):
         _refuse(f"node tree {tree.name!r} has animation or drivers; live curve transport is required")
 
 
+@guarded_emission
 def emit_input(socket, stack=(), *, as_vector=False):
     """IR for one input socket: its link's expression or its constant."""
     _require_static_tree(socket.node)
@@ -1236,6 +1242,7 @@ def _convert_link(expression, from_socket, to_socket):
     return expression
 
 
+@guarded_emission
 def emit_output(node, from_socket, stack=()):
     """IR for one node output.  Refuses anything without a proven cell.
 
@@ -1245,6 +1252,17 @@ def emit_output(node, from_socket, stack=()):
     _require_static_tree(node)
     idname = node.bl_idname
     socket_name = from_socket.name
+
+    if idname in {'FunctionNodeStringLength', 'FunctionNodeFindInString'}:
+        if __package__:
+            from .static_strings import evaluate_output, StaticStringUnsupported
+        else:
+            from static_strings import evaluate_output, StaticStringUnsupported
+        try:
+            record = evaluate_output(from_socket, stack)
+        except StaticStringUnsupported as error:
+            _refuse(str(error))
+        return {'op': 'typed_const', 'type': 'INT', 'value': record['value']}
 
     if getattr(node, "mute", False):
         # A muted node bypasses per its OWN internal_links -- Blender's
@@ -1320,6 +1338,16 @@ def emit_output(node, from_socket, stack=()):
             return {"op": "typed_const", "type": "BOOLEAN", "value": selected['constant']}
         return emit_input(selected['input'], stack=stack,
                           as_vector=from_socket.type in {"VECTOR", "RGBA"})
+
+    if idname in {"GeometryNodeRepeatInput", "GeometryNodeRepeatOutput"}:
+        if __package__:
+            from .repeat_ir import emit_repeat, RepeatUnsupported
+        else:
+            from repeat_ir import emit_repeat, RepeatUnsupported
+        try:
+            return emit_repeat(node, from_socket, stack, emit_input, _refuse, get_evaluation_engine())
+        except RepeatUnsupported as error:
+            _refuse(str(error))
 
     if idname == "ShaderNodeTexCoord":
         if socket_name in {"Camera", "Normal", "Window", "Reflection"}:
@@ -1835,6 +1863,14 @@ def emit_output(node, from_socket, stack=()):
             "gradientType": gradient_type,
             "vector": _texture_vector(node.inputs["Vector"], stack, node),
         }
+
+    if idname == "ShaderNodeRadialTiling":
+        if __package__:
+            from .radial_width_ir import emit_radial_width
+        else:
+            from radial_width_ir import emit_radial_width
+        return emit_radial_width(node, from_socket, scalar=lambda incoming: emit_input(incoming, stack=stack),
+                                 refuse=_refuse, evaluation_engine=get_evaluation_engine())
 
     if idname == "ShaderNodeTexMagic":
         if __package__:

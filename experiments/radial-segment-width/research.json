@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "role": "Research and bounded admission derivation only; separate pilot/full matrices own publication and browser qualification. No official demo acceptance or performance credit.",
+  "nativeSchema": {
+    "path": "artifacts/verification-radial-next/schema/schema.json",
+    "sha256": "4319732bc5331f65a85caec58477458c0d76b0443bbe006f383a983ef1469ce7"
+  },
+  "nativeMf": {
+    "reference": {
+      "path": "artifacts/verification-radial-next/research/width-mf/report.json",
+      "sha256": "e176f14463d0e350ffc57cffda2577bd2aac02eec9eeec80a0e5f4480cfe1111"
+    },
+    "samples": 882,
+    "scope": "63integer Sides2..64\u00d77independent vectors\u00d7both Normalize states, full Roundness1, actual geometry attribute readback.",
+    "zeroFloat64PiAnchorMismatches": true,
+    "float32PiAnchorWordMismatches": 224,
+    "maximumAnchorDifferenceUlps": 1,
+    "counterexample": {
+      "sides": 9,
+      "coordinate": [
+        0,
+        0
+      ],
+      "actualCpuMf": 0.3490658402442932,
+      "float32PiDividedBySides": 0.3490658700466156,
+      "differenceUlps": 1,
+      "resolution": "Keep separate measured CPU/GPU anchors under the original predeclared2ULP AND absolute2^-22 contract; do not widen or claim exactness except power-of-two Sides."
+    }
+  },
+  "upstreamProof": "Only integer Sides and Roundness1 choose the regular rounded branch. Its returned width is the half-segment PI/Sides; Vector is read only for other components. Later origin/Normalize operations leave Width unchanged. Other branches do not inherit this pruning.",
+  "transpiler": {
+    "status": "GENERATED_RADIAL_RESEARCH_ONLY",
+    "numericalCases": 0,
+    "finalExports": 0,
+    "officialSceneAcceptance": false,
+    "source": {
+      "path": "/private/tmp/scenetoweb-radial-scene-next/artifacts/verification-radial-next/research/shared.glsl",
+      "sha256": "adab763a5772baca55f40e9ad0aa0cc1942b8bee87f898fe3e4aaa0601ebeeb3"
+    },
+    "preprocessor": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.5.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin",
+    "threeRevision": 184,
+    "normalizedAliases": [
+      "float2\u2192vec2",
+      "float4\u2192vec4",
+      "atan2\u2192atan (two-argument overload)",
+      "M_PI/M_TAU\u2192explicit decimal literals",
+      "square scalar helper"
+    ],
+    "materializedLocalDeclarations": 109,
+    "inputBytes": 57296,
+    "preprocessedBytes": 37231,
+    "generatedBytes": 33829,
+    "generatedSha256": "f131786fef118f0405578339c2d62f00b777f7ec2caa9f5f6ea59db5c47fed08",
+    "fixtureSha256": "2440f478750276afbf9400c340fc7b02444e8893e426804d2bc24594061a9809",
+    "remainingGates": [
+      "Actual WebGPU and WebGL2 generated-shader compile/validation",
+      "Actual native shader-vs-browser fractional full-roundness numeric and branch controls",
+      "Origin/sector seam policy and unchanged authored official-scene acceptance",
+      "Shader size, register pressure and completed-draw costs versus source-shaped and specialized kernels"
+    ],
+    "productionAdmission": false,
+    "rawReport": {
+      "path": "artifacts/verification-radial-next/transpiler-feasibility/report.json",
+      "sha256": "e34c2a55187a0a6ebf494401c3875e4ad4a3a4b19e24dfc2206a0c9390034d20"
+    },
+    "generatedPath": "artifacts/verification-radial-next/transpiler-feasibility/candidate.js"
+  },
+  "officialScene": {
+    "rawRun": {
+      "path": "artifacts/verification-radial-next/official-scene-triage/run.json",
+      "sha256": "32ac2762767e7ca35fdf1754aebe1a01051e0e52b06bf5a1b6d1975e45427ff9"
+    },
+    "sourceSha256": "bfc3cea66963e84c4468e8fac6b0313ef72265cafa5df36cf0f03d21479d1e3c",
+    "originalPreserved": true,
+    "copyPreserved": true,
+    "sdkSourcesStable": true,
+    "materialPlanOutcomes": {
+      "blocked": 1,
+      "preserved": 1
+    },
+    "channelRefusals": [
+      {
+        "material": "Coordinates",
+        "channel": "Base Color",
+        "route": "refused",
+        "reasons": [
+          "Radial Tiling is not classified for channel routing yet."
+        ]
+      }
+    ],
+    "actualNodeSettings": {
+      "normalize": true,
+      "roundness": 1,
+      "sides": "spatial MapRange/Mix field, inner3/outer8",
+      "vector": "Object coordinates multiplied by group Scale2",
+      "usedOutput": "Segment Coordinates"
+    },
+    "conclusion": "Full scene remains blocked: this Width slice does not qualify its computed-Sides Segment Coordinates output. The original source schema uses STEPPED Map Range; the earlier fractional-Sides inference was incorrect. See demo-controls.json/md for the zero-render source derivation. No unchanged-scene acceptance is established.",
+    "renders": 0,
+    "stockExports": 0,
+    "finalExports": 0,
+    "browserAcceptance": 0,
+    "inferenceCorrection": {
+      "evidence": "experiments/radial-segment-width/demo-controls.json",
+      "reason": "Earlier probe omitted interpolation_type and therefore did not establish fractional Sides. Authored STEPPED Steps1 produces discrete3/8/12 over the actual meshes.",
+      "numericQualificationCredit": 0
+    }
+  },
+  "assetsRedistributed": false
+}

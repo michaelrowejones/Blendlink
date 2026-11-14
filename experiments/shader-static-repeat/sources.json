@@ -1,0 +1,22 @@
+[
+  {
+    "path": "source/blender/gpu/shaders/material/gpu_shader_material_repeat_zone.bsl.hh",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shaders/material/gpu_shader_material_repeat_zone.bsl.hh",
+    "sha256": "945a5861b1f60d4f0960c25a3d7f8fd654c61ea2ab8f1e169ef9d88b8cacd4a5"
+  },
+  {
+    "path": "source/blender/gpu/intern/gpu_codegen.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/intern/gpu_codegen.cc",
+    "sha256": "c7de419f1cc1dc256d7fdb4d2a8c371546c32a7a70a9b2008896800e91ba03f8"
+  },
+  {
+    "path": "source/blender/gpu/intern/gpu_node_graph.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/intern/gpu_node_graph.cc",
+    "sha256": "d0ff696fbfec30200d886ce009b232407593cd5bcabaf9643e8ed0602138de2d"
+  },
+  {
+    "path": "source/blender/nodes/geometry/nodes/node_geo_repeat.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/geometry/nodes/node_geo_repeat.cc",
+    "sha256": "3c09e905d747c9c2478cf4302cda78df37fcf79e4ef637c85d177243922fa5b4"
+  }
+]

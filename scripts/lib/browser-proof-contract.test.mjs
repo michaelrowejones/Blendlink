@@ -1,6 +1,6 @@
 import {test} from 'node:test'
 import assert from 'node:assert/strict'
-import {readFile,mkdir,mkdtemp,writeFile,symlink,rm,stat,chmod} from 'node:fs/promises'
+import {readFile,readdir,mkdir,mkdtemp,writeFile,symlink,rm,stat,chmod} from 'node:fs/promises'
 import {tmpdir} from 'node:os'
 import {spawnSync} from 'node:child_process'
 import {resolve,join} from 'node:path'
@@ -11,9 +11,9 @@ const families=Object.keys(browserProofFamilies)
 const withoutContractImport=source=>source.replace(/\bbrowserProofContract\s*,\s*|,\s*browserProofContract(?=\s*})/,'')
 async function assembly(family){const folder=join(root,'experiments',family);return{family,contract:(await import(pathToFileURL(join(folder,'protocol.mjs')).href)).browserProofContract,runner:await readFile(join(folder,'run.mjs'),'utf8'),reader:await readFile(join(folder,'verify.mjs'),'utf8'),protocol:await readFile(join(folder,'protocol.mjs'),'utf8')}}
 
-test('all six production runner/reader assemblies share their own immutable pinned protocol contract',async()=>{
+test('all registered production runner/reader assemblies share their own immutable pinned protocol contract',async()=>{
  const result=await preflightBrowserProofContracts(root)
- assert.equal(result.status,'PREFLIGHTED_BROWSER_PROOF_CONTRACTS');assert.equal(result.numericalCredit,0);assert.equal(result.families.length,6)
+ assert.equal(result.status,'PREFLIGHTED_BROWSER_PROOF_CONTRACTS');assert.equal(result.numericalCredit,0);assert.equal(result.families.length,families.length)
  // Distinct family identity is essential: historical Texture and Float reports share one status token.
  assert.equal(browserProofFamilies['compositor-texture-fields'].browserStatus,browserProofFamilies['compositor-float-coordinates'].browserStatus)
  assert.notEqual(browserProofFamilies['compositor-texture-fields'].family,browserProofFamilies['compositor-float-coordinates'].family)
@@ -37,22 +37,28 @@ const fixtures={
  'compositor-image-coordinates':{native:'assertPixelQualification',final:'assertPixelFinal',expected:'expectedPixelCases'},
  'compositor-float-coordinates':{native:'assertFloatCoordinateQualification',final:'assertFloatCoordinateFinal',expected:'expectedFloatCoordinateCases'},
  'compositor-texture-fields':{native:'assertTextureFieldQualification',final:'assertTextureFieldFinal',expected:'expectedTextureFieldCases'},
+ 'radial-segment-width':{native:'assertRadialWidthQualification',final:'assertRadialWidthFinal'},
  'compositor-vector-math':{native:'assertVectorMathQualification',final:'assertVectorMathFinal'},
  'compositor-image-info':{native:'assertImageInfoQualification',final:'assertImageInfoFinal',expected:'expectedImageInfoCases'},
+ 'static-string-family':{native:'assertQualification',final:'assertFinal'},
+ 'shader-static-repeat':{native:'assertQualification',final:'assertFinal'},
  'static-switch-family':{native:'assertQualification',final:'assertFinal'}
 }
 function nativeFixture(family,p,context){
  const spec=fixtures[family],contract=p.browserProofContract
+ if(family==='shader-static-repeat')return{status:contract.nativeStatus,version:[5,3,0],build:'02f0899d78e3',context:'shader',sourcePreserved:true,width:8,height:8,cases:p.expectedCases().map(row=>({...row,programSha256:pin,pixelSha256:pin,...(row.saved?{sourceFile:row.case+'.blend',sourceSha256:pin}:{})}))}
+ if(family==='static-string-family')return{status:contract.nativeStatus,version:[5,3,0],build:'02f0899d78e3',context,sourcePreserved:true,width:8,height:8,nativeBackend:context==='shader'?{evaluator:'EEVEE',requestedDevice:'shader',backend:'METAL',renderer:'Metal fixture renderer'}:{evaluator:'CPU-MF',requestedDevice:context,backend:null,renderer:null},cases:p.expectedCases(context).map(row=>({...row,context,sourcePreserved:true,helperText:row.expectedString,programSha256:pin,pixelSha256:pin,...(row.saved?{sourceFile:row.case+'.blend',sourceSha256:pin}:{})}))}
  if(family==='static-switch-family')return{status:contract.nativeStatus,version:[5,3,0],build:'02f0899d78e3',context,sourcePreserved:true,width:8,height:8,cases:p.expectedCases.map((name,index)=>({case:name,context,sourcePreserved:true,programSha256:pin,pixelSha256:pin,...(index<30?{sourceFile:name+'.blend'}:{})}))}
+ if(family==='radial-segment-width')return{status:contract.nativeStatus,version:[5,3,0],build:'02f0899d78e3',device:context,width:8,height:8,cases:p.specifications.map(row=>({...row,programSha256:pin,shaderIrSha256:pin,pixelSha256:pin,shaderPixelSha256:pin,...(row.saved?{sourceFile:row.case+'.blend',sourceSha256:pin}:{})})),refusals:p.expectedRefusals.map(kind=>({kind,diagnostics:[{code:kind==='animated-input'?'animated-tree':'unsupported-radial-width'}]}))}
  if(family==='compositor-vector-math')return{status:contract.nativeStatus,version:[5,3,0],build:'02f0899d78e3',device:context,width:8,height:8,cases:p.expectedCases().map(name=>({case:name,mode:name.startsWith('add-')?'ADD':p.modes.find(mode=>name.startsWith(mode.toLowerCase()+'-')),route:p.routes.find(route=>name==='add-'+route)??'default',programSha256:pin,pixelSha256:pin,...(p.expectedFinalCases().includes(name)?{sourceFile:name+'.blend',sourceSha256:pin}:{})})),refusals:p.expectedRefusals.map(kind=>({kind,diagnostics:[{code:kind==='animated-input'?'animated-tree':'unsupported-vector-math'}]}))}
  const saved=['13x9-implicit-gradient-linear-color','13x9-implicit-gradient-quadratic-color','13x9-implicit-gradient-easing-color','13x9-implicit-checker-5-color','13x9-normalized-gradient-easing-fac','13x9-normalized-checker-5-color','64x48-implicit-gradient-diagonal-color','64x48-uniform-gradient-diagonal-fac'].map(name=>'blender-5-3-'+context.toLowerCase()+'-'+name)
  return{status:contract.nativeStatus,version:[5,3,0],build:'02f0899d78e3',device:context,cases:p[spec.expected](context).map((row,index)=>({...row,programSha256:pin,pixelSha256:pin,inputSha256:pin,...((family==='compositor-texture-fields'?saved.includes(row.case):family==='compositor-image-info'?p.expectedImageInfoFinalCases(context).some(want=>want.case===row.case):family==='compositor-image-coordinates'?[13,26].includes(row.width)&&p.pixelFinalRoutes.includes(row.route):index<p.savedFinalCaseCount)?{sourceFile:row.case+'.blend'}:{})}))}
 }
-function finalFixture(family,p,q){return{status:p.browserProofContract.finalStatus,exporter:'built',context:q.context,sourcePreserved:true,nativeQualificationSha256:pin,rows:q.cases.filter(row=>row.sourceFile)}}
-const finals=(family,p,f,q)=>family==='static-switch-family'?p.assertFinal(f,q,pin):p[fixtures[family].final](f,q,{built:true,nativeSha256:pin})
+function finalFixture(family,p,q){const saved=q.cases.filter(row=>row.sourceFile),rows=family==='static-string-family'?saved.map(({case:label,sourceFile,sourceSha256})=>({case:label,sourceFile,sourceSha256,manifestPath:'/actual/manifest.json',manifestSha256:pin,glbPath:'/actual/scene.glb',glbSha256:pin,programPath:'/actual/program.json',programSha256:pin})):saved;return{status:p.browserProofContract.finalStatus,exporter:'built',context:q.context,sourcePreserved:true,nativeQualificationSha256:pin,rows}}
+const finals=(family,p,f,q)=>['static-switch-family','shader-static-repeat'].includes(family)?p.assertFinal(f,q,pin):p[fixtures[family].final](f,q,{built:true,nativeSha256:pin})
 for(const family of families)test(family+' closes native and saved Final schemas before capture; rejects omitted/extra/duplicate/cross-family/refused results',async()=>{
  const p=await import(pathToFileURL(join(root,'experiments',family,'protocol.mjs')).href),native=p[fixtures[family].native]
- for(const context of family==='static-switch-family'?['shader','CPU','GPU']:['CPU','GPU']){
+ for(const context of family==='shader-static-repeat'?['shader']:['static-switch-family','static-string-family'].includes(family)?['shader','CPU','GPU']:['CPU','GPU']){
   const q=nativeFixture(family,p,context);native(q);const f=finalFixture(family,p,q);finals(family,p,f,q)
   for(const mutate of [x=>x.cases.pop(),x=>x.cases.push({...x.cases[0],case:'unexpected-extra-case'}),x=>x.cases[1]={...x.cases[0]},x=>x.status='failed',x=>x.status='refused',x=>x.build='other-build',x=>x.cases[0].programSha256='not-a-pin']){const bad=structuredClone(q);mutate(bad);assert.throws(()=>native(bad),family)}
   if(family==='compositor-vector-math')for(const mutate of [x=>x.refusals.pop(),x=>x.refusals.push({...x.refusals[0],kind:'unexpected-refusal'}),x=>x.refusals[1]={...x.refusals[0]},x=>x.refusals[0].diagnostics=[],x=>x.refusals[0].diagnostics=[{code:'wrong-diagnostic'}],x=>x.cases[0].mode='UNQUALIFIED',x=>x.cases[0].route='wrong-route',x=>x.cases.find(row=>row.sourceFile).sourceSha256='not-a-pin']){const bad=structuredClone(q);mutate(bad);assert.throws(()=>native(bad),family)}
@@ -77,6 +83,8 @@ test('matrix and Switch entrypoints refuse contract drift before creating any na
     if(name==='run.mjs')source=source.replace('report.status=browserProofContract.browserStatus',"report.status='PASSED_COPIED_WRONG_BUILT_PROOF'")
     await writeFile(join(folder,name),source)
    }
+   // Protocols can share a byte-pinned JSON case census with their native fixture.
+   for(const name of await readdir(join(root,'experiments',family)))if(name.endsWith('.json'))await writeFile(join(folder,name),await readFile(join(root,'experiments',family,name)))
    const entry=family==='static-switch-family'?'suite.mjs':'matrix.mjs'
    await writeFile(join(folder,entry),await readFile(join(root,'experiments',family,entry)))
    await writeFile(join(folder,'capture.mjs'),'import {writeFile} from "node:fs/promises";await writeFile('+JSON.stringify(marker)+',"capture started");process.exit(91)')

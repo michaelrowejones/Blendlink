@@ -1,0 +1,102 @@
+{
+  "researchOnly": true,
+  "qualificationCredit": 0,
+  "originalMandelbrot": {
+    "sha256": "08b1928c3b8c6c2ed120a470cdc08277a706e624c8133e72bc2f0e0c6c4255f9",
+    "sourcePreserved": true,
+    "fps": 30,
+    "fpsBase": 1.0,
+    "frameRange": [
+      1,
+      200
+    ],
+    "driver": {
+      "path": "nodes[\"Value\"].outputs[0].default_value",
+      "index": 0,
+      "type": "SCRIPTED",
+      "expression": "frame",
+      "useSelf": false,
+      "variables": [],
+      "modifiers": []
+    },
+    "actionCurves": 0,
+    "nextContracts": [
+      "Actual playback/seek/pause source-frame transport, not renderer elapsed time",
+      "Bounded dynamic counts through200 without rewriting the original graph",
+      "Nonlinear unrounded-UV recurrence and Bump derivative sampling/error/cost contracts"
+    ]
+  },
+  "observedBoundaries": [
+    {
+      "kind": "cross-state-alias",
+      "observation": "Private native EEVEE direct two-state swap gave the second seed at iteration2 while staged mathematical swap returned the first. Pinned gpu_codegen assigns zone end items to the shared start variable IDs in item order; whole alias/inlining semantics are not broadly qualified.",
+      "decision": "Quarantine cross-state aliases and constant overwrites; retain independent own-state updates only."
+    },
+    {
+      "kind": "native-beauty-carrier",
+      "observation": "Raw negative emission clamps and raw HDR counter2016.125 was observed as2016. Reversible carrier outside the node recovers2016.125 without changing node arithmetic.",
+      "encodedRGBA": [
+        0.9921875,
+        0.0078125,
+        0.0,
+        1.0
+      ],
+      "decodedNodeValue": 2016.125,
+      "decision": "Predeclare exact independent signed carrier; never widen the node gate or repair state output."
+    },
+    {
+      "kind": "unrounded-uv",
+      "observation": "Two word differences occurred in the private native/browser raw UV calibration before any loop, with additional differences after accumulation.",
+      "decision": "Do not qualify any positive-count UV field seed, including authored clamp+SNAP.25. Retain25 scalar/vector/group field examples as unqualified research and3 named refusal controls. Do not alter Mandelbrot."
+    },
+    {
+      "kind": "loop-cache-branch-scope",
+      "observation": "Actual generated WGSL contained2 loops under separate ordinary DIVIDE branch scopes despite3 identical serialized IR uses and a cache.",
+      "decision": "Explicitly stage the cached Fn result as a Var; refreshed actual Metal raw/Final shaders require1 loop per positive case."
+    }
+  ],
+  "localArtifacts": [
+    {
+      "path": "artifacts/verification-repeat-research/mandelbrot-inventory.json",
+      "sha256": "e789b121e56552d374c42bf6bd19f71ddf0ce3bde19b9810d29d08fa07f43185"
+    },
+    {
+      "path": "artifacts/verification-repeat-research/failed-cse-metal.log",
+      "sha256": "f876c12775cef522fcddc424358e98efa212876e0f38b1861a020d753887de39"
+    },
+    {
+      "path": "artifacts/verification-repeat-research/failed-cse-raw.log",
+      "sha256": "a6ceb0a24b977146aa90cbfd2c585207733d7f57ee0267e32d4730c922fce815"
+    },
+    {
+      "path": "artifacts/verification-repeat-research/failed-cse-final.log",
+      "sha256": "e2589fe2a3eb3933ea75598c15b5f02c7466f2812670b0c78981ddd4dec4ce15"
+    },
+    {
+      "path": "artifacts/verification-repeat-research/raw-node-diagnostic.log",
+      "sha256": "ecb58c162b94549ebf925271b597d6f3d0cafddc4512727a0666e10db85a135a"
+    },
+    {
+      "path": "artifacts/verification-static-repeat-isolated-r2/counter-64-0.rgba32f",
+      "sha256": "e9d83f09d7daf035d6c4e902a34254c26bd89e8a2d86d26b8e2af772f29cbc7a"
+    }
+  ],
+  "scope": "Research and isolated pilots only. Root combined-source native/Final/browser closure remains required; no new original-demo or whole-node credit.",
+  "fieldAdmissionReview": {
+    "status": "UNQUALIFIED_FIELD_SEEDS_REFUSED",
+    "counterexample": {
+      "nativeOrRuntimeInputCandidates": [
+        0.2499999850988388,
+        0.25
+      ],
+      "inputDifferenceULP": 1,
+      "snapQuarterOutputs": [
+        0,
+        0.25
+      ]
+    },
+    "scope": "Arithmetic branch-domain counterexample, not a claimed native new render. Existing native research observed2ULP upstream UV differences;8x8 fixture raster-center margins do not establish arbitrary authored mesh-UV branch safety. Positive-count field admission removed; literal-only qualified candidate remains.",
+    "retainedResearchCases": 25,
+    "numericalCredit": 0
+  }
+}

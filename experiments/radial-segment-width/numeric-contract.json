@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "model": "regular-full-roundness-segment-width-v1",
+  "scope": "Roundness exactly1, literal integer Sides2..64, both Normalize states, Segment Width only. Vector is pruned solely by this output's proven dependency invariant.",
+  "reference": "Independent actual native compositor CPU/GPU and EEVEE Metal field output; never copied kernel output or image lookup in production.",
+  "width": {"maximumUlps":2,"maximumAbsoluteError":2.384185791015625e-7,"bothRequired":true,"finiteRequired":true},
+  "exactControls": "RGBA alpha1; power-of-two Sides2,4,8,16,32,64 require exact Float32 words. No native zero/one width exists in this parameter domain.",
+  "stageDistinction": "Native CPU MF uses double M_PI divided by Float32 Sides then stores Float32; native GPU uses its Float32 PI constant. A one-ULP stage difference is retained, not relabelled exact.",
+  "shaderCarrier": "Positive width<2 encoded in three independent half-exact base1024 digits with scale2. Quantum2^-28 is no larger than any admitted width's Float32 ULP; independent native Float32 controls require exact decoded words. Native raw packed pixels and saved source remain pinned.",
+  "exclusions": "Other outputs, fractional or computed Sides, other Roundness branches, Cycles live shader source, unmeasured native builds/platforms, arbitrary downstream pointwise composition, and official demo scene acceptance.",
+  "predeclaredBeforeBrowser":true
+}

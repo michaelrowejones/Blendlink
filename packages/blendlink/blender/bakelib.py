@@ -7655,6 +7655,44 @@ def _bake_isolated_field_pixels(
             slot.material = material
         slots.clear()
 
+        # Dilation averages encoded tangent normals. Its delivery pixels
+        # cannot establish whether an actual surface normal has unit length.
+        # Keep an independent zero-margin white geometry mask for NORMAL.
+        surface_coverage = coverage
+        if bake_type == "NORMAL" and margin:
+            surface_key = (tuple(sorted(obj.name for obj in objects)), resolution, 0, uv_layer)
+            surface_coverage = coverage_cache.get(surface_key) if isinstance(coverage_cache, dict) else None
+            if surface_coverage is None:
+                if coverage_target is None:
+                    coverage_target = bpy.data.images.new("BLENDLINK_CHANNEL_SURFACE_COVERAGE",
+                        width=resolution, height=resolution, alpha=True, float_buffer=True)
+                    coverage_target.generated_color = (0.0, 0.0, 0.0, 0.0)
+                if coverage_material is None:
+                    coverage_material = bpy.data.materials.new("BLENDLINK_CHANNEL_SURFACE_COVERAGE")
+                    tree = ensure_shader_node_tree(coverage_material)
+                    tree.nodes.clear()
+                    output_node = tree.nodes.new("ShaderNodeOutputMaterial")
+                    emission = tree.nodes.new("ShaderNodeEmission")
+                    emission.inputs["Color"].default_value = (1.0, 1.0, 1.0, 1.0)
+                    emission.inputs["Strength"].default_value = 1.0
+                    tree.links.new(emission.outputs["Emission"], output_node.inputs["Surface"])
+                for obj in objects:
+                    for slot in obj.material_slots:
+                        slots.append((slot, slot.link, slot.material))
+                        slot.link = "DATA"
+                        slot.material = coverage_material
+                configure_emit_bake(scene, 0, view_from=view_from)
+                bake_objects_to_image(objects, coverage_target, bake_type="EMIT", margin_px=0,
+                    uv_layer=uv_layer, log=log)
+                surface_coverage = image_signal_coverage(coverage_target, f"{label} actual surface coverage")
+                if isinstance(coverage_cache, dict):coverage_cache[surface_key] = surface_coverage
+                for slot, link, material in reversed(slots):
+                    slot.link = link
+                    slot.material = material
+                slots.clear()
+            if not np.all(~surface_coverage | coverage):
+                raise RuntimeError(f"{label}: surface coverage escapes delivery coverage")
+
         if bake_type != "EMIT":
             if configure is None:
                 raise ValueError(
@@ -7688,6 +7726,8 @@ def _bake_isolated_field_pixels(
         result = {
             "pixels": rgb,
             "coverage": coverage,
+            **({"surfaceCoverage": surface_coverage,
+                "surfaceCoverageModel": "native-white-emit-zero-margin-v1"} if bake_type == "NORMAL" else {}),
             "rgbMin": tuple(float(value) for value in covered.min(axis=0)),
             "rgbMax": tuple(float(value) for value in covered.max(axis=0)),
             "deviceClass": device["deviceClass"],
@@ -7962,6 +8002,31 @@ def bake_tangent_normal_field_pixels(
     )
 
 
+def save_tangent_normal_png(result, path, *, label="material normal channel"):
+    """Validate the actual raw PNG against native surface normals and margins.
+
+    This is an offline bake gate, with no production normalization/repair.
+    Full delivery coverage gets the data quantization gate; only independent
+    zero-margin geometry establishes a directional/unit-vector reference.
+    """
+    import numpy as np
+    import normal_bake_transport
+    if result.get("surfaceCoverageModel") != "native-white-emit-zero-margin-v1":
+        raise RuntimeError(f"{label}: tangent normal save needs actual zero-margin surface coverage")
+    saved = save_channel_png(result["pixels"], result["coverage"], path, colorspace="data", label=label)
+    image = bpy.data.images.load(saved["path"], check_existing=False)
+    try:
+        image.colorspace_settings.name = "Non-Color"
+        decoded = np.empty(image.size[0] * image.size[1] * 4, dtype=np.float32)
+        image.pixels.foreach_get(decoded)
+        decoded = decoded.reshape(image.size[1], image.size[0], 4)[:, :, :3]
+        saved["normalEncoding"] = normal_bake_transport.validate_encoding(
+            result["pixels"], result["coverage"], result["surfaceCoverage"], decoded)
+    finally:
+        bpy.data.images.remove(image)
+    return saved
+
+
 def bake_tangent_normal_to_png(
         objs, path: str, *, size: int, margin_px: int,
         uv_layer: str = ATLAS_UV, label: str = "material normal channel",
@@ -7971,10 +8036,7 @@ def bake_tangent_normal_to_png(
         objs, size=size, margin_px=margin_px, uv_layer=uv_layer,
         label=label, log=log,
     )
-    saved = save_channel_png(
-        result["pixels"], result["coverage"], path,
-        colorspace="data", label=label,
-    )
+    saved = save_tangent_normal_png(result, path, label=label)
     saved.update({
         "coveredFraction":
             float(result["coverage"].sum()) / float(result["coverage"].size),

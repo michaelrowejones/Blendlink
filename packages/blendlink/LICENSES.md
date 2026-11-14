@@ -32,6 +32,15 @@ The complete GNU General Public License version 3 text is in
 
 ## Third-party notice
 
+`dist/addon/static_string_case_data.json` and
+`dist/blender/static_string_case_data.json` contain a generated one-codepoint
+case map from Blender's `BLI_str_utf32_char_to_upper/lower` in
+[`string_utf8.cc`](https://projects.blender.org/blender/blender/src/commit/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/intern/string_utf8.cc).
+The data retains GPL-2.0-or-later attribution to 1999 Tom Tromey,
+2000 Red Hat, Inc. (all rights reserved), and 2011 Blender Authors.
+It is included in the GPL-3.0-or-later Blender aggregate; the source commit,
+source hash and generation method are recorded in the data file.
+
 `dist/tslMagicNodes.js`, `dist/tslSpectralNodes.js`, `dist/tslBrickNodes.js`, `dist/tslColorConversion.js`,
 `dist/tslSharedUtilities.js`, `dist/tslFractalNoise.js`, `dist/tslVaryingNoise.js`, `dist/staticNoise4d.js`,
 `dist/tslGeometryContext.js`, `dist/tslNormalNodes.js`, `dist/tslNodeRecipe.js` and their source TypeScript include spectral color,

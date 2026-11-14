@@ -22,7 +22,9 @@ test('compact exporter retains exact target/legacy denominators without enum/sch
 test('priority is separate from support, dependencies and usage evidence; research never promotes a node', () => {
   const get = key => tracker.rows.find(row => row.key === key)
   assert.equal(get('compositor:FunctionNodeFloatToInt').recommendedPriority, 'P0 Enablers'); assert.equal(get('compositor:FunctionNodeFloatToInt').targetStatus, 'partial'); assert.match(get('compositor:FunctionNodeFloatToInt').researchNote, /qualified partial literal production port/i)
-  assert.equal(get('shader:ShaderNodeRadialTiling').recommendedPriority, 'P1 Artist workflows'); assert.equal(get('shader:ShaderNodeRadialTiling').targetStatus, 'unsupported'); assert.match(get('shader:ShaderNodeRadialTiling').usageBasis, /official Radial/)
+  assert.equal(get('shader:ShaderNodeRadialTiling').recommendedPriority, 'P1 Artist workflows'); assert.equal(get('shader:ShaderNodeRadialTiling').targetStatus, 'partial'); assert.match(get('shader:ShaderNodeRadialTiling').limits, /Segment Width/); assert.match(get('shader:ShaderNodeRadialTiling').usageBasis, /official Radial/)
+  const researchOnly=structuredClone(coverage);researchOnly.reports.find(row=>row.blenderVersion==='5.3.0').domains.shader.nodes.find(row=>row.id==='ShaderNodeRadialTiling').category='unsupported'
+  assert.equal(make({coverage:researchOnly}).rows.find(row=>row.key==='shader:ShaderNodeRadialTiling').targetStatus,'unsupported','The same research/priority metadata cannot promote an unqualified coverage record')
   assert.equal(get('shader:ShaderNodeMath').recommendedPriority, 'Done'); assert.match(get('shader:ShaderNodeMath').priorityReason, /within.*limits/)
   assert.equal(get('shader:ShaderNodeCombineHSV').recommendedPriority, 'Legacy'); assert.equal(get('shader:ShaderNodeCombineHSV').targetStatus, 'not-available'); assert.equal(get('shader:ShaderNodeCombineHSV').versions['4.2.0'], 'partial')
   assert.ok(get('shader:ShaderNodeBump').dependencies.includes('image-sampling-lod')); assert.match(get('shader:ShaderNodeLightFalloff').usageBasis, /not user telemetry/)

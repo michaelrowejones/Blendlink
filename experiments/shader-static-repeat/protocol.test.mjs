@@ -1,0 +1,5 @@
+import test from'node:test'
+import assert from'node:assert/strict'
+import{expectedCases,expectedFinalCases,browserProofContract,assertQualification,browserRefusals,policyRefusals}from'./protocol.mjs'
+const valid=()=>({status:browserProofContract.nativeStatus,context:'shader',version:[5,3,0],build:'02f0899d78e3',sourcePreserved:true,width:8,height:8,cases:expectedCases().map(r=>({...r,programSha256:'a'.repeat(64),pixelSha256:'b'.repeat(64),...(r.saved?{sourceFile:r.case+'.blend',sourceSha256:'c'.repeat(64)}:{})}))})
+test('Repeat census retains exact actual cases and saved selections',()=>{assert.equal(expectedCases().length,49);assert.equal(expectedFinalCases().length,11);assert.equal(expectedCases().some(row=>row.kind.includes('field')),false);assert.ok(browserRefusals.includes('scalar-field')&&browserRefusals.includes('vector-field'));assert.ok(policyRefusals.includes('group-vector-field'));assertQualification(valid());for(const mutate of[x=>x.cases.pop(),x=>x.cases.push(x.cases[0]),x=>x.cases[1].iterations=999,x=>x.context='CPU',x=>x.sourcePreserved=false]){const x=valid();mutate(x);assert.throws(()=>assertQualification(x))}})

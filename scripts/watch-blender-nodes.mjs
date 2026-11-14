@@ -9,6 +9,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import { createHash, randomUUID } from 'node:crypto'
 import { validateDiscovery } from './lib/blender-build-discovery.mjs'
 import { WATCHED_SOURCE_ROOTS, OPTIONAL_SOURCE_ROOTS } from './lib/blender-node-changes.mjs'
+import { createNodePortBlenderLauncher } from './lib/node-port-python.mjs'
+import { archiveNativeLauncher } from './lib/native-proof-archive.mjs'
 
 const defaultRoot = resolve(fileURLToPath(new URL('../', import.meta.url)))
 const OFFICIAL_REPOSITORY = 'https://github.com/blender/blender.git'
@@ -159,7 +161,19 @@ export async function watchBlenderNodes(options, { run = executeWatchCommand } =
       const executable = await realpath(acquired.native.executable); assert.ok(ownedPath(await realpath(nativeWork), executable), 'Acquired executable is outside owned extraction')
       assert.ok((await lstat(acquired.native.executable)).isFile(), 'Acquired executable is not a regular file')
       targetCatalogPath = join(output, 'target.catalog.json')
-      await command('native-catalog', executable, ['--background', '--factory-startup', '-t', '1', '--python-exit-code', '1', '--python', join(root, 'scripts/audit-node-coverage.py'), '--', '--catalog-output', targetCatalogPath], { timeoutMs: 30 * 60_000, env: { ...process.env, LIBGL_ALWAYS_SOFTWARE: '1' } })
+      const launcher = await createNodePortBlenderLauncher({ blender: executable,
+        directory: join(work, 'native-python'), timeoutMs: 30 * 60_000 })
+      let catalogCompleted = false
+      try {
+        await command('native-catalog', launcher.executable, ['--background', '--factory-startup', '-t', '1', '--python-exit-code', '1', '--python', join(root, 'scripts/audit-node-coverage.py'), '--', '--catalog-output', targetCatalogPath], { timeoutMs: 30 * 60_000, env: { ...process.env, LIBGL_ALWAYS_SOFTWARE: '1' } })
+        catalogCompleted = true
+      } finally {
+        try {
+          const proof = await archiveNativeLauncher(launcher, output, catalogCompleted)
+          report.nativeCatalogPython = { identity: launcher.identity, proof }
+          if (catalogCompleted) assert.equal(proof.pythonInvocations, 1, 'Catalog observation needs one fresh guarded native Python invocation')
+        } finally { await launcher.dispose() }
+      }
       const catalog = await json(targetCatalogPath)
       assert.equal(catalog.schemaVersion, 1); assert.deepEqual(catalog.blenderVersionTuple, discovery.build.versionTuple, 'Actual catalog version differs from acquired binary')
       assert.equal(catalog.blenderBuildHash, acquired.native.buildHash, 'Actual native catalog build differs from the acquired binary')

@@ -43,6 +43,15 @@ def _literal(socket, stack, budget, seen=(), depth=0):
             return bool(node.boolean)
         if node.bl_idname == 'FunctionNodeInputInt' and socket.identifier == 'Integer' and socket.type == 'INT':
             return int(node.integer)
+        if node.bl_idname in {'FunctionNodeStringLength', 'FunctionNodeFindInString'} and socket.type == 'INT':
+            if __package__:
+                from .static_strings import evaluate_output, StaticStringUnsupported
+            else:
+                from static_strings import evaluate_output, StaticStringUnsupported
+            try:
+                return evaluate_output(socket, stack)['value']
+            except StaticStringUnsupported as error:
+                raise SelectionUnsupported(str(error)) from error
         if node.bl_idname in MENU_SOURCES and socket.identifier == 'Menu' and socket.type == 'MENU':
             # Native Input Menu stores its constant on the node, independently
             # of the output socket default. RNA resolves its label through the

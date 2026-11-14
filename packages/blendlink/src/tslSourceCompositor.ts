@@ -1,3 +1,4 @@
+import {buildCompositorRadialWidth} from './tslRadialWidth.js'
 import {buildCompositorVectorMath} from './tslCompositorVectorMath.js'
 import {buildCompositorImageInfo,buildImageInfoConversion,imageInfoConversionSource} from './tslCompositorImageInfo.js'
 import {buildCompositorFloat2Conversion,buildCompositorFloatCoordinates} from './tslCompositorFloatCoordinates.js'
@@ -661,6 +662,9 @@ export function buildSourceCompositor(
             break
           case 'relative-to-pixel':
             node = buildCompositorRelativeToPixel(op, program.ops, value, domainFail)
+            break
+          case 'radial-segment-width':
+            node = buildCompositorRadialWidth(op, program.ops, input, domainFail)
             break
           case 'vector-math':
             node = buildCompositorVectorMath(op, program.ops, input, domainFail)

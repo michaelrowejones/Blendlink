@@ -14,7 +14,8 @@ const actualRoot=resolve(import.meta.dirname,'../..')
 const families={
  'compositor-image-coordinates':{references:'BLENDLINK_IMAGE_COORDINATES_REFERENCES',expected:'expectedPixelCases'},
  'compositor-float-coordinates':{references:'BLENDLINK_FLOAT_COORDINATES_REFERENCES',expected:'expectedFloatCoordinateCases'},
- 'compositor-texture-fields':{references:'SCENETOWEB_TEXTURE_FIELD_REFERENCES',expected:'expectedTextureFieldCases'}
+ 'compositor-texture-fields':{references:'SCENETOWEB_TEXTURE_FIELD_REFERENCES',expected:'expectedTextureFieldCases'},
+ 'radial-segment-width':{references:'SCENETOWEB_RADIAL_WIDTH_REFERENCES'}
 }
 const textureSaved=['13x9-implicit-gradient-linear-color','13x9-implicit-gradient-quadratic-color','13x9-implicit-gradient-easing-color','13x9-implicit-checker-5-color','13x9-normalized-gradient-easing-fac','13x9-normalized-checker-5-color','64x48-implicit-gradient-diagonal-color','64x48-uniform-gradient-diagonal-fac'].map(name=>'blender-5-3-cpu-'+name)
 async function fixture(){
@@ -32,11 +33,12 @@ async function fixture(){
  for(const [family,spec]of Object.entries(families)){
   const folder=join(root,'experiments',family);await mkdir(folder,{recursive:true})
   for(const name of ['run.mjs','protocol.mjs','browser.js','index.html'])await writeFile(join(folder,name),await readFile(join(actualRoot,'experiments',family,name)))
+  if(family==='radial-segment-width')await writeFile(join(folder,'cases.json'),await readFile(join(actualRoot,'experiments',family,'cases.json')))
   const p=await import(pathToFileURL(join(folder,'protocol.mjs')).href),references=join(root,'references-'+family);await mkdir(references)
   const bytes=Buffer.from('synthetic data; never rendered'),pin=hash(bytes);await writeFile(join(references,'data.bin'),bytes)
-  const q={status:p.browserProofContract.nativeStatus,version:[5,3,0],build:'02f0899d78e3',device:'CPU',sourceHashes:{},cases:p[spec.expected]('CPU').map((row,index)=>{
-   const saved=family==='compositor-image-coordinates'?[13,26].includes(row.width)&&p.pixelFinalRoutes.includes(row.route):family==='compositor-texture-fields'?textureSaved.includes(row.case):index<p.savedFinalCaseCount
-   return{...row,programFile:'data.bin',programSha256:pin,pixelFile:'data.bin',pixelSha256:pin,inputFile:'data.bin',inputSha256:pin,...(saved?{sourceFile:row.case+'.blend'}:{})}
+  const q={status:p.browserProofContract.nativeStatus,version:[5,3,0],build:'02f0899d78e3',device:'CPU',sourceHashes:{},...(family==='radial-segment-width'?{width:8,height:8,refusals:p.expectedRefusals.map(kind=>({kind,diagnostics:[{code:kind==='animated-input'?'animated-tree':'unsupported-radial-width'}]}))}:{}),cases:(spec.expected?p[spec.expected]('CPU'):p.specifications).map((row,index)=>{
+   const saved=family==='radial-segment-width'?row.saved:family==='compositor-image-coordinates'?[13,26].includes(row.width)&&p.pixelFinalRoutes.includes(row.route):family==='compositor-texture-fields'?textureSaved.includes(row.case):index<p.savedFinalCaseCount
+   return{...row,programFile:'data.bin',programSha256:pin,pixelFile:'data.bin',pixelSha256:pin,inputFile:'data.bin',inputSha256:pin,...(family==='radial-segment-width'?{shaderIrFile:'data.bin',shaderIrSha256:pin,shaderPixelFile:'data.bin',shaderPixelSha256:pin}:{}),...(saved?{sourceFile:row.case+'.blend'}:{})}
   })}
   await writeFile(join(references,'qualification.json'),JSON.stringify(q))
  }
@@ -49,7 +51,7 @@ async function run(root,family,transaction={},built=true){
  assert.equal(result.error,undefined);assert.notEqual(result.status,0);assert.doesNotMatch(result.stderr,/UNEXPECTED_BROWSER_STARTUP/)
  return{...result,destination}
 }
-test('all three field runners select only an explicit validated transaction; standalone ignores existing snapshots',async()=>{
+test('all registered field runners select only an explicit validated transaction; standalone ignores existing snapshots',async()=>{
  const root=await fixture()
  try{
   const pin=await captureRuntimeTransaction({root,directory:join(root,'transaction')}),record=JSON.parse(await readFile(pin.path,'utf8'))
@@ -63,7 +65,7 @@ test('all three field runners select only an explicit validated transaction; sta
   }
  }finally{await rm(root,{recursive:true,force:true})}
 })
-test('all three field runners refuse missing/incorrect pins, absent manifests, source drift and source mode without GPU startup',async()=>{
+test('all registered field runners refuse missing/incorrect pins, absent manifests, source drift and source mode without GPU startup',async()=>{
  const root=await fixture()
  try{
   const pin=await captureRuntimeTransaction({root,directory:join(root,'transaction')}),good={SCENETOWEB_RUNTIME_TRANSACTION:pin.path,SCENETOWEB_RUNTIME_TRANSACTION_SHA256:pin.sha256}

@@ -1,3 +1,5 @@
+import {buildTslRadialWidth} from './tslRadialWidth.js'
+import {buildStaticRepeat,buildRepeatReference,staticRepeatCost} from './tslRepeat.js'
 import { buildTslSqueeze } from './tslSqueeze.js'
 export { validateMagicCoordinates as validateTslMagicCoordinates } from './tslMagicBounds.js'
 export { prepareTslNoiseFields } from './tslNoiseFields.js'
@@ -280,6 +282,8 @@ const tslNormalLocal = (
 const tslNormalWorld = normalWorld as unknown as TslExpression
 
 export interface BuildTslOptions {
+  /** Cancellation before bounded Repeat graph construction. */
+  signal?: AbortSignal
   /** Actual-owner callback for fresh bounded Magic fields; no payload range annotation grants this certificate. */
   validateMagicCoordinates?: (expression: TslIrExpression) => void
   /** Geometry contract for tangent-space normal programs. */
@@ -367,6 +371,8 @@ let activeOptions: BuildTslOptions = {}
 // requests 40 sampled-texture bindings against WebGPU's default 16 and
 // the pipeline never validates.
 let lutCache = new Map<string, { lut: DataTexture, samples: number }>()
+let repeatCache = new Map<string,TslExpression>()
+let repeatWork = 0
 
 /** Cycles fresnel_dielectric_cos for the front face: c = |cos|,
  * g2 = eta^2 - 1 + c^2; total internal reflection (g2 < 0) returns 1. */
@@ -563,6 +569,26 @@ function child(expression: TslIrExpression, key: string): TslIrExpression {
 
 function build(expression: TslIrExpression): TslExpression {
   switch (expression.op) {
+    case 'repeat_static': {
+      const options = {...activeOptions}
+      const cost = staticRepeatCost(expression, fail)
+      const key = JSON.stringify(expression)
+      const cached = repeatCache.get(key)
+      if(cached)return cached
+      if(repeatCache.size>=8)return fail('Repeat exceeds8 unique loops per channel')
+      repeatWork += cost
+      if(repeatWork>8192)return fail('Repeat exceeds aggregate channel loop cost')
+      const result = buildStaticRepeat(expression, value => {
+        const previous = activeOptions
+        activeOptions = options
+        try { return build(value) } finally { activeOptions = previous }
+      }, fail, options.signal).toVar()
+      repeatCache.set(key,result)
+      return result
+    }
+    case 'repeat_state':
+    case 'repeat_iteration':
+      return buildRepeatReference(expression, fail)
     case 'squeeze_native':
       return buildTslSqueeze(expression, build, fail)
     case 'camera_data_native':
@@ -1217,6 +1243,8 @@ function build(expression: TslIrExpression): TslExpression {
       // Cycles saturates the gradient before both outputs.
       return tslClamp(result, 0.0, 1.0)
     }
+    case 'radial_segment_width':
+      return buildTslRadialWidth(expression, build, fail)
     case 'tex_magic_native':
       return buildTslMagicNode(expression, build, fail, activeOptions)
     case 'tex_magic': {
@@ -2956,6 +2984,7 @@ export function buildTslColorNode(
   assertTslIrDocument(document)
   activeOptions = options
   lutCache = new Map()
+  repeatCache = new Map();repeatWork=0
   const texturesBefore = options.resources?.textures.length ?? 0
   try {
     const built = build(document.output)
@@ -2966,6 +2995,7 @@ export function buildTslColorNode(
   } finally {
     activeOptions = {}
     lutCache = new Map()
+    repeatCache = new Map();repeatWork=0
   }
 }
 
@@ -2978,6 +3008,7 @@ export function buildTslScalarNode(
   assertTslIrDocument(document)
   activeOptions = options
   lutCache = new Map()
+  repeatCache = new Map();repeatWork=0
   const texturesBefore = options.resources?.textures.length ?? 0
   try {
     const built = build(document.output)
@@ -2985,5 +3016,6 @@ export function buildTslScalarNode(
     return built
   } finally {
     activeOptions = {}
+    repeatCache = new Map();repeatWork=0
   }
 }

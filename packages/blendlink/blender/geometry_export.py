@@ -14,13 +14,13 @@ import geometry_ir
 
 
 @contextlib.contextmanager
-def exact_normals(plan):
+def exact_normals(plan, *, additional_targets=()):
     objects=set()
     for decision in plan.decisions:
         outputs=set();geometry_ir.collect_outputs(decision.channel_plan,outputs)
         if outputs & geometry_ir.NORMAL_OUTPUTS:
             objects.update(binding.object_name for binding in decision.bindings)
-    targets={bpy.data.objects[name].data.name for name in objects}
+    targets={bpy.data.objects[name].data.name for name in objects}|set(additional_targets)
     if not targets:
         yield
         return

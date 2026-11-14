@@ -1,0 +1,27 @@
+{
+  "model": "cycles-static-normal-carrier-v2",
+  "declaredBeforeNativeBakeProof": true,
+  "scope": "Static owned actual render-evaluated single-slot receiver, preserved owner identity and Generated texture space, explicit private bake UV, separate base/coat normal slots. This is bake/carrier fidelity, never live node coverage or whole-material lighting parity.",
+  "nativeReference": "Actual Cycles tangent +Y NORMAL float field. Surface direction/validity uses a separately baked native zero-margin white EMIT geometry mask; PNG component quantization compares every expanded-coverage delivery texel, including native margins. Repeat gates remain active.",
+  "pngEncoding": {
+    "maxEncodedComponentError": 0.003921668627450981,
+    "reason": "At most one 8-bit data quantization step plus 1e-7 Float32 allowance; no sRGB conversion, normalization repair or lossy image reencoding."
+  },
+  "decodedNormal": {
+    "maxAngularDegrees": 1,
+    "minimumReferenceLength": 0.5,
+    "maximumReferenceLength": 1.01,
+    "scope": "Independent actual zero-margin geometric surface mask only. Native bake margins average encoded RGB and do not represent unit surface normals. Expanded delivery coverage retains its full encoded-component quantization bound; there is no margin-direction or arbitrary filtering/LOD parity claim."
+  },
+  "transport": "Exact PNG byte hashes, explicit unit texture strength and exact chosen texCoord for both slots. Per-triangle POSITION/NORMAL/TANGENT/UV Float32 numeric association must match the exact native Mikk basis; geometric signed-zero components are equivalent because stock vertex welding canonicalizes their words. Every nonzero component, winding, handedness, UV and triangle census remains exact. This zero equivalence is not a node numerical gate or texture-byte relaxation.",
+  "refusals": [
+    "pose/mesh animation or shape keys",
+    "multi-slot or instanced normal receiver",
+    "unqualified modifiers",
+    "missing/changed tangent/normal/UV basis",
+    "swapped/missing base or coat texture",
+    "nonfinite or degenerate native normal",
+    "PNG quantization or angular bound failure"
+  ],
+  "priorCounterexample": "v1 retained in artifacts/verification-cycles-normal-actual-wood/source-snapshot: testing unit normal length on expanded/dilated coverage failed12/157910 texels. Pinned bake.cc normalizes geometric normals then native IMB_filter_extend averages RGB margins. No numeric tolerance or production field repair was changed."
+}

@@ -438,14 +438,14 @@
     },
     "shader:GeometryNodeRepeatInput": {
       "priority": "P0 Enablers",
-      "reason": "Close the shared bounded graph execution and time contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "reason": "Retain P0 after bounded static slice. Next blockers are genuine shared source-frame playback/seek/pause transport, FLOAT-to-INT driver semantics and source-proven nonlinear/cross-state Repeat assignment. Unchanged Mandelbrot Grow receives zero new port acceptance credit.",
       "dependsOn": [
         "typed-field-contracts"
       ]
     },
     "shader:GeometryNodeRepeatOutput": {
       "priority": "P0 Enablers",
-      "reason": "Close the shared bounded graph execution and time contract before widening dependent workflows. This is a qualitative dependency judgment.",
+      "reason": "Retain P0 after bounded static slice. Next blockers are genuine shared source-frame playback/seek/pause transport, FLOAT-to-INT driver semantics and source-proven nonlinear/cross-state Repeat assignment. Unchanged Mandelbrot Grow receives zero new port acceptance credit.",
       "dependsOn": [
         "typed-field-contracts"
       ]
@@ -671,7 +671,7 @@
     },
     "shader:ShaderNodeRadialTiling": {
       "priority": "P1 Artist workflows",
-      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "reason": "Retain P1 after bounded literal Width slice. Next gaps are computed integer Sides3/8/12 and Segment Coordinates used by the unchanged official stepped-Map-Range Radial demo; general fractional branches/ID/Rotation remain separate work. No demo acceptance credit.",
       "dependsOn": [
         "typed-field-contracts",
         "coordinate-procedural-fields",
@@ -820,11 +820,11 @@
     },
     "compositor:ShaderNodeRadialTiling": {
       "priority": "P1 Artist workflows",
-      "reason": "Qualitative artist-workflow candidate: common procedural/color/compositing building block; prevalence is inferred, not measured user demand.",
+      "reason": "Retain P1 after bounded literal Width slice. Next gaps are computed integer Sides3/8/12 and Segment Coordinates used by the unchanged official stepped-Map-Range Radial demo; general fractional branches/ID/Rotation remain separate work. No demo acceptance credit.",
       "dependsOn": [
         "typed-field-contracts",
-        "image-sampling-lod",
-        "compositor-domain-algebra"
+        "coordinate-procedural-fields",
+        "image-sampling-lod"
       ]
     },
     "compositor:CompositorNodeFilter": {
@@ -1199,7 +1199,7 @@
     },
     "shader:FunctionNodeFindInString": {
       "priority": "P3 Later",
-      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "reason": "Bounded compile-time scalar-control slice with fresh integrated receipt. Remaining work is arbitrary runtime text/format/layout and unsupported consumers; demand remains unmeasured. Keep this family behind reusable numeric, image and normal foundations.",
       "dependsOn": [
         "typed-field-contracts",
         "bounded-graph-execution"
@@ -1215,7 +1215,7 @@
     },
     "shader:FunctionNodeInputSpecialCharacters": {
       "priority": "P3 Later",
-      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "reason": "Bounded compile-time scalar-control slice with fresh integrated receipt. Remaining work is arbitrary runtime text/format/layout and unsupported consumers; demand remains unmeasured. Keep this family behind reusable numeric, image and normal foundations.",
       "dependsOn": [
         "typed-field-contracts",
         "bounded-graph-execution"
@@ -1223,7 +1223,7 @@
     },
     "shader:FunctionNodeInputString": {
       "priority": "P3 Later",
-      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "reason": "Bounded compile-time scalar-control slice with fresh integrated receipt. Remaining work is arbitrary runtime text/format/layout and unsupported consumers; demand remains unmeasured. Keep this family behind reusable numeric, image and normal foundations.",
       "dependsOn": [
         "typed-field-contracts",
         "bounded-graph-execution"
@@ -1239,7 +1239,7 @@
     },
     "shader:FunctionNodeReplaceString": {
       "priority": "P3 Later",
-      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "reason": "Bounded compile-time scalar-control slice with fresh integrated receipt. Remaining work is arbitrary runtime text/format/layout and unsupported consumers; demand remains unmeasured. Keep this family behind reusable numeric, image and normal foundations.",
       "dependsOn": [
         "typed-field-contracts",
         "bounded-graph-execution"
@@ -1247,7 +1247,7 @@
     },
     "shader:FunctionNodeReverseString": {
       "priority": "P3 Later",
-      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "reason": "Bounded compile-time scalar-control slice with fresh integrated receipt. Remaining work is arbitrary runtime text/format/layout and unsupported consumers; demand remains unmeasured. Keep this family behind reusable numeric, image and normal foundations.",
       "dependsOn": [
         "typed-field-contracts",
         "bounded-graph-execution"
@@ -1255,7 +1255,7 @@
     },
     "shader:FunctionNodeSetStringCase": {
       "priority": "P3 Later",
-      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "reason": "Bounded compile-time scalar-control slice with fresh integrated receipt. Remaining work is arbitrary runtime text/format/layout and unsupported consumers; demand remains unmeasured. Keep this family behind reusable numeric, image and normal foundations.",
       "dependsOn": [
         "typed-field-contracts",
         "bounded-graph-execution"
@@ -1263,7 +1263,7 @@
     },
     "shader:FunctionNodeSliceString": {
       "priority": "P3 Later",
-      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "reason": "Bounded compile-time scalar-control slice with fresh integrated receipt. Remaining work is arbitrary runtime text/format/layout and unsupported consumers; demand remains unmeasured. Keep this family behind reusable numeric, image and normal foundations.",
       "dependsOn": [
         "typed-field-contracts",
         "bounded-graph-execution"
@@ -1271,7 +1271,7 @@
     },
     "shader:FunctionNodeStringLength": {
       "priority": "P3 Later",
-      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "reason": "Bounded compile-time scalar-control slice with fresh integrated receipt. Remaining work is arbitrary runtime text/format/layout and unsupported consumers; demand remains unmeasured. Keep this family behind reusable numeric, image and normal foundations.",
       "dependsOn": [
         "typed-field-contracts",
         "bounded-graph-execution"
@@ -1287,7 +1287,7 @@
     },
     "shader:FunctionNodeTrimString": {
       "priority": "P3 Later",
-      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "reason": "Bounded compile-time scalar-control slice with fresh integrated receipt. Remaining work is arbitrary runtime text/format/layout and unsupported consumers; demand remains unmeasured. Keep this family behind reusable numeric, image and normal foundations.",
       "dependsOn": [
         "typed-field-contracts",
         "bounded-graph-execution"
@@ -1303,7 +1303,7 @@
     },
     "compositor:FunctionNodeFindInString": {
       "priority": "P3 Later",
-      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "reason": "Bounded compile-time scalar-control slice with fresh integrated receipt. Remaining work is arbitrary runtime text/format/layout and unsupported consumers; demand remains unmeasured. Keep this family behind reusable numeric, image and normal foundations.",
       "dependsOn": [
         "typed-field-contracts",
         "bounded-graph-execution"
@@ -1319,7 +1319,7 @@
     },
     "compositor:FunctionNodeInputSpecialCharacters": {
       "priority": "P3 Later",
-      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "reason": "Bounded compile-time scalar-control slice with fresh integrated receipt. Remaining work is arbitrary runtime text/format/layout and unsupported consumers; demand remains unmeasured. Keep this family behind reusable numeric, image and normal foundations.",
       "dependsOn": [
         "typed-field-contracts",
         "bounded-graph-execution"
@@ -1327,7 +1327,7 @@
     },
     "compositor:FunctionNodeInputString": {
       "priority": "P3 Later",
-      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "reason": "Bounded compile-time scalar-control slice with fresh integrated receipt. Remaining work is arbitrary runtime text/format/layout and unsupported consumers; demand remains unmeasured. Keep this family behind reusable numeric, image and normal foundations.",
       "dependsOn": [
         "typed-field-contracts",
         "bounded-graph-execution"
@@ -1343,7 +1343,7 @@
     },
     "compositor:FunctionNodeReplaceString": {
       "priority": "P3 Later",
-      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "reason": "Bounded compile-time scalar-control slice with fresh integrated receipt. Remaining work is arbitrary runtime text/format/layout and unsupported consumers; demand remains unmeasured. Keep this family behind reusable numeric, image and normal foundations.",
       "dependsOn": [
         "typed-field-contracts",
         "bounded-graph-execution"
@@ -1351,7 +1351,7 @@
     },
     "compositor:FunctionNodeReverseString": {
       "priority": "P3 Later",
-      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "reason": "Bounded compile-time scalar-control slice with fresh integrated receipt. Remaining work is arbitrary runtime text/format/layout and unsupported consumers; demand remains unmeasured. Keep this family behind reusable numeric, image and normal foundations.",
       "dependsOn": [
         "typed-field-contracts",
         "bounded-graph-execution"
@@ -1359,7 +1359,7 @@
     },
     "compositor:FunctionNodeSetStringCase": {
       "priority": "P3 Later",
-      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "reason": "Bounded compile-time scalar-control slice with fresh integrated receipt. Remaining work is arbitrary runtime text/format/layout and unsupported consumers; demand remains unmeasured. Keep this family behind reusable numeric, image and normal foundations.",
       "dependsOn": [
         "typed-field-contracts",
         "bounded-graph-execution"
@@ -1367,7 +1367,7 @@
     },
     "compositor:FunctionNodeSliceString": {
       "priority": "P3 Later",
-      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "reason": "Bounded compile-time scalar-control slice with fresh integrated receipt. Remaining work is arbitrary runtime text/format/layout and unsupported consumers; demand remains unmeasured. Keep this family behind reusable numeric, image and normal foundations.",
       "dependsOn": [
         "typed-field-contracts",
         "bounded-graph-execution"
@@ -1375,7 +1375,7 @@
     },
     "compositor:FunctionNodeStringLength": {
       "priority": "P3 Later",
-      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "reason": "Bounded compile-time scalar-control slice with fresh integrated receipt. Remaining work is arbitrary runtime text/format/layout and unsupported consumers; demand remains unmeasured. Keep this family behind reusable numeric, image and normal foundations.",
       "dependsOn": [
         "typed-field-contracts",
         "bounded-graph-execution"
@@ -1391,7 +1391,7 @@
     },
     "compositor:FunctionNodeTrimString": {
       "priority": "P3 Later",
-      "reason": "Specialist string/text workflow; defer behind reusable numeric, image, normal and compositor foundations. Relative user demand is unknown.",
+      "reason": "Bounded compile-time scalar-control slice with fresh integrated receipt. Remaining work is arbitrary runtime text/format/layout and unsupported consumers; demand remains unmeasured. Keep this family behind reusable numeric, image and normal foundations.",
       "dependsOn": [
         "typed-field-contracts",
         "bounded-graph-execution"
@@ -1424,8 +1424,8 @@
   },
   "researchNotes": {
     "compositor:FunctionNodeFloatToInt": "Qualified partial literal production port on measured Blender 5.3 macOS arm64: all four modes, native typed consumers and actual saved Final/browser proof. Computed/image fields, other platforms and implicit conversions remain unqualified; native subnormal and save/reopen image counterexamples are retained. Earlier Geometry-only/private kernel trials grant no additional support. Shader creation is rejected in all audited versions.",
-    "shader:ShaderNodeRadialTiling": "Research only, no production emitter/runtime port. The actual official Radial demo is refused by Final; native and private kernel trials retain their separate domain limits.",
-    "compositor:ShaderNodeRadialTiling": "Native context availability and separate shader research do not constitute a compositor port.",
+    "shader:ShaderNodeRadialTiling": "Qualified partial literal Segment Width port with closed native/Final/browser evidence. Computed Sides3/8/12 and Segment Coordinates in the unchanged stepped official demo remain unqualified. Generated-kernel compilation research is separate and earns no new support or scene credit.",
+    "compositor:ShaderNodeRadialTiling": "Qualified partial literal Segment Width port with closed native/Final/browser evidence. Computed Sides3/8/12 and Segment Coordinates in the unchanged stepped official demo remain unqualified. Generated-kernel compilation research is separate and earns no new support or scene credit.",
     "shader:ShaderNodeLightFalloff": "Native EEVEE/Cycles differences justify an engine-fallback safety guard, not a live Light Falloff port.",
     "shader:ShaderNodeSqueeze": "Blender 4.2 owned-context initialization remains research and production source admission stays N/A. Existing qualified 5.2/5.3 slices remain limited as declared.",
     "compositor:CompositorNodeImageCoordinates": "Qualified Pixel INT2 now has exact RGBA/padded-VECTOR3, VALUE half-sum, native INT midpoint ties toward X, and BOOLEAN either-component-nonzero edges through direct/reroute/group paths, real resize/DPR and analytic tie controls. Fresh Uniform/Normalized FLOAT2 stays separately bounded by<=2ULP AND abs<=2^-22 with exact zero centers/Z/alpha; no new FLOAT2 reduction or arbitrary composition credit. Next P0 work: FLOAT2 scalar/int/Boolean edges, data/display-window origins/domain algebra and independently budgeted composed fields. Preserve all Pixel exact-word gates.",
@@ -1434,7 +1434,10 @@
     "shader:FunctionNodeInputMenu": "Partial fixed native node.value selector for existing compile-time Menu Switch; direct, reroute and artist-group paths are measured on Blender5.3 build02f0899d78e3. Empty/conflicting menus, dynamic selectors, standalone Menu transport and other builds remain unqualified.",
     "compositor:FunctionNodeInputMenu": "Partial fixed native node.value selector for existing compile-time Menu Switch; direct, reroute and artist-group paths are measured on Blender5.3 build02f0899d78e3. Empty/conflicting menus, dynamic selectors, standalone Menu transport and other builds remain unqualified.",
     "compositor:ShaderNodeVectorMath": "Qualified partial compositor literal port in the measured5.3 slice: twelve simple modes accept practical exact normal Float32 defaults with nonzero magnitude[2^-32,2^16], or+0; four compound/division modes retain exact dyadic bounds. Exact output words, no tolerances. Next P0 gaps: computed producer chains/image fields, broader compound arithmetic, the remaining fourteen modes and native signed-zero/stage semantics. The three official demo triage has zero compositor Vector Math occurrences; shader occurrences4/2/10 use existing shader routes and grant no new compositor-port credit.",
-    "compositor:CompositorNodeImageInfo": "Qualified partial identity full-frame current-scene Render Layers metadata: five native outputs and explicit RGBA/padded-vector edges exact, dimensions live through resize/DPR with real PassNode dependency. Separately labelled existing width/height DIVIDE examples have their own bounded consumer contract; Aspect is not a native output. Next P0 gaps: nonidentity/static/computed image domains, metadata scalar/int/Boolean conversions and independently qualified composed-domain algebra. Image Info is absent from the three official demo physical inventories, so triage adds no new-port numerical/Final/browser/performance credit."
+    "compositor:CompositorNodeImageInfo": "Qualified partial identity full-frame current-scene Render Layers metadata: five native outputs and explicit RGBA/padded-vector edges exact, dimensions live through resize/DPR with real PassNode dependency. Separately labelled existing width/height DIVIDE examples have their own bounded consumer contract; Aspect is not a native output. Next P0 gaps: nonidentity/static/computed image domains, metadata scalar/int/Boolean conversions and independently qualified composed-domain algebra. Image Info is absent from the three official demo physical inventories, so triage adds no new-port numerical/Final/browser/performance credit.",
+    "shader:GeometryNodeRepeatInput": "Qualified paired static literal-seed Repeat slice; 49native/11Final/240browser family cases. UV phase margins, nonlinear/cross-state assignment and a shared source-frame timeline remain separate blockers. Original animated Mandelbrot has no new acceptance credit.",
+    "shader:GeometryNodeRepeatOutput": "Qualified paired static literal-seed Repeat slice; 49native/11Final/240browser family cases. UV phase margins, nonlinear/cross-state assignment and a shared source-frame timeline remain separate blockers. Original animated Mandelbrot has no new acceptance credit.",
+    "shader:ShaderNodeBump": "A separate offline Cycles Normal/active Coat Normal route is verified on actual owned Cube wood, with native render geometry, independent PNG/UV/Mikk checks and strict carrier-loading closure. Zero new live Bump coverage; Floor resource limit and Lighting-atlas composition remain refused."
   },
   "observationEvidence": [
     "experiments/official-demo-node-performance/README.md",
@@ -1448,10 +1451,18 @@
       "experiments/float-to-int-native/literal-evidence.json"
     ],
     "shader:ShaderNodeRadialTiling": [
-      "experiments/radial-tiling-research/README.md"
+      "experiments/radial-tiling-research/README.md",
+      "experiments/radial-segment-width/README.md",
+      "experiments/radial-segment-width/evidence.json",
+      "experiments/radial-segment-width/demo-controls.json",
+      "experiments/radial-segment-width/demo-controls.md"
     ],
     "compositor:ShaderNodeRadialTiling": [
-      "experiments/radial-tiling-research/README.md"
+      "experiments/radial-tiling-research/README.md",
+      "experiments/radial-segment-width/README.md",
+      "experiments/radial-segment-width/evidence.json",
+      "experiments/radial-segment-width/demo-controls.json",
+      "experiments/radial-segment-width/demo-controls.md"
     ],
     "shader:ShaderNodeLightFalloff": [
       "experiments/light-falloff-engine-differential/README.md"
@@ -1499,6 +1510,90 @@
       "experiments/compositor-image-info/README.md",
       "experiments/compositor-image-info/numeric-contract.json",
       "experiments/compositor-image-info/evidence.json"
+    ],
+    "shader:FunctionNodeInputString": [
+      "experiments/static-string-family/README.md",
+      "experiments/static-string-family/evidence.json"
+    ],
+    "shader:FunctionNodeInputSpecialCharacters": [
+      "experiments/static-string-family/README.md",
+      "experiments/static-string-family/evidence.json"
+    ],
+    "shader:FunctionNodeReverseString": [
+      "experiments/static-string-family/README.md",
+      "experiments/static-string-family/evidence.json"
+    ],
+    "shader:FunctionNodeTrimString": [
+      "experiments/static-string-family/README.md",
+      "experiments/static-string-family/evidence.json"
+    ],
+    "shader:FunctionNodeSliceString": [
+      "experiments/static-string-family/README.md",
+      "experiments/static-string-family/evidence.json"
+    ],
+    "shader:FunctionNodeReplaceString": [
+      "experiments/static-string-family/README.md",
+      "experiments/static-string-family/evidence.json"
+    ],
+    "shader:FunctionNodeSetStringCase": [
+      "experiments/static-string-family/README.md",
+      "experiments/static-string-family/evidence.json"
+    ],
+    "shader:FunctionNodeStringLength": [
+      "experiments/static-string-family/README.md",
+      "experiments/static-string-family/evidence.json"
+    ],
+    "shader:FunctionNodeFindInString": [
+      "experiments/static-string-family/README.md",
+      "experiments/static-string-family/evidence.json"
+    ],
+    "compositor:FunctionNodeInputString": [
+      "experiments/static-string-family/README.md",
+      "experiments/static-string-family/evidence.json"
+    ],
+    "compositor:FunctionNodeInputSpecialCharacters": [
+      "experiments/static-string-family/README.md",
+      "experiments/static-string-family/evidence.json"
+    ],
+    "compositor:FunctionNodeReverseString": [
+      "experiments/static-string-family/README.md",
+      "experiments/static-string-family/evidence.json"
+    ],
+    "compositor:FunctionNodeTrimString": [
+      "experiments/static-string-family/README.md",
+      "experiments/static-string-family/evidence.json"
+    ],
+    "compositor:FunctionNodeSliceString": [
+      "experiments/static-string-family/README.md",
+      "experiments/static-string-family/evidence.json"
+    ],
+    "compositor:FunctionNodeReplaceString": [
+      "experiments/static-string-family/README.md",
+      "experiments/static-string-family/evidence.json"
+    ],
+    "compositor:FunctionNodeSetStringCase": [
+      "experiments/static-string-family/README.md",
+      "experiments/static-string-family/evidence.json"
+    ],
+    "compositor:FunctionNodeStringLength": [
+      "experiments/static-string-family/README.md",
+      "experiments/static-string-family/evidence.json"
+    ],
+    "compositor:FunctionNodeFindInString": [
+      "experiments/static-string-family/README.md",
+      "experiments/static-string-family/evidence.json"
+    ],
+    "shader:GeometryNodeRepeatInput": [
+      "experiments/shader-static-repeat/README.md",
+      "experiments/shader-static-repeat/evidence.json"
+    ],
+    "shader:GeometryNodeRepeatOutput": [
+      "experiments/shader-static-repeat/README.md",
+      "experiments/shader-static-repeat/evidence.json"
+    ],
+    "shader:ShaderNodeBump": [
+      "experiments/cycles-normal-bake/README.md",
+      "experiments/cycles-normal-bake/evidence.json"
     ]
   },
   "sceneObservations": {

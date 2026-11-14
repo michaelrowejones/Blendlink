@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "role": "Independent byte-carrier counterexample only; zero static-string qualification credit. Native string/scalar value remained0.",
+  "sourceCase": "input-empty-length",
+  "rawProbe": {
+    "path": "artifacts/verification-static-string-pilot/zero-diagnostic/report.json",
+    "sha256": "4e40494f2bc8bbda381d2026c114d2c1b6155b6e96a93a9c65ee65ef6835432b"
+  },
+  "failedBrowserReceipt": {
+    "path": "artifacts/verification-static-string-pilot/shader-metal-r2/shader/browser-raw-metal/report.json",
+    "sha256": "b39a671e96ce09a903664e5c03a08923b63c86b16b11ae89cd61f05cc5476b39"
+  },
+  "nativeProgram": {
+    "path": "artifacts/verification-static-string-pilot/shader-metal-r2/shader/input-empty-length.program.json",
+    "sha256": "e4d4262d52c29d409465e3cad5e663c9bee5d8853efaaf36b15ae11b6fd7231b"
+  },
+  "nativePixels": {
+    "path": "artifacts/verification-static-string-pilot/shader-metal-r2/shader/input-empty-length.rgba32f",
+    "sha256": "838e440de915b6542a5ad420d34d1de11f5dd6e99d3eba5c662cea1e2cb08d17"
+  },
+  "counterexample": {
+    "gpu": {
+      "vendor": "apple",
+      "architecture": "metal-3",
+      "device": "",
+      "description": ""
+    },
+    "backend": "webgpu",
+    "firstPixel": [
+      0,
+      0,
+      0.25,
+      1
+    ],
+    "firstWords": [
+      2147483648,
+      0,
+      1048576000,
+      1065353216
+    ],
+    "shaderKeys": [],
+    "expectedFirstWords": [
+      0,
+      0,
+      1048576000,
+      1065353216
+    ],
+    "role": "Unqualified carrier counterexample; no string numerical failure or coverage credit"
+  },
+  "rootCause": "Existing float FLOORED_MODULO subtraction generated a negative-zero low byte on actual Metal WebGPU:0x80000000 versus native+0x00000000. Integer decode remained0, but the predeclared exact encoded-word contract correctly failed.",
+  "resolution": "Use existing qualified nonnegative INT MODULO/DIVIDE before Float32 power-of-two scales. All original string operators, expected text, scalar values and zero-tolerance encoded-word gates remain unchanged. Fresh native/Final/browser capture is required."
+}

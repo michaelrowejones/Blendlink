@@ -1,0 +1,11 @@
+{
+  "schemaVersion":1,
+  "model":"native-static-strings-53-v1",
+  "native":"Blender5.3.0 build02f0899d78e3 macOSarm64 host static strings; shader/CPU/GPU labels qualify encoded scalar transport, not GPU text arithmetic.",
+  "logicalText":"Manually authored expectedString literals. For each nonempty text case, actual native Length equals Unicode codepoint length of expectedString AND actual native Find(actualString,expectedString).Count equals1. Empty outputs require native Length0. Independently helper-resolved actual text must equal the authored expectedString. Witness render pairs count as one logical string case.",
+  "scalarCarrier":{"minimumInteger":0,"maximumInteger":4096,"R":"(n %256)/256","G":"floor(n/256)/256","B":0.25,"alpha":1,"encodedFloat32Words":"exact","decodedInteger":"exact","nativeOperatorUnmodified":true,"arithmetic":"Exact nonnegative integer MODULO/DIVIDE extract the bytes before the power-of-two Float32 scale; string operators and scalar values remain unchanged."},
+  "sourcePreservation":"Native operators and inputs remain authored. Only an owned temporary Emission output exposes the predeclared byte carrier during shader capture; actual saved Final retains the Principled source graph and native string classes.",
+  "scope":"Input String, Special Characters, Reverse, Trim, Slice, Replace, pinned native BLI one-codepoint Unicode Uppercase/Lowercase, Length, Find; typed groups/reroutes/native mute bypass; bounded static Compare/IndexSwitch controls. UTF8 codepoints, not graphemes. All666upper/669lower mappings and neighboring unmapped identities have literal expected-string controls; this is not Python Unicode casing or grapheme conversion.",
+  "performanceCredit":0,
+  "predeclaredBeforeBrowser":true
+}
