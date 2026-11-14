@@ -1,0 +1,10 @@
+{
+ "schemaVersion":1,
+ "role":"Actual Three r184 GPU compile/scaffold research only. Zero node support, numerical, Final or official-scene acceptance credit.",
+ "inputs":{"coordinates":"Unquantized varying UV affine fields within component magnitude2; separate synthetic source-shaped demo bounds±1.000370979309082/±1.0028247833251953.","Sides":"Broader fractional3..8 field, plus corrected demo-stepped integer3/8/12 field.","Roundness":1,"Normalize":[false,true]},
+ "outputs":"Native returned component order Segment Coordinates=(variables.y,variables.x,0). No output repair, epsilon seam mask, lookup texture, input quantization or algorithm substitution.",
+ "ceilings":{"generatedTslBytes":262144,"fragmentShaderBytesPerProgram":524288,"compileMillisecondsPerProgram":60000,"physicalDiagnosticExtent":[8,8],"drawsPerProgram":1,"portOwnedTextures":0},
+ "refusals":"Wrong pinned source SHA, unknown transpiler options, non-tail or non-exhaustive early-return adaptation, source/shader/time ceiling violation, missing actual API adapter or renderer fallback. Nonfinite output observations remain recorded, not silently repaired or counted as numerical passes.",
+ "knownRisks":["EEVEE GPU source versus CPU MF optimized branch staging","atan2/other trig and division approximations","Sector and stepped-radius branch boundaries","Origin/signed-zero semantics","Fractional values adjacent to integer Sides","Generated helper/register cost and dead-code elimination"],
+ "productionAdmission":false
+}

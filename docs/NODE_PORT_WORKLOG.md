@@ -559,7 +559,7 @@ modulo carrier signed zero was caught and replaced with existing integer
 arithmetic outside the string operators; no output tolerance was widened.
 
 The source tree passes1530SDK tests with5optional skips,98release-policy checks,
-123Node pipeline tests plus7Python audit tests, and local packed/Vanilla/R3F and
+123Node pipeline tests plus8Python audit tests, and local packed/Vanilla/R3F and
 fresh-cache install checks. Later metadata-only changes receive focused checks.
 All22new context/node entries are5.3-only partial overrides. Only the8measured
 Case/Find menu values acquire5.3partial enum scope;4.2/5.2categories and enum

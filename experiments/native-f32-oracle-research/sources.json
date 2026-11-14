@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "nativeVersion": [
+    5,
+    3,
+    0
+  ],
+  "nativeBuild": "02f0899d78e3",
+  "sourceRevision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "sources": [
+    {
+      "path": "source/blender/draw/engines/eevee/eevee_film.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/draw/engines/eevee/eevee_film.cc",
+      "sha256": "a6c5d9a70408e930c83ebc23c304c6d0c705b043e3b0a23ddb3a2cc1cd3f438f"
+    },
+    {
+      "path": "source/blender/draw/engines/eevee/eevee_renderbuffers.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/draw/engines/eevee/eevee_renderbuffers.cc",
+      "sha256": "f12a6a4627ec5649bfb6b56c9131fec3dff880b5639371ea1b48780025ad8018"
+    },
+    {
+      "path": "source/blender/python/gpu/gpu_py_framebuffer.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/python/gpu/gpu_py_framebuffer.cc",
+      "sha256": "c6927535e874259480297c694f63b2e81e1d9b1d08d2fb981782ab758e5196fd"
+    },
+    {
+      "path": "source/blender/python/gpu/gpu_py_shader_create_info.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/python/gpu/gpu_py_shader_create_info.cc",
+      "sha256": "ab0ca3ded6efd4f066dc6c1d9b2084b659bca7444727a50829dc9bdafd0e6230"
+    },
+    {
+      "path": "source/blender/python/gpu/gpu_py_shader.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/python/gpu/gpu_py_shader.cc",
+      "sha256": "407b66febdf6e2304dfdc25ef8670bd36e43871a031ab06219584ed2325c2d17"
+    },
+    {
+      "path": "source/blender/gpu/intern/gpu_shader.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/intern/gpu_shader.cc",
+      "sha256": "87acec9fbb29b37234971957a8e336dae99787cfc24fd6611fe2233d2d5ca589"
+    },
+    {
+      "path": "source/blender/gpu/intern/gpu_shader_dependency.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/intern/gpu_shader_dependency.cc",
+      "sha256": "33b09b53470eb775e511cec776529159802396bdc18658f96b2d40fa7af9fb67"
+    },
+    {
+      "path": "source/blender/gpu/metal/mtl_shader.mm",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/metal/mtl_shader.mm",
+      "sha256": "4ceff7474af3d25d2bdbcf68f64af2eae3c526c598acb977461f8cf37bc6e229"
+    },
+    {
+      "path": "source/blender/gpu/metal/mtl_shader_generate.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/metal/mtl_shader_generate.cc",
+      "sha256": "bf5ec45bd85c6686833057cb1f748921968338bd06c23e523123eead153b0cfb"
+    },
+    {
+      "path": "source/blender/draw/engines/eevee/eevee_renderbuffers.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/draw/engines/eevee/eevee_renderbuffers.hh",
+      "sha256": "c9d8f564c4abc3b4b6b37c36d529a659144505cfe0c682e52c10a61afd6d0df3"
+    },
+    {
+      "path": "source/blender/gpu/shader_tool/processor.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shader_tool/processor.cc",
+      "sha256": "c6e64687abc0c49a0cb41d750ad0e3eb620323fe7b02e1078fab24105552bb58"
+    },
+    {
+      "path": "source/blender/gpu/shader_tool/processor.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shader_tool/processor.hh",
+      "sha256": "0a10d97bdd168a41b2acb554156358b7bc42069007f5ce3769e14955feab37fc"
+    },
+    {
+      "path": "source/blender/gpu/shaders/material/gpu_shader_material_vector_math.bsl.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shaders/material/gpu_shader_material_vector_math.bsl.hh",
+      "sha256": "70a387963272a0fbfa3489e7efccaf9dd5448136bf6c9005ab12d2c803d4d734"
+    },
+    {
+      "path": "source/blender/gpu/shaders/material/gpu_shader_material_output_aov.bsl.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shaders/material/gpu_shader_material_output_aov.bsl.hh",
+      "sha256": "544afe3a6021094fd55f65188643d6d2e3c18b4ab04f6b8c5be74f44c394d7f1"
+    },
+    {
+      "path": "source/blender/python/gpu/gpu_py_api.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/python/gpu/gpu_py_api.cc",
+      "sha256": "3274ac11eb635474a08aadde7b93fc55aee376db8cf756c5919575d4b47edeaf"
+    },
+    {
+      "path": "source/blender/python/gpu/gpu_py.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/python/gpu/gpu_py.cc",
+      "sha256": "cee60c8ee8c11ebb44996a736053c3036f667076614d11623bd23a398c446091"
+    },
+    {
+      "path": "source/blender/python/gpu/gpu_py_offscreen.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/python/gpu/gpu_py_offscreen.cc",
+      "sha256": "dd49baafd47c941be894adf962e7bcc704fd763e9037cad79e9e3296d4db6bd9"
+    },
+    {
+      "path": "source/blender/python/gpu/gpu_py_texture.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/python/gpu/gpu_py_texture.cc",
+      "sha256": "30179325f8aebb8155f932010bf32475af12e8e53f47dfcf54d0ad4e3e22165e"
+    }
+  ]
+}

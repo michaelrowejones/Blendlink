@@ -1,0 +1,341 @@
+{
+  "schemaVersion": 1,
+  "status": "RADIAL_COMPILE_RESEARCH_CLOSED",
+  "scope": "Mechanical source-derived compilation scaffold only",
+  "source": {
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shaders/material/gpu_shader_material_radial_tiling_shared.glsl",
+    "sha256": "adab763a5772baca55f40e9ad0aa0cc1942b8bee87f898fe3e4aaa0601ebeeb3",
+    "license": "Apache-2.0",
+    "copyright": "2024-2025 Blender Authors"
+  },
+  "generatedTslBytes": 34474,
+  "astLowering": [
+    {
+      "function": "calculate_out_variables_irregular_circular",
+      "type": "vec4",
+      "tailLeaves": 4,
+      "resultVariable": "scenetowebTailReturn0",
+      "exhaustivePathsProved": true
+    }
+  ],
+  "observations": [
+    {
+      "directory": "artifacts/verification-radial-transpiler/compile-baseline-r3",
+      "reportSha256": "ec5dc18153fab62f188a9134f04d2c1a0d2fa2bcc8258a560a8a061af84d6105",
+      "variant": "baseline",
+      "profile": "metal",
+      "adapters": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "description": ""
+          },
+          "codegenDiagnostics": 1,
+          "programs": [
+            {
+              "case": "independent-input-control",
+              "fragmentBytes": 459,
+              "buildAndCompileMs": 7.800000011920929,
+              "nonfiniteComponents": 0,
+              "remainingTextures": 0
+            },
+            {
+              "case": "fractional-raw",
+              "fragmentBytes": 21252,
+              "buildAndCompileMs": 20.69999998807907,
+              "nonfiniteComponents": 0,
+              "remainingTextures": 0
+            },
+            {
+              "case": "fractional-normalized",
+              "fragmentBytes": 21251,
+              "buildAndCompileMs": 4.5,
+              "nonfiniteComponents": 0,
+              "remainingTextures": 0
+            },
+            {
+              "case": "demo-stepped-raw",
+              "fragmentBytes": 21609,
+              "buildAndCompileMs": 4.900000035762787,
+              "nonfiniteComponents": 0,
+              "remainingTextures": 0
+            },
+            {
+              "case": "demo-stepped-normalized",
+              "fragmentBytes": 21608,
+              "buildAndCompileMs": 4.699999988079071,
+              "nonfiniteComponents": 0,
+              "remainingTextures": 0
+            }
+          ]
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "codegenDiagnostics": 1,
+          "programs": [
+            {
+              "case": "independent-input-control",
+              "fragmentBytes": 847,
+              "buildAndCompileMs": 13.5,
+              "nonfiniteComponents": 0,
+              "remainingTextures": 0
+            },
+            {
+              "case": "fractional-raw",
+              "fragmentBytes": 21032,
+              "buildAndCompileMs": 33.10000002384186,
+              "nonfiniteComponents": 0,
+              "remainingTextures": 0
+            },
+            {
+              "case": "fractional-normalized",
+              "fragmentBytes": 21031,
+              "buildAndCompileMs": 16,
+              "nonfiniteComponents": 0,
+              "remainingTextures": 0
+            },
+            {
+              "case": "demo-stepped-raw",
+              "fragmentBytes": 21338,
+              "buildAndCompileMs": 16.5,
+              "nonfiniteComponents": 0,
+              "remainingTextures": 0
+            },
+            {
+              "case": "demo-stepped-normalized",
+              "fragmentBytes": 21337,
+              "buildAndCompileMs": 16.099999964237213,
+              "nonfiniteComponents": 0,
+              "remainingTextures": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "directory": "artifacts/verification-radial-transpiler/compile-lowered-r3",
+      "reportSha256": "1376a7360afc244b846464f5e128da991ea2fb15b6a38c9e7687e071b2b56f86",
+      "variant": "exhaustive-tail-lowered",
+      "profile": "metal",
+      "adapters": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "description": ""
+          },
+          "codegenDiagnostics": 0,
+          "programs": [
+            {
+              "case": "independent-input-control",
+              "fragmentBytes": 459,
+              "buildAndCompileMs": 7.100000023841858,
+              "nonfiniteComponents": 0,
+              "remainingTextures": 0
+            },
+            {
+              "case": "fractional-raw",
+              "fragmentBytes": 21361,
+              "buildAndCompileMs": 16.69999998807907,
+              "nonfiniteComponents": 0,
+              "remainingTextures": 0
+            },
+            {
+              "case": "fractional-normalized",
+              "fragmentBytes": 21360,
+              "buildAndCompileMs": 5.099999964237213,
+              "nonfiniteComponents": 0,
+              "remainingTextures": 0
+            },
+            {
+              "case": "demo-stepped-raw",
+              "fragmentBytes": 21718,
+              "buildAndCompileMs": 5,
+              "nonfiniteComponents": 0,
+              "remainingTextures": 0
+            },
+            {
+              "case": "demo-stepped-normalized",
+              "fragmentBytes": 21717,
+              "buildAndCompileMs": 5.099999964237213,
+              "nonfiniteComponents": 0,
+              "remainingTextures": 0
+            }
+          ]
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "codegenDiagnostics": 0,
+          "programs": [
+            {
+              "case": "independent-input-control",
+              "fragmentBytes": 847,
+              "buildAndCompileMs": 12.800000011920929,
+              "nonfiniteComponents": 0,
+              "remainingTextures": 0
+            },
+            {
+              "case": "fractional-raw",
+              "fragmentBytes": 21124,
+              "buildAndCompileMs": 16.299999952316284,
+              "nonfiniteComponents": 0,
+              "remainingTextures": 0
+            },
+            {
+              "case": "fractional-normalized",
+              "fragmentBytes": 21123,
+              "buildAndCompileMs": 17.399999976158142,
+              "nonfiniteComponents": 0,
+              "remainingTextures": 0
+            },
+            {
+              "case": "demo-stepped-raw",
+              "fragmentBytes": 21430,
+              "buildAndCompileMs": 17,
+              "nonfiniteComponents": 0,
+              "remainingTextures": 0
+            },
+            {
+              "case": "demo-stepped-normalized",
+              "fragmentBytes": 21429,
+              "buildAndCompileMs": 16.299999952316284,
+              "nonfiniteComponents": 0,
+              "remainingTextures": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "directory": "artifacts/verification-radial-transpiler/compile-lowered-software-r3",
+      "reportSha256": "d5894dc2a8d16197877df82f730e5b58831d17209643d1c4898b4257e96777e4",
+      "variant": "exhaustive-tail-lowered",
+      "profile": "software",
+      "adapters": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "description": ""
+          },
+          "codegenDiagnostics": 0,
+          "programs": [
+            {
+              "case": "independent-input-control",
+              "fragmentBytes": 459,
+              "buildAndCompileMs": 21.100000023841858,
+              "nonfiniteComponents": 0,
+              "remainingTextures": 0
+            },
+            {
+              "case": "fractional-raw",
+              "fragmentBytes": 21361,
+              "buildAndCompileMs": 32,
+              "nonfiniteComponents": 0,
+              "remainingTextures": 0
+            },
+            {
+              "case": "fractional-normalized",
+              "fragmentBytes": 21360,
+              "buildAndCompileMs": 21.30000001192093,
+              "nonfiniteComponents": 0,
+              "remainingTextures": 0
+            },
+            {
+              "case": "demo-stepped-raw",
+              "fragmentBytes": 21718,
+              "buildAndCompileMs": 21.600000023841858,
+              "nonfiniteComponents": 0,
+              "remainingTextures": 0
+            },
+            {
+              "case": "demo-stepped-normalized",
+              "fragmentBytes": 21717,
+              "buildAndCompileMs": 21.700000047683716,
+              "nonfiniteComponents": 0,
+              "remainingTextures": 0
+            }
+          ]
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Google)",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "codegenDiagnostics": 0,
+          "programs": [
+            {
+              "case": "independent-input-control",
+              "fragmentBytes": 847,
+              "buildAndCompileMs": 6.400000035762787,
+              "nonfiniteComponents": 0,
+              "remainingTextures": 0
+            },
+            {
+              "case": "fractional-raw",
+              "fragmentBytes": 21124,
+              "buildAndCompileMs": 13.700000047683716,
+              "nonfiniteComponents": 0,
+              "remainingTextures": 0
+            },
+            {
+              "case": "fractional-normalized",
+              "fragmentBytes": 21123,
+              "buildAndCompileMs": 3.300000011920929,
+              "nonfiniteComponents": 0,
+              "remainingTextures": 0
+            },
+            {
+              "case": "demo-stepped-raw",
+              "fragmentBytes": 21430,
+              "buildAndCompileMs": 3.400000035762787,
+              "nonfiniteComponents": 0,
+              "remainingTextures": 0
+            },
+            {
+              "case": "demo-stepped-normalized",
+              "fragmentBytes": 21429,
+              "buildAndCompileMs": 3.200000047683716,
+              "nonfiniteComponents": 0,
+              "remainingTextures": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "diagnosticWordEqualityBetweenBaselineAndAdaptedMetal": 2560,
+  "cleanAdaptedDiagnosticDraws": 20,
+  "independentControlDrawsIncluded": 4,
+  "supportCredit": 0,
+  "numericalCases": 0,
+  "finalExports": 0,
+  "officialSceneAcceptance": false,
+  "productionAdmission": false,
+  "limits": [
+    "No native numerical reference or error contract was exercised.",
+    "8x8 diagnostic fields do not establish branch completeness, seam/origin correctness or runtime performance.",
+    "API readback field orientations differ; independent field calibration is required before cross-API/native numerical comparison.",
+    "Texture counters returning to zero are a scaffold control, not full pipeline ownership/lifecycle qualification.",
+    "Build-and-compile wall timings include Three code generation/API work and are not GPU throughput benchmarks."
+  ]
+}

@@ -452,6 +452,15 @@ def python_constant(path, name):
 def mode_status(rule, value):
     if not rule:
         return "unreviewed"
+    allowed = set(CATEGORIES) | {"sourceSet", "refused"}
+    if not isinstance(rule, dict) or not set(rule).issubset(allowed):
+        raise ValueError("Invalid native enum rule: use category-to-value lists or sourceSet")
+    for category, values in rule.items():
+        if category == "sourceSet":
+            if not isinstance(values, str):
+                raise ValueError("Invalid native enum rule sourceSet")
+        elif not isinstance(values, list) or any(not isinstance(item, str) for item in values):
+            raise ValueError("Invalid native enum rule values: expected a string list")
     if "sourceSet" in rule:
         path, name = rule["sourceSet"].split(":", 1)
         return "supported" if value in python_constant(path, name) else "unsupported"

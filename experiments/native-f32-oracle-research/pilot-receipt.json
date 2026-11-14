@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "status": "CALIBRATED_DIRECT_RGBA32F_RESEARCH_ONLY",
+  "model": "blender53-python-glsl-adapted-bsl-body-rgba32f-v1",
+  "version": [
+    5,
+    3,
+    0
+  ],
+  "build": "02f0899d78e3",
+  "backend": {
+    "backend": "METAL",
+    "renderer": "Metal API",
+    "vendor": "Apple M5 Pro",
+    "version": "1.2"
+  },
+  "draws": 7,
+  "independentStorageCalibrationCases": 5,
+  "adaptedNativeBodyCases": 2,
+  "comparedFloat32Words": 112,
+  "wordMismatches": 0,
+  "nativeFunction": {
+    "name": "vector_math_add",
+    "sourceFile": "source/blender/gpu/shaders/material/gpu_shader_material_vector_math.bsl.hh",
+    "bodySha256": "6f030a76810541f72d4fd64b276b0aa93116301eac112563542cc20326781c29",
+    "arithmeticBodyChanged": false,
+    "declarationAdaptation": "Drop [[node]]; float3->vec3; C++ reference outputs->GLSL out; name ignored formal parameters; no function-body expression edits",
+    "adaptedFunctionSha256": "b68e810c9e025ccff7d5408b8f9aa011d00b8e504d4446df2a3e0d7a728faa05"
+  },
+  "sourceFlags": {
+    "evidence": "Pinned gpu_shader.cc and mtl_shader.mm, not runtime compiler introspection",
+    "pythonFrontEnd": "SourceProcessor(Language::GLSL)",
+    "pythonCreateInfo": [
+      "NO_BUFFER_TYPE_LINTING",
+      "NO_PREPROCESSOR"
+    ],
+    "metalFastMathEnabled": true,
+    "metalPreserveInvariance": true,
+    "metalLanguageDefault": "2.2",
+    "materialCreateInfoAndMacroParity": false
+  },
+  "sourcePins": {
+    "source/blender/draw/engines/eevee/eevee_film.cc": "a6c5d9a70408e930c83ebc23c304c6d0c705b043e3b0a23ddb3a2cc1cd3f438f",
+    "source/blender/draw/engines/eevee/eevee_renderbuffers.cc": "f12a6a4627ec5649bfb6b56c9131fec3dff880b5639371ea1b48780025ad8018",
+    "source/blender/python/gpu/gpu_py_framebuffer.cc": "c6927535e874259480297c694f63b2e81e1d9b1d08d2fb981782ab758e5196fd",
+    "source/blender/python/gpu/gpu_py_shader_create_info.cc": "ab0ca3ded6efd4f066dc6c1d9b2084b659bca7444727a50829dc9bdafd0e6230",
+    "source/blender/python/gpu/gpu_py_shader.cc": "407b66febdf6e2304dfdc25ef8670bd36e43871a031ab06219584ed2325c2d17",
+    "source/blender/gpu/intern/gpu_shader.cc": "87acec9fbb29b37234971957a8e336dae99787cfc24fd6611fe2233d2d5ca589",
+    "source/blender/gpu/intern/gpu_shader_dependency.cc": "33b09b53470eb775e511cec776529159802396bdc18658f96b2d40fa7af9fb67",
+    "source/blender/gpu/metal/mtl_shader.mm": "4ceff7474af3d25d2bdbcf68f64af2eae3c526c598acb977461f8cf37bc6e229",
+    "source/blender/gpu/metal/mtl_shader_generate.cc": "bf5ec45bd85c6686833057cb1f748921968338bd06c23e523123eead153b0cfb",
+    "source/blender/draw/engines/eevee/eevee_renderbuffers.hh": "c9d8f564c4abc3b4b6b37c36d529a659144505cfe0c682e52c10a61afd6d0df3",
+    "source/blender/gpu/shader_tool/processor.cc": "c6e64687abc0c49a0cb41d750ad0e3eb620323fe7b02e1078fab24105552bb58",
+    "source/blender/gpu/shader_tool/processor.hh": "0a10d97bdd168a41b2acb554156358b7bc42069007f5ce3769e14955feab37fc",
+    "source/blender/gpu/shaders/material/gpu_shader_material_vector_math.bsl.hh": "70a387963272a0fbfa3489e7efccaf9dd5448136bf6c9005ab12d2c803d4d734",
+    "source/blender/gpu/shaders/material/gpu_shader_material_output_aov.bsl.hh": "544afe3a6021094fd55f65188643d6d2e3c18b4ab04f6b8c5be74f44c394d7f1",
+    "source/blender/python/gpu/gpu_py_api.cc": "3274ac11eb635474a08aadde7b93fc55aee376db8cf756c5919575d4b47edeaf",
+    "source/blender/python/gpu/gpu_py.cc": "cee60c8ee8c11ebb44996a736053c3036f667076614d11623bd23a398c446091",
+    "source/blender/python/gpu/gpu_py_offscreen.cc": "dd49baafd47c941be894adf962e7bcc704fd763e9037cad79e9e3296d4db6bd9",
+    "source/blender/python/gpu/gpu_py_texture.cc": "30179325f8aebb8155f932010bf32475af12e8e53f47dfcf54d0ad4e3e22165e"
+  },
+  "manifestSha256": "cb458a2b40df658dc2bc533679f6ee6848183cea81460f22703c31b08745ef41",
+  "probeSha256": "2d7fb60d9f762f6d74835dafe9ca84c669d2af4c36dd5099d6b363eaf63f6f9b",
+  "shaderPins": {
+    "vertex": "8628f3c896b5f55e3162a533378206f1e9d1f12b67f8f78c2eb67f9537d6a830",
+    "copyFragment": "4208d675291db602197d976b9ee96f9089ae4a1b02704951ce441bdab935ec6b",
+    "adaptedKernelFragment": "5f6e2bea608df18884bbc8f2a205bb6cb650f57816462475b8df2113a77ef491"
+  },
+  "nativePythonProof": {
+    "pythonInvocations": 1,
+    "finalInvocations": 0,
+    "uniqueCachePrefixes": 1,
+    "numericalCredit": 0
+  },
+  "milliseconds": 1577,
+  "qualificationCredit": {
+    "node": 0,
+    "actualMaterial": 0,
+    "fullScene": 0
+  },
+  "rawArtifacts": {
+    "machineLocal": true,
+    "ignored": true,
+    "path": "artifacts/verification-native-f32-oracle-research/probe-r1",
+    "closedResearchSha256": "683ad278e48420054d681235338599024967ab1914d1719e6ffc893ceeb26d43",
+    "reportSha256": "f5b4ca67d96d30bc30fc13504cfad31b81855a7564a2070937e132c9a74c2349"
+  },
+  "actualMaterialCrosscheckStatus": "PLANNED_NOT_EXECUTED; no full material or full-scene parity claim",
+  "nativeIdentity": {
+    "native": {
+      "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da",
+      "bytes": 210043328
+    },
+    "node": {
+      "sha256": "eb96bdabfd1f6705345bbd459f9308d140c011fa55865efdb4fa8f61d048f55d",
+      "bytes": 126827136
+    },
+    "helper": {
+      "sha256": "78a134a426314bc7867f82d9f8c9deb274f378ad2099d7d6416743eec8b0a56b",
+      "bytes": 18685
+    },
+    "bridge": {
+      "sha256": "3390a410423e0cc921567a97473f6fd67f91cbe2987af7846346cb7cb51e9a8c",
+      "bytes": 321
+    }
+  }
+}

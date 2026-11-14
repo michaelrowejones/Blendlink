@@ -11147,8 +11147,10 @@
           "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
           "modes": {
             "inputs:Case": {
-              "Uppercase": "partial",
-              "Lowercase": "partial"
+              "partial": [
+                "Uppercase",
+                "Lowercase"
+              ]
             }
           }
         }
@@ -11321,8 +11323,10 @@
           "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Length and Find First Found/Count yield exact INT constants consumed by existing typed scalar controls. Find uses codepoint offsets, nonoverlapping Count and measured native empty/no-match semantics. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
           "modes": {
             "inputs:Mode": {
-              "From Start": "partial",
-              "From End": "partial"
+              "partial": [
+                "From Start",
+                "From End"
+              ]
             }
           }
         }
@@ -11915,8 +11919,10 @@
           "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Text stays inside the compiler and is consumed only by qualified native Length/Find scalar controls or static compositor Compare EQUAL/NOT_EQUAL. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
           "modes": {
             "inputs:Case": {
-              "Uppercase": "partial",
-              "Lowercase": "partial"
+              "partial": [
+                "Uppercase",
+                "Lowercase"
+              ]
             }
           }
         }
@@ -12089,8 +12095,10 @@
           "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 bounded host static strings only. Valid Unicode scalar values without embedded NUL, max4096 UTF8 bytes per input and output,128 visits/depth16, typed group/reroute/native mute bypass. Source tree animation/drivers/NLA refuse. Length and Find First Found/Count yield exact INT constants consumed by existing typed scalar controls. Find uses codepoint offsets, nonoverlapping Count and measured native empty/no-match semantics. Reverse/Slice/Trim/Replace operate on codepoints, not grapheme clusters. Slice rejects int32 position-plus-length overflow and requires typed fixed positions; Set Case uses pinned BLI single-codepoint upper/lower tables, not Python Unicode casing/expansion. No GPU string payload/opcode or string-kernel performance claim, text layout, computed numeric positions, animated strings, arbitrary runtime strings, other versions/builds/platforms or original-demo acceptance credit.",
           "modes": {
             "inputs:Mode": {
-              "From Start": "partial",
-              "From End": "partial"
+              "partial": [
+                "From Start",
+                "From End"
+              ]
             }
           }
         }

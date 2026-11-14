@@ -82,6 +82,12 @@ class FocusedCatalogTests(unittest.TestCase):
 
 
 class RetainedCatalogTests(unittest.TestCase):
+    def test_native_menu_rules_reject_value_to_status_maps_and_string_lists(self):
+        self.assertEqual(audit.mode_status({'partial': ['Uppercase', 'Lowercase']}, 'Uppercase'), 'partial')
+        for rule in [{'Uppercase': 'partial'}, {'partial': 'Uppercase'}, {'partial': [1]}]:
+            with self.subTest(rule=rule), self.assertRaisesRegex(ValueError, 'native enum rule'):
+                audit.mode_status(rule, 'Uppercase')
+
     def fixture(self, directory, partial=False):
         catalog = {'schemaVersion': 1, 'blenderVersion': '5.3.0', 'blenderVersionTuple': [5, 3, 0],
                    'blenderBuildHash': 'a' * 12, 'domains': {'shader': {'nodes': []}, 'compositor': {'nodes': []}}}

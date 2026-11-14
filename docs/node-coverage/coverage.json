@@ -1,5 +1,5 @@
 {
-  "capabilityMapSha256": "e3e3a56d93637d72603dc9f102ad9086884bdaf2c7b4b6e626c7bbfa8a5812fd",
+  "capabilityMapSha256": "affc89d4600342a0e357a8fb85e0ceefb94cfa2ce5fe99325bbc930d5d595be5",
   "capabilityValidationFailures": [],
   "classificationRefresh": {
     "catalogSha256": {
@@ -12,7 +12,7 @@
     "nativeInventoryRefreshed": false,
     "reason": "Classification-only refresh against unchanged content-pinned full inventories; no native rediscovery or numerical qualification is performed."
   },
-  "generatedAt": "2026-11-14T02:01:19.047209+00:00",
+  "generatedAt": "2026-11-14T02:12:02.110605+00:00",
   "nativeAvailabilityChanges": [],
   "nativeCatalogSha256": {
     "docs/node-coverage/blender-4.2.0.json": "2f71cb192f6a62e0e343ba5fcb11a2d8e0c6f6af1e8ac663ec6c3350b016b151",
@@ -14541,10 +14541,10 @@
             "unsupported": 99
           },
           "enumValueCounts": {
-            "partial": 27,
+            "partial": 31,
             "structural": 3,
             "supported": 279,
-            "unsupported": 623
+            "unsupported": 619
           },
           "nodes": [
             {
@@ -17564,8 +17564,8 @@
               "declaredCategory": "partial",
               "enumCoverage": {
                 "inputs:Mode": {
-                  "From End": "unsupported",
-                  "From Start": "unsupported"
+                  "From End": "partial",
+                  "From Start": "partial"
                 }
               },
               "evidence": [
@@ -18289,8 +18289,8 @@
               "declaredCategory": "partial",
               "enumCoverage": {
                 "inputs:Case": {
-                  "Lowercase": "unsupported",
-                  "Uppercase": "unsupported"
+                  "Lowercase": "partial",
+                  "Uppercase": "partial"
                 }
               },
               "evidence": [
@@ -20004,10 +20004,10 @@
             "unsupported": 59
           },
           "enumValueCounts": {
-            "partial": 25,
+            "partial": 29,
             "structural": 3,
             "supported": 258,
-            "unsupported": 155
+            "unsupported": 151
           },
           "nodes": [
             {
@@ -20060,8 +20060,8 @@
               "declaredCategory": "partial",
               "enumCoverage": {
                 "inputs:Mode": {
-                  "From End": "unsupported",
-                  "From Start": "unsupported"
+                  "From End": "partial",
+                  "From Start": "partial"
                 }
               },
               "evidence": [
@@ -20478,8 +20478,8 @@
               "declaredCategory": "partial",
               "enumCoverage": {
                 "inputs:Case": {
-                  "Lowercase": "unsupported",
-                  "Uppercase": "unsupported"
+                  "Lowercase": "partial",
+                  "Uppercase": "partial"
                 }
               },
               "evidence": [
