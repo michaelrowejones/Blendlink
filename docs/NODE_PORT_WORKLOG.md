@@ -772,3 +772,122 @@ Final proof hash is
 Only Box's Blender 5.3 override changes classification. Older versions, shader
 and unrelated compositor entries/counts retain their prior state; this is not a
 claim that other ports were freshly recaptured. Root owns coverage regeneration.
+
+
+## 2026-11-14 — Static CPU compositor Matrix family, after DAG guard correction
+
+Combine Matrix, Transpose Matrix and Separate Matrix gain partial Blender 5.3
+CPU-compositor admission for typed static copy/permutation islands terminating
+in Separate Float outputs. MATRIX stays opaque inside Python; existing `value`
+operations carry exact Float outputs. The source registry, three native class
+IDs, evaluation entry point and actual compositor caller are explicit audit
+contracts. Older versions retain their classification. Shader/EEVEE,
+GPU-authored, Matrix arithmetic/fields, Quaternion and generic registered
+CPU-MF support remain unqualified.
+
+Normal finite Float32 and positive zero are admitted before scalar promotion;
+stored negative-zero/subnormal controls refuse. The bounded resolver retains
+source/group ancestry, literal words, selected branches, scene/frame and
+ownership checks. One extraction-owned evaluation yields all 16 components
+from a private one-point Geometry Nodes CPU-MF carrier. Only these reviewed
+copy callbacks have same-builder equivalence, independently checked against
+actual CPU compositor FULL EXR32 output.
+
+Review held promotion when recursive tuple recipe hashing and shallow cached
+source records exposed a shared-DAG cost/depth escape. Flat integer recipe
+references now bound hashing work, and cached records retain complete source
+hop heights including non-recipe group/reroute/selector edges. Explicit source,
+record and recipe-depth limits reject over-budget graphs before evaluation.
+The policy passes 8 positive invariants and 12 refusal categories, including
+actual compositor RGB cache warming, reroute-only depth, broad-source cost and
+independently instrumented descendant hash-work controls. The pre-correction
+receipt remains historical only; no node classification was promoted from it.
+
+The [post-fix receipt](../experiments/compositor-static-matrix/evidence.json)
+freshly closes 14 native graphs, 6 actual saved Finals, 80 browser case-runs and
+5,120 primary Float32 words with zero differences or contract violations. Both
+actual WebGPU/WebGL2 APIs pass on Metal and SwiftShader. Separate comparisons
+cover 48 resize/DPR frames; 72 Final lifecycle cycles restore source material,
+callback and renderer cache identities. The source inventory is 129 inputs and
+8 actual Python cache prefixes, at runtime fingerprint
+`819e83b39bd016d505507cebfc1dff6c47e343669dc2d9f6126dee7d65955499`.
+Native/Final hashes are
+`e9ff5da0f96a0dc5231c390e9bf09a83d506b9fdd30b307457f5a68e4216b4fd` /
+`eaf94b09423aebe23be39835c651b9bf7199643dcaf3671094eb8f322ada9f64`.
+All unrelated port verification snapshots remain untouched. Root owns retained
+coverage regeneration after the pending Box/Ellipse replays; no catalog or
+coverage artifact is regenerated in this metadata change.
+
+
+## 2026-11-14 — Box replay on the final budget-fixed union
+
+The [fresh Box receipt](../experiments/compositor-box-mask/evidence.json) now
+closes the final budget-fixed union source: 40 CPU graphs, 12 actual saved
+Finals, 208 browser case-runs and 98,592 primary Float32 words with zero
+word differences or contract violations. It also retains 96 separately compared
+resize/DPR frames, 144 Final lifecycle cycles and 13 actual Python prefixes.
+The source inventory is 128 inputs at runtime fingerprint
+`819e83b39bd016d505507cebfc1dff6c47e343669dc2d9f6126dee7d65955499`.
+Native/Final hashes are
+`5900437fcbef2f21e0eb959fffbf59692a6819ad53ca14cbbcf02af5e9497b6b` /
+`2e7a52bb799afe5ea73ff716bee65bd772b4c4b8ee52c404fe784c625b85332d`.
+
+Only Box's receipt and verification lineage change. Its category/version
+override, menu coverage, bounds, mathematical contract and scope text remain
+unchanged. All other capability entries and proof snapshots are untouched;
+this is not an all-ports freshness claim. Root owns the final retained coverage
+refresh after Ellipse's separate qualification.
+
+## 2026-11-14 — CPU Ellipse Mask with integer row bounds
+
+The [fresh post-fix root receipt](../experiments/compositor-ellipse-mask/evidence.json)
+qualifies one partial Blender5.3 CPU compositor entry for the measured macOS
+arm64 build02f0899d78e3. It closes108 native graphs,16 actual saved Finals,
+496 browser case-runs and235,856 primary Float32 words with zero word differences
+or contract violations. Both requested actual WebGPU/WebGL2 APIs pass on Metal
+and SwiftShader. Separate checks cover144 resize/DPR frames,192 Final lifecycle
+cycles and17 actual Python cache prefixes. Its141-input source inventory closes
+runtime fingerprint
+`819e83b39bd016d505507cebfc1dff6c47e343669dc2d9f6126dee7d65955499`,
+shared by the fresh Matrix and Box union replays. Native/Final hashes are
+`cd6262891468348e0f054fac6fac24ea418675443357dc89fa4d695ef50775f7` /
+`3beada59f6fe59a770a23128c0019c11c70b5083174f97cab9affded5a2e1659`.
+
+The route admits fixed unlinked literals, positive-zero rotation and all four
+native mask operations within the recorded bounds. Host classification preserves
+the pinned worker's separate Float32 products/add/sqrt. One cached extent uses
+O(width+height log width) work to produce inclusive integer row intervals; the
+shader loads signed integer bounds rather than recomputing a floating boundary.
+Zero Size shares scalar Mask for every operation and enters single-value
+scheduling; equal-valued nonzero native masks remain fields. The native
+ImageInfo scheduling research remains separate and grants no new ImageInfo edge.
+
+Review exposed two admission issues before qualification: a copied source-kind
+filter, and a memory-only64-node budget that did not bound shader samplers.
+Shared class/kind/domain contracts now prevent copied family filters. Final
+admission permits at most one varying64KiB row table; zero/equal-value/identity
+nodes spend none. The compositor uses a closed texture-free pointwise-kind list,
+excluding Render Layers/Image, curves/ramps and spatial producers. Source and
+runtime presentation admission cap combined row plus display LUT lookups at8,
+and extra post-LDR registrations refuse until their samplers are accounted for.
+Native source policy covers actual OCIO7/8-LUT lowering; both actual browser APIs
+check the last valid one-table graph and first invalid two-table graph before
+resource allocation. These limit checks add no display-color numerical claim.
+
+Fresh Final/browser proof also checks first draw, larger/smaller physical sizes,
+DPR, invalid→valid recovery without cache/data/version mutation, texture lifetime,
+optimized all-zero guards, source IR ownership and repeated material/callback
+restoration. Isolated prototype and failed-run records remain historical; the
+qualified transaction captured new native references and sources after fixes.
+No EEVEE/material, native GPU-authored, linked field, animated, rotated,
+other-platform, arbitrary scene-compositing or whole-scene appearance claim is
+made. All nodes are not ported or polished yet.
+
+The integrated local gates passed1,561 SDK tests with6 optional skips,98 release
+policy tests,135 node-pipeline tests and8 Python audit tests. The871-file package,
+Vanilla/R3F/dogfood consumers, fresh empty-cache installation and two actual
+source-addon registration/connected-preview cycles passed. These checks support
+this checkpoint's integration and installation; they do not extend numerical
+coverage. This metadata change adds only the Ellipse5.3 override and exact proof
+lineage. Older entries/versions and all other proof snapshots remain unchanged;
+root owns the retained coverage refresh and spreadsheet publication.

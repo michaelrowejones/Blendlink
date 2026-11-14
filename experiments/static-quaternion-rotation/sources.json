@@ -1,0 +1,168 @@
+{
+  "schemaVersion": 1,
+  "status": "PRIMARY_SOURCE_RESEARCH_ONLY",
+  "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "sources": [
+    {
+      "path": "source/blender/nodes/function/nodes/node_fn_quaternion_to_rotation.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/function/nodes/node_fn_quaternion_to_rotation.cc",
+      "sha256": "ed42cf3afdaf9630e64ecced43d99a8b5effe83d5b0bd3b86d6396ebf4317da8",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/nodes/function/nodes/node_fn_rotation_to_quaternion.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/function/nodes/node_fn_rotation_to_quaternion.cc",
+      "sha256": "8fe89ac9b6d713d0dd5571b1e957f6222bd4244d52655b6277760635573e5f0c",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/blenlib/BLI_math_quaternion.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/BLI_math_quaternion.hh",
+      "sha256": "83a9d51c8bd2d81dfed5ca6967ce44fcd70798cad156571cf41cb6a4cf5be0f7",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/blenlib/BLI_math_quaternion_types.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/BLI_math_quaternion_types.hh",
+      "sha256": "d22417c3c47ca33abe8f1b9ea39e95f2141803956e4fa0460fdc0a29035d7614",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/nodes/intern/node_socket_declarations.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/intern/node_socket_declarations.cc",
+      "sha256": "d3663217d90781228f6fc4710f6b9ac74f4f8deac486679f9d5cf80d67c96c45",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/nodes/NOD_socket_declarations.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/NOD_socket_declarations.hh",
+      "sha256": "ae781d1ddf2ab8d6896cd042870f006be901a335a0704b677d9362b6afc4791d",
+      "license": "GPL-2.0-or-later"
+    }
+  ],
+  "catalog": {
+    "path": "docs/node-coverage/blender-5.3.0.json",
+    "sha256": "09f4e0473e1d6dfe6f978df418de82df7d8bca22b0ad665d0a7cbcdf916c6544",
+    "schemas": {
+      "5f79852181459de2f338": {
+        "inputs": [
+          {
+            "default": 1.0,
+            "enabled": true,
+            "identifier": "W",
+            "name": "W",
+            "socketClass": "NodeSocketFloat",
+            "type": "VALUE",
+            "unavailable": false
+          },
+          {
+            "default": 0.0,
+            "enabled": true,
+            "identifier": "X",
+            "name": "X",
+            "socketClass": "NodeSocketFloat",
+            "type": "VALUE",
+            "unavailable": false
+          },
+          {
+            "default": 0.0,
+            "enabled": true,
+            "identifier": "Y",
+            "name": "Y",
+            "socketClass": "NodeSocketFloat",
+            "type": "VALUE",
+            "unavailable": false
+          },
+          {
+            "default": 0.0,
+            "enabled": true,
+            "identifier": "Z",
+            "name": "Z",
+            "socketClass": "NodeSocketFloat",
+            "type": "VALUE",
+            "unavailable": false
+          }
+        ],
+        "outputs": [
+          {
+            "default": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "enabled": true,
+            "identifier": "Rotation",
+            "name": "Rotation",
+            "socketClass": "NodeSocketRotation",
+            "type": "ROTATION",
+            "unavailable": false
+          }
+        ]
+      },
+      "0f7d91a73f936e0e0cab": {
+        "inputs": [
+          {
+            "default": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "enabled": true,
+            "identifier": "Rotation",
+            "name": "Rotation",
+            "socketClass": "NodeSocketRotation",
+            "type": "ROTATION",
+            "unavailable": false
+          }
+        ],
+        "outputs": [
+          {
+            "default": 0.0,
+            "enabled": true,
+            "identifier": "W",
+            "name": "W",
+            "socketClass": "NodeSocketFloat",
+            "type": "VALUE",
+            "unavailable": false
+          },
+          {
+            "default": 0.0,
+            "enabled": true,
+            "identifier": "X",
+            "name": "X",
+            "socketClass": "NodeSocketFloat",
+            "type": "VALUE",
+            "unavailable": false
+          },
+          {
+            "default": 0.0,
+            "enabled": true,
+            "identifier": "Y",
+            "name": "Y",
+            "socketClass": "NodeSocketFloat",
+            "type": "VALUE",
+            "unavailable": false
+          },
+          {
+            "default": 0.0,
+            "enabled": true,
+            "identifier": "Z",
+            "name": "Z",
+            "socketClass": "NodeSocketFloat",
+            "type": "VALUE",
+            "unavailable": false
+          }
+        ]
+      }
+    },
+    "sourceContext": "Retained actual Blender5.3 catalog has both classes in root/group compositor contexts and rejects both in ShaderNodeTree."
+  },
+  "credits": {
+    "sdk": 0,
+    "nativeNumerical": 0,
+    "savedFinal": 0,
+    "browser": 0,
+    "support": 0
+  },
+  "conclusion": "Direct bounded literal quaternion normalization and component-copy path does not call canonicalize. Scalar source words must be checked before Python promotion, ROTATION remains opaque, and native output words must be checked before decoding."
+}

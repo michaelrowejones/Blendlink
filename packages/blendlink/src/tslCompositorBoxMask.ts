@@ -2,6 +2,7 @@
 /** CPU-profile rectangle classification. Shader math never re-evaluates its floating boundary. */
 import{Vector2,Vector4}from'three'
 import*as TSL from'three/tsl'
+import {validateStaticMaskDomains} from './tslCompositorMaskDomains.js'
 import type{SourceCompositorOperation,SourceCompositorProgram}from'./sourceDisplay.js'
 import type{TslEffectNode}from'./tslPostEffects.js'
 const{float,floor,ivec2,select,uniform,uv}=TSL as unknown as Record<string,(...args:any[])=>TslEffectNode>
@@ -34,9 +35,8 @@ export function boxMaskIntervals(width:number,height:number,s:BoxMaskSettings):r
  }
  return bounds as unknown as readonly[number,number,number,number]
 }
-const spatial=new Set(['flip', 'translate','image-affine','image-input','image-crop','alpha-crop','image-split','pixelate','blur','filter','glare'])
 export function validateBoxMaskGraph(program:SourceCompositorProgram,fail:(message:string)=>never):void{
- if(program.ops.some(op=>op.kind==='box-mask')&&program.ops.some(op=>spatial.has(op.kind)))fail('Box Mask requires full-frame pointwise consumers; spatial/domain transformations remain unqualified')
+ validateStaticMaskDomains(program,'CompositorNodeBoxMask',fail)
 }
 export function buildCompositorBoxMask(op:SourceCompositorOperation,ops:readonly SourceCompositorOperation[],fail:(message:string)=>never):TslEffectNode{
  const p=op.properties,index=ops.indexOf(op)

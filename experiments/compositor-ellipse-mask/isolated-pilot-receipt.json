@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "status": "isolated-row-texture-pilot-only",
+  "role": "Historical prototype CPU pixels plus isolated current source IR; not fresh union native/Final/full family qualification. Full matrix never reuses these numerical artifacts.",
+  "browserVersion": "158.0.8127.18",
+  "rawNativeSha256": "c9212bee51bd89df46aafb038e9fef26ef6b53f6dedfbb5870a31092bb402dbe",
+  "reportSha256": "9a4952d85f7e2f67465cb61a91ac5b50c1e0f26906d3ef2bceb73a4f273b5e4a",
+  "artifactDirectory": "artifacts/verification-ellipse-browser-pilot-v3",
+  "earlierFailure": "artifacts/verification-ellipse-browser-pilot-v1 (absent Chrome channel; no browser launched)",
+  "rows": [
+    {
+      "backend": "webgpu",
+      "gpu": {
+        "api": "WebGPU",
+        "vendor": "apple",
+        "architecture": "metal-3",
+        "device": "",
+        "description": ""
+      },
+      "cases": 87,
+      "words": 32120,
+      "exactWordDifferences": 0,
+      "rawGpuRowTextureReadbacks": 8,
+      "invalidRecoveryChecks": 13,
+      "constantGuardControls": [
+        {
+          "zeroSize": false,
+          "invalidRefused": true,
+          "outputZero": true,
+          "nativeCredit": 0
+        },
+        {
+          "zeroSize": true,
+          "invalidRefused": true,
+          "outputZero": true,
+          "nativeCredit": 0
+        }
+      ]
+    },
+    {
+      "backend": "webgl2",
+      "gpu": {
+        "api": "WebGL2",
+        "vendor": "Google Inc. (Apple)",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+      },
+      "cases": 87,
+      "words": 32120,
+      "exactWordDifferences": 0,
+      "rawGpuRowTextureReadbacks": 8,
+      "invalidRecoveryChecks": 13,
+      "constantGuardControls": [
+        {
+          "zeroSize": false,
+          "invalidRefused": true,
+          "outputZero": true,
+          "nativeCredit": 0
+        },
+        {
+          "zeroSize": true,
+          "invalidRefused": true,
+          "outputZero": true,
+          "nativeCredit": 0
+        }
+      ]
+    }
+  ],
+  "sourcePreserved": true,
+  "finalCredit": 0,
+  "supportCredit": 0
+}

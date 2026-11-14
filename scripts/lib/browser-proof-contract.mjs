@@ -12,6 +12,8 @@ export const browserProofFamilies=Object.freeze({
  // Historical Texture reports intentionally retain Float's status token. Family and census remain distinct.
  'compositor-texture-fields':Object.freeze({schemaVersion:1,family:'texture-fields',nativeStatus:'native-texture-fields-qualified',finalStatus:'published-texture-field-candidate',browserStatus:'PASSED_FLOAT_COORDINATE_BUILT_PROOF'}),
  'compositor-vector-math':Object.freeze({schemaVersion:1,family:'compositor-vector-math',nativeStatus:'native-vector-math-qualified',finalStatus:'published-vector-math-candidate',browserStatus:'PASSED_VECTOR_MATH_BUILT_PROOF'}),
+ 'compositor-static-matrix':Object.freeze({schemaVersion:1,family:'compositor-static-matrix',nativeStatus:'CAPTURED_COMPOSITOR_STATIC_MATRIX',finalStatus:'PUBLISHED_COMPOSITOR_STATIC_MATRIX',browserStatus:'PASSED_STATIC_MATRIX_BUILT_PROOF'}),
+ 'compositor-ellipse-mask':Object.freeze({schemaVersion:1,family:'compositor-ellipse-mask',nativeStatus:'CAPTURED_COMPOSITOR_ELLIPSE_MASK',finalStatus:'PUBLISHED_COMPOSITOR_ELLIPSE_MASK',browserStatus:'PASSED_ELLIPSE_MASK_BUILT_PROOF'}),
  'compositor-box-mask':Object.freeze({schemaVersion:1,family:'compositor-box-mask',nativeStatus:'CAPTURED_COMPOSITOR_BOX_MASK',finalStatus:'PUBLISHED_COMPOSITOR_BOX_MASK',browserStatus:'PASSED_BOX_MASK_BUILT_PROOF'}),
  'compositor-image-info':Object.freeze({schemaVersion:1,family:'image-info',nativeStatus:'native-image-info-qualified',finalStatus:'published-image-info-candidate',browserStatus:'PASSED_IMAGE_INFO_BUILT_PROOF'}),
  'radial-segment-width':Object.freeze({schemaVersion:1,family:'radial-segment-width',nativeStatus:'native-radial-width-qualified',finalStatus:'published-radial-width-candidate',browserStatus:'PASSED_RADIAL_WIDTH_BUILT_PROOF'}),

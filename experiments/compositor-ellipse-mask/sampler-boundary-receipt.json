@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "status": "isolated-sampler-boundary-canary-only",
+  "role": "Source/browser admission and one archival native mask comparison; not fresh union full-family qualification",
+  "reportSha256": "4a63a4b646c70d186d25f32f1e4c0524329b97da8c1462a557ad31a0ad7b3094",
+  "artifactDirectory": "artifacts/verification-ellipse-sampler-boundary-v1",
+  "productionSourceCommit": "42338b5",
+  "casesPerActualApi": 1,
+  "nativeWordsPerActualApi": 468,
+  "wordDifferences": 0,
+  "gpuRows": [
+    {
+      "backend": "webgpu",
+      "gpu": {
+        "api": "WebGPU",
+        "vendor": "apple",
+        "architecture": "metal-3",
+        "device": "",
+        "description": ""
+      },
+      "samplerBudgetControls": {
+        "lastValidVarying": 1,
+        "firstInvalidVarying": 2,
+        "twoRefused": true,
+        "noResourceMutation": true,
+        "sevenDisplayLookupsAccepted": true,
+        "eighthDisplayLookupRefused": true
+      },
+      "constantGuardControls": [
+        {
+          "zeroSize": false,
+          "invalidRefused": true,
+          "outputZero": true,
+          "nativeCredit": 0
+        },
+        {
+          "zeroSize": true,
+          "invalidRefused": true,
+          "outputZero": true,
+          "nativeCredit": 0
+        }
+      ]
+    },
+    {
+      "backend": "webgl2",
+      "gpu": {
+        "api": "WebGL2",
+        "vendor": "Google Inc. (Apple)",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+      },
+      "samplerBudgetControls": {
+        "lastValidVarying": 1,
+        "firstInvalidVarying": 2,
+        "twoRefused": true,
+        "noResourceMutation": true,
+        "sevenDisplayLookupsAccepted": true,
+        "eighthDisplayLookupRefused": true
+      },
+      "constantGuardControls": [
+        {
+          "zeroSize": false,
+          "invalidRefused": true,
+          "outputZero": true,
+          "nativeCredit": 0
+        },
+        {
+          "zeroSize": true,
+          "invalidRefused": true,
+          "outputZero": true,
+          "nativeCredit": 0
+        }
+      ]
+    }
+  ],
+  "sourcePolicy": {
+    "cases": 36,
+    "renderCalls": 0,
+    "realOwnedOcioLutCounts": [
+      7,
+      8
+    ],
+    "serializerModified": false
+  },
+  "supportCredit": 0,
+  "finalCredit": 0
+}

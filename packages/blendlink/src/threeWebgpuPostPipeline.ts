@@ -1,3 +1,4 @@
+import {validateEllipsePresentation} from './tslCompositorMaskDomains.js'
 /**
  * Phase 4 Track B: the WebGPU post pipeline behind the unchanged
  * PostPipelineService interface. Where the WebGL service assembles pmndrs
@@ -213,6 +214,7 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
       .sort((left, right) => phaseRank(left.phase) - phaseRank(right.phase)
         || left.id.localeCompare(right.id))
 
+    validateEllipsePresentation(this.options.sourcePresentation, registrations.filter(entry => entry.phase === 'post-ldr').length, message => { throw new SourceCompositorUnsupported(message) })
     const scene = this.options.scene
     const camera = this.options.camera
     const scenePass = pass(scene, camera)

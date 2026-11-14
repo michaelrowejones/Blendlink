@@ -1,3 +1,4 @@
+import {buildCompositorEllipseMask,validateEllipseMaskGraph} from './tslCompositorEllipseMask.js'
 import {buildCompositorBoxMask,validateBoxMaskGraph} from './tslCompositorBoxMask.js'
 import {buildCompositorBlackbody} from './tslCompositorBlackbody.js'
 import {buildCompositorRadialWidth} from './tslRadialWidth.js'
@@ -510,6 +511,7 @@ export function buildSourceCompositor(
     }
     if (program.outputAlpha !== undefined && program.outputAlpha !== 'legacy-composite-opaque-v1')
       throw new SourceCompositorUnsupported('Composite output has an unknown alpha model')
+    validateEllipseMaskGraph(program, message => { throw new SourceCompositorUnsupported(message) })
     validateBoxMaskGraph(program, message => { throw new SourceCompositorUnsupported(message) })
     validateTextureFieldGraph(program, message => { throw new SourceCompositorUnsupported(message) })
     validateImageCoordinateGraph(program, message => { throw new SourceCompositorUnsupported(message) })
@@ -578,7 +580,7 @@ export function buildSourceCompositor(
     for (const op of program.ops) {
       const domainFail = (message: string): never => { throw new SourceCompositorUnsupported(
         `${op.source.path.join(' / ')} / ${op.source.node} [${op.source.output}]: ${message}`) }
-      const single = op.kind==='image-info'||(!['render-pass', 'image-input', 'box-mask'].includes(op.kind) && !textureFieldKind(op) && Object.values(op.inputs).every(input => isSingleValue(input.value)))
+      const single = op.kind==='image-info'||(op.kind==='ellipse-mask'&&op.properties.ellipse_mask_identity===true)||(!['render-pass', 'image-input', 'box-mask', 'ellipse-mask'].includes(op.kind) && !textureFieldKind(op) && Object.values(op.inputs).every(input => isSingleValue(input.value)))
       const incoming = Object.entries(op.inputs).map(([name, input]) => ({ name, domain: origin(input.value) }))
       if (incoming.some(input => input.domain?.croppedWindow)
         && !['exposure', 'invert', 'posterize', 'alpha-over'].includes(op.kind))
@@ -656,6 +658,9 @@ export function buildSourceCompositor(
             break
           case 'utility-constant':
             node = sharedTypedConstant(op.type, op.value)
+            break
+          case 'ellipse-mask':
+            node = buildCompositorEllipseMask(op,program.ops,resources,domainFail)
             break
           case 'box-mask':
             node = buildCompositorBoxMask(op,program.ops,domainFail)

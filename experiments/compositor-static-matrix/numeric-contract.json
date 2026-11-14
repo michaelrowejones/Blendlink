@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "model": "native-static-matrix-copy-cpu-53-v1",
+  "nativeProfile": "Blender5.3.0 02f0899d78e3 macOS arm64 CPU compositor",
+  "sourceClasses": [
+    "FunctionNodeCombineMatrix",
+    "FunctionNodeTransposeMatrix",
+    "FunctionNodeSeparateMatrix"
+  ],
+  "operation": "Exact columns-first16 Float32 copies and transpose permutation only; no numeric arithmetic is emulated",
+  "inputs": "Raw Float32 normal finite or positive-zero words from typed unlinked Float sockets, Value, or qualified static Float/group/reroute/mute routes. Negative-zero, subnormal and nonfinite words refuse before Python scalar promotion.",
+  "nativeCarrier": "One owned one-point Geometry Nodes CPU-MF graph per unique reviewed matrix island per extraction; all16 outputs read via raw Float32 Store Named Attribute/foreach_get. Shared native builder source is reviewed specifically for these3 copy-only classes and independently crosschecked with actual CPU compositor FULL EXR32 output.",
+  "runtime": "Only existing Float value nodes; opaque MATRIX has no browser transport or kernel. Existing Combine Color RGB consumer and alpha1 are exact controls.",
+  "gates": {
+    "exactWordEquality": true,
+    "absoluteTolerance": 0,
+    "ulpTolerance": 0
+  },
+  "limits": {
+    "sourceNodeInstances": 64,
+    "sourceDepth": 16,
+    "sourceSocketVisits": 2048,
+    "matrixIslandsPerExtraction": 16,
+    "privateGeometryNodes": 128,
+    "flatRecipeRecords": 2048,
+    "flatRecipeDepth": 16
+  },
+  "remaining": [
+    "GPU-authored/shader/EEVEE context equivalence",
+    "fields and animated/context inputs",
+    "unlinked MATRIX defaults",
+    "implicit conversions",
+    "Matrix arithmetic, inversion, decomposition and Quaternion normalization",
+    "all-version support"
+  ],
+  "cost": "Immutable flat recipe keys contain only words/child IDs (Combine fixed16), avoiding recursive DAG hashing. Cached source records retain complete transitive resolver-hop height, including non-recipe group/reroute/selector edges; current call depth plus cached height must remain <=16 before reuse/native evaluation."
+}

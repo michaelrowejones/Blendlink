@@ -2595,7 +2595,7 @@
           "fieldAndControlReadbacksPerBackendPerVersion": 4536,
           "maximumEncodedRgbError": 0.0004943609237670898,
           "tolerance": "Unchanged fixed2e-5 raster allowance plus independently calibrated native final half-float ULP",
-          "scope": "Separate27-case corpus:1D–4D Object/Generated/constant inputs, lowStrengthColor and FacStrength, static signed controls, animated/shared/reflected owners, both exported bases, allfour Mikk profiles. Source/installer/actualGLB/draw guards enforce the narrower dynamic frequency domain and nonzero-normal certificate. Widerstresscases remain refused."
+          "scope": "Separate27-case corpus:1D\u20134D Object/Generated/constant inputs, lowStrengthColor and FacStrength, static signed controls, animated/shared/reflected owners, both exported bases, allfour Mikk profiles. Source/installer/actualGLB/draw guards enforce the narrower dynamic frequency domain and nonzero-normal certificate. Widerstresscases remain refused."
         }
       }
     },
@@ -2768,7 +2768,7 @@
     },
     "shader:ShaderNodeVectorTransform": {
       "category": "partial",
-      "limits": "All 27 World/Object/Camera × Point/Vector/Normal combinations use actual per-draw authored owner and active camera matrices, explicit exported Y-up/Z-up bases, and live transform animation. Camera scale magnitudes are ignored while reflections are preserved. Cycles uses inverse-transpose normals and identity passthrough; EEVEE always normalizes, uses camera direction legs, and before 5.2 also uses object direction legs. Normalization requires a verified nonzero literal normal; required object inverses and finite float32 matrices are checked at source, Final audit, install and draw boundaries. Generated/GPU instances, native 5.3 Light space, undefined normalization, and nonidentity transforms feeding frequency-bounded procedural textures refuse. This certifies channel functions, not matching lighting rigs or complete BSDF appearance.",
+      "limits": "All 27 World/Object/Camera \u00d7 Point/Vector/Normal combinations use actual per-draw authored owner and active camera matrices, explicit exported Y-up/Z-up bases, and live transform animation. Camera scale magnitudes are ignored while reflections are preserved. Cycles uses inverse-transpose normals and identity passthrough; EEVEE always normalizes, uses camera direction legs, and before 5.2 also uses object direction legs. Normalization requires a verified nonzero literal normal; required object inverses and finite float32 matrices are checked at source, Final audit, install and draw boundaries. Generated/GPU instances, native 5.3 Light space, undefined normalization, and nonidentity transforms feeding frequency-bounded procedural textures refuse. This certifies channel functions, not matching lighting rigs or complete BSDF appearance.",
       "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
       "runtimeOps": [
         "vector_transform"
@@ -4013,7 +4013,7 @@
     },
     "compositor:CompositorNodeColorBalance": {
       "category": "partial",
-      "limits": "LGG and ASC-CDL with linked grades/factor; legacy4.2 LGG uses sRGB adaptation. Native White Point is available52/53 with fixed mode, proven temperature1800..100000/tint±150 bounds and a source-LMS interval certificate excluding adaptation poles. Constant versus linked GPU paths, RGB working-space matrices and exact alpha are preserved. Nonlinear/offset OCIO roles, ambiguous zero-crossing bounds and animated selectors refuse.",
+      "limits": "LGG and ASC-CDL with linked grades/factor; legacy4.2 LGG uses sRGB adaptation. Native White Point is available52/53 with fixed mode, proven temperature1800..100000/tint\u00b1150 bounds and a source-LMS interval certificate excluding adaptation poles. Constant versus linked GPU paths, RGB working-space matrices and exact alpha are preserved. Nonlinear/offset OCIO roles, ambiguous zero-crossing bounds and animated selectors refuse.",
       "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
       "runtimeOps": [
         "color-balance"
@@ -8968,11 +8968,11 @@
               },
               "upperX": "min(1,maximumX+2^-22+2^-24)",
               "requiredEndpointGap": "1-upperX^2*(3-2*upperX) > 8*2^-24",
-              "derivation": "Ordered r²,3t,2tr,subtraction have <=7u absolute Float32 error on[0,1]; coordinateuncertainty included beforetesting,8u leaves admissioncushion. Preservesexactnativeonewithoutrepair. Safeportrait4x8192 remains admitted; landscape8192x4 refused.",
+              "derivation": "Ordered r\u00b2,3t,2tr,subtraction have <=7u absolute Float32 error on[0,1]; coordinateuncertainty included beforetesting,8u leaves admissioncushion. Preservesexactnativeonewithoutrepair. Safeportrait4x8192 remains admitted; landscape8192x4 refused.",
               "counterexample": "NativeCPU Easing exactone became0.9999999403953552 onactualMetal WebGPU/WebGL2 at8192x4. No acceptance limit widened."
             }
           },
-          "coverageScope": "Per-node admitted field-output scope only; familyTotals are shared across Gradient/Checker and not additional counts. Blender 5.3.0 build02f0899d78e3 macOS arm64, separate native CPU multi-function fields and native Metal GPU shader fields. Actual WebGPU and WebGL2 via WebGPURenderer on Metal and SwiftShader. Identity texture mapping, full-frame square-pixel domains without borders; physical extent4..8192 peraxis rechecked during resize/DPR changes. Implicit Uniform default Vector and direct qualified RLayers ImageCoordinates Uniform/Normalized via fresh FLOAT_VECTOR2 padded to VECTOR3. Other computed coordinate provenance, transformed/static references and spatial/neighborhood graphs remain unsupported. Evidence is per-field-output contracts and synthetic real saved Final pipelines, not every composed pointwise graph. Existing literal contracts remain separate and bitexact. LINEAR/QUADRATIC fields and admitted EASING/Normalized DIAGONAL use8ULP AND abs2^-20 with exact native zero/one/alpha controls. Uniform DIAGONAL requires a power-of-two maxphysicalextent and exactwords, including resize. EASING requires1-upperX²*(3-2upperX)>8*2^-24, upperX=min(1,rmax+2^-22+2^-24), rmax=(width-1)/max(width,height) forUniform or1-.5/width forNormalized. Native CPU correctly-rounded coordinate anchor and nativeGPU/browser bounded error are distinct. DefaultUniformEasing1920x1080 and portrait4x8192 admit; landscape8192x4 refuses.",
+          "coverageScope": "Per-node admitted field-output scope only; familyTotals are shared across Gradient/Checker and not additional counts. Blender 5.3.0 build02f0899d78e3 macOS arm64, separate native CPU multi-function fields and native Metal GPU shader fields. Actual WebGPU and WebGL2 via WebGPURenderer on Metal and SwiftShader. Identity texture mapping, full-frame square-pixel domains without borders; physical extent4..8192 peraxis rechecked during resize/DPR changes. Implicit Uniform default Vector and direct qualified RLayers ImageCoordinates Uniform/Normalized via fresh FLOAT_VECTOR2 padded to VECTOR3. Other computed coordinate provenance, transformed/static references and spatial/neighborhood graphs remain unsupported. Evidence is per-field-output contracts and synthetic real saved Final pipelines, not every composed pointwise graph. Existing literal contracts remain separate and bitexact. LINEAR/QUADRATIC fields and admitted EASING/Normalized DIAGONAL use8ULP AND abs2^-20 with exact native zero/one/alpha controls. Uniform DIAGONAL requires a power-of-two maxphysicalextent and exactwords, including resize. EASING requires1-upperX\u00b2*(3-2upperX)>8*2^-24, upperX=min(1,rmax+2^-22+2^-24), rmax=(width-1)/max(width,height) forUniform or1-.5/width forNormalized. Native CPU correctly-rounded coordinate anchor and nativeGPU/browser bounded error are distinct. DefaultUniformEasing1920x1080 and portrait4x8192 admit; landscape8192x4 refuses.",
           "resizeFrames": 544,
           "nativeStageBreakdown": {
             "cpu": {
@@ -9159,7 +9159,7 @@
               },
               "upperX": "min(1,maximumX+2^-22+2^-24)",
               "requiredEndpointGap": "1-upperX^2*(3-2*upperX) > 8*2^-24",
-              "derivation": "Ordered r²,3t,2tr,subtraction have <=7u absolute Float32 error on[0,1]; coordinateuncertainty included beforetesting,8u leaves admissioncushion. Preservesexactnativeonewithoutrepair. Safeportrait4x8192 remains admitted; landscape8192x4 refused.",
+              "derivation": "Ordered r\u00b2,3t,2tr,subtraction have <=7u absolute Float32 error on[0,1]; coordinateuncertainty included beforetesting,8u leaves admissioncushion. Preservesexactnativeonewithoutrepair. Safeportrait4x8192 remains admitted; landscape8192x4 refused.",
               "counterexample": "NativeCPU Easing exactone became0.9999999403953552 onactualMetal WebGPU/WebGL2 at8192x4. No acceptance limit widened."
             }
           },
@@ -9903,7 +9903,7 @@
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Measured Blender5.3.0 build02f0899d78e3 macOSarm64 compositor only. Full signed32 input/output bit patterns. Typed int32 socket literals, InputInt producers, flattened group defaults/reroutes and bounded qualified own-family chains only; all implicit conversions, fields/other computed inputs, animation/drivers and unmeasured native builds/platforms refuse. Authored CPU and GPU compositor single values execute through native CPU multi-functions; no native spatialGPU credit. Runtime independently rederives prefix-only provenance bounded to2048operations/64visits/depth8. No port-ownedtextures/RTTs or perframeGPUreadbacks. Actual savedGLTF no-compositor DFG_LUT exactidentitybaseline restored through3productionpipelinecycles. Integer hash/casts never pass through float reinterpretation. Proof stores raw[low16,byte2,byte3,1] integerFloat32 channels, independent IntegerMath transport calibrations and INT Compare consumers. Synthetic admitted-scope proof; no general demo-scene claim. Shared BitMath→Hash chain appears in both per-node counts; do not sum per-node totals. Isolated transaction; root integration requires fresh current-profile replay."
+          "limits": "Measured Blender5.3.0 build02f0899d78e3 macOSarm64 compositor only. Full signed32 input/output bit patterns. Typed int32 socket literals, InputInt producers, flattened group defaults/reroutes and bounded qualified own-family chains only; all implicit conversions, fields/other computed inputs, animation/drivers and unmeasured native builds/platforms refuse. Authored CPU and GPU compositor single values execute through native CPU multi-functions; no native spatialGPU credit. Runtime independently rederives prefix-only provenance bounded to2048operations/64visits/depth8. No port-ownedtextures/RTTs or perframeGPUreadbacks. Actual savedGLTF no-compositor DFG_LUT exactidentitybaseline restored through3productionpipelinecycles. Integer hash/casts never pass through float reinterpretation. Proof stores raw[low16,byte2,byte3,1] integerFloat32 channels, independent IntegerMath transport calibrations and INT Compare consumers. Synthetic admitted-scope proof; no general demo-scene claim. Shared BitMath\u2192Hash chain appears in both per-node counts; do not sum per-node totals. Isolated transaction; root integration requires fresh current-profile replay."
         }
       }
     },
@@ -9992,7 +9992,7 @@
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Measured Blender5.3.0 build02f0899d78e3 macOSarm64 compositor only. Full signed32 input/output bit patterns. Typed int32 socket literals, InputInt producers, flattened group defaults/reroutes and bounded qualified own-family chains only; all implicit conversions, fields/other computed inputs, animation/drivers and unmeasured native builds/platforms refuse. Authored CPU and GPU compositor single values execute through native CPU multi-functions; no native spatialGPU credit. Runtime independently rederives prefix-only provenance bounded to2048operations/64visits/depth8. No port-ownedtextures/RTTs or perframeGPUreadbacks. Actual savedGLTF no-compositor DFG_LUT exactidentitybaseline restored through3productionpipelinecycles. Integer hash/casts never pass through float reinterpretation. Proof stores raw[low16,byte2,byte3,1] integerFloat32 channels, independent IntegerMath transport calibrations and INT Compare consumers. Synthetic admitted-scope proof; no general demo-scene claim. Shared BitMath→Hash chain appears in both per-node counts; do not sum per-node totals. Isolated transaction; root integration requires fresh current-profile replay."
+          "limits": "Measured Blender5.3.0 build02f0899d78e3 macOSarm64 compositor only. Full signed32 input/output bit patterns. Typed int32 socket literals, InputInt producers, flattened group defaults/reroutes and bounded qualified own-family chains only; all implicit conversions, fields/other computed inputs, animation/drivers and unmeasured native builds/platforms refuse. Authored CPU and GPU compositor single values execute through native CPU multi-functions; no native spatialGPU credit. Runtime independently rederives prefix-only provenance bounded to2048operations/64visits/depth8. No port-ownedtextures/RTTs or perframeGPUreadbacks. Actual savedGLTF no-compositor DFG_LUT exactidentitybaseline restored through3productionpipelinecycles. Integer hash/casts never pass through float reinterpretation. Proof stores raw[low16,byte2,byte3,1] integerFloat32 channels, independent IntegerMath transport calibrations and INT Compare consumers. Synthetic admitted-scope proof; no general demo-scene claim. Shared BitMath\u2192Hash chain appears in both per-node counts; do not sum per-node totals. Isolated transaction; root integration requires fresh current-profile replay."
         }
       }
     },
@@ -13551,17 +13551,17 @@
         "numericContractSha256": "0864e181cfa7c0fca87fa3034faa2a40a04eb26ad1ab4cf5b927b05cf6908559",
         "coverageScope": "Pinned Blender5.3 CPU compositor only. Static literal unlinked axis-aligned Box Mask, native raw Float32 scalar copy; cached integer axis intervals and precomputed branch values. FULL/AUTO source requests recorded per case. Portable actual browser WebGPU/WebGL2 qualification on observed Metal and SwiftShader. No Blender GPU-authored, Ellipse, AA, animated/field/rotation or arbitrary transformed-domain claim.",
         "closedReader": {
-          "runtimeFingerprint": "29a553a8c01a0541324fa23100e0ac2593dcfc66a85841a6dd58be46698a66dd",
+          "runtimeFingerprint": "819e83b39bd016d505507cebfc1dff6c47e343669dc2d9f6126dee7d65955499",
           "verifierSha256": "7de5c1e695d544d67b9abef6fb7c3c7f450b20daa445bfbdf61188d70f95756a",
           "runtimeArchiveHelperSha256": "431b8a4e92a194d63a8db512aa84f3076c9951e083b873885d8115e0caf509ed",
           "nativeArchiveHelperSha256": "3a2310c94ed3109230d3fa89dc1ac6ea5bed447155e98144a68d52dac568a3da"
         },
         "sourceSnapshot": {
-          "sourceInputs": 125,
-          "nativeQualificationSha256": "4c661947a0e865c43dcebe41a756144e53c2ece670d35dfde0511f6321cf86e0",
-          "finalProofSha256": "399161371048af4c718fe74d55eb414283c3b920e59eab3fd5a34f467a1484c4",
+          "sourceInputs": 128,
+          "nativeQualificationSha256": "5900437fcbef2f21e0eb959fffbf59692a6819ad53ca14cbbcf02af5e9497b6b",
+          "finalProofSha256": "2e7a52bb799afe5ea73ff716bee65bd772b4c4b8ee52c404fe784c625b85332d",
           "evidence": "experiments/compositor-box-mask/evidence.json",
-          "limits": "This fresh transaction closes Box only. Other ports retain their own captured source snapshots; no all-other-ports freshness claim."
+          "limits": "This fresh post-budget-fix union replay closes Box only. Other ports retain their own captured source snapshots; no all-other-ports freshness claim."
         }
       },
       "versionOverrides": {
@@ -13578,6 +13578,693 @@
               ]
             }
           }
+        }
+      }
+    },
+    "compositor:CompositorNodeEllipseMask": {
+      "category": "unsupported",
+      "limits": "No admitted live route outside the explicitly qualified Blender5.3.0 build/platform CPU slice. Native availability alone does not establish numerical support.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "ellipse-mask"
+      ],
+      "modes": {
+        "inputs:Operation": {
+          "supported": [
+            "Add",
+            "Subtract",
+            "Multiply",
+            "Not"
+          ]
+        }
+      },
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; observed Apple Metal and SwiftShader. WebGL2 identifies Apple M5 Pro; the WebGPU model is redacted. Legacy WebGLRenderer has no live program installer.",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_ellipse_mask.py"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_box_mask.py"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_mask_domains.py"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py"
+        },
+        {
+          "path": "packages/blendlink/blender/source_presentation.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorEllipseMask.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorMaskDomains.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts"
+        },
+        {
+          "path": "packages/blendlink/src/threeWebgpuPostPipeline.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorEllipseMask.test.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorMaskDomains.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_ellipse_mask_check.py"
+        },
+        {
+          "path": "experiments/compositor-ellipse-mask/README.md"
+        },
+        {
+          "path": "experiments/compositor-ellipse-mask/cases.json"
+        },
+        {
+          "path": "experiments/compositor-ellipse-mask/reference.py"
+        },
+        {
+          "path": "experiments/compositor-ellipse-mask/protocol.mjs"
+        },
+        {
+          "path": "experiments/compositor-ellipse-mask/protocol.test.mjs"
+        },
+        {
+          "path": "experiments/compositor-ellipse-mask/browser-contract.mjs"
+        },
+        {
+          "path": "experiments/compositor-ellipse-mask/fixture-files.json"
+        },
+        {
+          "path": "experiments/compositor-ellipse-mask/capture.mjs"
+        },
+        {
+          "path": "experiments/compositor-ellipse-mask/export.test.ts"
+        },
+        {
+          "path": "experiments/compositor-ellipse-mask/browser.js"
+        },
+        {
+          "path": "experiments/compositor-ellipse-mask/run.mjs"
+        },
+        {
+          "path": "experiments/compositor-ellipse-mask/verify.mjs"
+        },
+        {
+          "path": "experiments/compositor-ellipse-mask/matrix.mjs"
+        },
+        {
+          "path": "experiments/compositor-ellipse-mask/numeric-contract.json"
+        },
+        {
+          "path": "experiments/compositor-ellipse-mask/sources.json"
+        },
+        {
+          "path": "experiments/compositor-ellipse-mask/evidence.json"
+        }
+      ],
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeCompositorDevices": [
+          "CPU"
+        ],
+        "nativeNodeEvaluator": "CPU compositor parallel_for with Float32 arrays; actual native carrier scene uses Cycles CPU. No EEVEE material or native GPU evaluation credit.",
+        "nativePrecisionRequests": [
+          "FULL",
+          "AUTO"
+        ],
+        "nativeGraphs": 108,
+        "savedFinalScenes": 16,
+        "browserCaseRuns": 496,
+        "primaryFloat32Words": 235856,
+        "wordMismatches": 0,
+        "contractViolations": 0,
+        "resizeFrames": 144,
+        "lifecycleCycles": 192,
+        "uniqueActualPythonPrefixes": 17,
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "numericContract": {
+          "schemaVersion": 1,
+          "model": "cpu-f32-row-integer-intervals-v1",
+          "sourceProfile": "darwin-arm64-53-ellipse-mask-cpu-v1",
+          "source": "Pinned Blender5.3 CPU compositor only, exact normal Float32 stages separate FMUL/FADD/FSQRT; FULL/AUTO requested precision recorded. No GPU-authored Blender claim.",
+          "output": "Exact all RGBA Float32 words, alpha1. No epsilon, threshold repair or tolerance.",
+          "singleValue": "Zero Size shares native scalar Mask and remains single-valued; equal-valued nonzero fields remain fields.",
+          "literalBounds": "Position[-2,2], Size[0,2], Mask/Value[0,1]; zero or abs>=2^-16; raw rotation+0; native scalar-copy storage.",
+          "physicalDomain": "Square pixels, zero-offset full-frame context, physical extent2..8192; no animation/linked fields/rotation/spatial consumers.",
+          "cost": "O(W+H log W) once per valid physical extent; one varying fixed256x32 RG32I nearest/load64KiB table per graph; constant/equal/zero-size consume0; shader integer coordinates/comparisons, no boundary float math or extra pass.",
+          "composition": "Closed texture-free pointwise compositor kinds only; no RenderPass/Image/curves/ramp or spatial consumers. Combined varying row plus Lut1D/Lut3D presentation lookup budget8. Additional post-LDR registrations remain refused pending explicit sampler accounting."
+        },
+        "numericContractSha256": "53ce2003033104f446b0d383a3d693d41770fcb5eb33a26f23ed42286c009714",
+        "coverageScope": "Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor only. Static unlinked literal Position[-2,2], Size[0,2], Mask/Value[0,1], each component zero or abs>=2^-16, with raw Rotation positive zero. All four Operation values Add/Subtract/Multiply/Not; raw native vector/scalar storage checks refuse negative zero, subnormals, nonfinite/out-of-bound values, links, animation and rotation. Zero-offset square-pixel full-frame context, physical extents2..8192. Native ordered Float32 division/subtraction/aspect/radius/products/sum/sqrt classify monotone integer row intervals in O(width+height log width) only on valid extent changes. Shader integer lookup/comparison selects precomputed branch values; no floating boundary, epsilon, quantization or full CPU pixel image. One fixed256x32 RG32I64KiB table per varying mask; at most one varying table per graph. Zero Size shares scalar Mask and remains single-valued for all operations; equal-valued nonzero masks remain fields, with no table allocation. Closed texture-free pointwise compositor kinds only: Render Layers/Image, curves/ramps and spatial/domain consumers remain excluded. Combined row plus display Lut1D/Lut3D budget8; additional post-LDR registrations refuse pending sampler accounting. Actual first-draw/resize/DPR, invalid-resize recovery, table identity/version/data, optimized constant guards and Final disposal are checked. All RGBA Float32 words, including scalar-to-RGBA alpha1 and strict edges, require exact equality. Reference is native CPU compositor with Cycles CPU carrier, not EEVEE shader/material or native GPU evaluation. Actual WebGPU/WebGL2 via WebGPURenderer measured on Apple Metal and SwiftShader. Legacy WebGLRenderer, other versions/builds/hosts, field/animated/rotated masks, arbitrary scene compositing and whole-scene appearance remain unqualified.",
+        "closedReader": {
+          "runtimeFingerprint": "819e83b39bd016d505507cebfc1dff6c47e343669dc2d9f6126dee7d65955499",
+          "verifierSha256": "b32210608a572a6a51d2dda94b1cc96afc85170af059c07a0e2b654c1616a9f5",
+          "runtimeArchiveHelperSha256": "431b8a4e92a194d63a8db512aa84f3076c9951e083b873885d8115e0caf509ed",
+          "nativeArchiveHelperSha256": "3a2310c94ed3109230d3fa89dc1ac6ea5bed447155e98144a68d52dac568a3da"
+        },
+        "sourceSnapshot": {
+          "sourceInputs": 141,
+          "nativeQualificationSha256": "cd6262891468348e0f054fac6fac24ea418675443357dc89fa4d695ef50775f7",
+          "finalProofSha256": "3beada59f6fe59a770a23128c0019c11c70b5083174f97cab9affded5a2e1659",
+          "evidence": "experiments/compositor-ellipse-mask/evidence.json",
+          "limits": "Fresh post-budget-fix root union proof closes this CPU Ellipse slice only. Other entries retain their own captured snapshots; no all-ports freshness claim."
+        }
+      },
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor only. Static unlinked literal Position[-2,2], Size[0,2], Mask/Value[0,1], each component zero or abs>=2^-16, with raw Rotation positive zero. All four Operation values Add/Subtract/Multiply/Not; raw native vector/scalar storage checks refuse negative zero, subnormals, nonfinite/out-of-bound values, links, animation and rotation. Zero-offset square-pixel full-frame context, physical extents2..8192. Native ordered Float32 division/subtraction/aspect/radius/products/sum/sqrt classify monotone integer row intervals in O(width+height log width) only on valid extent changes. Shader integer lookup/comparison selects precomputed branch values; no floating boundary, epsilon, quantization or full CPU pixel image. One fixed256x32 RG32I64KiB table per varying mask; at most one varying table per graph. Zero Size shares scalar Mask and remains single-valued for all operations; equal-valued nonzero masks remain fields, with no table allocation. Closed texture-free pointwise compositor kinds only: Render Layers/Image, curves/ramps and spatial/domain consumers remain excluded. Combined row plus display Lut1D/Lut3D budget8; additional post-LDR registrations refuse pending sampler accounting. Actual first-draw/resize/DPR, invalid-resize recovery, table identity/version/data, optimized constant guards and Final disposal are checked. All RGBA Float32 words, including scalar-to-RGBA alpha1 and strict edges, require exact equality. Reference is native CPU compositor with Cycles CPU carrier, not EEVEE shader/material or native GPU evaluation. Actual WebGPU/WebGL2 via WebGPURenderer measured on Apple Metal and SwiftShader. Legacy WebGLRenderer, other versions/builds/hosts, field/animated/rotated masks, arbitrary scene compositing and whole-scene appearance remain unqualified.",
+          "modes": {
+            "inputs:Operation": {
+              "supported": [
+                "Add",
+                "Subtract",
+                "Multiply",
+                "Not"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "compositor:FunctionNodeCombineMatrix": {
+      "category": "unsupported",
+      "limits": "No admitted live route outside the explicitly qualified Blender5.3.0 build/platform CPU static-copy slice. Native availability or shared MF registration alone does not establish numerical support.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [],
+      "modes": {},
+      "compileTime": {
+        "path": "packages/blendlink/blender/compositor_static_matrix.py",
+        "function": "evaluate_output",
+        "nodeSet": "NODES",
+        "callers": [
+          {
+            "path": "packages/blendlink/blender/compositor_graph.py",
+            "anchor": "record=static_matrix.evaluate_output(socket,scene,static_matrix_cache,tuple(reversed(frames)),static_selection.static_selection)"
+          }
+        ]
+      },
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor static copy-only Matrix islands. Combine Matrix constructs columns-first16 Float32 components, Transpose Matrix permutes them, and Separate Matrix terminates in existing Float value operations. MATRIX remains opaque inside Python; these three native classes qualify only when consumed by a reachable reviewed Separate Float endpoint. Typed literal/Value, explicit instance-bound groups, reroutes, actual native mute bypass and already-qualified static Float selector routes only. All resolved source Float words must be finite normal Float32 or raw positive zero, read by public native from_socket copies and homogeneous foreach_get before scalar promotion; stored negative zero/subnormals/nonfinite words refuse without repair. Source animation/drivers/NLA, arbitrary arithmetic/context/field producers, implicit conversions and unlinked MATRIX defaults refuse. Every initial and recursive group ancestry/binding, raw source storage, topology, selected branch and source scene/frame/CPU context is checked against the extraction snapshot. One extraction-owned cache evaluates each reviewed matrix recipe once, returning all16 raw Float32 attributes from an owned one-point Geometry Nodes CPU-MF graph; no global cache or authored user-tree/geometry evaluation. Bounds64 source node instances/depth16/2048 socket visits/16 islands/128 private nodes. Cached source records retain complete transitive resolver-hop height, including group/reroute/selector edges, and enforce current depth plus cached height at every reuse. Flat immutable recipe records contain only word/child IDs, with fixed16-child Combine keys; recipe depth16 and2048-record limits prevent recursive DAG hashing and bound private build recursion. Owned Scene/Object/Mesh/NodeTree are removed in finally; source ownership/users/active-selected objects/frame must remain unchanged. Exact actual CPU compositor FULL EXR32, native MF and existing scalar/color browser transport on measured Apple Metal/SwiftShader WebGPU/WebGL2. No new Matrix runtime opcode/kernel/pass/texture, per-frame native evaluation or readback. No shader/EEVEE, Blender GPU-authored, generic CPU-MF, Quaternion, Matrix arithmetic/inversion/decomposition, dynamic Matrix fields, other builds/hosts/versions, legacy WebGLRenderer or whole-scene appearance credit."
+        }
+      },
+      "provenanceRoute": {
+        "nativeClass": "FunctionNodeCombineMatrix",
+        "model": "native-static-matrix-copy-cpu-53-v1",
+        "serialized": "compileTimeMatrices records actual original Matrix class members/instance paths, native version/build, exact terminal Float word/value and native evaluation count. Existing value operations retain source.nodeType FunctionNodeSeparateMatrix and original output identifier. Opaque MATRIX is never serialized as a runtime value.",
+        "numericalCredit": "Reviewed CPU compositor static copy/permutation class slice only, independently verified against its shared native CPU-MF carrier. Three-class family totals are shared; no generic MF registration, GPU Matrix kernel or shader-context credit."
+      },
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; observed Apple Metal and SwiftShader. Existing scalar/color runtime only; legacy WebGLRenderer has no live program installer.",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_static_matrix.py",
+          "anchor": "def evaluate_output("
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "record=static_matrix.evaluate_output(socket,scene,static_matrix_cache,tuple(reversed(frames)),static_selection.static_selection)"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'value':"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/policy.py"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/reference.py"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/cases.json"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/protocol.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/export.test.ts"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/browser.js"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/run.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/verify.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/matrix.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/numeric-contract.json"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/sources.json"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/README.md"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/evidence.json"
+        }
+      ],
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeCompositorDevices": [
+          "CPU"
+        ],
+        "nativeNodeEvaluator": "Reviewed shared build_multi_function callbacks for these3 copy/permutation classes only. Actual CPU compositor FULL precision EXR32 crosschecked with private one-point Geometry Nodes CPU-MF Float attribute carrier. Actual native scene carrier uses Cycles CPU; no EEVEE/shader/GPU credit.",
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "familyNativeGraphs": 14,
+        "familySavedFinalScenes": 6,
+        "familyBrowserCaseRuns": 80,
+        "familyComparedFloat32Words": 5120,
+        "wordMismatches": 0,
+        "contractViolations": 0,
+        "resizeFrames": 48,
+        "lifecycleCycles": 72,
+        "uniqueActualPythonPrefixes": 8,
+        "sourcePolicy": {
+          "positiveInvariants": 8,
+          "refusalCategories": 12,
+          "cachedDAGDepthAndHashWorkControls": true
+        },
+        "numericContract": {
+          "schemaVersion": 1,
+          "model": "native-static-matrix-copy-cpu-53-v1",
+          "nativeProfile": "Blender5.3.0 02f0899d78e3 macOS arm64 CPU compositor",
+          "sourceClasses": [
+            "FunctionNodeCombineMatrix",
+            "FunctionNodeTransposeMatrix",
+            "FunctionNodeSeparateMatrix"
+          ],
+          "operation": "Exact columns-first16 Float32 copies and transpose permutation only; no numeric arithmetic is emulated",
+          "inputs": "Raw Float32 normal finite or positive-zero words from typed unlinked Float sockets, Value, or qualified static Float/group/reroute/mute routes. Negative-zero, subnormal and nonfinite words refuse before Python scalar promotion.",
+          "nativeCarrier": "One owned one-point Geometry Nodes CPU-MF graph per unique reviewed matrix island per extraction; all16 outputs read via raw Float32 Store Named Attribute/foreach_get. Shared native builder source is reviewed specifically for these3 copy-only classes and independently crosschecked with actual CPU compositor FULL EXR32 output.",
+          "runtime": "Only existing Float value nodes; opaque MATRIX has no browser transport or kernel. Existing Combine Color RGB consumer and alpha1 are exact controls.",
+          "gates": {
+            "exactWordEquality": true,
+            "absoluteTolerance": 0,
+            "ulpTolerance": 0
+          },
+          "limits": {
+            "sourceNodeInstances": 64,
+            "sourceDepth": 16,
+            "sourceSocketVisits": 2048,
+            "matrixIslandsPerExtraction": 16,
+            "privateGeometryNodes": 128,
+            "flatRecipeRecords": 2048,
+            "flatRecipeDepth": 16
+          },
+          "remaining": [
+            "GPU-authored/shader/EEVEE context equivalence",
+            "fields and animated/context inputs",
+            "unlinked MATRIX defaults",
+            "implicit conversions",
+            "Matrix arithmetic, inversion, decomposition and Quaternion normalization",
+            "all-version support"
+          ],
+          "cost": "Immutable flat recipe keys contain only words/child IDs (Combine fixed16), avoiding recursive DAG hashing. Cached source records retain complete transitive resolver-hop height, including non-recipe group/reroute/selector edges; current call depth plus cached height must remain <=16 before reuse/native evaluation."
+        },
+        "numericContractSha256": "04c1e238da2d90455b97da45b0fdf4a068b8bbc3ab07e38a5a246a9dd59368be",
+        "coverageScope": "Shared three-class static Matrix family totals, not independent per-class counts. All16 Combine and Transpose endpoint positions plus opaque MATRIX/Float group boundaries. Only CPU compositor constant-copy graphs and existing scalar/color transport qualify.",
+        "closedReader": {
+          "runtimeFingerprint": "819e83b39bd016d505507cebfc1dff6c47e343669dc2d9f6126dee7d65955499",
+          "verifierSha256": "a98117c7ea2e21f82673c45bc4b949b902741c6fe8a9522d2127ea06c9edfc2e",
+          "runtimeArchiveHelperSha256": "431b8a4e92a194d63a8db512aa84f3076c9951e083b873885d8115e0caf509ed",
+          "nativeArchiveHelperSha256": "3a2310c94ed3109230d3fa89dc1ac6ea5bed447155e98144a68d52dac568a3da"
+        },
+        "sourceSnapshot": {
+          "sourceInputs": 129,
+          "nativeQualificationSha256": "e9ff5da0f96a0dc5231c390e9bf09a83d506b9fdd30b307457f5a68e4216b4fd",
+          "finalProofSha256": "eaf94b09423aebe23be39835c651b9bf7199643dcaf3671094eb8f322ada9f64",
+          "evidence": "experiments/compositor-static-matrix/evidence.json",
+          "limits": "This fresh transaction closes only the static Matrix copy family. All other ports retain their own captured source snapshots."
+        }
+      }
+    },
+    "compositor:FunctionNodeTransposeMatrix": {
+      "category": "unsupported",
+      "limits": "No admitted live route outside the explicitly qualified Blender5.3.0 build/platform CPU static-copy slice. Native availability or shared MF registration alone does not establish numerical support.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [],
+      "modes": {},
+      "compileTime": {
+        "path": "packages/blendlink/blender/compositor_static_matrix.py",
+        "function": "evaluate_output",
+        "nodeSet": "NODES",
+        "callers": [
+          {
+            "path": "packages/blendlink/blender/compositor_graph.py",
+            "anchor": "record=static_matrix.evaluate_output(socket,scene,static_matrix_cache,tuple(reversed(frames)),static_selection.static_selection)"
+          }
+        ]
+      },
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor static copy-only Matrix islands. Combine Matrix constructs columns-first16 Float32 components, Transpose Matrix permutes them, and Separate Matrix terminates in existing Float value operations. MATRIX remains opaque inside Python; these three native classes qualify only when consumed by a reachable reviewed Separate Float endpoint. Typed literal/Value, explicit instance-bound groups, reroutes, actual native mute bypass and already-qualified static Float selector routes only. All resolved source Float words must be finite normal Float32 or raw positive zero, read by public native from_socket copies and homogeneous foreach_get before scalar promotion; stored negative zero/subnormals/nonfinite words refuse without repair. Source animation/drivers/NLA, arbitrary arithmetic/context/field producers, implicit conversions and unlinked MATRIX defaults refuse. Every initial and recursive group ancestry/binding, raw source storage, topology, selected branch and source scene/frame/CPU context is checked against the extraction snapshot. One extraction-owned cache evaluates each reviewed matrix recipe once, returning all16 raw Float32 attributes from an owned one-point Geometry Nodes CPU-MF graph; no global cache or authored user-tree/geometry evaluation. Bounds64 source node instances/depth16/2048 socket visits/16 islands/128 private nodes. Cached source records retain complete transitive resolver-hop height, including group/reroute/selector edges, and enforce current depth plus cached height at every reuse. Flat immutable recipe records contain only word/child IDs, with fixed16-child Combine keys; recipe depth16 and2048-record limits prevent recursive DAG hashing and bound private build recursion. Owned Scene/Object/Mesh/NodeTree are removed in finally; source ownership/users/active-selected objects/frame must remain unchanged. Exact actual CPU compositor FULL EXR32, native MF and existing scalar/color browser transport on measured Apple Metal/SwiftShader WebGPU/WebGL2. No new Matrix runtime opcode/kernel/pass/texture, per-frame native evaluation or readback. No shader/EEVEE, Blender GPU-authored, generic CPU-MF, Quaternion, Matrix arithmetic/inversion/decomposition, dynamic Matrix fields, other builds/hosts/versions, legacy WebGLRenderer or whole-scene appearance credit."
+        }
+      },
+      "provenanceRoute": {
+        "nativeClass": "FunctionNodeTransposeMatrix",
+        "model": "native-static-matrix-copy-cpu-53-v1",
+        "serialized": "compileTimeMatrices records actual original Matrix class members/instance paths, native version/build, exact terminal Float word/value and native evaluation count. Existing value operations retain source.nodeType FunctionNodeSeparateMatrix and original output identifier. Opaque MATRIX is never serialized as a runtime value.",
+        "numericalCredit": "Reviewed CPU compositor static copy/permutation class slice only, independently verified against its shared native CPU-MF carrier. Three-class family totals are shared; no generic MF registration, GPU Matrix kernel or shader-context credit."
+      },
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; observed Apple Metal and SwiftShader. Existing scalar/color runtime only; legacy WebGLRenderer has no live program installer.",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_static_matrix.py",
+          "anchor": "def evaluate_output("
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "record=static_matrix.evaluate_output(socket,scene,static_matrix_cache,tuple(reversed(frames)),static_selection.static_selection)"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'value':"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/policy.py"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/reference.py"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/cases.json"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/protocol.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/export.test.ts"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/browser.js"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/run.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/verify.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/matrix.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/numeric-contract.json"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/sources.json"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/README.md"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/evidence.json"
+        }
+      ],
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeCompositorDevices": [
+          "CPU"
+        ],
+        "nativeNodeEvaluator": "Reviewed shared build_multi_function callbacks for these3 copy/permutation classes only. Actual CPU compositor FULL precision EXR32 crosschecked with private one-point Geometry Nodes CPU-MF Float attribute carrier. Actual native scene carrier uses Cycles CPU; no EEVEE/shader/GPU credit.",
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "familyNativeGraphs": 14,
+        "familySavedFinalScenes": 6,
+        "familyBrowserCaseRuns": 80,
+        "familyComparedFloat32Words": 5120,
+        "wordMismatches": 0,
+        "contractViolations": 0,
+        "resizeFrames": 48,
+        "lifecycleCycles": 72,
+        "uniqueActualPythonPrefixes": 8,
+        "sourcePolicy": {
+          "positiveInvariants": 8,
+          "refusalCategories": 12,
+          "cachedDAGDepthAndHashWorkControls": true
+        },
+        "numericContract": {
+          "schemaVersion": 1,
+          "model": "native-static-matrix-copy-cpu-53-v1",
+          "nativeProfile": "Blender5.3.0 02f0899d78e3 macOS arm64 CPU compositor",
+          "sourceClasses": [
+            "FunctionNodeCombineMatrix",
+            "FunctionNodeTransposeMatrix",
+            "FunctionNodeSeparateMatrix"
+          ],
+          "operation": "Exact columns-first16 Float32 copies and transpose permutation only; no numeric arithmetic is emulated",
+          "inputs": "Raw Float32 normal finite or positive-zero words from typed unlinked Float sockets, Value, or qualified static Float/group/reroute/mute routes. Negative-zero, subnormal and nonfinite words refuse before Python scalar promotion.",
+          "nativeCarrier": "One owned one-point Geometry Nodes CPU-MF graph per unique reviewed matrix island per extraction; all16 outputs read via raw Float32 Store Named Attribute/foreach_get. Shared native builder source is reviewed specifically for these3 copy-only classes and independently crosschecked with actual CPU compositor FULL EXR32 output.",
+          "runtime": "Only existing Float value nodes; opaque MATRIX has no browser transport or kernel. Existing Combine Color RGB consumer and alpha1 are exact controls.",
+          "gates": {
+            "exactWordEquality": true,
+            "absoluteTolerance": 0,
+            "ulpTolerance": 0
+          },
+          "limits": {
+            "sourceNodeInstances": 64,
+            "sourceDepth": 16,
+            "sourceSocketVisits": 2048,
+            "matrixIslandsPerExtraction": 16,
+            "privateGeometryNodes": 128,
+            "flatRecipeRecords": 2048,
+            "flatRecipeDepth": 16
+          },
+          "remaining": [
+            "GPU-authored/shader/EEVEE context equivalence",
+            "fields and animated/context inputs",
+            "unlinked MATRIX defaults",
+            "implicit conversions",
+            "Matrix arithmetic, inversion, decomposition and Quaternion normalization",
+            "all-version support"
+          ],
+          "cost": "Immutable flat recipe keys contain only words/child IDs (Combine fixed16), avoiding recursive DAG hashing. Cached source records retain complete transitive resolver-hop height, including non-recipe group/reroute/selector edges; current call depth plus cached height must remain <=16 before reuse/native evaluation."
+        },
+        "numericContractSha256": "04c1e238da2d90455b97da45b0fdf4a068b8bbc3ab07e38a5a246a9dd59368be",
+        "coverageScope": "Shared three-class static Matrix family totals, not independent per-class counts. All16 Combine and Transpose endpoint positions plus opaque MATRIX/Float group boundaries. Only CPU compositor constant-copy graphs and existing scalar/color transport qualify.",
+        "closedReader": {
+          "runtimeFingerprint": "819e83b39bd016d505507cebfc1dff6c47e343669dc2d9f6126dee7d65955499",
+          "verifierSha256": "a98117c7ea2e21f82673c45bc4b949b902741c6fe8a9522d2127ea06c9edfc2e",
+          "runtimeArchiveHelperSha256": "431b8a4e92a194d63a8db512aa84f3076c9951e083b873885d8115e0caf509ed",
+          "nativeArchiveHelperSha256": "3a2310c94ed3109230d3fa89dc1ac6ea5bed447155e98144a68d52dac568a3da"
+        },
+        "sourceSnapshot": {
+          "sourceInputs": 129,
+          "nativeQualificationSha256": "e9ff5da0f96a0dc5231c390e9bf09a83d506b9fdd30b307457f5a68e4216b4fd",
+          "finalProofSha256": "eaf94b09423aebe23be39835c651b9bf7199643dcaf3671094eb8f322ada9f64",
+          "evidence": "experiments/compositor-static-matrix/evidence.json",
+          "limits": "This fresh transaction closes only the static Matrix copy family. All other ports retain their own captured source snapshots."
+        }
+      }
+    },
+    "compositor:FunctionNodeSeparateMatrix": {
+      "category": "unsupported",
+      "limits": "No admitted live route outside the explicitly qualified Blender5.3.0 build/platform CPU static-copy slice. Native availability or shared MF registration alone does not establish numerical support.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [],
+      "modes": {},
+      "compileTime": {
+        "path": "packages/blendlink/blender/compositor_static_matrix.py",
+        "function": "evaluate_output",
+        "nodeSet": "NODES",
+        "callers": [
+          {
+            "path": "packages/blendlink/blender/compositor_graph.py",
+            "anchor": "record=static_matrix.evaluate_output(socket,scene,static_matrix_cache,tuple(reversed(frames)),static_selection.static_selection)"
+          }
+        ]
+      },
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor static copy-only Matrix islands. Combine Matrix constructs columns-first16 Float32 components, Transpose Matrix permutes them, and Separate Matrix terminates in existing Float value operations. MATRIX remains opaque inside Python; these three native classes qualify only when consumed by a reachable reviewed Separate Float endpoint. Typed literal/Value, explicit instance-bound groups, reroutes, actual native mute bypass and already-qualified static Float selector routes only. All resolved source Float words must be finite normal Float32 or raw positive zero, read by public native from_socket copies and homogeneous foreach_get before scalar promotion; stored negative zero/subnormals/nonfinite words refuse without repair. Source animation/drivers/NLA, arbitrary arithmetic/context/field producers, implicit conversions and unlinked MATRIX defaults refuse. Every initial and recursive group ancestry/binding, raw source storage, topology, selected branch and source scene/frame/CPU context is checked against the extraction snapshot. One extraction-owned cache evaluates each reviewed matrix recipe once, returning all16 raw Float32 attributes from an owned one-point Geometry Nodes CPU-MF graph; no global cache or authored user-tree/geometry evaluation. Bounds64 source node instances/depth16/2048 socket visits/16 islands/128 private nodes. Cached source records retain complete transitive resolver-hop height, including group/reroute/selector edges, and enforce current depth plus cached height at every reuse. Flat immutable recipe records contain only word/child IDs, with fixed16-child Combine keys; recipe depth16 and2048-record limits prevent recursive DAG hashing and bound private build recursion. Owned Scene/Object/Mesh/NodeTree are removed in finally; source ownership/users/active-selected objects/frame must remain unchanged. Exact actual CPU compositor FULL EXR32, native MF and existing scalar/color browser transport on measured Apple Metal/SwiftShader WebGPU/WebGL2. No new Matrix runtime opcode/kernel/pass/texture, per-frame native evaluation or readback. No shader/EEVEE, Blender GPU-authored, generic CPU-MF, Quaternion, Matrix arithmetic/inversion/decomposition, dynamic Matrix fields, other builds/hosts/versions, legacy WebGLRenderer or whole-scene appearance credit."
+        }
+      },
+      "provenanceRoute": {
+        "nativeClass": "FunctionNodeSeparateMatrix",
+        "model": "native-static-matrix-copy-cpu-53-v1",
+        "serialized": "compileTimeMatrices records actual original Matrix class members/instance paths, native version/build, exact terminal Float word/value and native evaluation count. Existing value operations retain source.nodeType FunctionNodeSeparateMatrix and original output identifier. Opaque MATRIX is never serialized as a runtime value.",
+        "numericalCredit": "Reviewed CPU compositor static copy/permutation class slice only, independently verified against its shared native CPU-MF carrier. Three-class family totals are shared; no generic MF registration, GPU Matrix kernel or shader-context credit."
+      },
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; observed Apple Metal and SwiftShader. Existing scalar/color runtime only; legacy WebGLRenderer has no live program installer.",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_static_matrix.py",
+          "anchor": "def evaluate_output("
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "record=static_matrix.evaluate_output(socket,scene,static_matrix_cache,tuple(reversed(frames)),static_selection.static_selection)"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'value':"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/policy.py"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/reference.py"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/cases.json"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/protocol.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/export.test.ts"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/browser.js"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/run.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/verify.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/matrix.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/numeric-contract.json"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/sources.json"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/README.md"
+        },
+        {
+          "path": "experiments/compositor-static-matrix/evidence.json"
+        }
+      ],
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeCompositorDevices": [
+          "CPU"
+        ],
+        "nativeNodeEvaluator": "Reviewed shared build_multi_function callbacks for these3 copy/permutation classes only. Actual CPU compositor FULL precision EXR32 crosschecked with private one-point Geometry Nodes CPU-MF Float attribute carrier. Actual native scene carrier uses Cycles CPU; no EEVEE/shader/GPU credit.",
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "familyNativeGraphs": 14,
+        "familySavedFinalScenes": 6,
+        "familyBrowserCaseRuns": 80,
+        "familyComparedFloat32Words": 5120,
+        "wordMismatches": 0,
+        "contractViolations": 0,
+        "resizeFrames": 48,
+        "lifecycleCycles": 72,
+        "uniqueActualPythonPrefixes": 8,
+        "sourcePolicy": {
+          "positiveInvariants": 8,
+          "refusalCategories": 12,
+          "cachedDAGDepthAndHashWorkControls": true
+        },
+        "numericContract": {
+          "schemaVersion": 1,
+          "model": "native-static-matrix-copy-cpu-53-v1",
+          "nativeProfile": "Blender5.3.0 02f0899d78e3 macOS arm64 CPU compositor",
+          "sourceClasses": [
+            "FunctionNodeCombineMatrix",
+            "FunctionNodeTransposeMatrix",
+            "FunctionNodeSeparateMatrix"
+          ],
+          "operation": "Exact columns-first16 Float32 copies and transpose permutation only; no numeric arithmetic is emulated",
+          "inputs": "Raw Float32 normal finite or positive-zero words from typed unlinked Float sockets, Value, or qualified static Float/group/reroute/mute routes. Negative-zero, subnormal and nonfinite words refuse before Python scalar promotion.",
+          "nativeCarrier": "One owned one-point Geometry Nodes CPU-MF graph per unique reviewed matrix island per extraction; all16 outputs read via raw Float32 Store Named Attribute/foreach_get. Shared native builder source is reviewed specifically for these3 copy-only classes and independently crosschecked with actual CPU compositor FULL EXR32 output.",
+          "runtime": "Only existing Float value nodes; opaque MATRIX has no browser transport or kernel. Existing Combine Color RGB consumer and alpha1 are exact controls.",
+          "gates": {
+            "exactWordEquality": true,
+            "absoluteTolerance": 0,
+            "ulpTolerance": 0
+          },
+          "limits": {
+            "sourceNodeInstances": 64,
+            "sourceDepth": 16,
+            "sourceSocketVisits": 2048,
+            "matrixIslandsPerExtraction": 16,
+            "privateGeometryNodes": 128,
+            "flatRecipeRecords": 2048,
+            "flatRecipeDepth": 16
+          },
+          "remaining": [
+            "GPU-authored/shader/EEVEE context equivalence",
+            "fields and animated/context inputs",
+            "unlinked MATRIX defaults",
+            "implicit conversions",
+            "Matrix arithmetic, inversion, decomposition and Quaternion normalization",
+            "all-version support"
+          ],
+          "cost": "Immutable flat recipe keys contain only words/child IDs (Combine fixed16), avoiding recursive DAG hashing. Cached source records retain complete transitive resolver-hop height, including non-recipe group/reroute/selector edges; current call depth plus cached height must remain <=16 before reuse/native evaluation."
+        },
+        "numericContractSha256": "04c1e238da2d90455b97da45b0fdf4a068b8bbc3ab07e38a5a246a9dd59368be",
+        "coverageScope": "Shared three-class static Matrix family totals, not independent per-class counts. All16 Combine and Transpose endpoint positions plus opaque MATRIX/Float group boundaries. Only CPU compositor constant-copy graphs and existing scalar/color transport qualify.",
+        "closedReader": {
+          "runtimeFingerprint": "819e83b39bd016d505507cebfc1dff6c47e343669dc2d9f6126dee7d65955499",
+          "verifierSha256": "a98117c7ea2e21f82673c45bc4b949b902741c6fe8a9522d2127ea06c9edfc2e",
+          "runtimeArchiveHelperSha256": "431b8a4e92a194d63a8db512aa84f3076c9951e083b873885d8115e0caf509ed",
+          "nativeArchiveHelperSha256": "3a2310c94ed3109230d3fa89dc1ac6ea5bed447155e98144a68d52dac568a3da"
+        },
+        "sourceSnapshot": {
+          "sourceInputs": 129,
+          "nativeQualificationSha256": "e9ff5da0f96a0dc5231c390e9bf09a83d506b9fdd30b307457f5a68e4216b4fd",
+          "finalProofSha256": "eaf94b09423aebe23be39835c651b9bf7199643dcaf3671094eb8f322ada9f64",
+          "evidence": "experiments/compositor-static-matrix/evidence.json",
+          "limits": "This fresh transaction closes only the static Matrix copy family. All other ports retain their own captured source snapshots."
         }
       }
     }
@@ -13638,7 +14325,6 @@
     "compositor:FunctionNodeAxesToRotation",
     "compositor:FunctionNodeAxisAngleToRotation",
     "compositor:FunctionNodeBitMath",
-    "compositor:FunctionNodeCombineMatrix",
     "compositor:FunctionNodeCombineTransform",
     "compositor:FunctionNodeEulerToRotation",
     "compositor:FunctionNodeFindInString",
@@ -13665,7 +14351,6 @@
     "compositor:FunctionNodeRotationToAxisAngle",
     "compositor:FunctionNodeRotationToEuler",
     "compositor:FunctionNodeRotationToQuaternion",
-    "compositor:FunctionNodeSeparateMatrix",
     "compositor:FunctionNodeSeparateTransform",
     "compositor:FunctionNodeSetStringCase",
     "compositor:FunctionNodeSliceString",
@@ -13673,7 +14358,6 @@
     "compositor:FunctionNodeStringToValue",
     "compositor:FunctionNodeTransformDirection",
     "compositor:FunctionNodeTransformPoint",
-    "compositor:FunctionNodeTransposeMatrix",
     "compositor:FunctionNodeTrimString",
     "compositor:FunctionNodeValueToString",
     "compositor:GeometryNodeBoneInfo",

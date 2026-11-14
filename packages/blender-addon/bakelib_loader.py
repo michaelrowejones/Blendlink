@@ -35,6 +35,15 @@ def _load():
             "(packages/blendlink/dist/addon) rather than from the add-on "
             "source directory."
         )
+    # Source checkouts keep canonical backend helpers in this sibling folder.
+    # Register it on this addon package (after artist-facing addon modules), so
+    # ordinary relative imports resolve the entire helper closure, not only
+    # bakelib's first manually loaded module. Installed packages return above
+    # and never acquire a repository path or a bare-module import/cache entry.
+    package = sys.modules[__package__]
+    source_directory = str(source.parent.resolve())
+    if source_directory not in package.__path__:
+        package.__path__ = [*package.__path__, source_directory]
     spec = importlib.util.spec_from_file_location(packaged_name, source)
     if spec is None or spec.loader is None:
         raise ModuleNotFoundError(f"Could not load SceneToWeb bake module from {source}")

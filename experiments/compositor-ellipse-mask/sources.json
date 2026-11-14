@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "role": "Primary source research pins, no independent numerical credit",
+  "sources": [
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/nodes/composite/nodes/node_composite_ellipse_mask.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/composite/nodes/node_composite_ellipse_mask.cc",
+      "sha256": "a0441790bc323c1635ae2339a867c57d176c66a8e8fdb5a6c3067de955bf3219",
+      "bytes": 8821
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/compositor/shaders/compositor_ellipse_mask.glsl",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/shaders/compositor_ellipse_mask.glsl",
+      "sha256": "6405f3a83f21de00dc990ee79ddd200f3f74a3532fa4424550387e07de9c2e2f",
+      "bytes": 1538
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/compositor/shaders/infos/compositor_ellipse_mask_infos.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/shaders/infos/compositor_ellipse_mask_infos.hh",
+      "sha256": "fb5bc1600ed252e7b130483c9214e33970acea5e6cf468915f4be695583c9e84",
+      "bytes": 1710
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/blenlib/BLI_math_vector.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/BLI_math_vector.hh",
+      "sha256": "ba7395d8cfb829edb074501d48642c744ee44656a2af1eb017757e03c8b064b0",
+      "bytes": 24077
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/blenlib/BLI_math_base.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/BLI_math_base.hh",
+      "sha256": "cd6bc90176a7070134377a276dc702a06355832d79947840033610cc6218d7e4",
+      "bytes": 7092
+    }
+  ]
+}

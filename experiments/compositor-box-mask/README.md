@@ -4,6 +4,16 @@ The [closed receipt](evidence.json) qualifies a bounded Blender 5.3 CPU-composit
 Box Mask on actual browser WebGPU and WebGL2, using observed Apple Metal and
 SwiftShader adapters. It records 40 native graphs,12 actual saved Final scenes,
 208 browser case-runs and 98,592 exact Float32 words with zero differences.
+The fresh post-budget-fix union replay closes 128 native source inputs and
+13 actual Python cache prefixes at runtime fingerprint
+`819e83b39bd016d505507cebfc1dff6c47e343669dc2d9f6126dee7d65955499`.
+Its native qualification hash is
+`5900437fcbef2f21e0eb959fffbf59692a6819ad53ca14cbbcf02af5e9497b6b`;
+the Final proof hash is
+`2e7a52bb799afe5ea73ff716bee65bd772b4c4b8ee52c404fe784c625b85332d`.
+This refresh retains Box's scope and numerical contract. Unrelated ports retain
+their own captured source snapshots.
+
 All four native Operation menu values—Add, Subtract, Multiply and Not—are
 covered. This remains a partial port.
 

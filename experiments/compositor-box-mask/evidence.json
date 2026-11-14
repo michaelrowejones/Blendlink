@@ -76,7 +76,7 @@
   },
   "resources": "No port-owned texture/RTT/readback or new pass. Three Final apply/dispose cycles restore exact source material/callback identities and independently drawn renderer cache identities. Extent validator is retained on result VarNode, including allzero/constant optimized graphs; invalid extents recover without changing prior one-entry cache.",
   "closedReader": {
-    "runtimeFingerprint": "29a553a8c01a0541324fa23100e0ac2593dcfc66a85841a6dd58be46698a66dd",
+    "runtimeFingerprint": "819e83b39bd016d505507cebfc1dff6c47e343669dc2d9f6126dee7d65955499",
     "verifierSha256": "7de5c1e695d544d67b9abef6fb7c3c7f450b20daa445bfbdf61188d70f95756a",
     "runtimeArchiveHelperSha256": "431b8a4e92a194d63a8db512aa84f3076c9951e083b873885d8115e0caf509ed",
     "nativeArchiveHelperSha256": "3a2310c94ed3109230d3fa89dc1ac6ea5bed447155e98144a68d52dac568a3da"
@@ -84,16 +84,16 @@
   "sources": [
     {
       "native": {
-        "path": "artifacts/verification-next8-box-union/cpu/qualification.json",
-        "sha256": "4c661947a0e865c43dcebe41a756144e53c2ece670d35dfde0511f6321cf86e0"
+        "path": "artifacts/verification-next9r2-box-union/cpu/qualification.json",
+        "sha256": "5900437fcbef2f21e0eb959fffbf59692a6819ad53ca14cbbcf02af5e9497b6b"
       },
       "final": {
-        "path": "artifacts/verification-next8-box-union/cpu/final-proof.json",
-        "sha256": "399161371048af4c718fe74d55eb414283c3b920e59eab3fd5a34f467a1484c4"
+        "path": "artifacts/verification-next9r2-box-union/cpu/final-proof.json",
+        "sha256": "2e7a52bb799afe5ea73ff716bee65bd772b4c4b8ee52c404fe784c625b85332d"
       },
       "sourceHashes": {
         "packages/blender-addon/__init__.py": "de0e8534abcb690cc935eda33b827312e65901d944a540bb839c77dc1e871538",
-        "packages/blender-addon/bakelib_loader.py": "8f50fa1479d43f5f2e8a834e62b4c3517ef32beb858fae8e0082f807cfb6f5ed",
+        "packages/blender-addon/bakelib_loader.py": "8c2a30b0460e1cb28d6e5338b3a28134a966846f78fdb1131666bfe6233b4155",
         "packages/blender-addon/blender_known_issues.json": "e7d406bc7d3e7773309dc1ae6a13bd258885efe4e49c1799f6339b3071382aeb",
         "packages/blender-addon/bootstrap.py": "891bf5814e20e8b86bd5bfa5d78a4c6a8a67919122f1738bed7e4690b3e70202",
         "packages/blender-addon/brick_ir.py": "c2c187ead624d429ef3e546034281bfe9ba31188ce35f8b0e40fc9890ebc2966",
@@ -174,7 +174,7 @@
         "packages/blendlink/blender/compositor_alpha_conversion.py": "990390afa0f4d021d616802c9425dc0ab2ec706ce49b72327a1d22b16cdeb0db",
         "packages/blendlink/blender/compositor_blackbody.py": "9646898a1b0b9b9e1dbfe97adf73b3a463e624f49f68a7d786b3255bbdf42424",
         "packages/blendlink/blender/compositor_blur.py": "d86ffd87271a97563facacfedab6bcc3888ea0bff69926f12d32146736aff014",
-        "packages/blendlink/blender/compositor_box_mask.py": "141cea7fdb1fe889983be6bcba9d98335244336921d41274262fc6e7b66196c6",
+        "packages/blendlink/blender/compositor_box_mask.py": "6d1ad1f0953483c9c230ac3d49c5b3f4cb0fb30a8bb8d589fab19019056e6390",
         "packages/blendlink/blender/compositor_channel_key.py": "a00e0f67b92ab817a401340c654758177eadc1b07d7a0ae92258b16760dc46dc",
         "packages/blendlink/blender/compositor_chroma_key.py": "d304626d3aba0ed4bd560a11134f627536bb9dfe3e01d608a40fe677759512e5",
         "packages/blendlink/blender/compositor_color.py": "7f2c441e1390c38537fd6e434c6963398a517492f00441e928f2c6708e8eea27",
@@ -182,11 +182,12 @@
         "packages/blendlink/blender/compositor_crop.py": "44ed9983ecac97b400a3ba7896a8eb66738e23cb61bb151d139dbdff7150351c",
         "packages/blendlink/blender/compositor_difference_key.py": "4fce4d4ed1c082b3a2e7410dad2073672da8f2add7752f3b15883f82d3ed8c05",
         "packages/blendlink/blender/compositor_distance_key.py": "132faffadf13bcc49db7556a7442ff039a06ab5a777d8b2effa74bcd5ec8adf9",
+        "packages/blendlink/blender/compositor_ellipse_mask.py": "655933483b76b29bbe6f88968052faca74fb73ffd5d99841ef74b9cde5fc2039",
         "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
         "packages/blendlink/blender/compositor_float_coordinates.py": "a300cbfb6e5ea06806e2fb9b9d7795cd2e3b91cb21ada43e4c128ac89d8f0cec",
         "packages/blendlink/blender/compositor_float_to_int.py": "6292f5a5904107b59591c282fcf9def24a5f98dc2ead0a92d950b6219226658d",
         "packages/blendlink/blender/compositor_gpu.py": "9577b6df9abbf9820af6dab309b0ab2ec3a00db8a9bf60a4c5e0c9e4cb8600ae",
-        "packages/blendlink/blender/compositor_graph.py": "cb2dc888e29539ecab72ca126e4181b20aa1ed3d10d81aa11b0062eed9151949",
+        "packages/blendlink/blender/compositor_graph.py": "d03e1dd7c3be68b0e8df1d2621ee4f9970503ef0681d7669562a03c2fa75e2be",
         "packages/blendlink/blender/compositor_image.py": "55ee3b7800002331c4e30042a7d5da18538267b58ff60c006e03ad238da9e012",
         "packages/blendlink/blender/compositor_image_coordinates.py": "4b796327c579e7c08ed487cce4758c899a1a11be648e93977c22a0536451054a",
         "packages/blendlink/blender/compositor_image_info.py": "92e3f2488f646b8f7f79de67940717c54bd3e4cfc69956090b31ebd9b0e64729",
@@ -194,6 +195,7 @@
         "packages/blendlink/blender/compositor_luminance_key.py": "5391ac3ca522590a0bffa0a2ef3ca25c8be44d0218381fa9f3bc48ab14edb3cd",
         "packages/blendlink/blender/compositor_map_value.py": "784d1ba979b02e2e665b41818d4efd8912c5fe35ae821ea39135912fda3fe5fe",
         "packages/blendlink/blender/compositor_map_value_domain.py": "ff43991bf956ed131835b671f9d44c0a80e23b9888c53903f6486c5a287448eb",
+        "packages/blendlink/blender/compositor_mask_domains.py": "6e5d83b8b8341ba17ad9c0a92a8f8e8ba96bf06b8f09c54cdec4ded33338193e",
         "packages/blendlink/blender/compositor_math.py": "fd2f9efc43f4b0bf1dfebbdc651190025c9e33ccf2ae3ab0baf653715dd00b78",
         "packages/blendlink/blender/compositor_normal.py": "9dcd0e53d674560bb7c060a2a6a2b5ccdec361235ae67620c587a29136d2c94d",
         "packages/blendlink/blender/compositor_pixelate.py": "607f738a09fc75f15facb9cb0c261bfb72800663d5908826e5d105d980800b3d",
@@ -202,6 +204,7 @@
         "packages/blendlink/blender/compositor_relative_to_pixel.py": "a276d2e5fa7b0743b26c5e6fdba67cff3f884f2535f88c01ca0c536a8ce85870",
         "packages/blendlink/blender/compositor_spill.py": "8a7774222b7f126bcc6a42f0a526d953b2fe858b4f47c7018cd741ee94f56269",
         "packages/blendlink/blender/compositor_split.py": "1c25e68653abf9c8c8b2a88c3c7751a324fb4838a5feaacae309fe332e511a08",
+        "packages/blendlink/blender/compositor_static_matrix.py": "8e2ba5ad012ef57fbc982e2dad47a4bfc1b73165825c1c50ee9ae45ada8fb1fd",
         "packages/blendlink/blender/compositor_transform.py": "2f9ae73eb6e70f05fc53b755b1252e3bce4563ad013b08ed930304a4ae2ac42d",
         "packages/blendlink/blender/compositor_utilities.py": "b92be3bb89c05d9a943a08298bb3114274cf67f14f985ba84e3f5dbc9eddc384",
         "packages/blendlink/blender/compositor_vector_component.py": "8b29742404fa7d80d2bdc661363a052bc1a2680b3306a2a47b20d0d9e5bfe20c",
@@ -213,7 +216,7 @@
         "packages/blendlink/blender/native_color_band.py": "23aa27b056846d42cdb96919da968d04f9e8e44d794ffa10c80871f786bfc8d4",
         "packages/blendlink/blender/normal_bake_transport.py": "1e6211bb197f6e015262f80937112ec594e70977945fc1259133aa8ffd36429e",
         "packages/blendlink/blender/preparation_cache.py": "e3518eaa9999a0d51a0b7a9dd9810c68843dedd0d3bc119af3534ea8ec2db28d",
-        "packages/blendlink/blender/source_presentation.py": "ee6d03a6aa52b4828cc38dd795a6fbf17371f599695ac69605aa7f9b3179a96e",
+        "packages/blendlink/blender/source_presentation.py": "16490b78f23b6b9bc947665bb518b39c8b208f7e2f531fbde3184214331ca78c",
         "packages/blendlink/blender/tangent_export.py": "4815854bd825e910009b42de73ecf5aa9cc0bb07966bb2d688731e5df12b514e",
         "packages/blendlink/blender/uvgeometry.py": "2420caeccc225eddf3dce09c8dafe8ab9048d503689c0795c4a5513f7b3d705c",
         "experiments/compositor-box-mask/cases.json": "8630faddd8dbf4bcb707015642d4ed20fe7e402b15380cec6528ba298aa65dd4"
@@ -228,8 +231,8 @@
   ],
   "runs": [
     {
-      "path": "artifacts/verification-next8-box-union/cpu/browser-raw-metal/report.json",
-      "sha256": "baef33736f5ef92cfe0c4fb82ca13504a6898c7a2c9423b96a0a189e2f0d0888",
+      "path": "artifacts/verification-next9r2-box-union/cpu/browser-raw-metal/report.json",
+      "sha256": "ff1fd0f84cd612145fc8b6ac1aec0b8050ca1554bcca409d4da33f49bec28807",
       "profile": "metal",
       "phase": "raw",
       "browserVersion": "158.0.8127.18",
@@ -257,8 +260,8 @@
       ]
     },
     {
-      "path": "artifacts/verification-next8-box-union/cpu/browser-final-metal/report.json",
-      "sha256": "1e8b7bee7486a264569c391ca64b023dad40b5ea104858a252da58b59f25b072",
+      "path": "artifacts/verification-next9r2-box-union/cpu/browser-final-metal/report.json",
+      "sha256": "c384ae3e82cdf7fb8659fda159291200949511056b553dfc15c8fb8e66ac2660",
       "profile": "metal",
       "phase": "final",
       "browserVersion": "158.0.8127.18",
@@ -286,8 +289,8 @@
       ]
     },
     {
-      "path": "artifacts/verification-next8-box-union/cpu/browser-raw-software/report.json",
-      "sha256": "5d80bda56fd321868e41d4fc4a116ca05ce28ecb0bd7c2e3fd02fda386a45986",
+      "path": "artifacts/verification-next9r2-box-union/cpu/browser-raw-software/report.json",
+      "sha256": "458d08f99e15ddee2efc3066932a136bdc405767b4ced04e831d36b80f09fdb3",
       "profile": "software",
       "phase": "raw",
       "browserVersion": "158.0.8127.18",
@@ -315,8 +318,8 @@
       ]
     },
     {
-      "path": "artifacts/verification-next8-box-union/cpu/browser-final-software/report.json",
-      "sha256": "274d73cb7877de68422e2fd368cc9a6b3a2b66704c19938fc1ac4441eff2a1cc",
+      "path": "artifacts/verification-next9r2-box-union/cpu/browser-final-software/report.json",
+      "sha256": "0948b5c54ad4dc40d3e4304431eecdde240494162ef19b2213442a43cf9df4fc",
       "profile": "software",
       "phase": "final",
       "browserVersion": "158.0.8127.18",
@@ -589,6 +592,6 @@
   "rawArtifacts": {
     "machineLocal": true,
     "ignored": true,
-    "path": "artifacts/verification-next8-box-union"
+    "path": "artifacts/verification-next9r2-box-union"
   }
 }

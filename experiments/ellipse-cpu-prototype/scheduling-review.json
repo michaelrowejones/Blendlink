@@ -1,0 +1,201 @@
+{
+  "schemaVersion": 1,
+  "status": "REVIEW_NATIVE_ELLIPSE_ZERO_SIZE_SINGLE_VALUE_ONLY",
+  "sourceCommit": "a2ff2ce0100d275c15b7d74b58e11e12269e8d45",
+  "nativeVersion": [
+    5,
+    3,
+    0
+  ],
+  "nativeBuild": "02f0899d78e3",
+  "device": "CPU",
+  "carrierEngine": "CYCLES",
+  "precision": "FULL",
+  "actualNativeRenders": 8,
+  "sourceAdmissionCredit": 0,
+  "supportCredit": 0,
+  "browserCredit": 0,
+  "numericNodeCoverageCredit": 0,
+  "nativeFacts": [
+    {
+      "size": [
+        0,
+        0.5
+      ],
+      "operation": "Add",
+      "nativeDimensionsRGBA": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    {
+      "size": [
+        0,
+        0.5
+      ],
+      "operation": "Subtract",
+      "nativeDimensionsRGBA": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    {
+      "size": [
+        0,
+        0.5
+      ],
+      "operation": "Multiply",
+      "nativeDimensionsRGBA": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    {
+      "size": [
+        0,
+        0.5
+      ],
+      "operation": "Not",
+      "nativeDimensionsRGBA": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    {
+      "size": [
+        0.5,
+        0.5
+      ],
+      "operation": "Add",
+      "nativeDimensionsRGBA": [
+        13.0,
+        9.0,
+        0.0,
+        1.0
+      ]
+    },
+    {
+      "size": [
+        0.5,
+        0.5
+      ],
+      "operation": "Subtract",
+      "nativeDimensionsRGBA": [
+        13.0,
+        9.0,
+        0.0,
+        1.0
+      ]
+    },
+    {
+      "size": [
+        0.5,
+        0.5
+      ],
+      "operation": "Multiply",
+      "nativeDimensionsRGBA": [
+        13.0,
+        9.0,
+        0.0,
+        1.0
+      ]
+    },
+    {
+      "size": [
+        0.5,
+        0.5
+      ],
+      "operation": "Not",
+      "nativeDimensionsRGBA": [
+        13.0,
+        9.0,
+        0.0,
+        1.0
+      ]
+    }
+  ],
+  "interpretation": "All four zero-Size Ellipse operations share the scalar Mask result. Downstream native Image Info sees is_single_value and returns default Dimensions(0,0), not identity-domain1x1. Nonzero Ellipse results retain the13x9 field domain even when particular pixel values happen to be constant.",
+  "failedAssumption": "Initial expected1x1 identity-domain Dimensions was incorrect; failed attempt is retained with exit1 and zero credit. Correction follows actual ImageInfo single-value default-output branch, not a widened numeric tolerance.",
+  "upstream": {
+    "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+    "sources": [
+      {
+        "path": "source/blender/nodes/composite/nodes/node_composite_image_info.cc",
+        "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/composite/nodes/node_composite_image_info.cc",
+        "sha256": "6e2e8fd7aa80888eeba932c6ca7e0318807c810ab2a82d6ef9540991ac196cab",
+        "license": "GPL-2.0-or-later"
+      },
+      {
+        "path": "source/blender/nodes/composite/nodes/node_composite_ellipse_mask.cc",
+        "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/composite/nodes/node_composite_ellipse_mask.cc",
+        "sha256": "a0441790bc323c1635ae2339a867c57d176c66a8e8fdb5a6c3067de955bf3219",
+        "license": "GPL-2.0-or-later"
+      }
+    ],
+    "sourceLocations": [
+      "ImageInfoOperation::execute checks input.is_single_value and allocate_default_remaining_outputs, lines47\u201349",
+      "EllipseMaskOperation::execute zero Size shares input Mask data before CPU/GPU execution"
+    ]
+  },
+  "rawReport": {
+    "path": "artifacts/verification-ellipse-source-layout-review/zero-domain/report.json",
+    "sha256": "0261fe83cc2518e3062d67e74fa03311d50171265547048e211fa751f0b625b2"
+  },
+  "observations": [
+    {
+      "status": "failed-identity-domain-assumption",
+      "rawLog": {
+        "path": "artifacts/verification-ellipse-source-layout-review/zero-domain.log",
+        "sha256": "e6fe24c67ec3390d57c95997e0fdd6bb2de7775c99b9116e530d832761f8a505"
+      },
+      "exitCode": 1,
+      "pythonGuardApplied": true,
+      "cachePrefix": "/private/tmp/scenetoweb-box-mask-metadata-next/artifacts/verification-ellipse-source-layout-review/native-zero-domain/python-cache-bF2DMv",
+      "cacheDisposed": true,
+      "prefixAbsentAtReview": true
+    },
+    {
+      "status": "passed-single-value-default-output",
+      "rawLog": {
+        "path": "artifacts/verification-ellipse-source-layout-review/zero-domain-r2.log",
+        "sha256": "753b07f2f6e5805856296b57176f8e2f0b644e5546a9d31cca5bbd5271011901"
+      },
+      "exitCode": 0,
+      "pythonGuardApplied": true,
+      "cachePrefix": "/private/tmp/scenetoweb-box-mask-metadata-next/artifacts/verification-ellipse-source-layout-review/native-zero-domain-r2/python-cache-US206c",
+      "cacheDisposed": true,
+      "prefixAbsentAtReview": true
+    }
+  ],
+  "scripts": {
+    "capturedSuccessfulScript": {
+      "path": "artifacts/verification-ellipse-source-layout-review/zero-domain.py",
+      "sha256": "df85d9fbdef343c4aa6d337bbdc65408654e38dc3def8995a3673e8e4a2c3edf"
+    },
+    "retainedRepeatableScript": {
+      "path": "experiments/ellipse-cpu-prototype/scheduling-canary.py",
+      "sha256": "9091649768de6dc8b25f8d2a9b74347f19d7ab5c05d123631c10f9a18989e71a",
+      "difference": "Same numerical canary, with license/context comments and root derived from script location instead of machine-local absolute path; not rerun after this archival path adjustment."
+    }
+  },
+  "guardHelper": {
+    "path": "scripts/lib/node-port-python.mjs",
+    "sha256AtReview": "78a134a426314bc7867f82d9f8c9deb274f378ad2099d7d6416743eec8b0a56b",
+    "api": "runNodePortBlender; fresh Python prefix before script action, bounded30s, prefix cleanup recorded in each log",
+    "limitations": "This review used the guarded direct-run helper, not createNodePortBlenderLauncher. It did not capture immutable native/Node binary identities or a complete native launcher archive at execution time; none is retrospectively claimed."
+  },
+  "limits": [
+    "Existing ImageInfo direct-RenderLayers source admission remains unchanged/refused for these canary graphs.",
+    "No EEVEE shader/material, native GPU or browser/API qualification.",
+    "Historical87-case Ellipse prototype receipt is unchanged.",
+    "Actual scalar-versus-field scheduling fact only; not complete downstream-composition support."
+  ]
+}

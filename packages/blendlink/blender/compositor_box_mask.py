@@ -6,11 +6,14 @@ import platform
 import struct
 import sys
 import bpy
+if __package__:
+    from .compositor_mask_domains import validate_mask_domains
+else:
+    from compositor_mask_domains import validate_mask_domains
 
 MODEL = 'cpu-f32-axis-integer-intervals-v1'
 PROFILE = 'darwin-arm64-53-box-mask-cpu-v1'
 OPERATIONS = {'Add': 'ADD', 'Subtract': 'SUBTRACT', 'Multiply': 'MULTIPLY', 'Not': 'NOT'}
-SPATIAL = {'flip', 'translate', 'image-affine', 'image-input', 'image-crop', 'alpha-crop', 'image-split', 'pixelate', 'blur', 'filter', 'glare'}
 
 def read_box_scalar_words(node):
     """Read existing scalar storage through native copies, without Python promotion.
@@ -111,7 +114,4 @@ def normalize_box_mask(node, socket, op, scene, fail):
         box_mask_operation=operation, box_mask_position=position, box_mask_size=size, box_mask_mask=mask, box_mask_value=value)
 
 def validate_box_mask_graph(result):
-    masks = [op for op in result['ops'] if op['kind'] == 'box-mask']
-    if masks and any(op['kind'] in SPATIAL for op in result['ops']):
-        return masks[0], 'Box Mask currently requires full-frame pointwise consumers; spatial/domain transformations remain unqualified'
-    return None
+    return validate_mask_domains(result, 'CompositorNodeBoxMask')

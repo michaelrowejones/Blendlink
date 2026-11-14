@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "model": "cpu-f32-row-integer-intervals-v1",
+  "sourceProfile": "darwin-arm64-53-ellipse-mask-cpu-v1",
+  "source": "Pinned Blender5.3 CPU compositor only, exact normal Float32 stages separate FMUL/FADD/FSQRT; FULL/AUTO requested precision recorded. No GPU-authored Blender claim.",
+  "output": "Exact all RGBA Float32 words, alpha1. No epsilon, threshold repair or tolerance.",
+  "singleValue": "Zero Size shares native scalar Mask and remains single-valued; equal-valued nonzero fields remain fields.",
+  "literalBounds": "Position[-2,2], Size[0,2], Mask/Value[0,1]; zero or abs>=2^-16; raw rotation+0; native scalar-copy storage.",
+  "physicalDomain": "Square pixels, zero-offset full-frame context, physical extent2..8192; no animation/linked fields/rotation/spatial consumers.",
+  "cost": "O(W+H log W) once per valid physical extent; one varying fixed256x32 RG32I nearest/load64KiB table per graph; constant/equal/zero-size consume0; shader integer coordinates/comparisons, no boundary float math or extra pass.",
+  "composition": "Closed texture-free pointwise compositor kinds only; no RenderPass/Image/curves/ramp or spatial consumers. Combined varying row plus Lut1D/Lut3D presentation lookup budget8. Additional post-LDR registrations remain refused pending explicit sampler accounting."
+}

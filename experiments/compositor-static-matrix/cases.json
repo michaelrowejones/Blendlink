@@ -1,0 +1,192 @@
+[
+  {
+    "case": "combine-0",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "transpose": false,
+    "indices": [
+      0,
+      1,
+      2
+    ],
+    "saved": true
+  },
+  {
+    "case": "combine-1",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "transpose": false,
+    "indices": [
+      3,
+      4,
+      5
+    ],
+    "saved": false
+  },
+  {
+    "case": "combine-2",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "transpose": false,
+    "indices": [
+      6,
+      7,
+      8
+    ],
+    "saved": true
+  },
+  {
+    "case": "combine-3",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "transpose": false,
+    "indices": [
+      9,
+      10,
+      11
+    ],
+    "saved": false
+  },
+  {
+    "case": "combine-4",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "transpose": false,
+    "indices": [
+      12,
+      13,
+      14
+    ],
+    "saved": false
+  },
+  {
+    "case": "combine-5",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "transpose": false,
+    "indices": [
+      15
+    ],
+    "saved": false
+  },
+  {
+    "case": "transpose-0",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "transpose": true,
+    "indices": [
+      0,
+      1,
+      2
+    ],
+    "saved": false
+  },
+  {
+    "case": "transpose-1",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "transpose": true,
+    "indices": [
+      3,
+      4,
+      5
+    ],
+    "saved": true
+  },
+  {
+    "case": "transpose-2",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "transpose": true,
+    "indices": [
+      6,
+      7,
+      8
+    ],
+    "saved": false
+  },
+  {
+    "case": "transpose-3",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "transpose": true,
+    "indices": [
+      9,
+      10,
+      11
+    ],
+    "saved": true
+  },
+  {
+    "case": "transpose-4",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "transpose": true,
+    "indices": [
+      12,
+      13,
+      14
+    ],
+    "saved": false
+  },
+  {
+    "case": "transpose-5",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "transpose": true,
+    "indices": [
+      15
+    ],
+    "saved": false
+  },
+  {
+    "case": "matrix-group",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "matrix-group",
+    "transpose": true,
+    "indices": [
+      0,
+      0
+    ],
+    "saved": true
+  },
+  {
+    "case": "float-group",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "float-group",
+    "transpose": true,
+    "indices": [
+      0,
+      0
+    ],
+    "saved": true
+  }
+]
