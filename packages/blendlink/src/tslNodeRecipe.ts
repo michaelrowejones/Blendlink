@@ -1,3 +1,4 @@
+import { buildNativeVector2 } from './tslShaderVector2.js'
 import {buildTslRadialWidth} from './tslRadialWidth.js'
 import {buildStaticRepeat,buildRepeatReference,staticRepeatCost} from './tslRepeat.js'
 import { buildTslSqueeze } from './tslSqueeze.js'
@@ -632,6 +633,8 @@ function build(expression: TslIrExpression): TslExpression {
       const coordinates = tslUv(channel)
       return tslVec3(coordinates.x, activeOptions.uvSpace === 'gltf' ? tslOneMinus(coordinates.y) : coordinates.y, 0.0)
     }
+    case 'native_vector2':
+      return buildNativeVector2(expression, build, fail)
     case 'separate': {
       const input = build(child(expression, 'input'))
       const channel = expression.channel

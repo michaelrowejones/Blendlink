@@ -1,0 +1,36 @@
+{
+  "nativeVersion": [
+    5,
+    3,
+    0
+  ],
+  "nativeBuild": "02f0899d78e3",
+  "nativeRevision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "sources": [
+    {
+      "path": "source/blender/blenkernel/intern/type_conversions.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenkernel/intern/type_conversions.cc",
+      "sha256": "c5889d75c4de43abf51b35afca12b0545297f8d714f078220564f035dbfa9a83"
+    },
+    {
+      "path": "source/blender/gpu/intern/gpu_codegen.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/intern/gpu_codegen.cc",
+      "sha256": "c7de419f1cc1dc256d7fdb4d2a8c371546c32a7a70a9b2008896800e91ba03f8"
+    },
+    {
+      "path": "source/blender/gpu/intern/gpu_node_graph.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/intern/gpu_node_graph.cc",
+      "sha256": "d0ff696fbfec30200d886ce009b232407593cd5bcabaf9643e8ed0602138de2d"
+    },
+    {
+      "path": "source/blender/nodes/shader/nodes/node_shader_radial_tiling.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/shader/nodes/node_shader_radial_tiling.cc",
+      "sha256": "2a223c3326cfb4d2b4f6f364e7337c75f3c2352696e06e24ba4ec5eff17a7097"
+    },
+    {
+      "path": "source/blender/gpu/shaders/gpu_shader_codegen_lib.glsl",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shaders/gpu_shader_codegen_lib.glsl",
+      "sha256": "e0d5f3bec96196d7020fc874b9f8f40615d56633f07faef9972a60133352512b"
+    }
+  ]
+}

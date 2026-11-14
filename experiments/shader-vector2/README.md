@@ -1,0 +1,13 @@
+# Native shader 2D socket boundary
+
+This EEVEE-only shared conversion foundation uses the effective emission-engine context (including explicit material target overrides); Cycles conversions remain refused. It has no new node or full-material numerical qualification credit. It is pinned to Blender5.3.0 build02f0899d78e3. `sources.json` records primary-source identities.
+
+Native shader sockets expose both Vector2D and Vector3 as `.type == 'VECTOR'`. Their actual socket `default_value` array width distinguishes them; expression shape and group interface default array width do not. A group interface is created as NodeSocketVector with `dimensions=2`; generated actual sockets then expose width2. Radial's Vector input is native2D, while its Segment Coordinates output is native3D, with source-defined Z0.
+
+The GPU code generator emits conversions by actual GPUType. Its pinned codegen library uses exact XY swizzles for VECTOR3/RGBA to float2, `(xy,0)` for float2 to VECTOR3, and `(xy,0,1)` for float2 to color. `native_vector2` stores one child and model `blender53-shader-float2-padded-v1`; the runtime represents it as vec3(child.x,child.y,0). It performs no arithmetic, interpolation, quantization, or scalar mean. Consecutive projections are idempotent and do not duplicate the child graph. Existing color consumption supplies the native alpha1 convention. Native2D source/target scalar, INT, BOOLEAN and Vector4D edges refuse until separately qualified; the native two-component mean is not the generic3D mean.
+
+The no-render native policy test exercises real 2D defaults, both group directions, two instances, Vector3 and RGBA truncation, 3D consumer Z, reroutes, native muted-group bypass, and named scalar refusal. Native Radial has no width2-to-width3 internal mute bypass, so the emitter preserves its refusal rather than inventing one. This test establishes native socket policy and production IR shape; actual rendered channel proof belongs to each consuming family's closed native/Final/browser matrix.
+
+Run `packages/blender-addon/tests/shader_vector2_check.py` with the guarded `scripts/lib/node-port-python.mjs` launcher, `--background --factory-startup --python-exit-code 1 --python ...`. The emitted token is `SCENETOWEB_SHADER_VECTOR2_POLICY_PASSED`. GPU renders: zero.
+
+Runtime shader setup checks the actual child node type with the real Three NodeBuilder before swizzling. Only vec3/vec4 inputs are accepted; scalar/int/bool payloads cannot bypass the native emitter refusal via Three's scalar-swizzle broadcasting. This deferred check uses no renderer fingerprint, uniform, texture, or extra render pass.

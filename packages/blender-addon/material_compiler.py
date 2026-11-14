@@ -1314,6 +1314,88 @@ def _uv_descriptor(obj, source: FieldSource, slot_index: int):
             evaluated.to_mesh_clear()
 
 
+def _simple_normal_receiver_triangles(obj) -> int | None:
+    """Exact count for a narrow single-slot regular SIMPLE receiver, without evaluation.
+
+    Uniform SIMPLE subdivision turns each quad into 4**level quads. Decline
+    topology-changing/unknown chains and Simplify rather than treating a
+    source estimate as a lower bound after e.g. Decimate or Bevel.
+    """
+    if obj.type != 'MESH' or len(obj.material_slots) != 1 or obj.material_slots[0].link != 'DATA' \
+            or obj.data.shape_keys or obj.mode != 'OBJECT' \
+            or procedural._animated_id(obj) or procedural._animated_id(obj.data) \
+            or procedural._animated_id(bpy.context.scene) \
+            or bpy.context.scene.render.use_simplify \
+            or getattr(getattr(obj, 'cycles', None), 'use_adaptive_subdivision', False) \
+            or not getattr(bpy.app.build_options, 'opensubdiv', False):
+        return None
+    level = 0
+    for modifier in obj.modifiers:
+        if not modifier.show_render and not modifier.show_viewport:
+            continue
+        if modifier.type == 'WEIGHTED_NORMAL':
+            continue
+        if modifier.type == 'NORMAL_EDIT':
+            # Native face-normal correction may flip individual faces before
+            # a later SIMPLE modifier, invalidating the oriented input proof.
+            if not modifier.no_polynors_fix:return None
+            continue
+        if modifier.type != 'SUBSURF' or modifier.subdivision_type != 'SIMPLE' \
+                or getattr(modifier, 'use_adaptive_subdivision', False):
+            return None
+        if modifier.show_render:
+            level += modifier.render_levels
+    if level == 0 or not obj.data.polygons:
+        return None
+    # A regular oriented manifold quad mesh avoids native bad-topology
+    # fallback. Check only source corners; no depsgraph or private mesh exists.
+    mesh = obj.data
+    if len(mesh.loops) != 4 * len(mesh.polygons):return None
+    source_edges = []
+    for edge in mesh.edges:
+        a, b = edge.vertices
+        if a == b or min(a, b) < 0 or max(a, b) >= len(mesh.vertices):return None
+        source_edges.append(tuple(sorted((a, b))))
+    if len(set(source_edges)) != len(source_edges):return None
+    edges, vertex_faces, adjacency, boundaries, seen_faces = {}, {}, {}, {}, set()
+    for face in mesh.polygons:
+        if face.loop_start != face.index * 4 or face.loop_total != 4 or face.material_index != 0:
+            return None
+        loops = [mesh.loops[index] for index in range(face.loop_start, face.loop_start + 4)]
+        vertices = tuple(loop.vertex_index for loop in loops)
+        if len(set(vertices)) != 4 or min(vertices) < 0 or max(vertices) >= len(mesh.vertices):
+            return None
+        face_key = frozenset(vertices)
+        if face_key in seen_faces:return None
+        seen_faces.add(face_key)
+        for loop, a, b in zip(loops, vertices, vertices[1:] + vertices[:1]):
+            if not 0 <= loop.edge_index < len(source_edges) \
+                    or source_edges[loop.edge_index] != tuple(sorted((a, b))):return None
+        for vertex in vertices:
+            vertex_faces.setdefault(vertex, set()).add(face.index)
+        for a, b in zip(vertices, vertices[1:] + vertices[:1]):
+            edges.setdefault(tuple(sorted((a, b))), []).append((face.index, a, b))
+    if len(edges) != len(mesh.edges) or len(vertex_faces) != len(mesh.vertices):return None
+    for uses in edges.values():
+        if len(uses) == 1:
+            for vertex in uses[0][1:]:boundaries[vertex] = boundaries.get(vertex, 0) + 1
+        elif len(uses) == 2 and uses[0][1:] == uses[1][1:][::-1]:
+            for vertex in uses[0][1:]:
+                a, b = uses[0][0], uses[1][0]
+                adjacency.setdefault((vertex, a), set()).add(b)
+                adjacency.setdefault((vertex, b), set()).add(a)
+        else:return None
+    for vertex, faces in vertex_faces.items():
+        if boundaries.get(vertex, 0) not in {0, 2}:return None
+        seen, pending = set(), [next(iter(faces))]
+        while pending:
+            face = pending.pop()
+            if face in seen:continue
+            seen.add(face);pending.extend(adjacency.get((vertex, face), ()))
+        if seen != faces:return None
+    return 2 * len(obj.data.polygons) * 4 ** level
+
+
 def _binding_map(objects) -> dict:
     bindings = {}
 
@@ -1388,6 +1470,15 @@ def _binding_map(objects) -> dict:
                         evaluated.to_mesh_clear()
             continue
 
+        # Oversized regular SIMPLE receivers have one proved source binding.
+        # Resolve it before evaluated_material_uses can allocate millions of
+        # faces just to rediscover slot zero. Only a required normal bake is
+        # refused later; an ordinary live material is not rejected by this seam.
+        simple_triangles = _simple_normal_receiver_triangles(obj)
+        if simple_triangles is not None and simple_triangles > NORMAL_BAKE_TRIANGLE_BUDGET:
+            material = slots[0].material
+            if material is not None:add(material, obj, 0)
+            continue
         try:
             material_uses = procedural.evaluated_material_uses(obj)
         except procedural.EvaluatedMaterialUseError as error:
@@ -3724,13 +3815,10 @@ def _plan_material_bake(
             'Keep this response live or explicitly capture one reviewed static frame.', object_names))
     if evaluated_normal:
         for obj, slot in raw_bindings:
-            estimated_triangles = len(obj.data.loops) - 2 * len(obj.data.polygons)
-            for modifier in obj.modifiers:
-                if modifier.type == 'SUBSURF' and modifier.show_render:
-                    estimated_triangles *= 4 ** modifier.render_levels
-            if estimated_triangles > NORMAL_BAKE_TRIANGLE_BUDGET:
+            simple_triangles = _simple_normal_receiver_triangles(obj)
+            if simple_triangles is not None and simple_triangles > NORMAL_BAKE_TRIANGLE_BUDGET:
                 issues.append(MaterialIssue('material.normal-bake-geometry-budget', material.name,
-                    f'Object "{obj.name}" has a conservative render-subdivision estimate of {estimated_triangles:,} triangles; the static normal receiver budget is {NORMAL_BAKE_TRIANGLE_BUDGET:,}.',
+                    f'Object "{obj.name}" requires exactly {simple_triangles:,} render SIMPLE-subdivision triangles, proved from its source quad mesh before evaluated-mesh allocation; the static normal receiver budget is {NORMAL_BAKE_TRIANGLE_BUDGET:,}.',
                     'Use an explicitly reviewed lower-resolution coincident receiver or reduce redundant static subdivision; SceneToWeb will not silently bake viewport geometry or omit the normal.', (obj.name,)))
             animated = procedural._animated_id(obj) or procedural._animated_id(obj.data) or obj.data.shape_keys is not None
             supported = all(mod.type in NORMAL_BAKE_STATIC_MODIFIERS

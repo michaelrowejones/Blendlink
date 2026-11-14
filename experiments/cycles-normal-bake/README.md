@@ -24,7 +24,7 @@ private installation, then restores mesh/material/group/modifier state after
 success or failure. Each normal variant is tied to its actual owner/binding;
 there is no cross-owner bake dedupe or flat proxy for object/generated fields.
 Poses, shape keys, animation, instancing, unsupported modifiers and unproved
-contexts refuse. A conservative 2,000,000-triangle normal receiver budget prevents
+contexts refuse. A 2,000,000-triangle normal receiver budget prevents
 an unbounded private unwrap or GLB allocation. The original Cube Floor's render
 SUBSURF5 exceeds it: the whole original scene is still blocked by this named
 resource limit. A reviewed high-to-coincident-low capture is future work, not a
@@ -122,3 +122,28 @@ browser case/API/pin/closing metadata; `archive.test.mjs` refuses stale GLB,
 report, raw-field and program bytes, wrong role pins, missing/extra artifacts,
 symlinks and incomplete manifests; shared archive tests cover stale emitter,
 missing/extra modules/maps/vendor, fixture tampering and symlinks.
+
+
+The original Floor's 4,096 source quads and sole render SIMPLE level5 modifier
+prove 8,388,608 triangles. Its single source material slot can therefore be
+resolved without evaluating the mesh merely to rediscover slot zero; a required
+normal bake gets `material.normal-bake-geometry-budget` before that allocation.
+The shortcut requires a DATA-linked single slot, an oriented manifold quad source and only SIMPLE or
+topology-preserving normal modifiers (Normal Edit must disable face-normal
+correction). Bevel, Decimate, Catmull-Clark, unknown
+modifiers, animated object/mesh/scene IDs, edit mode, active Simplify/adaptive subdivision,
+loose geometry, malformed edge/corner arrays and unproved topology decline
+this early count and retain the actual evaluated-mesh gate. This removes the old
+unsafe source-count multiplier on arbitrary modifier chains. An ordinary live
+material gets no new resource refusal. Original Wood's Bevel/Catmull-Clark/
+Decimate chain stays on the existing path.
+
+`budget_preflight_check.py -- /absolute/path/to/pinned/cube_diorama.blend` loads
+only owned Floor/Beam2 datablocks and never evaluates Floor. Its planning control
+forbids evaluated-object/material-use/hash calls, checks the object/material
+diagnostic, and preserves source bytes and native ownership. Small synthetic
+SIMPLE meshes independently match native evaluated triangle counts at levels1–3;
+unsafe-chain and malformed-topology controls decline the shortcut. No render,
+bake, complete-scene export or additional live-node credit is claimed. The count
+follows pinned Blender's [resolution rule](https://github.com/blender/blender/blob/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/modifiers/intern/MOD_subsurf.cc#L94)
+and [quad face census](https://github.com/blender/blender/blob/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenkernel/intern/subdiv_foreach.cc#L139).

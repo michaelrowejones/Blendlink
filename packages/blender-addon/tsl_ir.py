@@ -22,6 +22,11 @@ if __package__:
 else:
     from repeat_ir import guarded_emission
 
+if __package__:
+    from .shader_vector2_ir import is_vector2, padded as padded_vector2, convert_boundary as convert_vector2_boundary
+else:
+    from shader_vector2_ir import is_vector2, padded as padded_vector2, convert_boundary as convert_vector2_boundary
+
 IR_MODEL = "blendlink-tsl-ir-v1"
 
 _evaluation_engine = ContextVar("blendlink_tsl_evaluation_engine", default=None)
@@ -1199,7 +1204,7 @@ def emit_input(socket, stack=(), *, as_vector=False):
         value = _constant_value(socket)
         if value is None:
             _refuse(f"socket {socket.name!r} has no usable constant")
-        return _vector(value) if as_vector else _scalar(value)
+        return padded_vector2(_vector(value), _refuse) if is_vector2(socket) else (_vector(value) if as_vector else _scalar(value))
     node, from_socket = source
     return _convert_link(emit_output(node, from_socket, stack), from_socket, socket)
 
@@ -1219,6 +1224,9 @@ def _convert_link(expression, from_socket, to_socket):
     broadcast needs no op (scalar replication is what both Cycles and
     TSL broadcasting do); vector-to-float (NODE_CONVERT_VF, component
     average) refuses by name until a cell exists."""
+    boundary = convert_vector2_boundary(expression, from_socket, to_socket, _refuse)
+    if boundary is not None:
+        return boundary
     from_type = str(getattr(from_socket, "type", ""))
     to_type = str(getattr(to_socket, "type", ""))
     if from_type != to_type and ({from_type, to_type} & {"INT", "BOOLEAN"}):
@@ -1244,6 +1252,11 @@ def _convert_link(expression, from_socket, to_socket):
 
 @guarded_emission
 def emit_output(node, from_socket, stack=()):
+    expression = _emit_output(node, from_socket, stack)
+    return padded_vector2(expression, _refuse) if is_vector2(from_socket) else expression
+
+
+def _emit_output(node, from_socket, stack=()):
     """IR for one node output.  Refuses anything without a proven cell.
 
     ``stack`` is the enclosing group-instance chain, outermost first; the
@@ -1286,6 +1299,8 @@ def emit_output(node, from_socket, stack=()):
         inner = _socket_source(node.inputs[0])
         if inner is None:
             _refuse("reroute with no input")
+        if is_vector2(node.inputs[0]) or is_vector2(from_socket):
+            return emit_input(node.inputs[0], stack=stack, as_vector=True)
         return emit_output(*inner, stack)
 
     if idname == "ShaderNodeGroup":
@@ -2925,10 +2940,9 @@ def emit_channel(socket, stack=(), *, evaluation_engine=None) -> dict:
         value = _constant_value(socket)
         if value is None:
             _refuse(f"channel {socket.name!r} has no usable constant")
-        expression = _vector(value) if socket.type in {"RGBA", "VECTOR"} \
-            else _scalar(value)
+        expression = padded_vector2(_vector(value), _refuse) if is_vector2(socket) else (_vector(value) if socket.type in {"RGBA", "VECTOR"} else _scalar(value))
     else:
-        expression = emit_output(*source, stack)
+        expression = emit_input(socket, stack=stack, as_vector=socket.type in {"VECTOR", "RGBA"}) if (is_vector2(socket) or is_vector2(source[1])) else emit_output(*source, stack)
     document = {
         "schemaVersion": 1,
         "model": IR_MODEL,
