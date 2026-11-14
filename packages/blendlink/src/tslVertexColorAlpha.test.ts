@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { BufferGeometry, Float32BufferAttribute, Mesh, InterleavedBuffer, InterleavedBufferAttribute, MeshStandardMaterial, Scene } from 'three'
-import { vertexAlphaBinding, VERTEX_ALPHA_MODEL, VERTEX_ALPHA_PROFILE, vertexAlphaLayers, assertVertexAlphaOpacity } from './tslVertexColorAlpha.js'
+import { vertexAlphaBinding, VERTEX_ALPHA_MODEL, VERTEX_ALPHA_PROFILE, vertexAlphaLayers, assertVertexAlphaOpacity, certifyVertexAlphaOpacity, matchVertexAlphaOpacity, VERTEX_ALPHA_OPACITY_MODEL } from './tslVertexColorAlpha.js'
 import { buildTslScalarNode } from './tslNodeRecipe.js'
 import { readFile } from 'node:fs/promises'
 import {validateNodeRendererRequirement} from './materialProgramRendererRequirements.js'
@@ -29,6 +29,34 @@ describe('raw Vertex Color Alpha primitive binding', () => {
     expect([first.material,bad.material]).toEqual(originals)
     expect([first.onBeforeRender,bad.onBeforeRender]).toEqual(callbacks)
     for(const object of[first,bad]){object.geometry.dispose();(object.material as MeshStandardMaterial).dispose()}
+  })
+  it('requires matching source-owned markers plus real scalar storage, never a payload bypass', () => {
+    const object=mesh(),other=mesh();object.material=new MeshStandardMaterial({vertexColors:true})
+    object.geometry.setAttribute('color',new Float32BufferAttribute([1,1,1,.1,1,1,1,.1,1,1,1,.1],4))
+    const channels={Alpha:{tslIr:{output:expression}}},marker={schemaVersion:1 as const,model:VERTEX_ALPHA_OPACITY_MODEL,sourceProfile:VERTEX_ALPHA_PROFILE,material:'Artist',alphaLayers:['Paint'],completeColor:false}
+    const tagged={...extras(),vertexColorAlphaOpacityOwners:{Artist:marker}}
+    expect(()=>assertVertexAlphaOpacity(object,channels,object.material,marker)).toThrow(/multiply opacity twice/)
+    for(const mutation of[{model:'unknown'},{material:'Other'},{alphaLayers:[]},{completeColor:true},{extra:1}])
+      expect(()=>matchVertexAlphaOpacity(channels,tagged,'Artist',{...marker,...mutation})).toThrow(/matching source-derived/)
+    expect(()=>matchVertexAlphaOpacity(channels,extras(),'Artist',marker)).toThrow(/matching source-derived/)
+    const certificate=certifyVertexAlphaOpacity(object,channels,tagged,'Artist',marker)!
+    expect(()=>assertVertexAlphaOpacity(object,channels,object.material,certificate)).not.toThrow()
+    other.material=new MeshStandardMaterial({vertexColors:true});other.geometry.setAttribute('color',object.geometry.getAttribute('color').clone())
+    expect(()=>assertVertexAlphaOpacity(other,channels,other.material,certificate)).toThrow(/multiply opacity twice/)
+    object.geometry.getAttribute(name).setX(0,-0)
+    expect(()=>certifyVertexAlphaOpacity(object,channels,tagged,'Artist',marker)).toThrow(/normal Float32/)
+    object.geometry.dispose();other.geometry.dispose()
+  })
+  it('rejects forged ownership on a later mesh before any texture work or source material swap',async()=>{
+    const root=new Scene(),first=mesh(),bad=mesh();first.material=new MeshStandardMaterial();bad.material=new MeshStandardMaterial()
+    for(const object of[first,bad]){object.material.userData.blendlink_source_material='Artist';object.userData.blendlink_tsl_runtime=extras();root.add(object)}
+    const marker={schemaVersion:1 as const,model:VERTEX_ALPHA_OPACITY_MODEL,sourceProfile:VERTEX_ALPHA_PROFILE,material:'Artist',alphaLayers:['Paint'],completeColor:false}
+    first.userData.blendlink_tsl_runtime.vertexColorAlphaOpacityOwners={Artist:marker}
+    bad.userData.blendlink_tsl_runtime.vertexColorAlphaOpacityOwners={Artist:{...marker,completeColor:true}}
+    const originals=[first.material,bad.material],callbacks=[first.onBeforeRender,bad.onBeforeRender]
+    await expect(installTslMaterials({root,descriptor:{materialPrograms:{url:'/fixture.json',hash:'0'.repeat(16),bytes:1}},loadPrograms:async()=>({schemaVersion:1,model:'blendlink-material-programs-v1',materials:{Artist:{vertexAlphaOpacity:marker,channels:{Alpha:{tslIr:{schemaVersion:1,model:'blendlink-tsl-ir-v1',output:expression}}}}}})})).rejects.toThrow(/matching source-derived/)
+    expect([first.material,bad.material]).toEqual(originals);expect([first.onBeforeRender,bad.onBeforeRender]).toEqual(callbacks)
+    for(const object of[first,bad]){object.geometry.dispose();object.material.dispose()}
   })
   it.skipIf(!process.env.SCENETOWEB_VERTEX_ALPHA_GLBS)('binds both actual shared-owner/material-split exported GLBs through GLTFLoader', async () => {
     const {GLTFLoader}=await import('three/examples/jsm/loaders/GLTFLoader.js')

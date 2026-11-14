@@ -5924,6 +5924,9 @@ def _tsl_runtime_mesh_entry(decision, obj, *, source_uv_state=None, alpha_instal
         entry["vertexColorAlphaOpacity"] = any(item.get("channel") == "Alpha" and vertex_color_alpha.layers(item.get("tslIr"))
             for item in (decision.channel_plan or {}).get("channels", ()))
         entry["vertexColorAlphaProof"] = {name: [item] for name, item in proof.items()}
+        ownership = vertex_color_alpha.opacity_ownership(decision.channel_plan, decision.material_name)
+        if ownership is not None:
+            entry["vertexColorAlphaOpacityOwners"] = {decision.material_name: ownership}
     if needs["requiresNodeRendererPrograms"]:
         entry["requiresNodeRenderer"] = {"schemaVersion": 1, "model": "live-material-programs-v1",
             "programs": [{"op": op, "model": model} for op, model in sorted(needs["requiresNodeRendererPrograms"])]}
@@ -6009,6 +6012,11 @@ def _store_tsl_runtime_entry(fact, owner, entry):
                 if row not in prior: prior.append(row)
         if existing.get("vertexColorAlpha") != entry.get("vertexColorAlpha"):
             raise MaterialCompileError("Vertex Color Alpha binding changed between material slots")
+        for source, ownership in entry.get("vertexColorAlphaOpacityOwners", {}).items():
+            owners = existing.setdefault("vertexColorAlphaOpacityOwners", {})
+            if source in owners and owners[source] != ownership:
+                raise MaterialCompileError("Vertex Alpha opacity ownership changed between material slots")
+            owners[source] = ownership
         return
     fact["tslRuntimeMeshes"][owner] = entry
 
@@ -6096,6 +6104,13 @@ def _stamp_tsl_runtime_extras(path: str, generated_facts: dict, object_space="gl
                                     for item in marker["programs"]}
                         merged[key] = {"schemaVersion": 1, "model": "live-material-programs-v1",
                             "programs": [{"op": op, "model": model} for op, model in sorted(programs)]}
+                    elif key == "vertexColorAlphaOpacityOwners":
+                        owners = dict(merged[key])
+                        for source, ownership in value.items():
+                            if source in owners and owners[source] != ownership:
+                                conflict = True
+                            else: owners[source] = ownership
+                        merged[key] = owners
                     elif key == "vertexColorAlpha":
                         values = dict(merged[key])
                         for layer, marker in value.items():
@@ -8296,6 +8311,8 @@ def with_compiled_materials(
                         "rule": TSL_PROGRAM_RULE,
                         "variant": program_variant,
                         "transport": "program",
+                        **({"vertexAlphaOpacity": vertex_color_alpha.opacity_ownership(decision.channel_plan, decision.material_name)}
+                           if vertex_color_alpha.opacity_ownership(decision.channel_plan, decision.material_name) else {}),
                         # The carrier is the artist graph exported stock;
                         # its surface response and PBR derivation belong
                         # to the glTF exporter's own contract, not this

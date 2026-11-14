@@ -92,7 +92,9 @@ export async function createNodePortBlenderLauncher({blender,directory,timeoutMs
   assert.ok([IDENTITY_DEFAULT,IDENTITY_TRANSACTION].includes(identityPolicy),'Unknown native identity policy')
   assert.ok(Number.isInteger(timeoutMs)&&timeoutMs>0&&timeoutMs<=1_800_000,'Native invocation timeout must be bounded')
   await mkdir(directory,{recursive:true})
-  const owned=await mkdtemp(join(resolve(directory),'native-launcher-'))
+  // Identity paths are canonical. Use the same namespace in the config and
+  // supervisor before writing any owned files (including symlinked parents).
+  const owned=await realpath(await mkdtemp(join(resolve(directory),'native-launcher-')))
   try{
     const native=await nodePortPythonFileIdentity(blender),node=await nodePortPythonFileIdentity(process.execPath)
     const helperSource=fileURLToPath(import.meta.url),bridgeSource=resolve(dirname(helperSource),'../node-port-blender.mjs')

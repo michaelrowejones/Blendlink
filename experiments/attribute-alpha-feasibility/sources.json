@@ -1,0 +1,48 @@
+{
+  "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "sources": [
+    {
+      "path": "source/blender/nodes/shader/nodes/node_shader_attribute.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/shader/nodes/node_shader_attribute.cc",
+      "sha256": "285de3febe11aa4cdcdac78ec767795fcf2b7c683d6080ae703db3dbd6e11f9a",
+      "bytes": 6075,
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/gpu/shaders/material/gpu_shader_material_attribute.bsl.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shaders/material/gpu_shader_material_attribute.bsl.hh",
+      "sha256": "b0af6c43af0569dbe00ea6868b2e22f2a4f827ca90e5b855188a34146d8c3d24",
+      "bytes": 3478,
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/nodes/shader/nodes/node_shader_vertex_color.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/shader/nodes/node_shader_vertex_color.cc",
+      "sha256": "9d231e77813f2a8c9d82d0abb8d1b0e41bde3d872df0f0cf388493ecfe7ca09c",
+      "bytes": 3830,
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/gpu/shaders/material/gpu_shader_material_vertex_color.bsl.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shaders/material/gpu_shader_material_vertex_color.bsl.hh",
+      "sha256": "e924573242d23d0c16bf8d704f6690f0f5fabdcd7fe9f622e9c01b5af14ac7d6",
+      "bytes": 299,
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/draw/intern/mesh_extractors/extract_mesh_vbo_attributes.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/draw/intern/mesh_extractors/extract_mesh_vbo_attributes.cc",
+      "sha256": "c634b011c092247a6f63cff12089412138c2bb90e68354a19c85ef077b50e26b",
+      "bytes": 10372,
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/draw/intern/attribute_convert.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/draw/intern/attribute_convert.hh",
+      "sha256": "59d9275af397a5b2697d8586bb462d8ec938a438856cfbc8f83299a1d815817e",
+      "bytes": 5735,
+      "license": "GPL-2.0-or-later"
+    }
+  ],
+  "supportCredit": 0
+}

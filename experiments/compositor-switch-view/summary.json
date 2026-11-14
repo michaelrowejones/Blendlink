@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "evidenceSha256": "adae95ae5c9a13467165c4eecdf90b599613f163b2d5880c2141b0dd70aa45c4",
+  "totalNativeGraphs": 8,
+  "calibrationGraphs": 1,
+  "actualSwitchViewGraphs": 7,
+  "totalSavedFinalScenes": 8,
+  "actualSwitchViewSavedFinalScenes": 7,
+  "totalBrowserCaseRuns": 64,
+  "actualSwitchViewBrowserCaseRuns": 56,
+  "totalComparedWords": 16384,
+  "actualSwitchViewComparedWords": 14336,
+  "calibrationComparedWords": 2048,
+  "wordMismatches": 0,
+  "nativeGPUCredit": false,
+  "scope": "Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor only. Current source Scene must explicitly use mono rendering and CPU evaluation; Scene and active source-tree actions/drivers/NLA refuse, including an animated use_multiview flag currently false. Native SwitchView RGBA Image output forwards actual ordered input0; never hardcodes left, guesses a hidden Scene ID, or selects an inactive branch. Enabled/available native RGBA socket schema and unique nonempty identifiers, at most64inputs and64selected nodes, are bounded; source context/schema/selected socket/link/default snapshots are rechecked after private evaluators. Existing mute bypass/group/reroute/recursive-cycle/selected dependency safeguards remain in force. Inactive SceneTime is not visited; selected unsupported producers still refuse. Exact selected literal/constant and field identity is preserved by normalizing to the existing selected expression; no synthetic image or new runtime opcode/kernel/pass/texture. Tested8x8 saved Final/raw browser words are exact on actual WebGPU/WebGL2 via WebGPURenderer, observed Apple Metal and SwiftShader. Selected static Image uses its existing byte-sRGB decoder/window contract; selected RenderLayers->ImageInfo uses its existing field/INT_VECTOR2->RGBA identity contract. The independent native0x0 single-domain observation does not admit single-value/static-image ImageInfo. Stereo/named-live/multiview, GPU-authored compositor, dynamic/animated view configuration, empty/stale/unknown schemas, other builds/hosts/versions and legacy WebGLRenderer are unqualified. This is fixed mono branch transport, not general scene compositing, live view selection, PBR/Cycles parity, global precision or whole-scene appearance qualification."
+}

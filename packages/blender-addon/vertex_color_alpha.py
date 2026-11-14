@@ -13,6 +13,17 @@ MODEL = "eevee53-float-color-alpha-scalar-v1"
 PROFILE = "blender53-eevee-metal-float-color-alpha-v1"
 PREFIX = "_SCENETOWEB_VCOL_ALPHA_"
 MAX_CORNERS = 300000
+OPACITY_MODEL = "vertex-alpha-explicit-opacity-v1"
+
+def opacity_ownership(channel_plan, material):
+    """Source-derived channel ownership, shared by mesh and sidecar publisher."""
+    rows = (channel_plan or {}).get("channels", ())
+    channels = {str(row.get("channel")): row.get("tslIr") for row in rows if row.get("tslIr")}
+    requested = layers(channels.get("Alpha"))
+    if not requested: return None
+    return {"schemaVersion": 1, "model": OPACITY_MODEL, "sourceProfile": PROFILE,
+            "material": material, "alphaLayers": sorted(requested), "completeColor": bool(channels.get("Base Color"))}
+
 
 
 def layers(value):
@@ -182,7 +193,10 @@ def attest(document, binary, facts, read_accessor):
                         raise ValueError("Vertex Color Alpha only qualifies static indexed triangle primitives")
                     attributes = primitive.get("attributes", {})
                     color_index = attributes.get("COLOR_0")
-                    if (entry.get("vertexColorAlphaOpacity") and color_index is not None
+                    ownership = entry.get("vertexColorAlphaOpacityOwners", {}).get(fact["source"])
+                    if ownership is not None and ownership != fact.get("vertexAlphaOpacity"):
+                        raise ValueError("Vertex Alpha opacity source ownership changed before attestation")
+                    if (entry.get("vertexColorAlphaOpacity") and ownership is None and color_index is not None
                             and document["accessors"][color_index].get("type") == "VEC4"):
                         _, color_values = read_accessor(document, binary, color_index)
                         position_count = document["accessors"][attributes["POSITION"]]["count"]

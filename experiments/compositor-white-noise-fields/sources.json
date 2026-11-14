@@ -1,0 +1,62 @@
+[
+  {
+    "path": "source/blender/nodes/shader/nodes/node_shader_tex_white_noise.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/shader/nodes/node_shader_tex_white_noise.cc",
+    "sha256": "13b39d6eac5a017f8027c8da2ef3892e29cbe4f52a570dd570eeb33ffdbfe921",
+    "license": "GPL-2.0-or-later"
+  },
+  {
+    "path": "source/blender/compositor/intern/implicit_input_operation.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/intern/implicit_input_operation.cc",
+    "sha256": "d1c993da03713eefe02eac2607d0606dd8f68237d86c2a4c9fdf7d2d2c17bd30",
+    "license": "GPL-2.0-or-later"
+  },
+  {
+    "path": "source/blender/compositor/intern/utilities.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/intern/utilities.cc",
+    "sha256": "406d7e4fa4ed7c65dddbe5b235b5bfb6b9e214603f31c4a00af5fc4028893234",
+    "license": "GPL-2.0-or-later"
+  },
+  {
+    "path": "source/blender/compositor/intern/multi_function_procedure_operation.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/intern/multi_function_procedure_operation.cc",
+    "sha256": "d61a452a55f9d333ea8c5fca6e81bf9604627521b547e59fb4ebfe0a59762ce9",
+    "license": "GPL-2.0-or-later"
+  },
+  {
+    "path": "source/blender/compositor/cached_resources/intern/image_coordinates.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/cached_resources/intern/image_coordinates.cc",
+    "sha256": "15fc47ea692a70c77c3af533fff6fa2f5ebffaa51fcf253b82bc114855df2bad",
+    "license": "GPL-2.0-or-later"
+  },
+  {
+    "path": "source/blender/compositor/intern/domain.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/intern/domain.cc",
+    "sha256": "f942718b88970678375f7e2b720cfcb12073934ccd568c2d7d1ed61a97c82e4d",
+    "license": "GPL-2.0-or-later"
+  },
+  {
+    "path": "source/blender/render/intern/compositor.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/render/intern/compositor.cc",
+    "sha256": "c08b32e40ac0c5a447ac2bfb659652b28998acbd6a2c314067383d0fc5363f80",
+    "license": "GPL-2.0-or-later"
+  },
+  {
+    "path": "source/blender/blenkernel/intern/type_conversions.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenkernel/intern/type_conversions.cc",
+    "sha256": "c5889d75c4de43abf51b35afca12b0545297f8d714f078220564f035dbfa9a83",
+    "license": "GPL-2.0-or-later"
+  },
+  {
+    "path": "source/blender/nodes/composite/nodes/node_composite_image_coordinates.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/composite/nodes/node_composite_image_coordinates.cc",
+    "sha256": "12cc2c1adcbe5e793a27a0b436b4ff2a32dc9bb369e4846c6ee01af5d130800c",
+    "license": "GPL-2.0-or-later"
+  },
+  {
+    "path": "source/blender/compositor/shaders/compositor_image_coordinates_uniform.glsl",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/shaders/compositor_image_coordinates_uniform.glsl",
+    "sha256": "50ab96f98c4f196c2346f1b1074ac78556ad0882ed4546890ed53eb8132c951c",
+    "license": "GPL-2.0-or-later"
+  }
+]

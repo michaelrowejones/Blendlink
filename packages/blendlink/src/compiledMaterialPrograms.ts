@@ -1,4 +1,4 @@
-import { vertexAlphaLayers, vertexAlphaBinding } from './tslVertexColorAlpha.js'
+import { vertexAlphaLayers, vertexAlphaBinding, matchVertexAlphaOpacity, certifyVertexAlphaOpacity } from './tslVertexColorAlpha.js'
 import { prepareTslNoiseFields } from './tslNoiseFields.js'
 import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
@@ -347,9 +347,11 @@ export async function validatedBaseColorProgramMaterials(
               throw new TslIrError('Material program requires unavailable per-object properties or a non-mesh binding')
             }
             const opacityChannel=record(program)&&record(program.channels)?program.channels.Alpha:null
+            const materialSource=record(material.extras)&&typeof material.extras.blendlink_source_material==='string'?material.extras.blendlink_source_material:''
+            const opacityOwnership=matchVertexAlphaOpacity(record(program)?program.channels:null,extras,materialSource,record(program)?program.vertexAlphaOpacity:undefined)
             const colorAccessor=Array.isArray(gltf.accessors)?gltf.accessors[Number(attributes.COLOR_0)]:null
             const actualColorAlpha=geometryData?.get(`${binding.meshIndex}:${binding.primitiveIndex}`)?.colorAlpha
-            if(vertexAlphaLayers(opacityChannel).size&&record(colorAccessor)&&colorAccessor.type==='VEC4'
+            if(!opacityOwnership&&vertexAlphaLayers(opacityChannel).size&&record(colorAccessor)&&colorAccessor.type==='VEC4'
               &&(!actualColorAlpha||actualColorAlpha.length!==colorAccessor.count||!actualColorAlpha.every(value=>value===1)))
               throw new TslIrError('Vertex Color Alpha opacity with stock VEC4 COLOR_0 is unqualified; implicit vertex alpha would multiply opacity twice')
             const rendererRequirement=validateNodeRendererRequirement(record(program)?program.channels:null,extras?.requiresNodeRenderer)
@@ -401,7 +403,7 @@ export async function validatedBaseColorProgramMaterials(
                 if(!record(accessor)||accessor.type!=='SCALAR'||accessor.componentType!==5126||accessor.normalized===true)
                   throw new TslIrError('Vertex Color Alpha accessor metadata is not raw Float32 SCALAR')
               }
-              Object.assign(options,vertexAlphaBinding(actualGeometry,record(program)?program.channels:null,extras,source).options)
+              Object.assign(options,vertexAlphaBinding(actualGeometry,record(program)?program.channels:null,extras,source,certifyVertexAlphaOpacity(actualGeometry,record(program)?program.channels:null,extras,source,record(program)?program.vertexAlphaOpacity:undefined)??undefined).options)
             }
             if(cameraData){
               if(!actualGeometry)throw new TslIrError('Camera Data needs actual decoded primitive geometry')

@@ -1,0 +1,119 @@
+[
+  {
+    "case": "attribute-zero",
+    "domain": "POINT",
+    "alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "sourceNode": "ShaderNodeAttribute",
+    "layer": "Render Paint"
+  },
+  {
+    "case": "attribute-tenth",
+    "domain": "POINT",
+    "alpha": [
+      0.1,
+      0.1,
+      0.1,
+      0.1
+    ],
+    "sourceNode": "ShaderNodeAttribute",
+    "layer": "Render Paint"
+  },
+  {
+    "case": "attribute-third",
+    "domain": "POINT",
+    "alpha": [
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333
+    ],
+    "sourceNode": "ShaderNodeAttribute",
+    "layer": "Render Paint"
+  },
+  {
+    "case": "attribute-one",
+    "domain": "POINT",
+    "alpha": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "sourceNode": "ShaderNodeAttribute",
+    "layer": "Render Paint"
+  },
+  {
+    "case": "attribute-point-nonuniform",
+    "domain": "POINT",
+    "alpha": [
+      0,
+      0.1,
+      0.3333333333333333,
+      1
+    ],
+    "sourceNode": "ShaderNodeAttribute",
+    "layer": "Render Paint"
+  },
+  {
+    "case": "attribute-corner-seam",
+    "domain": "CORNER",
+    "alpha": [
+      0,
+      0.1,
+      0.3333333333333333,
+      0.25,
+      0.8,
+      1
+    ],
+    "sourceNode": "ShaderNodeAttribute",
+    "layer": "Render Paint"
+  },
+  {
+    "case": "attribute-corner-group-reroute",
+    "domain": "CORNER",
+    "alpha": [
+      0,
+      0.1,
+      0.3333333333333333,
+      0.25,
+      0.8,
+      1
+    ],
+    "group": true,
+    "sourceNode": "ShaderNodeAttribute",
+    "layer": "Render Paint"
+  },
+  {
+    "case": "attribute-shared-owner-material-rgb",
+    "domain": "CORNER",
+    "alpha": [
+      0,
+      0.1,
+      0.3333333333333333,
+      0.25,
+      0.8,
+      1
+    ],
+    "shared": true,
+    "rgb": true,
+    "sourceNode": "ShaderNodeAttribute",
+    "layer": "Render Paint"
+  },
+  {
+    "case": "attribute-reserved-color",
+    "domain": "POINT",
+    "alpha": [
+      0,
+      0.1,
+      0.3333333333333333,
+      1
+    ],
+    "sourceNode": "ShaderNodeAttribute",
+    "layer": "color"
+  }
+]

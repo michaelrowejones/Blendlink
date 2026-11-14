@@ -1,0 +1,20 @@
+[
+  {
+    "path": "source/blender/nodes/shader/nodes/node_shader_tex_white_noise.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/shader/nodes/node_shader_tex_white_noise.cc",
+    "sha256": "13b39d6eac5a017f8027c8da2ef3892e29cbe4f52a570dd570eeb33ffdbfe921",
+    "license": "GPL-2.0-or-later"
+  },
+  {
+    "path": "source/blender/blenlib/intern/noise.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/intern/noise.cc",
+    "sha256": "ad717117a1c191bc5204706fd890e262356fc9a5fac4b8aee77be7e7b9b13df9",
+    "license": "GPL-2.0-or-later AND BSD-3-Clause"
+  },
+  {
+    "path": "source/blender/gpu/shaders/material/gpu_shader_material_tex_white_noise.bsl.hh",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shaders/material/gpu_shader_material_tex_white_noise.bsl.hh",
+    "sha256": "e149195af6ce6224e4693857fd5903b84c2e7f57f03eebdcdd0242ea2e589eae",
+    "license": "GPL-2.0-or-later"
+  }
+]

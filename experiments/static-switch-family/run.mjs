@@ -5,7 +5,7 @@ import {createServer} from 'vite'
 import {chromium} from '@playwright/test'
 import {loadRuntimeTransaction} from '../../scripts/lib/runtime-transaction-snapshot.mjs'
 import {captureRuntimeSnapshot,hash} from '../../scripts/lib/runtime-provenance.mjs'
-import {browserProofContract,assertFinal,assertQualification} from './protocol.mjs'
+import {browserProofContract,assertFinal,assertQualification,variant} from './protocol.mjs'
 const root=resolve(import.meta.dirname,'../..'),directory=resolve(process.env.SCENETOWEB_SWITCH_REFERENCES),built=process.argv.includes('--built'),final=process.argv.includes('--final')
 const profile=process.env.BLENDLINK_TEST_PROFILE??'software';assert.ok(['metal','software'].includes(profile))
 const qualification=assertQualification(JSON.parse(await readFile(join(directory,'qualification.json'))))
@@ -62,10 +62,10 @@ try{
     const gpu=navigator.gpu;if(!gpu)throw new Error('Positive proof needs navigator.gpu')
     const previous=Object.getOwnPropertyDescriptor(gpu,'requestAdapter');Object.defineProperty(gpu,'requestAdapter',{value:async()=>null,configurable:true})
     try{await window.staticSelectionProof(proof);return{refused:false}}catch(error){return{refused:true,error:String(error)}}finally{if(previous)Object.defineProperty(gpu,'requestAdapter',previous);else delete gpu.requestAdapter}
-   },{context:qualification.context,final,cases})
+   },{context:qualification.context,final,cases,variant})
    assert.equal(negative.refused,true);assert.match(negative.error,/actual WebGPU adapter/);report.missingAdapterControl=negative
   }
-  const row=await page.evaluate(proof=>window.staticSelectionProof(proof),{context:qualification.context,final,cases});report.rows.push({...row,pageErrors:errors});await save()
+  const row=await page.evaluate(proof=>window.staticSelectionProof(proof),{context:qualification.context,final,cases,variant});report.rows.push({...row,pageErrors:errors});await save()
   assert.equal(row.backend,backend);assert.equal(row.gpu.api,backend==='webgpu'?'WebGPU':'WebGL2');assert.deepEqual(errors,[]);assert.deepEqual(row.errors,[]);assert.equal(row.rows.length,cases.length);assert.deepEqual(row.rows.map(x=>x.case),cases.map(x=>x.case));for(const x of row.rows){assert.equal(x.wordMismatches,0);assert.equal(x.remainingTextures,0);assert.equal(x.ownershipPreserved,true);assert.equal(x.finalBindings,final);if(final)assert.equal(x.pinRejected,true)}
   if(profile==='metal'){assert.match(JSON.stringify(row.gpu),/apple|metal/i);assert.doesNotMatch(JSON.stringify(row.gpu),/swiftshader/i)}else assert.match(JSON.stringify(row.gpu),/swiftshader/i)
   await page.close()

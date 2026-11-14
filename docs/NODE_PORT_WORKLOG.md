@@ -1154,3 +1154,152 @@ coverage is not credited. Browser-only diagnostics use a separate fresh
 namespace and cannot publish a qualification pass token; original failures
 and references remain intact. Shared parsed preflight now includes both
 Euler and Alpha schemas and rejects status drift before native startup.
+
+### Named Attribute Alpha and shared proof variants, 2026-11-14
+
+Named GEOMETRY Attribute Alpha now reuses the qualified FLOAT_COLOR scalar
+carrier and browser operation. The first scope requires an explicit present
+POINT/CORNER layer on the same bounded static surface Mesh and pinned EEVEE
+source profile. Exact lowercase `temperature` refuses: Blender replaces its
+Attribute alpha with one. The reserved `color` name is admitted only under
+the surface-Mesh contract; its EEVEE volume callback has different behavior.
+Independent sibling-node research retained that distinction and measured
+81,920 matching native words plus the expected temperature counterexample.
+
+The full transaction is
+`artifacts/verification-next15-attribute-alpha/qualified.json`: nine native
+graphs, 27 EEVEE field frames plus the independent ramp, nine saved Final
+sources, 72 browser cases and 1,179,648 primary words across actual Metal and
+SwiftShader WebGPU/WebGL2. Raw scalar and indexed source associations remain
+exact through authored normal Meshopt optimization. Rendered RGB uses the
+declared EEVEE half-film comparison: 667,434 differing words, maximum absolute
+error 0.00048828125, zero 2^-10 gate violations and zero alpha-one mismatches.
+The transaction includes 216 resize frames, 216 install/dispose cycles and
+12 fresh Python prefixes. Runtime snapshot
+`ebd0ac5c9e4fe79571cb1655519ca61008e2ca1a9562f40ae3f29a4eb3e3a855`
+and reader `04d2f670ec4dc05706c3012b3b316342df591db62022a6d0d04771264a567407`
+identify this evidence; subsequent wording edits do not relabel it.
+
+The shared harness keeps the original eight-scene Vertex Color default and
+selects the nine-scene Attribute family explicitly. Source programs must retain
+the named field leaf, and the closed reader checks the family-specific source,
+policy, Final, browser and ownership census. Only Attribute's Blender 5.3
+override expands; base and legacy scopes, categories and enum records remain
+unchanged. This is a field port, without explicit-opacity or whole-material
+appearance credit. The separately certified opacity adapter is undergoing its
+own installed-diffuse proof.
+
+The combined SDK passes 1,620 unit tests and 98 release-policy checks, 138
+pipeline tests and eight Python coverage checks. Actual guarded source-addon
+registration/preview and both Alpha source policies pass on the union. The
+897-file tarball builds independent Vanilla and React Three Fiber consumers;
+the empty-dependency fresh-install check verifies archive integrity, root
+import and browser compilation. Package checks run after the build finishes,
+because asset copying replaces the bundled add-on tree during a build.
+
+### Certified opacity and a new compositor White Noise context, 2026-11-14
+
+The scoped opacity adapter closes independently at
+`artifacts/verification-next17r4-opacity-union/qualified.json`: four unchanged
+saved artist scenes, 48 actual Final installation cycles and 288 synthetic
+Standard/Physical controls on Metal/SwiftShader WebGPU/WebGL2. All 344,064
+diffuse RGBA words match exactly. Actual material and source-keyed mesh tags
+must agree with the original complete RGB/Alpha channels and physical scalar
+binding before a mesh-bound certificate is minted. Only that certificate
+selects the scoped class; old untagged programs retain the earlier refusal.
+The complete RGB program owns color once and explicit Alpha owns opacity
+once. The native alpha-test/hash/opaque stages remain in Three's setup.
+
+Every measured Final sample retained two source draws and two installed draws
+(48 samples, delta zero); the synthetic FrontSide controls used one draw.
+This does not claim one-pass transparent Final rendering. The adapter adds no
+texture, pass, readback or per-draw buffer scan. Source material/map properties
+and callbacks, renderer texture identities, and clone-local graph/cache state
+are restored. Ordinary application cloning/copying now preserves the private
+ownership flag, with no opt-in from lookalike public carrier properties.
+
+Earlier failed fixtures remain separate: unblendable Float32 source warmup
+and an auto-reset draw meter, then an expected texture RGB value that omitted
+the already-qualified EEVEE float data-image unassociation. The unchanged
+authored [1,0,1,0.125] input independently derives RGB [8,0,8]; all published
+texels and its storage/profile stages are checked before browser execution.
+The r3 closure predates the clone polish; r4 carries its own runtime snapshot
+`7b1700db87eb6a68335d7fb1eb5605e5d08bc4e45a2361cda9473783d1555472`.
+There is no native transparency, dither or whole-BSDF parity credit, and the
+actual fixture has zero external image assets.
+
+CPU compositor White Noise closes at
+`artifacts/verification-next18-white-noise-union/qualified.json`: 44 native
+graphs, 12 unchanged saved Final sources, 224 raw/Final browser cases, 14,336
+primary words, zero differences, 48 resize frames, 144 lifecycle cycles and
+14 fresh Python prefixes. 1D–4D Value/Color reuse the existing Jenkins shader
+hash arithmetic with a separate CPU source model. Inputs require original
+stored normal Float32/+0 words and explicit fixed typed bindings; native
+negative zero/subnormal witnesses are retained but refused before promotion.
+Private homogeneous socket storage is removed in finally. No native MF/hash
+folding or new port texture/pass/readback is introduced. The independent
+native Image Info 0×0 observation is a control, without a new Image Info port.
+Default implicit Uniform coordinates, computed/field seeds and GPU-authored
+sources remain unqualified. Only the new Blender 5.3 compositor override
+changes category: 46 supported, 130 partial, 142 unsupported, 14 structural.
+
+### Mono Switch View and World classification corrections, 2026-11-14
+
+Mono CPU Switch View closes at
+`artifacts/verification-next20r4-mono-view/closed-receipt.json`. The eight native
+and saved Final scenes comprise seven Switch View graphs and one independent
+calibration. Across actual Metal/SwiftShader WebGPU/WebGL2, 64 raw/Final cases
+compare 16,384 words with zero differences; the node-only subset is 56 cases
+and 14,336 words. Ten fresh Python prefixes close. Native input0 is selected
+under the pinned static current-scene mono CPU context, including disabled or
+renamed views, groups/reroutes and an inactive Scene Time branch. The selected
+constant/image/reference domain survives without a new runtime opcode. The
+Render Layers-to-Image Info case uses its existing INT_VECTOR2 conversion;
+single-value Image Info remains unqualified.
+
+The failed EXR fixture, uninitialized GPU metadata query and noisy Cycles
+calibration remain separate. The replacement varying field uses an already
+admitted packed PNG; its actual normalized source pixels are pinned. CPU-only
+metadata explicitly claims no initialized/evaluating native GPU. A diagnostic
+namespace recorded the original Cycles denoising/adaptive settings, proved an
+exact declared compositor-constant calibration and checked all eight raw cases
+on both Metal APIs with zero qualification credit before the fresh r4 matrix.
+The original selector family's 71-case/30-Final, three-context corpus and
+receipt remain unchanged. Only Switch View's Blender 5.3 context gains partial
+support: totals are now 46 supported, 131 partial, 141 unsupported and 14
+structural; legacy categories and enums are preserved.
+
+The existing constant World classifier now omits a selected linked Volume and
+uses Blender's own engine-target World Output selection, including ALL
+fallback. The global active-output RNA flag can select a Cycles output while
+EEVEE uses another output in the same tree. Actual guarded no-render controls
+cover matching/wrong/mixed targets, Volume and explicit website ownership.
+Unknown shader engines conservatively omit this evidence. These corrections
+do not yet promote Background or World Output or claim full environment/BSDF
+parity; their separate background-only qualification is in progress.
+
+The updated package passes 1,625 unit tests and 98 release-policy checks.
+Independent Vanilla and React Three Fiber consumers compile its 906-file
+tarball. Evidence remains tied to each recorded source/runtime snapshot,
+rather than claiming all retained ports were numerically refreshed together.
+
+The launcher now canonicalizes its owned directory before writing identities
+or configuration, avoiding false archive escapes through macOS /tmp aliases.
+Alias/canonical archive validation still rejects real child escapes, changed
+bytes and substituted links. Nine focused host tests pass; an actual guarded
+Blender World-policy invocation through an aliased parent also closes with
+one fresh prefix and zero numerical credit. The expanded pipeline passes 140
+Node tests plus eight Python coverage tests; the fresh package-install and
+six tracker checks pass.
+
+Field research exposed a separate SwiftShader wide-uint-to-Float32 rounding
+difference after coordinate and integer hash words matched exactly. Both
+SwiftShader APIs reproduce it with a dynamic unsigned uniform. Literal
+conversion and the actual fixed-input compositor route with the exact failed
+seed pair pass on all four backend/profile tuples, and native CPU matches
+that fixed seed. The admitted fixed-input scope is unchanged; fields remain
+unqualified. An explicit ties-to-even integer-rounding construction matches
+all 4,294,967,296 uint32 inputs in an exhaustive CPU experiment without
+changing rounding mode. This is mathematical/backend preparation, not a
+new shader, node or field qualification. Original failures and generated
+shader/source hashes remain under the field-research evidence.

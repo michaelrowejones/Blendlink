@@ -1,0 +1,55 @@
+{
+  "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "sources": [
+    {
+      "path": "source/blender/nodes/composite/nodes/node_composite_switch_view.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/composite/nodes/node_composite_switch_view.cc",
+      "sha256": "f4f48651997257adcc2cd43ba5770570595e7bfc65cc6412be7588e15a2aec78",
+      "bytes": 2577,
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/nodes/function/nodes/node_fn_input_rotation.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/function/nodes/node_fn_input_rotation.cc",
+      "sha256": "f85d26ac88eca8e34484ead2333dcb75af5340d8b28b68a084f08be6f8e2186e",
+      "bytes": 2294,
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/nodes/function/nodes/node_fn_input_int_vector.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/function/nodes/node_fn_input_int_vector.cc",
+      "sha256": "1fc0a4afaf41a7f47ed777c78155db8f4bb7e65d2418eb52c3ac9139a93ee9aa",
+      "bytes": 3186,
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/compositor/intern/node_operation.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/intern/node_operation.cc",
+      "sha256": "661061004a0c55e46bd87ca664598a6fc0d2cb8edf42dd413a34c28b9a449b07",
+      "bytes": 6441,
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/compositor/COM_context.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/COM_context.hh",
+      "sha256": "bcb477b1f7db32dc205a09fff3850be8a69a4f863f653aa216f6526199d2a733",
+      "bytes": 6120,
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/compositor/intern/context.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/intern/context.cc",
+      "sha256": "6d04e0813242d4a3294205438a7157713a1dd5223b0fc4502daa01e6dadc4651",
+      "bytes": 3094,
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/render/intern/compositor.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/render/intern/compositor.cc",
+      "sha256": "c08b32e40ac0c5a447ac2bfb659652b28998acbd6a2c314067383d0fc5363f80",
+      "bytes": 32350,
+      "license": "GPL-2.0-or-later"
+    }
+  ],
+  "supportCredit": 0
+}

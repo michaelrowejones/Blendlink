@@ -33,8 +33,47 @@ export function vertexAlphaLayers(value: unknown): Set<string> {
   return result
 }
 
+export const VERTEX_ALPHA_OPACITY_MODEL='vertex-alpha-explicit-opacity-v1'
+export interface VertexAlphaOpacityOwnership {
+  schemaVersion:1; model:typeof VERTEX_ALPHA_OPACITY_MODEL; sourceProfile:string
+  material:string; alphaLayers:string[]; completeColor:boolean
+}
+const opacityCertificates=new WeakMap<object,{mesh:Mesh;source:string}>()
+const objectRecord=(value:unknown):value is Record<string,unknown>=>!!value&&typeof value==='object'&&!Array.isArray(value)
+/** A raw payload flag is never a certificate: both original sidecar/primitive
+ * markers must match the actual channel set and source owner first. */
+export function matchVertexAlphaOpacity(channels:unknown,extras:TslRuntimeMeshExtras|null,source:string,programMarker:unknown):VertexAlphaOpacityOwnership|null{
+  const meshMarker=extras?.vertexColorAlphaOpacityOwners?.[source]
+  if(programMarker===undefined&&meshMarker===undefined)return null
+  const entries=objectRecord(channels)?channels:{},alphaLayers=[...vertexAlphaLayers(entries.Alpha)].sort()
+  const expected:VertexAlphaOpacityOwnership={schemaVersion:1,model:VERTEX_ALPHA_OPACITY_MODEL,sourceProfile:VERTEX_ALPHA_PROFILE,material:source,alphaLayers,completeColor:objectRecord(entries['Base Color'])&&!!entries['Base Color'].tslIr}
+  if(!alphaLayers.length)throw new TslIrError('Vertex Alpha opacity ownership has no original Alpha-field channel')
+  for(const marker of[programMarker,meshMarker]){
+    if(!objectRecord(marker)||Object.keys(marker).sort().join('|')!==Object.keys(expected).sort().join('|')
+      ||Object.entries(expected).some(([key,value])=>JSON.stringify(marker[key])!==JSON.stringify(value)))
+      throw new TslIrError('Vertex Alpha opacity needs matching source-derived program and primitive ownership tags')
+  }
+  return Object.freeze({...expected,alphaLayers:Object.freeze(alphaLayers) as unknown as string[]})
+}
+/** Mint only a mesh-bound certificate after actual scalar/primitive admission. */
+export function certifyVertexAlphaOpacity(mesh:Mesh,channels:unknown,extras:TslRuntimeMeshExtras|null,source:string,programMarker:unknown):VertexAlphaOpacityOwnership|null{
+  const marker=matchVertexAlphaOpacity(channels,extras,source,programMarker)
+  if(!marker)return null
+  const color=mesh.geometry.getAttribute('color'),position=mesh.geometry.getAttribute('position')
+  if(color&&(!position||![3,4].includes(color.itemSize)||color.count!==position.count))
+    throw new TslIrError('Vertex Alpha opacity ownership needs count-matched physical RGB/RGBA storage')
+  opacityCertificates.set(marker,{mesh,source})
+  try{vertexAlphaBinding(mesh,channels,extras,source,marker)}catch(error){opacityCertificates.delete(marker);throw error}
+  return marker
+}
+export function isVertexAlphaOpacityCertificate(mesh:Mesh,ownership:VertexAlphaOpacityOwnership|undefined,source?:string):boolean{
+  const owned=ownership&&opacityCertificates.get(ownership)
+  return !!owned&&owned.mesh===mesh&&(source===undefined||source===owned.source)
+}
+
 /** Run for every actual candidate before any installation/resource mutation. */
-export function assertVertexAlphaOpacity(mesh: Mesh, channels: unknown, material: Mesh['material']): void {
+export function assertVertexAlphaOpacity(mesh: Mesh, channels: unknown, material: Mesh['material'],ownership?:VertexAlphaOpacityOwnership): void {
+  if(isVertexAlphaOpacityCertificate(mesh,ownership))return
   const alpha = channels && typeof channels === 'object' && !Array.isArray(channels)
     ? (channels as Record<string, unknown>).Alpha : undefined
   if (!vertexAlphaLayers(alpha).size || mesh.geometry.getAttribute('color')?.itemSize !== 4) return
@@ -48,7 +87,11 @@ export function assertVertexAlphaOpacity(mesh: Mesh, channels: unknown, material
 
 /** Binds the actual loaded primitive, never an extras-only attribute promise. */
 export function vertexAlphaBinding(mesh: Mesh, channels: unknown, extras: TslRuntimeMeshExtras | null,
-  source: string): { options: Pick<BuildTslOptions, 'vertexColorAlpha'>; validate: () => void } {
+  source: string,ownership?:VertexAlphaOpacityOwnership): { options: Pick<BuildTslOptions, 'vertexColorAlpha'>; validate: () => void } {
+  if(ownership){
+    if(!isVertexAlphaOpacityCertificate(mesh,ownership,source))throw new TslIrError('Vertex Alpha opacity certificate has no actual mesh/source owner')
+    matchVertexAlphaOpacity(channels,extras,source,ownership)
+  }
   const layers = vertexAlphaLayers(channels)
   if (!layers.size) return { options: {}, validate() {} }
   if ((mesh as Mesh & { isSkinnedMesh?: boolean; isInstancedMesh?: boolean }).isSkinnedMesh ||
@@ -62,7 +105,7 @@ export function vertexAlphaBinding(mesh: Mesh, channels: unknown, extras: TslRun
     offset: 'isInterleavedBufferAttribute' in value ? value.offset : 0,
     stride: 'isInterleavedBufferAttribute' in value ? value.data.stride : value.itemSize,
   } : null
-  assertVertexAlphaOpacity(mesh,channels,mesh.material)
+  assertVertexAlphaOpacity(mesh,channels,mesh.material,ownership)
   const opacityChannel=channels&&typeof channels==='object'&&!Array.isArray(channels)?(channels as Record<string,unknown>).Alpha:undefined
   const usesUnitColorException=vertexAlphaLayers(opacityChannel).size>0&&geometry.getAttribute('color')?.itemSize===4
     &&(Array.isArray(mesh.material)?mesh.material:[mesh.material]).some(item=>(item as typeof item & {vertexColors?:boolean}).vertexColors===true)

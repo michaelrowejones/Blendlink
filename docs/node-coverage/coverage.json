@@ -1,5 +1,5 @@
 {
-  "capabilityMapSha256": "6d2d8402e220151027ca8eec00b0df9033d0c0a642482cb4935b50a0f26409c8",
+  "capabilityMapSha256": "474786cbaedd47fbc89ff9c497cadf3b551548bd3fc5654c0f3771e991315b38",
   "capabilityValidationFailures": [],
   "classificationRefresh": {
     "catalogSha256": {
@@ -12,7 +12,7 @@
     "nativeInventoryRefreshed": false,
     "reason": "Classification-only refresh against unchanged content-pinned full inventories; no native rediscovery or numerical qualification is performed."
   },
-  "generatedAt": "2026-11-14T12:28:42.684842+00:00",
+  "generatedAt": "2026-11-14T13:58:44.971654+00:00",
   "nativeAvailabilityChanges": [],
   "nativeCatalogSha256": {
     "docs/node-coverage/blender-4.2.0.json": "2f71cb192f6a62e0e343ba5fcb11a2d8e0c6f6af1e8ac663ec6c3350b016b151",
@@ -2772,10 +2772,65 @@
               "category": "unsupported",
               "declaredCategory": "unsupported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_view_selection.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_switch_view_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "experiments/static-switch-family/view-cases.json"
+                },
+                {
+                  "path": "experiments/static-switch-family/view_cases.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/reference.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/export.test.ts"
+                },
+                {
+                  "path": "experiments/static-switch-family/browser.js"
+                },
+                {
+                  "path": "experiments/static-switch-family/run.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/protocol.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/protocol.test.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/suite.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/switch-view-feasibility/sources.json"
+                },
+                {
+                  "path": "experiments/switch-view-feasibility/README.md"
+                },
+                {
+                  "path": "experiments/compositor-switch-view/README.md"
+                },
+                {
+                  "path": "experiments/compositor-switch-view/evidence.json"
+                }
+              ],
               "id": "CompositorNodeSwitchView",
               "label": "Switch View",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "No admitted route outside the explicitly qualified pinned Blender5.3 CPU mono-context override. Native availability alone is not support.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -9015,10 +9070,65 @@
               "category": "unsupported",
               "declaredCategory": "unsupported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_view_selection.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_switch_view_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "experiments/static-switch-family/view-cases.json"
+                },
+                {
+                  "path": "experiments/static-switch-family/view_cases.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/reference.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/export.test.ts"
+                },
+                {
+                  "path": "experiments/static-switch-family/browser.js"
+                },
+                {
+                  "path": "experiments/static-switch-family/run.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/protocol.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/protocol.test.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/suite.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/switch-view-feasibility/sources.json"
+                },
+                {
+                  "path": "experiments/switch-view-feasibility/README.md"
+                },
+                {
+                  "path": "experiments/compositor-switch-view/README.md"
+                },
+                {
+                  "path": "experiments/compositor-switch-view/evidence.json"
+                }
+              ],
               "id": "CompositorNodeSwitchView",
               "label": "Switch View",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "No admitted route outside the explicitly qualified pinned Blender5.3 CPU mono-context override. Native availability alone is not support.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -11636,11 +11746,62 @@
                   "4D": "unsupported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def normalize_white_noise",
+                  "path": "packages/blendlink/blender/compositor_white_noise.py"
+                },
+                {
+                  "anchor": "def fixed_inputs",
+                  "path": "packages/blendlink/blender/compositor_white_noise.py"
+                },
+                {
+                  "anchor": "elif node.bl_idname == \"ShaderNodeTexWhiteNoise\":",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "anchor": "export function validateCompositorWhiteNoise",
+                  "path": "packages/blendlink/src/tslCompositorWhiteNoise.ts"
+                },
+                {
+                  "anchor": "export function compositorWhiteNoiseHash",
+                  "path": "packages/blendlink/src/tslNodeRecipe.ts"
+                },
+                {
+                  "anchor": "case 'white-noise-texture':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorWhiteNoise.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_white_noise_check.py"
+                },
+                {
+                  "path": "experiments/compositor-white-noise/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-white-noise/reference.py"
+                },
+                {
+                  "path": "experiments/compositor-white-noise/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-white-noise/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/compositor-white-noise/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-white-noise/evidence.json"
+                }
+              ],
               "id": "ShaderNodeTexWhiteNoise",
               "label": "White Noise Texture",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "No admitted route outside the explicitly qualified Blender 5.3.0 CPU compositor fixed-input source slice. Native node availability alone is not numerical support.",
+              "runtimeOps": [
+                "white-noise-texture"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -15500,16 +15661,16 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 69,
+            "partial": 71,
             "structural": 7,
             "supported": 24,
-            "unsupported": 87
+            "unsupported": 85
           },
           "enumValueCounts": {
             "partial": 36,
             "structural": 3,
-            "supported": 287,
-            "unsupported": 606
+            "supported": 291,
+            "unsupported": 602
           },
           "nodes": [
             {
@@ -18246,13 +18407,68 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_view_selection.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_switch_view_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "experiments/static-switch-family/view-cases.json"
+                },
+                {
+                  "path": "experiments/static-switch-family/view_cases.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/reference.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/export.test.ts"
+                },
+                {
+                  "path": "experiments/static-switch-family/browser.js"
+                },
+                {
+                  "path": "experiments/static-switch-family/run.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/protocol.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/protocol.test.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/suite.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/switch-view-feasibility/sources.json"
+                },
+                {
+                  "path": "experiments/switch-view-feasibility/README.md"
+                },
+                {
+                  "path": "experiments/compositor-switch-view/README.md"
+                },
+                {
+                  "path": "experiments/compositor-switch-view/evidence.json"
+                }
+              ],
               "id": "CompositorNodeSwitchView",
               "label": "Switch View",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor only. Current source Scene must explicitly use mono rendering and CPU evaluation; Scene and active source-tree actions/drivers/NLA refuse, including an animated use_multiview flag currently false. Native SwitchView RGBA Image output forwards actual ordered input0; never hardcodes left, guesses a hidden Scene ID, or selects an inactive branch. Enabled/available native RGBA socket schema and unique nonempty identifiers, at most64inputs and64selected nodes, are bounded; source context/schema/selected socket/link/default snapshots are rechecked after private evaluators. Existing mute bypass/group/reroute/recursive-cycle/selected dependency safeguards remain in force. Inactive SceneTime is not visited; selected unsupported producers still refuse. Exact selected literal/constant and field identity is preserved by normalizing to the existing selected expression; no synthetic image or new runtime opcode/kernel/pass/texture. Tested8x8 saved Final/raw browser words are exact on actual WebGPU/WebGL2 via WebGPURenderer, observed Apple Metal and SwiftShader. Selected static Image uses its existing byte-sRGB decoder/window contract; selected RenderLayers->ImageInfo uses its existing field/INT_VECTOR2->RGBA identity contract. The independent native0x0 single-domain observation does not admit single-value/static-image ImageInfo. Stereo/named-live/multiview, GPU-authored compositor, dynamic/animated view configuration, empty/stale/unknown schemas, other builds/hosts/versions and legacy WebGLRenderer are unqualified. This is fixed mono branch transport, not general scene compositing, live view selection, PBR/Cycles parity, global precision or whole-scene appearance qualification.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -21437,21 +21653,72 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "noise_dimensions": {
-                  "1D": "unsupported",
-                  "2D": "unsupported",
-                  "3D": "unsupported",
-                  "4D": "unsupported"
+                  "1D": "supported",
+                  "2D": "supported",
+                  "3D": "supported",
+                  "4D": "supported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def normalize_white_noise",
+                  "path": "packages/blendlink/blender/compositor_white_noise.py"
+                },
+                {
+                  "anchor": "def fixed_inputs",
+                  "path": "packages/blendlink/blender/compositor_white_noise.py"
+                },
+                {
+                  "anchor": "elif node.bl_idname == \"ShaderNodeTexWhiteNoise\":",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "anchor": "export function validateCompositorWhiteNoise",
+                  "path": "packages/blendlink/src/tslCompositorWhiteNoise.ts"
+                },
+                {
+                  "anchor": "export function compositorWhiteNoiseHash",
+                  "path": "packages/blendlink/src/tslNodeRecipe.ts"
+                },
+                {
+                  "anchor": "case 'white-noise-texture':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorWhiteNoise.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_white_noise_check.py"
+                },
+                {
+                  "path": "experiments/compositor-white-noise/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-white-noise/reference.py"
+                },
+                {
+                  "path": "experiments/compositor-white-noise/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-white-noise/numeric-contract.json"
+                },
+                {
+                  "path": "experiments/compositor-white-noise/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-white-noise/evidence.json"
+                }
+              ],
               "id": "ShaderNodeTexWhiteNoise",
               "label": "White Noise Texture",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Blender 5.3.0 build 02f0899d78e3 macOS arm64 CPU compositor White Noise, 1D/2D/3D/4D Value and Color. Explicit fixed seeds only: raw positive zero or any finite normal Float32, classified in owned homogeneous native socket storage before Python scalar promotion. Native typed W defaults, linked Value, CombineXYZ, explicit instance-bound Float/Vector group defaults, reroutes and actual mute bypass copy routes; no native MF/hash evaluation during extraction. Vector must be explicitly linked because the native unlinked compositor input uses Uniform Image Coordinates, not zero; compositor default dimension is 2D. Source Float32 bits drive the same Jenkins uint32 hash family and channel seeds/permutations as the existing shader hash kernels, with distinct CPU-compositor admission. All measured RGBA output words, including alpha 1, are exact through actual saved Final publication, both actual APIs/profiles and physical resize. Bounds: 64 source nodes, 256 visits, 16 source hops and group ancestry depth 16. Owned raw-copy groups are removed in finally; source scene/frame/active-selected objects/ID ownership remain unchanged. Raw negative zero, subnormal/nonfinite seeds, implicit casts/coordinates, computed/field producers, animation/drivers/NLA, GPU-authored Blender, other versions/builds/hosts and EEVEE shader source equivalence remain unqualified. Independent native Image Info Dimensions 0x0 is a domain control only; Image Info single-value support is not promoted. Existing shader White Noise and its field approximation policies are unchanged. No port-owned texture/pass/readback; three actual Final apply/dispose cycles preserve source material/callback and exact renderer-cache ownership.",
+              "runtimeOps": [
+                "white-noise-texture"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -22909,14 +23176,54 @@
                 },
                 {
                   "path": "experiments/tsl-node-differential/cells.json"
+                },
+                {
+                  "path": "packages/blender-addon/vertex_color_alpha.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/attribute_alpha_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslVertexColorAlpha.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/vertexAlphaOptimization.ts"
+                },
+                {
+                  "path": "experiments/vertex-color-alpha/attribute-cases.json"
+                },
+                {
+                  "path": "experiments/vertex-color-alpha/reference.py"
+                },
+                {
+                  "path": "experiments/vertex-color-alpha/export.test.ts"
+                },
+                {
+                  "path": "experiments/vertex-color-alpha/protocol.mjs"
+                },
+                {
+                  "path": "experiments/vertex-color-alpha/verify.mjs"
+                },
+                {
+                  "path": "experiments/attribute-alpha-feasibility/sources.json"
+                },
+                {
+                  "path": "experiments/attribute-alpha-feasibility/special-name-sources.json"
+                },
+                {
+                  "path": "experiments/attribute-alpha/README.md"
+                },
+                {
+                  "path": "experiments/attribute-alpha/evidence.json"
                 }
               ],
               "id": "ShaderNodeAttribute",
               "label": "Attribute",
-              "limits": "GEOMETRY color/Fac via exported color attributes and OBJECT Color/Vector/Fac custom properties; other types/outputs refuse.",
+              "limits": "GEOMETRY color/Fac via exported color attributes and OBJECT Color/Vector/Fac custom properties; other types/outputs refuse. Additional Blender5.3.0 build02f0899d78e3 macOS arm64 EEVEE Metal surface-Mesh scope: GEOMETRY Alpha from an explicit nonempty named FLOAT_COLOR POINT/CORNER layer, including lowercase color on the surface pipeline. Exact lowercase temperature refuses because native Attribute overwrites alpha with1. Empty/default/missing names, BYTE_COLOR, other domains, OBJECT/INSTANCER/VIEW_LAYER/LIGHT Alpha and volume pipelines are unqualified. Existing RGB/Fac/OBJECT routes remain under their own prior contracts. The existing vertex_color_alpha opcode/model and private raw Float32 SCALAR carrier are reused: source alpha must be +0 or normal finite[0,1]; only compiler-owned static primary Mesh copies are modified. No deformation/modifiers, shape keys, instances, source animation/drivers or ambiguous coincident same-winding triangles; at most300000 source vertices/corners and4layers permesh. Raw alpha words and per-owner/material indexed position/corner associations are exact before and after normal authored Meshopt Final optimization, with the existing asset-wide POSITION quantization fallback bounded to1M unique position vertices and3M checked rendered corners. Native Alpha-to-Emission uses actual EEVEE half-film output in EXR32; RGB comparison is bounded maxAbs2^-10 on every pixel/seam/edge, not word-exact F32 raster equality. Observed maxAbs0.00048828125 with667434 RGB word differences, zero contract violations and exact alpha-one output. Nine authored field scenes include groups/reroutes/shared owners/materials and preserved RGB paths. Actual WebGPU/WebGL2 via WebGPURenderer on observed Apple Metal and SwiftShader. This field proof gives no explicit-opacity, transparent-coverage, Color+Alpha opacity, camera/lighting/whole-scene, other build/platform/version or legacy WebGLRenderer credit; source-certified opacity adapter has its own independent scope. The shared qualified scalar IR can use source-certified vertex-alpha-explicit-opacity-v1 ownership under the same exact tag/physical binding contract; see experiments/vertex-alpha-opacity-interoperability/evidence.json. That separate Three diffuse-stage adapter proof does not change this Attribute field receipt or add Attribute-authored opacity/native-transparency case counts.",
               "runtimeOps": [
                 "vertex_color",
-                "attribute_object"
+                "attribute_object",
+                "vertex_color_alpha"
               ],
               "unreviewedCapability": false
             },
@@ -26004,7 +26311,7 @@
               ],
               "id": "ShaderNodeVertexColor",
               "label": "Color Attribute",
-              "limits": "Color output and its earlier evidence remain unchanged. Additional Alpha field route only on pinned Blender 5.3.0 build 02f0899d78e3, macOS arm64 EEVEE with METAL preferences; Cycles/native OpenGL and other source builds remain unqualified. Present named FLOAT_COLOR POINT/CORNER layer, or native active-render color layer for an empty name (independent of editor-active). Source alpha words must be +0 or normal finite Float32 in [0,1], read/classified in bulk before Python conversion. BYTE_COLOR, signed-zero/subnormal/HDR/nonfinite alpha, missing/wrong-type layers, modifiers/deformation, shape keys, instances, clocks/animation, reserved carrier collisions and coincident same-winding triangles per source material refuse. At most 300000 source vertices/corners and four private layers per owned mesh. Exact private Float32 SCALAR transport and indexed source-corner associations are checked per actual owner/material, including decoded post-Meshopt output. The bounded initial optimizer fallback preserves asset-wide POSITION with a visible skipped-pass reason, limited to 1000000 unique position-accessor vertices (including morph streams); only declared Alpha scalars receive additional generic-quantization protection. Checked Alpha association work is limited to 3000000 rendered corners; existing COLOR/NORMAL/TEXCOORD policies are unchanged. Runtime requires actual count-matched non-normalized Float32 scalar storage and a complete primitive draw; attribute/position/index identity, upload version, schema, draw range and groups are guarded. New Alpha/opacity plus stock VEC4 COLOR_0 with nonunit/unknown physical alpha refuses before publication and before runtime mutation; the exact safe exception requires every actual COLOR_0 alpha to equal 1 and guards that carrier thereafter. General Color+Alpha opacity, transparent coverage, old RGB multiplication and whole-scene lighting/camera appearance are not qualified. Native EEVEE half-film RGB output is compared with a predeclared absolute 2^-10 gate, not called an exact Float32 field oracle; raw source-to-GLB transport is exact, and output alpha 1 is exact. Eight source field graphs/8 saved Final scenes cover constants/nonuniform fields, seams, groups/reroutes, shared owners/materials and preservation of the existing RGB route on both browser APIs with Metal and SwiftShader. All pixels and seam/edge bands are checked. A retained old-fixture raster counterexample selects different triangles at one near-edge pixel; fresh authored fixture geometry independently guarantees at least half a physical pixel of seam clearance at 32/64/96. This is no arbitrary raster-edge ownership guarantee, artist-scene rewrite or official-demo credit.",
+              "limits": "Color output and its earlier evidence remain unchanged. Additional Alpha field route only on pinned Blender 5.3.0 build 02f0899d78e3, macOS arm64 EEVEE with METAL preferences; Cycles/native OpenGL and other source builds remain unqualified. Present named FLOAT_COLOR POINT/CORNER layer, or native active-render color layer for an empty name (independent of editor-active). Source alpha words must be +0 or normal finite Float32 in [0,1], read/classified in bulk before Python conversion. BYTE_COLOR, signed-zero/subnormal/HDR/nonfinite alpha, missing/wrong-type layers, modifiers/deformation, shape keys, instances, clocks/animation, reserved carrier collisions and coincident same-winding triangles per source material refuse. At most 300000 source vertices/corners and four private layers per owned mesh. Exact private Float32 SCALAR transport and indexed source-corner associations are checked per actual owner/material, including decoded post-Meshopt output. The bounded initial optimizer fallback preserves asset-wide POSITION with a visible skipped-pass reason, limited to 1000000 unique position-accessor vertices (including morph streams); only declared Alpha scalars receive additional generic-quantization protection. Checked Alpha association work is limited to 3000000 rendered corners; existing COLOR/NORMAL/TEXCOORD policies are unchanged. Runtime requires actual count-matched non-normalized Float32 scalar storage and a complete primitive draw; attribute/position/index identity, upload version, schema, draw range and groups are guarded. Older or untagged new-Alpha/opacity programs plus stock VEC4 COLOR_0 with nonunit/unknown physical alpha retain the named refusal before publication/runtime mutation; the exact unit-alpha exception remains guarded. A separate source-certified vertex-alpha-explicit-opacity-v1 adapter now replaces implicit carrier alpha only when the actual Alpha layer set, complete-Base-Color flag, material identity and both program/primitive tags match the physical scalar binding. It preserves complete program RGB once, or carrier RGB fallback including RGBA texture/color carriers, then uses native alpha-test/opaque handling. Four unchanged authored default Meshopt Final sources and Standard/Physical controls on both APIs/profiles give exact installed diffuse/opacity words; clone/copy preserve private RGB ownership. This is adapter/diffuse semantics only, not native transparent coverage, dithering, whole BSDF/lighting/camera parity or a global repair of older RGB multiplication. See experiments/vertex-alpha-opacity-interoperability/evidence.json; the following native field evidence keeps its own independent snapshot. Native EEVEE half-film RGB output is compared with a predeclared absolute 2^-10 gate, not called an exact Float32 field oracle; raw source-to-GLB transport is exact, and output alpha 1 is exact. Eight source field graphs/8 saved Final scenes cover constants/nonuniform fields, seams, groups/reroutes, shared owners/materials and preservation of the existing RGB route on both browser APIs with Metal and SwiftShader. All pixels and seam/edge bands are checked. A retained old-fixture raster counterexample selects different triangles at one near-edge pixel; fresh authored fixture geometry independently guarantees at least half a physical pixel of seam clearance at 32/64/96. This is no arbitrary raster-edge ownership guarantee, artist-scene rewrite or official-demo credit.",
               "runtimeOps": [
                 "vertex_color",
                 "vertex_color_alpha"
@@ -26156,7 +26463,7 @@
     "packages/blender-addon/legacy_ramp_data.py": "8aa2a2cafdc0d46abb00633a97c65315bc8e93274e5ba0d3e0cb77ac5f8e36e0",
     "packages/blender-addon/magic_bounds.py": "9a15236ab29aac815e19688d3d054a474fd39ee880e076746b8cb693f494b9b8",
     "packages/blender-addon/magic_ir.py": "0acb99dc9a916679a8f23e2e79ec01a646e5dd9b6b9b7ccb5f8159dd700df46d",
-    "packages/blender-addon/material_compiler.py": "abe19c8ce692bcaeb74089a2fe2f59bac2c50b7c3e0f22fbc45948354a07c06e",
+    "packages/blender-addon/material_compiler.py": "36b7a24f10b6d30dc171e0c46823436d93aa8485b82d6bcbaedacde0c03ffb1b",
     "packages/blender-addon/math_modulo_native_ir.py": "89ee9a91f0a754ca9b7e3702085b8e90115ac993a3499946e5573f24b913ee63",
     "packages/blender-addon/noise_field_ir.py": "5f0a8bb9b209d1ffbcc695d879a229ee688f1e24dae2d66680f0176c005455f4",
     "packages/blender-addon/noise_fractal_ir.py": "363c03bec9b463f582bd0014bca6ff54dba146e737e87d4f4367c4770bb44457",
@@ -26181,7 +26488,7 @@
     "packages/blender-addon/static_string_case_data.json": "8fb83c1d86ae27a49e80bdbdbb8dddc5b66f155dac196d71ea033f3410139360",
     "packages/blender-addon/static_strings.py": "548314291e889724e93763cd9f37bcab372726788e09296496b4883c50435c18",
     "packages/blender-addon/tangent_ir.py": "1aecd4299717841db15ec5a129cdaef44bbc5853fdd4d7c96e21ddcde2910d7d",
-    "packages/blender-addon/tsl_ir.py": "b96807dc78e130a2bf6757274daee779a9a015a9dca357509871ea51fd43987d",
+    "packages/blender-addon/tsl_ir.py": "77fd45f056ceded7eb0e5a35b9ad5a7a3e65292538a18dcb2a2878497a5968b5",
     "packages/blender-addon/tsl_object_info.py": "beb2efc9684b53b1229b743d7b4206eb87f6206b9288d9454d4dd1c9d37d9f22",
     "packages/blender-addon/utility_ir.py": "d077031f6d9aec9e242bd3e7559753807dcbf29de53883b1c7bafc57fe2e97c5",
     "packages/blender-addon/vector_component_ir.py": "bb4d7ed8e35f112e511056ce8968be269d0bcb2993f3dbc41ce47aa3497f7b4a",
@@ -26204,7 +26511,7 @@
     "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
     "packages/blendlink/blender/compositor_float_coordinates.py": "a300cbfb6e5ea06806e2fb9b9d7795cd2e3b91cb21ada43e4c128ac89d8f0cec",
     "packages/blendlink/blender/compositor_float_to_int.py": "6292f5a5904107b59591c282fcf9def24a5f98dc2ead0a92d950b6219226658d",
-    "packages/blendlink/blender/compositor_graph.py": "005047c5782d8155ca730817c04483cb4a2ce4978c1addb61d17dfb22f38ff13",
+    "packages/blendlink/blender/compositor_graph.py": "dd5840a6b1ad9132fe605111ebf83a30701a5f58b68f9992039780f2c8d67e93",
     "packages/blendlink/blender/compositor_image.py": "55ee3b7800002331c4e30042a7d5da18538267b58ff60c006e03ad238da9e012",
     "packages/blendlink/blender/compositor_image_coordinates.py": "4b796327c579e7c08ed487cce4758c899a1a11be648e93977c22a0536451054a",
     "packages/blendlink/blender/compositor_image_info.py": "92e3f2488f646b8f7f79de67940717c54bd3e4cfc69956090b31ebd9b0e64729",
@@ -26227,15 +26534,17 @@
     "packages/blendlink/blender/compositor_utilities.py": "b92be3bb89c05d9a943a08298bb3114274cf67f14f985ba84e3f5dbc9eddc384",
     "packages/blendlink/blender/compositor_vector_component.py": "8b29742404fa7d80d2bdc661363a052bc1a2680b3306a2a47b20d0d9e5bfe20c",
     "packages/blendlink/blender/compositor_vector_math.py": "94a78be4e19d1b824b046665250fccb801e363b2339253a7f047c2e76532e0f9",
+    "packages/blendlink/blender/compositor_view_selection.py": "f5ef756dfd61ca8047f55bb004c74372f7af27fff357a74476d8d0c5432ab491",
+    "packages/blendlink/blender/compositor_white_noise.py": "659e290ccef6a622aa76d772e2fa0811b1357d230c2f91cfc964989b84fa2349",
     "packages/blendlink/blender/compositor_whitepoint.py": "a2beb2b16a1f7fbf6b02a31cb4690d0c98e23e144748e5962a0d4f755922d2e5",
     "packages/blendlink/blender/geometry_export.py": "3d147a218ee96f0bf72ffeb5add773396347fc39224501eb62d5d7f67551fd2d",
     "packages/blendlink/blender/native_color_band.py": "23aa27b056846d42cdb96919da968d04f9e8e44d794ffa10c80871f786bfc8d4",
     "packages/blendlink/blender/normal_bake_transport.py": "1e6211bb197f6e015262f80937112ec594e70977945fc1259133aa8ffd36429e",
     "packages/blendlink/blender/source_presentation.py": "6737226c3a2cc6d0c229123b03190f6a4f47e062b65d5474d06a0a5300485c79",
     "packages/blendlink/blender/tangent_export.py": "4815854bd825e910009b42de73ecf5aa9cc0bb07966bb2d688731e5df12b514e",
-    "packages/blendlink/src/compiledMaterialPrograms.ts": "b11ec7109bee588f4f852a4b9273683f09455a485ff93bd29f5f00f577987f36",
+    "packages/blendlink/src/compiledMaterialPrograms.ts": "d6f2d9471ec145d7ed7b2abc395221eb316a7daa55a004ebf8b0c3d2fecc6cec",
     "packages/blendlink/src/compiledSceneAudit.ts": "08fded1eb26f0fb964401d24699bd6ea0bc26aa9c0536c764a8965f0124748a5",
-    "packages/blendlink/src/materialProgramDocument.ts": "39ec3435678480a0c1074f55b3fee1340ec91710d384b76b0e9757ef0d181e63",
+    "packages/blendlink/src/materialProgramDocument.ts": "19e7e121b51a94bd714c193a00a718bef31fcf648ab1df6474d6737fec525e8a",
     "packages/blendlink/src/materialProgramRendererRequirements.ts": "01eff9b1241d907d302f90a88822fe5deedeb3c5309b24c48a192aee47a380ca",
     "packages/blendlink/src/sceneDiagnostics.ts": "48b8d220ad2b5216f496694ef1b29c19903e90cc65fc9ce01bda77e21c84dc0e",
     "packages/blendlink/src/staticNoise4d.ts": "0677ad1169801c601d74b8a5658d98691415bf313081ca0b4fa88ec762e62a76",
@@ -26295,6 +26604,7 @@
     "packages/blendlink/src/tslCompositorStaticImageDomain.ts": "82bb6bf70f547a8b3309df0ac564456d5ae262b0c42525f8a2d6e80565cab7cf",
     "packages/blendlink/src/tslCompositorTextureField.ts": "e4816ef165f41d5f667f0b6667a03a6d94283ef737aaa945f9912a42157d4023",
     "packages/blendlink/src/tslCompositorVectorMath.ts": "72e656d14d7a1a7d83e2102b36803a48af72392623ac7129db4ebda58717dd9a",
+    "packages/blendlink/src/tslCompositorWhiteNoise.ts": "9cb10d21ae1ef4633eff6753910b120fa4ed836e3a9e79bc8ee3d63a2a5868f7",
     "packages/blendlink/src/tslCompositorWhitePoint.ts": "70f5f1ae4ddc1bd9c723dcc8cb0af3567e75d110a35e7e812bfd124959814353",
     "packages/blendlink/src/tslCurveNodes.ts": "b88bff5a13527319e2be958f100115a2a87565a7546157b49e30c3fd3979de72",
     "packages/blendlink/src/tslFractalNoise.ts": "002ee4fd88186aad763fb6cfa8e40940452904f6bd48f33ef5bfa57557eed8b0",
@@ -26302,15 +26612,15 @@
     "packages/blendlink/src/tslIrInspection.ts": "976cdc3ae2f8a9bfde73f466b912f7acef17223288dfd6b8f61acb311750e3c7",
     "packages/blendlink/src/tslMagicBounds.ts": "f5ef0d1c3d5ef83a5d427d6a185d838226b201fe40d4dcdafb1e0001894a8614",
     "packages/blendlink/src/tslMagicNodes.ts": "58d4cb15216d438225438ae06ed5784a20c85c73bc205cd2f63b8ba6771a4cb1",
-    "packages/blendlink/src/tslMaterialProgram.ts": "a86c7f9ae3241c140e805e6bed726504e2530f5e59a062992331326b4746d5cc",
-    "packages/blendlink/src/tslMaterialRuntime.ts": "c2fca267e33f038eb922e64e69d47b9bc00606ff0d7bc1fc92cbcf8e3381d4bd",
+    "packages/blendlink/src/tslMaterialProgram.ts": "f32c998ae576b47ac5e9edf0f5d83bbd07aa5e3e79fbdcd15d68ca617d17b7ed",
+    "packages/blendlink/src/tslMaterialRuntime.ts": "cda421ee7ca81a8e386ebc1964bbd9d82ac9f130d056f145062f2f4b2ea15978",
     "packages/blendlink/src/tslMathModuloNative.ts": "f56ae4c332f93d0f597242607d02fdc8938af1d877392da3f4e3481b2e030da2",
     "packages/blendlink/src/tslMetalRendererGuard.ts": "90e181caec45f22b79c18bf5fa5c7862d5de0782e3f1b7bbcaccb0cb65e5bc94",
     "packages/blendlink/src/tslMfNoiseCoordinates.ts": "3d697e3dd7a01418263fa7edac3154db127b669f4212cf533b15c94ed53046a7",
     "packages/blendlink/src/tslNativeColorBand.ts": "71727e4ad3d5498f35d56b875e1475361a1a3a0adf62f7e7fd98b1581f308c92",
     "packages/blendlink/src/tslNativeNoisePrecision.ts": "7b64b75c45d38815d7d0cb9c1f74b4abae9352612edd2d7c6b615e4df1c495dd",
     "packages/blendlink/src/tslNativeVaryingNoise.ts": "f9d1268c168cbf5d486b1560454567565ecee3649332e556f2415455165248b7",
-    "packages/blendlink/src/tslNodeRecipe.ts": "7cbee6f80be5de5e11875ae1becd97350a035aa78ed8be9c06d78cf505b175bc",
+    "packages/blendlink/src/tslNodeRecipe.ts": "a76347d92394a994e500b66b65cfca0fd21e81426eaef47fce4ca7083a055901",
     "packages/blendlink/src/tslNoiseCoordinates.ts": "f0eb9e256f75be2915f0d2d78509fe3d638fbcb0936fc6c79099b19a1472f9f4",
     "packages/blendlink/src/tslNoiseFieldBarrier.ts": "9dcbd46802101108eeb3ae5fffc78d64317f48c832406e6b713bc129335295bf",
     "packages/blendlink/src/tslNoiseFields.ts": "a66cf44b0298add1ab3db195085629788060a9005df14757d283228e703416d1",
@@ -26325,7 +26635,7 @@
     "packages/blendlink/src/tslRadialWidth.ts": "9ffc9e3a7e32b3d0676b2a90fffad64e2578cd30d160ddaf00278d2d9ff43719",
     "packages/blendlink/src/tslRepeat.ts": "4d7925f09220e54973155c6af8c41c98e3b32e141f5acbdc6d29741c701d9a93",
     "packages/blendlink/src/tslSharedUtilities.ts": "1f21b06a4d60a439b0549b7c6716c66945b4cce3cc00fc6e965acbe77c80d9b9",
-    "packages/blendlink/src/tslSourceCompositor.ts": "1e51eb0d99bc914d875e5ba30eedf934157b43c74dc25b6b961624de0d042625",
+    "packages/blendlink/src/tslSourceCompositor.ts": "1991336b03483972b22db584e8e7a95539e4394dc4e1689658497837f13b90d9",
     "packages/blendlink/src/tslSpectralNodes.ts": "10719a4f7ceef71f80a9b3492561c382cd0904de209e0e93f9f578b5af529bf2",
     "packages/blendlink/src/tslSqueeze.ts": "14a56aa219ca2bb2dace54d512e8b9cfda754ea83991a92a1c270a1122ea492b",
     "packages/blendlink/src/tslTangentNodes.ts": "fb7ad452300be3e96a9f01b4f82f9ce59cb8577cf68e056df994876321cffcc1",

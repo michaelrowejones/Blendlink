@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict'
 import {execFile,execFileSync,spawn} from 'node:child_process'
-import {mkdtemp,mkdir,readFile,readdir,realpath,rm,writeFile} from 'node:fs/promises'
+import {mkdtemp,mkdir,readFile,readdir,realpath,rm,writeFile,symlink} from 'node:fs/promises'
 import {tmpdir} from 'node:os'
-import {join} from 'node:path'
+import {join,relative,sep} from 'node:path'
+import {archiveNativeLauncher,validateNativeArchive} from './native-proof-archive.mjs'
 import {promisify} from 'node:util'
 import test from 'node:test'
 import {createNodePortBlenderLauncher,prepareNodePortPython,requireNodePortPythonPlatform,runNodePortBlender} from './node-port-python.mjs'
@@ -101,5 +102,51 @@ for(const mode of ['SDK-single-PID-SIGKILL','parent-process-group-TERM'])test('l
  }finally{
   if(child?.pid){try{process.kill(-child.pid,'SIGKILL')}catch{}}
   await launcher?.dispose();await rm(root,{recursive:true,force:true})
+ }
+})
+
+
+test('symlink-parent launchers use one canonical owned namespace and close archives through either parent spelling',{skip:!supported},async()=>{
+ for(const identityPolicy of ['per-invocation-sha256-v1','transaction-metadata-v1']){
+  const {root,native}=await fixture(),physical=join(root,'physical parent'),alias=join(root,'alias parent')
+  let launcher
+  try{
+   await mkdir(physical);await symlink(physical,alias,'dir')
+   const requested=join(alias,'active'),canonicalParent=await realpath(physical)
+   launcher=await createNodePortBlenderLauncher({blender:native,directory:requested,identityPolicy})
+   const canonicalOwned=await realpath(launcher.directory),config=JSON.parse(await readFile(launcher.identity.configuration.path,'utf8'))
+   assert.equal(launcher.directory,canonicalOwned);assert.equal(config.owned,canonicalOwned)
+   assert.ok(canonicalOwned.startsWith(canonicalParent+sep))
+   for(const name of ['launcher','configuration','helper','bridge']){
+    const path=launcher.identity[name].path,child=relative(canonicalOwned,path)
+    assert.equal(path,await realpath(path));assert.ok(child&&child!=='..'&&!child.startsWith('..'+sep)&&!child.startsWith(sep))
+   }
+   const script=join(root,'reviewed reference.py');await writeFile(script,'# Fake native never executes this; zero numerical credit.\n')
+   const aliasExecutable=join(requested,relative(join(canonicalParent,'active'),canonicalOwned),'blender-proof')
+   for(const executable of [launcher.executable,aliasExecutable])await exec(executable,['--python',script])
+   const calls=await receipts(launcher);assert.equal(calls.length,2)
+   for(const call of calls){assert.equal(call.productionCases,0);assert.equal(call.result.cacheDisposed,true);assert.ok(call.result.cacheDirectory.startsWith(canonicalOwned+sep));assert.equal(call.result.pythonGuardApplied,true)}
+   await launcher.finalize()
+   const evidenceAlias=join(alias,'evidence');await mkdir(evidenceAlias)
+   const proof=await archiveNativeLauncher(launcher,evidenceAlias,true),record={identity:launcher.identity,proof}
+   const options={expectedFinalSources:[],expectedScripts:[{path:script,invocations:2}],helperInputs:{helper:join(import.meta.dirname,'node-port-python.mjs'),bridge:join(import.meta.dirname,'../node-port-blender.mjs')}}
+   await launcher.dispose()
+   for(const evidence of [evidenceAlias,await realpath(evidenceAlias)]){
+    const result=await validateNativeArchive(record,evidence,options);assert.equal(result.pythonInvocations,2);assert.equal(result.uniqueCachePrefixes,2)
+   }
+   assert.equal(proof.numericalCredit,false)
+   // A same-prefix sibling remains outside ownership, even with identical bytes.
+   const outside=canonicalOwned+'-outside';await mkdir(outside)
+   const source=await readFile(options.helperInputs.helper),outsideHelper=join(outside,'node-port-python.mjs');await writeFile(outsideHelper,source)
+   const escaped=structuredClone(record);escaped.identity.helper.path=outsideHelper
+   await assert.rejects(validateNativeArchive(escaped,evidenceAlias,options))
+   const archiveHelper=join(evidenceAlias,'native-python-proof/lib/node-port-python.mjs')
+   await rm(archiveHelper);await writeFile(archiveHelper,'tampered helper')
+   await assert.rejects(validateNativeArchive(record,evidenceAlias,options),/files changed/)
+   // Following this link would reproduce the exact expected byte inventory.
+   // The closed reader must instead reject the child link itself.
+   await rm(archiveHelper);await symlink(outsideHelper,archiveHelper)
+   await assert.rejects(validateNativeArchive(record,evidenceAlias,options),error=>error.code==='ERR_ASSERTION'&&error.actual===true&&error.expected===false)
+  }finally{await launcher?.dispose();await rm(root,{recursive:true,force:true})}
  }
 })

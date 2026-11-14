@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "stage": "actual CPU compositor constant-unit MF versus existing TSL integer hash kernel",
+  "source": "Blender 5.3.0 02f0899d78e3 macOS arm64 CPU compositor",
+  "inputs": "Explicit fixed native +0 or finite normal Float32. Raw source storage is inspected before Python promotion; no computed producers, implicit casts or fields.",
+  "arithmetic": "Jenkins uint32 wrap arithmetic over raw Float32 words; CPU uint32-to-Float32 conversion divided by Float32(UINT_MAX), with identical channel seeds/permutations. Runtime reuses existing shader hash functions, not shader source admission.",
+  "gate": {"exactWordMismatches": 0, "contractViolations": 0, "alphaWord": 1065353216},
+  "imageDomainControl": "Independent actual native Image Info Dimensions on a constant White Noise result must be 0x0; this does not admit the previously unqualified Image Info constant-input route.",
+  "credit": "Only a fully closed native/Saved Final/both-API/both-profile receipt can qualify this bounded compositor route. No EEVEE shader/field/implicit-coordinate credit."
+}

@@ -3,6 +3,7 @@ import {assertEllipseSceneFrameBinding,resolveEllipseSceneFrame,type EllipseScen
 import {buildCompositorEllipseMask,validateEllipseMaskGraph} from './tslCompositorEllipseMask.js'
 import {buildCompositorBoxMask,validateBoxMaskGraph} from './tslCompositorBoxMask.js'
 import {buildCompositorBlackbody} from './tslCompositorBlackbody.js'
+import {buildCompositorWhiteNoise,validateCompositorWhiteNoise} from './tslCompositorWhiteNoise.js'
 import {buildCompositorRadialWidth} from './tslRadialWidth.js'
 import {buildCompositorVectorMath} from './tslCompositorVectorMath.js'
 import {buildCompositorImageInfo,buildImageInfoConversion,imageInfoConversionSource} from './tslCompositorImageInfo.js'
@@ -583,6 +584,7 @@ export function buildSourceCompositor(
     const nativeDomain = program.ops.find(op => op.kind === 'image-affine'
       || op.kind === 'translate' && op.properties.image_domain_model === 'native-translation-v2')
     for (const op of program.ops) {
+      if(op.kind==='white-noise-texture')validateCompositorWhiteNoise(op,message=>{throw new SourceCompositorUnsupported(message)})
       const domainFail = (message: string): never => { throw new SourceCompositorUnsupported(
         `${op.source.path.join(' / ')} / ${op.source.node} [${op.source.output}]: ${message}`) }
       const single = op.kind==='image-info'||(op.kind==='ellipse-mask'&&op.properties.ellipse_mask_identity===true)||(!['render-pass', 'image-input', 'box-mask', 'ellipse-mask'].includes(op.kind) && !textureFieldKind(op) && Object.values(op.inputs).every(input => isSingleValue(input.value)))
@@ -681,6 +683,9 @@ export function buildSourceCompositor(
             break
           case 'blackbody-color':
             node = buildCompositorBlackbody(op,program.ops,domainFail)
+            break
+          case 'white-noise-texture':
+            node = buildCompositorWhiteNoise(op,domainFail)
             break
           case 'radial-segment-width':
             node = buildCompositorRadialWidth(op, program.ops, input, domainFail)

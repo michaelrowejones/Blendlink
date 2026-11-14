@@ -1,0 +1,750 @@
+[
+  {
+    "case": "1d-value-zero",
+    "route": "direct",
+    "dimensions": 1,
+    "output": "Value",
+    "seedWords": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "1d-value-ordinary",
+    "route": "direct",
+    "dimensions": 1,
+    "output": "Value",
+    "seedWords": [
+      1036831949,
+      3209481421,
+      1051372203,
+      1058103633
+    ],
+    "saved": true,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": true
+  },
+  {
+    "case": "1d-value-normal-extremes",
+    "route": "direct",
+    "dimensions": 1,
+    "output": "Value",
+    "seedWords": [
+      8388608,
+      2155872256,
+      2139095039,
+      4286578687
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "1d-value-large",
+    "route": "direct",
+    "dimensions": 1,
+    "output": "Value",
+    "seedWords": [
+      1266679809,
+      3414163457,
+      1199570944,
+      3347054592
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "1d-value-neighbors",
+    "route": "direct",
+    "dimensions": 1,
+    "output": "Value",
+    "seedWords": [
+      1056964609,
+      1056964607,
+      1065353217,
+      3212836865
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "1d-color-zero",
+    "route": "direct",
+    "dimensions": 1,
+    "output": "Color",
+    "seedWords": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "1d-color-ordinary",
+    "route": "direct",
+    "dimensions": 1,
+    "output": "Color",
+    "seedWords": [
+      1036831949,
+      3209481421,
+      1051372203,
+      1058103633
+    ],
+    "saved": true,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "1d-color-normal-extremes",
+    "route": "direct",
+    "dimensions": 1,
+    "output": "Color",
+    "seedWords": [
+      8388608,
+      2155872256,
+      2139095039,
+      4286578687
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "1d-color-large",
+    "route": "direct",
+    "dimensions": 1,
+    "output": "Color",
+    "seedWords": [
+      1266679809,
+      3414163457,
+      1199570944,
+      3347054592
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "1d-color-neighbors",
+    "route": "direct",
+    "dimensions": 1,
+    "output": "Color",
+    "seedWords": [
+      1056964609,
+      1056964607,
+      1065353217,
+      3212836865
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "2d-value-zero",
+    "route": "direct",
+    "dimensions": 2,
+    "output": "Value",
+    "seedWords": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "2d-value-ordinary",
+    "route": "direct",
+    "dimensions": 2,
+    "output": "Value",
+    "seedWords": [
+      1036831949,
+      3209481421,
+      1051372203,
+      1058103633
+    ],
+    "saved": true,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "2d-value-normal-extremes",
+    "route": "direct",
+    "dimensions": 2,
+    "output": "Value",
+    "seedWords": [
+      8388608,
+      2155872256,
+      2139095039,
+      4286578687
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "2d-value-large",
+    "route": "direct",
+    "dimensions": 2,
+    "output": "Value",
+    "seedWords": [
+      1266679809,
+      3414163457,
+      1199570944,
+      3347054592
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "2d-value-neighbors",
+    "route": "direct",
+    "dimensions": 2,
+    "output": "Value",
+    "seedWords": [
+      1056964609,
+      1056964607,
+      1065353217,
+      3212836865
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "2d-color-zero",
+    "route": "direct",
+    "dimensions": 2,
+    "output": "Color",
+    "seedWords": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "2d-color-ordinary",
+    "route": "direct",
+    "dimensions": 2,
+    "output": "Color",
+    "seedWords": [
+      1036831949,
+      3209481421,
+      1051372203,
+      1058103633
+    ],
+    "saved": true,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "2d-color-normal-extremes",
+    "route": "direct",
+    "dimensions": 2,
+    "output": "Color",
+    "seedWords": [
+      8388608,
+      2155872256,
+      2139095039,
+      4286578687
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "2d-color-large",
+    "route": "direct",
+    "dimensions": 2,
+    "output": "Color",
+    "seedWords": [
+      1266679809,
+      3414163457,
+      1199570944,
+      3347054592
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "2d-color-neighbors",
+    "route": "direct",
+    "dimensions": 2,
+    "output": "Color",
+    "seedWords": [
+      1056964609,
+      1056964607,
+      1065353217,
+      3212836865
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "3d-value-zero",
+    "route": "direct",
+    "dimensions": 3,
+    "output": "Value",
+    "seedWords": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "3d-value-ordinary",
+    "route": "direct",
+    "dimensions": 3,
+    "output": "Value",
+    "seedWords": [
+      1036831949,
+      3209481421,
+      1051372203,
+      1058103633
+    ],
+    "saved": true,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "3d-value-normal-extremes",
+    "route": "direct",
+    "dimensions": 3,
+    "output": "Value",
+    "seedWords": [
+      8388608,
+      2155872256,
+      2139095039,
+      4286578687
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "3d-value-large",
+    "route": "direct",
+    "dimensions": 3,
+    "output": "Value",
+    "seedWords": [
+      1266679809,
+      3414163457,
+      1199570944,
+      3347054592
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "3d-value-neighbors",
+    "route": "direct",
+    "dimensions": 3,
+    "output": "Value",
+    "seedWords": [
+      1056964609,
+      1056964607,
+      1065353217,
+      3212836865
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "3d-color-zero",
+    "route": "direct",
+    "dimensions": 3,
+    "output": "Color",
+    "seedWords": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "3d-color-ordinary",
+    "route": "direct",
+    "dimensions": 3,
+    "output": "Color",
+    "seedWords": [
+      1036831949,
+      3209481421,
+      1051372203,
+      1058103633
+    ],
+    "saved": true,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "3d-color-normal-extremes",
+    "route": "direct",
+    "dimensions": 3,
+    "output": "Color",
+    "seedWords": [
+      8388608,
+      2155872256,
+      2139095039,
+      4286578687
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "3d-color-large",
+    "route": "direct",
+    "dimensions": 3,
+    "output": "Color",
+    "seedWords": [
+      1266679809,
+      3414163457,
+      1199570944,
+      3347054592
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "3d-color-neighbors",
+    "route": "direct",
+    "dimensions": 3,
+    "output": "Color",
+    "seedWords": [
+      1056964609,
+      1056964607,
+      1065353217,
+      3212836865
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "4d-value-zero",
+    "route": "direct",
+    "dimensions": 4,
+    "output": "Value",
+    "seedWords": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "4d-value-ordinary",
+    "route": "direct",
+    "dimensions": 4,
+    "output": "Value",
+    "seedWords": [
+      1036831949,
+      3209481421,
+      1051372203,
+      1058103633
+    ],
+    "saved": true,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "4d-value-normal-extremes",
+    "route": "direct",
+    "dimensions": 4,
+    "output": "Value",
+    "seedWords": [
+      8388608,
+      2155872256,
+      2139095039,
+      4286578687
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "4d-value-large",
+    "route": "direct",
+    "dimensions": 4,
+    "output": "Value",
+    "seedWords": [
+      1266679809,
+      3414163457,
+      1199570944,
+      3347054592
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "4d-value-neighbors",
+    "route": "direct",
+    "dimensions": 4,
+    "output": "Value",
+    "seedWords": [
+      1056964609,
+      1056964607,
+      1065353217,
+      3212836865
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "4d-color-zero",
+    "route": "direct",
+    "dimensions": 4,
+    "output": "Color",
+    "seedWords": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "4d-color-ordinary",
+    "route": "direct",
+    "dimensions": 4,
+    "output": "Color",
+    "seedWords": [
+      1036831949,
+      3209481421,
+      1051372203,
+      1058103633
+    ],
+    "saved": true,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "4d-color-normal-extremes",
+    "route": "direct",
+    "dimensions": 4,
+    "output": "Color",
+    "seedWords": [
+      8388608,
+      2155872256,
+      2139095039,
+      4286578687
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "4d-color-large",
+    "route": "direct",
+    "dimensions": 4,
+    "output": "Color",
+    "seedWords": [
+      1266679809,
+      3414163457,
+      1199570944,
+      3347054592
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "4d-color-neighbors",
+    "route": "direct",
+    "dimensions": 4,
+    "output": "Color",
+    "seedWords": [
+      1056964609,
+      1056964607,
+      1065353217,
+      3212836865
+    ],
+    "saved": false,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "group-1d-value",
+    "route": "group",
+    "dimensions": 1,
+    "output": "Value",
+    "seedWords": [
+      1036831949,
+      3209481421,
+      1051372203,
+      1058103633
+    ],
+    "saved": true,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "group-1d-color",
+    "route": "group",
+    "dimensions": 1,
+    "output": "Color",
+    "seedWords": [
+      1036831949,
+      3209481421,
+      1051372203,
+      1058103633
+    ],
+    "saved": true,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "group-4d-value",
+    "route": "group",
+    "dimensions": 4,
+    "output": "Value",
+    "seedWords": [
+      1036831949,
+      3209481421,
+      1051372203,
+      1058103633
+    ],
+    "saved": true,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  },
+  {
+    "case": "group-4d-color",
+    "route": "group",
+    "dimensions": 4,
+    "output": "Color",
+    "seedWords": [
+      1036831949,
+      3209481421,
+      1051372203,
+      1058103633
+    ],
+    "saved": true,
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "imageInfoControl": false
+  }
+]

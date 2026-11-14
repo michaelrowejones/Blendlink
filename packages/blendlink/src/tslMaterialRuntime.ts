@@ -1,4 +1,5 @@
-import { vertexAlphaBinding, assertVertexAlphaOpacity } from './tslVertexColorAlpha.js'
+import { createOwnedVertexAlphaMaterial } from './tslOwnedVertexAlphaMaterial.js'
+import { vertexAlphaBinding, assertVertexAlphaOpacity, certifyVertexAlphaOpacity, type VertexAlphaOpacityOwnership } from './tslVertexColorAlpha.js'
 import { prepareTslNoiseFields, type NoiseFieldPreparationStatistics } from './tslNoiseFields.js'
 export { createTslBuildResources } from './tslNodeRecipe.js'
 export { prepareTslNoiseFields, type PreparedTslNoiseFields, type PrepareTslNoiseFieldsOptions, type NoiseFieldPreparationStatistics } from './tslNoiseFields.js'
@@ -131,16 +132,30 @@ export interface InstalledTslMaterials {
  */
 const CLONE_IDENTITY_KEYS = new Set([
   'uuid', 'id', 'type', 'version', 'name', 'userData', '_listeners', 'isMaterial',
+  // Private ownership state belongs to the scoped clone, never its source.
+  'completeProgramColor',
 ])
 
 export function installProgramIntoMaterial(
   source: THREE.Material,
   nodes: Partial<Record<MaterialNodeSlot, unknown>>,
 ): MeshStandardNodeMaterial {
+  return installCompiledProgramMaterial(source,nodes,false)
+}
+
+/** The new explicit VertexAlpha Alpha channel is the sole opt-in caller.
+ * The exported generic installation API and all older programs stay unchanged. */
+function installCompiledProgramMaterial(
+  source: THREE.Material,
+  nodes: Partial<Record<MaterialNodeSlot, unknown>>,
+  ownsVertexAlphaOpacity:boolean,
+): MeshStandardNodeMaterial {
   const physical = (source as THREE.MeshPhysicalMaterial).isMeshPhysicalMaterial
     || Object.keys(nodes).some(key => ['clearcoatNode', 'clearcoatRoughnessNode',
       'clearcoatNormalNode', 'transmissionNode', 'iorNode', 'sheenNode', 'sheenRoughnessNode'].includes(key))
-  const clone = physical ? new MeshPhysicalNodeMaterial() : new MeshStandardNodeMaterial()
+  const clone = ownsVertexAlphaOpacity
+    ? createOwnedVertexAlphaMaterial(Boolean(physical),nodes.colorNode!=null)
+    : physical ? new MeshPhysicalNodeMaterial() : new MeshStandardNodeMaterial()
   // NodeMaterial.copy reads node slots off the source; copying from
   // a plain shipped MeshStandardMaterial turns every null default
   // (fragmentNode, vertexNode, mrtNode, ...) into UNDEFINED — and
@@ -377,13 +392,17 @@ export async function installTslMaterials(
     : await fetchMaterialPrograms(pointer, options.signal)
   aborted()
   const used = new Set<string>()
+  const ownedOpacity=new WeakMap<THREE.Mesh,Map<string,VertexAlphaOpacityOwnership>>()
   options.root.traverse(object => {
     const mesh = object as THREE.Mesh
     if (!mesh.isMesh) return
     for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
       const source = material?.userData?.blendlink_source_material
       if (typeof source === 'string' && (material as THREE.MeshStandardMaterial).isMeshStandardMaterial) {
-        assertVertexAlphaOpacity(mesh,programs.materials[source]?.channels,material)
+        const entry=programs.materials[source],extras=meshRuntimeExtras(mesh)
+        const ownership=entry?certifyVertexAlphaOpacity(mesh,entry.channels,extras,source,entry.vertexAlphaOpacity):null
+        if(ownership){const map=ownedOpacity.get(mesh)??new Map<string,VertexAlphaOpacityOwnership>();map.set(source,ownership);ownedOpacity.set(mesh,map)}
+        assertVertexAlphaOpacity(mesh,entry?.channels,material,ownership??undefined)
         used.add(source)
       }
     }
@@ -502,7 +521,7 @@ export async function installTslMaterials(
           return
         }
         let vertexAlpha: ReturnType<typeof vertexAlphaBinding>
-        try { vertexAlpha = vertexAlphaBinding(mesh, program.channels, extras, source) }
+        try { vertexAlpha = vertexAlphaBinding(mesh, program.channels, extras, source,ownedOpacity.get(mesh)?.get(source)) }
         catch (error) {
           if (!(error instanceof TslIrError)) throw error
           skipped.push({material:source,reason:`mesh "${mesh.name}" Vertex Color Alpha refused: ${error.message}; its carrier stays`}); return
@@ -657,8 +676,11 @@ export async function installTslMaterials(
               })
               return
             }
+            const ownership=ownedOpacity.get(mesh)?.get(source)
+            if(ownership&&(program.nodes.opacityNode==null||ownership.completeColor!==(program.nodes.colorNode!=null)))
+              throw new TslIrError('Certified Vertex Alpha opacity requires its complete owned channels to build')
             variant = {
-              clone: installProgramIntoMaterial(material, program.nodes),
+              clone: installCompiledProgramMaterial(material,program.nodes,!!ownership),
               resources,
             }
             variants.set(variantKey, variant)

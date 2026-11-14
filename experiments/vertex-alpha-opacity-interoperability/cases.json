@@ -1,0 +1,1 @@
+{"schemaVersion":1,"cases":[{"case":"point-color-tenth","kind":"color","domain":"POINT","alpha":0.1},{"case":"corner-color-third","kind":"color","domain":"CORNER","alpha":0.3333333333333333},{"case":"point-texture-tenth","kind":"texture","domain":"POINT","alpha":0.1},{"case":"corner-texture-third","kind":"texture","domain":"CORNER","alpha":0.3333333333333333}]}

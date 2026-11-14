@@ -1,0 +1,6 @@
+import{spawn}from'node:child_process';import{resolve,join}from'node:path';
+const root=resolve(import.meta.dirname,'../..'),directory=resolve(process.argv[2]);const run=(args,env=process.env)=>new Promise((done,reject)=>{const child=spawn(process.execPath,args,{cwd:root,env,stdio:'inherit'}),timer=setTimeout(()=>{child.kill('SIGTERM');setTimeout(()=>child.kill('SIGKILL'),500).unref()},300000);child.once('error',reject);child.once('close',code=>{clearTimeout(timer);code===0?done():reject(Error('Opacity proof failed '+code))})})
+await run(['--test','experiments/vertex-alpha-opacity-interoperability/protocol.test.mjs'])
+await run(['experiments/vertex-alpha-opacity-interoperability/capture.mjs',directory])
+for(const profile of['metal','software']){const env={...process.env,BLENDLINK_TEST_PROFILE:profile,BLENDLINK_TEST_CHROMIUM_ARGS:profile==='metal'?'[]':'["--use-angle=swiftshader","--use-webgpu-adapter=swiftshader"]'};if(profile==='metal')env.BLENDLINK_TEST_CHROMIUM_CHANNEL='chromium';else delete env.BLENDLINK_TEST_CHROMIUM_CHANNEL;await run(['experiments/vertex-alpha-opacity-interoperability/run.mjs',directory,'--final'],env)}
+await run(['experiments/vertex-alpha-opacity-interoperability/verify.mjs',directory])

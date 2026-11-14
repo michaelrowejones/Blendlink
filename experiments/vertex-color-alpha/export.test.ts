@@ -8,9 +8,9 @@ import{MeshoptDecoder}from'meshoptimizer'
 import{resolveConfig}from'../../packages/blendlink/src/config.js'
 import{parseManifest}from'../../packages/blendlink/src/typegen.js'
 import{captureVertexAlphaOptimization}from'../../packages/blendlink/src/vertexAlphaOptimization.js'
-import{assertQualification,browserProofContract}from'./protocol.mjs'
+import{assertQualification,browserProofContract,assertAlphaSourcePrograms}from'./protocol.mjs'
 const hash=(bytes:Uint8Array)=>createHash('sha256').update(bytes).digest('hex')
-it('publishes eight untouched source fields with default packaged Final optimization',async()=>{
+it('publishes untouched source fields with default packaged Final optimization',async()=>{
  const directory=resolve(process.env.SCENETOWEB_VERTEX_ALPHA_REFERENCES!),native=assertQualification(JSON.parse(readFileSync(join(directory,'qualification.json'),'utf8')))
  const root=join(directory,'compiled');mkdirSync(root,{recursive:true})
  const{syncAll,verifyAll,publishedAssetPath}=await import('../../packages/blendlink/dist/sync.js')
@@ -30,7 +30,7 @@ it('publishes eight untouched source fields with default packaged Final optimiza
   const source=native.cases[index],manifestBytes=readFileSync(scene.manifestPath),manifest=parseManifest(manifestBytes.toString())!
   expect(manifest.materialPrograms).toBeTruthy();expect(manifest.optimization?.passes?.skipped).toContainEqual(expect.stringMatching(/asset-wide.*Vertex Color Alpha/))
   const materialPath=publishedAssetPath(scene,manifest.materialPrograms!.url,manifest)!,materialBytes=readFileSync(materialPath)
-  const actual=JSON.parse(materialBytes.toString()),raw=JSON.parse(readFileSync(join(directory,source.rawProgramFile),'utf8'))
+  const actual=JSON.parse(materialBytes.toString()),raw=JSON.parse(readFileSync(join(directory,source.rawProgramFile),'utf8'));assertAlphaSourcePrograms(raw,source);assertAlphaSourcePrograms(actual,source)
   expect(actual.materials).toEqual(raw.materials)
   const before=captureVertexAlphaOptimization(await io.read(join(directory,source.rawGlbFile)))!
   const after=captureVertexAlphaOptimization(await io.read(scene.glbPath))!

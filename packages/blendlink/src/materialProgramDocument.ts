@@ -33,7 +33,7 @@ export interface MaterialProgramImage {
 export interface MaterialProgramsDocument {
   schemaVersion: 1
   model: 'blendlink-material-programs-v1'
-  materials: Record<string, { channels: Record<string, MaterialProgramChannel>; skipped?: { channel?: string; reason: string }[] }>
+  materials: Record<string, { vertexAlphaOpacity?: import('./tslVertexColorAlpha.js').VertexAlphaOpacityOwnership; channels: Record<string, MaterialProgramChannel>; skipped?: { channel?: string; reason: string }[] }>
   /** texture_ref source images published beside the sidecar. */
   images?: Record<string, MaterialProgramImage>
 }

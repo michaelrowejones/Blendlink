@@ -37,6 +37,19 @@ def _normalize_evaluation_engine(engine):
     return "EEVEE" if engine in {"EEVEE", "BLENDER_EEVEE", "BLENDER_EEVEE_NEXT"} else engine
 
 
+def _float_color_alpha(layer):
+    """Shared native named-color Alpha field; no new browser opcode or carrier."""
+    import bpy
+    import platform as alpha_platform
+    import sys as alpha_sys
+    if (tuple(bpy.app.version) != (5, 3, 0) or bpy.app.build_hash != b'02f0899d78e3'
+            or get_evaluation_engine() != "EEVEE" or alpha_sys.platform != 'darwin'
+            or alpha_platform.machine() != 'arm64' or bpy.context.preferences.system.gpu_backend != 'METAL'):
+        _refuse("Vertex Color Alpha requires the pinned Blender 5.3 macOS arm64 EEVEE Metal source profile")
+    return {"op": "vertex_color_alpha", "model": "eevee53-float-color-alpha-scalar-v1",
+            "sourceProfile": "blender53-eevee-metal-float-color-alpha-v1", "layer": layer}
+
+
 def get_evaluation_engine():
     """Effective source engine, scoped to the selected material output."""
     import bpy
@@ -2809,15 +2822,7 @@ def _emit_output(node, from_socket, stack=()):
 
     if idname == "ShaderNodeVertexColor":
         if socket_name == "Alpha":
-            import bpy
-            import platform as alpha_platform
-            import sys as alpha_sys
-            if (tuple(bpy.app.version) != (5, 3, 0) or bpy.app.build_hash != b'02f0899d78e3'
-                    or get_evaluation_engine() != "EEVEE" or alpha_sys.platform != 'darwin'
-                    or alpha_platform.machine() != 'arm64' or bpy.context.preferences.system.gpu_backend != 'METAL'):
-                _refuse("Vertex Color Alpha requires the pinned Blender 5.3 macOS arm64 EEVEE Metal source profile")
-            return {"op": "vertex_color_alpha", "model": "eevee53-float-color-alpha-scalar-v1",
-                    "sourceProfile": "blender53-eevee-metal-float-color-alpha-v1", "layer": str(getattr(node, "layer_name", "") or "")}
+            return _float_color_alpha(str(getattr(node, "layer_name", "") or ""))
         if socket_name != "Color":
             _refuse(f"Vertex Color output {socket_name!r} has no cell yet")
         return {
@@ -2850,6 +2855,16 @@ def _emit_output(node, from_socket, stack=()):
                 f"Attribute type {node.attribute_type!r} has no cell yet"
             )
         attribute_output = getattr(from_socket, "identifier", socket_name)
+        if attribute_output == "Alpha":
+            name = str(getattr(node, "attribute_name", "") or "")
+            if not name:
+                _refuse("Attribute GEOMETRY Alpha requires an explicit nonempty named FLOAT_COLOR POINT/CORNER layer")
+            if name == "temperature":
+                _refuse("Attribute GEOMETRY Alpha named temperature has native alpha one; painted-alpha transport is unqualified")
+            # Present FLOAT_COLOR/domain, bounded static primary surface Mesh,
+            # raw words and exact owner/material binding are validated by the
+            # existing private scalar installation before any publication.
+            return _float_color_alpha(name)
         color = {
             "op": "vertex_color",
             "layer": str(getattr(node, "attribute_name", "") or ""),

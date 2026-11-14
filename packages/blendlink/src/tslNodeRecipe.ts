@@ -2179,6 +2179,15 @@ function hashFloat4ToFloat(
   )
 }
 
+/** Shared hash arithmetic only. Source/context admission belongs to the caller. */
+export function compositorWhiteNoiseHash(dimensions: number, vector: TslExpression, w: TslExpression, color: boolean): TslExpression {
+  if (dimensions === 1) return color ? hashFloat1ToFloat3(w) : hashFloat1ToFloat(w)
+  if (dimensions === 2) return color ? hashFloat2ToFloat3(vector.x, vector.y) : hashFloat2ToFloat(vector.x, vector.y)
+  if (dimensions === 3) return color ? hashFloat3ToFloat3(vector.x, vector.y, vector.z) : hashFloat3ToFloat(vector.x, vector.y, vector.z)
+  if (dimensions === 4) return color ? hashFloat4ToFloat3(vector.x, vector.y, vector.z, w) : hashFloat4ToFloat(vector.x, vector.y, vector.z, w)
+  throw new Error('White Noise hash requires dimensions 1 through 4')
+}
+
 /** Cycles hash_float3_to_float3: the 4D hash with w = 1 and w = 2 fills
  * the second and third lanes. */
 function hashFloat3ToFloat3(

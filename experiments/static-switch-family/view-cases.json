@@ -1,0 +1,10 @@
+[
+ {"case":"calibration","kind":"control","family":"mono-view","mode":"RGBA","choice":0},
+ {"case":"view-literal","kind":"view-literal","family":"mono-view","mode":"RGBA","choice":0},
+ {"case":"view-disabled-first","kind":"view-disabled","family":"mono-view","mode":"RGBA","choice":0},
+ {"case":"view-renamed-first","kind":"view-renamed","family":"mono-view","mode":"RGBA","choice":0},
+ {"case":"view-inactive-time","kind":"view-inactive","family":"mono-view","mode":"RGBA","choice":0},
+ {"case":"view-group-reroute","kind":"view-group","family":"mono-view","mode":"RGBA","choice":0},
+ {"case":"view-image-field","kind":"view-image","family":"mono-view","mode":"RGBA","choice":0},
+ {"case":"view-render-layer-domain","kind":"view-domain","family":"mono-view","mode":"RGBA","choice":0}
+]

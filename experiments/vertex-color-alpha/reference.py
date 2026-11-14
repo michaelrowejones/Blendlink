@@ -14,7 +14,7 @@ import material_compiler as compiler
 assert Path(compiler.__file__).resolve()==ROOT/'packages/blender-addon/material_compiler.py'
 OUT=Path(os.environ['SCENETOWEB_VERTEX_ALPHA_REFERENCES']).resolve()
 PLAN=json.loads((OUT/'plan.json').read_text());GEOMETRY=json.loads((ROOT/'experiments/vertex-color-alpha/fixture-geometry.json').read_text());sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
-files=sorted({Path(__file__),ROOT/'experiments/vertex-color-alpha/cases.json',ROOT/'experiments/vertex-color-alpha/protocol.mjs',ROOT/'experiments/vertex-color-alpha/fixture-geometry.json',
+files=sorted({Path(__file__),ROOT/'experiments/vertex-color-alpha/cases.json',ROOT/'experiments/vertex-color-alpha/attribute-cases.json',ROOT/'experiments/vertex-color-alpha/protocol.mjs',ROOT/'experiments/vertex-color-alpha/fixture-geometry.json',
     *(ROOT/'packages/blender-addon').glob('*.py'),*(ROOT/'packages/blender-addon').glob('*.json'),*(ROOT/'packages/blendlink/blender').glob('*.py')})
 source_hashes={str(p.relative_to(ROOT)):sha(p)for p in files}
 assert tuple(bpy.app.version)==(5,3,0) and bpy.app.build_hash==b'02f0899d78e3'
@@ -65,13 +65,25 @@ calibration.update({'maxAbs':0,'pixelOffset':[0,0],'samples':1,'filterSize':scen
 import gpu
 backend={'backend':gpu.platform.backend_type_get(),'vendor':gpu.platform.vendor_get(),'renderer':gpu.platform.renderer_get()}
 
+def alpha_node(tree,spec,vertex_layer):
+    kind=spec.get('sourceNode','ShaderNodeVertexColor')
+    assert kind in {'ShaderNodeVertexColor','ShaderNodeAttribute'}
+    node=tree.nodes.new(kind)
+    if kind=='ShaderNodeAttribute':
+        assert spec['layer'] and spec['layer']!='temperature'
+        node.attribute_type='GEOMETRY';node.attribute_name=spec['layer']
+        assert node.attribute_type=='GEOMETRY'and node.attribute_name==spec['layer']
+    else:node.layer_name=vertex_layer
+    assert node.outputs['Alpha'].identifier=='Alpha'
+    return node
+
 rows=[]
 for spec in PLAN['cases']:
     scene,mesh,owner=setup(spec['case'])
-    paint=mesh.color_attributes.new(name='Render Paint',type='FLOAT_COLOR',domain=spec['domain'])
+    paint=mesh.color_attributes.new(name=spec.get('layer','Render Paint'),type='FLOAT_COLOR',domain=spec['domain'])
     paint.data.foreach_set('color',array('f',[lane for value in spec['alpha']for lane in(.125,.25,.5,value)]))
     editor=mesh.color_attributes.new(name='Editor Paint',type='FLOAT_COLOR',domain='POINT');editor.data.foreach_set('color',array('f',[.125,.25,.5,1]*4))
-    mesh.color_attributes.render_color_index=0;mesh.color_attributes.active_color_index=1
+    mesh.color_attributes.render_color_index=1 if spec.get('sourceNode')=='ShaderNodeAttribute'else 0;mesh.color_attributes.active_color_index=1
     owners=[owner]
     if spec.get('shared'):
         owner.location.x=-1;owner.scale.x=.5
@@ -83,10 +95,10 @@ for spec in PLAN['cases']:
         surface.inputs['Base Color'].default_value=(0,0,0,1);surface.inputs['Specular IOR Level'].default_value=0;surface.inputs['Emission Strength'].default_value=1
         if spec.get('group'):
             group=bpy.data.node_groups.new('Artist Alpha Group','ShaderNodeTree');group.interface.new_socket(name='Artist Alpha',in_out='OUTPUT',socket_type='NodeSocketFloat')
-            field=group.nodes.new('ShaderNodeVertexColor');field.layer_name='Render Paint';result=group.nodes.new('NodeGroupOutput');reroute=group.nodes.new('NodeReroute')
+            field=alpha_node(group,spec,'Render Paint');result=group.nodes.new('NodeGroupOutput');reroute=group.nodes.new('NodeReroute')
             group.links.new(field.outputs['Alpha'],reroute.inputs[0]);group.links.new(reroute.outputs[0],result.inputs[0]);instance=tree.nodes.new('ShaderNodeGroup');instance.node_tree=group;alpha=instance.outputs[0]
         else:
-            field=tree.nodes.new('ShaderNodeVertexColor');field.layer_name=''if index else'Render Paint';alpha=field.outputs['Alpha']
+            field=alpha_node(tree,spec,''if index else'Render Paint');alpha=field.outputs['Alpha']
         tree.links.new(alpha,surface.inputs['Emission Color'])
         if spec.get('rgb'):
             rgb=tree.nodes.new('ShaderNodeVertexColor');rgb.layer_name='Editor Paint';tree.links.new(rgb.outputs['Color'],surface.inputs['Base Color'])
@@ -127,6 +139,6 @@ for spec in PLAN['cases']:
 assert source_hashes=={str(p.relative_to(ROOT)):sha(p)for p in files}
 qualification={'schemaVersion':1,'status':'CAPTURED_VERTEX_COLOR_ALPHA','nativeVersion':list(bpy.app.version),'nativeBuild':bpy.app.build_hash.decode(),
     'sourceBackend':backend,'sourceHashes':source_hashes,'calibration':calibration,'cases':rows,
-    'sourceStage':'actual EEVEE Principled Emission from native Vertex Color Alpha; half-film reference, not exact Float32 raster oracle'}
+    'sourceStage':'actual EEVEE Principled Emission from native '+('named Attribute GEOMETRY Alpha'if PLAN['cases'][0].get('sourceNode')=='ShaderNodeAttribute'else'Vertex Color Alpha')+'; half-film reference, not exact Float32 raster oracle'}
 (OUT/'qualification.json').write_text(json.dumps(qualification,indent=2)+'\n')
 print('SCENETOWEB_VERTEX_ALPHA_NATIVE_CAPTURED '+json.dumps({'cases':len(rows),'frames':len(rows)*len(PLAN['sizes']),'saved':len(rows)}))

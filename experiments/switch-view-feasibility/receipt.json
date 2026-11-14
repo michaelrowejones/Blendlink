@@ -1,0 +1,18 @@
+{
+  "status": "CLOSED_MONO_SWITCH_VIEW_FEASIBILITY",
+  "researchOnly": true,
+  "nativeRenders": 8,
+  "primaryWords": 3744,
+  "wordDifferences": 0,
+  "guardedPythonInvocations": 1,
+  "gpuInitializationCalls": 0,
+  "supportCredit": 0,
+  "FinalCredit": 0,
+  "browserCredit": 0,
+  "closure": {
+    "path": "artifacts/verification-switch-view-feasibility-v2/closed.json",
+    "sha256": "dffd06ae1b3e1af44ccffdc49a6fdea117169479a3949b6b4f2f5beacfc75a7f"
+  },
+  "primarySourcePinsSha256": "b57d2642f9e4032a29951b38d49fe6c401e90fcda7bccfc5eecbda7d35750d17",
+  "scope": "Pinned native CPU mono fallback/domain observations only. Inactive SceneTime changes no output; this is not a scheduler execution-count proof, multiview support, source extraction or actual Final/browser qualification."
+}

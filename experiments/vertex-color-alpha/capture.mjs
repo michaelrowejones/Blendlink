@@ -5,22 +5,22 @@ import{join,resolve}from'node:path'
 import{createNodePortBlenderLauncher}from'../../scripts/lib/node-port-python.mjs'
 import{archiveNativeLauncher,validateNativeArchive}from'../../scripts/lib/native-proof-archive.mjs'
 import{hash}from'../../scripts/lib/runtime-provenance.mjs'
-import{expectedCases,sizes,assertQualification,assertFinal}from'./protocol.mjs'
+import{expectedCases,sizes,assertQualification,assertFinal,sourcePolicyScripts}from'./protocol.mjs'
 const root=resolve(import.meta.dirname,'../..'),directory=resolve(process.argv[2])
 await mkdir(resolve(directory,'..'),{recursive:true});await mkdir(directory)
 await writeFile(join(directory,'plan.json'),JSON.stringify({cases:expectedCases(),sizes},null,2)+'\n')
 const launcher=await createNodePortBlenderLauncher({blender:process.env.BLENDLINK_BLENDER??'/Applications/Blender.app/Contents/MacOS/Blender',directory:join(directory,'native-active')})
-const env={...process.env,SCENETOWEB_VERTEX_ALPHA_REFERENCES:directory,SCENETOWEB_VERTEX_ALPHA_POLICY:join(directory,'policy'),BLENDLINK_BLENDER:launcher.executable}
+const env={...process.env,SCENETOWEB_VERTEX_ALPHA_REFERENCES:directory,SCENETOWEB_VERTEX_ALPHA_POLICY:join(directory,'policy'),SCENETOWEB_ATTRIBUTE_ALPHA_POLICY:join(directory,'attribute-policy'),BLENDLINK_BLENDER:launcher.executable}
 const run=(command,args)=>new Promise((done,reject)=>{
  const child=spawn(command,args,{cwd:root,env,stdio:'inherit'}),timer=setTimeout(()=>{child.kill('SIGTERM');setTimeout(()=>child.kill('SIGKILL'),500).unref()},300000)
  child.once('error',error=>{clearTimeout(timer);reject(error)});child.once('close',code=>{clearTimeout(timer);code===0?done():reject(Error('Vertex Alpha capture command failed '+code))})
 })
 const fixtureFiles=['experiments/vertex-color-alpha/capture.mjs','experiments/vertex-color-alpha/reference.py','experiments/vertex-color-alpha/export.test.ts',
- 'experiments/vertex-color-alpha/protocol.mjs','experiments/vertex-color-alpha/cases.json','experiments/vertex-color-alpha/fixture-geometry.json','packages/blender-addon/tests/vertex_color_alpha_check.py']
+ 'experiments/vertex-color-alpha/protocol.mjs','experiments/vertex-color-alpha/cases.json','experiments/vertex-color-alpha/attribute-cases.json','experiments/vertex-color-alpha/fixture-geometry.json','packages/blender-addon/tests/vertex_color_alpha_check.py','packages/blender-addon/tests/attribute_alpha_check.py']
 const fixtureHashes=Object.fromEntries(await Promise.all(fixtureFiles.map(async file=>[file,hash(await readFile(join(root,file)))])))
 let archived=false
 try{
- for(const script of['packages/blender-addon/tests/vertex_color_alpha_check.py','experiments/vertex-color-alpha/reference.py'])
+ for(const script of[...sourcePolicyScripts,'experiments/vertex-color-alpha/reference.py'])
   await run(launcher.executable,['--background','--factory-startup','-t','1','--python-exit-code','1','--python',join(root,script)])
  const native=assertQualification(JSON.parse(await readFile(join(directory,'qualification.json'))))
  await run(process.execPath,['node_modules/vitest/vitest.mjs','run','experiments/vertex-color-alpha/export.test.ts'])
@@ -29,7 +29,7 @@ try{
  final.fixtureHashes=fixtureHashes
  await launcher.finalize();final.nativeArchive={identity:launcher.identity,proof:await archiveNativeLauncher(launcher,directory,true)};archived=true
  await validateNativeArchive(final.nativeArchive,directory,{expectedFinalSources:native.cases.map(row=>join(directory,row.sourceFile)),
-  expectedScripts:[{path:join(root,'packages/blender-addon/tests/vertex_color_alpha_check.py'),invocations:1},{path:join(root,'experiments/vertex-color-alpha/reference.py'),invocations:1}],
+  expectedScripts:[...sourcePolicyScripts,'experiments/vertex-color-alpha/reference.py'].map(file=>({path:join(root,file),invocations:1})),
   helperInputs:{helper:join(root,'scripts/lib/node-port-python.mjs'),bridge:join(root,'scripts/node-port-blender.mjs')}})
  await writeFile(join(directory,'final-proof.json'),JSON.stringify(final,null,2)+'\n')
  console.log('SCENETOWEB_VERTEX_ALPHA_NATIVE_FINAL_CAPTURED '+JSON.stringify({native:native.cases.length,Final:final.rows.length}))

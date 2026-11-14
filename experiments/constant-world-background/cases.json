@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "sizes": [
+    [
+      13,
+      9
+    ],
+    [
+      26,
+      18
+    ],
+    [
+      19,
+      11
+    ]
+  ],
+  "numericContract": {
+    "rgbAbsoluteMax": 0.0009765625,
+    "alphaOneExact": true,
+    "reference": "actual EEVEE Metal half-film material output stored in EXR32",
+    "radianceMinimum": 0,
+    "radianceMaximum": 1
+  },
+  "cases": [
+    {
+      "case": "background-schema-default",
+      "setup": "schema",
+      "color": [
+        0.8,
+        0.8,
+        0.8
+      ],
+      "strength": 1,
+      "exactRGB": false
+    },
+    {
+      "case": "initialized-world-default",
+      "setup": "initialized",
+      "color": [
+        0.05,
+        0.05,
+        0.05
+      ],
+      "strength": 1,
+      "exactRGB": false
+    },
+    {
+      "case": "dyadic-color-strength",
+      "setup": "explicit",
+      "color": [
+        0.125,
+        0.25,
+        0.5
+      ],
+      "strength": 2,
+      "exactRGB": true
+    },
+    {
+      "case": "zero-strength",
+      "setup": "explicit",
+      "color": [
+        0.25,
+        0.5,
+        0.75
+      ],
+      "strength": 0,
+      "exactRGB": true
+    },
+    {
+      "case": "nonhalf-products",
+      "setup": "explicit",
+      "color": [
+        0.1,
+        0.2,
+        0.3
+      ],
+      "strength": 0.7,
+      "exactRGB": false
+    }
+  ],
+  "controlCases": [
+    {
+      "case": "film-transparent",
+      "setup": "explicit",
+      "color": [
+        0.125,
+        0.25,
+        0.5
+      ],
+      "strength": 2,
+      "exactRGB": true,
+      "controlKind": "film-transparent"
+    },
+    {
+      "case": "website-background",
+      "setup": "explicit",
+      "color": [
+        0.125,
+        0.25,
+        0.5
+      ],
+      "strength": 2,
+      "exactRGB": true,
+      "controlKind": "website-background"
+    }
+  ]
+}

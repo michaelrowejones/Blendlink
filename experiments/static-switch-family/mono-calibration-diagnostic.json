@@ -1,0 +1,80 @@
+{
+  "status": "DIAGNOSTIC_ONLY_LITERAL_MONO_CALIBRATION_AND_RAW8",
+  "qualificationCredit": 0,
+  "nativeRenders": 1,
+  "nativeLiteralWordDifferences": 0,
+  "rawBrowserCaseRuns": 16,
+  "actualApis": [
+    {
+      "backend": "webgpu",
+      "gpu": {
+        "api": "WebGPU",
+        "vendor": "apple",
+        "architecture": "metal-3",
+        "device": "",
+        "description": ""
+      },
+      "cases": 8,
+      "wordMismatches": 0
+    },
+    {
+      "backend": "webgl2",
+      "gpu": {
+        "api": "WebGL2",
+        "vendor": "Google Inc. (Apple)",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+      },
+      "cases": 8,
+      "wordMismatches": 0
+    }
+  ],
+  "originalCyclesSettings": {
+    "samples": 1,
+    "use_denoising": true,
+    "use_adaptive_sampling": true,
+    "device": "CPU"
+  },
+  "originalMaterialLinks": [
+    {
+      "material": "Source scene plate",
+      "links": [
+        [
+          "ShaderNodeEmission",
+          "Emission",
+          "ShaderNodeOutputMaterial",
+          "Surface",
+          true
+        ]
+      ]
+    }
+  ],
+  "sourceOverrides": [
+    {
+      "file": "packages/blendlink/blender/export_scene.py",
+      "original": "de92be7a07c84aa82b7a4b6261d9aa621828c2bb74d9fe6873e81665d587a4a7",
+      "current": "d746ba319cdf24915ea8f718104639b2d17075fff6da46cb503caf2c225c171f"
+    },
+    {
+      "file": "packages/blendlink/blender/export_scene.py",
+      "original": "de92be7a07c84aa82b7a4b6261d9aa621828c2bb74d9fe6873e81665d587a4a7",
+      "current": "d746ba319cdf24915ea8f718104639b2d17075fff6da46cb503caf2c225c171f"
+    },
+    {
+      "file": "packages/blendlink/dist/blender/export_scene.py",
+      "original": "de92be7a07c84aa82b7a4b6261d9aa621828c2bb74d9fe6873e81665d587a4a7",
+      "current": "d746ba319cdf24915ea8f718104639b2d17075fff6da46cb503caf2c225c171f"
+    }
+  ],
+  "runtimeTransaction": {
+    "path": "/Users/michaeljones/Documents/GitHub/Blendlink/artifacts/verification-next19r3-mono-view/runtime-transaction/transaction.json",
+    "sha256": "d5d58219d9441a7d3fa74a3b4147bda148ac865fafe45f6f44f574d3d1744046"
+  },
+  "sevenRowsReusedWithoutModification": true,
+  "limits": "New diagnostic namespace only. Captured r3 calibration/receipt unchanged; no PBR/Cycles parity, saved Final, software or support credit. Full fresh matrix required.",
+  "raw": {
+    "machineLocal": true,
+    "path": "artifacts/diagnostic-switch-r3-calibration/",
+    "inputsSha256": "379d39c1531910476df43d4b93ac08b34ec1643c557c7dd520de734029cd752f",
+    "browserReportSha256": "dd7e1373b2df04c7f2d9c0cdeab5e4afec9a4f64354c74e0e1151cecc6287abd"
+  }
+}

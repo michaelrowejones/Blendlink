@@ -22,7 +22,7 @@ it('publishes exact saved static selections through actual material or composito
   if(q.context==='shader'){
    const materials=Object.values(body.materials) as any[];expect(materials).toHaveLength(1)
    expect(materials[0].channels['Base Color'].tslIr).toEqual(actual)
-  }else for(const key of ['status','ops','passes','output','compileTimeSelections'])expect(body.compositor[key],entry.case+' '+key).toEqual(actual[key])
+  }else for(const key of ['status','ops','passes','output','compileTimeSelections','compileTimeViews'])expect(body.compositor[key],entry.case+' '+key).toEqual(actual[key])
   expect(hash(readFileSync(join(native,entry.sourceFile)))).toBe(entry.sourceSha256)
   rows.push({case:entry.case,sourceFile:entry.sourceFile,sourceSha256:entry.sourceSha256,manifestPath:scene.manifestPath,manifestSha256:hash(manifestBytes),glbPath:scene.glbPath,glbSha256:hash(readFileSync(scene.glbPath)),programPath:path,programSha256:hash(bytes),pointer})
  }

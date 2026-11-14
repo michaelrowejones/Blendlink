@@ -1,0 +1,27 @@
+{
+  "status": "CLOSED_ATTRIBUTE_ALPHA_RESEARCH",
+  "researchOnly": true,
+  "supportCredit": 0,
+  "FinalCredit": 0,
+  "browserCredit": 0,
+  "nativeRenders": 13,
+  "genericEquivalentCases": 4,
+  "exactGenericWords": 65536,
+  "exactReservedColorWords": 16384,
+  "temperatureNegative": {
+    "wordDifferences": 12288,
+    "reason": "Pinned Attribute temperature hook sets output alpha to1; VertexColor retains source alpha."
+  },
+  "actualGLBs": 6,
+  "sourceAndOwnedCarrierBindings": 6,
+  "uniquePythonPrefixes": 1,
+  "closed": {
+    "path": "artifacts/verification-attribute-alpha-feasibility-v2/closed.json",
+    "sha256": "4f7edcc738c3c8085873f9be2f3cbd79372a5cf0e1099249baada45a607a8c4b"
+  },
+  "sourcePins": {
+    "primary": "29ef78aeb6f45d165a6d21945f0995c132201ab3951d9a4afb2e6711a6607fe6",
+    "specialNames": "4ed80d9b8c9345bba9354f160ee27cef35dc9cc8263ab63ad2d36428089bd72b"
+  },
+  "limits": "No SDK/emitter change, actual built Final, browser render or capability credit. EEVEE half-film sibling-node equivalence and exact owned scalar transport observations only."
+}

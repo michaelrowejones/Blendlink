@@ -1,0 +1,49 @@
+{
+  "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "sources": [
+    {
+      "path": "source/blender/gpu/shaders/material/gpu_shader_material_interface.bsl.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shaders/material/gpu_shader_material_interface.bsl.hh",
+      "sha256": "48764d9e532efc3f3f2d70537ce30f9324056c670d5436c14cedf7109d610099",
+      "bytes": 14259,
+      "license": "GPL-2.0-or-later",
+      "role": "runtime-generated interface stub; not authority for actual EEVEE behavior"
+    },
+    {
+      "path": "source/blender/draw/engines/eevee/shaders/eevee_attributes_mesh_lib.bsl.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/draw/engines/eevee/shaders/eevee_attributes_mesh_lib.bsl.hh",
+      "sha256": "32f926c272da61ac845414f6809acf85f2f64079e8687dcb380fe5f5f5ad9307",
+      "bytes": 1570,
+      "license": "GPL-2.0-or-later",
+      "role": "actual EEVEE implementation"
+    },
+    {
+      "path": "source/blender/draw/engines/eevee/shaders/eevee_nodetree_lib.bsl.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/draw/engines/eevee/shaders/eevee_nodetree_lib.bsl.hh",
+      "sha256": "a802cf032dc9fe05f9c91cf5fedb1dd1713d651e735c166f3531851c8b58f583",
+      "bytes": 47560,
+      "license": "GPL-2.0-or-later",
+      "role": "actual EEVEE implementation",
+      "lines": "999-1019: temperature/color volume-only postprocessing; surface Mesh color retains attr.w"
+    }
+  ],
+  "localFoundations": [
+    {
+      "path": "packages/blender-addon/vertex_color_alpha.py",
+      "sha256": "d9d8fadc663069154fdb56da43a3812cb6a4e0eb1f1e4521ccce7809d3bbb14d"
+    },
+    {
+      "path": "packages/blender-addon/tsl_ir.py",
+      "sha256": "b96807dc78e130a2bf6757274daee779a9a015a9dca357509871ea51fd43987d"
+    },
+    {
+      "path": "packages/blender-addon/material_compiler.py",
+      "sha256": "abe19c8ce692bcaeb74089a2fe2f59bac2c50b7c3e0f22fbc45948354a07c06e"
+    },
+    {
+      "path": "experiments/vertex-color-alpha/fixture-geometry.json",
+      "sha256": "914e0ee7f19140a0dc2eae6026153259e41eab669700622f9347f443a6041304"
+    }
+  ],
+  "supportCredit": 0
+}

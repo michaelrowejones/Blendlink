@@ -2672,7 +2672,7 @@
       "versionOverrides": {
         "5.3.0": {
           "category": "partial",
-          "limits": "Color output and its earlier evidence remain unchanged. Additional Alpha field route only on pinned Blender 5.3.0 build 02f0899d78e3, macOS arm64 EEVEE with METAL preferences; Cycles/native OpenGL and other source builds remain unqualified. Present named FLOAT_COLOR POINT/CORNER layer, or native active-render color layer for an empty name (independent of editor-active). Source alpha words must be +0 or normal finite Float32 in [0,1], read/classified in bulk before Python conversion. BYTE_COLOR, signed-zero/subnormal/HDR/nonfinite alpha, missing/wrong-type layers, modifiers/deformation, shape keys, instances, clocks/animation, reserved carrier collisions and coincident same-winding triangles per source material refuse. At most 300000 source vertices/corners and four private layers per owned mesh. Exact private Float32 SCALAR transport and indexed source-corner associations are checked per actual owner/material, including decoded post-Meshopt output. The bounded initial optimizer fallback preserves asset-wide POSITION with a visible skipped-pass reason, limited to 1000000 unique position-accessor vertices (including morph streams); only declared Alpha scalars receive additional generic-quantization protection. Checked Alpha association work is limited to 3000000 rendered corners; existing COLOR/NORMAL/TEXCOORD policies are unchanged. Runtime requires actual count-matched non-normalized Float32 scalar storage and a complete primitive draw; attribute/position/index identity, upload version, schema, draw range and groups are guarded. New Alpha/opacity plus stock VEC4 COLOR_0 with nonunit/unknown physical alpha refuses before publication and before runtime mutation; the exact safe exception requires every actual COLOR_0 alpha to equal 1 and guards that carrier thereafter. General Color+Alpha opacity, transparent coverage, old RGB multiplication and whole-scene lighting/camera appearance are not qualified. Native EEVEE half-film RGB output is compared with a predeclared absolute 2^-10 gate, not called an exact Float32 field oracle; raw source-to-GLB transport is exact, and output alpha 1 is exact. Eight source field graphs/8 saved Final scenes cover constants/nonuniform fields, seams, groups/reroutes, shared owners/materials and preservation of the existing RGB route on both browser APIs with Metal and SwiftShader. All pixels and seam/edge bands are checked. A retained old-fixture raster counterexample selects different triangles at one near-edge pixel; fresh authored fixture geometry independently guarantees at least half a physical pixel of seam clearance at 32/64/96. This is no arbitrary raster-edge ownership guarantee, artist-scene rewrite or official-demo credit.",
+          "limits": "Color output and its earlier evidence remain unchanged. Additional Alpha field route only on pinned Blender 5.3.0 build 02f0899d78e3, macOS arm64 EEVEE with METAL preferences; Cycles/native OpenGL and other source builds remain unqualified. Present named FLOAT_COLOR POINT/CORNER layer, or native active-render color layer for an empty name (independent of editor-active). Source alpha words must be +0 or normal finite Float32 in [0,1], read/classified in bulk before Python conversion. BYTE_COLOR, signed-zero/subnormal/HDR/nonfinite alpha, missing/wrong-type layers, modifiers/deformation, shape keys, instances, clocks/animation, reserved carrier collisions and coincident same-winding triangles per source material refuse. At most 300000 source vertices/corners and four private layers per owned mesh. Exact private Float32 SCALAR transport and indexed source-corner associations are checked per actual owner/material, including decoded post-Meshopt output. The bounded initial optimizer fallback preserves asset-wide POSITION with a visible skipped-pass reason, limited to 1000000 unique position-accessor vertices (including morph streams); only declared Alpha scalars receive additional generic-quantization protection. Checked Alpha association work is limited to 3000000 rendered corners; existing COLOR/NORMAL/TEXCOORD policies are unchanged. Runtime requires actual count-matched non-normalized Float32 scalar storage and a complete primitive draw; attribute/position/index identity, upload version, schema, draw range and groups are guarded. Older or untagged new-Alpha/opacity programs plus stock VEC4 COLOR_0 with nonunit/unknown physical alpha retain the named refusal before publication/runtime mutation; the exact unit-alpha exception remains guarded. A separate source-certified vertex-alpha-explicit-opacity-v1 adapter now replaces implicit carrier alpha only when the actual Alpha layer set, complete-Base-Color flag, material identity and both program/primitive tags match the physical scalar binding. It preserves complete program RGB once, or carrier RGB fallback including RGBA texture/color carriers, then uses native alpha-test/opaque handling. Four unchanged authored default Meshopt Final sources and Standard/Physical controls on both APIs/profiles give exact installed diffuse/opacity words; clone/copy preserve private RGB ownership. This is adapter/diffuse semantics only, not native transparent coverage, dithering, whole BSDF/lighting/camera parity or a global repair of older RGB multiplication. See experiments/vertex-alpha-opacity-interoperability/evidence.json; the following native field evidence keeps its own independent snapshot. Native EEVEE half-film RGB output is compared with a predeclared absolute 2^-10 gate, not called an exact Float32 field oracle; raw source-to-GLB transport is exact, and output alpha 1 is exact. Eight source field graphs/8 saved Final scenes cover constants/nonuniform fields, seams, groups/reroutes, shared owners/materials and preservation of the existing RGB route on both browser APIs with Metal and SwiftShader. All pixels and seam/edge bands are checked. A retained old-fixture raster counterexample selects different triangles at one near-edge pixel; fresh authored fixture geometry independently guarantees at least half a physical pixel of seam clearance at 32/64/96. This is no arbitrary raster-edge ownership guarantee, artist-scene rewrite or official-demo credit.",
           "runtimeOps": [
             "vertex_color",
             "vertex_color_alpha"
@@ -2799,7 +2799,116 @@
           "path": "experiments/tsl-node-differential/cells.json"
         }
       ],
-      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+      "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "GEOMETRY color/Fac via exported color attributes and OBJECT Color/Vector/Fac custom properties; other types/outputs refuse. Additional Blender5.3.0 build02f0899d78e3 macOS arm64 EEVEE Metal surface-Mesh scope: GEOMETRY Alpha from an explicit nonempty named FLOAT_COLOR POINT/CORNER layer, including lowercase color on the surface pipeline. Exact lowercase temperature refuses because native Attribute overwrites alpha with1. Empty/default/missing names, BYTE_COLOR, other domains, OBJECT/INSTANCER/VIEW_LAYER/LIGHT Alpha and volume pipelines are unqualified. Existing RGB/Fac/OBJECT routes remain under their own prior contracts. The existing vertex_color_alpha opcode/model and private raw Float32 SCALAR carrier are reused: source alpha must be +0 or normal finite[0,1]; only compiler-owned static primary Mesh copies are modified. No deformation/modifiers, shape keys, instances, source animation/drivers or ambiguous coincident same-winding triangles; at most300000 source vertices/corners and4layers permesh. Raw alpha words and per-owner/material indexed position/corner associations are exact before and after normal authored Meshopt Final optimization, with the existing asset-wide POSITION quantization fallback bounded to1M unique position vertices and3M checked rendered corners. Native Alpha-to-Emission uses actual EEVEE half-film output in EXR32; RGB comparison is bounded maxAbs2^-10 on every pixel/seam/edge, not word-exact F32 raster equality. Observed maxAbs0.00048828125 with667434 RGB word differences, zero contract violations and exact alpha-one output. Nine authored field scenes include groups/reroutes/shared owners/materials and preserved RGB paths. Actual WebGPU/WebGL2 via WebGPURenderer on observed Apple Metal and SwiftShader. This field proof gives no explicit-opacity, transparent-coverage, Color+Alpha opacity, camera/lighting/whole-scene, other build/platform/version or legacy WebGLRenderer credit; source-certified opacity adapter has its own independent scope. The shared qualified scalar IR can use source-certified vertex-alpha-explicit-opacity-v1 ownership under the same exact tag/physical binding contract; see experiments/vertex-alpha-opacity-interoperability/evidence.json. That separate Three diffuse-stage adapter proof does not change this Attribute field receipt or add Attribute-authored opacity/native-transparency case counts.",
+          "runtimeOps": [
+            "vertex_color",
+            "attribute_object",
+            "vertex_color_alpha"
+          ],
+          "evidence": [
+            {
+              "path": "packages/blender-addon/tsl_ir.py",
+              "anchor": "def emit_output"
+            },
+            {
+              "path": "packages/blendlink/src/tslNodeRecipe.ts",
+              "anchor": "case 'vertex_color':"
+            },
+            {
+              "path": "experiments/tsl-node-differential/cells.json"
+            },
+            {
+              "path": "packages/blender-addon/vertex_color_alpha.py"
+            },
+            {
+              "path": "packages/blender-addon/tests/attribute_alpha_check.py"
+            },
+            {
+              "path": "packages/blendlink/src/tslVertexColorAlpha.ts"
+            },
+            {
+              "path": "packages/blendlink/src/vertexAlphaOptimization.ts"
+            },
+            {
+              "path": "experiments/vertex-color-alpha/attribute-cases.json"
+            },
+            {
+              "path": "experiments/vertex-color-alpha/reference.py"
+            },
+            {
+              "path": "experiments/vertex-color-alpha/export.test.ts"
+            },
+            {
+              "path": "experiments/vertex-color-alpha/protocol.mjs"
+            },
+            {
+              "path": "experiments/vertex-color-alpha/verify.mjs"
+            },
+            {
+              "path": "experiments/attribute-alpha-feasibility/sources.json"
+            },
+            {
+              "path": "experiments/attribute-alpha-feasibility/special-name-sources.json"
+            },
+            {
+              "path": "experiments/attribute-alpha/README.md"
+            },
+            {
+              "path": "experiments/attribute-alpha/evidence.json"
+            }
+          ],
+          "verification": {
+            "status": "QUALIFIED_PARTIAL_NAMED_ATTRIBUTE_ALPHA",
+            "sourceFamily": "attribute",
+            "nativeGraphs": 9,
+            "nativeFrames": 27,
+            "savedFinalScenes": 9,
+            "browserCaseRuns": 72,
+            "primaryFloat32Words": 1179648,
+            "rgbWordDifferences": 667434,
+            "exactAlphaMismatches": 0,
+            "contractViolations": 0,
+            "maximumAbsoluteRGB": 0.00048828125,
+            "numericContract": {
+              "rgbAbsoluteMax": 0.0009765625,
+              "alphaOneExact": true,
+              "allPixels": true,
+              "seamAndEdgeBands": true,
+              "reference": "actual EEVEE half-film material output, not an exact-F32 field oracle"
+            },
+            "resizeFrames": 216,
+            "lifecycleCycles": 216,
+            "uniqueActualPythonPrefixes": 12,
+            "closedReader": {
+              "runtimeFingerprint": "ebd0ac5c9e4fe79571cb1655519ca61008e2ca1a9562f40ae3f29a4eb3e3a855",
+              "verifierSha256": "04d2f670ec4dc05706c3012b3b316342df591db62022a6d0d04771264a567407"
+            },
+            "nativeVersion": "5.3.0",
+            "nativeBuild": "02f0899d78e3",
+            "nativeHost": "darwin-arm64",
+            "sourceEvaluator": "Actual native EEVEE Metal surface material Alpha-to-Emission; half-film output in EXR32, not a full-F32 raster oracle",
+            "rawTransport": "Exact stored Float32 alpha and per-owner/material indexed-corner associations, including default authored Meshopt Final assets; no COLOR_0 quantization substitute",
+            "actualRuntimeBackends": [
+              "WebGPU",
+              "WebGL2 via WebGPURenderer"
+            ],
+            "actualRuntimeProfiles": [
+              "observed Apple Metal",
+              "observed SwiftShader"
+            ],
+            "independentCalibrationFrames": 1,
+            "evidence": "experiments/attribute-alpha/evidence.json",
+            "evidenceSha256": "332fb259cb6ad147cc3d27d124d123b76f0ed45cbd995a99bb735aee1ff1fe9a",
+            "scope": "GEOMETRY color/Fac via exported color attributes and OBJECT Color/Vector/Fac custom properties; other types/outputs refuse. Additional Blender5.3.0 build02f0899d78e3 macOS arm64 EEVEE Metal surface-Mesh scope: GEOMETRY Alpha from an explicit nonempty named FLOAT_COLOR POINT/CORNER layer, including lowercase color on the surface pipeline. Exact lowercase temperature refuses because native Attribute overwrites alpha with1. Empty/default/missing names, BYTE_COLOR, other domains, OBJECT/INSTANCER/VIEW_LAYER/LIGHT Alpha and volume pipelines are unqualified. Existing RGB/Fac/OBJECT routes remain under their own prior contracts. The existing vertex_color_alpha opcode/model and private raw Float32 SCALAR carrier are reused: source alpha must be +0 or normal finite[0,1]; only compiler-owned static primary Mesh copies are modified. No deformation/modifiers, shape keys, instances, source animation/drivers or ambiguous coincident same-winding triangles; at most300000 source vertices/corners and4layers permesh. Raw alpha words and per-owner/material indexed position/corner associations are exact before and after normal authored Meshopt Final optimization, with the existing asset-wide POSITION quantization fallback bounded to1M unique position vertices and3M checked rendered corners. Native Alpha-to-Emission uses actual EEVEE half-film output in EXR32; RGB comparison is bounded maxAbs2^-10 on every pixel/seam/edge, not word-exact F32 raster equality. Observed maxAbs0.00048828125 with667434 RGB word differences, zero contract violations and exact alpha-one output. Nine authored field scenes include groups/reroutes/shared owners/materials and preserved RGB paths. Actual WebGPU/WebGL2 via WebGPURenderer on observed Apple Metal and SwiftShader. This field proof gives no explicit-opacity, transparent-coverage, Color+Alpha opacity, camera/lighting/whole-scene, other build/platform/version or legacy WebGLRenderer credit; source-certified opacity adapter has its own independent scope.",
+            "opacityScope": "No explicit-opacity qualification from this field matrix. The immutable receipt retains its original untagged-refusal wording; the integrated source-certified scalar-replacement adapter is a separate scope and needs its independent evidence.",
+            "sourceSnapshotLimits": "This receipt retains its own runtime fingerprint ebd0ac5c9e4fe79571cb1655519ca61008e2ca1a9562f40ae3f29a4eb3e3a855 and closing reader04d2f670ec4dc05706c3012b3b316342df591db62022a6d0d04771264a567407. The later verifier wording clarification changes no captured bytes or numeric/runtime contract. Other scopes keep their own evidence; no all-ports freshness claim."
+          }
+        }
+      }
     },
     "shader:ShaderNodeObjectInfo": {
       "category": "partial",
@@ -16059,6 +16168,288 @@
           "limits": "Fresh Euler family transaction only. Quaternion normalization retains its prior verification receipt/model/source snapshot; Matrix/Box/Ellipse/other ports retain their own captured lineages. Earlier source/API/witness/native-only pilots remain research and are not promoted to saved Final/browser support."
         }
       }
+    },
+    "compositor:ShaderNodeTexWhiteNoise": {
+      "category": "unsupported",
+      "limits": "No admitted route outside the explicitly qualified Blender 5.3.0 CPU compositor fixed-input source slice. Native node availability alone is not numerical support.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "white-noise-texture"
+      ],
+      "modes": {},
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Blender 5.3.0 build 02f0899d78e3 macOS arm64 CPU compositor White Noise, 1D/2D/3D/4D Value and Color. Explicit fixed seeds only: raw positive zero or any finite normal Float32, classified in owned homogeneous native socket storage before Python scalar promotion. Native typed W defaults, linked Value, CombineXYZ, explicit instance-bound Float/Vector group defaults, reroutes and actual mute bypass copy routes; no native MF/hash evaluation during extraction. Vector must be explicitly linked because the native unlinked compositor input uses Uniform Image Coordinates, not zero; compositor default dimension is 2D. Source Float32 bits drive the same Jenkins uint32 hash family and channel seeds/permutations as the existing shader hash kernels, with distinct CPU-compositor admission. All measured RGBA output words, including alpha 1, are exact through actual saved Final publication, both actual APIs/profiles and physical resize. Bounds: 64 source nodes, 256 visits, 16 source hops and group ancestry depth 16. Owned raw-copy groups are removed in finally; source scene/frame/active-selected objects/ID ownership remain unchanged. Raw negative zero, subnormal/nonfinite seeds, implicit casts/coordinates, computed/field producers, animation/drivers/NLA, GPU-authored Blender, other versions/builds/hosts and EEVEE shader source equivalence remain unqualified. Independent native Image Info Dimensions 0x0 is a domain control only; Image Info single-value support is not promoted. Existing shader White Noise and its field approximation policies are unchanged. No port-owned texture/pass/readback; three actual Final apply/dispose cycles preserve source material/callback and exact renderer-cache ownership.",
+          "modes": {
+            "noise_dimensions": {
+              "supported": [
+                "1D",
+                "2D",
+                "3D",
+                "4D"
+              ]
+            }
+          }
+        }
+      },
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2 backends; Apple Metal and SwiftShader measured. Legacy WebGLRenderer has no live installer.",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_white_noise.py",
+          "anchor": "def normalize_white_noise"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_white_noise.py",
+          "anchor": "def fixed_inputs"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "elif node.bl_idname == \"ShaderNodeTexWhiteNoise\":"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorWhiteNoise.ts",
+          "anchor": "export function validateCompositorWhiteNoise"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "export function compositorWhiteNoiseHash"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'white-noise-texture':"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorWhiteNoise.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_white_noise_check.py"
+        },
+        {
+          "path": "experiments/compositor-white-noise/protocol.mjs"
+        },
+        {
+          "path": "experiments/compositor-white-noise/reference.py"
+        },
+        {
+          "path": "experiments/compositor-white-noise/verify.mjs"
+        },
+        {
+          "path": "experiments/compositor-white-noise/numeric-contract.json"
+        },
+        {
+          "path": "experiments/compositor-white-noise/sources.json"
+        },
+        {
+          "path": "experiments/compositor-white-noise/evidence.json"
+        }
+      ],
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeCompositorDevices": [
+          "CPU"
+        ],
+        "nativeNodeEvaluator": "Actual CPU compositor constant-unit native MF, independently checked against integer Jenkins hashes. Carrier scene uses Cycles CPU; no EEVEE shader or Blender GPU-field source credit.",
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "nativeGraphs": 44,
+        "savedFinalScenes": 12,
+        "browserCaseRuns": 224,
+        "primaryFloat32Words": 14336,
+        "wordMismatches": 0,
+        "contractViolations": 0,
+        "resizeFrames": 48,
+        "lifecycleCycles": 144,
+        "uniqueActualPythonPrefixes": 14,
+        "sourcePolicy": {
+          "positiveControls": 18,
+          "namedRefusals": 16,
+          "rawStorageBeforePromotion": true,
+          "gpuInitializationCalls": 0
+        },
+        "nativeImageDomainControl": {
+          "dimensions": [
+            0,
+            0
+          ],
+          "runtimePortCredit": false,
+          "limits": "Actual native Image Info Dimensions control for the single-value White Noise result only; no new Image Info constant-input route is admitted."
+        },
+        "numericContract": {
+          "schemaVersion": 1,
+          "stage": "actual CPU compositor constant-unit MF versus existing TSL integer hash kernel",
+          "source": "Blender 5.3.0 02f0899d78e3 macOS arm64 CPU compositor",
+          "inputs": "Explicit fixed native +0 or finite normal Float32. Raw source storage is inspected before Python promotion; no computed producers, implicit casts or fields.",
+          "arithmetic": "Jenkins uint32 wrap arithmetic over raw Float32 words; CPU uint32-to-Float32 conversion divided by Float32(UINT_MAX), with identical channel seeds/permutations. Runtime reuses existing shader hash functions, not shader source admission.",
+          "gate": {
+            "exactWordMismatches": 0,
+            "contractViolations": 0,
+            "alphaWord": 1065353216
+          },
+          "imageDomainControl": "Independent actual native Image Info Dimensions on a constant White Noise result must be 0x0; this does not admit the previously unqualified Image Info constant-input route.",
+          "credit": "Only a fully closed native/Saved Final/both-API/both-profile receipt can qualify this bounded compositor route. No EEVEE shader/field/implicit-coordinate credit."
+        },
+        "numericContractSha256": "d07bb248334552f3fb6e91ec19e26fcc8db4d30b39c5d70ddcf37183d78157dc",
+        "coverageScope": "Pinned Blender5.3 macOS arm64 CPU compositor White Noise. 1D\u20134D Value and Color, raw normal/+0 fixed source words, explicit typed Value/CombineXYZ/group/reroute/mute copy routes only. No implicit Uniform Image Coordinates, fields/computed seeds/casts, negative zero/subnormals/nonfinite source seeds or GPU-authored/EEVEE source credit.",
+        "closedReader": {
+          "runtimeFingerprint": "7b1700db87eb6a68335d7fb1eb5605e5d08bc4e45a2361cda9473783d1555472",
+          "verifierSha256": "cb7a4eb613d380e4cee43aa61fb744c558b19652ac8fb6462c1213b4764c372d",
+          "runtimeArchiveHelperSha256": "431b8a4e92a194d63a8db512aa84f3076c9951e083b873885d8115e0caf509ed",
+          "nativeArchiveHelperSha256": "3a2310c94ed3109230d3fa89dc1ac6ea5bed447155e98144a68d52dac568a3da"
+        },
+        "sourceSnapshot": {
+          "sourceInputs": 137,
+          "nativeQualificationSha256": "3dfc1769bc64b3abfb075e9d47c8fe57df1d7a1d695c4267be209acd03c473f0",
+          "finalProofSha256": "376251fc4b97850cb47de48513a8b38c8567f84b4bee8e4778939787998196b3",
+          "evidence": "experiments/compositor-white-noise/evidence.json",
+          "evidenceSha256": "c72627821e02856c3821de3713e48fe57c929351e9a4b539e23373b973ac7c5f",
+          "limits": "This fresh union receipt closes only this bounded CPU compositor White Noise slice. Other ports retain their own source snapshots; no all-port freshness or shader-context promotion."
+        }
+      }
+    },
+    "compositor:CompositorNodeSwitchView": {
+      "category": "unsupported",
+      "limits": "No admitted route outside the explicitly qualified pinned Blender5.3 CPU mono-context override. Native availability alone is not support.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [],
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_view_selection.py"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_switch_view_check.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts"
+        },
+        {
+          "path": "experiments/static-switch-family/view-cases.json"
+        },
+        {
+          "path": "experiments/static-switch-family/view_cases.py"
+        },
+        {
+          "path": "experiments/static-switch-family/reference.py"
+        },
+        {
+          "path": "experiments/static-switch-family/export.test.ts"
+        },
+        {
+          "path": "experiments/static-switch-family/browser.js"
+        },
+        {
+          "path": "experiments/static-switch-family/run.mjs"
+        },
+        {
+          "path": "experiments/static-switch-family/protocol.mjs"
+        },
+        {
+          "path": "experiments/static-switch-family/protocol.test.mjs"
+        },
+        {
+          "path": "experiments/static-switch-family/suite.mjs"
+        },
+        {
+          "path": "experiments/static-switch-family/verify.mjs"
+        },
+        {
+          "path": "experiments/switch-view-feasibility/sources.json"
+        },
+        {
+          "path": "experiments/switch-view-feasibility/README.md"
+        },
+        {
+          "path": "experiments/compositor-switch-view/README.md"
+        },
+        {
+          "path": "experiments/compositor-switch-view/evidence.json"
+        }
+      ],
+      "renderer": "Existing selected expression via WebGPURenderer actual WebGPU/WebGL2; observed Apple Metal and SwiftShader. No new renderer view-selection runtime.",
+      "compileTime": {
+        "path": "packages/blendlink/blender/compositor_view_selection.py",
+        "function": "select_mono_view",
+        "nodeSet": "NODES",
+        "callers": [
+          {
+            "path": "packages/blendlink/blender/compositor_graph.py",
+            "anchor": "selected=view_selection.select_mono_view("
+          }
+        ]
+      },
+      "verification": {
+        "status": "qualified-mono-switch-view-slice",
+        "variant": "mono-view",
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeSourceContext": {
+          "evaluator": "native-cpu-compositor",
+          "requestedCompositorDevice": "CPU",
+          "gpuInitialized": false,
+          "gpuEvaluationCredit": false
+        },
+        "totalNativeGraphs": 8,
+        "calibrationNativeGraphs": 1,
+        "switchViewNativeGraphs": 7,
+        "totalSavedFinalScenes": 8,
+        "calibrationSavedFinalScenes": 1,
+        "switchViewSavedFinalScenes": 7,
+        "totalBrowserCaseRuns": 64,
+        "switchViewBrowserCaseRuns": 56,
+        "calibrationBrowserCaseRuns": 8,
+        "totalComparedFloat32Words": 16384,
+        "switchViewComparedWords": 14336,
+        "calibrationComparedWords": 2048,
+        "wordMismatches": 0,
+        "remainingOwnedTextures": 0,
+        "uniqueActualPythonPrefixes": 10,
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "observed Apple Metal",
+          "observed SwiftShader"
+        ],
+        "calibrationScope": "One literal compositor control plus independent physical GPU readback orientation; no Cycles/Three plate or PBR equality credit. Calibration counts earn no node coverage.",
+        "domainScope": "Selected constants and field refs are unchanged. Existing RenderLayers ImageInfo identity input/output conversion is inherited; native0x0/13x9 research observations provide no additional ImageInfo runtime support.",
+        "coverageScope": "Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor only. Current source Scene must explicitly use mono rendering and CPU evaluation; Scene and active source-tree actions/drivers/NLA refuse, including an animated use_multiview flag currently false. Native SwitchView RGBA Image output forwards actual ordered input0; never hardcodes left, guesses a hidden Scene ID, or selects an inactive branch. Enabled/available native RGBA socket schema and unique nonempty identifiers, at most64inputs and64selected nodes, are bounded; source context/schema/selected socket/link/default snapshots are rechecked after private evaluators. Existing mute bypass/group/reroute/recursive-cycle/selected dependency safeguards remain in force. Inactive SceneTime is not visited; selected unsupported producers still refuse. Exact selected literal/constant and field identity is preserved by normalizing to the existing selected expression; no synthetic image or new runtime opcode/kernel/pass/texture. Tested8x8 saved Final/raw browser words are exact on actual WebGPU/WebGL2 via WebGPURenderer, observed Apple Metal and SwiftShader. Selected static Image uses its existing byte-sRGB decoder/window contract; selected RenderLayers->ImageInfo uses its existing field/INT_VECTOR2->RGBA identity contract. The independent native0x0 single-domain observation does not admit single-value/static-image ImageInfo. Stereo/named-live/multiview, GPU-authored compositor, dynamic/animated view configuration, empty/stale/unknown schemas, other builds/hosts/versions and legacy WebGLRenderer are unqualified. This is fixed mono branch transport, not general scene compositing, live view selection, PBR/Cycles parity, global precision or whole-scene appearance qualification.",
+        "costScope": "Compile-time bounded socket selection/snapshot validation only. Selected input retains its existing resource and precision contracts; no additional runtime branch/kernel/pass/texture/readback.",
+        "closedReader": {
+          "runtimeFingerprint": "7b1700db87eb6a68335d7fb1eb5605e5d08bc4e45a2361cda9473783d1555472",
+          "verifierSha256": "9386a291e8c95323b650984fb50db3329fc75553e1d4ce386d004f5a5caa2e91",
+          "runtimeTransaction": {
+            "sha256": "ab0e7904e88372766799582576ea48cf798061537684b65581d989cbbdcb6a36",
+            "id": "81cbbd0e-c045-4e6f-86da-97ec6a3adbea",
+            "independentlyReemittedAtClose": true
+          }
+        },
+        "evidence": "experiments/compositor-switch-view/evidence.json",
+        "evidenceSha256": "adae95ae5c9a13467165c4eecdf90b599613f163b2d5880c2141b0dd70aa45c4",
+        "sourceSnapshotLimits": "Own fresh next20r4 source/runtime/fixture/native snapshot and independent closing emission. Shared-suite baseline field denotes framework ancestry, not the introduction of SwitchView. Default static selector evidence remains unchanged; no all-ports freshness claim."
+      },
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor only. Current source Scene must explicitly use mono rendering and CPU evaluation; Scene and active source-tree actions/drivers/NLA refuse, including an animated use_multiview flag currently false. Native SwitchView RGBA Image output forwards actual ordered input0; never hardcodes left, guesses a hidden Scene ID, or selects an inactive branch. Enabled/available native RGBA socket schema and unique nonempty identifiers, at most64inputs and64selected nodes, are bounded; source context/schema/selected socket/link/default snapshots are rechecked after private evaluators. Existing mute bypass/group/reroute/recursive-cycle/selected dependency safeguards remain in force. Inactive SceneTime is not visited; selected unsupported producers still refuse. Exact selected literal/constant and field identity is preserved by normalizing to the existing selected expression; no synthetic image or new runtime opcode/kernel/pass/texture. Tested8x8 saved Final/raw browser words are exact on actual WebGPU/WebGL2 via WebGPURenderer, observed Apple Metal and SwiftShader. Selected static Image uses its existing byte-sRGB decoder/window contract; selected RenderLayers->ImageInfo uses its existing field/INT_VECTOR2->RGBA identity contract. The independent native0x0 single-domain observation does not admit single-value/static-image ImageInfo. Stereo/named-live/multiview, GPU-authored compositor, dynamic/animated view configuration, empty/stale/unknown schemas, other builds/hosts/versions and legacy WebGLRenderer are unqualified. This is fixed mono branch transport, not general scene compositing, live view selection, PBR/Cycles parity, global precision or whole-scene appearance qualification."
+        }
+      }
     }
   },
   "knownUnsupported": [
@@ -16106,7 +16497,6 @@
     "compositor:CompositorNodeStabilize",
     "compositor:CompositorNodeStringToImage",
     "compositor:CompositorNodeSunBeams",
-    "compositor:CompositorNodeSwitchView",
     "compositor:CompositorNodeTexture",
     "compositor:CompositorNodeTime",
     "compositor:CompositorNodeTonemap",

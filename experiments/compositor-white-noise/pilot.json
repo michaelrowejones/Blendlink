@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "status": "RESEARCH_ONLY_COMPOSITOR_WHITE_NOISE_CPU_PILOT",
+  "nativeGraphs": 44,
+  "nativePrimaryFloat32Words": 2816,
+  "exactWordMismatches": 0,
+  "nativeImageInfoDimensions": [
+    0,
+    0
+  ],
+  "nativeImageInfoControlWords": 64,
+  "authoredSavedSources": 12,
+  "savedFinalCredit": 0,
+  "browserCredit": 0,
+  "portCredit": 0,
+  "gpuInitializationCalls": 0,
+  "nativeQualificationSha256": "4a7074f25f5378c31506909110e75607217523f8ef70967507869abb36897de1",
+  "guardedArchiveSha256": "040a3ce9b5ea1f11b999dd8b76dd3122afcd3f9f61c09952f32e5ba6cd680649",
+  "rawArtifacts": "artifacts/verification-compositor-white-noise-native-pilot-r1",
+  "scope": "Independent actual CPU compositor versus integer Jenkins reference only; no exported runtime or Final qualification."
+}

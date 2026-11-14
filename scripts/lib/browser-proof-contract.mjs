@@ -6,6 +6,7 @@ import {pathToFileURL} from 'node:url'
 import ts from 'typescript'
 
 export const browserProofFamilies=Object.freeze({
+ 'compositor-white-noise':Object.freeze({schemaVersion:1,family:'compositor-white-noise',nativeStatus:'CAPTURED_COMPOSITOR_WHITE_NOISE',finalStatus:'PUBLISHED_COMPOSITOR_WHITE_NOISE',browserStatus:'PASSED_WHITE_NOISE_BUILT_PROOF'}),
  'vertex-color-alpha':Object.freeze({schemaVersion:1,family:'vertex-color-alpha',nativeStatus:'CAPTURED_VERTEX_COLOR_ALPHA',finalStatus:'PUBLISHED_VERTEX_COLOR_ALPHA',browserStatus:'PASSED_VERTEX_COLOR_ALPHA_BUILT_PROOF'}),
  'compositor-blackbody':Object.freeze({schemaVersion:1,family:'compositor-blackbody',nativeStatus:'CAPTURED_COMPOSITOR_BLACKBODY',finalStatus:'PUBLISHED_COMPOSITOR_BLACKBODY',browserStatus:'PASSED_COMPOSITOR_BLACKBODY_BUILT_PROOF'}),
  'compositor-image-coordinates':Object.freeze({schemaVersion:1,family:'pixel-int2',nativeStatus:'native-pixel-int2-qualified',finalStatus:'published-pixel-candidate',browserStatus:'PASSED_PIXEL_BUILT_PROOF'}),

@@ -1,0 +1,489 @@
+{
+  "schemaVersion": 1,
+  "status": "RESEARCH_ONLY_IMPLICIT_WHITE_NOISE_CPU_FIELDS",
+  "version": [
+    5,
+    3,
+    0
+  ],
+  "build": "02f0899d78e3",
+  "sourceStage": "CPU compositor cached Uniform Float2 -> native Float3 Z+0 -> actual White Noise MF field",
+  "rows": [
+    {
+      "case": "13x9-raw-uniform",
+      "width": 13,
+      "height": 9,
+      "pixelFile": "13x9-raw-uniform.rgba32f",
+      "pixelSha256": "e845dacdd94200e4266f1a360ad869abb0583b69750bbef8450467706d389f0f",
+      "kind": "coordinate",
+      "dimension": 2,
+      "output": "Color",
+      "linked": false,
+      "exactWordDifferences": 0,
+      "sourceAxes": [
+        [
+          3211546309,
+          3208965199,
+          3206384089,
+          3203157701,
+          3197995481,
+          3189606873,
+          0,
+          1042123225,
+          1050511833,
+          1055674053,
+          1058900441,
+          1061481551,
+          1064062661
+        ],
+        [
+          3206384089,
+          3203157701,
+          3197995481,
+          3189606873,
+          0,
+          1042123225,
+          1050511833,
+          1055674053,
+          1058900441
+        ]
+      ]
+    },
+    {
+      "case": "13x9-2d-value-untouched-default",
+      "width": 13,
+      "height": 9,
+      "pixelFile": "13x9-2d-value-untouched-default.rgba32f",
+      "pixelSha256": "fd1fcec8a25fbd87c0404e3dd2089e717b8b44e2906f0cf225b77e6a5a428707",
+      "kind": "noise",
+      "dimension": 2,
+      "output": "Value",
+      "linked": false,
+      "exactWordDifferences": 0
+    },
+    {
+      "case": "13x9-2d-color-untouched-default",
+      "width": 13,
+      "height": 9,
+      "pixelFile": "13x9-2d-color-untouched-default.rgba32f",
+      "pixelSha256": "aeb099be0b28ef91296e1b7050fafcde00a20146141ce66ebe4c1f2633d97dba",
+      "kind": "noise",
+      "dimension": 2,
+      "output": "Color",
+      "linked": false,
+      "exactWordDifferences": 0
+    },
+    {
+      "case": "13x9-3d-color-untouched-default",
+      "width": 13,
+      "height": 9,
+      "pixelFile": "13x9-3d-color-untouched-default.rgba32f",
+      "pixelSha256": "b219a9586294c29c9cffa17239a880a5dac1773a593e2b2a460815f24fad97e6",
+      "kind": "noise",
+      "dimension": 3,
+      "output": "Color",
+      "linked": false,
+      "exactWordDifferences": 0
+    },
+    {
+      "case": "13x9-4d-color-untouched-default",
+      "width": 13,
+      "height": 9,
+      "pixelFile": "13x9-4d-color-untouched-default.rgba32f",
+      "pixelSha256": "1ca74dc5a47b0926f475a617019399386da098ffee56f1665adc95b7af67ace1",
+      "kind": "noise",
+      "dimension": 4,
+      "output": "Color",
+      "linked": false,
+      "exactWordDifferences": 0
+    },
+    {
+      "case": "13x9-2d-color-linked-control",
+      "width": 13,
+      "height": 9,
+      "pixelFile": "13x9-2d-color-linked-control.rgba32f",
+      "pixelSha256": "aeb099be0b28ef91296e1b7050fafcde00a20146141ce66ebe4c1f2633d97dba",
+      "kind": "noise",
+      "dimension": 2,
+      "output": "Color",
+      "linked": true,
+      "exactWordDifferences": 0
+    },
+    {
+      "case": "9x13-raw-uniform",
+      "width": 9,
+      "height": 13,
+      "pixelFile": "9x13-raw-uniform.rgba32f",
+      "pixelSha256": "253e2dba1c3b454a7e2f70d652943344012ec6e16183b138d61a7364203a6313",
+      "kind": "coordinate",
+      "dimension": 2,
+      "output": "Color",
+      "linked": false,
+      "exactWordDifferences": 0,
+      "sourceAxes": [
+        [
+          3206384089,
+          3203157701,
+          3197995481,
+          3189606873,
+          0,
+          1042123225,
+          1050511833,
+          1055674053,
+          1058900441
+        ],
+        [
+          3211546309,
+          3208965199,
+          3206384089,
+          3203157701,
+          3197995481,
+          3189606873,
+          0,
+          1042123225,
+          1050511833,
+          1055674053,
+          1058900441,
+          1061481551,
+          1064062661
+        ]
+      ]
+    },
+    {
+      "case": "9x13-2d-value-untouched-default",
+      "width": 9,
+      "height": 13,
+      "pixelFile": "9x13-2d-value-untouched-default.rgba32f",
+      "pixelSha256": "f23e2d179e1b36842810565c7f3bb1b242681a4a8ddb8471fff64509b1772645",
+      "kind": "noise",
+      "dimension": 2,
+      "output": "Value",
+      "linked": false,
+      "exactWordDifferences": 0
+    },
+    {
+      "case": "9x13-2d-color-untouched-default",
+      "width": 9,
+      "height": 13,
+      "pixelFile": "9x13-2d-color-untouched-default.rgba32f",
+      "pixelSha256": "659698cbed46f1ead87fc7ccd454e8de04946aadb0396a8019746f2e38a428cd",
+      "kind": "noise",
+      "dimension": 2,
+      "output": "Color",
+      "linked": false,
+      "exactWordDifferences": 0
+    },
+    {
+      "case": "9x13-3d-color-untouched-default",
+      "width": 9,
+      "height": 13,
+      "pixelFile": "9x13-3d-color-untouched-default.rgba32f",
+      "pixelSha256": "f14cafb7c7f1a022643ebe19caf694658b74558b3004a6697f6609546e66062f",
+      "kind": "noise",
+      "dimension": 3,
+      "output": "Color",
+      "linked": false,
+      "exactWordDifferences": 0
+    },
+    {
+      "case": "9x13-4d-color-untouched-default",
+      "width": 9,
+      "height": 13,
+      "pixelFile": "9x13-4d-color-untouched-default.rgba32f",
+      "pixelSha256": "551aca5133d14cbe73b1446b7beae016e7ed36fad5c073acc261088f78a90031",
+      "kind": "noise",
+      "dimension": 4,
+      "output": "Color",
+      "linked": false,
+      "exactWordDifferences": 0
+    },
+    {
+      "case": "9x13-2d-color-linked-control",
+      "width": 9,
+      "height": 13,
+      "pixelFile": "9x13-2d-color-linked-control.rgba32f",
+      "pixelSha256": "659698cbed46f1ead87fc7ccd454e8de04946aadb0396a8019746f2e38a428cd",
+      "kind": "noise",
+      "dimension": 2,
+      "output": "Color",
+      "linked": true,
+      "exactWordDifferences": 0
+    },
+    {
+      "case": "16x8-raw-uniform",
+      "width": 16,
+      "height": 8,
+      "pixelFile": "16x8-raw-uniform.rgba32f",
+      "pixelSha256": "a1ecf7a6066f17ff6fdcbdfd4e980e11ba52a3a0492724d823fdb30a1f649262",
+      "kind": "coordinate",
+      "dimension": 2,
+      "output": "Color",
+      "linked": false,
+      "exactWordDifferences": 0,
+      "sourceAxes": [
+        [
+          3211788288,
+          3209691136,
+          3207593984,
+          3205496832,
+          3202351104,
+          3198156800,
+          3191865344,
+          3179282432,
+          1031798784,
+          1044381696,
+          1050673152,
+          1054867456,
+          1058013184,
+          1060110336,
+          1062207488,
+          1064304640
+        ],
+        [
+          3202351104,
+          3198156800,
+          3191865344,
+          3179282432,
+          1031798784,
+          1044381696,
+          1050673152,
+          1054867456
+        ]
+      ]
+    },
+    {
+      "case": "16x8-2d-value-untouched-default",
+      "width": 16,
+      "height": 8,
+      "pixelFile": "16x8-2d-value-untouched-default.rgba32f",
+      "pixelSha256": "3468df435b31b80e2220098503445d197913833af2bf1ec1b491d00d7d3d146b",
+      "kind": "noise",
+      "dimension": 2,
+      "output": "Value",
+      "linked": false,
+      "exactWordDifferences": 0
+    },
+    {
+      "case": "16x8-2d-color-untouched-default",
+      "width": 16,
+      "height": 8,
+      "pixelFile": "16x8-2d-color-untouched-default.rgba32f",
+      "pixelSha256": "b853df8d44d3211e029e90e7d69ed305b04ea5b61b31199a4f087df9dfeb28fe",
+      "kind": "noise",
+      "dimension": 2,
+      "output": "Color",
+      "linked": false,
+      "exactWordDifferences": 0
+    },
+    {
+      "case": "16x8-3d-color-untouched-default",
+      "width": 16,
+      "height": 8,
+      "pixelFile": "16x8-3d-color-untouched-default.rgba32f",
+      "pixelSha256": "419ce5f2e03653b0449e4feb91e59f16073ffd88eb92d6d52c1d19d4cd72db2e",
+      "kind": "noise",
+      "dimension": 3,
+      "output": "Color",
+      "linked": false,
+      "exactWordDifferences": 0
+    },
+    {
+      "case": "16x8-4d-color-untouched-default",
+      "width": 16,
+      "height": 8,
+      "pixelFile": "16x8-4d-color-untouched-default.rgba32f",
+      "pixelSha256": "c92719a9783fdfad57cc98e4e35d1e54157e3c54d84920e89ea0483f5738fa02",
+      "kind": "noise",
+      "dimension": 4,
+      "output": "Color",
+      "linked": false,
+      "exactWordDifferences": 0
+    },
+    {
+      "case": "16x8-2d-color-linked-control",
+      "width": 16,
+      "height": 8,
+      "pixelFile": "16x8-2d-color-linked-control.rgba32f",
+      "pixelSha256": "b853df8d44d3211e029e90e7d69ed305b04ea5b61b31199a4f087df9dfeb28fe",
+      "kind": "noise",
+      "dimension": 2,
+      "output": "Color",
+      "linked": true,
+      "exactWordDifferences": 0
+    },
+    {
+      "case": "8x8-raw-uniform",
+      "width": 8,
+      "height": 8,
+      "pixelFile": "8x8-raw-uniform.rgba32f",
+      "pixelSha256": "c4bb3cd330c51c2aeeddb6b3377fef2e76990e01f531eedb7af4e06a16a3a5df",
+      "kind": "coordinate",
+      "dimension": 2,
+      "output": "Color",
+      "linked": false,
+      "exactWordDifferences": 0,
+      "sourceAxes": [
+        [
+          3210739712,
+          3206545408,
+          3200253952,
+          3187671040,
+          1040187392,
+          1052770304,
+          1059061760,
+          1063256064
+        ],
+        [
+          3210739712,
+          3206545408,
+          3200253952,
+          3187671040,
+          1040187392,
+          1052770304,
+          1059061760,
+          1063256064
+        ]
+      ]
+    },
+    {
+      "case": "8x8-2d-value-untouched-default",
+      "width": 8,
+      "height": 8,
+      "pixelFile": "8x8-2d-value-untouched-default.rgba32f",
+      "pixelSha256": "e833f4816b46934f329c66cdb5ff4f516297f7e522e12a170b905bd470bc763d",
+      "kind": "noise",
+      "dimension": 2,
+      "output": "Value",
+      "linked": false,
+      "exactWordDifferences": 0
+    },
+    {
+      "case": "8x8-2d-color-untouched-default",
+      "width": 8,
+      "height": 8,
+      "pixelFile": "8x8-2d-color-untouched-default.rgba32f",
+      "pixelSha256": "9291489bd0a91ec2d3a2d02a7d4992727881fb55a11546450efa741e296078d7",
+      "kind": "noise",
+      "dimension": 2,
+      "output": "Color",
+      "linked": false,
+      "exactWordDifferences": 0
+    },
+    {
+      "case": "8x8-3d-color-untouched-default",
+      "width": 8,
+      "height": 8,
+      "pixelFile": "8x8-3d-color-untouched-default.rgba32f",
+      "pixelSha256": "60ed4e8c6a9908d8c6b6527f78396b03b6ff91dddcf594cb2421e5564ea1ee03",
+      "kind": "noise",
+      "dimension": 3,
+      "output": "Color",
+      "linked": false,
+      "exactWordDifferences": 0
+    },
+    {
+      "case": "8x8-4d-color-untouched-default",
+      "width": 8,
+      "height": 8,
+      "pixelFile": "8x8-4d-color-untouched-default.rgba32f",
+      "pixelSha256": "56b8c646c446800cfbf9b43d1ba58b6b0e042625960b884c3ab627317d972173",
+      "kind": "noise",
+      "dimension": 4,
+      "output": "Color",
+      "linked": false,
+      "exactWordDifferences": 0
+    },
+    {
+      "case": "8x8-2d-color-linked-control",
+      "width": 8,
+      "height": 8,
+      "pixelFile": "8x8-2d-color-linked-control.rgba32f",
+      "pixelSha256": "9291489bd0a91ec2d3a2d02a7d4992727881fb55a11546450efa741e296078d7",
+      "kind": "noise",
+      "dimension": 2,
+      "output": "Color",
+      "linked": true,
+      "exactWordDifferences": 0
+    }
+  ],
+  "nativeRenders": 24,
+  "primaryFloat32Words": 10224,
+  "exactWordDifferences": 0,
+  "gpuInitializationCalls": 0,
+  "portCredit": 0,
+  "savedFinalCredit": 0,
+  "browserCredit": 0,
+  "nativeReportSha256": "11fd0a31feb7884a4c3c77675dd7ee3ac06297f0526136e85ce2aa3f4f358e68",
+  "nativeArchiveSha256": "5958a57bc0aa854ac776b050898514775321afb337d2366a640b1a594f36a956",
+  "probeSha256": "210ba8bdaa71f60b75c5d0b4e7607f6ad7f89f7e06f1d8c2640ca1dadb873f26",
+  "upstream": [
+    {
+      "path": "source/blender/nodes/shader/nodes/node_shader_tex_white_noise.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/shader/nodes/node_shader_tex_white_noise.cc",
+      "sha256": "13b39d6eac5a017f8027c8da2ef3892e29cbe4f52a570dd570eeb33ffdbfe921",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/compositor/intern/implicit_input_operation.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/intern/implicit_input_operation.cc",
+      "sha256": "d1c993da03713eefe02eac2607d0606dd8f68237d86c2a4c9fdf7d2d2c17bd30",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/compositor/intern/utilities.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/intern/utilities.cc",
+      "sha256": "406d7e4fa4ed7c65dddbe5b235b5bfb6b9e214603f31c4a00af5fc4028893234",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/compositor/intern/multi_function_procedure_operation.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/intern/multi_function_procedure_operation.cc",
+      "sha256": "d61a452a55f9d333ea8c5fca6e81bf9604627521b547e59fb4ebfe0a59762ce9",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/compositor/cached_resources/intern/image_coordinates.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/cached_resources/intern/image_coordinates.cc",
+      "sha256": "15fc47ea692a70c77c3af533fff6fa2f5ebffaa51fcf253b82bc114855df2bad",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/compositor/intern/domain.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/intern/domain.cc",
+      "sha256": "f942718b88970678375f7e2b720cfcb12073934ccd568c2d7d1ed61a97c82e4d",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/render/intern/compositor.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/render/intern/compositor.cc",
+      "sha256": "c08b32e40ac0c5a447ac2bfb659652b28998acbd6a2c314067383d0fc5363f80",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/blenkernel/intern/type_conversions.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenkernel/intern/type_conversions.cc",
+      "sha256": "c5889d75c4de43abf51b35afca12b0545297f8d714f078220564f035dbfa9a83",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/nodes/composite/nodes/node_composite_image_coordinates.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/composite/nodes/node_composite_image_coordinates.cc",
+      "sha256": "12cc2c1adcbe5e793a27a0b436b4ff2a32dc9bb369e4846c6ee01af5d130800c",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/compositor/shaders/compositor_image_coordinates_uniform.glsl",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/shaders/compositor_image_coordinates_uniform.glsl",
+      "sha256": "50ab96f98c4f196c2346f1b1074ac78556ad0882ed4546890ed53eb8132c951c",
+      "license": "GPL-2.0-or-later"
+    }
+  ],
+  "directKernelCounterexample": {
+    "source": "experiments/compositor-float-coordinates/evidence.json",
+    "sha256": "61b1780709779eb09c5d13b2c5650a40edb5446e4a61e0968e27eb361df4e55d",
+    "exactWordDifferences": 33024,
+    "maxUlps": 1,
+    "contractViolations": 0,
+    "scope": "Prior qualified coordinate-only bound, not permission to feed approximate words to a raw-bit hash."
+  }
+}

@@ -1,7 +1,11 @@
 import assert from'node:assert/strict'
 import{readFileSync}from'node:fs'
 export const browserProofContract=Object.freeze({schemaVersion:1,family:'vertex-color-alpha',nativeStatus:'CAPTURED_VERTEX_COLOR_ALPHA',finalStatus:'PUBLISHED_VERTEX_COLOR_ALPHA',browserStatus:'PASSED_VERTEX_COLOR_ALPHA_BUILT_PROOF'})
-export const cases=JSON.parse(readFileSync(new URL('./cases.json',import.meta.url))).map(row=>({...row,width:64,height:64,owners:row.shared?2:1,materials:row.shared?2:1}))
+export const sourceFamily=process.env.SCENETOWEB_ALPHA_SOURCE??'vertex'
+assert.ok(['vertex','attribute'].includes(sourceFamily),'Unknown Alpha source family')
+export const casesFile=sourceFamily==='attribute'?'attribute-cases.json':'cases.json'
+export const sourcePolicyScripts=['packages/blender-addon/tests/vertex_color_alpha_check.py',...(sourceFamily==='attribute'?['packages/blender-addon/tests/attribute_alpha_check.py']:[])]
+export const cases=JSON.parse(readFileSync(new URL('./'+casesFile,import.meta.url))).map(row=>({...row,width:64,height:64,owners:row.shared?2:1,materials:row.shared?2:1}))
 export const sizes=Object.freeze([64,32,96]),absoluteGate=2**-10
 export const expectedCases=()=>structuredClone(cases)
 export const expectedFinalCases=expectedCases
@@ -40,5 +44,15 @@ export function assertBrowserRows(report,{profile,phase}){
   }
   if(profile==='metal'){assert.match(JSON.stringify(api.gpu),/apple|metal/i);assert.doesNotMatch(JSON.stringify(api.gpu),/swiftshader/i)}
   else assert.match(JSON.stringify(api.gpu),/swiftshader/i)
+ }
+}
+/** New named sources must retain their exact field leaf, not a baked/constant substitute. */
+export function assertAlphaSourcePrograms(programs,spec){
+ if(sourceFamily!=='attribute')return
+ assert.equal(spec.sourceNode,'ShaderNodeAttribute');assert.ok(typeof spec.layer==='string'&&spec.layer&&spec.layer!=='temperature')
+ for(const material of Object.values(programs.materials)){
+  const pending=[material.channels.Emission?.tslIr],seen=new Set(),layers=[]
+  while(pending.length){const item=pending.pop();if(!item||typeof item!=='object'||seen.has(item))continue;seen.add(item);if(item.op==='vertex_color_alpha'){assert.equal(item.model,'eevee53-float-color-alpha-scalar-v1');assert.equal(item.sourceProfile,'blender53-eevee-metal-float-color-alpha-v1');layers.push(item.layer)}pending.push(...Object.values(item).filter(x=>x&&typeof x==='object'))}
+  assert.ok(layers.length>0);assert.deepEqual([...new Set(layers)],[spec.layer])
  }
 }

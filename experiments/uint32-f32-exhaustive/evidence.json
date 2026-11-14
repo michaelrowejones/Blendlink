@@ -1,0 +1,83 @@
+{
+  "status": "exhaustive-owned-cpu-law-pass",
+  "credit": {
+    "liveNodes": 0,
+    "blender": 0,
+    "gpu": 0,
+    "savedFinal": 0
+  },
+  "host": {
+    "system": "macOS-26.5.1-arm64-arm-64bit",
+    "machine": "arm64",
+    "cpuCount": 15
+  },
+  "compiler": {
+    "command": "/Library/Developer/CommandLineTools/usr/bin/clang++",
+    "canonicalPath": "/Library/Developer/CommandLineTools/usr/bin/clang",
+    "sha256": "f30550eab15fdf5ab8c0dc54c52679711241e5d4b636b027e18c09fef531775d",
+    "version": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.5.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n"
+  },
+  "compileCommand": [
+    "/Library/Developer/CommandLineTools/usr/bin/clang++",
+    "-std=c++20",
+    "-O3",
+    "-fno-fast-math",
+    "-ffp-contract=off",
+    "-pthread",
+    "/private/tmp/scenetoweb-uint32-f32-exhaustive-next/artifacts/verification-uint32-f32-exhaustive-retained-v2/probe.cpp",
+    "-o",
+    "/private/tmp/scenetoweb-uint32-f32-exhaustive-next/artifacts/verification-uint32-f32-exhaustive-retained-v2/probe"
+  ],
+  "files": {
+    "source": {
+      "path": "/private/tmp/scenetoweb-uint32-f32-exhaustive-next/artifacts/verification-uint32-f32-exhaustive-retained-v2/probe.cpp",
+      "sha256": "8acfa2627115217a9014c88df62f2942fad66a8fce154b3dfdffb90157e9c1d1"
+    },
+    "runner": {
+      "path": "/private/tmp/scenetoweb-uint32-f32-exhaustive-next/experiments/uint32-f32-exhaustive/run.py",
+      "sha256": "2c82b93c72ec360dd8e918d66369e71ec20ad44c5e200dec687fe18f64939750"
+    },
+    "executable": {
+      "path": "/private/tmp/scenetoweb-uint32-f32-exhaustive-next/artifacts/verification-uint32-f32-exhaustive-retained-v2/probe",
+      "sha256": "595a71ab153c1934d5149ce60176d18d6a9932cc337d75e6851ef77268b0c54a"
+    },
+    "assembly": {
+      "path": "/private/tmp/scenetoweb-uint32-f32-exhaustive-next/artifacts/verification-uint32-f32-exhaustive-retained-v2/probe.s",
+      "sha256": "3d2067c88f94ba9ffe1d331d97969c699163768557dd76525e7807711461c0e1"
+    },
+    "stdout": {
+      "path": "/private/tmp/scenetoweb-uint32-f32-exhaustive-next/artifacts/verification-uint32-f32-exhaustive-retained-v2/stdout.json",
+      "sha256": "f84fc98a3a9d40b3fb5f1e380ae15a36d65e61962b5ae428f93f1e6d6c7b90b7"
+    },
+    "stderr": {
+      "path": "/private/tmp/scenetoweb-uint32-f32-exhaustive-next/artifacts/verification-uint32-f32-exhaustive-retained-v2/stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "measured": {
+    "checked": 4294967296,
+    "mismatches": 0,
+    "seconds": 0.669161708,
+    "workers": 8,
+    "roundingUnchangedNearestEven": true,
+    "referenceWordSum": "4521614024961425408",
+    "lawWordSum": "4521614024961425408",
+    "shiftCounts": [
+      16777216,
+      16777216,
+      33554432,
+      67108864,
+      134217728,
+      268435456,
+      536870912,
+      1073741824,
+      2147483648
+    ]
+  },
+  "processWallSeconds": 0.818696584,
+  "exitCode": 0,
+  "boundSeconds": 115,
+  "formula": "RN-even(u / 2^32), compared to float(u)/float(UINT32_MAX)",
+  "runtimeRoundingChanged": false,
+  "limitations": "Owned host C++20 exhaustive identity only; does not qualify a shader backend, Blender node, compiler elsewhere or GPU conversion."
+}

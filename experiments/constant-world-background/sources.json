@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "supportCredit": 0,
+  "blenderRevision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "primarySources": [
+    {
+      "path": "source/blender/nodes/shader/nodes/node_shader_background.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/shader/nodes/node_shader_background.cc",
+      "sha256": "b3733fa2194823e679aed09193cac0f6894c00a90121f692b46d59a541b71cb6",
+      "bytes": 2041,
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/nodes/shader/nodes/node_shader_output_world.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/shader/nodes/node_shader_output_world.cc",
+      "sha256": "f59e29baf1e1f8f2c3202c10dac3ba1235fde8c0e18f1ea22ac597f27b9bbc06",
+      "bytes": 1834,
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/gpu/shaders/material/gpu_shader_material_background.bsl.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shaders/material/gpu_shader_material_background.bsl.hh",
+      "sha256": "9bd6c6f978007f7367ec043618ecbae9f90d657009d5b280ba202ef57cffb8e7",
+      "bytes": 546,
+      "license": "GPL-2.0-or-later"
+    }
+  ],
+  "currentRepositorySources": [
+    {
+      "path": "packages/blendlink/blender/export_scene.py",
+      "sha256": "d746ba319cdf24915ea8f718104639b2d17075fff6da46cb503caf2c225c171f"
+    },
+    {
+      "path": "packages/blendlink/blender/source_presentation.py",
+      "sha256": "6737226c3a2cc6d0c229123b03190f6a4f47e062b65d5474d06a0a5300485c79"
+    },
+    {
+      "path": "packages/blendlink/src/threeRuntime.ts",
+      "sha256": "4ca05fb2b46239e30a434591c3ecfa42531b179c20e946828921a419e64db3b4"
+    },
+    {
+      "path": "packages/blendlink/src/runtime.ts",
+      "sha256": "577ff88491473f24f2d62653e721a1aaed753d015cc835968203555bf072aa64"
+    },
+    {
+      "path": "packages/blendlink/src/previewStudioHost.ts",
+      "sha256": "5568c3ff907cd13dba87719e38481d9a4db8ac35c014cad8a653e41ce49d37f2"
+    },
+    {
+      "path": "packages/blendlink/src/typegen.ts",
+      "sha256": "ff25f0d58b7d791984d28d4651ae2e8f78ff4a96e0bee5a3c3696c9641aaea66"
+    },
+    {
+      "path": "packages/blender-addon/procedural.py",
+      "sha256": "dd85b29a3293db0829f024941881e7ec068a0d7d9258e7d019484184ac2cf31c"
+    }
+  ],
+  "three": {
+    "version": "0.184.0",
+    "sources": [
+      {
+        "path": "src/renderers/common/Background.js",
+        "sha256": "d06aa01d4f12a384800baf00caddc406f03d276309b9cb82236a91709ea3e86a"
+      },
+      {
+        "path": "src/renderers/common/nodes/NodeManager.js",
+        "sha256": "9ee14cecabd1f975b92bf3e57471073c204817f914a17facda4acfc1f0a30996"
+      },
+      {
+        "path": "src/nodes/utils/CubeMapNode.js",
+        "sha256": "7210caed1b9ab9327a03b8b0ebe603e03c3124e2d278402ad996d9fb1bdfcb57"
+      },
+      {
+        "path": "src/renderers/common/CubeRenderTarget.js",
+        "sha256": "9db2979e0dce21ef42def6b0d2d5abda022e6a4e5952b0ebfee30a49202a6014"
+      }
+    ]
+  }
+}

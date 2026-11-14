@@ -44,8 +44,9 @@ for index, layer in enumerate(('', 'Render Paint')):
         output=group.nodes.new('NodeGroupOutput');reroute=group.nodes.new('NodeReroute')
         group.links.new(field.outputs['Alpha'],reroute.inputs[0]);group.links.new(reroute.outputs[0],output.inputs['Artist Alpha'])
         instance=tree.nodes.new('ShaderNodeGroup');instance.node_tree=group
-        tree.links.new(instance.outputs['Artist Alpha'],bsdf.inputs['Roughness'])
-    else:tree.links.new(color.outputs['Alpha'], bsdf.inputs['Roughness'])
+        tree.links.new(instance.outputs['Artist Alpha'],bsdf.inputs['Roughness']);tree.links.new(instance.outputs['Artist Alpha'],bsdf.inputs['Alpha'])
+    else:
+        tree.links.new(color.outputs['Alpha'], bsdf.inputs['Roughness']);tree.links.new(color.outputs['Alpha'],bsdf.inputs['Alpha'])
     rgb = tree.nodes.new('ShaderNodeVertexColor');rgb.layer_name = 'Editor Paint'
     tree.links.new(rgb.outputs['Color'], bsdf.inputs['Base Color'])
     mesh.materials.append(material)
@@ -64,6 +65,13 @@ def snapshot():
         bpy.context.view_layer.objects.active.as_pointer(),scene.frame_current,
         mesh.color_attributes.active_color_index,mesh.color_attributes.render_color_index)
 
+merge={};base={'vertexColorAlpha':{}}
+compiler._store_tsl_runtime_entry(merge,'owner',{**base,'vertexColorAlphaOpacityOwners':{'A':{'model':'one'}}})
+compiler._store_tsl_runtime_entry(merge,'owner',{**base,'vertexColorAlphaOpacityOwners':{'B':{'model':'two'}}})
+assert set(merge['tslRuntimeMeshes']['owner']['vertexColorAlphaOpacityOwners'])=={'A','B'}
+try:compiler._store_tsl_runtime_entry(merge,'owner',{**base,'vertexColorAlphaOpacityOwners':{'A':{'model':'changed'}}})
+except compiler.MaterialCompileError as error:assert 'ownership changed' in str(error)
+else:raise AssertionError('conflicting material ownership merged')
 before = snapshot()
 out = Path(os.environ.get('SCENETOWEB_VERTEX_ALPHA_POLICY', tempfile.mkdtemp(prefix='vertex-alpha-policy-')))
 out.mkdir(parents=True, exist_ok=True)
@@ -97,6 +105,8 @@ for repeat in range(2):
     for exported in doc['meshes']:
         markers=exported['extras']['blendlink_tsl_runtime']['vertexColorAlpha']
         assert set(markers)=={'','Render Paint'}
+        owners=exported['extras']['blendlink_tsl_runtime']['vertexColorAlphaOpacityOwners']
+        assert set(owners)=={'Artist alpha 0','Artist alpha 1'} and all(row['completeColor'] for row in owners.values()),owners
         assert all(row['sourceLayer']=='Render Paint' and row['domain']=='CORNER' for row in markers.values())
         for primitive in exported['primitives']:
             assert 'COLOR_0' in primitive['attributes'], 'existing RGB transport was disabled'
@@ -150,7 +160,7 @@ finally:
     bpy.data.objects.remove(owned,do_unlink=True);bpy.data.meshes.remove(private)
 assert snapshot()==before
 # Alpha-only opacity has no COLOR_0 and must retain the new scalar route;
-# Color+Alpha opacity produces stock VEC4 and must fail before publication.
+# Color+Alpha opacity is admitted only with source-derived explicit ownership.
 opacity_mesh=mesh.copy();opacity_material=mesh.materials[0].copy()
 opacity_material.name='Owned opacity guard material'
 opacity_mesh.materials.clear();opacity_mesh.materials.append(opacity_material)
@@ -165,6 +175,7 @@ try:
     field=tree.nodes.new('ShaderNodeVertexColor');field.layer_name='Render Paint'
     tree.links.new(field.outputs['Alpha'],bsdf.inputs['Alpha'])
     opacity_material.surface_render_method='DITHERED'
+    observed_opacity_colors=[]
     def emit_opacity(destination):
         selected=list(bpy.context.selected_objects);active=bpy.context.view_layer.objects.active
         try:
@@ -181,6 +192,7 @@ try:
                         accessor,colors=compiler._accessor_values(document,binary,index)
                         observed.append({'type':accessor['type'],'componentType':accessor['componentType'],
                             'normalized':accessor.get('normalized',False),'alpha':[row[3]for row in colors]})
+            observed_opacity_colors[:]=observed
             (out/'actual-opacity-color-observation.json').write_text(json.dumps(observed,indent=2)+'\n')
             return value
         finally:
@@ -196,11 +208,32 @@ try:
     tree.links.new(field.outputs['Color'],bsdf.inputs['Base Color'])
     opacity_plan=compiler.plan_materials([opacity_owner],purpose='final',automatic_programs=True)
     assert not opacity_plan.errors,compiler.format_plan_errors(opacity_plan)
-    rejected=out/'color-alpha-opacity-must-refuse.glb'
-    try:compiler.with_compiled_materials(opacity_plan,str(rejected),emit_opacity)
-    except compiler.MaterialCompileError as error:assert 'implicit vertex alpha would multiply opacity twice' in str(error),str(error)
-    else:raise AssertionError('stock VEC4 plus scalar opacity published double-alpha material')
-    assert not rejected.exists()
+    certified=out/'color-alpha-certified.glb'
+    compiler.with_compiled_materials(opacity_plan,str(certified),emit_opacity)
+    certified_json=read_glb_json(certified)
+    markers=[item['extras']['blendlink_tsl_runtime']['vertexColorAlphaOpacityOwners'][opacity_material.name]
+        for item in certified_json['meshes'] if item.get('extras',{}).get('blendlink_tsl_runtime',{}).get('vertexColorAlphaOpacityOwners')]
+    expected=alpha.opacity_ownership(opacity_plan.lowerings[0].channel_plan,opacity_material.name)
+    assert markers and all(marker==expected for marker in markers),markers
+    assert expected['completeColor'] is True and expected['alphaLayers']==['Render Paint']
+    # Exercise the real sidecar publisher, not a handwritten marker projection.
+    sys.modules['material_compiler']=compiler
+    import export_scene
+    assert Path(export_scene.__file__).resolve()==Path(__file__).resolve().parents[2]/'blendlink'/'blender'/'export_scene.py'
+    pointer=export_scene.publish_material_programs(opacity_plan,str(out/'certified-sidecar.glb'))
+    published=json.loads(Path(pointer['path']).read_text())
+    assert published['materials'][opacity_material.name]['vertexAlphaOpacity']==expected
+    assert any(any(row['alpha'][i]!=1 for i in range(len(row['alpha']))) for row in observed_opacity_colors),observed_opacity_colors
+    # Test-only old-publisher simulation: no certificate must retain 959.
+    original_ownership=alpha.opacity_ownership
+    alpha.opacity_ownership=lambda *_args:None
+    rejected=out/'untagged-color-alpha-must-refuse.glb'
+    try:
+        try:compiler.with_compiled_materials(opacity_plan,str(rejected),emit_opacity)
+        except compiler.MaterialCompileError as error:assert 'implicit vertex alpha would multiply opacity twice' in str(error),str(error)
+        else:raise AssertionError('untagged opacity bypassed old publication refusal')
+        assert not rejected.exists()
+    finally:alpha.opacity_ownership=original_ownership
     assert opacity_owner.data==opacity_mesh and opacity_owner.data.materials[0]==opacity_material
 finally:
     bpy.data.objects.remove(opacity_owner,do_unlink=True);bpy.data.meshes.remove(opacity_mesh);bpy.data.materials.remove(opacity_material)

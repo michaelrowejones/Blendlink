@@ -1,0 +1,19 @@
+// Research closure only: exact raw native observations, no port qualification.
+import assert from'node:assert/strict';import{readFile,writeFile,realpath,readdir}from'node:fs/promises';import{resolve,join}from'node:path';import{createHash}from'node:crypto';import{validateNativeArchive}from'../../scripts/lib/native-proof-archive.mjs';
+const root=await realpath(resolve(import.meta.dirname,'../..')),out=await realpath(resolve(process.argv[2])),sha=b=>createHash('sha256').update(b).digest('hex'),json=async p=>JSON.parse(await readFile(p)),q=await json(join(out,'report.json'))
+assert.equal(q.status,'OBSERVED_MONO_SWITCH_VIEW_NATIVE_CPU');assert.deepEqual(q.version,[5,3,0]);assert.equal(q.build,'02f0899d78e3');assert.equal(q.nativeRenders,8);assert.equal(q.gpuInitializationCalls,0)
+for(const[file,pin]of Object.entries(await json(join(out,'inputs.json'))))assert.equal(sha(await readFile(join(root,file))),pin)
+const archive=await validateNativeArchive(await json(join(out,'native-archive.json')),out,{expectedFinalSources:[],expectedScripts:[{path:join(import.meta.dirname,'probe.py'),invocations:1}],helperInputs:{helper:join(root,'scripts/lib/node-port-python.mjs'),bridge:join(root,'scripts/node-port-blender.mjs')}})
+const labels=['mono-default','mono-disabled-first','mono-renamed-first','mono-inactive-time','mono-group-reroute','mono-image-field','mono-single-domain','mono-image-domain'];assert.deepEqual(q.rows.slice(0,8).map(r=>r.case),labels)
+const word=n=>new Uint32Array(new Float32Array([n]).buffer)[0],runs=[];let words=0
+for(const row of q.rows.slice(0,8)){
+ assert.equal(row.mono,true);assert.equal(row.sourcePreserved,true);assert.equal(row.nativeSceneProperty,null);assert.equal(row.selectedInput,row.inputs[0][0]);assert.equal(row.words,468)
+ const b=await readFile(join(out,row.file));assert.equal(sha(b),row.sha256);assert.equal(b.length,1872);const data=new Uint32Array(b.buffer,b.byteOffset,b.length/4)
+ for(let y=0;y<9;y++)for(let x=0;x<13;x++){const expected=row.dimensions?(row.selectedImageField?[13,9,0,1]:[0,0,0,1]):row.selectedImageField?[x/16,y/16,.375,1]:[.125,.25,.5,1];for(let c=0;c<4;c++)assert.equal(data[4*(y*13+x)+c],word(expected[c]))}
+ words+=data.length;runs.push({case:row.case,selectedInput:row.selectedInput,words:data.length,wordDifferences:0,sha256:row.sha256})
+}
+assert.equal(q.rows[1].selectedInput,'right');assert.equal(q.rows[2].selectedInput,'Artist right');assert.equal(q.rows[3].inactiveSceneTime,true)
+const integer=q.rows.find(r=>r.node==='FunctionNodeInputIntVector');assert.deepEqual(integer.integerPropertyRead,[-2147483648,16777217,2147483647]);assert.deepEqual(integer.twoDPropertyRead,[-2147483648,16777217])
+const files=[];async function visit(folder,prefix=''){for(const entry of(await readdir(folder,{withFileTypes:true})).sort((a,b)=>a.name.localeCompare(b.name))){assert.equal(entry.isSymbolicLink(),false);const name=prefix+entry.name;if(name==='closed.json'||name.startsWith('active/'))continue;if(entry.isDirectory())await visit(join(folder,entry.name),name+'/');else{const b=await readFile(join(folder,entry.name));files.push({path:name,bytes:b.length,sha256:sha(b)})}}}await visit(out)
+const receipt={status:'CLOSED_MONO_SWITCH_VIEW_FEASIBILITY',nativeRenders:8,primaryWords:words,wordDifferences:0,guardedPythonInvocations:1,gpuInitializationCalls:0,runs,archive,files,readerSha256:sha(await readFile(join(import.meta.dirname,'close.mjs'))),supportCredit:0,FinalCredit:0,browserCredit:0,limits:'Pinned native CPU mono fallback/domain observations only. Inactive SceneTime changes no output; this is not a scheduler execution-count proof, multiview support, source extraction or actual Final/browser qualification.'}
+await writeFile(join(out,'closed.json'),JSON.stringify(receipt,null,2)+'\n');console.log(JSON.stringify({status:receipt.status,nativeRenders:8,primaryWords:words,wordDifferences:0,supportCredit:0}))

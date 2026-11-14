@@ -76,6 +76,7 @@ normalize_float_to_int = _sibling("compositor_float_to_int").normalize_float_to_
 normalize_vector_math = _sibling("compositor_vector_math").normalize_vector_math
 normalize_radial_width = _sibling("compositor_radial_width").normalize_radial_width
 normalize_blackbody = _sibling("compositor_blackbody").normalize_blackbody
+normalize_white_noise = _sibling("compositor_white_noise").normalize_white_noise
 resolve_vector_math_literal = _sibling("compositor_procedural_texture").literal
 normalize_procedural_texture = _sibling("compositor_procedural_texture").normalize_procedural_texture
 validate_texture_field_graph = _sibling("compositor_procedural_texture").validate_texture_field_graph
@@ -92,6 +93,7 @@ normalize_ellipse_mask = _sibling("compositor_ellipse_mask").normalize_ellipse_m
 validate_ellipse_mask_graph = _sibling("compositor_ellipse_mask").validate_ellipse_mask_graph
 normalize_image_info = _sibling("compositor_image_info").normalize_image_info
 validate_image_info_edge = _sibling("compositor_image_info").validate_image_info_edge
+view_selection = _sibling("compositor_view_selection")
 normalize_float_coordinates = _sibling("compositor_float_coordinates").normalize_float_coordinates
 validate_image_coordinate_graph = _sibling("compositor_image_coordinates").validate_image_coordinate_graph
 normalize_crop = _sibling("compositor_crop").normalize_crop
@@ -108,6 +110,7 @@ TYPES = {
     "ShaderNodeVectorMath": "vector-math",
     "ShaderNodeRadialTiling": "radial-segment-width",
     "ShaderNodeBlackbody": "blackbody-color",
+    "ShaderNodeTexWhiteNoise": "white-noise-texture",
     "ShaderNodeTexGradient": "gradient-texture",
     "ShaderNodeTexChecker": "checker-texture",
     "CompositorNodeRelativeToPixel": "relative-to-pixel",
@@ -307,6 +310,7 @@ def extract(scene):
     static_rotation_cache = {}
     static_euler_cache = {}
     source_nodes = {}
+    view_selections = []
 
     def is_single_value(ref):
         return ref["kind"] == "constant" or (ref["kind"] == "ref" and ref["node"] in single_values) \
@@ -486,6 +490,18 @@ def extract(scene):
                         "Group output identifier does not match instance",
                     )
                 ref = input_value(target, subctx)
+            elif node.bl_idname in view_selection.NODES:
+                if len(view_selections)>=view_selection.MAX_SELECTIONS:
+                    fail('unsupported-view-selection',path,node,socket,'Switch View exceeds its64 selected-node traversal budget')
+                try:
+                    selected=view_selection.select_mono_view(node,socket,scene)
+                    snapshot=view_selection.selection_snapshot(node,socket,scene)
+                except view_selection.ViewSelectionUnsupported as error:
+                    fail('unsupported-view-selection',path,node,socket,str(error))
+                # Record before recursion so long transparent chains are bounded.
+                view_selections.append((node,socket,snapshot))
+                ref=input_value(selected['input'],ctx)
+                result.setdefault('compileTimeViews',[]).append(dict(selected['metadata'],path=list(path),node=node.name))
             elif node.bl_idname in static_selection.NODES:
                 # The native shader inliner and compositor operation both forward only
                 # the selected input. Inactive branches must never enter extraction.
@@ -597,6 +613,12 @@ def extract(scene):
                 elif node.bl_idname == "ShaderNodeBlackbody":
                     normalize_blackbody(node, socket, op, lambda incoming: input_value(incoming, ctx), result["ops"],
                         lambda incoming, message: fail("unsupported-blackbody", path, node, incoming, message), resolve_vector_math_literal)
+                elif node.bl_idname == "ShaderNodeTexWhiteNoise":
+                    frames = []; current = ctx
+                    while current.get('parent') is not None:
+                        frames.append(current['instance']); current = current['parent']
+                    normalize_white_noise(node, socket, op, scene, tuple(reversed(frames)),
+                        lambda incoming, message: fail("unsupported-white-noise", path, node, incoming, message))
                 elif node.bl_idname == "ShaderNodeRadialTiling":
                     normalize_radial_width(node, socket, op, lambda incoming: input_value(incoming, ctx), result["ops"],
                         lambda incoming, message: fail("unsupported-radial-width", path, node, incoming, message), resolve_vector_math_literal)
@@ -1120,6 +1142,12 @@ def extract(scene):
                     evaluator.check_sources()
                 except (static_matrix.StaticMatrixUnsupported, static_rotation.StaticRotationUnsupported, RecursionError) as error:
                     fail('static-island-source-changed', ctx['path'], sink, terminal, str(error))
+        for node,socket,snapshot in view_selections:
+            try:
+                if view_selection.selection_snapshot(node,socket,scene)!=snapshot:
+                    raise view_selection.ViewSelectionUnsupported('Switch View source selection/context changed during extraction')
+            except (view_selection.ViewSelectionUnsupported,ReferenceError,RuntimeError) as error:
+                fail('unsupported-view-selection',ctx['path'],node,socket,str(error))
         result["status"] = "extracted"
     except Unsupported:
         result["status"] = "unsupported"

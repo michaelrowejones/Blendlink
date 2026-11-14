@@ -23,6 +23,14 @@ window.staticSelectionProof=async proof=>{
  const gpu=info?{api:'WebGPU',vendor:info.vendor,architecture:info.architecture,device:info.device,description:info.description}:{api:'WebGL2',vendor:gl.getParameter(debug?.UNMASKED_VENDOR_WEBGL??gl.VENDOR),renderer:gl.getParameter(debug?.UNMASKED_RENDERER_WEBGL??gl.RENDERER)}
  renderer.setPixelRatio(1);renderer.setSize(8,8);renderer.outputColorSpace=THREE.LinearSRGBColorSpace;renderer.toneMapping=THREE.NoToneMapping
  const rows=[],errors=[];renderer.debug.onShaderError=(gl,program)=>errors.push(gl.getProgramInfoLog(program));let flip
+ if(proof.variant==='mono-view'){
+  const data=new Float32Array(256);for(let y=0;y<8;y++)for(let x=0;x<8;x++)data.set([x/16,y/16,.375,1],4*(y*8+x))
+  const input=new THREE.DataTexture(data,8,8,THREE.RGBAFormat,THREE.FloatType);input.colorSpace=THREE.NoColorSpace;input.needsUpdate=true
+  const output=new THREE.RenderTarget(8,8,{type:THREE.FloatType,depthBuffer:false});output.texture.colorSpace=THREE.NoColorSpace
+  const material=new NodeMaterial();material.fragmentNode=textureLoad(input,ivec2(uv().mul(vec2(8,8))));renderer.setRenderTarget(output);new QuadMesh(material).render(renderer)
+  try{const values=await renderer.readRenderTargetPixelsAsync(output,0,0,8,8);if(!(values instanceof Float32Array))throw Error('Independent orientation needs Float32 pixels');const width=values.length===256?8:backend==='webgpu'&&values.length===480?16:0;if(!width)throw Error('Unknown independent orientation layout');const got=new Uint32Array(values.buffer,values.byteOffset,values.length),expected=new Uint32Array(data.buffer),measure=flipped=>{let n=0;for(let y=0;y<8;y++)for(let x=0;x<8;x++)for(let c=0;c<4;c++)if(got[((flipped?7-y:y)*width+x)*4+c]!==expected[4*(y*8+x)+c])n++;return n};flip=measure(true)<measure(false);if(measure(flip))throw Error('Independent physical orientation control failed')}finally{renderer.setRenderTarget(null);material.dispose();input.dispose();output.dispose()}
+ }
+
  for(const entry of proof.cases){
   const expected=new Uint32Array(await bytes(entry.pixelUrl,entry.pixelSha256)),target=new THREE.RenderTarget(8,8,{type:THREE.FloatType,depthBuffer:!!proof.final});target.texture.colorSpace=THREE.NoColorSpace
   let sourceTexture,quad,material,built,pipeline,installation,gltf,scene,camera,bindings,source,originals=[],geometries=new Set(),materials=new Set(),pinRejected=false
@@ -65,7 +73,7 @@ window.staticSelectionProof=async proof=>{
    const words=new Uint32Array(pixels.buffer,pixels.byteOffset,pixels.length),stride=pixels.length===256?8:backend==='webgpu'&&pixels.length===480?16:0
    if(!stride)throw new Error('Unknown actual GPU readback layout')
    const measure=flipped=>{let count=0;for(let y=0;y<8;y++)for(let x=0;x<8;x++)for(let c=0;c<4;c++)if(words[((flipped?7-y:y)*stride+x)*4+c]!==expected[(y*8+x)*4+c])count++;return count}
-   if(entry.case==='calibration'){flip=measure(true)<measure(false);if(measure(flip))throw new Error('Independent source/calibration mismatch '+measure(flip))}
+   if(entry.case==='calibration'&&flip===undefined){flip=measure(true)<measure(false);if(measure(flip))throw new Error('Independent source/calibration mismatch '+measure(flip))}
    if(flip===undefined)throw new Error('Independent calibration is required')
    const mismatches=measure(flip);if(mismatches)throw new Error(entry.case+' '+proof.context+' has '+mismatches+' word mismatches')
    return mismatches
@@ -83,7 +91,7 @@ window.staticSelectionProof=async proof=>{
   }
   const error=await renderer.backend.device?.popErrorScope();if(error)errors.push(error.message)
   renderer.setRenderTarget(null);target.dispose();if(renderer.info.memory.textures!==0)throw new Error('Owned textures leaked '+renderer.info.memory.textures)
-  rows.push({case:entry.case,wordMismatches:mismatches,remainingTextures:0,finalBindings:!!proof.final,pinRejected:proof.final?pinRejected:null,ownershipPreserved:true})
+  rows.push({case:entry.case,wordMismatches:mismatches,remainingTextures:0,finalBindings:!!proof.final,pinRejected:proof.final?pinRejected:null,ownershipPreserved:true,...(proof.variant==='mono-view'?{comparedWords:256,lifecycleCycles:proof.final?2:1}:{})})
  }
  renderer.dispose();device?.destroy();if(errors.length)throw new Error(JSON.stringify(errors))
  return{backend,gpu,rows,errors}

@@ -1,6 +1,7 @@
 import{spawn}from'node:child_process'
 import{resolve,join}from'node:path'
 import{preflightBrowserProofContracts}from'../../scripts/lib/browser-proof-contract.mjs'
+process.env.SCENETOWEB_ALPHA_SOURCE=process.argv[3]??process.env.SCENETOWEB_ALPHA_SOURCE??'vertex'
 const root=resolve(import.meta.dirname,'../..'),directory=resolve(process.argv[2])
 await preflightBrowserProofContracts(root,['vertex-color-alpha'])
 const run=(args,env=process.env)=>new Promise((done,reject)=>{

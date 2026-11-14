@@ -930,6 +930,11 @@ def publish_material_programs(material_plan, out_path: str) -> dict | None:
                     if item.get('tslIrRefusal')
                 ],
             }
+    for decision in getattr(material_plan, "lowerings", ()) or ():
+        if decision.material_name in materials:
+            ownership = material_compiler.vertex_color_alpha.opacity_ownership(decision.channel_plan, decision.material_name)
+            if ownership is not None:
+                materials[decision.material_name]["vertexAlphaOpacity"] = ownership
     if not materials:
         return None
     image_names = set()
@@ -1080,19 +1085,36 @@ def analyze_authoring_preview_world(scene) -> tuple[dict | None, str | None]:
             "source": "world-color",
         }, None
 
-    outputs = [
-        node for node in tree.nodes
-        if node.type == "OUTPUT_WORLD"
-        and bool(getattr(node, "is_active_output", False))
-        and not bool(getattr(node, "mute", False))
-    ]
-    if len(outputs) != 1:
+    engine = str(getattr(getattr(scene, "render", None), "engine", ""))
+    target = {"BLENDER_EEVEE": "EEVEE", "BLENDER_EEVEE_NEXT": "EEVEE",
+              "CYCLES": "CYCLES"}.get(engine)
+    if target is None:
         return None, (
-            "Blender's World needs exactly one active, unmuted World Output "
-            f"for automatic Preview lighting; found {len(outputs)}"
+            "Preview Studio has no qualified constant World shader context "
+            f"for render engine {engine!r}"
+        )
+    # Native selection owns target-specific precedence and ALL fallback.
+    # is_active_output alone is global RNA state and can point to a Cycles
+    # output while the EEVEE renderer selects another output in the same tree.
+    try:
+        output = tree.get_output_node(target)
+    except (AttributeError, RuntimeError, TypeError, ValueError) as error:
+        return None, "Blender's native World Output selection is unavailable: " + str(error)
+    if (output is None or output.type != "OUTPUT_WORLD"
+            or bool(getattr(output, "mute", False))):
+        return None, (
+            "Blender's World needs an unmuted World Output selected by its "
+            f"native {target} target"
         )
 
-    surface = outputs[0].inputs.get("Surface")
+    volume = output.inputs.get("Volume")
+    if volume is not None and volume.is_linked:
+        return None, (
+            "Blender's active World Volume is connected; a constant Surface "
+            "cannot represent volumetric camera transport or environment lighting"
+        )
+
+    surface = output.inputs.get("Surface")
     if surface is None or not surface.is_linked or len(surface.links) != 1:
         return None, (
             "Blender's active World Surface is not connected through one "

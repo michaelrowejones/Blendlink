@@ -1,0 +1,16 @@
+import{createHash}from'node:crypto';import{mkdirSync,readFileSync,writeFileSync}from'node:fs';import{resolve,join}from'node:path';import{it,expect}from'vitest';import{resolveConfig}from'../../packages/blendlink/src/config.js';import{parseManifest}from'../../packages/blendlink/src/typegen.js';import{assertQualification,browserProofContract}from'./protocol.mjs'
+const hash=(b:Uint8Array)=>createHash('sha256').update(b).digest('hex')
+it('publishes untouched direct World sources through default Final descriptors',async()=>{
+ const directory=resolve(process.env.SCENETOWEB_WORLD_BACKGROUND_REFERENCES!),native=assertQualification(JSON.parse(readFileSync(join(directory,'qualification.json'),'utf8'))),root=join(directory,'compiled');mkdirSync(root,{recursive:true})
+ const{syncAll,verifyAll,publishedAssetPath}=await import('../../packages/blendlink/dist/sync.js'),config=resolveConfig({blenderPath:process.env.BLENDLINK_BLENDER!,outDir:'public/models',genDir:'src/generated',scenes:[...native.cases,...native.controls].map((row:any,index:number)=>({name:'world'+index,file:join(directory,row.sourceFile)}))},root)
+ const provenance=['export_scene.py','source_presentation.py'].map(name=>{const source='packages/blendlink/blender/'+name,artifact='packages/blendlink/dist/blender/'+name;expect(readFileSync(source)).toEqual(readFileSync(artifact));return{source,artifact,sha256:hash(readFileSync(source))}})
+ try{await syncAll(config,{force:true})}catch(error){console.error((error as any).detail??error);throw error}
+ const rows=[]
+ for(const[index,scene]of config.scenes.entries()){
+  const source=[...native.cases,...native.controls][index],manifestBytes=readFileSync(scene.manifestPath),manifest=parseManifest(manifestBytes.toString())!;expect(manifest.authoringPreview!.world).toEqual(source.world);expect(manifest.authoringPreview!.look.sourceViewTransform).toBe('Raw');expect(manifest.sourcePresentation).toBeTruthy();expect(Object.keys(manifest.states??{})).toEqual([])
+  const pointer=manifest.sourcePresentation!,presentationPath=publishedAssetPath(scene,pointer.url,manifest)!,presentationBytes=readFileSync(presentationPath),presentation=JSON.parse(presentationBytes.toString());expect(presentation.display.view).toBe('Raw');expect(presentation.compositor).toBeUndefined();expect(hash(presentationBytes).slice(0,16)).toBe(pointer.hash);expect(presentationBytes.length).toBe(pointer.bytes);expect(hash(readFileSync(join(directory,source.sourceFile)))).toBe(source.sourceSha256)
+  rows.push({case:source.case,sourceFile:source.sourceFile,sourceSha256:source.sourceSha256,authoringWorld:manifest.authoringPreview!.world,manifestPath:scene.manifestPath,manifestSha256:hash(manifestBytes),glbPath:scene.glbPath,glbSha256:hash(readFileSync(scene.glbPath)),modulePath:scene.modulePath,moduleSha256:hash(readFileSync(scene.modulePath)),moduleExport:'world'+index,presentationPath,presentationSha256:hash(presentationBytes),presentationPointer:pointer})
+ }
+ expect((await verifyAll(config)).filter(issue=>issue.severity!=='warning')).toEqual([])
+ writeFileSync(join(directory,'final-proof.json'),JSON.stringify({status:browserProofContract.finalStatus,exporter:'built',sourcePreserved:true,nativeQualificationSha256:hash(readFileSync(join(directory,'qualification.json'))),provenance,rows},null,2)+'\n')
+},300000)
