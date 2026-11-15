@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "supportCredit": 0,
+  "sources": [
+    {
+      "path": "source/blender/blenlib/BLI_math_interp.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/BLI_math_interp.hh",
+      "sha256": "a3ffc7eab6b51210b6654f0678b70cf896f52fcd14ebdbe4e89bd5256cfa23ed",
+      "bytes": 16556,
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/blenlib/BLI_simd.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/BLI_simd.hh",
+      "sha256": "ea20be387df51daaad39f6191c4f566f591a0fda47e690a65ecd5f5a00423382",
+      "bytes": 5785,
+      "license": "GPL-2.0-or-later"
+    }
+  ]
+}

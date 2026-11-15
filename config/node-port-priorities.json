@@ -1466,7 +1466,7 @@
     }
   },
   "researchNotes": {
-    "compositor:ShaderNodeTexNoise": "Research only; no production support. Twenty guarded Blender 5.3 CPU renders cover eight varying default 2D FBM rows, eight Scale-zero controls and four independent Uniform-coordinate witnesses. The source-faithful mixed-precision host model matches 6,816 primary words exactly. The existing staged-F32 host model differs in 1,221 words by at most 7 ULP, within its predeclared research gate; this is not actual TSL, GPU or saved-Final qualification. Default CPU Noise cannot be relabeled as the EEVEE/Cycles profile. Shared exact axes, fixed Color offsets and a distinct CPU precision contract are the proposed next enablers.",
+    "compositor:ShaderNodeTexNoise": "Historical host-only research is retained separately. Fresh automatic native/Final/browser verification now qualifies the pinned Blender 5.3 CPU default 2D FBM Fac/Color route: 26 source graphs, 15 native controls, 8 saved Finals and 136 browser cases. RGB requires both 8 ULP and absolute 2^-20; alpha/lattice/channel identities are exact. Only the four proven output grammars are admitted. Other dimensions, linked controls, generic downstream consumers and image/spatial mixtures remain work; no EEVEE/Cycles profile is inferred.",
     "compositor:ShaderNodeTexWave": "Pinned Blender 5.3 CPU Bands X/Y SAW/TRI default Uniform fields now have reviewed partial production coverage: 140 graphs plus 9 native controls, 20 saved Final scenes, 640 actual browser cases and 10,876,288 exact primary words on Metal/SwiftShader WebGPU/WebGL2. Source Scale/Phase raw+0/normal magnitude [2^-16,8], positive-zero Distortion and unlinked Detail inputs only; repeated Fac/Color keys share one bounded row. SIN retains its independent exact-endpoint/compiler/libm counterexample and remains refused, as do Rings, linked controls/coordinates and other domains. Next useful work is truthful SIN or linked-coordinate support, not claiming the whole node finished. The official retained demo inventories contain no Wave usage; qualitative artist priority is not measured user demand.",
     "compositor:FunctionNodeFloatToInt": "Qualified partial literal production port on measured Blender 5.3 macOS arm64: all four modes, native typed consumers and actual saved Final/browser proof. Computed/image fields, other platforms and implicit conversions remain unqualified; native subnormal and save/reopen image counterexamples are retained. Earlier Geometry-only/private kernel trials grant no additional support. Shader creation is rejected in all audited versions.",
     "shader:ShaderNodeRadialTiling": "Qualified partial literal Segment Width port with closed native/Final/browser evidence. Computed Sides3/8/12 and Segment Coordinates in the unchanged stepped official demo remain unqualified. Generated-kernel compilation research is separate and earns no new support or scene credit.",
@@ -1485,7 +1485,9 @@
     "shader:ShaderNodeBump": "A separate offline Cycles Normal/active Coat Normal route is verified on actual owned Cube wood, with native render geometry, independent PNG/UV/Mikk checks and strict carrier-loading closure. Zero new live Bump coverage; Floor resource limit and Lighting-atlas composition remain refused.",
     "compositor:ShaderNodeBlackbody": "Closed compositor CPU-MF literal Blackbody proof: 76 native graphs /32 Finals /432 browser cases; RGB within predeclared source-error envelope, exact alpha/calibration. GPU fields and custom color transforms remain separate.",
     "compositor:FunctionNodeQuaternionToRotation": "Reviewed CPU normalization/component-copy callbacks admit a bounded static-island candidate; negative W and positive-zero signs must be preserved. Production qualification is separate from this research.",
-    "compositor:FunctionNodeRotationToQuaternion": "Reviewed CPU normalization/component-copy callbacks admit a bounded static-island candidate; negative W and positive-zero signs must be preserved. Production qualification is separate from this research."
+    "compositor:FunctionNodeRotationToQuaternion": "Reviewed CPU normalization/component-copy callbacks admit a bounded static-island candidate; negative W and positive-zero signs must be preserved. Production qualification is separate from this research.",
+    "compositor:CompositorNodeBlankImage": "Fresh automatic verification qualifies a pinned Blender 5.3 CPU terminal finite producer with static unlinked Color/Size, including native max(Size,1), exact pre-display words and separate bounded Raw display. Virtual source texels avoid a source-sized RTT/fill. Image Info/Coordinates, linked controls and mixed/pointwise/spatial consumers remain unqualified; finite image semantics must be preserved before adding them.",
+    "compositor:CompositorNodeDisplace": "Fresh automatic verification qualifies a pinned Blender 5.3 CPU terminal constant-displacement route, Nearest/Bilinear Clip, on direct Render Layers Image or alpha-one native RGB. Sixteen admitted source graphs remain distinct from 160 injected same-pixel oracle inputs. Linear direct/installed words are exact; Raw display has its own bounded audit. Varying displacement, other extensions/filters and composed image-domain consumers remain work. No Image producer or EEVEE/BSDF beauty credit is inferred."
   },
   "observationEvidence": [
     "experiments/official-demo-node-performance/README.md",
@@ -1498,7 +1500,9 @@
       "experiments/compositor-noise-uniform-research/README.md",
       "experiments/compositor-noise-uniform-research/evidence.json",
       "experiments/compositor-noise-uniform-research/contract.json",
-      "experiments/compositor-noise-uniform-research/sources.json"
+      "experiments/compositor-noise-uniform-research/sources.json",
+      "experiments/compositor-noise-default-field/README.md",
+      "experiments/compositor-noise-default-field/evidence.json"
     ],
     "compositor:ShaderNodeTexWave": [
       "experiments/compositor-wave-axis-research/README.md",
@@ -1670,6 +1674,14 @@
     "compositor:FunctionNodeRotationToQuaternion": [
       "experiments/static-quaternion-rotation/proposal.md",
       "experiments/static-quaternion-rotation/sources.json"
+    ],
+    "compositor:CompositorNodeBlankImage": [
+      "experiments/compositor-blank-image/README.md",
+      "experiments/compositor-blank-image/evidence.json"
+    ],
+    "compositor:CompositorNodeDisplace": [
+      "experiments/compositor-displace-single/README.md",
+      "experiments/compositor-displace-single/evidence.json"
     ]
   },
   "sceneObservations": {

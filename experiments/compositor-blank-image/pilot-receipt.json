@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "status": "RESEARCH_ONLY_BLANK_IMAGE_VIRTUAL_TEXEL_PILOT",
+  "supportCredit": 0,
+  "productionCandidate": "d91d3b1",
+  "referenceResearch": "e883d21",
+  "pilotDirectory": "artifacts/verification-blank-image-raw-pilot-r1",
+  "reviewSha256": "a33a311937116dd0b67068eaed9404a0939aa8a84aa4d456b69b6eac062b7f39",
+  "review": {
+    "status": "CLOSED_BLANK_IMAGE_RAW_PILOT_REVIEW",
+    "supportCredit": 0,
+    "finalCredit": 0,
+    "runtimeFingerprint": "7a6c6ccdcc5dd163ebe710be3ef04984b05caf0b2f8eb23dd51fef766f00bfd9",
+    "originalReceipt": {
+      "file": "pilot-closed.json",
+      "sha256": "053aed4baa47ad7de41757db4a9a386831834f82a655b91ca7c66920df0150d2"
+    },
+    "sourcePinsSha256": "c86a61280582999b142120175214cd8dc4be1f145fe637bbf4cf60b29654ddfe",
+    "nativeSourceSha256": "7bcf6f68eb5c3be2fed52abede11f6d98ae9ed8d6b14e7439013522db2f183a8",
+    "nativeArchiveSha256": "1b88cda46121d566883c5e8dd8905998678afc4f04dbf5650f9dfeafb0613504",
+    "producerCases": 11,
+    "browserCases": 44,
+    "primaryWords": 19744,
+    "exactWordDifferences": 0,
+    "mappingBytesPerPipeline": 262144,
+    "sourceRenderTargetsPerPipeline": 0,
+    "firstUploads": 2,
+    "warmUploads": 0,
+    "drawCallsPerFrame": 1,
+    "remainingTextures": 0,
+    "remainingRenderTargets": 0,
+    "reports": [
+      {
+        "file": "metal/report.json",
+        "sha256": "486beaec0c2db1cd8895192fded18a08cbaba403a0fba482e59ef084f10d206f",
+        "adapters": [
+          {
+            "backend": "webgpu",
+            "gpu": {
+              "api": "WebGPU",
+              "vendor": "apple",
+              "architecture": "metal-3",
+              "device": "",
+              "description": ""
+            }
+          },
+          {
+            "backend": "webgl2",
+            "gpu": {
+              "api": "WebGL2",
+              "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+            }
+          }
+        ]
+      },
+      {
+        "file": "software/report.json",
+        "sha256": "0f35830553058c003dea7b25ce03e08908d6574f74a4b7f3dfaafd47b006c3a2",
+        "adapters": [
+          {
+            "backend": "webgpu",
+            "gpu": {
+              "api": "WebGPU",
+              "vendor": "google",
+              "architecture": "swiftshader",
+              "device": "",
+              "description": ""
+            }
+          },
+          {
+            "backend": "webgl2",
+            "gpu": {
+              "api": "WebGL2",
+              "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+            }
+          }
+        ]
+      }
+    ],
+    "limits": [
+      "Raw feasibility only; no actual saved Final or category promotion.",
+      "Retained independently rendered native CPU references; source programs freshly extracted without rendering.",
+      "Native Image Info and coordinates consumer controls remain unqualified.",
+      "First-frame comparisons are independent raw native words; same-physical-extent DPR and invalid-viewport recovery are repeated pixel checks.",
+      "Source-sized constant RTT is absent; two existing coordinate tables remain allocated.",
+      "No larger physical resize, partial allocation, saved renderer disposal or public installer proof in this pilot."
+    ]
+  },
+  "policyDirectory": "artifacts/verification-blank-image-policy-r3",
+  "policyClosedSha256": "4f238bf4d503b42b4351ebbea1f574e402d09f6300615372cf44af1b4d455bf0",
+  "policyReport": {
+    "status": "SCENETOWEB_BLANK_IMAGE_POLICY_PASSED",
+    "supportCredit": 0,
+    "nativeVersion": [
+      5,
+      3,
+      0
+    ],
+    "nativeBuild": "02f0899d78e3",
+    "positives": [
+      "defaults",
+      "native-clamp",
+      "thin",
+      "group",
+      "reroute",
+      "minimum-color"
+    ],
+    "refusals": [
+      "gpu",
+      "border",
+      "too-wide",
+      "pixel-budget",
+      "linked-color",
+      "consumer-domain",
+      "muted",
+      "animation",
+      "negative-zero",
+      "minimum-subnormal",
+      "maximum-subnormal",
+      "below-color-bound",
+      "late-color",
+      "late-size",
+      "late-frame",
+      "late-mute",
+      "late-group-mute",
+      "late-reroute-link"
+    ],
+    "sourceReadRepeats": 3,
+    "gpuInitGuardProved": true,
+    "gpuInitializations": 0,
+    "nativeRenders": 0
+  },
+  "retainedFailure": {
+    "directory": "artifacts/verification-blank-image-policy-r1",
+    "reason": "Test asserted an absent singleValue JSON field before source policy controls; no renders or pixel qualification."
+  },
+  "readerSha256": "33c4788bb7c7c86e9a3561479e7e89ef56a2f9aade8a16ac16b041e6271cedab"
+}

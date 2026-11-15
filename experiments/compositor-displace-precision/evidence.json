@@ -1,0 +1,934 @@
+{
+  "status": "RESEARCH_ONLY_DISPLACE_CPU_STAGING_CLOSED",
+  "qualificationCredit": 0,
+  "supportPromotion": false,
+  "freshNativeRenders": 0,
+  "freshFinalExports": 0,
+  "sdkCommit": "f1667a1",
+  "boundedFailureFixtureCommit": "72ef31f",
+  "sourcePins": "sources.json",
+  "sourceAttribution": {
+    "scriptSha256": "03e4b98883e9d2ff94d95f9821ed845037cfd537392310168c434dcc1d6dea5b",
+    "fourWordWitnesses": "attribution.json",
+    "witnessesSha256": "c439c61b48a82bf914639b04d259797707d3ec7af947bdf54c7088c050748888",
+    "contractedShader": "contracted-target.wgsl",
+    "contractedShaderSha256": "e08947a686e6809f38a12211d6a8fdabb49daa698e16c1f09fc77ac75612b667",
+    "failureReport": {
+      "path": "/tmp/scenetoweb-node-ports-final-batch-next/artifacts/verification-displace-next50-browser-diagnostic-r2/browser-compare-metal/report.json",
+      "sha256": "56152103a6d24cb4299e7a4ecbfd41dff8fe75ac705151830f9a75962d32711c"
+    },
+    "rawBuffers": {
+      "actual-input": {
+        "path": "/tmp/scenetoweb-node-ports-final-batch-next/artifacts/verification-displace-next50-browser-diagnostic-r2/browser-compare-metal/failed-readbacks/webgpu--metal--webgpu--bilinear-integer--18x26@2.actual-input.rgba32f",
+        "sha256": "95918493193204034d5708678090870dea1e8ba5ea35d2e31d8fb58068bc5615"
+      },
+      "repeated-input": {
+        "path": "/tmp/scenetoweb-node-ports-final-batch-next/artifacts/verification-displace-next50-browser-diagnostic-r2/browser-compare-metal/failed-readbacks/webgpu--metal--webgpu--bilinear-integer--18x26@2.repeated-input.rgba32f",
+        "sha256": "95918493193204034d5708678090870dea1e8ba5ea35d2e31d8fb58068bc5615"
+      },
+      "direct": {
+        "path": "/tmp/scenetoweb-node-ports-final-batch-next/artifacts/verification-displace-next50-browser-diagnostic-r2/browser-compare-metal/failed-readbacks/webgpu--metal--webgpu--bilinear-integer--18x26@2.direct.rgba32f",
+        "sha256": "e5f9f8a75c4116d51e7cf60a0fb144b8feef2fb7b5cafd59ab25f3e4627942ae"
+      }
+    },
+    "nativeTarget": {
+      "path": "/tmp/scenetoweb-node-ports-final-batch-next/artifacts/verification-displace-single-next50-joint/native/metal--webgpu--bilinear-integer--18x26@2.linear.rgba32f",
+      "sha256": "b45f168243b0b3d044000480f2bf6692d99041eabdb7be77b6aca0f50d3d8382"
+    },
+    "finding": "All4targetwords: separately rounded product/pair model exactly native; fused pair/chain exactly old GPU. No coordinate, input, alpha, or oracle modification."
+  },
+  "retainedInputs": {
+    "sources.json": {
+      "path": "/tmp/scenetoweb-node-ports-final-batch-next/artifacts/verification-displace-single-next50-joint/sources.json",
+      "sha256": "c63ca43017b4031cf11741b45f50b0813a13b5cf24f5cc83fe140bf7452501ac"
+    },
+    "final.json": {
+      "path": "/tmp/scenetoweb-node-ports-final-batch-next/artifacts/verification-displace-single-next50-joint/final.json",
+      "sha256": "5cf4cffb257ad0c56bd715f10966d0336a57db39d1b520babb89058d05e9de23"
+    },
+    "native.json": {
+      "path": "/tmp/scenetoweb-node-ports-final-batch-next/artifacts/verification-displace-single-next50-joint/native.json",
+      "sha256": "bca67ef5a559f50deb2205506ca507dd306c8953bd9336e5d3f7ed5b19bf7216"
+    },
+    "baselines.json": {
+      "path": "/tmp/scenetoweb-node-ports-final-batch-next/artifacts/verification-displace-single-next50-joint/baselines.json",
+      "sha256": "6431417656da36479d261a89cab73acdf660fb34d2ec9a96ca5d6cba572ff153"
+    }
+  },
+  "successfulNativeReplays": [
+    {
+      "run": "r3",
+      "profile": "metal",
+      "path": "/private/tmp/scenetoweb-displace-rounding-next/artifacts/verification-displace-rounded-diagnostic-r3/browser-compare-metal/report.json",
+      "sha256": "84ded78dcb29b01b3cd7a9832ddaf297e86b83fa9f6334feb69b72bd9a275b5b",
+      "status": "DIAGNOSTIC_ONLY_ZERO_CREDIT",
+      "fixturePins": {
+        "browser.js": "9ea1cb833e3c0e21be79b080454cfbe63f61f18663e6348ec1b1661a78434002",
+        "browser-contract.mjs": "557d12e54f4ec66c861f3077a6735f502ef09c495b66a5d2151cca8a65aaec9f",
+        "same-frame.mjs": "e370e334d047240d10e72a9166719f4f702948d11b790585966e4d13343e94f1",
+        "index.html": "d9424939fa396b2f15234674d2b71d03d7ddd0c5e01d3310cfdd8f67c0fe0ae8"
+      },
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "description": "",
+            "device": ""
+          },
+          "frames": [
+            {
+              "id": "metal--webgpu--bilinear-integer--13x9@1",
+              "directWords": 468,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "e81b390c5082a7d7d143d9894d32ce6da562258c91ceaad1de47027d1716bead"
+            },
+            {
+              "id": "metal--webgpu--bilinear-integer--18x26@2",
+              "directWords": 1872,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "f22e56d2629adcb663c3d79f47a5c5a0b87e98731a81f48e0918a7119e007bbd"
+            }
+          ],
+          "errors": [],
+          "uncaptured": []
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "frames": [
+            {
+              "id": "metal--webgl2--bilinear-integer--13x9@1",
+              "directWords": 468,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "3644e44b710166aeda62507fefefa0417e5456d8919fa6a519cf96aee4d5f1f0"
+            },
+            {
+              "id": "metal--webgl2--bilinear-integer--18x26@2",
+              "directWords": 1872,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "26e387c0261cc75d81a9a747b9727729dfef2c8032f8dc2de384f7f6d58a8c35"
+            }
+          ],
+          "errors": [],
+          "uncaptured": []
+        }
+      ]
+    },
+    {
+      "run": "r3",
+      "profile": "software",
+      "path": "/private/tmp/scenetoweb-displace-rounding-next/artifacts/verification-displace-rounded-diagnostic-r3/browser-compare-software/report.json",
+      "sha256": "982e013145c9f53cf343a18c22c1fb6b351ae479b357c1712e6ab30c312efddf",
+      "status": "DIAGNOSTIC_ONLY_ZERO_CREDIT",
+      "fixturePins": {
+        "browser.js": "9ea1cb833e3c0e21be79b080454cfbe63f61f18663e6348ec1b1661a78434002",
+        "browser-contract.mjs": "557d12e54f4ec66c861f3077a6735f502ef09c495b66a5d2151cca8a65aaec9f",
+        "same-frame.mjs": "e370e334d047240d10e72a9166719f4f702948d11b790585966e4d13343e94f1",
+        "index.html": "d9424939fa396b2f15234674d2b71d03d7ddd0c5e01d3310cfdd8f67c0fe0ae8"
+      },
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "description": "",
+            "device": ""
+          },
+          "frames": [
+            {
+              "id": "software--webgpu--bilinear-integer--13x9@1",
+              "directWords": 468,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "d920548dc7c06e6f75834fd4750e7d1eb4f5dd1b378ed3388eb839f487fd7018"
+            },
+            {
+              "id": "software--webgpu--bilinear-integer--18x26@2",
+              "directWords": 1872,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "083bf30df16345a5641bd6727f50977111bb5836ea0503e4a9fccd277270c477"
+            }
+          ],
+          "errors": [],
+          "uncaptured": []
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "frames": [
+            {
+              "id": "software--webgl2--bilinear-integer--13x9@1",
+              "directWords": 468,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "a79fc056b9ec6f27161efd0fa24b92c6b180b7ae18ce00e4224bb2f50e7136c1"
+            },
+            {
+              "id": "software--webgl2--bilinear-integer--18x26@2",
+              "directWords": 1872,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "2077c5eea7d94bc4984f17e0ed237abad67556c97431e98aa1ca58a6fc24a2fc"
+            }
+          ],
+          "errors": [],
+          "uncaptured": []
+        }
+      ]
+    },
+    {
+      "run": "r4",
+      "profile": "metal",
+      "path": "/private/tmp/scenetoweb-displace-rounding-next/artifacts/verification-displace-rounded-diagnostic-r4/browser-compare-metal/report.json",
+      "sha256": "91cea1af1f1172338ac72f9f59c9b43f5e6c4e609dd3e781002d1339e12f33ea",
+      "status": "DIAGNOSTIC_ONLY_ZERO_CREDIT",
+      "fixturePins": {
+        "browser.js": "9ea1cb833e3c0e21be79b080454cfbe63f61f18663e6348ec1b1661a78434002",
+        "browser-contract.mjs": "557d12e54f4ec66c861f3077a6735f502ef09c495b66a5d2151cca8a65aaec9f",
+        "same-frame.mjs": "e370e334d047240d10e72a9166719f4f702948d11b790585966e4d13343e94f1",
+        "index.html": "d9424939fa396b2f15234674d2b71d03d7ddd0c5e01d3310cfdd8f67c0fe0ae8"
+      },
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "description": "",
+            "device": ""
+          },
+          "frames": [
+            {
+              "id": "metal--webgpu--bilinear-fractional--13x9@1",
+              "directWords": 468,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "b70d79c4393def19bb164dd4caa9c95e394fc018e4667167279329953e3d4dc4"
+            },
+            {
+              "id": "metal--webgpu--bilinear-fractional--18x26@2",
+              "directWords": 1872,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "2954eed093d50c5f396dc932382dd89b0edd66ccfc2078a59147ffad047f1f07"
+            },
+            {
+              "id": "metal--webgpu--bilinear-ordinary--13x9@1",
+              "directWords": 468,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "c9e493b437b30bd19c2444fa762aadf4fb86cdf79be23666c806ac276600e329"
+            },
+            {
+              "id": "metal--webgpu--bilinear-ordinary--18x26@2",
+              "directWords": 1872,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "454f904a67b85181f9c273ed3e72f838975115c06d1a9f5510f7d7bc224992c0"
+            },
+            {
+              "id": "metal--webgpu--bilinear-minimum--13x9@1",
+              "directWords": 468,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "d9a78b9529ce6bba0fd4cc015e34408f65c42e419932588b119442227be7a746"
+            },
+            {
+              "id": "metal--webgpu--bilinear-minimum--18x26@2",
+              "directWords": 1872,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "1d3a8e4217051002b7e8d8a94d3343ce7e919042bfdb0f58a905519f2bff2dda"
+            },
+            {
+              "id": "metal--webgpu--bilinear-maximum--13x9@1",
+              "directWords": 468,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "cc99800863c1414e79968891fcf5c20d0ab876a4015e3520be0cf45f916d9e2f"
+            },
+            {
+              "id": "metal--webgpu--bilinear-maximum--18x26@2",
+              "directWords": 1872,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "d05e7507aa442de6110f21233592aa3403dd121dc359ec4cdb512654a0a1cc66"
+            },
+            {
+              "id": "metal--webgpu--bilinear-maximum--8192x4@1",
+              "directWords": 131072,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "8c04c1a6f165ab79a56e36da19620366e35b88d6941f824ee6449f3c2f5f91f4"
+            },
+            {
+              "id": "metal--webgpu--bilinear-maximum--4x8192@1",
+              "directWords": 131072,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "e402008f08db7b8d59b8285611426c681975eac8680af685db5cec9f0eff08d2"
+            }
+          ],
+          "errors": [],
+          "uncaptured": []
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "frames": [
+            {
+              "id": "metal--webgl2--bilinear-fractional--13x9@1",
+              "directWords": 468,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "59862fe152d495d353d92959f7be5a967412776d5b58f81aeaf7c3422cc9ac09"
+            },
+            {
+              "id": "metal--webgl2--bilinear-fractional--18x26@2",
+              "directWords": 1872,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "022ab7780bb3b524eb9911939100cc84c3571703056b3ff9268e201c6a393a28"
+            },
+            {
+              "id": "metal--webgl2--bilinear-ordinary--13x9@1",
+              "directWords": 468,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "9dfdfc35fb87669505ee572adca1e8ed8a68000705bbdc870c17989c48a882f6"
+            },
+            {
+              "id": "metal--webgl2--bilinear-ordinary--18x26@2",
+              "directWords": 1872,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "be15370437e9e583e1a4c429362ea175a552c3f3a65af03843e89ecf5efc4894"
+            },
+            {
+              "id": "metal--webgl2--bilinear-minimum--13x9@1",
+              "directWords": 468,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "35af96098874ae040871ed76c422268bdd0e6dc250d188bc6a3500a5da519b8b"
+            },
+            {
+              "id": "metal--webgl2--bilinear-minimum--18x26@2",
+              "directWords": 1872,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "a891bd98b772200eb81f36f60ecd67582ed53323be727cf3ca348d118be5760a"
+            },
+            {
+              "id": "metal--webgl2--bilinear-maximum--13x9@1",
+              "directWords": 468,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "561a8c5e2f6baba9193579261fa404241cc308b575ed458c05f81e6d866c2c01"
+            },
+            {
+              "id": "metal--webgl2--bilinear-maximum--18x26@2",
+              "directWords": 1872,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "e400b53b3d8c7b996cb2c21f4f8ea02de8cb050364cec7ba0df72efaf964afcc"
+            },
+            {
+              "id": "metal--webgl2--bilinear-maximum--8192x4@1",
+              "directWords": 131072,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "5b018a79179cb939e6512ab4921fcffc96660e4f9bef6b6eb41f16f40956596f"
+            },
+            {
+              "id": "metal--webgl2--bilinear-maximum--4x8192@1",
+              "directWords": 131072,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "bdbfafded718b0495248f7c26e974f23ae5c11199164c01b2a44453f006dd032"
+            }
+          ],
+          "errors": [],
+          "uncaptured": []
+        }
+      ]
+    },
+    {
+      "run": "r4",
+      "profile": "software",
+      "path": "/private/tmp/scenetoweb-displace-rounding-next/artifacts/verification-displace-rounded-diagnostic-r4/browser-compare-software/report.json",
+      "sha256": "c43a8d89ce8f265efdc063078bf1e5464f81e20b8785be98772a2d719a29a73e",
+      "status": "DIAGNOSTIC_ONLY_ZERO_CREDIT",
+      "fixturePins": {
+        "browser.js": "9ea1cb833e3c0e21be79b080454cfbe63f61f18663e6348ec1b1661a78434002",
+        "browser-contract.mjs": "557d12e54f4ec66c861f3077a6735f502ef09c495b66a5d2151cca8a65aaec9f",
+        "same-frame.mjs": "e370e334d047240d10e72a9166719f4f702948d11b790585966e4d13343e94f1",
+        "index.html": "d9424939fa396b2f15234674d2b71d03d7ddd0c5e01d3310cfdd8f67c0fe0ae8"
+      },
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "description": "",
+            "device": ""
+          },
+          "frames": [
+            {
+              "id": "software--webgpu--bilinear-fractional--13x9@1",
+              "directWords": 468,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "7c1ff5fd27b52c00bc508cb67f67467a437c5690717043af24c46b44d3568c67"
+            },
+            {
+              "id": "software--webgpu--bilinear-fractional--18x26@2",
+              "directWords": 1872,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "c48ff27703a5f5fa0fc0ad9f0f8b0f59ea6b15a9dc1262cfe02cdf86a978ffc7"
+            },
+            {
+              "id": "software--webgpu--bilinear-ordinary--13x9@1",
+              "directWords": 468,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "da936d4add99c9194595f33e9f793687fdc6cf535a3909b1cbd5c6a8bc3515da"
+            },
+            {
+              "id": "software--webgpu--bilinear-ordinary--18x26@2",
+              "directWords": 1872,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "0fde3952bf2a21e87ba3f2c9ab5adb4a45bf8eb58d3e7ed7dce615030c9cad95"
+            },
+            {
+              "id": "software--webgpu--bilinear-minimum--13x9@1",
+              "directWords": 468,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "76492b947dfbf7deb9bc610c0c01eb3c553c41f52963602103520b7ea840b5be"
+            },
+            {
+              "id": "software--webgpu--bilinear-minimum--18x26@2",
+              "directWords": 1872,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "f9b34e422476deff10344a860f924d057e5937e70a70efaea0f0a6e9728f90de"
+            },
+            {
+              "id": "software--webgpu--bilinear-maximum--13x9@1",
+              "directWords": 468,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "01203af300b6944c78cb8c8a6de39cc95ad2e1b72542c964e4f928b1c172fff5"
+            },
+            {
+              "id": "software--webgpu--bilinear-maximum--18x26@2",
+              "directWords": 1872,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "ccdf6afc2662ab0e4ed82ba86305e533d66acdab2cfaf7ffff12616f03b8d844"
+            },
+            {
+              "id": "software--webgpu--bilinear-maximum--8192x4@1",
+              "directWords": 131072,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "7915bfb9a1158970e0c9391c120842c6eb2fd092d9b4bb26ae75a24b0b01195b"
+            },
+            {
+              "id": "software--webgpu--bilinear-maximum--4x8192@1",
+              "directWords": 131072,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "160348cdc0c6162c1273dcd18b3fe8c168ccc92fce9e5e74599a7e621f0ac99c"
+            }
+          ],
+          "errors": [],
+          "uncaptured": []
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "frames": [
+            {
+              "id": "software--webgl2--bilinear-fractional--13x9@1",
+              "directWords": 468,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "9a53eea020b8e1c61bfc00e99be84be26713a2139246e5b1931a5c3160cf47cf"
+            },
+            {
+              "id": "software--webgl2--bilinear-fractional--18x26@2",
+              "directWords": 1872,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "f7ef725935a285ddd3e2e2b8114643b6e1e5925f702a74bd7b1b162dc2aa4bff"
+            },
+            {
+              "id": "software--webgl2--bilinear-ordinary--13x9@1",
+              "directWords": 468,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "4e42db3889fcdbd4d96b1ddb72918f0dbd9cbf501babe0860b7571833fb84b66"
+            },
+            {
+              "id": "software--webgl2--bilinear-ordinary--18x26@2",
+              "directWords": 1872,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "4858e4bdfebdd5ddb317c6944688e210f3ee6c9473485ab5ecce8678e8467d00"
+            },
+            {
+              "id": "software--webgl2--bilinear-minimum--13x9@1",
+              "directWords": 468,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "4be3d33e3dadeeee2fdcc4c466a14a01123ca98ed63b06a7f49be50986a9ec91"
+            },
+            {
+              "id": "software--webgl2--bilinear-minimum--18x26@2",
+              "directWords": 1872,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "be8037f7a9543e91a4ff6690470ede802c16b1ed0e88c945b02780103964f888"
+            },
+            {
+              "id": "software--webgl2--bilinear-maximum--13x9@1",
+              "directWords": 468,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "4eda7ce3c7a2a4632190edd19436563fff993d51c56e24dc94e049110516fb37"
+            },
+            {
+              "id": "software--webgl2--bilinear-maximum--18x26@2",
+              "directWords": 1872,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "0bfbc5fff30827c1d15eb58c929a970e808aab2e8ee9b6ab013567dd9dcf830f"
+            },
+            {
+              "id": "software--webgl2--bilinear-maximum--8192x4@1",
+              "directWords": 131072,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "6aa163662937e3f241c832505b601e59e4692f5ffef34b8a207c93d954ef81fa"
+            },
+            {
+              "id": "software--webgl2--bilinear-maximum--4x8192@1",
+              "directWords": 131072,
+              "cycles": 3,
+              "readbackFiles": 13,
+              "readbackInventorySha256": "3cdc0cd3549e9eef3cb4c033e1eb8fae0507fb733aa92dcc7d8d6a9ec4a3bec4"
+            }
+          ],
+          "errors": [],
+          "uncaptured": []
+        }
+      ]
+    }
+  ],
+  "replayTotals": {
+    "frames": 48,
+    "primaryWords": 1095376,
+    "installedRepeatedWords": 6572256,
+    "displayProjectionWords": 6572256,
+    "exactLinearWordDifferences": 0
+  },
+  "failedVectorBitcastPrototypes": [
+    {
+      "path": "/private/tmp/scenetoweb-displace-rounding-next/artifacts/verification-displace-rounded-diagnostic-r1/browser-compare-metal/report.json",
+      "sha256": "2941784dadb48403ab0313b753d347842f3f750ff34726cd418439880ae6ed90",
+      "status": "failed",
+      "errors": [
+        {
+          "backend": "webgpu",
+          "status": "PASSED_DISPLACE_ACTUAL_FINAL",
+          "error": null,
+          "errors": []
+        },
+        {
+          "backend": "webgl2",
+          "status": "FAILED_DISPLACE_DIAGNOSTIC_ZERO_CREDIT",
+          "error": "Error: Direct Displace/native mismatch metal--webgl2--bilinear-integer--13x9@1 {\"words\":468,\"wordDifferences\":160,\"examples\":[{\"index\":12,\"actual\":0,\"native\":860528640},{\"index\":13,\"actual\":0,\"native\":845185024},{\"index\":14,\"actual\":0,\"native\":838705152},{\"index\":15,\"actual\":0,\"native\":880803840},{\"index\":16,\"actual\":0,\"native\":1045078016},{\"index\":17,\"actual\":0,\"native\":1029734400},{\"index\":18,\"actual\":0,\"native\":1023254528},{\"index\":19,\"actual\":0,\"native\":1065353216}],\"sha256\":\"e3dd750851eba7858adfb137b83d9e071e938c668ba3fe36d54f8fd68fff10d4\"}",
+          "errors": [
+            "Fragment shader is not compiled.\n"
+          ]
+        }
+      ],
+      "supportCredit": 0
+    },
+    {
+      "path": "/private/tmp/scenetoweb-displace-rounding-next/artifacts/verification-displace-rounded-diagnostic-r2/browser-compare-metal/report.json",
+      "sha256": "a67bdd471d2cdaa5024943ff38ef7f852431014002de5a8cecaf01379b02e0e8",
+      "status": "failed",
+      "errors": [
+        {
+          "backend": "webgpu",
+          "status": "PASSED_DISPLACE_ACTUAL_FINAL",
+          "error": null,
+          "errors": []
+        },
+        {
+          "backend": "webgl2",
+          "status": "FAILED_DISPLACE_DIAGNOSTIC_ZERO_CREDIT",
+          "error": "Error: Direct Displace/native mismatch metal--webgl2--bilinear-integer--13x9@1 {\"words\":468,\"wordDifferences\":160,\"examples\":[{\"index\":12,\"actual\":0,\"native\":860528640},{\"index\":13,\"actual\":0,\"native\":845185024},{\"index\":14,\"actual\":0,\"native\":838705152},{\"index\":15,\"actual\":0,\"native\":880803840},{\"index\":16,\"actual\":0,\"native\":1045078016},{\"index\":17,\"actual\":0,\"native\":1029734400},{\"index\":18,\"actual\":0,\"native\":1023254528},{\"index\":19,\"actual\":0,\"native\":1065353216}],\"sha256\":\"e3dd750851eba7858adfb137b83d9e071e938c668ba3fe36d54f8fd68fff10d4\"}",
+          "errors": [
+            "Fragment shader is not compiled.\n\n\nERROR: 0:244: 'bitcast_vec4_uvec4' : no matching overloaded function found\nERROR: 0:244: '|' : wrong operand types - no operation '|' exists that takes a left-hand operand of type 'const mediump float' and a right operand of type 'highp 4-component vector of uint' (or there is no acceptable conversion)\nERROR: 0:244: 'bitcast_uvec4_vec4' : no matching overloaded function found\nERROR: 0:244: 'bitcast_vec4_uvec4' : no matching overloaded function found\nERROR: 0:244: '|' : wrong operand types - no operation '|' exists that takes a left-hand operand of type 'const mediump float' and a right operand of type 'highp 4-component vector of uint' (or there is no acceptable conversion)\nERROR: 0:244: 'bitcast_uvec4_vec4' : no matching overloaded function found\nERROR: 0:244: 'bitcast_vec4_uvec4' : no matching overloaded function found\nERROR: 0:244: '|' : wrong operand types - no operation '|' exists that takes a left-hand operand of type 'const mediump float' and a right operand of type 'highp 4-component vector of uint' (or there is no acceptable conversion)\nERROR: 0:244: 'bitcast_uvec4_vec4' : no matching overloaded function found\nERROR: 0:244: 'bitcast_vec4_uvec4' : no matching overloaded function found\nERROR: 0:244: '|' : wrong operand types - no operation '|' exists that takes a left-hand operand of type 'const mediump float' and a right operand of type 'highp 4-component vector of uint' (or there is no acceptable conversion)\nERROR: 0:244: 'bitcast_uvec4_vec4' : no matching overloaded function found\nERROR: 0:244: 'bitcast_vec4_uvec4' : no matching overloaded function found\nERROR: 0:244: '|' : wrong operand types - no operation '|' exists that takes a left-hand operand of type 'const mediump float' and a right operand of type 'highp 4-component vector of uint' (or there is no acceptable conversion)\nERROR: 0:244: 'bitcast_uvec4_vec4' : no matching overloaded function found\nERROR: 0:244: 'bitcast_vec4_uvec4' : no matching overloaded function found\nERROR: 0:244: '|' : wrong operand types - no operation '|' exists that takes a left-hand operand of type 'const mediump float' and a right operand of type 'highp 4-component vector of uint' (or there is no acceptable conversion)\nERROR: 0:244: 'bitcast_uvec4_vec4' : no matching overloaded function found\nERROR: 0:244: 'bitcast_vec4_uvec4' : no matching overloaded function found\nERROR: 0:244: '|' : wrong operand types - no operation '|' exists that takes a left-hand operand of type 'const mediump float' and a right operand of type 'highp 4-component vector of uint' (or there is no acceptable conversion)\nERROR: 0:244: 'bitcast_uvec4_vec4' : no matching overloaded function found\nERROR: 0:244: '=' : dimension mismatch\nERROR: 0:244: 'assign' : cannot convert from 'const mediump float' to 'highp 4-component vector of float'\n"
+          ]
+        }
+      ],
+      "supportCredit": 0
+    }
+  ],
+  "micro": {
+    "path": "/private/tmp/scenetoweb-displace-rounding-next/artifacts/verification-displace-staging-micro-r1/report.json",
+    "sha256": "20f1dfc06dc7b9d553980e0f36df65ba9daf9111b991682e3bdec1ad2a048758",
+    "fixturePins": {
+      "browser.js": "e68a237be3adcc2d1000f2e77543f90240769735efcd5ea3ff9b46d9bc6e27e3",
+      "index.html": "f71f234e9cef3e82eb35c52878e7fdac796eb08349d11699b89db3797cca6b0a",
+      "run.mjs": "6a0595ee2c45890deeb6a3dc8404ee46277f7996d454e38bfeeef2cd011ced82"
+    },
+    "actualTuples": 4,
+    "finiteHdrSignedZeroWords": 96,
+    "genericDefaultPixelWords": 1872,
+    "rows": [
+      {
+        "profile": "metal",
+        "status": "PASSED_DISPLACE_STAGING_MICROCONTROLS",
+        "backend": "webgpu",
+        "gpu": {
+          "api": "WebGPU",
+          "vendor": "apple",
+          "architecture": "metal-3",
+          "device": "",
+          "description": ""
+        },
+        "privateUniformMutationRefusal": "Error: Displace CPU interpolation requires its unchanged private rounding uniform",
+        "finiteHdrSignedZeroWords": 24,
+        "actualWords": [
+          1025728512,
+          1029029884,
+          1010442239,
+          1000620035,
+          1025728510,
+          1029029875,
+          1010442233,
+          1000620037,
+          3214934016,
+          3231711232,
+          1056964608,
+          1051721728,
+          2147483648,
+          2147483648,
+          2147483648,
+          2147483648,
+          0,
+          0,
+          1082130432,
+          3229614080,
+          1018556860,
+          3187685134,
+          1042325928,
+          1057085404
+        ],
+        "expectedWords": [
+          1025728512,
+          1029029884,
+          1010442239,
+          1000620035,
+          1025728510,
+          1029029875,
+          1010442233,
+          1000620037,
+          3214934016,
+          3231711232,
+          1056964608,
+          1051721728,
+          2147483648,
+          2147483648,
+          2147483648,
+          2147483648,
+          0,
+          0,
+          1082130432,
+          3229614080,
+          1018556860,
+          3187685134,
+          1042325928,
+          1057085404
+        ],
+        "signedZeroControlWords": [
+          2147483648,
+          2147483648,
+          2147483648,
+          2147483648
+        ],
+        "genericDefaultShaderByteIdentical": true,
+        "genericDefaultShaderBytes": 4593,
+        "genericDefaultPixelWords": 468,
+        "errors": [],
+        "uncaptured": [],
+        "nativeRenders": 0,
+        "qualificationCredit": 0
+      },
+      {
+        "profile": "metal",
+        "status": "PASSED_DISPLACE_STAGING_MICROCONTROLS",
+        "backend": "webgl2",
+        "gpu": {
+          "api": "WebGL2",
+          "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+        },
+        "privateUniformMutationRefusal": "Error: Displace CPU interpolation requires its unchanged private rounding uniform",
+        "finiteHdrSignedZeroWords": 24,
+        "actualWords": [
+          1025728512,
+          1029029884,
+          1010442239,
+          1000620035,
+          1025728510,
+          1029029875,
+          1010442233,
+          1000620037,
+          3214934016,
+          3231711232,
+          1056964608,
+          1051721728,
+          2147483648,
+          2147483648,
+          2147483648,
+          2147483648,
+          0,
+          0,
+          1082130432,
+          3229614080,
+          1018556860,
+          3187685134,
+          1042325928,
+          1057085404
+        ],
+        "expectedWords": [
+          1025728512,
+          1029029884,
+          1010442239,
+          1000620035,
+          1025728510,
+          1029029875,
+          1010442233,
+          1000620037,
+          3214934016,
+          3231711232,
+          1056964608,
+          1051721728,
+          2147483648,
+          2147483648,
+          2147483648,
+          2147483648,
+          0,
+          0,
+          1082130432,
+          3229614080,
+          1018556860,
+          3187685134,
+          1042325928,
+          1057085404
+        ],
+        "signedZeroControlWords": [
+          2147483648,
+          2147483648,
+          2147483648,
+          2147483648
+        ],
+        "genericDefaultShaderByteIdentical": true,
+        "genericDefaultShaderBytes": 6082,
+        "genericDefaultPixelWords": 468,
+        "errors": [],
+        "uncaptured": [],
+        "nativeRenders": 0,
+        "qualificationCredit": 0
+      },
+      {
+        "profile": "software",
+        "status": "PASSED_DISPLACE_STAGING_MICROCONTROLS",
+        "backend": "webgpu",
+        "gpu": {
+          "api": "WebGPU",
+          "vendor": "google",
+          "architecture": "swiftshader",
+          "device": "",
+          "description": ""
+        },
+        "privateUniformMutationRefusal": "Error: Displace CPU interpolation requires its unchanged private rounding uniform",
+        "finiteHdrSignedZeroWords": 24,
+        "actualWords": [
+          1025728512,
+          1029029884,
+          1010442239,
+          1000620035,
+          1025728510,
+          1029029875,
+          1010442233,
+          1000620037,
+          3214934016,
+          3231711232,
+          1056964608,
+          1051721728,
+          2147483648,
+          2147483648,
+          2147483648,
+          2147483648,
+          0,
+          0,
+          1082130432,
+          3229614080,
+          1018556860,
+          3187685134,
+          1042325928,
+          1057085404
+        ],
+        "expectedWords": [
+          1025728512,
+          1029029884,
+          1010442239,
+          1000620035,
+          1025728510,
+          1029029875,
+          1010442233,
+          1000620037,
+          3214934016,
+          3231711232,
+          1056964608,
+          1051721728,
+          2147483648,
+          2147483648,
+          2147483648,
+          2147483648,
+          0,
+          0,
+          1082130432,
+          3229614080,
+          1018556860,
+          3187685134,
+          1042325928,
+          1057085404
+        ],
+        "signedZeroControlWords": [
+          2147483648,
+          2147483648,
+          2147483648,
+          2147483648
+        ],
+        "genericDefaultShaderByteIdentical": true,
+        "genericDefaultShaderBytes": 4593,
+        "genericDefaultPixelWords": 468,
+        "errors": [],
+        "uncaptured": [],
+        "nativeRenders": 0,
+        "qualificationCredit": 0
+      },
+      {
+        "profile": "software",
+        "status": "PASSED_DISPLACE_STAGING_MICROCONTROLS",
+        "backend": "webgl2",
+        "gpu": {
+          "api": "WebGL2",
+          "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+        },
+        "privateUniformMutationRefusal": "Error: Displace CPU interpolation requires its unchanged private rounding uniform",
+        "finiteHdrSignedZeroWords": 24,
+        "actualWords": [
+          1025728512,
+          1029029884,
+          1010442239,
+          1000620035,
+          1025728510,
+          1029029875,
+          1010442233,
+          1000620037,
+          3214934016,
+          3231711232,
+          1056964608,
+          1051721728,
+          2147483648,
+          2147483648,
+          2147483648,
+          2147483648,
+          0,
+          0,
+          1082130432,
+          3229614080,
+          1018556860,
+          3187685134,
+          1042325928,
+          1057085404
+        ],
+        "expectedWords": [
+          1025728512,
+          1029029884,
+          1010442239,
+          1000620035,
+          1025728510,
+          1029029875,
+          1010442233,
+          1000620037,
+          3214934016,
+          3231711232,
+          1056964608,
+          1051721728,
+          2147483648,
+          2147483648,
+          2147483648,
+          2147483648,
+          0,
+          0,
+          1082130432,
+          3229614080,
+          1018556860,
+          3187685134,
+          1042325928,
+          1057085404
+        ],
+        "signedZeroControlWords": [
+          2147483648,
+          2147483648,
+          2147483648,
+          2147483648
+        ],
+        "genericDefaultShaderByteIdentical": true,
+        "genericDefaultShaderBytes": 6082,
+        "genericDefaultPixelWords": 468,
+        "errors": [],
+        "uncaptured": [],
+        "nativeRenders": 0,
+        "qualificationCredit": 0
+      }
+    ],
+    "limits": "Finite HDR/signed-zero arithmetic and actual private uniform mutation/recovery. No GPU SNaN/subnormal bitcast preservation claim. Default shader byte equality is asserted inside actual capture; raw shader bytes were not separately archived."
+  }
+}

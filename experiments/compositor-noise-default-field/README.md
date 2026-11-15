@@ -1,0 +1,35 @@
+# Blender 5.3 CPU compositor default 2D Noise
+
+This family qualifies one bounded, approximate CPU-compositor profile of `ShaderNodeTexNoise`: normalized 2D FBM, native own-unlinked Uniform Vector, Fac/Color, and all five original unlinked scalar controls (Scale 5, Detail 2, Roughness .5, Lacunarity 2, Distortion +0). It uses the stock Blender CPU compositor as the numerical reference. Cycles CPU supplies the carrier scene; this is not an EEVEE or native GPU comparison.
+
+The current qualification is [evidence.json](evidence.json), at frozen source `5d614b499b988546aca9cb5039685772be24da02` on the final joint runtime and automation pipeline. The full automatic transaction `artifacts/verification-noise-next51-manifest` rebuilt once, recaptured native/Final data, ran all four actual tuples and independently closed twice. Its wrapper reports `qualified`, `workspaceStable: true`, `productionCredit: true`, `supportPromotion: false`; `adapter-closed.json` SHA-256 is `3f468c7b3368468327545be8aa20213d86f57bd897ca98f49a6a4c16a3f34fea`. Private Displace staging does not change the Noise kernel, scope or measured counts.
+
+The [initial next45 evidence](history/next45-evidence.json), [pre-narrowing next48 evidence](history/next48-evidence.json) and [initial narrow next50 evidence](history/next50-evidence.json) remain byte-for-byte history, with their original receipt/source/runtime pins. Historical measured outputs never qualify arbitrary amplifying consumers. This current receipt qualifies the proven grammar below; each other port has its own independent qualification.
+
+The reader closed 26 production native graphs plus 15 independent controls (41 renders), eight authored built Final exports, and 136 primary browser case-runs on actual Metal and SwiftShader WebGPU/WebGL2. It independently reread 12,919,456 primary Float32 words: **1,312,872 word differences, zero contract violations**, maximum 8 ULP and absolute error `1.1920928955078125e-7`. Both `absolute <= 2^-20` **and** `ULP <= 8` are required. RGB is not bit exact. Alpha 1, scaled Fac lattice .5, Fac RGB broadcast, and Color.red/Fac equality have separate exact checks, including every retained resize cohort. There are 352 resize frames and 96 installation/disposal cycles.
+
+Eleven native coordinate controls independently establish the full-frame Uniform axes before evaluating Noise. Two native ImageInfo controls establish field domains (13×9 and 5×5), without admitting that consumer at runtime. Two Scale-zero controls establish native endpoints without admitting changed Scale controls. Native variants prove group/reroute, shared Fac/Color, two Color nodes, and six-Fac mean graphs against independent direct references. Source ownership, actual RNA group links, complete canonical/addon source hashes, packaged-source parity, the native launcher archive, actual APIs, archived runtime/vendor/fixture bytes and a fresh compiler emission close the transaction.
+
+The v3 kernel is private to this CPU-compositor profile: compensated BLI fade plus explicit Float32 Perlin and FBM staging. The 72 pre-existing shader/Cycles function declarations and shared native precision/noise helpers remain byte-identical. Neither the compensated fade nor the tested output bound is a universal bit-exact arithmetic theorem. Earlier host exhaustive fade research retained seven one-ULP differences; no output repair or authored parameter quantization is used.
+
+Physical extents are square-pixel, zero-origin full-frame 4…8192, AUTO/FULL CPU Float32. Animation, drivers/NLA, linked controls/coordinates, nonidentity mapping, distortion, other dimensions/fractals and unsupported mute paths refuse. Composition admits **only** direct/group/reroute output forwarding; same-physical Fac/Color RGB selection; two-Color RGB selection; or three ADD-then-MULTIPLY.5 pair means from six distinct Fac nodes. Every operation must contribute through exact typed/source/channel edges. Alpha 1 may be inline or one contributing VALUE value=1 operation with empty inputs, covering the validated private-MF fold. Generic Math, Exposure, Gamma, MapRange, other wrappers/consumers and disconnected operations refuse before allocation. The 18-Perlin-call and one-table/axis-plus-display-eight-sampler budgets remain unchanged; no registered pre-HDR/post-LDR effects. Image/render-pass/spatial/mask/White Noise/Wave mixtures, arbitrary amplification, ImageInfo consumption, whole scene/PBR/IBL, official-demo acceptance, other native versions/hosts and native GPU/EEVEE remain outside the scope.
+
+Across the 96 actual Final cycles the observed **axis-only** preparation and commit counts were zero allocations/uploads; live rendering allocated one table and uploaded it once. The maximum logical table is 65,536 bytes, unchanged extents upload zero times, and the port adds zero render-target passes. These counters exclude PMREM, scene/display passes, assets and all other installation work. They are not total CPU/GPU bytes or a frame-time benchmark. Renderer epoch, saved-original disposal, texture-binding mutation and borrowed-resource preservation are separately checked.
+
+The old numerical failures are retained with zero qualification credit: original fade staging failed the large boundary probe (1,672 violating words, maximum 12 ULP); compensated-fade v2 failed moderate dense Metal tests (16 violating words, maximum 12 ULP). Their gates were unchanged. Source-backed private fade and staging changes led to v3, which also passed separate denser stress before this full native/Final closure. See the diagnostic lineage in the compact evidence; failed namespaces were not repaired or relabeled.
+
+The [admission counterexample](../compositor-noise-composition/README.md) records the pre-fix source/runtime acceptance of Multiply1024 and Exposure+10. A separate host-only projection demonstrates the absent error-propagation bound; it is not an amplified native/GPU render. Matching narrow source/runtime admission now closes 7 positive and 41 refusal controls plus five separate malformed-IR controls. The disconnected-output negative is an allocation-free build-time refusal, not a render-time guard. No Noise math or numerical gate changed. The failed no-render next49 preflight exposed only refusal-list order; a fresh corrected source replay and this full transaction closed it.
+
+To create a fresh transaction on a frozen built SDK:
+
+```sh
+node scripts/test-node-port.mjs compositor-noise-default-field --profile mac-53 --blender /Applications/Blender.app/Contents/MacOS/Blender --evidence artifacts/verification-noise-default-field-fresh
+```
+
+Or independently close an existing complete capture:
+
+```sh
+node experiments/compositor-noise-default-field/verify.mjs artifacts/verification-noise-next51-manifest artifacts/verification-noise-next51-manifest/independently-closed.json
+```
+
+Use the guarded launcher through `capture.mjs`/`matrix.mjs`; do not invoke ad hoc unarchived native scripts. Keep all captured source/runtime/fixture bytes frozen until the independent reader closes.

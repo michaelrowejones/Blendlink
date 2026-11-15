@@ -5,6 +5,7 @@ import type { TslEffectNode } from './tslPostEffects.js'
 import { OwnedCompositorDataTexture, bindCompositorDataTextures } from './tslCompositorDataTextureOwner.js'
 import { ownBlurRtt } from './tslCompositorBlur.js'
 import { compositorFma32 } from './tslCompositorFma.js'
+import {createDisplaceCpuRgbaStages} from './tslCompositorDisplacePrecision.js'
 export { compositorFma32 } from './tslCompositorFma.js'
 
 const { Fn, clamp, int, ivec2, rtt, select, textureLoad, textureSize, uv, vec4 } = TSL as unknown as Record<
@@ -65,7 +66,8 @@ export function compositorAxisMapping(size: number, from: number, to: number, sa
 export function resampleCompositorField(input: TslEffectNode, from: readonly [number, number], to: readonly [number, number],
   sampling: CompositorSampling, resources: { dispose(): void }[],
   validateExtent: (renderer: TslEffectNode, width: number, height: number) => void,
-  fail: (message: string) => never, legacyLocalDelta?: readonly [number, number]): TslEffectNode {
+  fail: (message: string) => never, legacyLocalDelta?: readonly [number, number],
+  beforeReset?: (frame: TslEffectNode) => void, displaceCpuRgbaStages?: true): TslEffectNode {
   const image = rtt(input, 1, 1, { type: FloatType, depthBuffer: false })
   resources.push(ownBlurRtt(image))
   const tables = [0, 1].map(() => {
@@ -81,11 +83,12 @@ export function resampleCompositorField(input: TslEffectNode, from: readonly [nu
   const updateBefore = image.updateBefore.bind(image), size = new Vector2(), viewport = new Vector4(), scissor = new Vector4()
   image.updateBefore = (frame: TslEffectNode): void => {
     const renderer = frame.renderer
+    renderer.getDrawingBufferSize(size)
+    validateExtent(renderer, size.x, size.y)
+    beforeReset?.(frame)
     renderer.getViewport(viewport); renderer.getScissor(scissor)
     const state = RendererUtils.resetRendererState(renderer, undefined as never)
     try {
-      renderer.getDrawingBufferSize(size)
-      validateExtent(renderer, size.x, size.y)
       if (size.x !== lastWidth || size.y !== lastHeight) {
         // Validate both axes before changing resources; an invalid responsive
         // extent can recover on the next supported render without recompiling.
@@ -103,6 +106,7 @@ export function resampleCompositorField(input: TslEffectNode, from: readonly [nu
       renderer.setViewport(viewport); renderer.setScissor(scissor)
     }
   }
+  const cpuRgbaStages=displaceCpuRgbaStages?createDisplaceCpuRgbaStages():undefined
   return Fn(() => {
     const dimensions = ivec2(textureSize(image)), coordinate = ivec2(uv().mul(dimensions))
     const mapping = (axis: number, index: TslEffectNode): TslEffectNode =>
@@ -116,6 +120,7 @@ export function resampleCompositorField(input: TslEffectNode, from: readonly [nu
     }
     if (sampling.interpolation === 'Nearest') return select(x.w.mul(y.w).equal(0), vec4(0), load(x.x, y.x))
     const a = load(x.x, y.x), b = load(x.y, y.x), c = load(x.x, y.y), d = load(x.y, y.y)
+    if(cpuRgbaStages)return select(x.w.mul(y.w).equal(0),vec4(0),cpuRgbaStages(a,b,c,d,x.z,y.z))
     const left = x.z.oneMinus(), bottom = y.z.oneMinus()
     // Native CPU RGBA interpolation has two rounded horizontal product pairs.
     // GPU uses a fixed-function four-tap dot. Independent references bound the

@@ -16,7 +16,7 @@ const { Fn, bitcast, clamp, float, floor, int, ivec2, rtt, select, textureLoad, 
 export function resampleCompositorAffine(input: TslEffectNode, matrix: CompositorAffineMatrix, to: readonly [number, number],
   sampling: CompositorSampling, resources: { dispose(): void }[],
   validateExtent: (renderer: TslEffectNode, width: number, height: number) => void,
-  fail: (message: string) => never): TslEffectNode {
+  fail: (message: string) => never, beforeReset?: (frame: TslEffectNode) => void): TslEffectNode {
   if (!['modern-cpu-v1', 'modern-metal-v1'].includes(sampling.model))
     return fail('Affine realization requires its verified modern CPU/Metal sampling model')
   const image = rtt(input, 1, 1, { type: FloatType, depthBuffer: false })
@@ -34,13 +34,14 @@ export function resampleCompositorAffine(input: TslEffectNode, matrix: Composito
   const updateBefore = image.updateBefore.bind(image), size = new Vector2(), viewport = new Vector4(), scissor = new Vector4()
   image.updateBefore = (frame: TslEffectNode): void => {
     const renderer = frame.renderer
+    renderer.getDrawingBufferSize(size)
+    validateExtent(renderer, size.x, size.y)
+    if (!Number.isInteger(size.x) || !Number.isInteger(size.y) || Math.min(size.x, size.y) < 1 || Math.max(size.x, size.y) > 8192)
+      fail('Affine realization requires image extents between 1 and 8192 pixels per axis')
+    beforeReset?.(frame)
     renderer.getViewport(viewport); renderer.getScissor(scissor)
     const state = RendererUtils.resetRendererState(renderer, undefined as never)
     try {
-      renderer.getDrawingBufferSize(size)
-      validateExtent(renderer, size.x, size.y)
-      if (!Number.isInteger(size.x) || !Number.isInteger(size.y) || Math.min(size.x, size.y) < 1 || Math.max(size.x, size.y) > 8192)
-        fail('Affine realization requires image extents between 1 and 8192 pixels per axis')
       if (size.x !== lastWidth || size.y !== lastHeight) {
         const dimensions = [size.x, size.y] as const
         const base = { dataSize: dimensions, displaySize: dimensions, dataOffset: [0, 0] as const }

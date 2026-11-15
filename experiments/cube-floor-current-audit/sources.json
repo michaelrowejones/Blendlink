@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "role": "Primary source pins inherited from independently retained Floor research; no algorithm or implementation promotion.",
+  "sources": [
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/modifiers/intern/MOD_subsurf.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/modifiers/intern/MOD_subsurf.cc",
+      "bytes": 17347,
+      "sha256": "f46d9e5e506f653bd207ca62a08ad2e2fa530202fd15aeeaa05c8594d79df001"
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/blenkernel/intern/subdiv_mesh.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenkernel/intern/subdiv_mesh.cc",
+      "bytes": 65991,
+      "sha256": "4ebfce74ce778ab4e54f61cd2b7b3ceb003c1b6d2aead6f8807310963bf2ac53"
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/blenkernel/intern/subdiv.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenkernel/intern/subdiv.cc",
+      "bytes": 7322,
+      "sha256": "535121c99db5b7c5c154ed862c60ddccc4047c8151bc433ec7f906954603959a"
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/blenkernel/intern/subdiv_modifier.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenkernel/intern/subdiv_modifier.cc",
+      "bytes": 5151,
+      "sha256": "119344a7cf1e1bcdb807cb5784f3d993f668bb8148082ebe8ab20d3e4a420dec"
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/blenkernel/intern/subdiv_eval.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenkernel/intern/subdiv_eval.cc",
+      "bytes": 13887,
+      "sha256": "8ed41577f09021f08c556b7475e7b90c15128b85bd0e472ba363353f47f819ca"
+    },
+    {
+      "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+      "path": "source/blender/blenkernel/intern/mesh_tangent.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenkernel/intern/mesh_tangent.cc",
+      "bytes": 12495,
+      "sha256": "5f903346e4eecd6b9213ee95a9ce45aaea1edc5ef08a3d3aed14ad948dbf576b"
+    }
+  ]
+}

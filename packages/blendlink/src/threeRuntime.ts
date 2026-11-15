@@ -1835,6 +1835,12 @@ async function prepareThreeCompiledSceneAttempt(
     || options.descriptor.optimization?.geometry === 'meshopt'
   let ownedKtx2Loader: KTX2Loader | null = null
   let loaded: LoadedWithBindings | null = null
+  // The one-call loader owns its imported node-renderer lights, not lights
+  // already belonging to the host or attached by the application later.
+  const ownsNodeLights = (options.renderer as { isWebGPURenderer?: boolean }).isWebGPURenderer === true
+  const callerLights = new Set<THREE.Light>()
+  if (ownsNodeLights) options.scene.traverse(object => { if ((object as THREE.Light).isLight) callerLights.add(object as THREE.Light) })
+  let ownedNodeLights: readonly THREE.Light[] = []
   let sceneLoad: Promise<LoadedWithBindings> | null = null
   let phase: ThreeSceneInstallationProgress['phase'] = 'loading'
   let itemsLoaded = 0
@@ -1939,6 +1945,7 @@ async function prepareThreeCompiledSceneAttempt(
       loaded = await (cspWatch
         ? Promise.race([sceneLoad, cspWatch.failure])
         : sceneLoad) as LoadedWithBindings
+      if (ownsNodeLights) ownedNodeLights = privateLoadedNodeLights(loaded, callerLights)
       throwIfInstallationAborted(options.signal)
       if (failedDependencies.size > 0) {
         throw new ThreeCompiledSceneDependencyError(failedDependencies)
@@ -1951,7 +1958,7 @@ async function prepareThreeCompiledSceneAttempt(
         // pool); this observer owns either settlement of the losing GLTF load.
         // A late graph is disposed, while a late rejection is deliberately
         // consumed so the actionable CSP failure remains the primary error.
-        if (sceneLoad) observeLateKtx2CspSceneLoad(sceneLoad)
+        if (sceneLoad) observeLateKtx2CspSceneLoad(sceneLoad, ownsNodeLights ? callerLights : null)
         abortOwnedRequests()
         throw error
       }
@@ -1986,9 +1993,10 @@ async function prepareThreeCompiledSceneAttempt(
       await prepareLoadedThreeCompiledScene(loaded, effectiveOptions),
       loaded,
       ownedKtx2Loader,
+      ownedNodeLights,
     )
   } catch (error) {
-    const disposalErrors = loaded ? disposeLoadedThreeResources(loaded) : []
+    const disposalErrors = loaded ? disposeLoadedThreeResources(loaded, ownedNodeLights) : []
     if (ownedKtx2Loader) {
       try { ownedKtx2Loader.dispose() } catch (disposeError) { disposalErrors.push(disposeError) }
     }
@@ -3205,12 +3213,13 @@ function ownLoadedThreePreparedResources(
   prepared: PreparedThreeCompiledScene,
   loaded: GLTF,
   ownedKtx2Loader: KTX2Loader | null = null,
+  ownedNodeLights: readonly THREE.Light[] = [],
 ): PreparedThreeCompiledScene {
   let resourcesDisposed = false
   const releaseResources = (): unknown[] => {
     if (resourcesDisposed) return []
     resourcesDisposed = true
-    const errors = disposeLoadedThreeResources(loaded)
+    const errors = disposeLoadedThreeResources(loaded, ownedNodeLights)
     if (ownedKtx2Loader) {
       try { ownedKtx2Loader.dispose() } catch (error) { errors.push(error) }
     }
@@ -3330,7 +3339,16 @@ function createOwnedKtx2Loader(
 /** `installThreeCompiledScene()` loads a private GLTF, unlike the cache-owning
  * `installLoadedThreeCompiledScene()` seam. Three does not release GPU assets
  * when an Object3D leaves a scene, so collect and dispose that private graph. */
-function disposeLoadedThreeResources(loaded: GLTF): unknown[] {
+function privateLoadedNodeLights(loaded: GLTF, callerLights: ReadonlySet<THREE.Light>): THREE.Light[] {
+  const lights = new Set<THREE.Light>()
+  for (const root of new Set([loaded.scene, ...(loaded.scenes ?? [])])) root.traverse(object => {
+    const light = object as THREE.Light
+    if (light.isLight && !callerLights.has(light)) lights.add(light)
+  })
+  return [...lights]
+}
+
+function disposeLoadedThreeResources(loaded: GLTF, ownedNodeLights: readonly THREE.Light[] = []): unknown[] {
   const geometries = new Set<THREE.BufferGeometry>()
   const materials = new Set<THREE.Material>()
   const textures = new Set<THREE.Texture>()
@@ -3381,6 +3399,14 @@ function disposeLoadedThreeResources(loaded: GLTF): unknown[] {
   }
 
   const errors: unknown[] = []
+  for (const light of ownedNodeLights) {
+    // WebGPURenderer (including its WebGL backend) registers an actual analytic
+    // light disposal listener that owns its ShadowNode target. Dispatch the
+    // public base event only: Point/Spot/Directional overrides also dispose the
+    // CURRENT light.shadow.map, which may now be an application replacement.
+    // Legacy WebGLRenderer shadow-map lifetime is deliberately unchanged.
+    try { THREE.Light.prototype.dispose.call(light) } catch (error) { errors.push(error) }
+  }
   for (const skeleton of skeletons) {
     try { skeleton.dispose() } catch (error) { errors.push(error) }
   }
@@ -3396,9 +3422,9 @@ function disposeLoadedThreeResources(loaded: GLTF): unknown[] {
   return errors
 }
 
-function observeLateKtx2CspSceneLoad(load: Promise<LoadedWithBindings>): void {
+function observeLateKtx2CspSceneLoad(load: Promise<LoadedWithBindings>, callerLights: ReadonlySet<THREE.Light> | null = null): void {
   void load.then((lateLoaded) => {
-    const errors = disposeLoadedThreeResources(lateLoaded)
+    const errors = disposeLoadedThreeResources(lateLoaded, callerLights ? privateLoadedNodeLights(lateLoaded, callerLights) : [])
     if (errors.length > 0) {
       console.error(
         'SceneToWeb received a late glTF result after a KTX2 CSP failure, but could not ' +

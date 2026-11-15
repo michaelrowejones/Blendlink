@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "supportCredit": 0,
+  "sources": [
+    {
+      "path": "source/blender/nodes/composite/nodes/node_composite_blank_image.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/composite/nodes/node_composite_blank_image.cc",
+      "sha256": "6a1d23271f728fa828aed285756beb96fff53028e8417035472fee473943532f",
+      "bytes": 2184,
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/nodes/composite/nodes/node_composite_image_info.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/composite/nodes/node_composite_image_info.cc",
+      "sha256": "6e2e8fd7aa80888eeba932c6ca7e0318807c810ab2a82d6ef9540991ac196cab",
+      "bytes": 3590,
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/nodes/composite/nodes/node_composite_image_coordinates.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/composite/nodes/node_composite_image_coordinates.cc",
+      "sha256": "12cc2c1adcbe5e793a27a0b436b4ff2a32dc9bb369e4846c6ee01af5d130800c",
+      "bytes": 3608,
+      "license": "GPL-2.0-or-later"
+    }
+  ]
+}

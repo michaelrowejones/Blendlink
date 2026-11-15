@@ -37,7 +37,8 @@ export function ownBlurRtt(node: TslEffectNode): { dispose(): void } {
 }
 
 export function buildNativeCompositorBlur(op: SourceCompositorOperation, input: TslEffectNode,
-  single: boolean, resources: { dispose(): void }[], fail: (message: string) => never): TslEffectNode {
+  single: boolean, resources: { dispose(): void }[], fail: (message: string) => never,
+  beforeReset?: (frame: TslEffectNode) => void): TslEffectNode {
   const model = op.properties.blur_model
   if (model !== 'legacy-cpu-f32-v1' && model !== 'symmetric-separable-f32-v1')
     fail('Blur requires a verified native separable filter model')
@@ -141,9 +142,11 @@ export function buildNativeCompositorBlur(op: SourceCompositorOperation, input: 
     const viewport = new Vector4(), scissor = new Vector4()
     node.updateBefore = (frame: TslEffectNode): void => {
       const renderer = frame.renderer
+      updateRelative(renderer)
+      beforeReset?.(frame)
       renderer.getViewport(viewport); renderer.getScissor(scissor)
       const state = RendererUtils.resetRendererState(renderer, undefined as never)
-      try { updateRelative(renderer); updateBefore(frame) }
+      try { updateBefore(frame) }
       finally {
         RendererUtils.restoreRendererState(renderer, state)
         renderer.setViewport(viewport); renderer.setScissor(scissor)

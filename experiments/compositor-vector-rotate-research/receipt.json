@@ -1,0 +1,190 @@
+{
+  "schemaVersion": 1,
+  "status": "RESEARCH_ONLY_NATIVE_VECTOR_ROTATE_COEFFICIENT_FOUNDATION",
+  "supportCredit": 0,
+  "FinalCredit": 0,
+  "browserCredit": 0,
+  "nativeRenders": 0,
+  "gpuInitializations": 0,
+  "nativeVersion": [
+    5,
+    3,
+    0
+  ],
+  "nativeBuild": "02f0899d78e3",
+  "nativeEvaluator": "Owned Geometry Nodes CPU multi-function; actual compositor schema only, no compositor rendering or renderer equivalence credit",
+  "geometryCases": 30,
+  "componentHashWitnesses": 90,
+  "publicMathutilsMismatchCases": [
+    "AXIS_ANGLE-False-ordinary",
+    "AXIS_ANGLE-True-ordinary",
+    "X_AXIS-False-ordinary",
+    "X_AXIS-False-zero-axis",
+    "X_AXIS-True-ordinary",
+    "X_AXIS-True-zero-axis",
+    "Y_AXIS-False-ordinary",
+    "Y_AXIS-False-zero-axis",
+    "Y_AXIS-True-ordinary",
+    "Y_AXIS-True-zero-axis",
+    "Z_AXIS-False-ordinary",
+    "Z_AXIS-False-zero-axis",
+    "Z_AXIS-True-ordinary",
+    "Z_AXIS-True-zero-axis",
+    "EULER_XYZ-False-ordinary",
+    "EULER_XYZ-False-zero-axis",
+    "EULER_XYZ-True-ordinary",
+    "EULER_XYZ-True-zero-axis"
+  ],
+  "distinctStaticCoefficientKeys": 22,
+  "basisGeometryEvaluations": 66,
+  "basisPredictionMismatches": [],
+  "basisStoreHashAmbiguities": 0,
+  "sourceOwnershipRestored": true,
+  "zeroAxisCounterexample": {
+    "case": "AXIS_ANGLE-False-zero-axis",
+    "inputs": {
+      "mode": "AXIS_ANGLE",
+      "invert": false,
+      "vector": [
+        0.10000000149011612,
+        0.20000000298023224,
+        0.30000001192092896
+      ],
+      "center": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "axis": [
+        0,
+        0,
+        0
+      ],
+      "angle": 0.8999999761581421,
+      "rotation": [
+        0.10000000149011612,
+        0.20000000298023224,
+        0.30000001192092896
+      ]
+    },
+    "geometryFloatWords": [
+      1036831948,
+      1045220556,
+      1050253722
+    ],
+    "preStoreHashWords": [
+      1168916766,
+      2552015046,
+      1321343586
+    ],
+    "publicMathutilsWords": [
+      1036831948,
+      1045220556,
+      1050253722
+    ],
+    "publicMatrixWords": [
+      [
+        1065353216,
+        0,
+        0
+      ],
+      [
+        0,
+        1065353216,
+        0
+      ],
+      [
+        0,
+        0,
+        1065353216
+      ]
+    ],
+    "inputVectorWords": [
+      1036831949,
+      1045220557,
+      1050253722
+    ],
+    "floatAgreement": true
+  },
+  "artifacts": {
+    "directory": "artifacts/verification-vector-rotate-no-render-r5",
+    "reportSha256": "41c9ee451b2c26ab58b75d6eec56d074e4ee69bbca5592e53d079db835fc43f3",
+    "closedSha256": "78aacbedc87fd303955d6d1c4da65e51e398ef3e8d304a273be000bd6b659bbd",
+    "sourcePinsSha256": "52cfe17a1ee74b63601771dea0d4eab192dfbb0b9cc3c1fb1d5016f0fa4b9eef",
+    "archiveSha256": "6669859ed91596ffdb943aa2b00a5526c7e31367d030d2e16c0e9cef2e85b238"
+  },
+  "sources": [
+    {
+      "path": "source/blender/nodes/shader/nodes/node_shader_vector_rotate.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/shader/nodes/node_shader_vector_rotate.cc",
+      "sha256": "49b89be46a16f9bc9c89654a5ad04c07c5b1d72d0e185e2fa11c31157ddcdee5",
+      "bytes": 10568,
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/blenlib/intern/math_rotation_c.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/intern/math_rotation_c.cc",
+      "sha256": "236c4cc99d65108a2329c0c21845b5a1a4d8b41ed1dacab2c7a8c4cb0f9fc34a",
+      "bytes": 66592,
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/blenlib/intern/math_matrix_c.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/intern/math_matrix_c.cc",
+      "sha256": "bcbf99d6a2d3c838b99ec49072eccd633d94a9c0856f3d220b8be178af27f590",
+      "bytes": 77145,
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/blenlib/intern/math_vector_inline.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/intern/math_vector_inline.cc",
+      "sha256": "15c60e8a6119fac59928921d0f7e3dc2a6b3489ccec5b54342c238ff749f9104",
+      "bytes": 21649,
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/gpu/shaders/material/gpu_shader_material_vector_rotate.bsl.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shaders/material/gpu_shader_material_vector_rotate.bsl.hh",
+      "sha256": "9c7e8cf92ba63272dc07eda39f1fa75edc183addfcc74f53b785c7cf0e1ab2d0",
+      "bytes": 3450,
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/gpu/shaders/common/gpu_shader_math_matrix_construct.bsl.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shaders/common/gpu_shader_math_matrix_construct.bsl.hh",
+      "sha256": "2c9b7c47149b0d072ece108f49a902602f3a0068c34314808e366b0dd36f5e46",
+      "bytes": 9513,
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/python/mathutils/mathutils_Matrix.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/python/mathutils/mathutils_Matrix.cc",
+      "sha256": "5116b8472b7c66b8ac16cb8e885093f9e004e4405ac3c0db1fec1b2b7ec7be1e",
+      "bytes": 124693,
+      "license": "GPL-2.0-or-later"
+    }
+  ],
+  "failures": [
+    {
+      "directory": "artifacts/verification-vector-rotate-no-render-r1",
+      "credit": 0,
+      "reason": "Euler default_value has no foreach_get; stopped in schema setup."
+    },
+    {
+      "directory": "artifacts/verification-vector-rotate-no-render-r2",
+      "credit": 0,
+      "reason": "Attempted access to an unavailable Rotation socket by name; stopped before MF evaluation."
+    }
+  ],
+  "priorObservations": [
+    "artifacts/verification-vector-rotate-no-render-r3",
+    "artifacts/verification-vector-rotate-no-render-r4"
+  ],
+  "limits": [
+    "No shader/runtime/source-admission changes.",
+    "No actual compositor numeric, native GPU, browser, saved Final or field-domain proof.",
+    "No all-input signed-zero/subnormal guarantee from the observed basis cases.",
+    "Existing shader Vector Rotate and copy-only static Matrix contracts remain unchanged."
+  ],
+  "basisCoefficientScope": "Finite normal nonzero coefficient recovery only. Zero words/hashes attest basis outputs, not internal matrix zero signs; no signed-zero snapping or universal internal matrix-bit proof."
+}

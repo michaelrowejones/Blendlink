@@ -1,0 +1,2128 @@
+{
+  "status": "RESEARCH_ONLY_PRODUCER_STATE_AND_NEAREST_ORIGIN_CONTROLS_PASSED",
+  "productionCredit": false,
+  "supportPromotion": false,
+  "qualificationCredit": 0,
+  "sdkCommits": [
+    "3a33ee7",
+    "5f47606",
+    "0bff3f7"
+  ],
+  "fixtureCommit": "98ea541",
+  "scope": "Caller-state scheduling before owned compositor RTT reset; one retained nearest-origin13x9 actual Final/native case only. No full Displace qualification.",
+  "stateControl": {
+    "path": "/private/tmp/scenetoweb-compositor-producer-state-next/artifacts/verification-producer-state-r3/report.json",
+    "sha256": "79d34f1533cbb033a9fe7c411d062edc23f3177bcce60b9f7144fe143b445487",
+    "fixturePins": {
+      "browser.js": "a4b1e60212b9ed600837d4202a5b7ab4b83a8bec4158a5a3c7eb47bd9819f2eb",
+      "index.html": "f71f234e9cef3e82eb35c52878e7fdac796eb08349d11699b89db3797cca6b0a",
+      "run.mjs": "056ef7299492b411bfc5b58cce389e6ad219207ab274d3210d34ad7077ee3237"
+    },
+    "runtimeModuleCensusSha256": "3b2aaf1d6617df8ff3b7d8165c57cb0afae0e7a4b5948480bc379dace3aca724",
+    "actualTuples": 4,
+    "cases": 40,
+    "integerDefaultSamplerCopyWords": 3744,
+    "rows": [
+      {
+        "profile": "metal",
+        "backend": "webgpu",
+        "gpu": {
+          "api": "WebGPU",
+          "vendor": "apple",
+          "architecture": "metal-3",
+          "device": "",
+          "description": ""
+        },
+        "rows": [
+          {
+            "state": "transparent",
+            "mode": "integer",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0,
+              "color": [
+                0,
+                0,
+                0
+              ],
+              "tone": 0,
+              "exposure": 1,
+              "hook": true,
+              "frame": 3
+            },
+            "exactIdentityWords": 468,
+            "forwardedHookCalls": 0,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "transparent",
+            "mode": "fractional",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0,
+              "color": [
+                0,
+                0,
+                0
+              ],
+              "tone": 0,
+              "exposure": 1,
+              "hook": true,
+              "frame": 4
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 0,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "transparent",
+            "mode": "affine",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0,
+              "color": [
+                0,
+                0,
+                0
+              ],
+              "tone": 0,
+              "exposure": 1,
+              "hook": true,
+              "frame": 5
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 0,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "transparent",
+            "mode": "crop",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0,
+              "color": [
+                0,
+                0,
+                0
+              ],
+              "tone": 0,
+              "exposure": 1,
+              "hook": true,
+              "frame": 6
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 0,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "transparent",
+            "mode": "wrapped-relative-blur",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0,
+              "color": [
+                0,
+                0,
+                0
+              ],
+              "tone": 0,
+              "exposure": 1,
+              "hook": true,
+              "frame": 7
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 0,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "custom-clear-hook",
+            "mode": "integer",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0.25,
+              "color": [
+                0.125,
+                0.25,
+                0.5
+              ],
+              "tone": 4,
+              "exposure": 2,
+              "hook": true,
+              "frame": 9
+            },
+            "exactIdentityWords": 468,
+            "forwardedHookCalls": 2,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "custom-clear-hook",
+            "mode": "fractional",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0.25,
+              "color": [
+                0.125,
+                0.25,
+                0.5
+              ],
+              "tone": 4,
+              "exposure": 2,
+              "hook": true,
+              "frame": 10
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 2,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "custom-clear-hook",
+            "mode": "affine",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0.25,
+              "color": [
+                0.125,
+                0.25,
+                0.5
+              ],
+              "tone": 4,
+              "exposure": 2,
+              "hook": true,
+              "frame": 11
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 2,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "custom-clear-hook",
+            "mode": "crop",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0.25,
+              "color": [
+                0.125,
+                0.25,
+                0.5
+              ],
+              "tone": 4,
+              "exposure": 2,
+              "hook": true,
+              "frame": 12
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 2,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "custom-clear-hook",
+            "mode": "wrapped-relative-blur",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0.25,
+              "color": [
+                0.125,
+                0.25,
+                0.5
+              ],
+              "tone": 4,
+              "exposure": 2,
+              "hook": true,
+              "frame": 13
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 2,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          }
+        ],
+        "errors": [],
+        "uncaptured": []
+      },
+      {
+        "profile": "metal",
+        "backend": "webgl2",
+        "gpu": {
+          "api": "WebGL2",
+          "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+        },
+        "rows": [
+          {
+            "state": "transparent",
+            "mode": "integer",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0,
+              "color": [
+                0,
+                0,
+                0
+              ],
+              "tone": 0,
+              "exposure": 1,
+              "hook": true,
+              "frame": 4
+            },
+            "exactIdentityWords": 468,
+            "forwardedHookCalls": 0,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "transparent",
+            "mode": "fractional",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0,
+              "color": [
+                0,
+                0,
+                0
+              ],
+              "tone": 0,
+              "exposure": 1,
+              "hook": true,
+              "frame": 6
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 0,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "transparent",
+            "mode": "affine",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0,
+              "color": [
+                0,
+                0,
+                0
+              ],
+              "tone": 0,
+              "exposure": 1,
+              "hook": true,
+              "frame": 8
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 0,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "transparent",
+            "mode": "crop",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0,
+              "color": [
+                0,
+                0,
+                0
+              ],
+              "tone": 0,
+              "exposure": 1,
+              "hook": true,
+              "frame": 10
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 0,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "transparent",
+            "mode": "wrapped-relative-blur",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0,
+              "color": [
+                0,
+                0,
+                0
+              ],
+              "tone": 0,
+              "exposure": 1,
+              "hook": true,
+              "frame": 12
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 0,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "custom-clear-hook",
+            "mode": "integer",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0.25,
+              "color": [
+                0.125,
+                0.25,
+                0.5
+              ],
+              "tone": 4,
+              "exposure": 2,
+              "hook": true,
+              "frame": 16
+            },
+            "exactIdentityWords": 468,
+            "forwardedHookCalls": 2,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "custom-clear-hook",
+            "mode": "fractional",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0.25,
+              "color": [
+                0.125,
+                0.25,
+                0.5
+              ],
+              "tone": 4,
+              "exposure": 2,
+              "hook": true,
+              "frame": 18
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 2,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "custom-clear-hook",
+            "mode": "affine",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0.25,
+              "color": [
+                0.125,
+                0.25,
+                0.5
+              ],
+              "tone": 4,
+              "exposure": 2,
+              "hook": true,
+              "frame": 20
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 2,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "custom-clear-hook",
+            "mode": "crop",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0.25,
+              "color": [
+                0.125,
+                0.25,
+                0.5
+              ],
+              "tone": 4,
+              "exposure": 2,
+              "hook": true,
+              "frame": 22
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 2,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "custom-clear-hook",
+            "mode": "wrapped-relative-blur",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0.25,
+              "color": [
+                0.125,
+                0.25,
+                0.5
+              ],
+              "tone": 4,
+              "exposure": 2,
+              "hook": true,
+              "frame": 24
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 2,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          }
+        ],
+        "errors": [],
+        "uncaptured": []
+      },
+      {
+        "profile": "software",
+        "backend": "webgpu",
+        "gpu": {
+          "api": "WebGPU",
+          "vendor": "google",
+          "architecture": "swiftshader",
+          "device": "",
+          "description": ""
+        },
+        "rows": [
+          {
+            "state": "transparent",
+            "mode": "integer",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0,
+              "color": [
+                0,
+                0,
+                0
+              ],
+              "tone": 0,
+              "exposure": 1,
+              "hook": true,
+              "frame": 8
+            },
+            "exactIdentityWords": 468,
+            "forwardedHookCalls": 0,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "transparent",
+            "mode": "fractional",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0,
+              "color": [
+                0,
+                0,
+                0
+              ],
+              "tone": 0,
+              "exposure": 1,
+              "hook": true,
+              "frame": 11
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 0,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "transparent",
+            "mode": "affine",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0,
+              "color": [
+                0,
+                0,
+                0
+              ],
+              "tone": 0,
+              "exposure": 1,
+              "hook": true,
+              "frame": 14
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 0,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "transparent",
+            "mode": "crop",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0,
+              "color": [
+                0,
+                0,
+                0
+              ],
+              "tone": 0,
+              "exposure": 1,
+              "hook": true,
+              "frame": 17
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 0,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "transparent",
+            "mode": "wrapped-relative-blur",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0,
+              "color": [
+                0,
+                0,
+                0
+              ],
+              "tone": 0,
+              "exposure": 1,
+              "hook": true,
+              "frame": 22
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 0,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "custom-clear-hook",
+            "mode": "integer",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0.25,
+              "color": [
+                0.125,
+                0.25,
+                0.5
+              ],
+              "tone": 4,
+              "exposure": 2,
+              "hook": true,
+              "frame": 29
+            },
+            "exactIdentityWords": 468,
+            "forwardedHookCalls": 2,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "custom-clear-hook",
+            "mode": "fractional",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0.25,
+              "color": [
+                0.125,
+                0.25,
+                0.5
+              ],
+              "tone": 4,
+              "exposure": 2,
+              "hook": true,
+              "frame": 30
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 2,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "custom-clear-hook",
+            "mode": "affine",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0.25,
+              "color": [
+                0.125,
+                0.25,
+                0.5
+              ],
+              "tone": 4,
+              "exposure": 2,
+              "hook": true,
+              "frame": 31
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 2,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "custom-clear-hook",
+            "mode": "crop",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0.25,
+              "color": [
+                0.125,
+                0.25,
+                0.5
+              ],
+              "tone": 4,
+              "exposure": 2,
+              "hook": true,
+              "frame": 32
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 2,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "custom-clear-hook",
+            "mode": "wrapped-relative-blur",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0.25,
+              "color": [
+                0.125,
+                0.25,
+                0.5
+              ],
+              "tone": 4,
+              "exposure": 2,
+              "hook": true,
+              "frame": 33
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 2,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          }
+        ],
+        "errors": [],
+        "uncaptured": []
+      },
+      {
+        "profile": "software",
+        "backend": "webgl2",
+        "gpu": {
+          "api": "WebGL2",
+          "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+        },
+        "rows": [
+          {
+            "state": "transparent",
+            "mode": "integer",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0,
+              "color": [
+                0,
+                0,
+                0
+              ],
+              "tone": 0,
+              "exposure": 1,
+              "hook": true,
+              "frame": 9
+            },
+            "exactIdentityWords": 468,
+            "forwardedHookCalls": 0,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "transparent",
+            "mode": "fractional",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0,
+              "color": [
+                0,
+                0,
+                0
+              ],
+              "tone": 0,
+              "exposure": 1,
+              "hook": true,
+              "frame": 13
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 0,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "transparent",
+            "mode": "affine",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0,
+              "color": [
+                0,
+                0,
+                0
+              ],
+              "tone": 0,
+              "exposure": 1,
+              "hook": true,
+              "frame": 17
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 0,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "transparent",
+            "mode": "crop",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0,
+              "color": [
+                0,
+                0,
+                0
+              ],
+              "tone": 0,
+              "exposure": 1,
+              "hook": true,
+              "frame": 21
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 0,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "transparent",
+            "mode": "wrapped-relative-blur",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0,
+              "color": [
+                0,
+                0,
+                0
+              ],
+              "tone": 0,
+              "exposure": 1,
+              "hook": true,
+              "frame": 27
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 0,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "custom-clear-hook",
+            "mode": "integer",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0.25,
+              "color": [
+                0.125,
+                0.25,
+                0.5
+              ],
+              "tone": 4,
+              "exposure": 2,
+              "hook": true,
+              "frame": 36
+            },
+            "exactIdentityWords": 468,
+            "forwardedHookCalls": 2,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "custom-clear-hook",
+            "mode": "fractional",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0.25,
+              "color": [
+                0.125,
+                0.25,
+                0.5
+              ],
+              "tone": 4,
+              "exposure": 2,
+              "hook": true,
+              "frame": 40
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 2,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "custom-clear-hook",
+            "mode": "affine",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0.25,
+              "color": [
+                0.125,
+                0.25,
+                0.5
+              ],
+              "tone": 4,
+              "exposure": 2,
+              "hook": true,
+              "frame": 44
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 2,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "custom-clear-hook",
+            "mode": "crop",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0.25,
+              "color": [
+                0.125,
+                0.25,
+                0.5
+              ],
+              "tone": 4,
+              "exposure": 2,
+              "hook": true,
+              "frame": 48
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 2,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          },
+          {
+            "state": "custom-clear-hook",
+            "mode": "wrapped-relative-blur",
+            "producerFrames": 1,
+            "entry": {
+              "alpha": 0.25,
+              "color": [
+                0.125,
+                0.25,
+                0.5
+              ],
+              "tone": 4,
+              "exposure": 2,
+              "hook": true,
+              "frame": 54
+            },
+            "exactIdentityWords": 0,
+            "forwardedHookCalls": 2,
+            "callerStateRestored": true,
+            "referenceStage": "public-PassTexture-default-sampler-copy",
+            "samplingQualificationCredit": 0
+          }
+        ],
+        "errors": [],
+        "uncaptured": []
+      }
+    ]
+  },
+  "retainedStateControlFailures": [
+    {
+      "path": "/private/tmp/scenetoweb-compositor-producer-state-next/artifacts/verification-producer-state-r1/report.json",
+      "sha256": "6e2356fea78bba452725e4204ba4015276d4a33bdfbd695dab685c4111712b61",
+      "status": "FAILED_ZERO_CREDIT",
+      "error": "Error: page.evaluate: Error: Integer direct RGBA word differences 72\n    at assert (http://127.0.0.1:54267/browser.js:6:34)\n    at compare (http://127.0.0.1:54267/browser.js:8:235)\n    at window.runProducerStateControls (http://127.0.0.1:54267/browser.js:49:36)\n    at async <anonymous>:381:23",
+      "qualificationCredit": 0
+    },
+    {
+      "path": "/private/tmp/scenetoweb-compositor-producer-state-next/artifacts/verification-producer-state-r2/report.json",
+      "sha256": "cecf5dff56c2be7a9592978aca6204b293718104439352185ea66806976f42d4",
+      "status": "FAILED_ZERO_CREDIT",
+      "error": "Error: page.evaluate: Error: Integer direct RGBA word differences 72 [{\"i\":64,\"actual\":1.7881393432617188e-7,\"expected\":0,\"actualWord\":876609536,\"expectedWord\":0},{\"i\":65,\"actual\":3.5762786865234375e-7,\"expected\":0,\"actualWord\":884998144,\"expectedWord\":0},{\"i\":66,\"actual\":5.364418029785156e-7,\"expected\":0,\"actualWord\":890241024,\"expectedWord\":0},{\"i\":67,\"actual\":7.152557373046875e-7,\"expected\":0,\"actualWord\":893386752,\"expectedWord\":0},{\"i\":68,\"actual\":1.7881393432617188e-7,\"expected\":0,\"actualWord\":876609536,\"expectedWord\":0},{\"i\":69,\"actual\":3.5762786865234375e-7,\"expected\":0,\"actualWord\":884998144,\"expectedWord\":0},{\"i\":70,\"actual\":5.364418029785156e-7,\"expected\":0,\"actualWord\":890241024,\"expectedWord\":0},{\"i\":71,\"actual\":7.152557373046875e-7,\"expected\":0,\"actualWord\":893386752,\"expectedWord\":0},{\"i\":72,\"actual\":1.7881393432617188e-7,\"expected\":0,\"actualWord\":876609536,\"expectedWord\":0},{\"i\":73,\"actual\":3.5762786865234375e-7,\"expected\":0,\"actualWord\":884998144,\"expectedWord\":0},{\"i\":74,\"actual\":5.364418029785156e-7,\"expected\":0,\"actualWord\":890241024,\"expectedWord\":0},{\"i\":75,\"actual\":7.152557373046875e-7,\"expected\":0,\"actualWord\":893386752,\"expectedWord\":0}]\n    at assert (http://127.0.0.1:54294/browser.js:6:34)\n    at compare (http://127.0.0.1:54294/browser.js:8:359)\n    at window.runProducerStateControls (http://127.0.0.1:54294/browser.js:49:36)\n    at async <anonymous>:381:23",
+      "qualificationCredit": 0
+    }
+  ],
+  "nearestOrigin": {
+    "retainedInputPins": {
+      "sources.json": "f32745d4262403e1899caf30d2f102934c131c22eebc9508e56c6509aba40d20",
+      "final.json": "8edb70e43fb8bcbe7016a94e1e3147320f805b1e1a1eaa94641c85d99dc55f40",
+      "native.json": "bca67ef5a559f50deb2205506ca507dd306c8953bd9336e5d3f7ed5b19bf7216",
+      "baselines.json": "b717b4b4fcfbfc610c21ebc318debad29f3c657ea13c13ad40faca6900797f87"
+    },
+    "profiles": [
+      {
+        "stage": "state",
+        "profile": "metal",
+        "path": "/tmp/scenetoweb-node-ports-next-union/artifacts/verification-displace-single-next48/diagnostic-nearest-state-metal/report.json",
+        "sha256": "35fd5ebc08b9b53f26ae6617aa71f1e395207aae38da922f852a803fe3423779",
+        "status": "DIAGNOSTIC_ONLY_ZERO_CREDIT",
+        "qualificationCredit": 0,
+        "apis": [
+          {
+            "backend": "webgpu",
+            "gpu": {
+              "api": "WebGPU",
+              "vendor": "apple",
+              "architecture": "metal-3",
+              "description": "",
+              "device": ""
+            },
+            "status": "PASSED_DISPLACE_ACTUAL_FINAL",
+            "error": null,
+            "failureFrame": null
+          },
+          {
+            "backend": "webgl2",
+            "gpu": {
+              "api": "WebGL2",
+              "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+            },
+            "status": "PASSED_DISPLACE_ACTUAL_FINAL",
+            "error": null,
+            "failureFrame": null
+          }
+        ],
+        "fixturePins": {
+          "browser.js": "eecc0f55c9af728db4181e44182589c5ea857c8f8b3fc27faa87801b9620589e",
+          "browser-contract.mjs": "488bdb94d3d890f63376d566f5e440dff891070a1de4c1311384e03f76ddc6ac",
+          "same-frame.mjs": "e370e334d047240d10e72a9166719f4f702948d11b790585966e4d13343e94f1",
+          "index.html": "d9424939fa396b2f15234674d2b71d03d7ddd0c5e01d3310cfdd8f67c0fe0ae8"
+        },
+        "runtimeModuleCensusSha256": "3b2aaf1d6617df8ff3b7d8165c57cb0afae0e7a4b5948480bc379dace3aca724"
+      },
+      {
+        "stage": "state",
+        "profile": "software",
+        "path": "/tmp/scenetoweb-node-ports-next-union/artifacts/verification-displace-single-next48/diagnostic-nearest-state-software/report.json",
+        "sha256": "b51e1165d16efc7abb90237575b98d5a81c31729c0c2d6de30ac81b443006a0f",
+        "status": "DIAGNOSTIC_ONLY_ZERO_CREDIT",
+        "qualificationCredit": 0,
+        "apis": [
+          {
+            "backend": "webgpu",
+            "gpu": {
+              "api": "WebGPU",
+              "vendor": "google",
+              "architecture": "swiftshader",
+              "description": "",
+              "device": ""
+            },
+            "status": "FAILED_DISPLACE_DIAGNOSTIC_ZERO_CREDIT",
+            "error": "Error: Direct Displace/native mismatch software--webgpu--nearest-origin--13x9@1 {\"words\":468,\"wordDifferences\":94,\"examples\":[{\"index\":64,\"actual\":873973760,\"native\":0},{\"index\":65,\"actual\":858271744,\"native\":0},{\"index\":66,\"actual\":851314688,\"native\":0},{\"index\":67,\"actual\":893386752,\"native\":0},{\"index\":68,\"actual\":874876928,\"native\":0},{\"index\":69,\"actual\":859236352,\"native\":0},{\"index\":70,\"actual\":852365312,\"native\":0},{\"index\":71,\"actual\":893386752,\"native\":0}],\"sha256\":\"44039b65bbe1bc6bc354ba6b2e0b4932093b14671c369111a4d701030a6703a7\"}",
+            "failureFrame": {
+              "id": "software--webgpu--nearest-origin--13x9@1",
+              "case": "nearest-origin",
+              "width": 13,
+              "height": 9,
+              "pixelRatio": 1,
+              "cycle": 0,
+              "buffers": [
+                {
+                  "role": "actual-input",
+                  "file": "failed-readbacks/webgpu--software--webgpu--nearest-origin--13x9@1.actual-input.rgba32f",
+                  "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a",
+                  "wordCount": 468
+                },
+                {
+                  "role": "repeated-input",
+                  "file": "failed-readbacks/webgpu--software--webgpu--nearest-origin--13x9@1.repeated-input.rgba32f",
+                  "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a",
+                  "wordCount": 468
+                },
+                {
+                  "role": "direct",
+                  "file": "failed-readbacks/webgpu--software--webgpu--nearest-origin--13x9@1.direct.rgba32f",
+                  "sha256": "44039b65bbe1bc6bc354ba6b2e0b4932093b14671c369111a4d701030a6703a7",
+                  "wordCount": 468
+                }
+              ]
+            }
+          },
+          {
+            "backend": "webgl2",
+            "gpu": {
+              "api": "WebGL2",
+              "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+            },
+            "status": "FAILED_DISPLACE_DIAGNOSTIC_ZERO_CREDIT",
+            "error": "Error: Direct Displace/native mismatch software--webgl2--nearest-origin--13x9@1 {\"words\":468,\"wordDifferences\":73,\"examples\":[{\"index\":116,\"actual\":1045061626,\"native\":1045061632},{\"index\":117,\"actual\":1029718009,\"native\":1029718016},{\"index\":118,\"actual\":1023238136,\"native\":1023238144},{\"index\":119,\"actual\":1065353208,\"native\":1065353216},{\"index\":120,\"actual\":1046265849,\"native\":1046265856},{\"index\":121,\"actual\":1031004152,\"native\":1031004160},{\"index\":122,\"actual\":1024024572,\"native\":1024024576},{\"index\":123,\"actual\":1065353208,\"native\":1065353216}],\"sha256\":\"9cd0b9e1de72635c7d6098e6d68d73e87c0a71f534140df852cc1c494bc3e42a\"}",
+            "failureFrame": {
+              "id": "software--webgl2--nearest-origin--13x9@1",
+              "case": "nearest-origin",
+              "width": 13,
+              "height": 9,
+              "pixelRatio": 1,
+              "cycle": 0,
+              "buffers": [
+                {
+                  "role": "actual-input",
+                  "file": "failed-readbacks/webgl2--software--webgl2--nearest-origin--13x9@1.actual-input.rgba32f",
+                  "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a",
+                  "wordCount": 468
+                },
+                {
+                  "role": "repeated-input",
+                  "file": "failed-readbacks/webgl2--software--webgl2--nearest-origin--13x9@1.repeated-input.rgba32f",
+                  "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a",
+                  "wordCount": 468
+                },
+                {
+                  "role": "direct",
+                  "file": "failed-readbacks/webgl2--software--webgl2--nearest-origin--13x9@1.direct.rgba32f",
+                  "sha256": "9cd0b9e1de72635c7d6098e6d68d73e87c0a71f534140df852cc1c494bc3e42a",
+                  "wordCount": 468
+                }
+              ]
+            }
+          }
+        ],
+        "fixturePins": {
+          "browser.js": "eecc0f55c9af728db4181e44182589c5ea857c8f8b3fc27faa87801b9620589e",
+          "browser-contract.mjs": "488bdb94d3d890f63376d566f5e440dff891070a1de4c1311384e03f76ddc6ac",
+          "same-frame.mjs": "e370e334d047240d10e72a9166719f4f702948d11b790585966e4d13343e94f1",
+          "index.html": "d9424939fa396b2f15234674d2b71d03d7ddd0c5e01d3310cfdd8f67c0fe0ae8"
+        },
+        "runtimeModuleCensusSha256": "3b2aaf1d6617df8ff3b7d8165c57cb0afae0e7a4b5948480bc379dace3aca724"
+      },
+      {
+        "stage": "texel",
+        "profile": "metal",
+        "path": "/tmp/scenetoweb-node-ports-next-union/artifacts/verification-displace-single-next48/diagnostic-nearest-texel-metal/report.json",
+        "sha256": "32410c41fee0b272d7e5ccf08403aabcf55d923e816032061ced4b5244c185a5",
+        "status": "DIAGNOSTIC_ONLY_ZERO_CREDIT",
+        "qualificationCredit": 0,
+        "apis": [
+          {
+            "backend": "webgpu",
+            "gpu": {
+              "api": "WebGPU",
+              "vendor": "apple",
+              "architecture": "metal-3",
+              "description": "",
+              "device": ""
+            },
+            "status": "PASSED_DISPLACE_ACTUAL_FINAL",
+            "error": null,
+            "case": "nearest-origin",
+            "direct": {
+              "words": 468,
+              "wordDifferences": 0,
+              "examples": [],
+              "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2"
+            },
+            "cycles": [
+              {
+                "cycle": 0,
+                "commitDraws": 0,
+                "preparationHostRestored": true,
+                "sourceMaterialsPreserved": true,
+                "textureBaselineRestored": true,
+                "installed": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "examples": [],
+                  "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2"
+                },
+                "repeated": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "examples": [],
+                  "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2"
+                },
+                "display": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "alphaWordDifferences": 0,
+                  "nonfiniteClassDifferences": 0,
+                  "maxClampedAbsoluteError": 0,
+                  "projectionContract": "existing-ocio-png-clamp01-3e-5",
+                  "projectionAccepted": true,
+                  "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2"
+                },
+                "repeatedDisplay": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "alphaWordDifferences": 0,
+                  "nonfiniteClassDifferences": 0,
+                  "maxClampedAbsoluteError": 0,
+                  "projectionContract": "existing-ocio-png-clamp01-3e-5",
+                  "projectionAccepted": true,
+                  "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2"
+                },
+                "installedDraws": 7,
+                "repeatedDraws": 7,
+                "probeDraws": 2,
+                "repeatedProbeDraws": 2,
+                "installedFrame": 12,
+                "repeatedFrame": 13,
+                "probeFrame": 12,
+                "repeatedProbeFrame": 13
+              },
+              {
+                "cycle": 1,
+                "commitDraws": 0,
+                "preparationHostRestored": true,
+                "sourceMaterialsPreserved": true,
+                "textureBaselineRestored": true,
+                "installed": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "examples": [],
+                  "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2"
+                },
+                "repeated": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "examples": [],
+                  "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2"
+                },
+                "display": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "alphaWordDifferences": 0,
+                  "nonfiniteClassDifferences": 0,
+                  "maxClampedAbsoluteError": 0,
+                  "projectionContract": "existing-ocio-png-clamp01-3e-5",
+                  "projectionAccepted": true,
+                  "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2"
+                },
+                "repeatedDisplay": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "alphaWordDifferences": 0,
+                  "nonfiniteClassDifferences": 0,
+                  "maxClampedAbsoluteError": 0,
+                  "projectionContract": "existing-ocio-png-clamp01-3e-5",
+                  "projectionAccepted": true,
+                  "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2"
+                },
+                "installedDraws": 7,
+                "repeatedDraws": 7,
+                "probeDraws": 2,
+                "repeatedProbeDraws": 2,
+                "installedFrame": 18,
+                "repeatedFrame": 19,
+                "probeFrame": 18,
+                "repeatedProbeFrame": 19
+              },
+              {
+                "cycle": 2,
+                "commitDraws": 0,
+                "preparationHostRestored": true,
+                "sourceMaterialsPreserved": true,
+                "textureBaselineRestored": true,
+                "installed": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "examples": [],
+                  "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2"
+                },
+                "repeated": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "examples": [],
+                  "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2"
+                },
+                "display": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "alphaWordDifferences": 0,
+                  "nonfiniteClassDifferences": 0,
+                  "maxClampedAbsoluteError": 0,
+                  "projectionContract": "existing-ocio-png-clamp01-3e-5",
+                  "projectionAccepted": true,
+                  "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2"
+                },
+                "repeatedDisplay": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "alphaWordDifferences": 0,
+                  "nonfiniteClassDifferences": 0,
+                  "maxClampedAbsoluteError": 0,
+                  "projectionContract": "existing-ocio-png-clamp01-3e-5",
+                  "projectionAccepted": true,
+                  "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2"
+                },
+                "installedDraws": 7,
+                "repeatedDraws": 7,
+                "probeDraws": 2,
+                "repeatedProbeDraws": 2,
+                "installedFrame": 24,
+                "repeatedFrame": 25,
+                "probeFrame": 24,
+                "repeatedProbeFrame": 25
+              }
+            ],
+            "readbacks": [
+              {
+                "role": "direct",
+                "file": "readbacks/metal--webgpu--nearest-origin--13x9@1.direct.rgba32f",
+                "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2",
+                "words": 468
+              },
+              {
+                "role": "installed-0",
+                "file": "readbacks/metal--webgpu--nearest-origin--13x9@1.installed-0.rgba32f",
+                "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2",
+                "words": 468
+              },
+              {
+                "role": "repeated-0",
+                "file": "readbacks/metal--webgpu--nearest-origin--13x9@1.repeated-0.rgba32f",
+                "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2",
+                "words": 468
+              },
+              {
+                "role": "display-0",
+                "file": "readbacks/metal--webgpu--nearest-origin--13x9@1.display-0.rgba32f",
+                "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2",
+                "words": 468
+              },
+              {
+                "role": "repeatedDisplay-0",
+                "file": "readbacks/metal--webgpu--nearest-origin--13x9@1.repeatedDisplay-0.rgba32f",
+                "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2",
+                "words": 468
+              },
+              {
+                "role": "installed-1",
+                "file": "readbacks/metal--webgpu--nearest-origin--13x9@1.installed-1.rgba32f",
+                "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2",
+                "words": 468
+              },
+              {
+                "role": "repeated-1",
+                "file": "readbacks/metal--webgpu--nearest-origin--13x9@1.repeated-1.rgba32f",
+                "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2",
+                "words": 468
+              },
+              {
+                "role": "display-1",
+                "file": "readbacks/metal--webgpu--nearest-origin--13x9@1.display-1.rgba32f",
+                "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2",
+                "words": 468
+              },
+              {
+                "role": "repeatedDisplay-1",
+                "file": "readbacks/metal--webgpu--nearest-origin--13x9@1.repeatedDisplay-1.rgba32f",
+                "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2",
+                "words": 468
+              },
+              {
+                "role": "installed-2",
+                "file": "readbacks/metal--webgpu--nearest-origin--13x9@1.installed-2.rgba32f",
+                "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2",
+                "words": 468
+              },
+              {
+                "role": "repeated-2",
+                "file": "readbacks/metal--webgpu--nearest-origin--13x9@1.repeated-2.rgba32f",
+                "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2",
+                "words": 468
+              },
+              {
+                "role": "display-2",
+                "file": "readbacks/metal--webgpu--nearest-origin--13x9@1.display-2.rgba32f",
+                "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2",
+                "words": 468
+              },
+              {
+                "role": "repeatedDisplay-2",
+                "file": "readbacks/metal--webgpu--nearest-origin--13x9@1.repeatedDisplay-2.rgba32f",
+                "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2",
+                "words": 468
+              }
+            ]
+          },
+          {
+            "backend": "webgl2",
+            "gpu": {
+              "api": "WebGL2",
+              "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+            },
+            "status": "PASSED_DISPLACE_ACTUAL_FINAL",
+            "error": null,
+            "case": "nearest-origin",
+            "direct": {
+              "words": 468,
+              "wordDifferences": 0,
+              "examples": [],
+              "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2"
+            },
+            "cycles": [
+              {
+                "cycle": 0,
+                "commitDraws": 0,
+                "preparationHostRestored": true,
+                "sourceMaterialsPreserved": true,
+                "textureBaselineRestored": true,
+                "installed": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "examples": [],
+                  "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2"
+                },
+                "repeated": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "examples": [],
+                  "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2"
+                },
+                "display": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "alphaWordDifferences": 0,
+                  "nonfiniteClassDifferences": 0,
+                  "maxClampedAbsoluteError": 0,
+                  "projectionContract": "existing-ocio-png-clamp01-3e-5",
+                  "projectionAccepted": true,
+                  "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2"
+                },
+                "repeatedDisplay": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "alphaWordDifferences": 0,
+                  "nonfiniteClassDifferences": 0,
+                  "maxClampedAbsoluteError": 0,
+                  "projectionContract": "existing-ocio-png-clamp01-3e-5",
+                  "projectionAccepted": true,
+                  "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2"
+                },
+                "installedDraws": 7,
+                "repeatedDraws": 7,
+                "probeDraws": 2,
+                "repeatedProbeDraws": 2,
+                "installedFrame": 18,
+                "repeatedFrame": 20,
+                "probeFrame": 18,
+                "repeatedProbeFrame": 20
+              },
+              {
+                "cycle": 1,
+                "commitDraws": 0,
+                "preparationHostRestored": true,
+                "sourceMaterialsPreserved": true,
+                "textureBaselineRestored": true,
+                "installed": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "examples": [],
+                  "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2"
+                },
+                "repeated": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "examples": [],
+                  "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2"
+                },
+                "display": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "alphaWordDifferences": 0,
+                  "nonfiniteClassDifferences": 0,
+                  "maxClampedAbsoluteError": 0,
+                  "projectionContract": "existing-ocio-png-clamp01-3e-5",
+                  "projectionAccepted": true,
+                  "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2"
+                },
+                "repeatedDisplay": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "alphaWordDifferences": 0,
+                  "nonfiniteClassDifferences": 0,
+                  "maxClampedAbsoluteError": 0,
+                  "projectionContract": "existing-ocio-png-clamp01-3e-5",
+                  "projectionAccepted": true,
+                  "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2"
+                },
+                "installedDraws": 7,
+                "repeatedDraws": 7,
+                "probeDraws": 2,
+                "repeatedProbeDraws": 2,
+                "installedFrame": 30,
+                "repeatedFrame": 32,
+                "probeFrame": 30,
+                "repeatedProbeFrame": 32
+              },
+              {
+                "cycle": 2,
+                "commitDraws": 0,
+                "preparationHostRestored": true,
+                "sourceMaterialsPreserved": true,
+                "textureBaselineRestored": true,
+                "installed": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "examples": [],
+                  "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2"
+                },
+                "repeated": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "examples": [],
+                  "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2"
+                },
+                "display": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "alphaWordDifferences": 0,
+                  "nonfiniteClassDifferences": 0,
+                  "maxClampedAbsoluteError": 0,
+                  "projectionContract": "existing-ocio-png-clamp01-3e-5",
+                  "projectionAccepted": true,
+                  "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2"
+                },
+                "repeatedDisplay": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "alphaWordDifferences": 0,
+                  "nonfiniteClassDifferences": 0,
+                  "maxClampedAbsoluteError": 0,
+                  "projectionContract": "existing-ocio-png-clamp01-3e-5",
+                  "projectionAccepted": true,
+                  "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2"
+                },
+                "installedDraws": 7,
+                "repeatedDraws": 7,
+                "probeDraws": 2,
+                "repeatedProbeDraws": 2,
+                "installedFrame": 42,
+                "repeatedFrame": 44,
+                "probeFrame": 42,
+                "repeatedProbeFrame": 44
+              }
+            ],
+            "readbacks": [
+              {
+                "role": "direct",
+                "file": "readbacks/metal--webgl2--nearest-origin--13x9@1.direct.rgba32f",
+                "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2",
+                "words": 468
+              },
+              {
+                "role": "installed-0",
+                "file": "readbacks/metal--webgl2--nearest-origin--13x9@1.installed-0.rgba32f",
+                "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2",
+                "words": 468
+              },
+              {
+                "role": "repeated-0",
+                "file": "readbacks/metal--webgl2--nearest-origin--13x9@1.repeated-0.rgba32f",
+                "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2",
+                "words": 468
+              },
+              {
+                "role": "display-0",
+                "file": "readbacks/metal--webgl2--nearest-origin--13x9@1.display-0.rgba32f",
+                "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2",
+                "words": 468
+              },
+              {
+                "role": "repeatedDisplay-0",
+                "file": "readbacks/metal--webgl2--nearest-origin--13x9@1.repeatedDisplay-0.rgba32f",
+                "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2",
+                "words": 468
+              },
+              {
+                "role": "installed-1",
+                "file": "readbacks/metal--webgl2--nearest-origin--13x9@1.installed-1.rgba32f",
+                "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2",
+                "words": 468
+              },
+              {
+                "role": "repeated-1",
+                "file": "readbacks/metal--webgl2--nearest-origin--13x9@1.repeated-1.rgba32f",
+                "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2",
+                "words": 468
+              },
+              {
+                "role": "display-1",
+                "file": "readbacks/metal--webgl2--nearest-origin--13x9@1.display-1.rgba32f",
+                "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2",
+                "words": 468
+              },
+              {
+                "role": "repeatedDisplay-1",
+                "file": "readbacks/metal--webgl2--nearest-origin--13x9@1.repeatedDisplay-1.rgba32f",
+                "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2",
+                "words": 468
+              },
+              {
+                "role": "installed-2",
+                "file": "readbacks/metal--webgl2--nearest-origin--13x9@1.installed-2.rgba32f",
+                "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2",
+                "words": 468
+              },
+              {
+                "role": "repeated-2",
+                "file": "readbacks/metal--webgl2--nearest-origin--13x9@1.repeated-2.rgba32f",
+                "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2",
+                "words": 468
+              },
+              {
+                "role": "display-2",
+                "file": "readbacks/metal--webgl2--nearest-origin--13x9@1.display-2.rgba32f",
+                "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2",
+                "words": 468
+              },
+              {
+                "role": "repeatedDisplay-2",
+                "file": "readbacks/metal--webgl2--nearest-origin--13x9@1.repeatedDisplay-2.rgba32f",
+                "sha256": "6269c848294e455a24fba545928e62a91746dd727ce928bdd00a64e250b62ae2",
+                "words": 468
+              }
+            ]
+          }
+        ],
+        "fixturePins": {
+          "browser.js": "eecc0f55c9af728db4181e44182589c5ea857c8f8b3fc27faa87801b9620589e",
+          "browser-contract.mjs": "488bdb94d3d890f63376d566f5e440dff891070a1de4c1311384e03f76ddc6ac",
+          "same-frame.mjs": "e370e334d047240d10e72a9166719f4f702948d11b790585966e4d13343e94f1",
+          "index.html": "d9424939fa396b2f15234674d2b71d03d7ddd0c5e01d3310cfdd8f67c0fe0ae8"
+        },
+        "runtimeModuleCensusSha256": "c79cb20b3bf91f78f72f66eab40bb91ad63c5d6f929490633c586731c8811dd6"
+      },
+      {
+        "stage": "texel",
+        "profile": "software",
+        "path": "/tmp/scenetoweb-node-ports-next-union/artifacts/verification-displace-single-next48/diagnostic-nearest-texel-software/report.json",
+        "sha256": "0bd186b43eda55cbcd0e4b7aeaae844819875f5344d6f4a7fa6f32056cb95872",
+        "status": "DIAGNOSTIC_ONLY_ZERO_CREDIT",
+        "qualificationCredit": 0,
+        "apis": [
+          {
+            "backend": "webgpu",
+            "gpu": {
+              "api": "WebGPU",
+              "vendor": "google",
+              "architecture": "swiftshader",
+              "description": "",
+              "device": ""
+            },
+            "status": "PASSED_DISPLACE_ACTUAL_FINAL",
+            "error": null,
+            "case": "nearest-origin",
+            "direct": {
+              "words": 468,
+              "wordDifferences": 0,
+              "examples": [],
+              "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a"
+            },
+            "cycles": [
+              {
+                "cycle": 0,
+                "commitDraws": 0,
+                "preparationHostRestored": true,
+                "sourceMaterialsPreserved": true,
+                "textureBaselineRestored": true,
+                "installed": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "examples": [],
+                  "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a"
+                },
+                "repeated": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "examples": [],
+                  "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a"
+                },
+                "display": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "alphaWordDifferences": 0,
+                  "nonfiniteClassDifferences": 0,
+                  "maxClampedAbsoluteError": 0,
+                  "projectionContract": "existing-ocio-png-clamp01-3e-5",
+                  "projectionAccepted": true,
+                  "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a"
+                },
+                "repeatedDisplay": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "alphaWordDifferences": 0,
+                  "nonfiniteClassDifferences": 0,
+                  "maxClampedAbsoluteError": 0,
+                  "projectionContract": "existing-ocio-png-clamp01-3e-5",
+                  "projectionAccepted": true,
+                  "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a"
+                },
+                "installedDraws": 7,
+                "repeatedDraws": 7,
+                "probeDraws": 2,
+                "repeatedProbeDraws": 2,
+                "installedFrame": 45,
+                "repeatedFrame": 48,
+                "probeFrame": 45,
+                "repeatedProbeFrame": 48
+              },
+              {
+                "cycle": 1,
+                "commitDraws": 0,
+                "preparationHostRestored": true,
+                "sourceMaterialsPreserved": true,
+                "textureBaselineRestored": true,
+                "installed": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "examples": [],
+                  "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a"
+                },
+                "repeated": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "examples": [],
+                  "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a"
+                },
+                "display": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "alphaWordDifferences": 0,
+                  "nonfiniteClassDifferences": 0,
+                  "maxClampedAbsoluteError": 0,
+                  "projectionContract": "existing-ocio-png-clamp01-3e-5",
+                  "projectionAccepted": true,
+                  "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a"
+                },
+                "repeatedDisplay": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "alphaWordDifferences": 0,
+                  "nonfiniteClassDifferences": 0,
+                  "maxClampedAbsoluteError": 0,
+                  "projectionContract": "existing-ocio-png-clamp01-3e-5",
+                  "projectionAccepted": true,
+                  "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a"
+                },
+                "installedDraws": 7,
+                "repeatedDraws": 7,
+                "probeDraws": 2,
+                "repeatedProbeDraws": 2,
+                "installedFrame": 55,
+                "repeatedFrame": 56,
+                "probeFrame": 55,
+                "repeatedProbeFrame": 56
+              },
+              {
+                "cycle": 2,
+                "commitDraws": 0,
+                "preparationHostRestored": true,
+                "sourceMaterialsPreserved": true,
+                "textureBaselineRestored": true,
+                "installed": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "examples": [],
+                  "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a"
+                },
+                "repeated": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "examples": [],
+                  "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a"
+                },
+                "display": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "alphaWordDifferences": 0,
+                  "nonfiniteClassDifferences": 0,
+                  "maxClampedAbsoluteError": 0,
+                  "projectionContract": "existing-ocio-png-clamp01-3e-5",
+                  "projectionAccepted": true,
+                  "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a"
+                },
+                "repeatedDisplay": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "alphaWordDifferences": 0,
+                  "nonfiniteClassDifferences": 0,
+                  "maxClampedAbsoluteError": 0,
+                  "projectionContract": "existing-ocio-png-clamp01-3e-5",
+                  "projectionAccepted": true,
+                  "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a"
+                },
+                "installedDraws": 7,
+                "repeatedDraws": 7,
+                "probeDraws": 2,
+                "repeatedProbeDraws": 2,
+                "installedFrame": 63,
+                "repeatedFrame": 64,
+                "probeFrame": 63,
+                "repeatedProbeFrame": 64
+              }
+            ],
+            "readbacks": [
+              {
+                "role": "direct",
+                "file": "readbacks/software--webgpu--nearest-origin--13x9@1.direct.rgba32f",
+                "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a",
+                "words": 468
+              },
+              {
+                "role": "installed-0",
+                "file": "readbacks/software--webgpu--nearest-origin--13x9@1.installed-0.rgba32f",
+                "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a",
+                "words": 468
+              },
+              {
+                "role": "repeated-0",
+                "file": "readbacks/software--webgpu--nearest-origin--13x9@1.repeated-0.rgba32f",
+                "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a",
+                "words": 468
+              },
+              {
+                "role": "display-0",
+                "file": "readbacks/software--webgpu--nearest-origin--13x9@1.display-0.rgba32f",
+                "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a",
+                "words": 468
+              },
+              {
+                "role": "repeatedDisplay-0",
+                "file": "readbacks/software--webgpu--nearest-origin--13x9@1.repeatedDisplay-0.rgba32f",
+                "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a",
+                "words": 468
+              },
+              {
+                "role": "installed-1",
+                "file": "readbacks/software--webgpu--nearest-origin--13x9@1.installed-1.rgba32f",
+                "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a",
+                "words": 468
+              },
+              {
+                "role": "repeated-1",
+                "file": "readbacks/software--webgpu--nearest-origin--13x9@1.repeated-1.rgba32f",
+                "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a",
+                "words": 468
+              },
+              {
+                "role": "display-1",
+                "file": "readbacks/software--webgpu--nearest-origin--13x9@1.display-1.rgba32f",
+                "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a",
+                "words": 468
+              },
+              {
+                "role": "repeatedDisplay-1",
+                "file": "readbacks/software--webgpu--nearest-origin--13x9@1.repeatedDisplay-1.rgba32f",
+                "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a",
+                "words": 468
+              },
+              {
+                "role": "installed-2",
+                "file": "readbacks/software--webgpu--nearest-origin--13x9@1.installed-2.rgba32f",
+                "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a",
+                "words": 468
+              },
+              {
+                "role": "repeated-2",
+                "file": "readbacks/software--webgpu--nearest-origin--13x9@1.repeated-2.rgba32f",
+                "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a",
+                "words": 468
+              },
+              {
+                "role": "display-2",
+                "file": "readbacks/software--webgpu--nearest-origin--13x9@1.display-2.rgba32f",
+                "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a",
+                "words": 468
+              },
+              {
+                "role": "repeatedDisplay-2",
+                "file": "readbacks/software--webgpu--nearest-origin--13x9@1.repeatedDisplay-2.rgba32f",
+                "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a",
+                "words": 468
+              }
+            ]
+          },
+          {
+            "backend": "webgl2",
+            "gpu": {
+              "api": "WebGL2",
+              "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+            },
+            "status": "PASSED_DISPLACE_ACTUAL_FINAL",
+            "error": null,
+            "case": "nearest-origin",
+            "direct": {
+              "words": 468,
+              "wordDifferences": 0,
+              "examples": [],
+              "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a"
+            },
+            "cycles": [
+              {
+                "cycle": 0,
+                "commitDraws": 0,
+                "preparationHostRestored": true,
+                "sourceMaterialsPreserved": true,
+                "textureBaselineRestored": true,
+                "installed": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "examples": [],
+                  "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a"
+                },
+                "repeated": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "examples": [],
+                  "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a"
+                },
+                "display": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "alphaWordDifferences": 0,
+                  "nonfiniteClassDifferences": 0,
+                  "maxClampedAbsoluteError": 0,
+                  "projectionContract": "existing-ocio-png-clamp01-3e-5",
+                  "projectionAccepted": true,
+                  "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a"
+                },
+                "repeatedDisplay": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "alphaWordDifferences": 0,
+                  "nonfiniteClassDifferences": 0,
+                  "maxClampedAbsoluteError": 0,
+                  "projectionContract": "existing-ocio-png-clamp01-3e-5",
+                  "projectionAccepted": true,
+                  "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a"
+                },
+                "installedDraws": 7,
+                "repeatedDraws": 7,
+                "probeDraws": 2,
+                "repeatedProbeDraws": 2,
+                "installedFrame": 58,
+                "repeatedFrame": 68,
+                "probeFrame": 58,
+                "repeatedProbeFrame": 68
+              },
+              {
+                "cycle": 1,
+                "commitDraws": 0,
+                "preparationHostRestored": true,
+                "sourceMaterialsPreserved": true,
+                "textureBaselineRestored": true,
+                "installed": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "examples": [],
+                  "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a"
+                },
+                "repeated": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "examples": [],
+                  "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a"
+                },
+                "display": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "alphaWordDifferences": 0,
+                  "nonfiniteClassDifferences": 0,
+                  "maxClampedAbsoluteError": 0,
+                  "projectionContract": "existing-ocio-png-clamp01-3e-5",
+                  "projectionAccepted": true,
+                  "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a"
+                },
+                "repeatedDisplay": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "alphaWordDifferences": 0,
+                  "nonfiniteClassDifferences": 0,
+                  "maxClampedAbsoluteError": 0,
+                  "projectionContract": "existing-ocio-png-clamp01-3e-5",
+                  "projectionAccepted": true,
+                  "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a"
+                },
+                "installedDraws": 7,
+                "repeatedDraws": 7,
+                "probeDraws": 2,
+                "repeatedProbeDraws": 2,
+                "installedFrame": 106,
+                "repeatedFrame": 115,
+                "probeFrame": 106,
+                "repeatedProbeFrame": 115
+              },
+              {
+                "cycle": 2,
+                "commitDraws": 0,
+                "preparationHostRestored": true,
+                "sourceMaterialsPreserved": true,
+                "textureBaselineRestored": true,
+                "installed": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "examples": [],
+                  "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a"
+                },
+                "repeated": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "examples": [],
+                  "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a"
+                },
+                "display": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "alphaWordDifferences": 0,
+                  "nonfiniteClassDifferences": 0,
+                  "maxClampedAbsoluteError": 0,
+                  "projectionContract": "existing-ocio-png-clamp01-3e-5",
+                  "projectionAccepted": true,
+                  "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a"
+                },
+                "repeatedDisplay": {
+                  "words": 468,
+                  "wordDifferences": 0,
+                  "alphaWordDifferences": 0,
+                  "nonfiniteClassDifferences": 0,
+                  "maxClampedAbsoluteError": 0,
+                  "projectionContract": "existing-ocio-png-clamp01-3e-5",
+                  "projectionAccepted": true,
+                  "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a"
+                },
+                "installedDraws": 7,
+                "repeatedDraws": 7,
+                "probeDraws": 2,
+                "repeatedProbeDraws": 2,
+                "installedFrame": 154,
+                "repeatedFrame": 163,
+                "probeFrame": 154,
+                "repeatedProbeFrame": 163
+              }
+            ],
+            "readbacks": [
+              {
+                "role": "direct",
+                "file": "readbacks/software--webgl2--nearest-origin--13x9@1.direct.rgba32f",
+                "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a",
+                "words": 468
+              },
+              {
+                "role": "installed-0",
+                "file": "readbacks/software--webgl2--nearest-origin--13x9@1.installed-0.rgba32f",
+                "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a",
+                "words": 468
+              },
+              {
+                "role": "repeated-0",
+                "file": "readbacks/software--webgl2--nearest-origin--13x9@1.repeated-0.rgba32f",
+                "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a",
+                "words": 468
+              },
+              {
+                "role": "display-0",
+                "file": "readbacks/software--webgl2--nearest-origin--13x9@1.display-0.rgba32f",
+                "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a",
+                "words": 468
+              },
+              {
+                "role": "repeatedDisplay-0",
+                "file": "readbacks/software--webgl2--nearest-origin--13x9@1.repeatedDisplay-0.rgba32f",
+                "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a",
+                "words": 468
+              },
+              {
+                "role": "installed-1",
+                "file": "readbacks/software--webgl2--nearest-origin--13x9@1.installed-1.rgba32f",
+                "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a",
+                "words": 468
+              },
+              {
+                "role": "repeated-1",
+                "file": "readbacks/software--webgl2--nearest-origin--13x9@1.repeated-1.rgba32f",
+                "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a",
+                "words": 468
+              },
+              {
+                "role": "display-1",
+                "file": "readbacks/software--webgl2--nearest-origin--13x9@1.display-1.rgba32f",
+                "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a",
+                "words": 468
+              },
+              {
+                "role": "repeatedDisplay-1",
+                "file": "readbacks/software--webgl2--nearest-origin--13x9@1.repeatedDisplay-1.rgba32f",
+                "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a",
+                "words": 468
+              },
+              {
+                "role": "installed-2",
+                "file": "readbacks/software--webgl2--nearest-origin--13x9@1.installed-2.rgba32f",
+                "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a",
+                "words": 468
+              },
+              {
+                "role": "repeated-2",
+                "file": "readbacks/software--webgl2--nearest-origin--13x9@1.repeated-2.rgba32f",
+                "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a",
+                "words": 468
+              },
+              {
+                "role": "display-2",
+                "file": "readbacks/software--webgl2--nearest-origin--13x9@1.display-2.rgba32f",
+                "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a",
+                "words": 468
+              },
+              {
+                "role": "repeatedDisplay-2",
+                "file": "readbacks/software--webgl2--nearest-origin--13x9@1.repeatedDisplay-2.rgba32f",
+                "sha256": "8a7a36c996792de6682d2be31ef6d4d293c980289c31b043e71eec84d1b2da0a",
+                "words": 468
+              }
+            ]
+          }
+        ],
+        "fixturePins": {
+          "browser.js": "eecc0f55c9af728db4181e44182589c5ea857c8f8b3fc27faa87801b9620589e",
+          "browser-contract.mjs": "488bdb94d3d890f63376d566f5e440dff891070a1de4c1311384e03f76ddc6ac",
+          "same-frame.mjs": "e370e334d047240d10e72a9166719f4f702948d11b790585966e4d13343e94f1",
+          "index.html": "d9424939fa396b2f15234674d2b71d03d7ddd0c5e01d3310cfdd8f67c0fe0ae8"
+        },
+        "runtimeModuleCensusSha256": "c79cb20b3bf91f78f72f66eab40bb91ad63c5d6f929490633c586731c8811dd6"
+      }
+    ],
+    "exactPrimaryWords": 13104,
+    "displayProjectionWords": 11232,
+    "freshNativeRenders": 0,
+    "actualFinalExports": 0,
+    "reusedFinalCases": 1,
+    "samplingContract": "Original unchanged same-pixel native oracle; pre-fix software94/73 word differences, post-fix allRGBA exact on all4tuples.",
+    "scriptSnapshots": {
+      "run.mjs": "c4d6031195a64e771acd96678bef815ee12b8e41ac6919e424ce2cfa5f2db1f9",
+      "browser.js": "eecc0f55c9af728db4181e44182589c5ea857c8f8b3fc27faa87801b9620589e"
+    }
+  }
+}

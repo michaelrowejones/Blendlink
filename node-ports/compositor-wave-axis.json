@@ -65,7 +65,8 @@
       "scripts/lib/runtime-proof-archive.mjs",
       "scripts/lib/runtime-compiler-trace.mjs",
       "scripts/lib/runtime-transaction-snapshot.mjs",
-      "scripts/lib/browser-proof-contract.mjs"
+      "scripts/lib/browser-proof-contract.mjs",
+      "scripts/lib/node-port-displace-evidence.mjs"
     ],
     "tests": [
       "experiments/compositor-wave-axis/*.mjs",

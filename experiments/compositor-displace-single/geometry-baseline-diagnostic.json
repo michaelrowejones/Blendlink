@@ -1,0 +1,202 @@
+{
+  "schemaVersion": 1,
+  "status": "RESEARCH_ONLY_CONFIRMED_CALLER_GEOMETRY_BASELINE",
+  "supportCredit": 0,
+  "nativeRenders": 0,
+  "savedFinalCredit": 0,
+  "sourceSDK": "2d8ec4205eadefcc0fd9e9c406bf95157f06ae5e",
+  "originalFailure": {
+    "path": "artifacts/verification-displace-single-next45/browser-baseline-metal/report.json",
+    "worktree": "/tmp/scenetoweb-node-ports-next-union",
+    "sha256": "cfbf3df1f792133aad58413b3ffc14370c3aa7a800e3098bc389b596c51836e5"
+  },
+  "diagnosticReport": {
+    "path": "/tmp/scenetoweb-displace-geometry-diagnostic-next/artifacts/displace-geometry-r3/browser-baseline-metal/report.json",
+    "sha256": "e2456727b978dfdd1f838b580ea024402da8823e61ab6b2fe9cd22f1c1ce7cd8",
+    "fixturePins": {
+      "browser.js": "a2283b8949179d5c8fe3c3e74d6588d8280a4043fb1e4b6eea37c0d4e53946e9",
+      "browser-contract.mjs": "488bdb94d3d890f63376d566f5e440dff891070a1de4c1311384e03f76ddc6ac",
+      "index.html": "d9424939fa396b2f15234674d2b71d03d7ddd0c5e01d3310cfdd8f67c0fe0ae8"
+    },
+    "runnerSha256": "0847ce6fe14c564ad80e71a6effae8ce9cac8f97068de27a46c825575eac03f4",
+    "wholeProgramEmitterVerified": true
+  },
+  "profile": "metal",
+  "backend": "webgpu",
+  "gpu": {
+    "api": "WebGPU",
+    "vendor": "apple",
+    "architecture": "metal-3",
+    "description": "",
+    "device": ""
+  },
+  "trace": {
+    "baselineGeometry": 1,
+    "actual": 2,
+    "live": [
+      {
+        "id": 2,
+        "uuid": "79c4c0b7-dfc6-42dd-a700-5be63a0d4459",
+        "type": "BufferGeometry",
+        "objectName": "",
+        "objectType": "Mesh",
+        "positionCount": 3,
+        "disposals": 0
+      },
+      {
+        "id": 4,
+        "uuid": "904727bc-971e-4495-a63b-351160cbad50",
+        "type": "PlaneGeometry",
+        "objectName": "Caller-owned mesh",
+        "objectType": "Mesh",
+        "positionCount": 4,
+        "indexCount": 6,
+        "disposals": 0
+      }
+    ],
+    "trace": [
+      {
+        "id": 2,
+        "uuid": "79c4c0b7-dfc6-42dd-a700-5be63a0d4459",
+        "type": "BufferGeometry",
+        "objectName": "",
+        "objectType": "Mesh",
+        "positionCount": 3,
+        "disposals": 0,
+        "before": 0,
+        "after": 1
+      },
+      {
+        "id": 3,
+        "uuid": "f76ecc1b-60bf-42cc-a8e3-934c26a5a54e",
+        "type": "PlaneGeometry",
+        "objectName": "",
+        "objectType": "Mesh",
+        "positionCount": 4,
+        "indexCount": 6,
+        "disposals": 0,
+        "before": 1,
+        "after": 2
+      },
+      {
+        "id": 7,
+        "uuid": "8a4703d8-ce74-409a-b4a2-a80c589cb51a",
+        "type": "BufferGeometry",
+        "objectName": "",
+        "objectType": "Mesh",
+        "positionCount": 36,
+        "disposals": 0,
+        "before": 1,
+        "after": 2
+      },
+      {
+        "id": 8,
+        "uuid": "1138678c-7167-475f-880d-53ca04e31d1c",
+        "type": "BufferGeometry",
+        "objectName": "",
+        "objectType": "Mesh",
+        "positionCount": 36,
+        "disposals": 0,
+        "before": 2,
+        "after": 3
+      },
+      {
+        "id": 9,
+        "uuid": "bd01fbf9-eabd-4490-bde7-08b651aef03f",
+        "type": "BufferGeometry",
+        "objectName": "",
+        "objectType": "Mesh",
+        "positionCount": 36,
+        "disposals": 0,
+        "before": 3,
+        "after": 4
+      },
+      {
+        "id": 10,
+        "uuid": "6affc5d4-b2f7-41a3-9ca6-f84f9ac6b072",
+        "type": "BufferGeometry",
+        "objectName": "",
+        "objectType": "Mesh",
+        "positionCount": 36,
+        "disposals": 0,
+        "before": 4,
+        "after": 5
+      },
+      {
+        "id": 11,
+        "uuid": "e0e888bb-e209-4b81-9cd5-e2552e9232be",
+        "type": "BufferGeometry",
+        "objectName": "",
+        "objectType": "Mesh",
+        "positionCount": 36,
+        "disposals": 0,
+        "before": 5,
+        "after": 6
+      },
+      {
+        "id": 12,
+        "uuid": "537b7bcc-a6a4-4630-83e3-cd190e88cc85",
+        "type": "BufferGeometry",
+        "objectName": "",
+        "objectType": "Mesh",
+        "positionCount": 36,
+        "disposals": 0,
+        "before": 6,
+        "after": 7
+      },
+      {
+        "id": 13,
+        "uuid": "1421b5ec-291d-438c-80c9-c72e47bf3335",
+        "type": "BufferGeometry",
+        "objectName": "",
+        "objectType": "Mesh",
+        "positionCount": 36,
+        "disposals": 0,
+        "before": 7,
+        "after": 8
+      },
+      {
+        "id": 5,
+        "uuid": "d945fae3-1c19-4965-a2b9-43b63f918fbf",
+        "type": "BufferGeometry",
+        "objectName": "Cube",
+        "objectType": "Mesh",
+        "positionCount": 24,
+        "indexCount": 36,
+        "disposals": 0,
+        "before": 1,
+        "after": 2
+      },
+      {
+        "id": 6,
+        "uuid": "0f799f96-0332-4fd3-ae21-d3e4154db710",
+        "type": "BufferGeometry",
+        "objectName": "Sphere",
+        "objectType": "Mesh",
+        "positionCount": 360,
+        "indexCount": 504,
+        "disposals": 0,
+        "before": 2,
+        "after": 3
+      },
+      {
+        "id": 4,
+        "uuid": "904727bc-971e-4495-a63b-351160cbad50",
+        "type": "PlaneGeometry",
+        "objectName": "Caller-owned mesh",
+        "objectType": "Mesh",
+        "positionCount": 4,
+        "indexCount": 6,
+        "disposals": 0,
+        "before": 3,
+        "after": 4
+      }
+    ]
+  },
+  "conclusion": "The initial shared QuadMesh geometry was already warm. The extra live geometry is the caller-owned PlaneGeometry, initialized by public preparation and correctly preserved by installation disposal. Port assets and PMREM scratch are absent from the live geometry manager. A pre-host baseline incorrectly treated the live caller asset as a leak.",
+  "correction": "Independently render the actual caller scene/mesh before preparation, preserve that exact live-host baseline on every cycle, then let the fixture caller retire its geometry/material and require the original shared global baseline. No SDK change or increased leak allowance.",
+  "limits": [
+    "Only one Metal/WebGPU identity trace; this is not the future full four-tuple production qualification.",
+    "Earlier isolated r1/r2 diagnostics failed at filesystem access before the geometry trace; failures retained, zero credit."
+  ]
+}

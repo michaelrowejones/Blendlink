@@ -1,3 +1,4 @@
+import { updateCompositorPassProducers } from './tslCompositorProducers.js'
 import { FloatType, Vector2, Vector4 } from 'three'
 import { RendererUtils } from 'three/webgpu'
 import * as TSL from 'three/tsl'
@@ -17,8 +18,15 @@ const { Fn, clamp, ivec2, rtt, select, textureSize, uv, vec4 } = TSL as unknown 
 
 /** A real finite pixel window with a deferred origin, not an already clipped field. */
 export interface CompositorImageOrigin {
+  /** Internal producer modes, never sourced from arbitrary JSON window fields. */
+  /** Set only after closed Displace source admission, never read from JSON. */
+  displaceCpuRgbaStages?: true
+  virtualConstant?: boolean
+  validateRenderer?: (renderer: TslEffectNode) => void
   croppedWindow?: CroppedCompositorWindow
   staticWindow?: StaticCompositorWindow
+  /** Internal producer budget, never read from a source JSON maxPixels field. */
+  maxPixels?: number
   x: number
   y: number
   sampling?: CompositorSampling
@@ -73,7 +81,7 @@ export function translatedImageOrigin(op: SourceCompositorOperation, input: Comp
   const sampling = model === 'deferred-integer-origin-v1' ? undefined : {
     model: op.properties.image_sampling_model, interpolation: legacyCpu ? 'Nearest' : op.properties.image_interpolation,
   } as CompositorSampling
-  return { x, y, roots: input.roots, ...(sampling ? { sampling } : {}) }
+  return { x, y, roots: input.roots, ...(sampling ? { sampling } : {}), ...(op.source.nodeType==='CompositorNodeDisplace'?{maxPixels:4194304}:{}) }
 }
 
 export function affineImageOrigin(op: SourceCompositorOperation, input: CompositorImageOrigin | null,
@@ -105,6 +113,8 @@ export function affineImageOrigin(op: SourceCompositorOperation, input: Composit
 
 export function validateCompositorExtent(origin: CompositorImageOrigin, renderer: TslEffectNode,
   width: number, height: number, fail: (message: string) => never): void {
+  if(origin.maxPixels!==undefined&&(!Number.isSafeInteger(width)||!Number.isSafeInteger(height)||Math.min(width,height)<4||Math.max(width,height)>8192||width*height>origin.maxPixels))
+    fail('Displace field realization exceeds its 4194304 pixel budget')
   if (!Number.isInteger(width) || !Number.isInteger(height) || width < 1 || height < 1)
     fail('Translate requires a finite nonempty compositing image extent')
   for (const root of origin.roots) {
@@ -130,12 +140,13 @@ export function realizeCompositorOrigin(input: TslEffectNode, from: CompositorIm
   if (from.croppedWindow) {
     if (from.x !== 0 || from.y !== 0 || from.affineMatrix || to.some(value => value !== 0))
       return fail('Resized Crop transform consumers require native finite-window processing')
-    return realizeCroppedCompositorWindow(input, from.croppedWindow, resources, fail)
+    return realizeCroppedCompositorWindow(input, from.croppedWindow, resources, fail,
+      frame => updateCompositorPassProducers(from.roots.map(root => root.node), frame))
   }
   if (from.staticWindow) {
     if (from.x !== 0 || from.y !== 0 || from.affineMatrix || to.some(value => value !== 0))
       return fail('Static Image transform consumers require native finite-window processing')
-    return realizeStaticCompositorWindow(input, from.staticWindow, resources, fail)
+    return realizeStaticCompositorWindow(input, from.staticWindow, resources, fail, { virtualConstant: from.virtualConstant, validateRenderer: from.validateRenderer })
   }
   if (from.affineMatrix) {
     if (!from.sampling) return fail('Affine realization requires native sampling metadata')
@@ -146,7 +157,8 @@ export function realizeCompositorOrigin(input: TslEffectNode, from: CompositorIm
     if (from.affineMatrix.every((value, index) => Math.abs(value - target[index]!) <= 1e-5))
       return realizeIntegerImageOrigin(input, { ...from, x: 0, y: 0 }, resources, fail)
     return resampleCompositorAffine(input, from.affineMatrix, to, from.sampling, resources,
-      (renderer, width, height) => validateCompositorExtent(from, renderer, width, height, fail), fail)
+      (renderer, width, height) => validateCompositorExtent(from, renderer, width, height, fail), fail,
+      frame => updateCompositorPassProducers(from.roots.map(root => root.node), frame))
   }
   const dx = from.x - to[0], dy = from.y - to[1]
   if ((!from.sampling || from.sampling.interpolation === 'Nearest') && Number.isInteger(dx) && Number.isInteger(dy)
@@ -154,7 +166,8 @@ export function realizeCompositorOrigin(input: TslEffectNode, from: CompositorIm
     return realizeIntegerImageOrigin(input, { ...from, x: dx, y: dy }, resources, fail)
   if (!from.sampling) return fail('Fractional image realization requires a native sampling model')
   return resampleCompositorField(input, [from.x, from.y], to, from.sampling, resources,
-    (renderer, width, height) => validateCompositorExtent(from, renderer, width, height, fail), fail)
+    (renderer, width, height) => validateCompositorExtent(from, renderer, width, height, fail), fail, undefined,
+      frame => updateCompositorPassProducers(from.roots.map(root => root.node), frame), from.displaceCpuRgbaStages)
 }
 
 export function translatedCompositorField(op: SourceCompositorOperation, input: TslEffectNode,
@@ -165,7 +178,8 @@ export function translatedCompositorField(op: SourceCompositorOperation, input: 
   const delta = op.properties.image_translation as number[]
   if (!delta.some(value => !Number.isInteger(value))) return input
   return resampleCompositorField(input, [0, 0], [0, 0], { model: 'legacy-cpu-v1', interpolation: op.properties.image_interpolation as 'Nearest' | 'Bilinear' }, resources,
-    (renderer, width, height) => validateCompositorExtent(domain, renderer, width, height, fail), fail, [delta[0]!, delta[1]!])
+    (renderer, width, height) => validateCompositorExtent(domain, renderer, width, height, fail), fail, [delta[0]!, delta[1]!],
+    frame => updateCompositorPassProducers(domain.roots.map(root => root.node), frame))
 }
 
 /** Realize once, after neighborhood/pointwise processing, preserving off-canvas
@@ -178,12 +192,13 @@ export function realizeIntegerImageOrigin(input: TslEffectNode, origin: Composit
   const updateBefore = image.updateBefore.bind(image), size = new Vector2(), viewport = new Vector4(), scissor = new Vector4()
   image.updateBefore = (frame: TslEffectNode): void => {
     const renderer = frame.renderer
+    renderer.getDrawingBufferSize(size)
+    const width = size.x, height = size.y
+    validateCompositorExtent(origin, renderer, width, height, fail)
+    updateCompositorPassProducers(origin.roots.map(root => root.node), frame)
     renderer.getViewport(viewport); renderer.getScissor(scissor)
     const state = RendererUtils.resetRendererState(renderer, undefined as never)
     try {
-      renderer.getDrawingBufferSize(size)
-      const width = size.x, height = size.y
-      validateCompositorExtent(origin, renderer, width, height, fail)
       if (image.renderTarget.width !== width || image.renderTarget.height !== height) image.setSize(width, height)
       updateBefore(frame)
     } finally {

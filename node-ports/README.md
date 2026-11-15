@@ -6,12 +6,38 @@ qualification. It never reuses numerical proof. The source watcher discovers
 all JSON manifests in this directory; a changed upstream dependency or native
 revision queues fresh verification, with zero automatic support promotion.
 
-Two compositor manifests use **family-owned matrices**:
+These compositor manifests use **family-owned matrices**:
 
 | Manifest | Source | Complete native / Final / browser census |
 | --- | --- | --- |
+| `compositor-noise-default-field` | Default-input Blender 5.3 CPU compositor Noise, bounded RGB contract | 41 / 8 / 136 |
+| `compositor-wave-axis` | Axis Blender 5.3 CPU compositor Wave | 149 / 20 / 640 |
+| `compositor-white-noise-default-field` | Default-input Blender 5.3 CPU compositor White Noise | 63 / 8 / 248 |
 | `compositor-white-noise` | Fixed-input Blender 5.3 CPU compositor White Noise | 44 / 12 / 224 |
 | `mono-switch-view` | Static mono Blender 5.3 CPU Switch View input0 selection | 8 / 8 / 64 total; 7 / 7 / 56 production, plus calibration |
+| `compositor-blank-image` | Static finite Blender 5.3 CPU compositor Blank Image | 26 / 8 / 136 |
+| `compositor-displace-single` | Terminal Blender 5.3 CPU Displace, actual source and same-pixel oracle kept separate | 320 renders for 160 inputs / 16 / 160 numerical frame cases |
+
+The Blank Image adapter passed a fresh complete automatic transaction on the
+joint runtime, including a byte-identical independent second close. Its closed
+reader requires exact native linear words, all 272 resize
+frames, 96 lifecycle cycles and ten unique native prefixes; actual Raw display
+has a separate existing clamp01 absolute 3e-5 audit.
+
+Displace also passed its full fresh automatic transaction and byte-identical
+independent second close. Its sixteen admitted saved graphs are not counted as 160
+source-graph ports: 160 separate browser scene-pass inputs feed the explicitly
+source-unadmitted native Image oracle. The adapter owns `proof/` and its adjacent
+`proof-source-policy/` within the outer evidence directory, runs the fresh matrix
+once, re-runs its authoritative reader, and checks all three native archive
+identities against the outer actual executable. It preserves exact linear words
+and the separate existing Raw display audit.
+
+Large Displace readbacks stream as exact binary packets into an exclusively
+owned archive. The transport validates frame/API/role, byte count and SHA-256;
+the independent reader still checks every original raw file and all thirteen
+roles. This removes the large CDP array serialization failure without dropping
+comparisons or relaxing a gate. Earlier failed namespaces remain zero credit.
 
 These scheduling adapters run the existing native, Saved Final, Metal and
 SwiftShader, WebGPU and WebGL2 proof exactly once. Their registered ownership

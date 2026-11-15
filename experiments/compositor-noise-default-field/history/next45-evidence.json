@@ -1,0 +1,592 @@
+{
+  "schemaVersion": 1,
+  "kind": "qualified-partial-compositor-noise-default-field-v3",
+  "status": "QUALIFIED_PARTIAL_COMPOSITOR_NOISE_DEFAULT_FIELD",
+  "sourceCommit": "2d8ec4205eadefcc0fd9e9c406bf95157f06ae5e",
+  "manualScopeReview": "New Blender5.3-only compositor partial override; base and all older versions remain unsupported. This is reviewed bounded approximation, not bit-exact or general Noise coverage.",
+  "counts": {
+    "nativeGraphs": 26,
+    "nativeOracleControls": 15,
+    "nativeRenders": 41,
+    "savedFinalScenes": 8,
+    "browserCaseRuns": 136,
+    "primaryFloat32Words": 12919456,
+    "wordDifferences": 1312872,
+    "contractViolations": 0,
+    "maxUlps": 8,
+    "maxAbsoluteError": 1.1920928955078125e-07,
+    "resizeFrames": 352,
+    "lifecycleCycles": 96,
+    "uniqueActualPythonPrefixes": 10
+  },
+  "qualification": {
+    "path": "artifacts/verification-noise-default-field-next45/qualified.json",
+    "sha256": "a9c2ca185538f23b35af407f47ed6d127b5df3d268e4e2237e3601b69070a670",
+    "closedReader": {
+      "runtimeFingerprint": "a387a2e427339cbd1061ad152677a97f3548dd3bb83157b48705bef50fa28620",
+      "verifierSha256": "861f055fa4092013a91e59125caf140e52d2da0587cb19c6b949ab17f1aeb271",
+      "runtimeArchiveHelperSha256": "431b8a4e92a194d63a8db512aa84f3076c9951e083b873885d8115e0caf509ed",
+      "nativeArchiveHelperSha256": "3a2310c94ed3109230d3fa89dc1ac6ea5bed447155e98144a68d52dac568a3da"
+    }
+  },
+  "scope": "Pinned Blender5.3.0 build02f0899d78e3 macOS arm64 CPU compositor AUTO/FULL only. Native own-unlinked Uniform Vector, normalized2D FBM Fac/Color with exact original scalar controls Scale5 Detail2 Roughness.5 Lacunarity2 Distortion+0; all active controls unlinked, identity mapping, no animation/drivers/NLA or native mute bypass. Full-frame zero-origin square-pixel physical extents4..8192 including resize/DPR. Kernel staged-bli-fade-perlin-fbm-noise2d-v3 is a separate CPU-compositor profile: compensated BLI fade and explicit Float32 Perlin/FBM staging; RGB is bounded approximate, not bit exact. Both absolute error<=2^-20 AND ULP distance<=8 must hold; alpha1, scaled Fac lattice0.5, Fac RGB broadcast and Color.red/Fac are exact. Actual four Metal/SwiftShader WebGPU/WebGL2 tuples passed26 production native graphs plus15 oracle controls,8 saved Final exports and136 browser case-runs;12,919,456 primary words have1,312,872 bit differences and zero contract violations. Closed texture-free pointwise composition under each consumer's own limits, at most18 Perlin calls (Fac3/Color9), one shared Uniform axis table<=64KiB and axis+display sampler budget8; no registered pre-HDR/post-LDR effects. No image/scene/render-pass/spatial/mask/WhiteNoise/Wave mixtures, linked/computed controls, distortion, other dimensions/fractals, native GPU/EEVEE, ImageInfo consumer extension, arbitrary downstream amplification, whole-look/PBR/original-demo or other native host/version/build credit. Existing shader/Cycles Noise functions and older classifications are unchanged.",
+  "numericContract": {
+    "gate": {
+      "absoluteMax": 9.5367431640625e-07,
+      "ulpsMax": 8
+    },
+    "combination": "AND",
+    "exact": [
+      "alpha1",
+      "scaled Fac lattice0.5",
+      "Fac RGB broadcast",
+      "Color.red equals Fac"
+    ],
+    "bitExactRgb": false,
+    "primaryWordDifferences": 1312872,
+    "outputRepair": false
+  },
+  "sourcePolicy": {
+    "status": "NOISE_DEFAULT_FIELD_SOURCE_POLICY_PASSED",
+    "positive": [
+      "AUTO-Fac",
+      "AUTO-Color",
+      "FULL-Fac",
+      "FULL-Color",
+      "implicit-ignores-stored-vector",
+      "native-group-reroute-field",
+      "late-unchanged"
+    ],
+    "refusals": [
+      "linked-Vector",
+      "muted-link-Vector",
+      "linked-Scale",
+      "muted-link-Scale",
+      "linked-Detail",
+      "muted-link-Detail",
+      "linked-Roughness",
+      "muted-link-Roughness",
+      "linked-Lacunarity",
+      "muted-link-Lacunarity",
+      "linked-Distortion",
+      "muted-link-Distortion",
+      "changed-Scale",
+      "changed-Detail",
+      "changed-Roughness",
+      "changed-Lacunarity",
+      "changed-Distortion",
+      "mode-noise_dimensions-3D",
+      "mode-noise_dimensions-4D",
+      "mode-noise_type-MULTIFRACTAL",
+      "mode-normalize-False",
+      "mode-mute-True",
+      "context-compositor_device",
+      "context-use_border",
+      "context-use_crop_to_border",
+      "context-pixel_aspect_y",
+      "context-resolution_percentage",
+      "context-resolution_y",
+      "animated",
+      "late-group-mute",
+      "late-reroute-relink",
+      "late-root",
+      "late-disabled",
+      "late-frame",
+      "late-scalar-default"
+    ],
+    "renders": 0,
+    "gpuInitializationCalls": 0,
+    "portCredit": 0,
+    "guardControls": {
+      "gpuInitializationRefused": true,
+      "renderRefused": true
+    }
+  },
+  "nativeOnlyControls": [
+    {
+      "case": "13x9-raw-uniform",
+      "sha256": "e845dacdd94200e4266f1a360ad869abb0583b69750bbef8450467706d389f0f",
+      "comparedWords": 468,
+      "runtimeConsumerCredit": 0
+    },
+    {
+      "case": "9x13-raw-uniform",
+      "sha256": "253e2dba1c3b454a7e2f70d652943344012ec6e16183b138d61a7364203a6313",
+      "comparedWords": 468,
+      "runtimeConsumerCredit": 0
+    },
+    {
+      "case": "16x8-raw-uniform",
+      "sha256": "a1ecf7a6066f17ff6fdcbdfd4e980e11ba52a3a0492724d823fdb30a1f649262",
+      "comparedWords": 512,
+      "runtimeConsumerCredit": 0
+    },
+    {
+      "case": "8x8-raw-uniform",
+      "sha256": "c4bb3cd330c51c2aeeddb6b3377fef2e76990e01f531eedb7af4e06a16a3a5df",
+      "comparedWords": 256,
+      "runtimeConsumerCredit": 0
+    },
+    {
+      "case": "5x5-raw-uniform",
+      "sha256": "5091e3f8c95d024d6e29257105ee0f99df2251d20a81c553a39c57046db2ceca",
+      "comparedWords": 100,
+      "runtimeConsumerCredit": 0
+    },
+    {
+      "case": "127x65-raw-uniform",
+      "sha256": "ad4040037a6e1db0c4868eff4f35e6831637ff6bda6156027e9613482a894b81",
+      "comparedWords": 33020,
+      "runtimeConsumerCredit": 0
+    },
+    {
+      "case": "65x127-raw-uniform",
+      "sha256": "6fa82c851a425b7030d7f6a675e701ac75f4d8b5e39f768540d42b283681dc8c",
+      "comparedWords": 33020,
+      "runtimeConsumerCredit": 0
+    },
+    {
+      "case": "8192x4-raw-uniform",
+      "sha256": "3cdcda5a5c6ba985d9a416b345e5df3d406bf48121361aeffeb119ff10b5def7",
+      "comparedWords": 131072,
+      "runtimeConsumerCredit": 0
+    },
+    {
+      "case": "4x8192-raw-uniform",
+      "sha256": "4bdd8f4f5561374be576051cce78dd0350062cfc9572e7efebd6d79b44d86fdc",
+      "comparedWords": 131072,
+      "runtimeConsumerCredit": 0
+    },
+    {
+      "case": "257x251-raw-uniform",
+      "sha256": "fe103e1fbc501aab74cdc4f1004a2638fb0b51a581bc3bac8779b631d1de8f85",
+      "comparedWords": 258028,
+      "runtimeConsumerCredit": 0
+    },
+    {
+      "case": "509x503-raw-uniform",
+      "sha256": "5a4be328d08042b1f04de9b3a2579561f2b476a5f2dbba5c0bd8ac529463eb89",
+      "comparedWords": 1024108,
+      "runtimeConsumerCredit": 0
+    },
+    {
+      "case": "13x9-native-image-info-field-domain",
+      "sha256": "47633e755119db42ff42959b126ff1ca1c8e215ca401005eec5e06d147eeb959",
+      "comparedWords": 468,
+      "runtimeConsumerCredit": 0
+    },
+    {
+      "case": "5x5-native-image-info-field-domain",
+      "sha256": "4546161483a445161eccae6496d007132810afa56e04627794cbfb3a587733cc",
+      "comparedWords": 100,
+      "runtimeConsumerCredit": 0
+    },
+    {
+      "case": "13x9-scale-zero-fac",
+      "sha256": "23117148d31cceeb9d46f2538a1d15f833e10482091cb49cc324a8e7d4eaa973",
+      "comparedWords": 468,
+      "runtimeConsumerCredit": 0
+    },
+    {
+      "case": "13x9-scale-zero-color",
+      "sha256": "c4b58c997c36d68a1ed9fc4e9ca5ce2d44d76ae8c262b0a9787860558a4017c1",
+      "comparedWords": 468,
+      "runtimeConsumerCredit": 0
+    }
+  ],
+  "nativeProofs": [
+    {
+      "native": {
+        "path": "artifacts/verification-noise-default-field-next45/cpu/qualification.json",
+        "sha256": "07d81aca9cae5eded27ff5f0404f81786b5193bda6a174a3263466e924e5a5c8"
+      },
+      "final": {
+        "path": "artifacts/verification-noise-default-field-next45/cpu/final-proof.json",
+        "sha256": "795c2d0d75f0e30963444b7f424f167b00f4d8493022af92a3b9a2a919a19233"
+      },
+      "sourceInputs": 144,
+      "nativeArchive": {
+        "pythonInvocations": 10,
+        "finalInvocations": 8,
+        "uniqueCachePrefixes": 10
+      }
+    }
+  ],
+  "runs": [
+    {
+      "path": "artifacts/verification-noise-default-field-next45/cpu/browser-raw-metal/report.json",
+      "sha256": "5f1fb45fde35b2e9ff8e06ab2ef6b4235e5d25c56ad0339f0263705c37968bf8",
+      "profile": "metal",
+      "phase": "raw",
+      "browserVersion": "158.0.8127.18",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 26,
+          "savedDispose": {
+            "error": "Error: White Noise exact axes: renderer/device/context/allocation epoch changed",
+            "physicalDestroys": 1,
+            "externalDevice": true,
+            "remainingOwnedTextures": 0,
+            "idempotentDisposal": true,
+            "ownerRoute": "buildSourceCompositor",
+            "bindingControls": [
+              {
+                "kind": "value",
+                "error": "Error: White Noise exact axes: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "reference",
+                "error": "Error: White Noise exact axes: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "uv",
+                "error": "Error: White Noise exact axes: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              }
+            ]
+          }
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 26,
+          "savedDispose": {
+            "error": "Error: White Noise exact axes: actual available renderer/device/context required",
+            "physicalDestroys": 1,
+            "externalDevice": false,
+            "remainingOwnedTextures": 0,
+            "idempotentDisposal": true,
+            "ownerRoute": "buildSourceCompositor",
+            "bindingControls": [
+              {
+                "kind": "value",
+                "error": "Error: White Noise exact axes: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "reference",
+                "error": "Error: White Noise exact axes: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "uv",
+                "error": "Error: White Noise exact axes: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "artifacts/verification-noise-default-field-next45/cpu/browser-final-metal/report.json",
+      "sha256": "490590860fe257a2be69b405cfc397dd8c47b288a1d776775e262535564c55be",
+      "profile": "metal",
+      "phase": "final",
+      "browserVersion": "158.0.8127.18",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 8,
+          "savedDispose": {
+            "error": "Error: White Noise exact axes: renderer/device/context/allocation epoch changed",
+            "physicalDestroys": 1,
+            "externalDevice": true,
+            "remainingOwnedTextures": 0,
+            "idempotentDisposal": true,
+            "ownerRoute": "buildSourceCompositor",
+            "bindingControls": [
+              {
+                "kind": "value",
+                "error": "Error: White Noise exact axes: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "reference",
+                "error": "Error: White Noise exact axes: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "uv",
+                "error": "Error: White Noise exact axes: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              }
+            ]
+          }
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 8,
+          "savedDispose": {
+            "error": "Error: White Noise exact axes: actual available renderer/device/context required",
+            "physicalDestroys": 1,
+            "externalDevice": false,
+            "remainingOwnedTextures": 0,
+            "idempotentDisposal": true,
+            "ownerRoute": "buildSourceCompositor",
+            "bindingControls": [
+              {
+                "kind": "value",
+                "error": "Error: White Noise exact axes: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "reference",
+                "error": "Error: White Noise exact axes: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "uv",
+                "error": "Error: White Noise exact axes: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "artifacts/verification-noise-default-field-next45/cpu/browser-raw-software/report.json",
+      "sha256": "f672dab02aa83413f0754140e085fe2d13a76865f4ce560de45ea086395c6df4",
+      "profile": "software",
+      "phase": "raw",
+      "browserVersion": "158.0.8127.18",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 26,
+          "savedDispose": {
+            "error": "Error: White Noise exact axes: renderer/device/context/allocation epoch changed",
+            "physicalDestroys": 1,
+            "externalDevice": true,
+            "remainingOwnedTextures": 0,
+            "idempotentDisposal": true,
+            "ownerRoute": "buildSourceCompositor",
+            "bindingControls": [
+              {
+                "kind": "value",
+                "error": "Error: White Noise exact axes: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "reference",
+                "error": "Error: White Noise exact axes: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "uv",
+                "error": "Error: White Noise exact axes: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              }
+            ]
+          }
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 26,
+          "savedDispose": {
+            "error": "Error: White Noise exact axes: actual available renderer/device/context required",
+            "physicalDestroys": 1,
+            "externalDevice": false,
+            "remainingOwnedTextures": 0,
+            "idempotentDisposal": true,
+            "ownerRoute": "buildSourceCompositor",
+            "bindingControls": [
+              {
+                "kind": "value",
+                "error": "Error: White Noise exact axes: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "reference",
+                "error": "Error: White Noise exact axes: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "uv",
+                "error": "Error: White Noise exact axes: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "path": "artifacts/verification-noise-default-field-next45/cpu/browser-final-software/report.json",
+      "sha256": "9e64575f327a0b6a3f830a44b71e8af9c020cf435610e6145778e258c91c528d",
+      "profile": "software",
+      "phase": "final",
+      "browserVersion": "158.0.8127.18",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 8,
+          "savedDispose": {
+            "error": "Error: White Noise exact axes: renderer/device/context/allocation epoch changed",
+            "physicalDestroys": 1,
+            "externalDevice": true,
+            "remainingOwnedTextures": 0,
+            "idempotentDisposal": true,
+            "ownerRoute": "buildSourceCompositor",
+            "bindingControls": [
+              {
+                "kind": "value",
+                "error": "Error: White Noise exact axes: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "reference",
+                "error": "Error: White Noise exact axes: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "uv",
+                "error": "Error: White Noise exact axes: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              }
+            ]
+          }
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 8,
+          "savedDispose": {
+            "error": "Error: White Noise exact axes: actual available renderer/device/context required",
+            "physicalDestroys": 1,
+            "externalDevice": false,
+            "remainingOwnedTextures": 0,
+            "idempotentDisposal": true,
+            "ownerRoute": "buildSourceCompositor",
+            "bindingControls": [
+              {
+                "kind": "value",
+                "error": "Error: White Noise exact axes: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "reference",
+                "error": "Error: White Noise exact axes: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              },
+              {
+                "kind": "uv",
+                "error": "Error: White Noise exact axes: owned texture-node binding or sampling schema changed",
+                "borrowedUploads": 0,
+                "borrowedDisposals": 0
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "axisInstallMeasurements": {
+    "measuredFinalCycles": 96,
+    "preparation": {
+      "axisAllocations": 0,
+      "axisUploads": 0
+    },
+    "commit": {
+      "axisAllocations": 0,
+      "axisUploads": 0
+    },
+    "live": {
+      "axisAllocations": 1,
+      "initialAxisUploads": 1
+    },
+    "maximumAxisBytes": 65536,
+    "unchangedExtentUploads": 0,
+    "additionalPortPasses": 0,
+    "scope": "Observed owned-axis allocations/uploads and additional port passes only across all actual Final cycles. Excludes PMREM, assets, scene/display passes and other installation resources; not total CPU/GPU bytes, frame timing or a GPU benchmark."
+  },
+  "diagnosticHistory": [
+    {
+      "commit": "b7bc962",
+      "namespace": "/tmp/scenetoweb-noise-boundary-probe-next/artifacts/verification-noise-boundary-r1",
+      "result": "Original staged fade failed unchanged8ULP gate:1672 actual word violations, maximum12ULP. Retained zero-credit failure; private compensated BLI fade introduced separately.",
+      "qualificationCredit": 0
+    },
+    {
+      "commit": "39fcb80",
+      "namespace": "/tmp/scenetoweb-noise-v2-stress-next/artifacts/verification-noise-v2-stress-r1",
+      "result": "Compensated-fade v2 failed moderate dense Metal test:16 word violations, maximum12ULP. Retained zero-credit failure; v3 private Perlin/FBM stage barriers introduced separately.",
+      "qualificationCredit": 0
+    }
+  ],
+  "limits": [
+    "Native controls are independent coordinate/domain/endpoint witnesses, not15 additional ported graphs. ImageInfo remains unsupported for this consumer route.",
+    "The42-FP compensated fade is not universally bit-exact; exhaustive host research retained seven one-ULP differences. This qualification uses the declared output bound and measured extents, not a universal arithmetic theorem.",
+    "Three Perlin evaluations for Fac, nine for Color; up to18 per source graph. Shader function CSE, repeated-field caching and browser frame cost are not benchmarked here.",
+    "Earlier raw feasibility and failed diagnostics remain unchanged and provide no Final/support credit. Other ports retain their own source snapshots."
+  ]
+}

@@ -1,5 +1,5 @@
 {
-  "capabilityMapSha256": "23f7c0e7138402489bb51eced8653a786735556c8d00b123365f0facc31322c9",
+  "capabilityMapSha256": "439e0e50a6538d9f4fbf7953b8c430c2da9a1138723c96f69a990cfdbfd9ec53",
   "capabilityValidationFailures": [],
   "classificationRefresh": {
     "catalogSha256": {
@@ -12,7 +12,7 @@
     "nativeInventoryRefreshed": false,
     "reason": "Classification-only refresh against unchanged content-pinned full inventories; no native rediscovery or numerical qualification is performed."
   },
-  "generatedAt": "2026-11-14T18:57:55.723636+00:00",
+  "generatedAt": "2026-11-15T00:32:49.188430+00:00",
   "nativeAvailabilityChanges": [],
   "nativeCatalogSha256": {
     "docs/node-coverage/blender-4.2.0.json": "2f71cb192f6a62e0e343ba5fcb11a2d8e0c6f6af1e8ac663ec6c3350b016b151",
@@ -1153,11 +1153,66 @@
               "category": "unsupported",
               "declaredCategory": "unsupported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def normalize",
+                  "path": "packages/blendlink/blender/compositor_displace.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "anchor": "validateDisplaceProgram",
+                  "path": "packages/blendlink/src/tslCompositorDisplace.ts"
+                },
+                {
+                  "anchor": "createDisplaceCpuRgbaStages",
+                  "path": "packages/blendlink/src/tslCompositorDisplacePrecision.ts"
+                },
+                {
+                  "anchor": "updateCompositorPassProducers",
+                  "path": "packages/blendlink/src/tslCompositorProducers.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorImageDomain.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorResampling.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorDisplace.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorDisplacePrecision.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_displace_single_check.py"
+                },
+                {
+                  "path": "experiments/compositor-displace-single/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-displace-single/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-displace-single/README.md"
+                },
+                {
+                  "path": "experiments/compositor-displace-single/evidence.json"
+                },
+                {
+                  "path": "node-ports/compositor-displace-single.json"
+                }
+              ],
               "id": "CompositorNodeDisplace",
               "label": "Displace",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 CPU compositor version/build/host slice. Legacy versions and native availability alone remain unsupported.",
+              "runtimeOps": [
+                "translate"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -6607,11 +6662,74 @@
               "category": "unsupported",
               "declaredCategory": "unsupported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_blank_image.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorBlankImage.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorBlankImage.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorImageDomain.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorStaticImageDomain.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_blank_image_check.py"
+                },
+                {
+                  "path": "experiments/compositor-blank-image/README.md"
+                },
+                {
+                  "path": "experiments/compositor-blank-image/cases.json"
+                },
+                {
+                  "path": "experiments/compositor-blank-image/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-blank-image/capture.mjs"
+                },
+                {
+                  "path": "experiments/compositor-blank-image/export.test.ts"
+                },
+                {
+                  "path": "experiments/compositor-blank-image/browser.js"
+                },
+                {
+                  "path": "experiments/compositor-blank-image/run.mjs"
+                },
+                {
+                  "path": "experiments/compositor-blank-image/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-blank-image/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-blank-image/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-blank-image/evidence-next50-manual.json"
+                },
+                {
+                  "path": "experiments/compositor-blank-image/evidence-next51-automatic.json"
+                }
+              ],
               "id": "CompositorNodeBlankImage",
               "label": "Blank Image",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 CPU compositor version/build/host slice. Native availability alone does not establish support.",
+              "runtimeOps": [
+                "blank-image"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -7625,11 +7743,66 @@
                   "Nearest": "unsupported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def normalize",
+                  "path": "packages/blendlink/blender/compositor_displace.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "anchor": "validateDisplaceProgram",
+                  "path": "packages/blendlink/src/tslCompositorDisplace.ts"
+                },
+                {
+                  "anchor": "createDisplaceCpuRgbaStages",
+                  "path": "packages/blendlink/src/tslCompositorDisplacePrecision.ts"
+                },
+                {
+                  "anchor": "updateCompositorPassProducers",
+                  "path": "packages/blendlink/src/tslCompositorProducers.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorImageDomain.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorResampling.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorDisplace.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorDisplacePrecision.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_displace_single_check.py"
+                },
+                {
+                  "path": "experiments/compositor-displace-single/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-displace-single/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-displace-single/README.md"
+                },
+                {
+                  "path": "experiments/compositor-displace-single/evidence.json"
+                },
+                {
+                  "path": "node-ports/compositor-displace-single.json"
+                }
+              ],
               "id": "CompositorNodeDisplace",
               "label": "Displace",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 CPU compositor version/build/host slice. Legacy versions and native availability alone remain unsupported.",
+              "runtimeOps": [
+                "translate"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -11744,11 +11917,86 @@
                   "RIDGED_MULTIFRACTAL": "unsupported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def normalize_noise",
+                  "path": "packages/blendlink/blender/compositor_noise.py"
+                },
+                {
+                  "anchor": "def validate_noise_graph",
+                  "path": "packages/blendlink/blender/compositor_noise.py"
+                },
+                {
+                  "anchor": "\"ShaderNodeTexNoise\": \"noise-texture\"",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "anchor": "export function buildCompositorNoise",
+                  "path": "packages/blendlink/src/tslCompositorNoise.ts"
+                },
+                {
+                  "anchor": "export function validateNoiseFieldGraph",
+                  "path": "packages/blendlink/src/tslCompositorNoise.ts"
+                },
+                {
+                  "anchor": "export const compositorCpuBliPerlinFade",
+                  "path": "packages/blendlink/src/tslCompositorNoisePrecision.ts"
+                },
+                {
+                  "anchor": "export function compositorCpuDefaultNoise2d",
+                  "path": "packages/blendlink/src/tslNodeRecipe.ts"
+                },
+                {
+                  "anchor": "case 'noise-texture':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "anchor": "export class CompositorExactAxes",
+                  "path": "packages/blendlink/src/tslCompositorExactAxes.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_noise_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorNoise.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorNoisePrecision.test.ts"
+                },
+                {
+                  "path": "experiments/compositor-noise-default-field/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-noise-default-field/reference.py"
+                },
+                {
+                  "path": "experiments/compositor-noise-default-field/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-noise-default-field/numeric-contract.mjs"
+                },
+                {
+                  "path": "experiments/compositor-noise-default-field/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-noise-default-field/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-noise-default-field/README.md"
+                },
+                {
+                  "path": "experiments/compositor-noise-composition/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-noise-composition/README.md"
+                }
+              ],
               "id": "ShaderNodeTexNoise",
               "label": "Noise Texture",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "No admitted compositor Noise route outside the explicitly qualified Blender5.3.0 CPU default2D field override; existing shader Noise coverage is separate.",
+              "runtimeOps": [
+                "noise-texture"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -15926,16 +16174,16 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 72,
+            "partial": 75,
             "structural": 7,
             "supported": 24,
-            "unsupported": 84
+            "unsupported": 81
           },
           "enumValueCounts": {
-            "partial": 36,
+            "partial": 42,
             "structural": 3,
             "supported": 296,
-            "unsupported": 597
+            "unsupported": 591
           },
           "nodes": [
             {
@@ -15995,14 +16243,77 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_blank_image.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorBlankImage.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorBlankImage.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorImageDomain.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorStaticImageDomain.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_blank_image_check.py"
+                },
+                {
+                  "path": "experiments/compositor-blank-image/README.md"
+                },
+                {
+                  "path": "experiments/compositor-blank-image/cases.json"
+                },
+                {
+                  "path": "experiments/compositor-blank-image/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-blank-image/capture.mjs"
+                },
+                {
+                  "path": "experiments/compositor-blank-image/export.test.ts"
+                },
+                {
+                  "path": "experiments/compositor-blank-image/browser.js"
+                },
+                {
+                  "path": "experiments/compositor-blank-image/run.mjs"
+                },
+                {
+                  "path": "experiments/compositor-blank-image/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-blank-image/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-blank-image/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-blank-image/evidence-next50-manual.json"
+                },
+                {
+                  "path": "experiments/compositor-blank-image/evidence-next51-automatic.json"
+                }
+              ],
               "id": "CompositorNodeBlankImage",
               "label": "Blank Image",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Pinned Blender 5.3.0 build 02f0899d78e3 macOS arm64 CPU compositor only. One terminal finite Blank Image with unlinked native raw Color and two-component signed Int32 pixel Size. Native max(Size, 1) is preserved; each source/output extent is 1..8192 and the maximum is 4,194,304 pixels. Color components are positive zero or positive normal Float32 values from 2^-16 through 16, with alpha at most one. Finite image-domain semantics are retained through the existing modern CPU realization coordinates, weights and Float32 staging; virtual constant texel loads avoid a source-sized texture and fill pass. Every valid output resize updates one cached pair of coordinate maps, including physical DPR. Groups and reroutes are qualified only around the producer. Linked controls, fields, actions/drivers/NLA, muted producers, non-square pixels, borders/crop, Image Info/Image Coordinates and mixed/pointwise/spatial consumers remain unqualified. Actual native CPU references and saved Final sources are independently checked on WebGPURenderer WebGPU/WebGL2 with observed Apple Metal and SwiftShader. Pre-display RGBA requires exact Float32 words; actual Raw display is separately audited under the existing clamp-to-[0,1] absolute 3e-5 projection contract with alpha words and finite classes exact. No native GPU compositor, EEVEE shader/material, whole-scene appearance, other version/build/host or arbitrary graph composition credit.",
+              "runtimeOps": [
+                "blank-image"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -17130,31 +17441,86 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "inputs:Extension X": {
-                  "Clip": "unsupported",
+                  "Clip": "partial",
                   "Extend": "unsupported",
                   "Repeat": "unsupported"
                 },
                 "inputs:Extension Y": {
-                  "Clip": "unsupported",
+                  "Clip": "partial",
                   "Extend": "unsupported",
                   "Repeat": "unsupported"
                 },
                 "inputs:Interpolation": {
                   "Anisotropic": "unsupported",
                   "Bicubic": "unsupported",
-                  "Bilinear": "unsupported",
-                  "Nearest": "unsupported"
+                  "Bilinear": "partial",
+                  "Nearest": "partial"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def normalize",
+                  "path": "packages/blendlink/blender/compositor_displace.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "anchor": "validateDisplaceProgram",
+                  "path": "packages/blendlink/src/tslCompositorDisplace.ts"
+                },
+                {
+                  "anchor": "createDisplaceCpuRgbaStages",
+                  "path": "packages/blendlink/src/tslCompositorDisplacePrecision.ts"
+                },
+                {
+                  "anchor": "updateCompositorPassProducers",
+                  "path": "packages/blendlink/src/tslCompositorProducers.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorImageDomain.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorResampling.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorDisplace.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorDisplacePrecision.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_displace_single_check.py"
+                },
+                {
+                  "path": "experiments/compositor-displace-single/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-displace-single/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-displace-single/README.md"
+                },
+                {
+                  "path": "experiments/compositor-displace-single/evidence.json"
+                },
+                {
+                  "path": "node-ports/compositor-displace-single.json"
+                }
+              ],
               "id": "CompositorNodeDisplace",
               "label": "Displace",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Pinned Blender 5.3.0 build 02f0899d78e3 macOS arm64 CPU compositor AUTO/FULL only. One terminal actual Displace with unlinked native raw Float32 float2 Displacement: positive zero or signed normal magnitude [2^-16,8192]. Nearest/Bilinear, Clip on both axes; static zero-origin square-pixel full frame, source/output dimensions 4..8192 and maximum 4,194,304 pixels. Image is direct Render Layers Image or an unlinked/native RGB single RGBA value with positive zero or normal RGB magnitude [2^-16,16] and alpha one. Whole-node groups/reroutes are qualified around this fixed branch. Linked displacement/sampling controls, animation/drivers/NLA, muted producers, vector fields/casts, arbitrary Image producers, mixed/pointwise/spatial chains, downstream consumers, borders/crop, non-square pixels, other interpolation/extensions and legacy Scale X/Y schemas remain unqualified. Actual saved Final uses the public preparation/commit/render/resize/cancel/dispose pipeline on WebGPURenderer WebGPU/WebGL2, observed Apple Metal and SwiftShader. Direct and installed pre-display RGBA require exact Float32 words against unchanged independent same-pixel CPU references. The injected native Image oracle is source-unadmitted and grants zero Image producer, Render Layers beauty, EEVEE shader/material, Cycles-versus-Three rendering, whole-scene appearance, other version/build/host or generic varying Displacement credit. Raw display is separate: clamp01 absolute RGB 3e-5 with exact alpha words/nonfinite classes, not bit-exact display.",
+              "runtimeOps": [
+                "translate"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -21829,28 +22195,103 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "noise_dimensions": {
                   "1D": "unsupported",
-                  "2D": "unsupported",
+                  "2D": "partial",
                   "3D": "unsupported",
                   "4D": "unsupported"
                 },
                 "noise_type": {
-                  "FBM": "unsupported",
+                  "FBM": "partial",
                   "HETERO_TERRAIN": "unsupported",
                   "HYBRID_MULTIFRACTAL": "unsupported",
                   "MULTIFRACTAL": "unsupported",
                   "RIDGED_MULTIFRACTAL": "unsupported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def normalize_noise",
+                  "path": "packages/blendlink/blender/compositor_noise.py"
+                },
+                {
+                  "anchor": "def validate_noise_graph",
+                  "path": "packages/blendlink/blender/compositor_noise.py"
+                },
+                {
+                  "anchor": "\"ShaderNodeTexNoise\": \"noise-texture\"",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "anchor": "export function buildCompositorNoise",
+                  "path": "packages/blendlink/src/tslCompositorNoise.ts"
+                },
+                {
+                  "anchor": "export function validateNoiseFieldGraph",
+                  "path": "packages/blendlink/src/tslCompositorNoise.ts"
+                },
+                {
+                  "anchor": "export const compositorCpuBliPerlinFade",
+                  "path": "packages/blendlink/src/tslCompositorNoisePrecision.ts"
+                },
+                {
+                  "anchor": "export function compositorCpuDefaultNoise2d",
+                  "path": "packages/blendlink/src/tslNodeRecipe.ts"
+                },
+                {
+                  "anchor": "case 'noise-texture':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "anchor": "export class CompositorExactAxes",
+                  "path": "packages/blendlink/src/tslCompositorExactAxes.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_noise_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorNoise.test.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorNoisePrecision.test.ts"
+                },
+                {
+                  "path": "experiments/compositor-noise-default-field/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-noise-default-field/reference.py"
+                },
+                {
+                  "path": "experiments/compositor-noise-default-field/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-noise-default-field/numeric-contract.mjs"
+                },
+                {
+                  "path": "experiments/compositor-noise-default-field/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-noise-default-field/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-noise-default-field/README.md"
+                },
+                {
+                  "path": "experiments/compositor-noise-composition/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-noise-composition/README.md"
+                }
+              ],
               "id": "ShaderNodeTexNoise",
               "label": "Noise Texture",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Pinned Blender 5.3.0 build 02f0899d78e3 macOS arm64 CPU compositor AUTO/FULL only. Native own-unlinked Uniform Vector, normalized 2D FBM Fac/Color with exact original scalar controls Scale 5, Detail 2, Roughness .5, Lacunarity 2, Distortion +0; all active controls unlinked, identity mapping, no animation/drivers/NLA or native mute bypass. Full-frame zero-origin square-pixel physical extents 4..8192 including resize/DPR. Kernel staged-bli-fade-perlin-fbm-noise2d-v3 is a separate CPU-compositor profile: compensated BLI fade and explicit Float32 Perlin/FBM staging; RGB is bounded approximate, not bit exact. BOTH absolute error<=2^-20 AND ULP distance<=8 are required; alpha 1, scaled Fac lattice 0.5, Fac RGB broadcast and Color.red/Fac are exact. ONLY one direct/group/reroute Noise output; same-physical Fac+Color RGB selection; two-Color RGB selection; or three exact pair means from six distinct Fac nodes (ADD then MULTIPLY.5) are admitted. Exact typed/source/channel relationships are required and every emitted operation must contribute. Alpha 1 may be inline or one contributing VALUE value=1 operation with inputs{}; no other wrappers or consumers. Generic Math/Exposure/Gamma/MapRange and arbitrary downstream amplification refuse before allocation. At most 18 Perlin calls (Fac 3 / Color 9), one shared Uniform axis table<=64KiB and axis+display sampler budget8; no registered pre-HDR/post-LDR effects. Actual four Metal/SwiftShader WebGPU/WebGL2 tuples passed 26 production native graphs plus 15 oracle controls, 8 saved Final exports and 136 browser case-runs;12,919,456 primary words have 1,312,872 bit differences and zero contract violations. No image/scene/render-pass/spatial/mask/WhiteNoise/Wave mixtures, linked/computed controls, distortion, other dimensions/fractals, native GPU/EEVEE, ImageInfo consumer extension, whole-look/PBR/original-demo or other native host/version/build credit. Existing shader/Cycles Noise functions and older classifications are unchanged.",
+              "runtimeOps": [
+                "noise-texture"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -26969,6 +27410,7 @@
     "packages/blendlink/blender/compositor_affine.py": "7df4327f10d8cb0d223cd4b2e5c67b2f62721e246831ce4a6fd98ec4653b03e4",
     "packages/blendlink/blender/compositor_alpha_conversion.py": "990390afa0f4d021d616802c9425dc0ab2ec706ce49b72327a1d22b16cdeb0db",
     "packages/blendlink/blender/compositor_blackbody.py": "9646898a1b0b9b9e1dbfe97adf73b3a463e624f49f68a7d786b3255bbdf42424",
+    "packages/blendlink/blender/compositor_blank_image.py": "b2d53c3e4e227773f20635be285441afd849c2099fbd62e35032ec23e5937b0b",
     "packages/blendlink/blender/compositor_blur.py": "d86ffd87271a97563facacfedab6bcc3888ea0bff69926f12d32146736aff014",
     "packages/blendlink/blender/compositor_box_mask.py": "6d1ad1f0953483c9c230ac3d49c5b3f4cb0fb30a8bb8d589fab19019056e6390",
     "packages/blendlink/blender/compositor_channel_key.py": "a00e0f67b92ab817a401340c654758177eadc1b07d7a0ae92258b16760dc46dc",
@@ -26977,13 +27419,14 @@
     "packages/blendlink/blender/compositor_color_key.py": "3d905f6f46171a0c9beb48edf280d3969d8f53ef77a11a0334124cdc176e84f5",
     "packages/blendlink/blender/compositor_crop.py": "44ed9983ecac97b400a3ba7896a8eb66738e23cb61bb151d139dbdff7150351c",
     "packages/blendlink/blender/compositor_difference_key.py": "4fce4d4ed1c082b3a2e7410dad2073672da8f2add7752f3b15883f82d3ed8c05",
+    "packages/blendlink/blender/compositor_displace.py": "aba7b3571143159acfdac94f5c11a39fecdb4d171f8d201dd373389968138cd9",
     "packages/blendlink/blender/compositor_distance_key.py": "132faffadf13bcc49db7556a7442ff039a06ab5a777d8b2effa74bcd5ec8adf9",
     "packages/blendlink/blender/compositor_ellipse_mask.py": "655933483b76b29bbe6f88968052faca74fb73ffd5d99841ef74b9cde5fc2039",
     "packages/blendlink/blender/compositor_ellipse_scene_mix.py": "c27c0740a6db7603c21f50b8dbd3069393a58a9f7211a8dbcd2138f77785de0e",
     "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
     "packages/blendlink/blender/compositor_float_coordinates.py": "a300cbfb6e5ea06806e2fb9b9d7795cd2e3b91cb21ada43e4c128ac89d8f0cec",
     "packages/blendlink/blender/compositor_float_to_int.py": "6292f5a5904107b59591c282fcf9def24a5f98dc2ead0a92d950b6219226658d",
-    "packages/blendlink/blender/compositor_graph.py": "c2cce842b3cbfaf6bae84c126628975199ce85f6904ce6570b7ea8b75be4c4fb",
+    "packages/blendlink/blender/compositor_graph.py": "5fe0af4b6c9b69ad3fc60ded9f7134e4b6c8f2546da93e6cbf422e3e91a51c4d",
     "packages/blendlink/blender/compositor_group_defaults.py": "484fea6a45208531f189e65d627747f94c1386b98a9a6b460a21f51afa01889d",
     "packages/blendlink/blender/compositor_image.py": "55ee3b7800002331c4e30042a7d5da18538267b58ff60c006e03ad238da9e012",
     "packages/blendlink/blender/compositor_image_coordinates.py": "4b796327c579e7c08ed487cce4758c899a1a11be648e93977c22a0536451054a",
@@ -26993,6 +27436,7 @@
     "packages/blendlink/blender/compositor_map_value.py": "784d1ba979b02e2e665b41818d4efd8912c5fe35ae821ea39135912fda3fe5fe",
     "packages/blendlink/blender/compositor_map_value_domain.py": "ff43991bf956ed131835b671f9d44c0a80e23b9888c53903f6486c5a287448eb",
     "packages/blendlink/blender/compositor_mask_domains.py": "0a513ff741c657b0cee96387591e0640ebd9a04091bdce311cd4a2372743991c",
+    "packages/blendlink/blender/compositor_noise.py": "42d832609e94625f8bd6c40950905f4ec0955738468379b64a95a353eb200cd4",
     "packages/blendlink/blender/compositor_normal.py": "9dcd0e53d674560bb7c060a2a6a2b5ccdec361235ae67620c587a29136d2c94d",
     "packages/blendlink/blender/compositor_pixelate.py": "607f738a09fc75f15facb9cb0c261bfb72800663d5908826e5d105d980800b3d",
     "packages/blendlink/blender/compositor_procedural_texture.py": "70d34a56ea67a67aecd899fb05e66716746865c190e9d9f2bd4289b6df2bf025",
@@ -27015,7 +27459,7 @@
     "packages/blendlink/blender/geometry_export.py": "3d147a218ee96f0bf72ffeb5add773396347fc39224501eb62d5d7f67551fd2d",
     "packages/blendlink/blender/native_color_band.py": "23aa27b056846d42cdb96919da968d04f9e8e44d794ffa10c80871f786bfc8d4",
     "packages/blendlink/blender/normal_bake_transport.py": "1e6211bb197f6e015262f80937112ec594e70977945fc1259133aa8ffd36429e",
-    "packages/blendlink/blender/source_presentation.py": "4ecd0ad81889abd39693348b2ff32201b7806c3473ba3860316ca8c5d2526706",
+    "packages/blendlink/blender/source_presentation.py": "b6abe72f0c1bee19b20d118646751c1cae19a9b27a4f27ca3591ad313c2101d6",
     "packages/blendlink/blender/tangent_export.py": "4815854bd825e910009b42de73ecf5aa9cc0bb07966bb2d688731e5df12b514e",
     "packages/blendlink/src/compiledMaterialPrograms.ts": "d6f2d9471ec145d7ed7b2abc395221eb316a7daa55a004ebf8b0c3d2fecc6cec",
     "packages/blendlink/src/compiledSceneAudit.ts": "08fded1eb26f0fb964401d24699bd6ea0bc26aa9c0536c764a8965f0124748a5",
@@ -27023,8 +27467,8 @@
     "packages/blendlink/src/materialProgramRendererRequirements.ts": "01eff9b1241d907d302f90a88822fe5deedeb3c5309b24c48a192aee47a380ca",
     "packages/blendlink/src/sceneDiagnostics.ts": "48b8d220ad2b5216f496694ef1b29c19903e90cc65fc9ce01bda77e21c84dc0e",
     "packages/blendlink/src/staticNoise4d.ts": "0677ad1169801c601d74b8a5658d98691415bf313081ca0b4fa88ec762e62a76",
-    "packages/blendlink/src/threeRuntime.ts": "4eac231544744877535e8e71f044ae8beadc9478a839fa3ba05357fa35c03632",
-    "packages/blendlink/src/threeWebgpuPostPipeline.ts": "d6f6a8b396b1e60f150d187c49ca2ada8797bf0e96f424b0fc600cea1ec305b9",
+    "packages/blendlink/src/threeRuntime.ts": "05fc757a5c39a14180ef4407a51894f7fc60508679564f1267e74815231629ed",
+    "packages/blendlink/src/threeWebgpuPostPipeline.ts": "7c81531ffb120cdfe7217780a5b07a0b07ceeb86e1c044ae96adf5da82b1da46",
     "packages/blendlink/src/tslBlackbodyCoefficients.ts": "39d17f54a1bb7f394bae6393200badb5faa756e9772ea4d4ef92f878ff4fac18",
     "packages/blendlink/src/tslBrickNodes.ts": "5b61f5565af2b818d3a507b3cc0b408f1ef3537d5d8cb64517280f8473afde9b",
     "packages/blendlink/src/tslBumpHeight.ts": "3c8622196e1fcdbbbdafcd76a85f42a545e05a54fc8ad61002e5a259d2fd2f8f",
@@ -27032,10 +27476,11 @@
     "packages/blendlink/src/tslCameraData.ts": "357a3d5db89e630d9cabf12f5e7f2d88ccdf79a5cfaa1c0597cf2e81427168f6",
     "packages/blendlink/src/tslCameraGeometry.ts": "45102cb42b0f5d0ee22740931d549e3ebe54ff4559e812fd73b8d381783ad7b8",
     "packages/blendlink/src/tslColorConversion.ts": "1c2186bff30ee2d46bb6867285db835a10c307004236276085ab7a9a7ce92671",
-    "packages/blendlink/src/tslCompositorAffine.ts": "8b2ce8dbe3468882fbbf9f5077d8c2d4bb3dfc0cb48e221b1a36d4688045b2e3",
+    "packages/blendlink/src/tslCompositorAffine.ts": "acbcc16e5e4cc965fb67c2544c919f1c7d51ab8c23c1033659003c9e430bc235",
     "packages/blendlink/src/tslCompositorAlphaConversion.ts": "54fde14082f2882a067055a84f2c3493b8c6fa19688df8ed68b4e0713ded9dba",
     "packages/blendlink/src/tslCompositorBlackbody.ts": "f3d156204aee2e81c055df785a209338e5f9f2b6b9b13f27184fc895f4811e33",
-    "packages/blendlink/src/tslCompositorBlur.ts": "269ee8832695f28616f840d5a377fbbc0310ba3fa907c5bbb25ec9858636571a",
+    "packages/blendlink/src/tslCompositorBlankImage.ts": "194e9d2fbec2ed7f2141836938adf0a0b242379bfc0ca791f45758b82cd5ac2a",
+    "packages/blendlink/src/tslCompositorBlur.ts": "4b87f7e1a018be154ce1295cb2f8bdad7bbcc47249a02d59ad9fc46c79e9596e",
     "packages/blendlink/src/tslCompositorBoxMask.ts": "2597786e737d25ab45d57ab1a24cae137e6e0435e56995d889940f66052fcf04",
     "packages/blendlink/src/tslCompositorChannelKey.ts": "8b46848f5ec32dc99051c23fef97f0afedaa98fac1f0d8f2e566e727f7b53ffb",
     "packages/blendlink/src/tslCompositorChromaKey.ts": "f69481feb37448ad02f7873091a540eb18bf1564620489e2a0d7010fd0fc6875",
@@ -27048,9 +27493,11 @@
     "packages/blendlink/src/tslCompositorCpuLuminanceRatio.ts": "6b5933797d8b8edfe123fe9b789b726bd0a097358328393819f17fff031d0341",
     "packages/blendlink/src/tslCompositorCpuSqrt.ts": "06f59ce2e0b239a278a6294695e3cff9006f4b2591320788cc009248cd44b52a",
     "packages/blendlink/src/tslCompositorCrop.ts": "1e68316e5374e4a4721d606a813103aced1a679acf8f9b915834f95bcb94c4ff",
-    "packages/blendlink/src/tslCompositorCropDomain.ts": "0b89e325e9b186bd136b37e904ea5dce6d07c0c9808a4ec167d37a1e023fa6c6",
+    "packages/blendlink/src/tslCompositorCropDomain.ts": "c4da703efc5217a55036932b15bcb6c0f23f0ed277f1fd2ade70ea2ff6654324",
     "packages/blendlink/src/tslCompositorCropResize.ts": "21ca914dc474a31f5e6527543b9e2853d7d66ba5d9b09d838d00a5a355a0b642",
     "packages/blendlink/src/tslCompositorDifferenceKey.ts": "4604b8aa1de7300739d602eec4a94e04cfe660491beea34dea23c690fd00b4de",
+    "packages/blendlink/src/tslCompositorDisplace.ts": "0a4e15c9ae6a46dfacc2c76de0bedb3870ff03bcaed43b4a1e8565c039eb51f8",
+    "packages/blendlink/src/tslCompositorDisplacePrecision.ts": "4e7ebf9a611e61ddab7228310a0e72f9244bf4ebf6e562f0ad5b5aaecd07b2e4",
     "packages/blendlink/src/tslCompositorDistanceKey.ts": "8a2aebf7105274f8d02fd9b68b358bdb3cb89a6b43a60edda00a0fd30a5aa2fa",
     "packages/blendlink/src/tslCompositorEllipseMask.ts": "bcbcf7be97750ec105df27d98c2239d2ef9e41b010d84462b2ee9f8e57e3da07",
     "packages/blendlink/src/tslCompositorEllipseSceneMix.ts": "5717eecb8b5378f7c3f1c2d54c4c12dd008cefe004820191cf552bea256aa38f",
@@ -27060,7 +27507,7 @@
     "packages/blendlink/src/tslCompositorFloatToInt.ts": "8e39857c7d79d0233e4f29163052f6dcc3ef14585ee05425be3405d924989aac",
     "packages/blendlink/src/tslCompositorGray.ts": "e32c05ec6deb9a8a793d3de4751ebac288a7fe0ab1d90555f8ec4504562975d1",
     "packages/blendlink/src/tslCompositorHueCorrect.ts": "2ba41e9c03f89af0df3dd04c0f12d1dc86be9013f07737c8e1c8425590cf3318",
-    "packages/blendlink/src/tslCompositorImageDomain.ts": "50eb4b114dcb565a22df1c13821179d879881df87e33bed52f98b565ef7e5016",
+    "packages/blendlink/src/tslCompositorImageDomain.ts": "47200f793954bf2c7f6a4e0a049533f53e94c6063368dbed4861461b9e69c1e0",
     "packages/blendlink/src/tslCompositorImageInfo.ts": "c7124d8af5c3e5f02fc4780ad06faaf122daadf1d686e14aa2cfd87d58073390",
     "packages/blendlink/src/tslCompositorIntegerBits.ts": "cf59d1b7fe476b8489d6a2d28e745f2a088a8f03798c4d44dfe41fa9e482f748",
     "packages/blendlink/src/tslCompositorLumaGradual.ts": "f6497d953d2371b323fbfb0c1d4e98b543d2387528b49c7538ccb1e25ee491ed",
@@ -27068,17 +27515,20 @@
     "packages/blendlink/src/tslCompositorMapValue.ts": "a3ec846d3af2a2e91e234a0c425c192f3dbaacad0319af11a4414f42baa7e538",
     "packages/blendlink/src/tslCompositorMapValueDomain.ts": "325637bd5fb107ff49ce5aa8b45aa954be7a4411e9daf8cb79b4bb64ffa9ad0a",
     "packages/blendlink/src/tslCompositorMaskDomains.ts": "d694173c3a48f986d083baad0ab58ca76fe5a3cb94473dc4fa3976239fcbdaa4",
+    "packages/blendlink/src/tslCompositorNoise.ts": "08b2c43d6013007bcc30962691f81efa3bd968a4392d62e3561c6529282e59c6",
+    "packages/blendlink/src/tslCompositorNoisePrecision.ts": "2301ed36ad15cef8e2c56862227941a7c0019b0c99eac6ab8e4711c72d4f3163",
     "packages/blendlink/src/tslCompositorPixelate.ts": "20feecc95d60c471e11428474bbcd3c214133652ecaafabc6b81a0486bc28b21",
     "packages/blendlink/src/tslCompositorProceduralTexture.ts": "6c53d01b82960c77bb624bcefdb261805244363d4ffb7e70b1d45d1004d8cb9a",
+    "packages/blendlink/src/tslCompositorProducers.ts": "4d60812e431c86b323a0f39574ede3fac0d9cb416a34a9c117fa3a77fce30e68",
     "packages/blendlink/src/tslCompositorRelativeToPixel.ts": "0594bfe77a71f54c5526abc520b5ef6a9f59a864db07f1554c39133bf4153646",
-    "packages/blendlink/src/tslCompositorResampling.ts": "6ff79d9bb5f31bee831e2491fe5cfb89582584c80026b1a3c0c302985377a1d6",
-    "packages/blendlink/src/tslCompositorRowTable.ts": "03ee44ba3b7040f80c204ca74aebc1a8cb81ba160331304d082fc695b9c1897f",
+    "packages/blendlink/src/tslCompositorResampling.ts": "9f83474d9fc6e37ab70b6e9295c8c416cf1ebb589e249236a2f962b18ac3d437",
+    "packages/blendlink/src/tslCompositorRowTable.ts": "2bed1830a34e3cf23abfa0fbf598da06694999e7e9ac0c0f16fce94ac740fe3a",
     "packages/blendlink/src/tslCompositorSceneFrame.ts": "b24e41bb51d684d589d97669e0ca279093ce8b68a5cc2e38d43bd42ff8c12479",
     "packages/blendlink/src/tslCompositorSpatial.ts": "9cf2dbf99faca6d063e978a5f0463d26c43473b96ddffb543849e1733162806c",
     "packages/blendlink/src/tslCompositorSpill.ts": "df6393b864834cfb8a386c88ce52d3b45ed169df94b4c8724b501272d148903d",
     "packages/blendlink/src/tslCompositorSplit.ts": "662a552d1b3f1201871bbfa06b84418426d30e614b8df290374bba7c3fc96cc7",
     "packages/blendlink/src/tslCompositorStaticImage.ts": "c72547908fbc1c43f382e3c968c894f979cd4e017cebd9cff34f6d33491ac9af",
-    "packages/blendlink/src/tslCompositorStaticImageDomain.ts": "82bb6bf70f547a8b3309df0ac564456d5ae262b0c42525f8a2d6e80565cab7cf",
+    "packages/blendlink/src/tslCompositorStaticImageDomain.ts": "9debeb93e0cf40596793d89629581f738d5e50bd55e2dc68ddfddb36e18e53e8",
     "packages/blendlink/src/tslCompositorTextureField.ts": "e4816ef165f41d5f667f0b6667a03a6d94283ef737aaa945f9912a42157d4023",
     "packages/blendlink/src/tslCompositorVectorMath.ts": "72e656d14d7a1a7d83e2102b36803a48af72392623ac7129db4ebda58717dd9a",
     "packages/blendlink/src/tslCompositorWaveAxis.ts": "19305925d6c13f172a4d44a082f4da51be94e4415126c567e088cce77153de2a",
@@ -27101,7 +27551,7 @@
     "packages/blendlink/src/tslNativeColorBand.ts": "71727e4ad3d5498f35d56b875e1475361a1a3a0adf62f7e7fd98b1581f308c92",
     "packages/blendlink/src/tslNativeNoisePrecision.ts": "7b64b75c45d38815d7d0cb9c1f74b4abae9352612edd2d7c6b615e4df1c495dd",
     "packages/blendlink/src/tslNativeVaryingNoise.ts": "f9d1268c168cbf5d486b1560454567565ecee3649332e556f2415455165248b7",
-    "packages/blendlink/src/tslNodeRecipe.ts": "a40d55b3810875f8c4a92008a2168f6aca7beb5d04f6e52d221ecb4f715c143a",
+    "packages/blendlink/src/tslNodeRecipe.ts": "10ff16257c9af8247ff9e1757e13e9014d2f295b2c6945bad07e7ed10443121d",
     "packages/blendlink/src/tslNoiseCoordinates.ts": "f0eb9e256f75be2915f0d2d78509fe3d638fbcb0936fc6c79099b19a1472f9f4",
     "packages/blendlink/src/tslNoiseFieldBarrier.ts": "9dcbd46802101108eeb3ae5fffc78d64317f48c832406e6b713bc129335295bf",
     "packages/blendlink/src/tslNoiseFields.ts": "a66cf44b0298add1ab3db195085629788060a9005df14757d283228e703416d1",
@@ -27116,7 +27566,7 @@
     "packages/blendlink/src/tslRadialWidth.ts": "9ffc9e3a7e32b3d0676b2a90fffad64e2578cd30d160ddaf00278d2d9ff43719",
     "packages/blendlink/src/tslRepeat.ts": "4d7925f09220e54973155c6af8c41c98e3b32e141f5acbdc6d29741c701d9a93",
     "packages/blendlink/src/tslSharedUtilities.ts": "1f21b06a4d60a439b0549b7c6716c66945b4cce3cc00fc6e965acbe77c80d9b9",
-    "packages/blendlink/src/tslSourceCompositor.ts": "f8ab2ab28ddadef7b8b9b8a93cc83e45b478a939ef0a941d599f5cc3095ad72a",
+    "packages/blendlink/src/tslSourceCompositor.ts": "7684a2adc4b559ba0b9529907b7b228a4a67f851084a45669574156d60df5844",
     "packages/blendlink/src/tslSpectralNodes.ts": "10719a4f7ceef71f80a9b3492561c382cd0904de209e0e93f9f578b5af529bf2",
     "packages/blendlink/src/tslSqueeze.ts": "14a56aa219ca2bb2dace54d512e8b9cfda754ea83991a92a1c270a1122ea492b",
     "packages/blendlink/src/tslTangentNodes.ts": "fb7ad452300be3e96a9f01b4f82f9ce59cb8577cf68e056df994876321cffcc1",

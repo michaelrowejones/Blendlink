@@ -1,0 +1,63 @@
+{
+  "status": "PASSED_DISPLACE_SOURCE_ONLY",
+  "supportCredit": 0,
+  "policy": {
+    "positive": [
+      "constant-Nearest-0",
+      "constant-Nearest-1",
+      "constant-Nearest-2",
+      "constant-Nearest-3",
+      "constant-Bilinear-4",
+      "constant-Bilinear-5",
+      "constant-Bilinear-6",
+      "constant-Bilinear-7",
+      "field-Nearest-8",
+      "field-Nearest-9",
+      "field-Nearest-10",
+      "field-Nearest-11",
+      "field-Bilinear-12",
+      "field-Bilinear-13",
+      "field-Bilinear-14",
+      "field-Bilinear-15",
+      "rerouted-output",
+      "native-RGB-copy",
+      "whole-node-group"
+    ],
+    "refusals": [
+      "raw-word-0x80000000",
+      "raw-word-0x1",
+      "raw-word-0x7fffff",
+      "raw-word-0x7fc12345",
+      "menu-Interpolation-Bicubic",
+      "menu-Interpolation-Anisotropic",
+      "menu-Extension X-Repeat",
+      "menu-Extension Y-Extend",
+      "linked-displacement",
+      "below-minimum",
+      "above-maximum",
+      "downstream-transform",
+      "GPU-authoring",
+      "pixel-budget",
+      "late-menu-Interpolation",
+      "late-menu-Extension X",
+      "late-menu-Extension Y",
+      "late-group-mute",
+      "late-reroute-relink",
+      "animated-source"
+    ],
+    "omissions": [
+      "disabled-root"
+    ],
+    "nativeRenders": 0,
+    "gpuInitializations": 0,
+    "supportCredit": 0,
+    "guardsProved": [
+      "gpu.init",
+      "render-operator-call"
+    ],
+    "blockedPolicyCalls": {
+      "gpu": 0,
+      "render": 0
+    }
+  }
+}

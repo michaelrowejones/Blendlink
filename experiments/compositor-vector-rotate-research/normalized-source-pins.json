@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "upstreamCommit": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "sources": [
+    {
+      "path": "source/blender/nodes/composite/nodes/node_composite_image_coordinates.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/composite/nodes/node_composite_image_coordinates.cc",
+      "sha256": "12cc2c1adcbe5e793a27a0b436b4ff2a32dc9bb369e4846c6ee01af5d130800c",
+      "bytes": 3608,
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/compositor/cached_resources/intern/image_coordinates.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/cached_resources/intern/image_coordinates.cc",
+      "sha256": "15fc47ea692a70c77c3af533fff6fa2f5ebffaa51fcf253b82bc114855df2bad",
+      "bytes": 5197,
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/blenlib/BLI_math_vector_types.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/BLI_math_vector_types.hh",
+      "sha256": "b11dd5e4fa77f1179956befdab71dc12d65120de878249f13b00e0643e6c4b39",
+      "bytes": 17799,
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/compositor/shaders/compositor_image_coordinates_normalized.glsl",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/shaders/compositor_image_coordinates_normalized.glsl",
+      "sha256": "66f7f8c4dd318a82ac276ad2176359f4d377451fad4d9e7d3ce2d1ef51a59166",
+      "bytes": 516,
+      "license": "GPL-2.0-or-later"
+    }
+  ],
+  "nativeCompilerEvidence": [
+    {
+      "path": "artifacts/verification-vector-rotate-source/normalized-cpu-symbols.txt",
+      "sha256": "4da785c23c214ad9ca701ab1311067187f8bcd2a315779ee5279671b43bbba1a",
+      "bytes": 749
+    },
+    {
+      "path": "artifacts/verification-vector-rotate-source/normalized-cpu-callback.txt",
+      "sha256": "5ffedab2d3b09ddd0c3e0a2317c78e1c81f59fe7787e4dc083ab13be38a3b0da",
+      "bytes": 3401
+    }
+  ],
+  "observation": "The CPU Normalized callback computes Float32(data_offset+texel)+0.5 then divides componentwise by Float32(display_size). Installed callback address 0x100cce048..0x100cce0e0 has fadd.2s then fdiv.2s; no reciprocal multiply substitution. The private consumer proposal restricts offset zero and data/display extents equal physical full-frame extents."
+}

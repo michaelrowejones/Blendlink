@@ -1,0 +1,91 @@
+{
+  "alphaConvention": "premultiplied",
+  "blenderVersion": "5.3.0",
+  "colorSpace": "scene-linear",
+  "diagnostics": [],
+  "displayTransform": "separate, after authored compositor",
+  "engine": "CYCLES",
+  "frame": 1,
+  "ops": [
+    {
+      "id": "n0",
+      "inputs": {
+        "Color": {
+          "name": "Color",
+          "socketType": "RGBA",
+          "value": {
+            "kind": "constant",
+            "type": "RGBA",
+            "value": [
+              0.25,
+              0.5,
+              2.0,
+              0.5
+            ]
+          }
+        },
+        "Size": {
+          "name": "Size",
+          "socketType": "INT_VECTOR",
+          "value": {
+            "kind": "constant",
+            "type": "INT_VECTOR2",
+            "value": [
+              4,
+              4
+            ]
+          }
+        }
+      },
+      "kind": "blank-image",
+      "properties": {
+        "blank_image_build": "02f0899d78e3",
+        "blank_image_color_words": [
+          1048576000,
+          1056964608,
+          1073741824,
+          1056964608
+        ],
+        "blank_image_effective_size": [
+          4,
+          4
+        ],
+        "blank_image_max_pixels": 4194304,
+        "blank_image_model": "native-compositor-blank-image-cpu-53-v1",
+        "blank_image_profile": "darwin-arm64-53-blank-image-cpu-v1",
+        "blank_image_sampling_model": "modern-cpu-v1",
+        "blank_image_size": [
+          4,
+          4
+        ],
+        "blank_image_source_precision": "FULL",
+        "blank_image_version": [
+          5,
+          3,
+          0
+        ],
+        "evaluation_device": "CPU",
+        "native_gpu_backend": "METAL",
+        "single_value_device": "CPU"
+      },
+      "source": {
+        "node": "Blank Image",
+        "nodeType": "CompositorNodeBlankImage",
+        "output": "Image",
+        "path": [
+          "Native Compositor"
+        ]
+      },
+      "type": "RGBA"
+    }
+  ],
+  "output": {
+    "kind": "ref",
+    "node": "n0",
+    "type": "RGBA"
+  },
+  "passes": [],
+  "status": "extracted",
+  "tree": "Native Compositor",
+  "version": 1
+}

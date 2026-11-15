@@ -2,6 +2,7 @@ import { DataTexture, FloatType, RGBAFormat, Vector2, Vector4 } from 'three'
 import { RendererUtils } from 'three/webgpu'
 import * as TSL from 'three/tsl'
 import type { TslEffectNode } from './tslPostEffects.js'
+import { OwnedCompositorDataTexture, bindCompositorDataTextures } from './tslCompositorDataTextureOwner.js'
 import { ownBlurRtt } from './tslCompositorBlur.js'
 import { staticImageAxisMappings, type StaticCompositorWindow } from './tslCompositorStaticImage.js'
 
@@ -39,48 +40,58 @@ export function cacheStaticCompositorRtt(image: TslEffectNode, resources: { disp
 /** Pointwise evaluation stays on the finite native image canvas. Realization
  * into the live output viewport happens once, after that processing. */
 export function realizeStaticCompositorWindow(input: TslEffectNode, window: StaticCompositorWindow,
-  resources: { dispose(): void }[], fail: (message: string) => never): TslEffectNode {
-  const image = rtt(input, window.width, window.height, { type: FloatType, depthBuffer: false })
-  resources.push(ownBlurRtt(image))
-  if (window.cache) cacheStaticCompositorRtt(image, resources)
+  resources: { dispose(): void }[], fail: (message: string) => never,
+  options: { virtualConstant?: boolean; validateRenderer?: (renderer: TslEffectNode) => void } = {},
+): TslEffectNode {
+  // Only the closed Blank Image producer selects this mode. Native integer
+  // texels contain the authored F32 constant; coordinates/weights stay shared.
+  const image = options.virtualConstant ? undefined : rtt(input, window.width, window.height, { type: FloatType, depthBuffer: false })
+  if (image) { resources.push(ownBlurRtt(image)); if (window.cache) cacheStaticCompositorRtt(image, resources) }
   const tables = [0, 1].map(() => {
     const data = new Float32Array(8192 * 4), texture = new DataTexture(data, 256, 32, RGBAFormat, FloatType)
     texture.needsUpdate = true
-    let disposed = false
-    resources.push({ dispose() { if (!disposed) { disposed = true; texture.dispose() } } })
-    return { data, texture }
+    const owner = new OwnedCompositorDataTexture(texture)
+    resources.push(owner)
+    return { data, texture, owner }
   })
   const outputSize = uniform(new Vector2(1, 1)), identity = uniform(false, 'bool'), mask = uniform(0x7fc00000, 'uint')
   let previousWidth = 0, previousHeight = 0
-  const updateBefore = image.updateBefore.bind(image), size = new Vector2(), viewport = new Vector4(), scissor = new Vector4()
-  image.updateBefore = (frame: TslEffectNode): void => {
-    const renderer = frame.renderer
-    renderer.getViewport(viewport); renderer.getScissor(scissor)
-    const state = RendererUtils.resetRendererState(renderer, undefined as never)
-    try {
-      renderer.getDrawingBufferSize(size)
-      if (size.x !== previousWidth || size.y !== previousHeight) {
-        let next: [Float32Array, Float32Array]
-        try { next = staticImageAxisMappings(window, size.x, size.y) }
-        catch (error) { return fail((error as Error).message) }
-        next.forEach((data, axis) => { tables[axis]!.data.set(data); tables[axis]!.texture.needsUpdate = true })
-        outputSize.value.set(size.x, size.y)
-        identity.value = size.x === window.width && size.y === window.height
-        previousWidth = size.x; previousHeight = size.y
-      }
-      updateBefore(frame)
-    } finally {
-      RendererUtils.restoreRendererState(renderer, state)
-      renderer.setViewport(viewport); renderer.setScissor(scissor)
+  const size = new Vector2(), viewport = new Vector4(), scissor = new Vector4()
+  const updateMappings = (renderer: TslEffectNode): void => {
+    renderer.getDrawingBufferSize(size)
+    if (size.x !== previousWidth || size.y !== previousHeight) {
+      let next: [Float32Array, Float32Array]
+      try { next = staticImageAxisMappings(window, size.x, size.y) }
+      catch (error) { return fail((error as Error).message) }
+      next.forEach((data, axis) => { tables[axis]!.data.set(data); tables[axis]!.texture.needsUpdate = true })
+      outputSize.value.set(size.x, size.y)
+      identity.value = size.x === window.width && size.y === window.height
+      previousWidth = size.x; previousHeight = size.y
     }
   }
-  return Fn(() => {
+  if (image) {
+    bindCompositorDataTextures(image, tables.map(table => table.owner))
+    const updateBefore = image.updateBefore.bind(image)
+    image.updateBefore = (frame: TslEffectNode): void => {
+      const renderer = frame.renderer
+      options.validateRenderer?.(renderer)
+      renderer.getViewport(viewport); renderer.getScissor(scissor)
+      const state = RendererUtils.resetRendererState(renderer, undefined as never)
+      try { updateMappings(renderer); updateBefore(frame) }
+      finally {
+        RendererUtils.restoreRendererState(renderer, state)
+        renderer.setViewport(viewport); renderer.setScissor(scissor)
+      }
+    }
+  }
+  const resultNode = Fn(() => {
+    const nativeLoad = (index: TslEffectNode): TslEffectNode => options.virtualConstant ? input : image!.load(index)
     const coordinate = ivec2(uv().mul(outputSize))
     const result = vec4(0).toVar()
     // Native realization returns the input unchanged on equal domains. This
     // uniform branch avoids four taps/Float32 stages on every identity pixel;
     // eager select would still evaluate those expensive unequal-window terms.
-    If(identity, () => { result.assign(image.load(coordinate)) }).Else(() => {
+    If(identity, () => { result.assign(nativeLoad(coordinate)) }).Else(() => {
       const mapping = (axis: number, index: TslEffectNode) =>
         textureLoad(tables[axis]!.texture, ivec2(index.mod(int(256)), index.div(int(256))))
       const x = mapping(0, coordinate.x).toVar(), y = mapping(1, coordinate.y).toVar()
@@ -88,7 +99,7 @@ export function realizeStaticCompositorWindow(input: TslEffectNode, window: Stat
         const index = ivec2(int(px), int(py)), dimensions = ivec2(window.width, window.height)
         const inside = index.x.greaterThanEqual(0).and(index.y.greaterThanEqual(0))
           .and(index.x.lessThan(dimensions.x)).and(index.y.lessThan(dimensions.y))
-        return select(inside, image.load(clamp(index, ivec2(0), dimensions.sub(1))), vec4(0))
+        return select(inside, nativeLoad(clamp(index, ivec2(0), dimensions.sub(1))), vec4(0))
       }
       const rounded = (value: TslEffectNode): TslEffectNode => {
         const bits = bitcast(value, 'uint').toVar()
@@ -103,4 +114,9 @@ export function realizeStaticCompositorWindow(input: TslEffectNode, window: Stat
     })
     return result
   })()
+  return image ? resultNode : resultNode.toVar().onRenderUpdate((frame: TslEffectNode) => {
+    options.validateRenderer?.(frame.renderer)
+    updateMappings(frame.renderer)
+    for (const table of tables) table.owner.bind(frame.renderer)
+  })
 }

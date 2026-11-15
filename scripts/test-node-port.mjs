@@ -192,7 +192,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
   try {
     const result = await runNodePort(parseNodePortArguments(process.argv.slice(2)))
     const summary = Object.fromEntries(['manifestId', 'profile', 'status', 'exitCode', 'supportPromotion', 'productionCredit', 'reportPath',
-      'productionCases', 'calibrationCases', 'nativeGraphs', 'savedFinalScenes', 'caseRuns', 'productionCaseRuns', 'primaryFloat32Words', 'productionFloat32Words', 'wordMismatches', 'rgbComparisons', 'maximumOutsideNativeInterval', 'workspaceStable', 'inputDigest', 'requestKey', 'evidenceKey', 'error',
+      'productionCases', 'calibrationCases', 'nativeGraphs', 'savedFinalScenes', 'caseRuns', 'productionCaseRuns', 'primaryFloat32Words', 'productionFloat32Words', 'wordMismatches', 'wordDifferences', 'contractViolations', 'precision', 'maxUlps', 'maxAbsoluteError', 'rgbComparisons', 'maximumOutsideNativeInterval', 'workspaceStable', 'inputDigest', 'requestKey', 'evidenceKey', 'error',
       ...(result.dryRun ? ['dryRun', 'runnable', 'unknownIdentities', 'nativeIdentity', 'commands'] : [])].filter(key => result[key] !== undefined).map(key => [key, result[key]]))
     console.log('BLENDLINK_NODE_PORT_RESULT ' + JSON.stringify(summary)); process.exitCode = result.exitCode
   }

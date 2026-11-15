@@ -17,7 +17,8 @@ export interface CroppedCompositorWindow {
 /** Modern CPU RealizeOnDomain: preserve the finite canvas through pointwise
  * processing, then center/crop/pad it once in the actual physical viewport. */
 export function realizeCroppedCompositorWindow(input: TslEffectNode, window: CroppedCompositorWindow,
-  resources: { dispose(): void }[], fail: (message: string) => never): TslEffectNode {
+  resources: { dispose(): void }[], fail: (message: string) => never,
+  beforeReset?: (frame: TslEffectNode) => void): TslEffectNode {
   const image = rtt(input, 1, 1, { type: FloatType, depthBuffer: false })
   resources.push(ownBlurRtt(image))
   const tables = [0, 1].map(() => {
@@ -32,16 +33,19 @@ export function realizeCroppedCompositorWindow(input: TslEffectNode, window: Cro
   const update = image.updateBefore.bind(image), size = new Vector2(), viewport = new Vector4(), scissor = new Vector4()
   image.updateBefore = (frame: TslEffectNode): void => {
     const renderer = frame.renderer
+    renderer.getDrawingBufferSize(size)
+    const native = window.resolve(renderer)
+    if (native.model !== 'modern-cpu-v1') return fail('Resized Crop requires its modern CPU finite-window realization model')
+    const next = [native.width, native.height, size.x, size.y].join(':')
+    let mappings: [Float32Array, Float32Array] | undefined
+    if (next !== previous) {
+      try { mappings = staticImageAxisMappings(native, size.x, size.y) } catch (error) { return fail((error as Error).message) }
+    }
+    beforeReset?.(frame)
     renderer.getViewport(viewport); renderer.getScissor(scissor)
     const state = RendererUtils.resetRendererState(renderer, undefined as never)
     try {
-      renderer.getDrawingBufferSize(size)
-      const native = window.resolve(renderer)
-      if (native.model !== 'modern-cpu-v1') return fail('Resized Crop requires its modern CPU finite-window realization model')
-      const next = [native.width, native.height, size.x, size.y].join(':')
-      if (next !== previous) {
-        let mappings: [Float32Array, Float32Array]
-        try { mappings = staticImageAxisMappings(native, size.x, size.y) } catch (error) { return fail((error as Error).message) }
+      if (mappings) {
         mappings.forEach((values, axis) => { tables[axis]!.data.set(values); tables[axis]!.texture.needsUpdate = true })
         inputSize.value.set(native.width, native.height); outputSize.value.copy(size)
         image.setSize(native.width, native.height); previous = next

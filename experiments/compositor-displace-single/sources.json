@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "supportCredit": 0,
+  "sources": [
+    {
+      "path": "source/blender/nodes/composite/nodes/node_composite_displace.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/composite/nodes/node_composite_displace.cc",
+      "sha256": "b07a3e3dc80f1545fe32fc4eb3dbd35248bc347debf228b0fb529ab35ac19fbf",
+      "bytes": 13323,
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/compositor/shaders/compositor_displace.glsl",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/shaders/compositor_displace.glsl",
+      "sha256": "b23bd242ed9d71304df193dc8e370c5346a90a3cf558511b5223cf8f92df8dc8",
+      "bytes": 1031,
+      "license": "GPL-2.0-or-later"
+    }
+  ]
+}

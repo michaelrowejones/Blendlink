@@ -16,8 +16,19 @@ import {planUnqualifiedPorts} from '../watch-blender-nodes.mjs'
 const root=resolve(import.meta.dirname,'../..'),ids=Object.keys(CLOSED_NODE_PORT_FAMILIES)
 const manifests=Object.fromEntries(await Promise.all(ids.map(async id=>[id,await readNodePortManifest(join(root,'node-ports',id+'.json'))])))
 const receipt=async id=>{
+ if(id==='compositor-blank-image'){
+  const fixed=JSON.parse(await readFile(join(root,'experiments/compositor-white-noise/evidence.json'),'utf8'))
+  const fixture={...fixed,status:'QUALIFIED_PARTIAL_COMPOSITOR_BLANK_IMAGE',nativeGraphs:26,nativeRenders:26,savedFinalScenes:8,browserCaseRuns:136,primaryFloat32Words:1153408,uniqueActualPythonPrefixes:10,lifecycleCycles:96,resizeFrames:272,
+   sources:[{nativeArchive:{pythonInvocations:10,finalInvocations:8,uniqueCachePrefixes:10}}],runs:fixed.runs.map(run=>({...run,actualApis:run.actualApis.map(api=>({...api,cases:run.phase==='raw'?26:8}))}))}
+  delete fixture.contractViolations;return fixture
+ }
  // This new-family object exercises only parser/scheduling boundaries. It is
  // intentionally synthetic and never written as production evidence.
+ if(id==='compositor-noise-default-field'){
+  const fixed=JSON.parse(await readFile(join(root,'experiments/compositor-white-noise/evidence.json'),'utf8'))
+  const fixture={...fixed,status:'QUALIFIED_PARTIAL_COMPOSITOR_NOISE_DEFAULT_FIELD',nativeGraphs:26,nativeOracleControls:15,nativeRenders:41,savedFinalScenes:8,browserCaseRuns:136,primaryFloat32Words:12919456,uniqueActualPythonPrefixes:10,lifecycleCycles:96,resizeFrames:352,wordDifferences:100,maxUlps:8,maxAbsoluteError:2**-23,precision:{absoluteMax:2**-20,ulpsMax:8},sources:[{nativeArchive:{pythonInvocations:10,finalInvocations:8,uniqueCachePrefixes:10}}],runs:fixed.runs.map(run=>({...run,actualApis:run.actualApis.map(api=>({...api,cases:run.phase==='raw'?26:8}))}))}
+  delete fixture.exactWordMismatches;return fixture
+ }
  if(id==='compositor-wave-axis'){
   const fixed=JSON.parse(await readFile(join(root,'experiments/compositor-white-noise/evidence.json'),'utf8'))
   return {...fixed,status:'QUALIFIED_PARTIAL_COMPOSITOR_WAVE_AXIS',nativeGraphs:140,nativeOracleControls:9,nativeRenders:149,savedFinalScenes:20,browserCaseRuns:640,primaryFloat32Words:10876288,uniqueActualPythonPrefixes:22,lifecycleCycles:240,resizeFrames:384,nativeZeroRgbWords:1,nativeOneRgbWords:1,
@@ -62,9 +73,10 @@ for(const id of ids){
    q=>apis(id,browsers(id,q)[2])[0].gpu={api:'WebGPU',vendor:'Apple Metal'},
   ]
   if(id==='mono-switch-view')mutations.push(q=>q.variant='static',q=>q.productionNativeGraphs=8,q=>q.productionBrowserCaseRuns=64,q=>q.receipts[0].nativeBackend.gpuInitialized=true,q=>q.nativePythonProof.finalInvocations=0)
-  else mutations.push(q=>q.exactWordMismatches=1,q=>q.contractViolations=1,q=>apis(id,browsers(id,q)[0])[0].cases=0,q=>q.sources[0].nativeArchive.finalInvocations=0)
+  else mutations.push(...(id==='compositor-noise-default-field'?[q=>q.exactWordMismatches=0,q=>q.wordDifferences=-1,q=>q.wordDifferences=12919457,q=>q.maxUlps=9,q=>q.maxAbsoluteError=2**-19,q=>q.precision.ulpsMax=9,q=>q.nativeOracleControls=14,q=>q.resizeFrames=0]:[q=>q.exactWordMismatches=1]),q=>q.contractViolations=1,q=>apis(id,browsers(id,q)[0])[0].cases=0,q=>q.sources[0].nativeArchive.finalInvocations=0)
   if(id==='compositor-wave-axis')mutations.push(q=>q.nativeOracleControls=0,q=>q.nativeRenders=140,q=>q.lifecycleCycles=96,q=>q.uniqueActualPythonPrefixes=10,q=>q.resizeFrames=0,q=>q.nativeZeroRgbWords=0,q=>q.nativeOneRgbWords=0)
   if(id==='compositor-white-noise-default-field')mutations.push(q=>q.nativeOracleControls=0,q=>q.nativeRenders=54,q=>q.lifecycleCycles=0,q=>q.uniqueActualPythonPrefixes=14)
+  if(id==='compositor-blank-image')mutations.push(q=>q.nativeRenders=0,q=>q.lifecycleCycles=0,q=>q.resizeFrames=0,q=>q.uniqueActualPythonPrefixes=0)
   for(const mutate of mutations){const copy=structuredClone(q);mutate(copy);assert.throws(()=>assertClosedFamilyReceipt(id,copy))}
  })
  test(id+' dry-run schedules one full existing family without a launcher, GPU or evidence writes',async t=>{
@@ -173,7 +185,7 @@ test('new family manifests participate in source-change selection and observatio
 // Recording it must not recursively queue the same numerical transaction.
 test('proof record updates do not invalidate executable inputs, but case changes do',async t=>{
  const tmp=await mkdtemp(join(tmpdir(),'scenetoweb-proof-record-boundary-'));t.after(()=>rm(tmp,{recursive:true,force:true}))
- for(const id of ['compositor-white-noise','compositor-white-noise-default-field','compositor-wave-axis']){
+ for(const id of ['compositor-blank-image','compositor-noise-default-field','compositor-white-noise','compositor-white-noise-default-field','compositor-wave-axis']){
   const folder=CLOSED_NODE_PORT_FAMILIES[id].folder,jsonInputs=manifests[id].inputs.tests.filter(path=>path.startsWith(folder+'/')&&path.endsWith('.json'))
   assert.ok(jsonInputs.length>0);assert.ok(jsonInputs.every(path=>!path.includes('*')))
   const dir=join(tmp,id);await mkdir(join(dir,folder),{recursive:true})
@@ -186,4 +198,25 @@ test('proof record updates do not invalidate executable inputs, but case changes
   const cases=join(dir,folder,'cases.json');await writeFile(cases,(await readFile(cases,'utf8'))+'\n')
   assert.notEqual((await fingerprintNodePortInputs(dir,manifest)).inputDigest,before.inputDigest)
  }
+})
+
+test('bounded Noise adapter preserves measured word differences without advertising exact equality',async t=>{
+ const tmp=await mkdtemp(join(tmpdir(),'scenetoweb-noise-adapter-'));t.after(()=>rm(tmp,{recursive:true,force:true}))
+ const id='compositor-noise-default-field',proof=await receipt(id),out=join(tmp,'evidence'),folder=join(tmp,CLOSED_NODE_PORT_FAMILIES[id].folder)
+ await mkdir(folder,{recursive:true});await mkdir(join(out,'cpu'),{recursive:true})
+ const identity={path:'/synthetic/never-executed-blender',bytes:123,sha256:'c'.repeat(64)}
+ const bytes=JSON.stringify(proof)
+ // Fake reader/scene bytes exercise adapter transport only; no numerical work,
+ // Blender execution, browser run or production receipt is claimed here.
+ await writeFile(join(folder,'verify.mjs'),"import {writeFile} from 'node:fs/promises';await writeFile(process.argv[3],"+JSON.stringify(bytes)+")")
+ await writeFile(join(out,'qualified.json'),bytes)
+ await writeFile(join(out,'suite-matrix.json'),JSON.stringify({status:'passed',family:id,built:true,reuseNative:false,receiptSha256:nodePortHash(bytes),nativeGraphs:26,savedFinalScenes:8,browserCaseRuns:136}))
+ const cases=Array.from({length:8},(_,i)=>({sourceFile:'source'+i+'.blend'}))
+ for(const row of cases)await writeFile(join(out,'cpu',row.sourceFile),'synthetic source; never opened')
+ await writeFile(join(out,'cpu/qualification.json'),JSON.stringify({version:[5,3,0],build:'02f0899d78e3',cases}))
+ await writeFile(join(out,'cpu/final-proof.json'),JSON.stringify({nativeArchive:{identity:{native:identity}}}))
+ const result=await nodePortEvidenceAdapter('compositor-noise-default-field-v1').read({root:tmp,evidence:out,...scope(id),nativeIdentity:identity})
+ assert.equal(result.wordDifferences,100);assert.equal(result.wordMismatches,undefined)
+ assert.equal(result.contractViolations,0);assert.deepEqual(result.precision,{absoluteMax:2**-20,ulpsMax:8})
+ assert.equal(result.maxUlps,8);assert.equal(result.maxAbsoluteError,2**-23)
 })

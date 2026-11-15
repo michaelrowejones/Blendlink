@@ -1,3 +1,7 @@
+import { compositorProducerLookup, updateCompositorPassProducers } from './tslCompositorProducers.js'
+import {buildCompositorNoise,validateNoiseFieldGraph,noiseFieldKind} from './tslCompositorNoise.js'
+import {validateDisplaceProgram,guardDisplaceOutput} from './tslCompositorDisplace.js'
+import {validateBlankImageProgram,buildBlankImageColor,createBlankImageFrameGuard} from './tslCompositorBlankImage.js'
 import {buildCompositorWaveAxis,CompositorWaveAxisTable} from './tslCompositorWaveAxis.js'
 import {validateWaveAxisGraph,waveAxisFieldKind} from './tslCompositorWaveField.js'
 import {CompositorExactAxes} from './tslCompositorExactAxes.js'
@@ -518,6 +522,9 @@ export function buildSourceCompositor(
     }
     if (program.outputAlpha !== undefined && program.outputAlpha !== 'legacy-composite-opaque-v1')
       throw new SourceCompositorUnsupported('Composite output has an unknown alpha model')
+    validateNoiseFieldGraph(program,message=>{throw new SourceCompositorUnsupported(message)})
+    const displace=validateDisplaceProgram(program,message=>{throw new SourceCompositorUnsupported(message)})
+    const blankImage=validateBlankImageProgram(program,message=>{throw new SourceCompositorUnsupported(message)})
     validateWaveAxisGraph(program,message=>{throw new SourceCompositorUnsupported(message)})
     validateWhiteNoiseFieldGraph(program,message=>{throw new SourceCompositorUnsupported(message)})
     validateEllipseMaskGraph(program, message => { throw new SourceCompositorUnsupported(message) })
@@ -527,15 +534,16 @@ export function buildSourceCompositor(
     validateBoxMaskGraph(program, message => { throw new SourceCompositorUnsupported(message) })
     validateTextureFieldGraph(program, message => { throw new SourceCompositorUnsupported(message) })
     validateImageCoordinateGraph(program, message => { throw new SourceCompositorUnsupported(message) })
-    const exactAxes=program.ops.some(whiteNoiseFieldKind)?new CompositorExactAxes():undefined
+    const exactAxes=program.ops.some(op=>whiteNoiseFieldKind(op)||noiseFieldKind(op))?new CompositorExactAxes():undefined
     if(exactAxes)resources.push(exactAxes)
     const waveTables=new Map<string,CompositorWaveAxisTable>()
     const nodes = new Map<string, TslEffectNode>()
+    const producerInputs=program.ops.some(op=>op.kind==='blur')?compositorProducerLookup(program.ops,nodes,message=>{throw new SourceCompositorUnsupported(message)}):undefined
     const images = new Map<string, ReturnType<typeof staticCompositorTexture>>()
     const cacheImages = staticImageCacheEligible(program)
     let imagePixels = 0
     const origins = new Map<string, CompositorImageOrigin | null>()
-    const usesImageDomains = program.ops.some(op => op.kind === 'translate' || op.kind === 'image-affine' || op.kind === 'image-input' || op.kind === 'alpha-crop' || op.kind === 'image-crop' || op.kind === 'image-split' || op.kind === 'pixelate' && op.properties.pixelate_size !== 1)
+    const usesImageDomains = program.ops.some(op => op.kind === 'translate' || op.kind === 'image-affine' || op.kind === 'image-input' || op.kind === 'blank-image' || op.kind === 'alpha-crop' || op.kind === 'image-crop' || op.kind === 'image-split' || op.kind === 'pixelate' && op.properties.pixelate_size !== 1)
     if (program.ops.some(op => op.kind === 'image-input') && program.ops.some(op => op.kind === 'render-pass'))
       throw new SourceCompositorUnsupported('Static Image and Render Layers currently need separate canvas-domain realization')
     if (program.ops.some(op => op.kind === 'image-affine') && program.ops.some(op => op.kind === 'translate'
@@ -596,7 +604,7 @@ export function buildSourceCompositor(
       if(op.kind==='white-noise-texture')validateCompositorWhiteNoise(op,message=>{throw new SourceCompositorUnsupported(message)})
       const domainFail = (message: string): never => { throw new SourceCompositorUnsupported(
         `${op.source.path.join(' / ')} / ${op.source.node} [${op.source.output}]: ${message}`) }
-      const single = op.kind==='image-info'||(op.kind==='ellipse-mask'&&op.properties.ellipse_mask_identity===true)||(!['render-pass', 'image-input', 'box-mask', 'ellipse-mask'].includes(op.kind) && !textureFieldKind(op) && !whiteNoiseFieldKind(op) && !waveAxisFieldKind(op) && Object.values(op.inputs).every(input => isSingleValue(input.value)))
+      const single = op.kind==='image-info'||(op.kind==='ellipse-mask'&&op.properties.ellipse_mask_identity===true)||(!['render-pass', 'image-input', 'blank-image', 'box-mask', 'ellipse-mask'].includes(op.kind) && !textureFieldKind(op) && !whiteNoiseFieldKind(op) && !noiseFieldKind(op) && !waveAxisFieldKind(op) && Object.values(op.inputs).every(input => isSingleValue(input.value)))
       const incoming = Object.entries(op.inputs).map(([name, input]) => ({ name, domain: origin(input.value) }))
       if (incoming.some(input => input.domain?.croppedWindow)
         && !['exposure', 'invert', 'posterize', 'alpha-over'].includes(op.kind))
@@ -641,6 +649,13 @@ export function buildSourceCompositor(
       let node: TslEffectNode
       try {
         switch (op.kind) {
+          case 'blank-image': {
+            if (!blankImage || blankImage.op !== op) return domainFail('Blank Image requires its validated finite producer')
+            node = buildBlankImageColor(blankImage)
+            domain = { x: 0, y: 0, staticWindow: { width: blankImage.width, height: blankImage.height, model: 'modern-cpu-v1', cache: true },
+              roots: [{ node }], virtualConstant: true, validateRenderer: createBlankImageFrameGuard() }
+            break
+          }
           case 'image-input': {
             const id = op.properties.image_id, model = op.properties.image_window_model
             if (op.properties.evaluation_device !== 'CPU' || typeof id !== 'string' || !program.images?.[id]
@@ -693,6 +708,9 @@ export function buildSourceCompositor(
           case 'blackbody-color':
             node = buildCompositorBlackbody(op,program.ops,domainFail)
             break
+          case 'noise-texture':
+            node = buildCompositorNoise(op,domainFail,exactAxes!)
+            break
           case 'wave-texture':
             node = buildCompositorWaveAxis(op,waveTables,resources,domainFail)
             break
@@ -731,7 +749,8 @@ export function buildSourceCompositor(
           case 'blur': {
             if (op.properties.blur_model !== undefined) {
               node = buildNativeCompositorBlur(op, input('Image'), isSingleValue(op.inputs.Image!.value), resources,
-                message => { throw new SourceCompositorUnsupported(message) })
+                message => { throw new SourceCompositorUnsupported(message) },
+                producerInputs ? ((roots)=>frame=>updateCompositorPassProducers(roots,frame))(producerInputs(op.inputs.Image!.value)) : undefined)
               break
             }
             if (
@@ -857,6 +876,14 @@ export function buildSourceCompositor(
               throw new SourceCompositorUnsupported(
                 `Render pass ${op.pass.viewLayer} / ${op.pass.name} needs a runtime pass provider`,
               )
+            // Displace's CPU Image is an exact texel canvas. A normalized
+            // linear copy can mix a neighboring alpha at software pixel centers.
+            // TextureNode.load clones the pass texture and retains passNode,
+            // so explicit producer scheduling still precedes the owned RTT.
+            if (displace) {
+              if (node.isPassNode) node = node.getTextureNode()
+              if (node.isTextureNode) node = textureLoad(node, ivec2(uv().mul(textureSize(node))))
+            }
             break
           }
           case 'rgb':
@@ -1312,13 +1339,16 @@ export function buildSourceCompositor(
           extent: options.resolvePassExtent ? renderer => options.resolvePassExtent!(op.pass!, renderer) : undefined }],
           ...(nativeDomain ? { sampling: { model: nativeDomain.properties.image_sampling_model,
             interpolation: 'Bilinear' } as NonNullable<CompositorImageOrigin['sampling']> } : {}) }
-        if (op.kind === 'translate') domain = translatedImageOrigin(op, domain, domainFail)
+        if (op.kind === 'translate') {
+          domain = translatedImageOrigin(op, domain, domainFail)
+          if(displace && domain)domain={...domain,displaceCpuRgbaStages:true}
+        }
         if (op.kind === 'image-affine') domain = affineImageOrigin(op, domain, domainFail)
         origins.set(op.id, domain)
       }
     }
     const output = value(program.output), domain = origin(program.output)
-    const transformSource = program.ops.find(op => op.kind === 'translate' || op.kind === 'image-affine' || op.kind === 'image-input' || op.kind === 'alpha-crop' || op.kind === 'image-crop' || op.kind === 'image-split' || op.kind === 'pixelate' && op.properties.pixelate_size !== 1)?.source
+    const transformSource = program.ops.find(op => op.kind === 'translate' || op.kind === 'image-affine' || op.kind === 'image-input' || op.kind === 'blank-image' || op.kind === 'alpha-crop' || op.kind === 'image-crop' || op.kind === 'image-split' || op.kind === 'pixelate' && op.properties.pixelate_size !== 1)?.source
     const realized = usesImageDomains && domain ? realizeCompositorOrigin(output, domain, [0, 0], resources,
       message => { throw new SourceCompositorUnsupported(transformSource
         ? `${transformSource.path.join(' / ')} / ${transformSource.node} [${transformSource.output}]: ${message}` : message) }) : output
@@ -1329,6 +1359,7 @@ export function buildSourceCompositor(
       exactAxes?.validate(frame.renderer)
       for(const table of waveTables.values())table.validate(frame.renderer)
     })
+    finalNode=guardDisplaceOutput(finalNode,program)
     return { node: finalNode, dispose }
   } catch (error) {
     dispose()

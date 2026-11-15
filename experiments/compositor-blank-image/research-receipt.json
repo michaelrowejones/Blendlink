@@ -1,0 +1,446 @@
+{
+  "schemaVersion": 1,
+  "status": "RESEARCH_CLOSED_BLANK_IMAGE_CPU_DOMAINS",
+  "supportCredit": 0,
+  "nativeRenders": 21,
+  "gpuInitializations": 0,
+  "schema": {
+    "inputs": [
+      {
+        "name": "Color",
+        "identifier": "Color",
+        "type": "RGBA",
+        "class": "NodeSocketColor",
+        "value": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "name": "Size",
+        "identifier": "Size",
+        "type": "INT_VECTOR",
+        "class": "NodeSocketIntVectorPixel2D",
+        "value": [
+          1920,
+          1080
+        ]
+      }
+    ],
+    "outputs": [
+      {
+        "name": "Image",
+        "identifier": "Image",
+        "type": "RGBA",
+        "class": "NodeSocketColor"
+      }
+    ]
+  },
+  "observations": [
+    {
+      "case": "native-defaults",
+      "storedSize": [
+        1920,
+        1080
+      ],
+      "effectiveSize": [
+        1920,
+        1080
+      ],
+      "outputSize": [
+        13,
+        9
+      ],
+      "pixelSha256": "213aec83b934358b1e12903a77b13a70be806e3f57b3f5f5b086fb5dd7c7ec2b",
+      "uniquePixelCount": 1,
+      "sourceStatus": "unsupported"
+    },
+    {
+      "case": "identity",
+      "storedSize": [
+        13,
+        9
+      ],
+      "effectiveSize": [
+        13,
+        9
+      ],
+      "outputSize": [
+        13,
+        9
+      ],
+      "pixelSha256": "af10ad36065a21eb48f9c29573795068cb15afeb1b2afc8663405392fb0d1ac4",
+      "uniquePixelCount": 1,
+      "sourceStatus": "unsupported"
+    },
+    {
+      "case": "small-odd-parity",
+      "storedSize": [
+        4,
+        4
+      ],
+      "effectiveSize": [
+        4,
+        4
+      ],
+      "outputSize": [
+        13,
+        9
+      ],
+      "pixelSha256": "95614ceb30db83ab5aa06da46f31ad0867bb2b40d3a2757e9479f934220febcd",
+      "uniquePixelCount": 2,
+      "sourceStatus": "unsupported"
+    },
+    {
+      "case": "large-signed-hdr",
+      "storedSize": [
+        16,
+        12
+      ],
+      "effectiveSize": [
+        16,
+        12
+      ],
+      "outputSize": [
+        13,
+        9
+      ],
+      "pixelSha256": "5a682149a7484860bc470628e758a632cb3ccf7ab9d9258b04cc3ed4ff869984",
+      "uniquePixelCount": 1,
+      "sourceStatus": "unsupported"
+    },
+    {
+      "case": "zero-alpha-hdr",
+      "storedSize": [
+        5,
+        3
+      ],
+      "effectiveSize": [
+        5,
+        3
+      ],
+      "outputSize": [
+        13,
+        9
+      ],
+      "pixelSha256": "4fe0452b726d03bf58ba14c5f16169b26b89821576c68be2163f0c405e4cb61d",
+      "uniquePixelCount": 7,
+      "sourceStatus": "unsupported"
+    },
+    {
+      "case": "even-native-window",
+      "storedSize": [
+        4,
+        4
+      ],
+      "effectiveSize": [
+        4,
+        4
+      ],
+      "outputSize": [
+        8,
+        8
+      ],
+      "pixelSha256": "ca2b92a530c6fd21b32dfc8cf672802118f917ffc55ae3aff6c80ef2b904e8a8",
+      "uniquePixelCount": 2,
+      "sourceStatus": "unsupported"
+    },
+    {
+      "case": "whole-node-group",
+      "storedSize": [
+        5,
+        3
+      ],
+      "effectiveSize": [
+        5,
+        3
+      ],
+      "outputSize": [
+        13,
+        9
+      ],
+      "pixelSha256": "9a2b68fc027e7d5aa776f194b55fd8e251a5b31e67e158b46a5d3ff82759d099",
+      "uniquePixelCount": 7,
+      "sourceStatus": "unsupported"
+    },
+    {
+      "case": "rerouted-portrait",
+      "storedSize": [
+        5,
+        3
+      ],
+      "effectiveSize": [
+        5,
+        3
+      ],
+      "outputSize": [
+        9,
+        13
+      ],
+      "pixelSha256": "16ba9858493290c6f52f7e1852660d0ca0950557b3aa69abb9ddbd089a4ad2b7",
+      "uniquePixelCount": 5,
+      "sourceStatus": "unsupported"
+    },
+    {
+      "case": "native-minimum-clamp",
+      "storedSize": [
+        -3,
+        0
+      ],
+      "effectiveSize": [
+        1,
+        1
+      ],
+      "outputSize": [
+        13,
+        9
+      ],
+      "pixelSha256": "c6f58b0a7e28c90dcff84754ab238c5be88708701073f226df5b1e6c8ccf30e1",
+      "uniquePixelCount": 2,
+      "sourceStatus": "unsupported"
+    },
+    {
+      "case": "different-output-canvas",
+      "storedSize": [
+        13,
+        9
+      ],
+      "effectiveSize": [
+        13,
+        9
+      ],
+      "outputSize": [
+        9,
+        13
+      ],
+      "pixelSha256": "246949be7675ed51ec888f25a197836131e8e69a439fb715ba2697a3b72953af",
+      "uniquePixelCount": 2,
+      "sourceStatus": "unsupported"
+    },
+    {
+      "case": "info-dimensions",
+      "storedSize": [
+        5,
+        3
+      ],
+      "effectiveSize": [
+        5,
+        3
+      ],
+      "outputSize": [
+        13,
+        9
+      ],
+      "pixelSha256": "4ba387a55db2c37ed7e4f29d21cd9b512334917856af221b44b7e938240f7375",
+      "uniquePixelCount": 1,
+      "sourceStatus": "unsupported"
+    },
+    {
+      "case": "info-resolution",
+      "storedSize": [
+        5,
+        3
+      ],
+      "effectiveSize": [
+        5,
+        3
+      ],
+      "outputSize": [
+        13,
+        9
+      ],
+      "pixelSha256": "4ba387a55db2c37ed7e4f29d21cd9b512334917856af221b44b7e938240f7375",
+      "uniquePixelCount": 1,
+      "sourceStatus": "unsupported"
+    },
+    {
+      "case": "info-location",
+      "storedSize": [
+        5,
+        3
+      ],
+      "effectiveSize": [
+        5,
+        3
+      ],
+      "outputSize": [
+        13,
+        9
+      ],
+      "pixelSha256": "213aec83b934358b1e12903a77b13a70be806e3f57b3f5f5b086fb5dd7c7ec2b",
+      "uniquePixelCount": 1,
+      "sourceStatus": "unsupported"
+    },
+    {
+      "case": "info-rotation",
+      "storedSize": [
+        5,
+        3
+      ],
+      "effectiveSize": [
+        5,
+        3
+      ],
+      "outputSize": [
+        13,
+        9
+      ],
+      "pixelSha256": "213aec83b934358b1e12903a77b13a70be806e3f57b3f5f5b086fb5dd7c7ec2b",
+      "uniquePixelCount": 1,
+      "sourceStatus": "unsupported"
+    },
+    {
+      "case": "info-scale",
+      "storedSize": [
+        5,
+        3
+      ],
+      "effectiveSize": [
+        5,
+        3
+      ],
+      "outputSize": [
+        13,
+        9
+      ],
+      "pixelSha256": "8a0ccac25e962a98207177c3dbe92d155819d26e2495659d58a3f41be2d8bde7",
+      "uniquePixelCount": 1,
+      "sourceStatus": "unsupported"
+    },
+    {
+      "case": "coordinates-pixel",
+      "storedSize": [
+        5,
+        3
+      ],
+      "effectiveSize": [
+        5,
+        3
+      ],
+      "outputSize": [
+        13,
+        9
+      ],
+      "pixelSha256": "4085d1f186706d8c195e6eb03474a73d5ca721dbb7d5bf888221535f241fc896",
+      "uniquePixelCount": 25,
+      "sourceStatus": "unsupported"
+    },
+    {
+      "case": "coordinates-uniform",
+      "storedSize": [
+        5,
+        3
+      ],
+      "effectiveSize": [
+        5,
+        3
+      ],
+      "outputSize": [
+        13,
+        9
+      ],
+      "pixelSha256": "2ca1029bb7cb891ef28ba9e2ec4e95ac5744a922f36372bbe7f06a1148afd5e7",
+      "uniquePixelCount": 25,
+      "sourceStatus": "unsupported"
+    },
+    {
+      "case": "coordinates-normalized",
+      "storedSize": [
+        5,
+        3
+      ],
+      "effectiveSize": [
+        5,
+        3
+      ],
+      "outputSize": [
+        13,
+        9
+      ],
+      "pixelSha256": "13af3b32a851697a11b009f72cacb55d4231ac1208135fd55cf2a3e9da4baece",
+      "uniquePixelCount": 25,
+      "sourceStatus": "unsupported"
+    },
+    {
+      "case": "different-source-frame",
+      "storedSize": [
+        5,
+        3
+      ],
+      "effectiveSize": [
+        5,
+        3
+      ],
+      "outputSize": [
+        13,
+        9
+      ],
+      "pixelSha256": "9a2b68fc027e7d5aa776f194b55fd8e251a5b31e67e158b46a5d3ff82759d099",
+      "uniquePixelCount": 7,
+      "sourceStatus": "unsupported"
+    },
+    {
+      "case": "changed-source-size",
+      "storedSize": [
+        7,
+        4
+      ],
+      "effectiveSize": [
+        7,
+        4
+      ],
+      "outputSize": [
+        13,
+        9
+      ],
+      "pixelSha256": "6b4ee1f9ea0919e207efedae021e5bfc1788614fbdbc6d8afeed4bf06eb0f1eb",
+      "uniquePixelCount": 2,
+      "sourceStatus": "unsupported"
+    },
+    {
+      "case": "maximum-thin",
+      "storedSize": [
+        8192,
+        4
+      ],
+      "effectiveSize": [
+        8192,
+        4
+      ],
+      "outputSize": [
+        13,
+        9
+      ],
+      "pixelSha256": "bd99353ec14263c1f868adcf3f4e3519291afd4a728f4076b7430002b2585ce5",
+      "uniquePixelCount": 2,
+      "sourceStatus": "unsupported"
+    }
+  ],
+  "rawReport": {
+    "machineLocal": true,
+    "path": "artifacts/verification-blank-image-cpu-r2/report.json",
+    "sha256": "6eabb1c3add66be7d5b000f0186b09c7bcfa1221aa11d60f7979c83891e33add"
+  },
+  "closedReader": {
+    "machineLocal": true,
+    "path": "artifacts/verification-blank-image-cpu-r2/closed.json",
+    "sha256": "e62cf0235a2e17f4812c9f3840ac21f9c0cc732feb934ddbe7814f4f93566ae8"
+  },
+  "failedSetup": {
+    "path": "artifacts/verification-blank-image-cpu-r1",
+    "supportCredit": 0,
+    "reason": "Requested negative unlinked Color did not survive native RNA assignment; assertion stopped after three native renders",
+    "scriptSha256": "bdfa67f589d88a42a9f02bcd8eb8e601b9c4a3012f8e5de0c4f3976966454c3d",
+    "nativeLogSha256": "d1bb39074f141fb6e834b7ca086269fcc15c8b2bc6837799480043c77ea0a716",
+    "archiveSha256": "1af6af868887cd28ac4acae6f5a0c04de075c5714465582c1eeb175f8b4c1aa4",
+    "sourcePinsSha256": "4dcda5ccc44aa0a7f1ba201fcf552a8b6ee597b6a961aedcf76ba5ec44063960"
+  },
+  "limits": [
+    "Native CPU source research only; existing extractor still refuses Blank Image",
+    "Signed/HDR controls use actual linked Combine Color; this does not qualify linked source admission",
+    "ImageInfo and coordinate native observations grant no new source/runtime support",
+    "No saved Final, browser or native GPU/EEVEE qualification"
+  ]
+}

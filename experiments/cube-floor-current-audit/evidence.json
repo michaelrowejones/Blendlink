@@ -1,0 +1,430 @@
+{
+  "schemaVersion": 1,
+  "status": "RETAINED_SOURCE_ONLY_ORIGINAL_FLOOR_AUDIT",
+  "productionImplementation": false,
+  "supportCredit": 0,
+  "nativeRenders": 0,
+  "bakeCalls": 0,
+  "finalCredit": 0,
+  "browserCredit": 0,
+  "sourceCommit": "c718d63fdbe818417658646eb924d98842e36003",
+  "currentReportScope": "Current published source inspected; the five normal/planner files also byte-match frozen joint SDK. This is not a fresh Final attempt or rendering qualification.",
+  "original": {
+    "sha256": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e",
+    "bytes": 11674153,
+    "ownedUnlinkedDatablock": true,
+    "originalSaved": false,
+    "floorEvaluated": false
+  },
+  "native": {
+    "version": [
+      5,
+      3,
+      0
+    ],
+    "build": "02f0899d78e3"
+  },
+  "guardObservations": {
+    "allCanariesRefused": true,
+    "gpu": 0,
+    "render": 0,
+    "evaluate": 0
+  },
+  "sourceOwnershipPreserved": true,
+  "floor": {
+    "vertices": 4225,
+    "edges": 8320,
+    "faces": 4096,
+    "loops": 16384,
+    "bounds": [
+      [
+        -1.0,
+        -1.0,
+        0.0
+      ],
+      [
+        1.0,
+        1.0,
+        0.0
+      ]
+    ],
+    "uvs": [
+      {
+        "name": "UVMap",
+        "activeRender": true
+      }
+    ],
+    "attributes": [
+      {
+        "name": ".select_vert",
+        "type": "BOOLEAN",
+        "domain": "POINT"
+      },
+      {
+        "name": ".select_edge",
+        "type": "BOOLEAN",
+        "domain": "EDGE"
+      },
+      {
+        "name": ".select_poly",
+        "type": "BOOLEAN",
+        "domain": "FACE"
+      },
+      {
+        "name": "position",
+        "type": "FLOAT_VECTOR",
+        "domain": "POINT"
+      },
+      {
+        "name": ".edge_verts",
+        "type": "INT32_2D",
+        "domain": "EDGE"
+      },
+      {
+        "name": ".corner_vert",
+        "type": "INT",
+        "domain": "CORNER"
+      },
+      {
+        "name": ".corner_edge",
+        "type": "INT",
+        "domain": "CORNER"
+      },
+      {
+        "name": "UVMap",
+        "type": "FLOAT2",
+        "domain": "CORNER"
+      }
+    ],
+    "material": "Boards - Basketweave",
+    "principled": "Principled BSDF",
+    "principledOwner": "SH-Boards.Basketweave",
+    "groupAncestry": [
+      "Group.001"
+    ],
+    "renderTrianglesExact": 8388608,
+    "receiverBudget": 2000000
+  },
+  "contributingChannels": [
+    {
+      "channel": "Base Color",
+      "sources": [
+        {
+          "node": "Mix.001",
+          "class": "ShaderNodeMix",
+          "output": "Result",
+          "tree": "SH-Boards.Basketweave",
+          "properties": {
+            "data_type": "RGBA",
+            "blend_type": "MULTIPLY",
+            "unlinkedInputs": {
+              "Factor_Float": 1.0,
+              "Factor_Vector": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "A_Float": 0.0,
+              "B_Float": 0.0,
+              "A_Vector": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "B_Vector": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "A_Rotation": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "B_Rotation": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            }
+          }
+        },
+        {
+          "node": "Combine RGB",
+          "class": "ShaderNodeCombineColor",
+          "output": "Color",
+          "tree": "UT-RGB_Power",
+          "properties": {
+            "unlinkedInputs": {}
+          }
+        },
+        {
+          "node": "Math.002",
+          "class": "ShaderNodeMath",
+          "output": "Value",
+          "tree": "UT-RGB_Power",
+          "properties": {
+            "operation": "POWER",
+            "unlinkedInputs": {
+              "Value_002": 0.5
+            }
+          }
+        },
+        {
+          "node": "Separate RGB",
+          "class": "ShaderNodeSeparateColor",
+          "output": "Blue",
+          "tree": "UT-RGB_Power",
+          "properties": {
+            "unlinkedInputs": {}
+          }
+        },
+        {
+          "node": "Mix",
+          "class": "ShaderNodeMix",
+          "output": "Result",
+          "tree": "SH-Boards.Basketweave",
+          "properties": {
+            "data_type": "RGBA",
+            "blend_type": "DIVIDE",
+            "unlinkedInputs": {
+              "Factor_Float": 1.0,
+              "Factor_Vector": [
+                0.5,
+                0.5,
+                0.5
+              ],
+              "A_Float": 0.0,
+              "B_Float": 0.0,
+              "A_Vector": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "B_Vector": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "B_Color": [
+                0.2861620783805847,
+                0.13530519604682922,
+                0.04761776700615883,
+                1.0
+              ],
+              "A_Rotation": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "B_Rotation": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            }
+          }
+        },
+        {
+          "node": "Image Texture",
+          "class": "ShaderNodeTexImage",
+          "output": "Color",
+          "tree": "SH-Boards.Basketweave",
+          "properties": {
+            "interpolation": "Linear",
+            "projection": "FLAT",
+            "projection_blend": 0.0,
+            "extension": "REPEAT",
+            "unlinkedInputs": {},
+            "image": {
+              "name": "boards_basketweave",
+              "size": [
+                1024,
+                1024
+              ],
+              "colorspace": "sRGB",
+              "packed": true,
+              "packedSha256": "f4707e07fbaecb37cdd88cac8553e29e97f0d26706bed5a2cc45cdf88203ebb1"
+            }
+          }
+        },
+        {
+          "node": "UV Map",
+          "class": "ShaderNodeUVMap",
+          "output": "UV",
+          "tree": "SH-Boards.Basketweave",
+          "properties": {
+            "uv_map": "",
+            "unlinkedInputs": {}
+          }
+        },
+        {
+          "node": "Math.001",
+          "class": "ShaderNodeMath",
+          "output": "Value",
+          "tree": "UT-RGB_Power",
+          "properties": {
+            "operation": "POWER",
+            "unlinkedInputs": {
+              "Value_002": 0.5
+            }
+          }
+        },
+        {
+          "node": "Separate RGB",
+          "class": "ShaderNodeSeparateColor",
+          "output": "Green",
+          "tree": "UT-RGB_Power",
+          "properties": {
+            "unlinkedInputs": {}
+          }
+        },
+        {
+          "node": "Math",
+          "class": "ShaderNodeMath",
+          "output": "Value",
+          "tree": "UT-RGB_Power",
+          "properties": {
+            "operation": "POWER",
+            "unlinkedInputs": {
+              "Value_002": 0.5
+            }
+          }
+        },
+        {
+          "node": "Separate RGB",
+          "class": "ShaderNodeSeparateColor",
+          "output": "Red",
+          "tree": "UT-RGB_Power",
+          "properties": {
+            "unlinkedInputs": {}
+          }
+        }
+      ]
+    },
+    {
+      "channel": "Normal",
+      "sources": [
+        {
+          "node": "Bump",
+          "class": "ShaderNodeBump",
+          "output": "Normal",
+          "tree": "SH-Boards.Basketweave",
+          "properties": {
+            "invert": false,
+            "unlinkedInputs": {
+              "Strength": 1.0,
+              "Distance": 0.019999999552965164,
+              "Filter Width": 1.0,
+              "Normal": [
+                0.0,
+                0.0,
+                0.0
+              ]
+            }
+          }
+        },
+        {
+          "node": "Math",
+          "class": "ShaderNodeMath",
+          "output": "Value",
+          "tree": "SH-Boards.Basketweave",
+          "properties": {
+            "operation": "POWER",
+            "unlinkedInputs": {
+              "Value_001": 0.20000000298023224,
+              "Value_002": 0.5
+            }
+          }
+        },
+        {
+          "node": "Image Texture",
+          "class": "ShaderNodeTexImage",
+          "output": "Color",
+          "tree": "SH-Boards.Basketweave",
+          "properties": {
+            "interpolation": "Linear",
+            "projection": "FLAT",
+            "projection_blend": 0.0,
+            "extension": "REPEAT",
+            "unlinkedInputs": {},
+            "image": {
+              "name": "boards_basketweave",
+              "size": [
+                1024,
+                1024
+              ],
+              "colorspace": "sRGB",
+              "packed": true,
+              "packedSha256": "f4707e07fbaecb37cdd88cac8553e29e97f0d26706bed5a2cc45cdf88203ebb1"
+            }
+          }
+        },
+        {
+          "node": "UV Map",
+          "class": "ShaderNodeUVMap",
+          "output": "UV",
+          "tree": "SH-Boards.Basketweave",
+          "properties": {
+            "uv_map": "",
+            "unlinkedInputs": {}
+          }
+        }
+      ]
+    }
+  ],
+  "issues": [
+    {
+      "code": "material.normal-bake-geometry-budget",
+      "material": "Boards - Basketweave",
+      "problem": "Object \"Floor\" requires exactly 8,388,608 render SIMPLE-subdivision triangles, proved from its source quad mesh before evaluated-mesh allocation; the static normal receiver budget is 2,000,000.",
+      "fix": "Use an explicitly reviewed lower-resolution coincident receiver or reduce redundant static subdivision; SceneToWeb will not silently bake viewport geometry or omit the normal.",
+      "objects": [
+        "Floor"
+      ]
+    }
+  ],
+  "retainedCurrentReports": {
+    "experiments/official-demo-node-performance/current-final-refusal-regression.json": {
+      "sha256": "8f6c1b9275ef4a4090bf04fdf54fbee009803ae300136bbca950966223b1f605",
+      "bytes": 10563
+    },
+    "experiments/official-demo-node-performance/current-normal-bake-triage.json": {
+      "sha256": "41ff0d8813541cf0137bad876f332485ffbc05feee8e017cd2781a1e79844e2d",
+      "bytes": 21100
+    }
+  },
+  "retainedPriorSourceUVFinding": {
+    "path": "experiments/floor-receiver-research/sources.json",
+    "sha256": "47a12e08aba71af923a14c8315f37ce62ba2f27c006bece0a07c16f53918c41d",
+    "sameOriginalSourceSha256": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e",
+    "maxAffineResidual": 1.054399790878513e-05,
+    "maxFaceBilinearCrossTerm": 5.960464477539062e-07,
+    "provenance": "Earlier source-array inspection of the exact same original, not remeasured UV residuals in this invocation. Synthetic0.0625 counterexample is separate and is not an actual Floor measurement."
+  },
+  "localClosedAudit": {
+    "directory": "artifacts/verification-original-floor-current-source-r4",
+    "reportSha256": "45fd5163a1a7edac36c32ec04d24a8be6bab08ea49b6d46f5f7b22316f76a7d2",
+    "closedSha256": "5f97ecf1888579a24b7623c942b2cc8aa3a94ca5803195c5291f12c78ace1819",
+    "archiveSha256": "c3c8d440d1f4c314c9baa206da8890441bc2e9cd580e23ea32446c3ec5fe1752",
+    "sourcePinsSha256": "583d223caa292f9890588302d67ba0c510dca6ee4a09b7aad0e075de170dcc0c",
+    "actualPythonInvocations": 1,
+    "nativeArchiveValidated": true
+  },
+  "productionSourcePins": {
+    "packages/blender-addon/material_compiler.py": "36b7a24f10b6d30dc171e0c46823436d93aa8485b82d6bcbaedacde0c03ffb1b",
+    "packages/blender-addon/procedural.py": "dd85b29a3293db0829f024941881e7ec068a0d7d9258e7d019484184ac2cf31c",
+    "packages/blendlink/blender/bakelib.py": "51469367512aa77cf6da533499eebbdf035f54eb3247b5efecc7ec94b193ded3",
+    "packages/blendlink/blender/normal_bake_transport.py": "1e6211bb197f6e015262f80937112ec594e70977945fc1259133aa8ffd36429e",
+    "packages/blendlink/blender/export_scene.py": "d746ba319cdf24915ea8f718104639b2d17075fff6da46cb503caf2c225c171f"
+  },
+  "decision": "No source-only zero-loss subdivision removal certificate for this actual Floor: consumed authored UV field is nonaffine. Preserve named budget refusal; reviewed derivative or separate high-to-low receiver design requires new appearance proof.",
+  "guardScope": "Actual render/bake/GPU functions and current evaluated-depsgraph/material-use/materialized-hash allocation seams are denied with canaries. This is not a universal override of native Object.evaluated_get.",
+  "retainedFailedCanary": {
+    "directory": "artifacts/verification-original-floor-current-source-r3",
+    "nativeLogSha256": "e169b524eefbf36a98038cd63831841a74247768d3301e2bbe0ab7d760a6ecda",
+    "archiveSha256": "109e0a5e277ff7a717e8839741f0a373c222d3a52cb7090d144f02b61ecd5468",
+    "cause": "An attempted bpy.types.Object.evaluated_get monkeypatch did not intercept RNA lookup. Canary reached native None-argument validation; no evaluated mesh was created. Final r4 uses explicit current allocation seams plus actual context wrapper, with all canaries tested before planning.",
+    "qualificationCredit": 0
+  }
+}

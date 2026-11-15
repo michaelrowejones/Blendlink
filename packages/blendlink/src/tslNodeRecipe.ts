@@ -41,6 +41,7 @@ import {buildTslTangentNormalMap} from './tslTangentNormalMap.js'
 import { buildSharedUtilityIr } from './tslSharedUtilities.js'
 import { buildPortableSine } from './tslPortableTrig.js'
 import { buildMetalShaderNoiseCoordinate, buildExactNoiseCoordinate } from './tslNoiseCoordinates.js'
+import { compositorCpuBliPerlinFade, roundCompositorNoiseF32 } from './tslCompositorNoisePrecision.js'
 import { nativeCpuPerlinFade, buildNativeNoiseFma } from './tslNativeNoisePrecision.js'
 import { buildTslFractalNoise } from './tslFractalNoise.js'
 import { buildTslVaryingFbm, isUnitRoughnessExpression } from './tslVaryingNoise.js'
@@ -3046,4 +3047,55 @@ export function buildTslScalarNode(
     activeOptions = {}
     repeatCache = new Map();repeatWork=0
   }
+}
+
+/** Source-pinned CPU compositor default2D FBM candidate, distinct from shader
+ * evaluation admission. The existing staged-F32 primitive is a bounded
+ * approximation to BLI's double-literal CPU fade/mix; qualification belongs to
+ * its separate compositor model. Original shader kernels remain unchanged. */
+export const compositorCpuDefaultNoise2dOffsets = Object.freeze([
+  Object.freeze([0x42df4487, 0x431d5e90].map(bits => new Float32Array(new Uint32Array([bits]).buffer)[0]!)),
+  Object.freeze([0x432571fe, 0x4322c4aa].map(bits => new Float32Array(new Uint32Array([bits]).buffer)[0]!)),
+])
+/** Private CPU compositor interpolation: preserve Float32 products and sums.
+ * The source's double outer weight remains a bounded approximation; shader
+ * and Cycles perlin2d functions above deliberately retain their own models. */
+function compositorCpuPerlin2d(p:TslExpression):TslExpression {
+  const r=roundCompositorNoiseF32,ix=tslFloor(p.x),iy=tslFloor(p.y)
+  const x=r(p.x.sub(ix)),y=r(p.y.sub(iy))
+  const X=tslBitcast(tslIntOf(ix),'uint'),Y=tslBitcast(tslIntOf(iy),'uint')
+  const u=compositorCpuBliPerlinFade(x),v=compositorCpuBliPerlinFade(y),oneMinusU=r(tslFloat(1).sub(u))
+  const gradient=(i:number,j:number):TslExpression=>{
+    const h=hashUint2(X.add(tslUintOf(i)),Y.add(tslUintOf(j))).bitAnd(tslUintOf(7)),useX=h.lessThan(tslUintOf(4))
+    const a=tslSelect(useX,x.sub(i),y.sub(j)),b=tslSelect(useX,y.sub(j),x.sub(i)).mul(2)
+    return r(tslSelect(h.bitAnd(tslUintOf(1)).equal(tslUintOf(0)),a,a.negate())
+      .add(tslSelect(h.bitAnd(tslUintOf(2)).equal(tslUintOf(0)),b,b.negate())))
+  }
+  const row0=r(r(gradient(0,0).mul(oneMinusU)).add(r(gradient(1,0).mul(u))))
+  const row1=r(r(gradient(0,1).mul(oneMinusU)).add(r(gradient(1,1).mul(u))))
+  return r(r(r(r(tslFloat(1).sub(v)).mul(row0)).add(r(v.mul(row1)))).mul(.6616))
+}
+const compositorCpuDefaultPerlin2d = tslFn(([position]) => compositorCpuPerlin2d(position!))
+  .setLayout({name:'blendlinkCompositorCpuDefaultPerlin2dV3',type:'float',inputs:[{name:'position',type:'vec2'}]})
+
+/** Fixed default CPU FBM recurrence; every source Float32 boundary is explicit.
+ * No shared shader/variable-FBM recurrence is changed by this specialization. */
+function compositorCpuDefaultFbm(point:TslExpression):TslExpression {
+  const r=roundCompositorNoiseF32
+  let sum=tslFloat(0),weight=tslFloat(1),maximum=tslFloat(0)
+  for(let octave=0;octave<3;octave++){
+    sum=r(sum.add(r(compositorCpuDefaultPerlin2d(point.mul(2**octave)).mul(weight))))
+    maximum=r(maximum.add(weight));weight=r(weight.mul(.5))
+  }
+  return r(r(r(sum.mul(.5)).div(maximum)).add(.5))
+}
+
+export function compositorCpuDefaultNoise2d(position: TslExpression, color: boolean): TslExpression {
+  // Stage Scale before offset/lattice evaluation. Finite Uniform axes are
+  // supplied by their genuine owner; source controls are fixed at defaults.
+  const p = tslVec2(roundFiniteF32(position.x.mul(5)), roundFiniteF32(position.y.mul(5))).toVar()
+  const fbm = compositorCpuDefaultFbm
+  const fac = fbm(p)
+  if (!color) return fac
+  return tslVec3(fac, ...compositorCpuDefaultNoise2dOffsets.map(offset => fbm(p.add(tslVec2(offset[0]!, offset[1]!)))))
 }

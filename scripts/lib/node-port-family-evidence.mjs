@@ -6,6 +6,8 @@ import {join,relative,sep} from 'node:path'
 import {executeNodePortCommand,nodePortHash} from './node-port-contract.mjs'
 
 export const CLOSED_NODE_PORT_FAMILIES=Object.freeze({
+ 'compositor-blank-image':Object.freeze({adapter:'compositor-blank-image-v1',node:'CompositorNodeBlankImage',folder:'experiments/compositor-blank-image',profile:'darwin-arm64-53-blank-image-cpu-v1',productionCases:26,calibrationCases:0,nativeGraphs:26,nativeRenders:26,prefixes:10,finals:8,caseRuns:136,words:1153408,lifecycleCycles:96,resizeFrames:272,sourcePolicy:true,derivedExactContract:true,status:'QUALIFIED_PARTIAL_COMPOSITOR_BLANK_IMAGE'}),
+ 'compositor-noise-default-field':Object.freeze({adapter:'compositor-noise-default-field-v1',node:'ShaderNodeTexNoise',folder:'experiments/compositor-noise-default-field',profile:'darwin-arm64-53-noise2d-default-fbm-cpu-v1',productionCases:26,calibrationCases:0,nativeGraphs:26,nativeOracleControls:15,nativeRenders:41,prefixes:10,finals:8,caseRuns:136,words:12919456,lifecycleCycles:96,resizeFrames:352,sourcePolicy:true,approximateRgb:true,status:'QUALIFIED_PARTIAL_COMPOSITOR_NOISE_DEFAULT_FIELD'}),
  'compositor-wave-axis':Object.freeze({adapter:'compositor-wave-axis-v1',node:'ShaderNodeTexWave',folder:'experiments/compositor-wave-axis',profile:'darwin-arm64-53-wave-saw-tri-cpu-v1',productionCases:140,calibrationCases:0,nativeGraphs:140,nativeOracleControls:9,nativeRenders:149,prefixes:22,finals:20,caseRuns:640,words:10876288,lifecycleCycles:240,resizeFrames:384,exactEndpoints:true,sourcePolicy:true,status:'QUALIFIED_PARTIAL_COMPOSITOR_WAVE_AXIS'}),
  'compositor-white-noise':Object.freeze({adapter:'compositor-white-noise-fixed-v1',node:'ShaderNodeTexWhiteNoise',folder:'experiments/compositor-white-noise',profile:'darwin-arm64-53-white-noise-cpu-v1',productionCases:44,calibrationCases:0,nativeGraphs:44,prefixes:14,finals:12,caseRuns:224,words:14336,status:'QUALIFIED_PARTIAL_COMPOSITOR_WHITE_NOISE'}),
  'compositor-white-noise-default-field':Object.freeze({adapter:'compositor-white-noise-default-field-v1',node:'ShaderNodeTexWhiteNoise',folder:'experiments/compositor-white-noise-default-field',profile:'darwin-arm64-53-white-noise-uniform-cpu-v1',productionCases:54,calibrationCases:0,nativeGraphs:54,nativeOracleControls:9,nativeRenders:63,sourcePolicy:true,prefixes:10,finals:8,caseRuns:248,words:7943520,status:'QUALIFIED_PARTIAL_COMPOSITOR_WHITE_NOISE_DEFAULT_FIELD'}),
@@ -40,7 +42,13 @@ export function assertClosedFamilyReceipt(id,value){
  const f=closedNodePortFamily(id)
  assert.equal(value.status,f.status);assert.equal(value.nativeGraphs,f.nativeGraphs);assert.equal(value.savedFinalScenes,f.finals)
  assert.equal(value.browserCaseRuns,f.caseRuns);assert.equal(mono(id)?value.comparedFloat32Words:value.primaryFloat32Words,f.words)
- assert.equal(mono(id)?value.wordMismatches:value.exactWordMismatches,0)
+ if(f.approximateRgb){
+  assert.equal(value.exactWordMismatches,undefined,'Bounded approximation must not claim word-exact output')
+  assert.deepEqual(value.precision,{absoluteMax:2**-20,ulpsMax:8})
+  assert.ok(Number.isSafeInteger(value.wordDifferences)&&value.wordDifferences>=0&&value.wordDifferences<=f.words)
+  assert.ok(Number.isSafeInteger(value.maxUlps)&&value.maxUlps>=0&&value.maxUlps<=8)
+  assert.ok(Number.isFinite(value.maxAbsoluteError)&&value.maxAbsoluteError>=0&&value.maxAbsoluteError<=2**-20)
+ }else assert.equal(mono(id)?value.wordMismatches:value.exactWordMismatches,0)
  if(mono(id)){
   assert.equal(value.variant,'mono-view');assert.equal(value.productionNativeGraphs,7);assert.equal(value.productionBrowserCaseRuns,56);assert.equal(value.productionComparedWords,14336);assert.equal(value.remainingOwnedTextures,0)
   assert.equal(value.runtimeTransaction?.independentlyReemittedAtClose,true)
@@ -50,10 +58,14 @@ export function assertClosedFamilyReceipt(id,value){
   assert.deepEqual(receipt.browsers.map(r=>[r.profile,r.phase]),phases)
   for(const run of receipt.browsers){assert.equal(run.caseRuns,16);actualApis(run.APIs,run.profile)}
  }else{
-  assert.equal(value.contractViolations,0);assert.equal(value.uniqueActualPythonPrefixes,f.prefixes)
+  // Blank's reader derives byte equality from every archived linear readback;
+  // it does not emit the approximate field families' violation counter.
+  assert.equal(value.contractViolations,f.derivedExactContract?undefined:0);assert.equal(value.uniqueActualPythonPrefixes,f.prefixes)
   assert.equal(value.sources.length,1);const archive=value.sources[0].nativeArchive
   assert.equal(archive?.pythonInvocations,f.prefixes);assert.equal(archive.finalInvocations,f.finals);assert.equal(archive.uniqueCachePrefixes,f.prefixes)
-  if(f.nativeOracleControls!==undefined){assert.equal(value.nativeOracleControls,f.nativeOracleControls);assert.equal(value.nativeRenders,f.nativeRenders);assert.equal(value.lifecycleCycles,f.lifecycleCycles??96)}
+  if(f.nativeOracleControls!==undefined)assert.equal(value.nativeOracleControls,f.nativeOracleControls)
+  if(f.nativeRenders!==undefined)assert.equal(value.nativeRenders,f.nativeRenders)
+  if(f.lifecycleCycles!==undefined||f.nativeOracleControls!==undefined)assert.equal(value.lifecycleCycles,f.lifecycleCycles??96)
   if(f.resizeFrames!==undefined)assert.equal(value.resizeFrames,f.resizeFrames)
   if(f.exactEndpoints)for(const key of['nativeZeroRgbWords','nativeOneRgbWords'])assert.ok(Number.isSafeInteger(value[key])&&value[key]>0,'Actual native endpoint witnesses are required')
   assert.deepEqual(value.runs.map(r=>[r.profile,r.phase]),phases)
@@ -110,8 +122,8 @@ export function closedFamilyAdapter(id){
    assertClosedFamilyNativeIdentity(native,archive,nativeIdentity)
    const sources=await finalSources(id,evidence);assert.equal(sources.length,f.finals);assert.equal(new Set(sources).size,f.finals)
    return {status:'qualified',productionCases:f.productionCases,calibrationCases:f.calibrationCases,nativeGraphs:f.nativeGraphs,savedFinalScenes:f.finals,
-    ...(f.nativeOracleControls===undefined?{}:{nativeOracleControls:f.nativeOracleControls,nativeRenders:f.nativeRenders}),
-    caseRuns:f.caseRuns,primaryFloat32Words:f.words,productionCaseRuns:mono(id)?56:f.caseRuns,productionFloat32Words:mono(id)?14336:f.words,wordMismatches:0,finalSources:sources,
+    ...(f.nativeOracleControls===undefined?{}:{nativeOracleControls:f.nativeOracleControls}),...(f.nativeRenders===undefined?{}:{nativeRenders:f.nativeRenders}),
+    caseRuns:f.caseRuns,primaryFloat32Words:f.words,productionCaseRuns:mono(id)?56:f.caseRuns,productionFloat32Words:mono(id)?14336:f.words,...(f.approximateRgb?{wordDifferences:proof.wordDifferences,contractViolations:0,precision:proof.precision,maxUlps:proof.maxUlps,maxAbsoluteError:proof.maxAbsoluteError}:{wordMismatches:0}),finalSources:sources,
     nativePythonOwnership:'family',nativePythonProof:mono(id)?proof.nativePythonProof:proof.sources[0].nativeArchive,
     files:[{path:relative(evidence,output),sha256:nodePortHash(await readFile(output))}],
     actualIdentity:{nativeVersion:native.version,nativeBuild:native.build,nativeSource:profile.nativeSource,browsers:mono(id)?proof.receipts[0].browsers:proof.runs}}

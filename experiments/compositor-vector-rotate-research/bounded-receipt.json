@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "status": "CLOSED_RESEARCH_ONLY_VECTOR_ROTATE_BOUNDED_PROTOTYPE",
+  "supportCredit": 0,
+  "sourceAdmissionCredit": 0,
+  "newNativeEvaluations": 0,
+  "nativeRenders": 0,
+  "browserCredit": 0,
+  "FinalCredit": 0,
+  "inheritedNativeReport": {
+    "path": "artifacts/verification-vector-rotate-no-render-r5/report.json",
+    "sha256": "41c9ee451b2c26ab58b75d6eec56d074e4ee69bbca5592e53d079db835fc43f3"
+  },
+  "sameInputPredictions": 30,
+  "sameInputPredictedWords": 90,
+  "mismatches": 0,
+  "hostControls": {
+    "tests": 10,
+    "stagedLatticeChecks": 23100,
+    "zeroSignVariants": 576,
+    "exactRationalExtentCount": 14,
+    "exactRationalPixels": 27059
+  },
+  "additionalNativeBoundaryControls": {
+    "controlKeys": 36,
+    "basisComponentWords": 324,
+    "predictedComponentWords": 324,
+    "nativeRenders": 0,
+    "gpuInitializations": 0,
+    "compositorCredit": 0
+  },
+  "hostIdentity": {
+    "node": "v24.22.1",
+    "threeVersion": "0.184.0",
+    "threePackageSha256": "8308e43d6d6dd4c636c2dfe2e724da07dcd9fe4349bba6afb56f2c5ba6625391",
+    "packageLockSha256": "7e4810ca59644d37fa50750416518b129f6abef7dd5b8cdca7f8466efec50e87"
+  },
+  "remainingBlockers": [
+    "Arbitrary-axis/Euler basis output zero alone does not establish an internal zero coefficient; the first candidate must keep source-proven fixed-axis controls.",
+    "The qualified Normalized coordinate field allows CPU word differences. A distinct exact-row consumer must retain real source/domain ownership before whole-graph CPU equality can be claimed.",
+    "Actual CPU compositor, saved Final and both-API/profile renderer proofs remain unrun for this prototype."
+  ],
+  "sourcePins": {
+    "bounded-domain.mjs": "2eb823ce9a88b1f1d4626c2ba1ff91c103b546c01b7bc31dce84691a6ed33cfc",
+    "bounded-domain.test.mjs": "b9eb763e5e21fa1193283a2dea5c8fafc75978adfec03d4ad8c405120280ff7f",
+    "staged-matvec.mjs": "64d45e006a9c354f3ec80482840c1a36438b59d9027f50819e07fbeb4cd95b25",
+    "staged-matvec.test.mjs": "fce21a62cb6d605936582a898a532b551c0805c3789f85a325365559763c9017",
+    "normalized-rows.mjs": "a5b406776f1b6f5dd5d50bd4e05bbba619fe6a3f706b7c82469821276f362174",
+    "normalized-rows.test.mjs": "0a0b303422442af84544514d7bc7d85f108246215564d3712cfc733d42a82665",
+    "normalized-source-pins.json": "29587db8f016166f8367e47f18df9c569b26e345a714862c8cb6e61243c023bb",
+    "bounded-native-receipt.json": "e9ccf35f2bad31effefdc6ec8d8f8ef6a5fc804f96a9de8ff7dcde77a5ae1da7",
+    "close-bounded.mjs": "785598714eb81ab232ecc8db37f96a34e47eb6440013d3764046f8d27db45038",
+    "compiler-evidence.json": "632e8d9cf6ffbccaa2798c850260f9d568bec713560bb0236bb2670d9881de65",
+    "bounded-proposal.md": "4a80ebd1cdb4731eecbdc9c5bc66b0ead742c9632beef225a930ee1b3ca831e4"
+  }
+}

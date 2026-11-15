@@ -1,0 +1,29 @@
+{
+  "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "sources": [
+    {
+      "path": "source/blender/nodes/shader/nodes/node_shader_tex_noise.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/shader/nodes/node_shader_tex_noise.cc",
+      "sha256": "15327904379c2b3aad563e7336faf500398af852ac22dcfe91d5d30db421fa64",
+      "bytes": 20945
+    },
+    {
+      "path": "source/blender/blenlib/intern/noise.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/intern/noise.cc",
+      "sha256": "ad717117a1c191bc5204706fd890e262356fc9a5fac4b8aee77be7e7b9b13df9",
+      "bytes": 92173
+    },
+    {
+      "path": "source/blender/blenlib/BLI_math_base.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/BLI_math_base.hh",
+      "sha256": "cd6bc90176a7070134377a276dc702a06355832d79947840033610cc6218d7e4",
+      "bytes": 7092
+    },
+    {
+      "path": "source/blender/compositor/intern/operation.cc",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/intern/operation.cc",
+      "sha256": "0c51613277f842d359a69f1890295218de0dd913d7ae6891685e671028eedcc4",
+      "bytes": 5662
+    }
+  ]
+}

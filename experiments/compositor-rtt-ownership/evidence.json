@@ -1,0 +1,527 @@
+{
+  "schemaVersion": 1,
+  "status": "RESEARCH_ONLY_ACTUAL_FOUR_TUPLE_OWNERSHIP_CONTROLS_PASSED",
+  "productionCommits": [
+    "6fe126f",
+    "bd50628"
+  ],
+  "qualificationCredit": 0,
+  "nativeRenders": 0,
+  "nodeProductionCases": 0,
+  "savedFinalCases": 0,
+  "scope": "Private compositor RTT and explicitly allocated mapping-table lifetime; no new numeric or node-support qualification. Actual fractional Nearest Displace builder uses a deliberately constant Render Layers resolver and an explicit physical extent resolver for resource/guard controls only.",
+  "report": {
+    "path": "artifacts/verification-rtt-table-owner-control-r7/report.json",
+    "sha256": "c7d803ac01232845ae4b5e8dc7bc3924dbbac4947a93f8eaae5b2d77840c2743"
+  },
+  "sourcePins": {
+    "tslCompositorRttOwner.ts": "9f566fcd36ec2f24847dbb7182be78d66b5c3784e995bb63171702aa89c04212",
+    "tslCompositorDataTextureOwner.ts": "3839a8ed8912ca2fe31a1fd189e6b62618226094641853a3f224581beca3172c",
+    "tslCompositorBlur.ts": "1fa84b640ed82b6349f3b39b2f96a37fee3e5bc3daa74ffe566d04a7ee3c51ba",
+    "tslCompositorResampling.ts": "5657523f8ae3e55c6ad4f7828bcb8e33fd68fc4bd671af6093385f543585a0bd",
+    "tslCompositorDisplace.ts": "0a4e15c9ae6a46dfacc2c76de0bedb3870ff03bcaed43b4a1e8565c039eb51f8"
+  },
+  "fixturePins": {
+    "browser.js": "47fe7e84a6d8eac1570c7a9db7b269b29e3e174338c10ed4bf622a95e1d056c4",
+    "index.html": "f71f234e9cef3e82eb35c52878e7fdac796eb08349d11699b89db3797cca6b0a",
+    "run.mjs": "523dde66ed2c7087455cb60468b76ab086f6164fb55343db071bed44bc6c7d19"
+  },
+  "wholeProgramEmitterModules": 202,
+  "wholeProgramEmitterVerified": true,
+  "tuples": [
+    {
+      "profile": "metal",
+      "backend": "webgpu",
+      "gpu": {
+        "api": "WebGPU",
+        "vendor": "apple",
+        "architecture": "metal-3",
+        "device": "",
+        "description": ""
+      },
+      "rows": [
+        {
+          "mode": "normal-resize-warm",
+          "ownedTextures": 4,
+          "ownedAuxiliary": 0,
+          "allPhysicalDestroyedExactlyOnce": true,
+          "refusal": "",
+          "remainingCounts": [
+            1,
+            1
+          ],
+          "externalDeviceAlive": false
+        },
+        {
+          "mode": "first-upload-failure",
+          "ownedTextures": 3,
+          "ownedAuxiliary": 0,
+          "allPhysicalDestroyedExactlyOnce": true,
+          "refusal": "Error: Intentional owned first-upload failure",
+          "remainingCounts": [
+            1,
+            1
+          ],
+          "externalDeviceAlive": false
+        },
+        {
+          "mode": "foreign-bindings",
+          "ownedTextures": 2,
+          "ownedAuxiliary": 0,
+          "allPhysicalDestroyedExactlyOnce": true,
+          "refusal": "Error: Compositor RTT owned physical allocation changed",
+          "remainingCounts": [
+            1,
+            1
+          ],
+          "externalDeviceAlive": false
+        },
+        {
+          "mode": "combined-normal-resize",
+          "ownedTextures": 4,
+          "ownedAuxiliary": 0,
+          "allPhysicalDestroyedExactlyOnce": true,
+          "refusal": "",
+          "remainingCounts": [
+            1,
+            1
+          ],
+          "externalDeviceAlive": false
+        },
+        {
+          "mode": "combined-table-failure",
+          "ownedTextures": 4,
+          "ownedAuxiliary": 0,
+          "allPhysicalDestroyedExactlyOnce": true,
+          "refusal": "Error: Intentional owned first-upload failure",
+          "remainingCounts": [
+            1,
+            1
+          ],
+          "externalDeviceAlive": false
+        },
+        {
+          "mode": "combined-foreign",
+          "ownedTextures": 3,
+          "ownedAuxiliary": 0,
+          "allPhysicalDestroyedExactlyOnce": true,
+          "refusal": "Error: Compositor table owned physical allocation changed",
+          "remainingCounts": [
+            1,
+            1
+          ],
+          "externalDeviceAlive": false
+        },
+        {
+          "mode": "combined-saved-original-dispose",
+          "ownedTextures": 3,
+          "ownedAuxiliary": 0,
+          "allPhysicalDestroyedExactlyOnce": true,
+          "refusal": "Error: Displace: renderer/device/context/allocation epoch changed",
+          "remainingCounts": [
+            0,
+            0
+          ],
+          "externalDeviceAlive": true
+        }
+      ],
+      "foreign": [
+        {
+          "kind": "texture",
+          "beforeCleanupDestructions": 0
+        },
+        {
+          "kind": "texture",
+          "beforeCleanupDestructions": 0
+        }
+      ],
+      "errors": [],
+      "uncaptured": []
+    },
+    {
+      "profile": "metal",
+      "backend": "webgl2",
+      "gpu": {
+        "api": "WebGL2",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+      },
+      "rows": [
+        {
+          "mode": "normal-resize-warm",
+          "ownedTextures": 4,
+          "ownedAuxiliary": 2,
+          "allPhysicalDestroyedExactlyOnce": true,
+          "refusal": "",
+          "remainingCounts": [
+            1,
+            1
+          ],
+          "externalDeviceAlive": false
+        },
+        {
+          "mode": "first-upload-failure",
+          "ownedTextures": 3,
+          "ownedAuxiliary": 1,
+          "allPhysicalDestroyedExactlyOnce": true,
+          "refusal": "Error: Intentional owned first-upload failure",
+          "remainingCounts": [
+            1,
+            1
+          ],
+          "externalDeviceAlive": false
+        },
+        {
+          "mode": "foreign-bindings",
+          "ownedTextures": 2,
+          "ownedAuxiliary": 1,
+          "allPhysicalDestroyedExactlyOnce": true,
+          "refusal": "Error: Compositor RTT owned physical allocation changed",
+          "remainingCounts": [
+            1,
+            1
+          ],
+          "externalDeviceAlive": false
+        },
+        {
+          "mode": "combined-normal-resize",
+          "ownedTextures": 4,
+          "ownedAuxiliary": 2,
+          "allPhysicalDestroyedExactlyOnce": true,
+          "refusal": "",
+          "remainingCounts": [
+            1,
+            1
+          ],
+          "externalDeviceAlive": false
+        },
+        {
+          "mode": "combined-table-failure",
+          "ownedTextures": 4,
+          "ownedAuxiliary": 1,
+          "allPhysicalDestroyedExactlyOnce": true,
+          "refusal": "Error: Intentional owned first-upload failure",
+          "remainingCounts": [
+            1,
+            1
+          ],
+          "externalDeviceAlive": false
+        },
+        {
+          "mode": "combined-foreign",
+          "ownedTextures": 3,
+          "ownedAuxiliary": 1,
+          "allPhysicalDestroyedExactlyOnce": true,
+          "refusal": "Error: Compositor table owned physical allocation changed",
+          "remainingCounts": [
+            1,
+            1
+          ],
+          "externalDeviceAlive": false
+        },
+        {
+          "mode": "combined-saved-original-dispose",
+          "ownedTextures": 3,
+          "ownedAuxiliary": 1,
+          "allPhysicalDestroyedExactlyOnce": true,
+          "refusal": "Error: Displace requires an actual available renderer/device/context",
+          "remainingCounts": [
+            0,
+            0
+          ],
+          "externalDeviceAlive": false
+        }
+      ],
+      "foreign": [
+        {
+          "kind": "texture",
+          "beforeCleanupDestructions": 0
+        },
+        {
+          "kind": "texture",
+          "beforeCleanupDestructions": 0
+        }
+      ],
+      "errors": [],
+      "uncaptured": []
+    },
+    {
+      "profile": "software",
+      "backend": "webgpu",
+      "gpu": {
+        "api": "WebGPU",
+        "vendor": "google",
+        "architecture": "swiftshader",
+        "device": "",
+        "description": ""
+      },
+      "rows": [
+        {
+          "mode": "normal-resize-warm",
+          "ownedTextures": 4,
+          "ownedAuxiliary": 0,
+          "allPhysicalDestroyedExactlyOnce": true,
+          "refusal": "",
+          "remainingCounts": [
+            1,
+            1
+          ],
+          "externalDeviceAlive": false
+        },
+        {
+          "mode": "first-upload-failure",
+          "ownedTextures": 3,
+          "ownedAuxiliary": 0,
+          "allPhysicalDestroyedExactlyOnce": true,
+          "refusal": "Error: Intentional owned first-upload failure",
+          "remainingCounts": [
+            1,
+            1
+          ],
+          "externalDeviceAlive": false
+        },
+        {
+          "mode": "foreign-bindings",
+          "ownedTextures": 2,
+          "ownedAuxiliary": 0,
+          "allPhysicalDestroyedExactlyOnce": true,
+          "refusal": "Error: Compositor RTT owned physical allocation changed",
+          "remainingCounts": [
+            1,
+            1
+          ],
+          "externalDeviceAlive": false
+        },
+        {
+          "mode": "combined-normal-resize",
+          "ownedTextures": 4,
+          "ownedAuxiliary": 0,
+          "allPhysicalDestroyedExactlyOnce": true,
+          "refusal": "",
+          "remainingCounts": [
+            1,
+            1
+          ],
+          "externalDeviceAlive": false
+        },
+        {
+          "mode": "combined-table-failure",
+          "ownedTextures": 4,
+          "ownedAuxiliary": 0,
+          "allPhysicalDestroyedExactlyOnce": true,
+          "refusal": "Error: Intentional owned first-upload failure",
+          "remainingCounts": [
+            1,
+            1
+          ],
+          "externalDeviceAlive": false
+        },
+        {
+          "mode": "combined-foreign",
+          "ownedTextures": 3,
+          "ownedAuxiliary": 0,
+          "allPhysicalDestroyedExactlyOnce": true,
+          "refusal": "Error: Compositor table owned physical allocation changed",
+          "remainingCounts": [
+            1,
+            1
+          ],
+          "externalDeviceAlive": false
+        },
+        {
+          "mode": "combined-saved-original-dispose",
+          "ownedTextures": 3,
+          "ownedAuxiliary": 0,
+          "allPhysicalDestroyedExactlyOnce": true,
+          "refusal": "Error: Displace: renderer/device/context/allocation epoch changed",
+          "remainingCounts": [
+            0,
+            0
+          ],
+          "externalDeviceAlive": true
+        }
+      ],
+      "foreign": [
+        {
+          "kind": "texture",
+          "beforeCleanupDestructions": 0
+        },
+        {
+          "kind": "texture",
+          "beforeCleanupDestructions": 0
+        }
+      ],
+      "errors": [],
+      "uncaptured": []
+    },
+    {
+      "profile": "software",
+      "backend": "webgl2",
+      "gpu": {
+        "api": "WebGL2",
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+      },
+      "rows": [
+        {
+          "mode": "normal-resize-warm",
+          "ownedTextures": 4,
+          "ownedAuxiliary": 2,
+          "allPhysicalDestroyedExactlyOnce": true,
+          "refusal": "",
+          "remainingCounts": [
+            1,
+            1
+          ],
+          "externalDeviceAlive": false
+        },
+        {
+          "mode": "first-upload-failure",
+          "ownedTextures": 3,
+          "ownedAuxiliary": 1,
+          "allPhysicalDestroyedExactlyOnce": true,
+          "refusal": "Error: Intentional owned first-upload failure",
+          "remainingCounts": [
+            1,
+            1
+          ],
+          "externalDeviceAlive": false
+        },
+        {
+          "mode": "foreign-bindings",
+          "ownedTextures": 2,
+          "ownedAuxiliary": 1,
+          "allPhysicalDestroyedExactlyOnce": true,
+          "refusal": "Error: Compositor RTT owned physical allocation changed",
+          "remainingCounts": [
+            1,
+            1
+          ],
+          "externalDeviceAlive": false
+        },
+        {
+          "mode": "combined-normal-resize",
+          "ownedTextures": 4,
+          "ownedAuxiliary": 2,
+          "allPhysicalDestroyedExactlyOnce": true,
+          "refusal": "",
+          "remainingCounts": [
+            1,
+            1
+          ],
+          "externalDeviceAlive": false
+        },
+        {
+          "mode": "combined-table-failure",
+          "ownedTextures": 4,
+          "ownedAuxiliary": 1,
+          "allPhysicalDestroyedExactlyOnce": true,
+          "refusal": "Error: Intentional owned first-upload failure",
+          "remainingCounts": [
+            1,
+            1
+          ],
+          "externalDeviceAlive": false
+        },
+        {
+          "mode": "combined-foreign",
+          "ownedTextures": 3,
+          "ownedAuxiliary": 1,
+          "allPhysicalDestroyedExactlyOnce": true,
+          "refusal": "Error: Compositor table owned physical allocation changed",
+          "remainingCounts": [
+            1,
+            1
+          ],
+          "externalDeviceAlive": false
+        },
+        {
+          "mode": "combined-saved-original-dispose",
+          "ownedTextures": 3,
+          "ownedAuxiliary": 1,
+          "allPhysicalDestroyedExactlyOnce": true,
+          "refusal": "Error: Displace requires an actual available renderer/device/context",
+          "remainingCounts": [
+            0,
+            0
+          ],
+          "externalDeviceAlive": false
+        }
+      ],
+      "foreign": [
+        {
+          "kind": "texture",
+          "beforeCleanupDestructions": 0
+        },
+        {
+          "kind": "texture",
+          "beforeCleanupDestructions": 0
+        }
+      ],
+      "errors": [],
+      "uncaptured": []
+    }
+  ],
+  "totals": {
+    "actualTuples": 4,
+    "resourceControls": 28,
+    "ownedTextureAllocations": 92,
+    "ownedAuxiliaryAllocations": 18,
+    "savedDisposalOriginalHandles": 12,
+    "allPhysicalDestroyedExactlyOnce": true
+  },
+  "retainedFailures": [
+    {
+      "path": "artifacts/verification-rtt-owner-control-r1/report.json",
+      "sha256": "fa53d7bbf7b620499f3db3edefe877403dd5c53ed01669353ec321b66d8d71f5",
+      "status": "FAILED_ZERO_CREDIT",
+      "error": "Error: page.evaluate: Error: Saved renderer disposal was not refused\n    at assert (http://127.0.0.1:51758/browser.js:27:43)\n    at window.runRttOwnerControls (http://127.0.0.1:51758/browser.js:45:144)\n    at async <anonymous>:381:23",
+      "qualificationCredit": 0
+    },
+    {
+      "path": "/tmp/scenetoweb-rtt-table-owner-control-r1.log",
+      "sha256": "35b782520e6728cc2f5ef8f439b9c10dae8400bc06116d0aba283a3ea95efd0e",
+      "phase": "preflight-before-GPU",
+      "qualificationCredit": 0
+    },
+    {
+      "path": "artifacts/verification-rtt-table-owner-control-r2/report.json",
+      "sha256": "d7bb211ecc9ad05bde39da97da1a81a40fac516a78b5623aebf8bc2b03263819",
+      "status": "FAILED_ZERO_CREDIT",
+      "error": "Error: page.evaluate: SourceCompositorUnsupported: Compositor / Artist Displace [Image]: Translate requires matching source/render image extents; arbitrary data/display windows need native domain realization\n    at http://127.0.0.1:51982/@fs/private/tmp/scenetoweb-compositor-rtt-owner-next/artifacts/verification-rtt-table-owner-control-r2/runtime/tslSourceCompositor.js:1225:19\n    at validateCompositorExtent (http://127.0.0.1:51982/@fs/private/tmp/scenetoweb-compositor-rtt-owner-next/artifacts/verification-rtt-table-owner-control-r2/runtime/tslCompositorImageDomain.js:120:13)\n    at http://127.0.0.1:51982/@fs/private/tmp/scenetoweb-compositor-rtt-owner-next/artifacts/verification-rtt-table-owner-control-r2/runtime/tslCompositorImageDomain.js:151:120\n    at image.updateBefore (http://127.0.0.1:51982/@fs/private/tmp/scenetoweb-compositor-rtt-owner-next/artifacts/verification-rtt-table-owner-control-r2/runtime/tslCompositorResampling.js:78:13)\n    at NodeFrame.updateBeforeNode (http://127.0.0.1:51982/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:53072:15)\n    at NodeManager.updateBefore (http://127.0.0.1:51982/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:55031:47)\n    at WebGPURenderer._renderObjectDirect (http://127.0.0.1:51982/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:61306:16)\n    at WebGPURenderer.renderObject (http://127.0.0.1:51982/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:61231:9)\n    at WebGPURenderer._renderObjects (http://127.0.0.1:51982/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:61026:9)\n    at WebGPURenderer._renderScene (http://127.0.0.1:51982/@fs/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/build/three.webgpu.js:59491:64)",
+      "qualificationCredit": 0
+    },
+    {
+      "path": "artifacts/verification-rtt-table-owner-control-r3/report.json",
+      "sha256": "9cd315d74ac2441c3e450d5c295eaa9f3ecb4d7232058bde0132b4afc7d05cf6",
+      "status": "FAILED_ZERO_CREDIT",
+      "error": "Error: page.evaluate: Error: Owned textures not retired exactly once\n    at assert (http://127.0.0.1:51994/browser.js:29:43)\n    at window.runRttOwnerControls (http://127.0.0.1:51994/browser.js:51:122)\n    at async <anonymous>:381:23",
+      "qualificationCredit": 0
+    },
+    {
+      "path": "artifacts/verification-rtt-table-owner-control-r4/report.json",
+      "sha256": "9e914b7dc01ae914f0f9138144b6fa49311e9bffaa9a57da1f16f1eb1a80fe11",
+      "status": "FAILED_ZERO_CREDIT",
+      "error": "Error: page.evaluate: Error: Owned textures not retired exactly once {\"mode\":\"combined-normal-resize\",\"counts\":[1,1,1,0,1]}\n    at assert (http://127.0.0.1:52006/browser.js:29:43)\n    at window.runRttOwnerControls (http://127.0.0.1:52006/browser.js:51:122)\n    at async <anonymous>:381:23",
+      "qualificationCredit": 0
+    },
+    {
+      "path": "artifacts/verification-rtt-table-owner-control-r5/report.json",
+      "sha256": "d1c6ce9fcb0aca9406af6ce8ceef2d88581ba529bc1e07685724c9c93f88c55d",
+      "status": "FAILED_ZERO_CREDIT",
+      "error": "Error: page.evaluate: Error: Owned textures not retired exactly once {\"mode\":\"combined-normal-resize\",\"counts\":[{\"destroys\":1,\"kind\":\"texture\",\"name\":\"\",\"uuid\":\"f2436035-14dd-4376-be71-bb3bd3c1cd51\",\"width\":4,\"height\":4,\"outer\":false},{\"destroys\":1,\"kind\":\"texture\",\"name\":\"\",\"uuid\":\"e956e669-ef4c-4a88-ae0b-dda71e71e476\",\"isTable\":true,\"width\":256,\"height\":32,\"outer\":false},{\"destroys\":1,\"kind\":\"texture\",\"name\":\"\",\"uuid\":\"26593c76-e922-420e-abde-dd27d108c784\",\"isTable\":true,\"width\":256,\"height\":32,\"outer\":false},{\"destroys\":0,\"kind\":\"texture\"},{\"destroys\":1,\"kind\":\"texture\",\"name\":\"\",\"uuid\":\"f2436035-14dd-4376-be71-bb3bd3c1cd51\",\"width\":6,\"height\":5,\"outer\":false}]}\n    at assert (http://127.0.0.1:52022/browser.js:29:43)\n    at window.runRttOwnerControls (http://127.0.0.1:52022/browser.js:51:122)\n    at async <anonymous>:381:23",
+      "qualificationCredit": 0
+    },
+    {
+      "path": "artifacts/verification-rtt-table-owner-control-r6/report.json",
+      "sha256": "67503fc65dea9c4b71c7325a4768bc0c5a80d4be1f3ebb8e712e438bf5f9565f",
+      "status": "FAILED_ZERO_CREDIT",
+      "error": "Error: page.evaluate: Error: Saved renderer disposal was not refused: Error: Displace requires an actual available renderer/device/context\n    at assert (http://127.0.0.1:52035/browser.js:29:43)\n    at window.runRttOwnerControls (http://127.0.0.1:52035/browser.js:49:144)\n    at async <anonymous>:381:23",
+      "qualificationCredit": 0
+    }
+  ],
+  "limits": [
+    "No native arithmetic or saved-Final qualification in this resource-only probe.",
+    "No blanket ownership of borrowed input, scene-pass, replacement or renderer output textures.",
+    "First-partial-upload and existing MSAA-array append cases also have real Three Textures/Info host regressions; actual probe uses ordinary non-MSAA RTTs.",
+    "Shared quad geometry is borrowed and never disposed by the RTT owner."
+  ]
+}

@@ -73,6 +73,7 @@ normalize_map_value = _sibling("compositor_map_value").normalize_map_value
 normalize_spill = _sibling("compositor_spill").normalize_spill
 normalize_color_key = _sibling("compositor_color_key").normalize_color_key
 normalize_static_image = _sibling("compositor_image").normalize_image
+blank_image = _sibling("compositor_blank_image")
 normalize_vector_component = _sibling("compositor_vector_component").normalize_vector_component
 normalize_float_to_int = _sibling("compositor_float_to_int").normalize_float_to_int
 normalize_vector_math = _sibling("compositor_vector_math").normalize_vector_math
@@ -80,7 +81,11 @@ normalize_radial_width = _sibling("compositor_radial_width").normalize_radial_wi
 normalize_blackbody = _sibling("compositor_blackbody").normalize_blackbody
 normalize_white_noise = _sibling("compositor_white_noise").normalize_white_noise
 validate_white_noise_field_graph = _sibling("compositor_white_noise").validate_white_noise_field_graph
+noise_texture = _sibling("compositor_noise")
+noise_fixed_inputs = _sibling("compositor_white_noise").fixed_inputs
+validate_noise_presentation = noise_texture.validate_noise_presentation
 wave_axis = _sibling("compositor_wave_axis")
+displace_single = _sibling("compositor_displace")
 resolve_vector_math_literal = _sibling("compositor_procedural_texture").literal
 normalize_procedural_texture = _sibling("compositor_procedural_texture").normalize_procedural_texture
 validate_texture_field_graph = _sibling("compositor_procedural_texture").validate_texture_field_graph
@@ -115,6 +120,7 @@ TYPES = {
     "ShaderNodeRadialTiling": "radial-segment-width",
     "ShaderNodeBlackbody": "blackbody-color",
     "ShaderNodeTexWhiteNoise": "white-noise-texture",
+    "ShaderNodeTexNoise": "noise-texture",
     "ShaderNodeTexWave": "wave-texture",
     "ShaderNodeTexGradient": "gradient-texture",
     "ShaderNodeTexChecker": "checker-texture",
@@ -184,6 +190,7 @@ TYPES = {
     "CompositorNodeHueSat": "hue-saturation-value",
     "CompositorNodeHueCorrect": "hue-correct",
     "CompositorNodeBlur": "blur",
+    "CompositorNodeDisplace": "translate",
     "CompositorNodeTranslate": "translate",
     "CompositorNodeTransform": "translate",
     "CompositorNodeRotate": "image-affine",
@@ -196,6 +203,7 @@ TYPES = {
     "CompositorNodeGlare": "glare",
     "CompositorNodeRLayers": "render-pass",
     "CompositorNodeImage": "image-input",
+    "CompositorNodeBlankImage": "blank-image",
     "CompositorNodeCrop": "alpha-crop",
     "CompositorNodeSplit": "image-split",
 }
@@ -314,10 +322,15 @@ def extract(scene):
     static_matrix_cache = {}
     static_rotation_cache = {}
     static_euler_cache = {}
+    noise_reads = []
+    blank_image_reads = []
+    blank_image_topology = {}
+    blank_image_active = [False]
     wave_axis_reads = []
-    wave_used_nodes = {}
-    wave_topology = {}
-    wave_active = [False]
+    field_used_nodes = {}
+    field_topology = {}
+    field_active = [None]
+    displace_reads = []
     source_nodes = {}
     view_selections = []
     used_group_interfaces = {}
@@ -462,6 +475,8 @@ def extract(scene):
             fail("cycle", path, node, socket, "Reachable compositor cycle")
         visiting.add(key)
         try:
+            if node.mute and node.bl_idname=='CompositorNodeBlankImage':
+                fail('unsupported-blank-image',path,node,socket,'Blank Image mute bypass is outside the qualified finite-domain producer profile')
             if node.mute:
                 links = [l for l in node.internal_links if l.to_socket == socket]
                 if len(links) != 1:
@@ -625,6 +640,11 @@ def extract(scene):
                         fail('unsupported-static-matrix',path,node,socket,str(error))
                     op['value']=record['value']
                     result.setdefault('compileTimeMatrices',[]).append(dict(record,path=list(path),node=node.name,output=socket.identifier))
+                elif node.bl_idname == "CompositorNodeBlankImage":
+                    blank_image_active[0]=True
+                    for used,used_path in field_used_nodes.values():observe_blank_topology(used,used_path)
+                    snapshot=blank_image.normalize(node,socket,op,scene,lambda incoming,message:fail('unsupported-blank-image',path,node,incoming,message))
+                    blank_image_reads.append((node,socket,snapshot,tuple(path)))
                 elif node.bl_idname == "CompositorNodeImage":
                     normalize_static_image(node, socket, op, scene, result, static_image_cache,
                         lambda incoming, message: fail("unsupported-static-image", path, node, incoming, message))
@@ -656,10 +676,17 @@ def extract(scene):
                 elif node.bl_idname == "ShaderNodeBlackbody":
                     normalize_blackbody(node, socket, op, lambda incoming: input_value(incoming, ctx), result["ops"],
                         lambda incoming, message: fail("unsupported-blackbody", path, node, incoming, message), resolve_vector_math_literal)
+                elif node.bl_idname == "ShaderNodeTexNoise":
+                    activate_field_topology('noise','Noise')
+                    frames=[];current=ctx
+                    while current.get('parent') is not None:
+                        frames.append(current['instance']);current=current['parent']
+                    stack=tuple(reversed(frames))
+                    signature=noise_texture.normalize_noise(node,socket,op,scene,stack,
+                        lambda incoming,message:fail('unsupported-noise',path,node,incoming,message),noise_fixed_inputs)
+                    noise_reads.append((node,socket,signature,path,stack))
                 elif node.bl_idname == "ShaderNodeTexWave":
-                    if not wave_active[0]:
-                        wave_active[0]=True
-                        for used,used_path in wave_used_nodes.values():observe_wave_topology(used,used_path)
+                    activate_field_topology('wave-axis','Wave')
                     if len(wave_axis_reads)>=128:
                         fail('unsupported-wave-axis',path,node,socket,'Wave axis exceeds its 128 source-operation budget')
                     signature=wave_axis.normalize_wave_axis(node,socket,op,scene,
@@ -806,6 +833,13 @@ def extract(scene):
                     normalize_blur(node, op, scene, lambda incoming: input_value(incoming, ctx),
                         _sibling("compositor_math").numeric_socket_bounds,
                         lambda incoming, message: fail("unsupported-blur-mode", path, node, incoming, message))
+                elif node.bl_idname == 'CompositorNodeDisplace':
+                    activate_field_topology('displace-single','Displace')
+                    if displace_reads:
+                        fail('unsupported-displace-single',path,node,socket,'Displace currently allows one terminal constant-displacement node')
+                    observation=displace_single.normalize(node,socket,op,scene,lambda incoming: input_value(incoming,ctx),result['ops'],source_nodes,
+                        lambda incoming,message: fail('unsupported-displace-single',path,node,incoming,message))
+                    displace_reads.append((node,socket,observation,path))
                 elif node.bl_idname in ("CompositorNodeTranslate", "CompositorNodeTransform", "CompositorNodeRotate", "CompositorNodeScale"):
                     bounds = _sibling("compositor_math").numeric_socket_bounds
                     if node.bl_idname == "CompositorNodeTranslate" or translation_only_transform(node, bounds):
@@ -1060,7 +1094,7 @@ def extract(scene):
                                 "value": input_value(incoming, ctx),
                             }
                 # Assign only after dependencies are emitted, yielding topological order.
-                single = op["kind"] == "image-info" or (op["kind"] == "ellipse-mask" and op["properties"].get("ellipse_mask_identity") is True) or (op["kind"] not in {"render-pass", "image-input", "box-mask", "ellipse-mask"} and not op["properties"].get("procedural_texture_coordinate_model") and not op["properties"].get("white_noise_coordinate_model") and not op["properties"].get("wave_axis_model") and all(is_single_value(incoming["value"]) for incoming in op["inputs"].values()))
+                single = op["kind"] == "image-info" or (op["kind"] == "ellipse-mask" and op["properties"].get("ellipse_mask_identity") is True) or (op["kind"] not in {"render-pass", "image-input", "blank-image", "box-mask", "ellipse-mask"} and not op["properties"].get("procedural_texture_coordinate_model") and not op["properties"].get("white_noise_coordinate_model") and not op["properties"].get("wave_axis_model") and not op["properties"].get("noise_coordinate_model") and all(is_single_value(incoming["value"]) for incoming in op["inputs"].values()))
                 if single and op["kind"] == "alpha-crop" and bpy.app.version < (4, 5, 0) and device == "CPU":
                     fail("unsupported-crop-domain", path, node, socket,
                          "Legacy CPU Crop requires a finite image input; constant-image canvas evaluation remains unqualified")
@@ -1079,25 +1113,43 @@ def extract(scene):
         finally:
             visiting.remove(key)
 
-    def observe_wave_topology(node, path):
-        # Only used nodes, never a containing-tree copy or unused-node walk.
-        if len(wave_topology)>=2048 and node.as_pointer() not in wave_topology:
-            fail('unsupported-wave-axis',path,node,None,'Wave source topology exceeds 2048 used nodes')
+    def activate_field_topology(code,label):
+        if field_active[0] is None:
+            field_active[0]=(code,label)
+            for used,used_path in field_used_nodes.values():observe_field_topology(used,used_path)
+
+    def observe_field_topology(node, path):
+        # Only contributing nodes; shared by bounded CPU field families.
+        code,label=field_active[0]
+        if len(field_topology)>=2048 and node.as_pointer() not in field_topology:
+            fail('unsupported-'+code,path,node,None,label+' source topology exceeds 2048 used nodes')
         if len(node.inputs)+len(node.outputs)>4096:
-            fail('unsupported-wave-axis',path,node,None,'Wave source topology exceeds its socket budget')
+            fail('unsupported-'+code,path,node,None,label+' source topology exceeds its socket budget')
         try:
             signature=static_matrix._Evaluator.signature(node)
             key=node.as_pointer()
-            prior=wave_topology.get(key)
+            prior=field_topology.get(key)
             if prior is not None and prior[1]!=signature:
-                raise ValueError('Wave used topology changed during extraction')
-            wave_topology[key]=(node,signature,tuple(path),node.name)
+                raise ValueError(label+' used topology changed during extraction')
+            field_topology[key]=(node,signature,tuple(path),node.name)
         except (ValueError,ReferenceError,RuntimeError) as error:
-            fail('wave-axis-topology-changed',path,node,None,str(error))
+            fail(code+'-topology-changed',path,node,None,str(error))
+
+    def observe_blank_topology(node,path):
+        try:
+            if len(blank_image_topology)>=2048 and node.as_pointer()not in blank_image_topology or len(node.inputs)+len(node.outputs)>4096:
+                raise blank_image.BlankImageUnsupported('Blank Image used topology exceeds its bounded node/socket budget')
+            blank_image._static(node.id_data)
+            signature=static_matrix._Evaluator.signature(node)
+            prior=blank_image_topology.get(node.as_pointer())
+            if prior is not None and prior[1]!=signature:raise blank_image.BlankImageUnsupported('Blank Image used topology changed during extraction')
+            blank_image_topology[node.as_pointer()]=(node,signature,tuple(path),node.name)
+        except (ValueError,ReferenceError,RuntimeError)as error:fail('blank-image-source-changed',path,node,None,str(error))
 
     def require_static(node, socket, ctx):
-        wave_used_nodes[node.as_pointer()]=(node,tuple(ctx['path']))
-        if wave_active[0]:observe_wave_topology(node,ctx['path'])
+        field_used_nodes[node.as_pointer()]=(node,tuple(ctx['path']))
+        if field_active[0]:observe_field_topology(node,ctx['path'])
+        if blank_image_active[0]:observe_blank_topology(node,ctx['path'])
         owner = node.id_data
         animation = owner.animation_data
         if animation and (
@@ -1160,6 +1212,11 @@ def extract(scene):
             op, message = box_conflict
             result["diagnostics"].append({"code":"unsupported-box-mask", "path":op["source"]["path"], "node":op["source"]["node"], "socket":op["source"]["output"], "message":message})
             raise Unsupported()
+        noise_conflict=noise_texture.validate_noise_graph(result)
+        if noise_conflict:
+            op,message=noise_conflict
+            result['diagnostics'].append({'code':'unsupported-noise','path':op['source']['path'],'node':op['source']['node'],'socket':op['source']['output'],'message':message})
+            raise Unsupported()
         wave_conflict = wave_axis.validate_wave_axis_graph(result)
         if wave_conflict:
             op,message=wave_conflict
@@ -1199,11 +1256,21 @@ def extract(scene):
             result["diagnostics"].append({"code": "unsupported-crop-domain", "path": op["source"]["path"],
                 "node": op["source"]["node"], "socket": op["source"]["output"], "message": message})
             raise Unsupported()
+        blank_conflict=blank_image.validate_graph(result)
+        if blank_conflict:
+            op,message=blank_conflict
+            result['diagnostics'].append({'code':'unsupported-blank-image','path':op['source']['path'],'node':op['source']['node'],'socket':op['source']['output'],'message':message})
+            raise Unsupported()
         image_conflict = validate_static_image_graph(result)
         if image_conflict:
             op, message = image_conflict
             result["diagnostics"].append({"code": "unsupported-image-domain", "path": op["source"]["path"],
                 "node": op["source"]["node"], "socket": op["source"]["output"], "message": message})
+            raise Unsupported()
+        displace_conflict=displace_single.validate_graph(result)
+        if displace_conflict:
+            op,message=displace_conflict
+            result['diagnostics'].append({'code':'unsupported-displace-single','path':op['source']['path'],'node':op['source']['node'],'socket':op['source']['output'],'message':message})
             raise Unsupported()
         if any(op["kind"] in ("translate", "image-affine") for op in result["ops"]):
             conflict = transform_origin_conflict(result, single_values, multiply_image_affine)
@@ -1249,18 +1316,40 @@ def extract(scene):
             except (group_defaults.GroupDefaultUnsupported,ReferenceError,RuntimeError) as error:
                 # The node itself may have been removed by an evaluation handler.
                 fail('group-interface-changed',path,None,None,label+': '+str(error))
-        for node,signature,path,label in wave_topology.values():
+        for node,socket,signature,path,stack in noise_reads:
+            current={'inputs':{},'properties':{'evaluation_device':'CPU','single_value_device':'CPU'}}
             try:
-                if static_matrix._Evaluator.signature(node)!=signature:
-                    raise ValueError('Wave used topology changed during extraction')
+                actual=noise_texture.normalize_noise(node,socket,current,scene,stack,
+                    lambda incoming,message:fail('noise-source-changed',path,node,incoming,message),noise_fixed_inputs)
+                if actual!=signature:fail('noise-source-changed',path,node,socket,'Noise source/context changed after contributing source evaluation')
             except (ValueError,ReferenceError,RuntimeError) as error:
-                fail('wave-axis-topology-changed',path,None,None,label+': '+str(error))
+                fail('noise-source-changed',path,node,socket,str(error))
+        for node,signature,path,label in blank_image_topology.values():
+            try:
+                blank_image._static(node.id_data)
+                if static_matrix._Evaluator.signature(node)!=signature:raise blank_image.BlankImageUnsupported('Blank Image used topology changed during extraction')
+            except (ValueError,ReferenceError,RuntimeError)as error:fail('blank-image-source-changed',path,None,None,label+': '+str(error))
+        for node,socket,signature,path in blank_image_reads:
+            try:
+                if blank_image.source_signature(node,scene)!=signature:raise blank_image.BlankImageUnsupported('Blank Image source or context changed during extraction')
+            except (ValueError,ReferenceError,RuntimeError)as error:fail('blank-image-source-changed',path,node,socket,str(error))
         for node,socket,signature,path in wave_axis_reads:
             try:
                 if wave_axis.source_signature(node,scene)!=signature:
                     raise wave_axis.WaveAxisUnsupported('Wave axis source/context changed during extraction')
             except (wave_axis.WaveAxisUnsupported,ReferenceError,RuntimeError) as error:
                 fail('wave-axis-source-changed',path,node,socket,str(error))
+        for node,socket,observation,path in displace_reads:
+            try:displace_single.check(node,scene,observation)
+            except (displace_single.DisplaceUnsupported,ReferenceError,RuntimeError) as error:
+                fail('displace-source-changed',path,node,socket,str(error))
+        for node,signature,path,node_label in field_topology.values():
+            code,label=field_active[0]
+            try:
+                if static_matrix._Evaluator.signature(node)!=signature:
+                    raise ValueError(label+' used topology changed during extraction')
+            except (ValueError,ReferenceError,RuntimeError) as error:
+                fail(code+'-topology-changed',path,None,None,node_label+': '+str(error))
         result["status"] = "extracted"
     except Unsupported:
         result["status"] = "unsupported"

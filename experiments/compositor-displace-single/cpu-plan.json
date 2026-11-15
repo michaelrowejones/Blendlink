@@ -1,0 +1,541 @@
+{
+  "schemaVersion": 1,
+  "role": "Declared native CPU branch feasibility only",
+  "supportCredit": 0,
+  "gates": {
+    "displaceVsTranslate": "every Float32 word exact",
+    "origin": "independent input words exact",
+    "farOutsideClip": "every RGBA word positive zero",
+    "gpuInitializationCalls": 0
+  },
+  "cases": [
+    {
+      "case": "13x9-Nearest-origin",
+      "width": 13,
+      "height": 9,
+      "interpolation": "Nearest",
+      "setting": "origin",
+      "displacementWords": [
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Nearest-integer",
+      "width": 13,
+      "height": 9,
+      "interpolation": "Nearest",
+      "setting": "integer",
+      "displacementWords": [
+        1065353216,
+        3221225472
+      ]
+    },
+    {
+      "case": "13x9-Nearest-fractional",
+      "width": 13,
+      "height": 9,
+      "interpolation": "Nearest",
+      "setting": "fractional",
+      "displacementWords": [
+        1048576000,
+        3204448256
+      ]
+    },
+    {
+      "case": "13x9-Nearest-ordinary",
+      "width": 13,
+      "height": 9,
+      "interpolation": "Nearest",
+      "setting": "ordinary",
+      "displacementWords": [
+        1036831949,
+        3197737370
+      ]
+    },
+    {
+      "case": "13x9-Nearest-minimum",
+      "width": 13,
+      "height": 9,
+      "interpolation": "Nearest",
+      "setting": "minimum",
+      "displacementWords": [
+        931135488,
+        3078619136
+      ]
+    },
+    {
+      "case": "13x9-Nearest-maximum",
+      "width": 13,
+      "height": 9,
+      "interpolation": "Nearest",
+      "setting": "maximum",
+      "displacementWords": [
+        1174405120,
+        3321888768
+      ]
+    },
+    {
+      "case": "13x9-Bilinear-origin",
+      "width": 13,
+      "height": 9,
+      "interpolation": "Bilinear",
+      "setting": "origin",
+      "displacementWords": [
+        0,
+        0
+      ]
+    },
+    {
+      "case": "13x9-Bilinear-integer",
+      "width": 13,
+      "height": 9,
+      "interpolation": "Bilinear",
+      "setting": "integer",
+      "displacementWords": [
+        1065353216,
+        3221225472
+      ]
+    },
+    {
+      "case": "13x9-Bilinear-fractional",
+      "width": 13,
+      "height": 9,
+      "interpolation": "Bilinear",
+      "setting": "fractional",
+      "displacementWords": [
+        1048576000,
+        3204448256
+      ]
+    },
+    {
+      "case": "13x9-Bilinear-ordinary",
+      "width": 13,
+      "height": 9,
+      "interpolation": "Bilinear",
+      "setting": "ordinary",
+      "displacementWords": [
+        1036831949,
+        3197737370
+      ]
+    },
+    {
+      "case": "13x9-Bilinear-minimum",
+      "width": 13,
+      "height": 9,
+      "interpolation": "Bilinear",
+      "setting": "minimum",
+      "displacementWords": [
+        931135488,
+        3078619136
+      ]
+    },
+    {
+      "case": "13x9-Bilinear-maximum",
+      "width": 13,
+      "height": 9,
+      "interpolation": "Bilinear",
+      "setting": "maximum",
+      "displacementWords": [
+        1174405120,
+        3321888768
+      ]
+    },
+    {
+      "case": "9x13-Nearest-origin",
+      "width": 9,
+      "height": 13,
+      "interpolation": "Nearest",
+      "setting": "origin",
+      "displacementWords": [
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-Nearest-integer",
+      "width": 9,
+      "height": 13,
+      "interpolation": "Nearest",
+      "setting": "integer",
+      "displacementWords": [
+        1065353216,
+        3221225472
+      ]
+    },
+    {
+      "case": "9x13-Nearest-fractional",
+      "width": 9,
+      "height": 13,
+      "interpolation": "Nearest",
+      "setting": "fractional",
+      "displacementWords": [
+        1048576000,
+        3204448256
+      ]
+    },
+    {
+      "case": "9x13-Nearest-ordinary",
+      "width": 9,
+      "height": 13,
+      "interpolation": "Nearest",
+      "setting": "ordinary",
+      "displacementWords": [
+        1036831949,
+        3197737370
+      ]
+    },
+    {
+      "case": "9x13-Nearest-minimum",
+      "width": 9,
+      "height": 13,
+      "interpolation": "Nearest",
+      "setting": "minimum",
+      "displacementWords": [
+        931135488,
+        3078619136
+      ]
+    },
+    {
+      "case": "9x13-Nearest-maximum",
+      "width": 9,
+      "height": 13,
+      "interpolation": "Nearest",
+      "setting": "maximum",
+      "displacementWords": [
+        1174405120,
+        3321888768
+      ]
+    },
+    {
+      "case": "9x13-Bilinear-origin",
+      "width": 9,
+      "height": 13,
+      "interpolation": "Bilinear",
+      "setting": "origin",
+      "displacementWords": [
+        0,
+        0
+      ]
+    },
+    {
+      "case": "9x13-Bilinear-integer",
+      "width": 9,
+      "height": 13,
+      "interpolation": "Bilinear",
+      "setting": "integer",
+      "displacementWords": [
+        1065353216,
+        3221225472
+      ]
+    },
+    {
+      "case": "9x13-Bilinear-fractional",
+      "width": 9,
+      "height": 13,
+      "interpolation": "Bilinear",
+      "setting": "fractional",
+      "displacementWords": [
+        1048576000,
+        3204448256
+      ]
+    },
+    {
+      "case": "9x13-Bilinear-ordinary",
+      "width": 9,
+      "height": 13,
+      "interpolation": "Bilinear",
+      "setting": "ordinary",
+      "displacementWords": [
+        1036831949,
+        3197737370
+      ]
+    },
+    {
+      "case": "9x13-Bilinear-minimum",
+      "width": 9,
+      "height": 13,
+      "interpolation": "Bilinear",
+      "setting": "minimum",
+      "displacementWords": [
+        931135488,
+        3078619136
+      ]
+    },
+    {
+      "case": "9x13-Bilinear-maximum",
+      "width": 9,
+      "height": 13,
+      "interpolation": "Bilinear",
+      "setting": "maximum",
+      "displacementWords": [
+        1174405120,
+        3321888768
+      ]
+    },
+    {
+      "case": "8192x4-Nearest-origin",
+      "width": 8192,
+      "height": 4,
+      "interpolation": "Nearest",
+      "setting": "origin",
+      "displacementWords": [
+        0,
+        0
+      ]
+    },
+    {
+      "case": "8192x4-Nearest-integer",
+      "width": 8192,
+      "height": 4,
+      "interpolation": "Nearest",
+      "setting": "integer",
+      "displacementWords": [
+        1065353216,
+        3221225472
+      ]
+    },
+    {
+      "case": "8192x4-Nearest-fractional",
+      "width": 8192,
+      "height": 4,
+      "interpolation": "Nearest",
+      "setting": "fractional",
+      "displacementWords": [
+        1048576000,
+        3204448256
+      ]
+    },
+    {
+      "case": "8192x4-Nearest-ordinary",
+      "width": 8192,
+      "height": 4,
+      "interpolation": "Nearest",
+      "setting": "ordinary",
+      "displacementWords": [
+        1036831949,
+        3197737370
+      ]
+    },
+    {
+      "case": "8192x4-Nearest-minimum",
+      "width": 8192,
+      "height": 4,
+      "interpolation": "Nearest",
+      "setting": "minimum",
+      "displacementWords": [
+        931135488,
+        3078619136
+      ]
+    },
+    {
+      "case": "8192x4-Nearest-maximum",
+      "width": 8192,
+      "height": 4,
+      "interpolation": "Nearest",
+      "setting": "maximum",
+      "displacementWords": [
+        1174405120,
+        3321888768
+      ]
+    },
+    {
+      "case": "8192x4-Bilinear-origin",
+      "width": 8192,
+      "height": 4,
+      "interpolation": "Bilinear",
+      "setting": "origin",
+      "displacementWords": [
+        0,
+        0
+      ]
+    },
+    {
+      "case": "8192x4-Bilinear-integer",
+      "width": 8192,
+      "height": 4,
+      "interpolation": "Bilinear",
+      "setting": "integer",
+      "displacementWords": [
+        1065353216,
+        3221225472
+      ]
+    },
+    {
+      "case": "8192x4-Bilinear-fractional",
+      "width": 8192,
+      "height": 4,
+      "interpolation": "Bilinear",
+      "setting": "fractional",
+      "displacementWords": [
+        1048576000,
+        3204448256
+      ]
+    },
+    {
+      "case": "8192x4-Bilinear-ordinary",
+      "width": 8192,
+      "height": 4,
+      "interpolation": "Bilinear",
+      "setting": "ordinary",
+      "displacementWords": [
+        1036831949,
+        3197737370
+      ]
+    },
+    {
+      "case": "8192x4-Bilinear-minimum",
+      "width": 8192,
+      "height": 4,
+      "interpolation": "Bilinear",
+      "setting": "minimum",
+      "displacementWords": [
+        931135488,
+        3078619136
+      ]
+    },
+    {
+      "case": "8192x4-Bilinear-maximum",
+      "width": 8192,
+      "height": 4,
+      "interpolation": "Bilinear",
+      "setting": "maximum",
+      "displacementWords": [
+        1174405120,
+        3321888768
+      ]
+    },
+    {
+      "case": "4x8192-Nearest-origin",
+      "width": 4,
+      "height": 8192,
+      "interpolation": "Nearest",
+      "setting": "origin",
+      "displacementWords": [
+        0,
+        0
+      ]
+    },
+    {
+      "case": "4x8192-Nearest-integer",
+      "width": 4,
+      "height": 8192,
+      "interpolation": "Nearest",
+      "setting": "integer",
+      "displacementWords": [
+        1065353216,
+        3221225472
+      ]
+    },
+    {
+      "case": "4x8192-Nearest-fractional",
+      "width": 4,
+      "height": 8192,
+      "interpolation": "Nearest",
+      "setting": "fractional",
+      "displacementWords": [
+        1048576000,
+        3204448256
+      ]
+    },
+    {
+      "case": "4x8192-Nearest-ordinary",
+      "width": 4,
+      "height": 8192,
+      "interpolation": "Nearest",
+      "setting": "ordinary",
+      "displacementWords": [
+        1036831949,
+        3197737370
+      ]
+    },
+    {
+      "case": "4x8192-Nearest-minimum",
+      "width": 4,
+      "height": 8192,
+      "interpolation": "Nearest",
+      "setting": "minimum",
+      "displacementWords": [
+        931135488,
+        3078619136
+      ]
+    },
+    {
+      "case": "4x8192-Nearest-maximum",
+      "width": 4,
+      "height": 8192,
+      "interpolation": "Nearest",
+      "setting": "maximum",
+      "displacementWords": [
+        1174405120,
+        3321888768
+      ]
+    },
+    {
+      "case": "4x8192-Bilinear-origin",
+      "width": 4,
+      "height": 8192,
+      "interpolation": "Bilinear",
+      "setting": "origin",
+      "displacementWords": [
+        0,
+        0
+      ]
+    },
+    {
+      "case": "4x8192-Bilinear-integer",
+      "width": 4,
+      "height": 8192,
+      "interpolation": "Bilinear",
+      "setting": "integer",
+      "displacementWords": [
+        1065353216,
+        3221225472
+      ]
+    },
+    {
+      "case": "4x8192-Bilinear-fractional",
+      "width": 4,
+      "height": 8192,
+      "interpolation": "Bilinear",
+      "setting": "fractional",
+      "displacementWords": [
+        1048576000,
+        3204448256
+      ]
+    },
+    {
+      "case": "4x8192-Bilinear-ordinary",
+      "width": 4,
+      "height": 8192,
+      "interpolation": "Bilinear",
+      "setting": "ordinary",
+      "displacementWords": [
+        1036831949,
+        3197737370
+      ]
+    },
+    {
+      "case": "4x8192-Bilinear-minimum",
+      "width": 4,
+      "height": 8192,
+      "interpolation": "Bilinear",
+      "setting": "minimum",
+      "displacementWords": [
+        931135488,
+        3078619136
+      ]
+    },
+    {
+      "case": "4x8192-Bilinear-maximum",
+      "width": 4,
+      "height": 8192,
+      "interpolation": "Bilinear",
+      "setting": "maximum",
+      "displacementWords": [
+        1174405120,
+        3321888768
+      ]
+    }
+  ]
+}

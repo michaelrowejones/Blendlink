@@ -1,0 +1,15 @@
+# Blank Image: native finite-domain research
+
+Pinned Blender 5.3 always allocates a texture with `Domain(max(Size, 1))` and fills every pixel with the actual single Color. It never returns a single-value result. The native Size socket is `NodeSocketIntVectorPixel2D`, not the ordinary vector socket used by some other nodes. Original defaults are black with alpha one and size 1920 by 1080.
+
+The retained CPU probe closed 21 actual compositor renders using CYCLES CPU as carrier, CPU compositor FULL and a demonstrated `gpu.init` refusal. The existing extractor still refused every Blank source. Equal-size output preserves the stored HDR/alpha values; smaller images retain transparent exterior pixels. Unequal odd windows also preserve small Float32 fringe values near the border. An integer rectangle or a global constant would lose those semantics.
+
+Image Info reads the Blank image's own size, with identity location/rotation/scale, independently of the render canvas. Pixel/Uniform/Normalized coordinate outputs likewise use that finite image domain and undergo the native terminal realization. These are research observations only. Their current Render Layers producer contracts must not be relabeled or widened to accept Blank without separate provenance and proofs.
+
+The first attempt failed an assignment-fidelity assertion: a requested negative unlinked Color did not survive native RNA storage. It stopped after three renders, remains zero credit, and retains its exact failed script bytes, log and incomplete launcher archive. The successful second probe uses a genuine linked Combine Color only for signed/HDR native controls. That does not authorize linked inputs in the first port.
+
+The initial producer design keeps a distinct native class/model, static raw unlinked Color/Size, source snapshots and a finite image domain. Raw Size is clamped exactly as the native integer operation before enforcing dimensions 1 through 8192 and at most 4,194,304 pixels. Color input admission uses actual raw stored Float32 words, not the values requested through Python setters. Linked controls, animation, transforms, mixed image domains, Image Info/coordinate consumers and other source profiles remain unqualified initially.
+
+The existing modern CPU finite-window realizer already owns the required coordinate, neighbor, Float32 weight and parity behavior. A narrow opt-in virtual texel loader can return the authored color for an in-bounds integer texel and transparent black outside, keeping that arithmetic unchanged while avoiding a large constant-color RTT. Two existing O(W+H) mapping tables remain; their ownership and first-draw/prewarm ordering need actual browser proof. If the optimization needs broader engine work, the bounded cached RTT remains an honest fallback, with its approximately 31.6 MiB default allocation and fill pass stated explicitly.
+
+Primary files and GPL attribution are pinned in `sources.json`. `research-receipt.json` points to ignored machine-local native artifacts; it grants no source port, Final, browser, GPU or whole-scene credit. No original user scene was copied or evaluated.

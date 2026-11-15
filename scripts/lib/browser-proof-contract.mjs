@@ -6,6 +6,9 @@ import {pathToFileURL} from 'node:url'
 import ts from 'typescript'
 
 export const browserProofFamilies=Object.freeze({
+ 'compositor-displace-single':Object.freeze({schemaVersion:1,family:'compositor-displace-single',nativeStatus:'CAPTURED_DISPLACE_CPU_SAME_PIXEL_REFERENCES',finalStatus:'EXPORTED_DISPLACE_SAVED_FINAL',browserStatus:'PASSED_DISPLACE_ACTUAL_FINAL'}),
+ 'compositor-noise-default-field':Object.freeze({schemaVersion:1,family:'compositor-noise-default-field',nativeStatus:'CAPTURED_COMPOSITOR_NOISE_DEFAULT_FIELD',finalStatus:'PUBLISHED_COMPOSITOR_NOISE_DEFAULT_FIELD',browserStatus:'PASSED_NOISE_DEFAULT_FIELD_BUILT_PROOF'}),
+ 'compositor-blank-image':Object.freeze({schemaVersion:1,family:'compositor-blank-image',nativeStatus:'CAPTURED_COMPOSITOR_BLANK_IMAGE',finalStatus:'PUBLISHED_COMPOSITOR_BLANK_IMAGE',browserStatus:'PASSED_BLANK_IMAGE_BUILT_PROOF'}),
  'compositor-white-noise-default-field':Object.freeze({schemaVersion:1,family:'compositor-white-noise-default-field',nativeStatus:'CAPTURED_COMPOSITOR_WHITE_NOISE_DEFAULT_FIELD',finalStatus:'PUBLISHED_COMPOSITOR_WHITE_NOISE_DEFAULT_FIELD',browserStatus:'PASSED_WHITE_NOISE_DEFAULT_FIELD_BUILT_PROOF'}),
  'compositor-wave-axis':Object.freeze({schemaVersion:1,family:'compositor-wave-axis',nativeStatus:'CAPTURED_COMPOSITOR_WAVE_AXIS',finalStatus:'PUBLISHED_COMPOSITOR_WAVE_AXIS',browserStatus:'PASSED_WAVE_AXIS_BUILT_PROOF'}),
  'compositor-white-noise':Object.freeze({schemaVersion:1,family:'compositor-white-noise',nativeStatus:'CAPTURED_COMPOSITOR_WHITE_NOISE',finalStatus:'PUBLISHED_COMPOSITOR_WHITE_NOISE',browserStatus:'PASSED_WHITE_NOISE_BUILT_PROOF'}),
@@ -54,8 +57,12 @@ export function assertBrowserProofAssembly({family,contract,runner,reader,protoc
  assert.ok(hasProtocolImport(run,'browserProofContract'),'Runner must import its own pinned protocol contract')
  const assignments=nodes(run,node=>ts.isBinaryExpression(node)&&node.operatorToken.kind===ts.SyntaxKind.EqualsToken&&text(node.left,run)==='report.status')
  assert.equal(assignments.filter(node=>text(node.right,run)==='browserProofContract.browserStatus').length,1,'Runner must publish the shared pass token exactly once')
- assert.deepEqual(assignments.map(node=>ts.isStringLiteral(node.right)?node.right.text:text(node.right,run)).sort(),['failed','browserProofContract.browserStatus'].sort(),'Unexpected runner status assignment')
- if(family==='static-switch-family'){
+ assert.deepEqual(assignments.map(node=>ts.isStringLiteral(node.right)?node.right.text:text(node.right,run)).sort(),['failed','browserProofContract.browserStatus',...(family==='compositor-displace-single'?['statuses.baseline']:[])].sort(),'Unexpected runner status assignment')
+ if(family==='compositor-noise-default-field'){
+  assert.ok(hasProtocolImport(verify,'assertBrowserRows'),'Noise reader must import its pinned browser validator')
+  assert.ok(nodes(verify,node=>ts.isCallExpression(node)&&text(node.expression,verify)==='assertBrowserRows').length,'Noise reader must call its browser validator')
+  assert.equal(contractStatusAssertions(schema).length,1,'Noise browser schema must consume its shared pass token')
+ }else if(family==='static-switch-family'){
   assert.ok(hasProtocolImport(verify,'assertBrowserReport'),'Switch reader must use its pinned browser validator')
   assert.ok(nodes(verify,node=>ts.isCallExpression(node)&&text(node.expression,verify)==='assertBrowserReport').length,'Switch reader must call its browser validator')
   assert.equal(contractStatusAssertions(schema).length,1,'Switch browser schema must consume its shared pass token')

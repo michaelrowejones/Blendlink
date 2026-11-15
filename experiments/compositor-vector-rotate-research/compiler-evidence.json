@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "status": "RESEARCH_ONLY_NATIVE_COMPILER_EVIDENCE",
+  "supportCredit": 0,
+  "nativeBinarySha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da",
+  "symbol": "__ZN7blender11eul_to_mat3EPA3_fPKf",
+  "startAddress": "0x100b0ae4c",
+  "stopAddressExclusive": "0x100b0af28",
+  "observation": "Loads Float32 Euler inputs into s0, calls ___sincosf_stret through stub 0x1066c9314, then promotes selected Float32 results to double for coefficient products. Double local variables do not establish double trigonometry. The neighboring eulO_to_mat3 public mathutils route is a distinct implementation.",
+  "rawArtifacts": {
+    "artifacts/verification-vector-rotate-source/eul-to-mat3-exact-function.txt": {
+      "sha256": "d22c4e8839f7d3a46ee545dd63bc71bdb24594a3546f42b41270e4da87b4aaab",
+      "bytes": 2535
+    },
+    "artifacts/verification-vector-rotate-source/sincos-indirect-symbols.txt": {
+      "sha256": "e8e736a9c9fe29d4aaa39b3bdf376a79e632196f3cdbc3c0ad9b670ee0dbc732",
+      "bytes": 170
+    }
+  },
+  "commands": [
+    "xcrun llvm-objdump --disassemble --start-address=0x100b0ae4c --stop-address=0x100b0af28 /Applications/Blender.app/Contents/MacOS/Blender",
+    "xcrun llvm-objdump --macho --indirect-symbols /Applications/Blender.app/Contents/MacOS/Blender | rg 1066c9314|sincos"
+  ],
+  "compilePolicySource": {
+    "path": "build_files/cmake/platform/platform_apple.cmake",
+    "url": "https://projects.blender.org/blender/blender/src/commit/02f0899d78e374b63e7181d9061e1f7ab03419cc/build_files/cmake/platform/platform_apple.cmake#L161",
+    "sha256": "b44ef820b863ae13a373b8791357cea004a95ee2c3c4bfb4a5374392953c5377",
+    "observation": "Line 161 appends -ffp-contract=off. This pins upstream build policy; it is not an independent recovery of every flag used in the installed binary."
+  }
+}

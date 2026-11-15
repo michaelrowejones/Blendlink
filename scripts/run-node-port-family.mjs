@@ -5,8 +5,10 @@ import {join,resolve} from 'node:path'
 import {pathToFileURL} from 'node:url'
 import {executeNodePortCommand,nodePortHash} from './lib/node-port-contract.mjs'
 import {closedNodePortFamily,assertClosedFamilyReceipt} from './lib/node-port-family-evidence.mjs'
+import {DISPLACE_FAMILY,displaceSuitePlan,runDisplaceSuite} from './lib/node-port-displace-evidence.mjs'
 
 export function closedFamilySuitePlan(id,{root,evidence,blender}){
+ if(id===DISPLACE_FAMILY)return displaceSuitePlan({root,evidence,blender})
  const f=closedNodePortFamily(id),mono=id==='mono-switch-view'
  assert.ok(blender&&evidence&&root)
  return {argv:[process.execPath,join(root,f.folder,mono?'suite.mjs':'matrix.mjs'),...(mono?['--built','--mono-view']:[evidence])],
@@ -14,6 +16,7 @@ export function closedFamilySuitePlan(id,{root,evidence,blender}){
    SCENETOWEB_RUNTIME_TRANSACTION:null,SCENETOWEB_RUNTIME_TRANSACTION_SHA256:null,SCENETOWEB_NATIVE_IDENTITY_POLICY:'per-invocation-sha256-v1'},timeoutMs:1_200_000}
 }
 export async function runClosedFamily(id,{root,evidence,blender}){
+ if(id===DISPLACE_FAMILY)return runDisplaceSuite({root,evidence,blender})
  const command=closedFamilySuitePlan(id,{root,evidence,blender}),path=join(evidence,'suite-matrix.json')
  await assert.rejects(readFile(path),{code:'ENOENT'},'Use a fresh family transaction')
  const result=await executeNodePortCommand({...command,cwd:root,logPath:join(evidence,'family-matrix.log')})

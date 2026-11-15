@@ -1558,3 +1558,89 @@ is not a complete port qualification. Displace's source checks and 16 actual
 saved Final exports pass; its pixel-oracle and installed-browser close remain
 separate gates. The retained catalog remains 46 supported, 134 partial, 138
 unsupported and 14 structural. No hosted workflows or public release ran.
+
+### Qualified Noise, finite Blank Image and constant Displace, 2026-11-14
+
+Three new Blender 5.3 CPU compositor routes are now partial, with explicit
+version/build/host, typed-edge and graph limits. They passed fresh complete
+manifest-selected native, saved Final and built-browser transactions on actual
+Metal/SwiftShader WebGPU/WebGL2. Each automatic wrapper reports unchanged
+declared inputs and no automatic support promotion. Independent second readers
+produce byte-identical receipts. All three share runtime fingerprint
+`9d64b4e4f40f0e795a5594e20d5115c94df8740cd1fd6afd54449cb0fed81a69`.
+
+Noise covers default unlinked 2D normalized FBM Fac/Color and only four proven
+output grammars. Its 26 source graphs, 15 native controls, eight saved Finals and
+136 browser cases compare 12,919,456 primary Float32 words. There are 1,312,872
+measured differing words, zero contract violations, maximum eight ULP and
+1.1920928955078125e-7 absolute error. Both the eight-ULP and absolute 2^-20 gates
+must pass; alpha, lattice and channel identities are exact. Generic downstream
+Math/Exposure and image/spatial mixtures refuse. The admitted topology was
+narrowed after a real amplification counterexample; neither tolerance was
+relaxed. All 72 preexisting named shader recipe functions remain byte-identical,
+as do the three shared native/varying Noise modules. Earlier proof histories
+remain immutable and separate from the current automatic receipt.
+
+Blank Image retains a finite native domain, including max(Size,1), rather than
+pretending it is an infinite single value. Its 26 native cases, eight saved
+Finals and 136 browser cases close 1,153,408 primary and 4,036,800 archived linear
+words exactly, 272 resize frames and 96 installation cycles. Two coordinate maps
+use 262,144 persistent logical bytes; virtual source texels avoid a source-sized
+RTT and fill pass. Linked controls and mixed/domain consumers remain unqualified.
+The separate Raw display audit records its 568 differing words honestly.
+
+Displace covers one terminal node, static raw float2 displacement,
+Nearest/Bilinear Clip, and direct Render Layers Image or alpha-one constant RGB.
+Sixteen admitted source graphs and sixteen actual saved Finals remain distinct
+from the 160 injected same-pixel oracle inputs and 320 CPU reference renders.
+The four browser tuples close 192 installed scenes, 480 frame cycles and nineteen
+native Python prefixes. All 4,344,064 direct and 26,064,384 installed/repeated
+linear words match exactly. The separate display audit has 3,702 differing words,
+maximum clamped error 2.9802322387695312e-8 within its unchanged 3e-5 gate, and
+zero alpha/nonfinite-class differences. The oracle grants no Image producer,
+BSDF, EEVEE beauty or whole-scene appearance credit.
+
+The Displace proof exposed two reusable issues. Actual borrowed PassNode updates
+must run before internal renderer-state reset; same-frame probes now capture the
+real installed frame synchronously. Native CPU bilinear products also round
+separately, whereas GPU contraction changed four target words by one ULP.
+Displace alone now stages those products and sums with bit-preserving scalar
+bitcasts and one private zero uint uniform. Other samplers retain their default
+branch; the generic sampling control's shader bytes match on all four tuples.
+The staged path adds ALU work, no texture or pass; it is not a
+GPU-time improvement claim. Its existing field resources are at most one 64 MiB
+RGBA32F RTT plus 256 KiB mapping tables. Finite HDR, signed-zero, mutation,
+recovery and all-four-tuple targeted controls precede the full qualification.
+
+The large proof initially lost its browser execution context while serializing
+14,118,208 raw JS-number words per API. A full comparison retaining only metadata
+isolated the transport failure. Exact binary POSTs now stream every readback into
+an exclusive owned archive, checking API/frame/role, length, SHA and token. The
+reader still rechecks every original raw file and all thirteen roles. Actual HTTP
+tests cover corruption, duplicates, offsets, partial writes and ownership errors;
+no pixel, oracle, role or gate was removed. Failed namespaces remain zero credit.
+
+The local SDK passes 1,820 unit tests (seven optional skips), 101 release-policy
+checks, 187 Node pipeline tests (three platform skips) and eleven Python audits.
+The first unit attempt raced the automatic clean step's packaged LICENSE copy;
+the retained rerun after build completion passes. The 965-file archive is
+2,823,956 packed and 12,897,854 unpacked bytes. Packed Vanilla/R3F consumers,
+committed examples, package identity and an independent empty-cache install,
+CLI/root import and browser build pass. Retained archive SHA-256 is
+`2e07ca386652df6c82b2ee0fbdc84b42fb1ece85088cde36ffb6bb68a8b6f48e`.
+
+Coverage is 46 supported, 137 partial, 135 unsupported and fourteen structural
+entries in the retained 5.3 inventory. These are three new partial contexts, not
+unrestricted node or graph support. Older classifications and the native inventory
+audit date are unchanged. The tracker now distinguishes completed bounded proofs
+from their historical host-only research and remaining work.
+
+Parallel source-only work keeps the next bottlenecks concrete. Current original
+Cube normal baking already handles four materials; Floor instead exceeds the
+two-million receiver triangle budget. Nonaffine UV/bump dependencies prevent
+claiming lossless automatic subdivision removal. Vector Rotate research finds
+real CPU/shader and public-mathutils differences. Same-native-MF fixed-axis
+coefficients, staged matvec and exact normalized axis rows have bounded native/
+host evidence, with explicit signed-zero and source-input limits. They add no
+runtime admission or node coverage at this checkpoint. No PR, hosted workflow,
+release tag, npm release or site publication ran.

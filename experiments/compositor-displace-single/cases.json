@@ -1,0 +1,423 @@
+[
+  {
+    "case": "nearest-origin",
+    "source": "render-layer",
+    "interpolation": "Nearest",
+    "displacementWords": [
+      0,
+      0
+    ],
+    "layout": "direct",
+    "setting": "origin",
+    "frames": [
+      {
+        "width": 13,
+        "height": 9,
+        "pixelRatio": 1
+      },
+      {
+        "width": 18,
+        "height": 26,
+        "pixelRatio": 2
+      },
+      {
+        "width": 8192,
+        "height": 4,
+        "pixelRatio": 1
+      },
+      {
+        "width": 4,
+        "height": 8192,
+        "pixelRatio": 1
+      }
+    ]
+  },
+  {
+    "case": "nearest-integer",
+    "source": "render-layer",
+    "interpolation": "Nearest",
+    "displacementWords": [
+      1065353216,
+      3221225472
+    ],
+    "layout": "direct",
+    "setting": "integer",
+    "frames": [
+      {
+        "width": 13,
+        "height": 9,
+        "pixelRatio": 1
+      },
+      {
+        "width": 18,
+        "height": 26,
+        "pixelRatio": 2
+      }
+    ]
+  },
+  {
+    "case": "nearest-fractional",
+    "source": "render-layer",
+    "interpolation": "Nearest",
+    "displacementWords": [
+      1048576000,
+      3204448256
+    ],
+    "layout": "direct",
+    "setting": "fractional",
+    "frames": [
+      {
+        "width": 13,
+        "height": 9,
+        "pixelRatio": 1
+      },
+      {
+        "width": 18,
+        "height": 26,
+        "pixelRatio": 2
+      }
+    ]
+  },
+  {
+    "case": "nearest-ordinary",
+    "source": "render-layer",
+    "interpolation": "Nearest",
+    "displacementWords": [
+      1036831949,
+      3197737370
+    ],
+    "layout": "direct",
+    "setting": "ordinary",
+    "frames": [
+      {
+        "width": 13,
+        "height": 9,
+        "pixelRatio": 1
+      },
+      {
+        "width": 18,
+        "height": 26,
+        "pixelRatio": 2
+      }
+    ]
+  },
+  {
+    "case": "nearest-minimum",
+    "source": "render-layer",
+    "interpolation": "Nearest",
+    "displacementWords": [
+      931135488,
+      3078619136
+    ],
+    "layout": "direct",
+    "setting": "minimum",
+    "frames": [
+      {
+        "width": 13,
+        "height": 9,
+        "pixelRatio": 1
+      },
+      {
+        "width": 18,
+        "height": 26,
+        "pixelRatio": 2
+      }
+    ]
+  },
+  {
+    "case": "nearest-maximum",
+    "source": "render-layer",
+    "interpolation": "Nearest",
+    "displacementWords": [
+      1174405120,
+      3321888768
+    ],
+    "layout": "direct",
+    "setting": "maximum",
+    "frames": [
+      {
+        "width": 13,
+        "height": 9,
+        "pixelRatio": 1
+      },
+      {
+        "width": 18,
+        "height": 26,
+        "pixelRatio": 2
+      },
+      {
+        "width": 8192,
+        "height": 4,
+        "pixelRatio": 1
+      },
+      {
+        "width": 4,
+        "height": 8192,
+        "pixelRatio": 1
+      }
+    ]
+  },
+  {
+    "case": "bilinear-origin",
+    "source": "render-layer",
+    "interpolation": "Bilinear",
+    "displacementWords": [
+      0,
+      0
+    ],
+    "layout": "direct",
+    "setting": "origin",
+    "frames": [
+      {
+        "width": 13,
+        "height": 9,
+        "pixelRatio": 1
+      },
+      {
+        "width": 18,
+        "height": 26,
+        "pixelRatio": 2
+      },
+      {
+        "width": 8192,
+        "height": 4,
+        "pixelRatio": 1
+      },
+      {
+        "width": 4,
+        "height": 8192,
+        "pixelRatio": 1
+      }
+    ]
+  },
+  {
+    "case": "bilinear-integer",
+    "source": "render-layer",
+    "interpolation": "Bilinear",
+    "displacementWords": [
+      1065353216,
+      3221225472
+    ],
+    "layout": "direct",
+    "setting": "integer",
+    "frames": [
+      {
+        "width": 13,
+        "height": 9,
+        "pixelRatio": 1
+      },
+      {
+        "width": 18,
+        "height": 26,
+        "pixelRatio": 2
+      }
+    ]
+  },
+  {
+    "case": "bilinear-fractional",
+    "source": "render-layer",
+    "interpolation": "Bilinear",
+    "displacementWords": [
+      1048576000,
+      3204448256
+    ],
+    "layout": "direct",
+    "setting": "fractional",
+    "frames": [
+      {
+        "width": 13,
+        "height": 9,
+        "pixelRatio": 1
+      },
+      {
+        "width": 18,
+        "height": 26,
+        "pixelRatio": 2
+      }
+    ]
+  },
+  {
+    "case": "bilinear-ordinary",
+    "source": "render-layer",
+    "interpolation": "Bilinear",
+    "displacementWords": [
+      1036831949,
+      3197737370
+    ],
+    "layout": "direct",
+    "setting": "ordinary",
+    "frames": [
+      {
+        "width": 13,
+        "height": 9,
+        "pixelRatio": 1
+      },
+      {
+        "width": 18,
+        "height": 26,
+        "pixelRatio": 2
+      }
+    ]
+  },
+  {
+    "case": "bilinear-minimum",
+    "source": "render-layer",
+    "interpolation": "Bilinear",
+    "displacementWords": [
+      931135488,
+      3078619136
+    ],
+    "layout": "direct",
+    "setting": "minimum",
+    "frames": [
+      {
+        "width": 13,
+        "height": 9,
+        "pixelRatio": 1
+      },
+      {
+        "width": 18,
+        "height": 26,
+        "pixelRatio": 2
+      }
+    ]
+  },
+  {
+    "case": "bilinear-maximum",
+    "source": "render-layer",
+    "interpolation": "Bilinear",
+    "displacementWords": [
+      1174405120,
+      3321888768
+    ],
+    "layout": "direct",
+    "setting": "maximum",
+    "frames": [
+      {
+        "width": 13,
+        "height": 9,
+        "pixelRatio": 1
+      },
+      {
+        "width": 18,
+        "height": 26,
+        "pixelRatio": 2
+      },
+      {
+        "width": 8192,
+        "height": 4,
+        "pixelRatio": 1
+      },
+      {
+        "width": 4,
+        "height": 8192,
+        "pixelRatio": 1
+      }
+    ]
+  },
+  {
+    "case": "nearest-group",
+    "source": "render-layer",
+    "interpolation": "Nearest",
+    "displacementWords": [
+      1048576000,
+      3204448256
+    ],
+    "layout": "group",
+    "setting": "fractional",
+    "frames": [
+      {
+        "width": 13,
+        "height": 9,
+        "pixelRatio": 1
+      },
+      {
+        "width": 18,
+        "height": 26,
+        "pixelRatio": 2
+      }
+    ]
+  },
+  {
+    "case": "bilinear-reroute",
+    "source": "render-layer",
+    "interpolation": "Bilinear",
+    "displacementWords": [
+      3204448256,
+      1048576000
+    ],
+    "layout": "reroute",
+    "setting": "fractional",
+    "frames": [
+      {
+        "width": 13,
+        "height": 9,
+        "pixelRatio": 1
+      },
+      {
+        "width": 18,
+        "height": 26,
+        "pixelRatio": 2
+      }
+    ]
+  },
+  {
+    "case": "nearest-rgb",
+    "source": "constant-rgba",
+    "interpolation": "Nearest",
+    "displacementWords": [
+      1174405120,
+      3321888768
+    ],
+    "layout": "rgb",
+    "setting": "constant",
+    "frames": [
+      {
+        "width": 13,
+        "height": 9,
+        "pixelRatio": 1
+      },
+      {
+        "width": 18,
+        "height": 26,
+        "pixelRatio": 2
+      }
+    ],
+    "colorWords": [
+      1048576000,
+      1056964608,
+      1065353216,
+      1065353216
+    ]
+  },
+  {
+    "case": "bilinear-default",
+    "source": "constant-rgba",
+    "interpolation": "Bilinear",
+    "displacementWords": [
+      0,
+      0
+    ],
+    "layout": "direct",
+    "setting": "constant",
+    "frames": [
+      {
+        "width": 13,
+        "height": 9,
+        "pixelRatio": 1
+      },
+      {
+        "width": 18,
+        "height": 26,
+        "pixelRatio": 2
+      }
+    ],
+    "colorWords": [
+      1065353216,
+      1065353216,
+      1065353216,
+      1065353216
+    ],
+    "nativeDefaults": true
+  }
+]

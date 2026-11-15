@@ -1,0 +1,155 @@
+{
+  "schemaVersion": 1,
+  "id": "compositor-noise-default-field",
+  "nativeNode": "ShaderNodeTexNoise",
+  "domain": "compositor",
+  "lifecycle": "production",
+  "scope": "Partial pinned Blender 5.3 macOS arm64 CPU compositor normalized 2D FBM Fac/Color, own unlinked Uniform Vector and original unlinked scalar defaults. Private BLI fade/Perlin/FBM kernel v3, full-frame square pixels 4..8192, Perlin-call budget 18 and sampler budget 8. RGB requires BOTH 8 ULP and absolute 2^-20; alpha, lattice and Color.red/Fac are exact. ONLY direct output including group/reroute forwarding; RGB selection using Fac/Color from the same native Noise node; RGB selection using two Color nodes; or three pair means from six distinct Fac nodes (ADD then MULTIPLY .5). Every operation must contribute through exact typed edges and source/channel identities. Alpha 1 may be inline or one contributing VALUE op with value 1 and no inputs. No other wrappers or consumers, generic Math/Exposure/Gamma/MapRange, linked/computed controls, amplification, native GPU/EEVEE or image/spatial/pass mixtures.",
+  "upstream": {
+    "direct": [
+      "source/blender/nodes/shader/nodes/node_shader_tex_noise.cc",
+      "source/blender/blenlib/intern/noise.cc"
+    ],
+    "shared": [
+      "source/blender/compositor/intern/node_tree_evaluator.cc",
+      "source/blender/compositor/intern/compile_state.cc",
+      "source/blender/compositor/intern/compile_state.hh",
+      "source/blender/compositor/intern/operation.cc",
+      "source/blender/compositor/intern/multi_function_procedure_operation.cc",
+      "source/blender/nodes/intern/node_multi_function.cc",
+      "source/blender/nodes/NOD_multi_function.hh",
+      "source/blender/makesrna/intern/rna_nodetree.cc",
+      "source/blender/nodes/NOD_static_types.h",
+      "source/blender/blenlib/BLI_noise.hh",
+      "source/blender/blenlib/BLI_hash.hh",
+      "source/blender/compositor/intern/implicit_input_operation.cc",
+      "source/blender/compositor/intern/utilities.cc",
+      "source/blender/compositor/cached_resources/intern/image_coordinates.cc",
+      "source/blender/compositor/intern/domain.cc",
+      "source/blender/render/intern/compositor.cc",
+      "source/blender/blenkernel/intern/type_conversions.cc",
+      "source/blender/nodes/composite/nodes/node_composite_image_coordinates.cc",
+      "source/blender/compositor/shaders/compositor_image_coordinates_uniform.glsl",
+      "source/blender/blenlib/BLI_math_base.hh"
+    ]
+  },
+  "inputs": {
+    "native": [
+      "packages/blender-addon/*.py",
+      "packages/blender-addon/*.json",
+      "packages/blendlink/blender/**/*.py",
+      "experiments/compositor-noise-default-field/*.py",
+      "packages/blender-addon/tests/compositor_reference.py",
+      "packages/blender-addon/tests/compositor_noise_check.py"
+    ],
+    "runtime": [
+      "packages/blendlink/src/**/*.ts"
+    ],
+    "sdk": [
+      "package.json",
+      "package-lock.json",
+      "packages/blendlink/package.json",
+      "packages/blendlink/tsconfig.json",
+      "packages/blendlink/scripts/*.mjs",
+      "scripts/test-node-port.mjs",
+      "scripts/run-node-port-family.mjs",
+      "scripts/lib/node-port-contract.mjs",
+      "scripts/lib/node-port-evidence.mjs",
+      "scripts/lib/node-port-family-evidence.mjs",
+      "scripts/lib/node-port-python.mjs",
+      "scripts/node-port-blender.mjs",
+      "scripts/lib/native-proof-archive.mjs",
+      "scripts/lib/runtime-provenance.mjs",
+      "scripts/lib/runtime-proof-archive.mjs",
+      "scripts/lib/runtime-compiler-trace.mjs",
+      "scripts/lib/runtime-transaction-snapshot.mjs",
+      "scripts/lib/browser-proof-contract.mjs",
+      "scripts/lib/node-port-displace-evidence.mjs"
+    ],
+    "tests": [
+      "experiments/compositor-noise-default-field/*.mjs",
+      "experiments/compositor-noise-default-field/*.ts",
+      "experiments/compositor-noise-default-field/*.js",
+      "experiments/compositor-noise-default-field/*.html",
+      "experiments/compositor-noise-default-field/cases.json",
+      "scripts/lib/node-port-family-evidence.test.mjs",
+      "scripts/lib/node-port-contract.test.mjs",
+      "scripts/lib/node-port-python.*",
+      "scripts/lib/node-port-evidence*",
+      "scripts/lib/browser-proof-contract.test.mjs",
+      "node-ports/compositor-noise-default-field.json",
+      "scripts/compositor-noise-coverage-policy.test.mjs"
+    ]
+  },
+  "commands": {
+    "build": [
+      {
+        "id": "clean",
+        "argv": [
+          "{node}",
+          "packages/blendlink/scripts/clean-dist.mjs"
+        ],
+        "timeoutMs": 60000
+      },
+      {
+        "id": "typescript",
+        "argv": [
+          "{node}",
+          "node_modules/typescript/bin/tsc",
+          "-p",
+          "packages/blendlink/tsconfig.json"
+        ],
+        "timeoutMs": 180000
+      },
+      {
+        "id": "assets",
+        "argv": [
+          "{node}",
+          "packages/blendlink/scripts/copy-assets.mjs"
+        ],
+        "timeoutMs": 60000
+      }
+    ],
+    "verify": {
+      "id": "suite",
+      "argv": [
+        "{node}",
+        "scripts/run-node-port-family.mjs",
+        "compositor-noise-default-field",
+        "--evidence",
+        "{evidence}",
+        "--blender",
+        "{blender}"
+      ],
+      "timeoutMs": 1500000
+    }
+  },
+  "profiles": [
+    {
+      "id": "mac-53",
+      "hostPlatforms": [
+        "darwin"
+      ],
+      "blenderVersion": "5.3.0",
+      "blenderBuildHash": "02f0899d78e3",
+      "nativeSource": {
+        "profile": "darwin-arm64-53-noise2d-default-fbm-cpu-v1",
+        "backend": null,
+        "evaluator": "CPU-compositor"
+      },
+      "runs": [
+        {
+          "id": "matrix",
+          "adapter": "matrix",
+          "env": {}
+        }
+      ]
+    }
+  ],
+  "evidence": {
+    "adapter": "compositor-noise-default-field-v1",
+    "productionCases": 26,
+    "calibrationCases": 0,
+    "refusedNativeCases": 0
+  }
+}

@@ -1,0 +1,261 @@
+{
+  "schemaVersion": 1,
+  "status": "RESEARCH_ONLY_ACTUAL_PRIVATE_LIGHT_OWNERSHIP_PASSED",
+  "productionCommit": "5a7b415",
+  "qualificationCredit": 0,
+  "nativeRenders": 0,
+  "savedFinalQualificationCredit": 0,
+  "sourceStage": "One unchanged retained actual saved nearest-origin Displace Cube/Sphere/PointLight Final, public preparation/commit/render/disposal. Resource ownership only, no numerical or native-source fidelity claim.",
+  "report": {
+    "path": "artifacts/verification-private-light-control-r1/report.json",
+    "sha256": "c5a38f9cd52a35915ac19881e61b2db661c24c87abf7823a8cec88fcb6a8f66b"
+  },
+  "sourcePins": {
+    "packages/blendlink/src/threeRuntime.ts": "05fc757a5c39a14180ef4407a51894f7fc60508679564f1267e74815231629ed"
+  },
+  "fixturePins": {
+    "browser.js": "24c8f81174c013ab22130d5f72c12a8d38c3fd96e2c790eb19b22949f865e452",
+    "index.html": "d9424939fa396b2f15234674d2b71d03d7ddd0c5e01d3310cfdd8f67c0fe0ae8",
+    "run.mjs": "230a8344f14b3671c4d1c278da24113c07c62573710ca8c4870c7dff8b7ed664"
+  },
+  "testedWholeProgramEmitter": {
+    "modules": 202,
+    "verified": true
+  },
+  "retainedSource": {
+    "case": "nearest-origin",
+    "sourceSha256": "937956d8baafb670d77cee093e593fa29ba3732d93bc0536c564d6d8cf545f2b",
+    "manifestSha256": "88dea5b0d59bf680d49acff13242c3d0e5bb004422931117306af239619e5793",
+    "glbSha256": "44a1e5cbebace2a5b26687a8789b3044d69dcd9100cf94bd7a201922332874dc",
+    "presentationSha256": "e5891a9597e1c7188e228ba14e435bf58235e7b852d8b6eb7d9b667cd052acab",
+    "moduleSha256": "cb8648ecfcde8ce40f99903c0ba31806e7fb0c603ccfdc7a729cbe58aac8ff68"
+  },
+  "totals": {
+    "actualTuples": 4,
+    "publicInstallations": 8,
+    "originalPrivatePointShadowHandles": 16,
+    "allPrivateTextureHandles": 88,
+    "allRetiredExactlyOnce": true
+  },
+  "tuples": [
+    {
+      "profile": "metal",
+      "backend": "webgpu",
+      "gpu": {
+        "api": "WebGPU",
+        "vendor": "apple",
+        "architecture": "metal-3",
+        "device": "",
+        "description": ""
+      },
+      "rows": [
+        {
+          "mode": "normal",
+          "privatePointShadowHandles": [
+            {
+              "name": "PointShadowMap",
+              "physicalDestroys": 1
+            },
+            {
+              "name": "PointShadowDepthTexture",
+              "physicalDestroys": 1
+            }
+          ],
+          "allPrivateHandles": 11,
+          "callerPointShadowPreserved": true,
+          "borrowedReplacementPreserved": true,
+          "lateAddedLightPreserved": false,
+          "remainingInstallTextures": 0,
+          "callerSceneRestored": true
+        },
+        {
+          "mode": "borrowed-map-and-late-light",
+          "privatePointShadowHandles": [
+            {
+              "name": "PointShadowMap",
+              "physicalDestroys": 1
+            },
+            {
+              "name": "PointShadowDepthTexture",
+              "physicalDestroys": 1
+            }
+          ],
+          "allPrivateHandles": 11,
+          "callerPointShadowPreserved": true,
+          "borrowedReplacementPreserved": true,
+          "lateAddedLightPreserved": true,
+          "remainingInstallTextures": 0,
+          "callerSceneRestored": true
+        }
+      ],
+      "errors": [],
+      "uncaptured": []
+    },
+    {
+      "profile": "metal",
+      "backend": "webgl2",
+      "gpu": {
+        "api": "WebGL2",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+      },
+      "rows": [
+        {
+          "mode": "normal",
+          "privatePointShadowHandles": [
+            {
+              "name": "PointShadowMap",
+              "physicalDestroys": 1
+            },
+            {
+              "name": "PointShadowDepthTexture",
+              "physicalDestroys": 1
+            }
+          ],
+          "allPrivateHandles": 11,
+          "callerPointShadowPreserved": true,
+          "borrowedReplacementPreserved": true,
+          "lateAddedLightPreserved": false,
+          "remainingInstallTextures": 0,
+          "callerSceneRestored": true
+        },
+        {
+          "mode": "borrowed-map-and-late-light",
+          "privatePointShadowHandles": [
+            {
+              "name": "PointShadowMap",
+              "physicalDestroys": 1
+            },
+            {
+              "name": "PointShadowDepthTexture",
+              "physicalDestroys": 1
+            }
+          ],
+          "allPrivateHandles": 11,
+          "callerPointShadowPreserved": true,
+          "borrowedReplacementPreserved": true,
+          "lateAddedLightPreserved": true,
+          "remainingInstallTextures": 0,
+          "callerSceneRestored": true
+        }
+      ],
+      "errors": [],
+      "uncaptured": []
+    },
+    {
+      "profile": "software",
+      "backend": "webgpu",
+      "gpu": {
+        "api": "WebGPU",
+        "vendor": "google",
+        "architecture": "swiftshader",
+        "device": "",
+        "description": ""
+      },
+      "rows": [
+        {
+          "mode": "normal",
+          "privatePointShadowHandles": [
+            {
+              "name": "PointShadowMap",
+              "physicalDestroys": 1
+            },
+            {
+              "name": "PointShadowDepthTexture",
+              "physicalDestroys": 1
+            }
+          ],
+          "allPrivateHandles": 11,
+          "callerPointShadowPreserved": true,
+          "borrowedReplacementPreserved": true,
+          "lateAddedLightPreserved": false,
+          "remainingInstallTextures": 0,
+          "callerSceneRestored": true
+        },
+        {
+          "mode": "borrowed-map-and-late-light",
+          "privatePointShadowHandles": [
+            {
+              "name": "PointShadowMap",
+              "physicalDestroys": 1
+            },
+            {
+              "name": "PointShadowDepthTexture",
+              "physicalDestroys": 1
+            }
+          ],
+          "allPrivateHandles": 11,
+          "callerPointShadowPreserved": true,
+          "borrowedReplacementPreserved": true,
+          "lateAddedLightPreserved": true,
+          "remainingInstallTextures": 0,
+          "callerSceneRestored": true
+        }
+      ],
+      "errors": [],
+      "uncaptured": []
+    },
+    {
+      "profile": "software",
+      "backend": "webgl2",
+      "gpu": {
+        "api": "WebGL2",
+        "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+      },
+      "rows": [
+        {
+          "mode": "normal",
+          "privatePointShadowHandles": [
+            {
+              "name": "PointShadowMap",
+              "physicalDestroys": 1
+            },
+            {
+              "name": "PointShadowDepthTexture",
+              "physicalDestroys": 1
+            }
+          ],
+          "allPrivateHandles": 11,
+          "callerPointShadowPreserved": true,
+          "borrowedReplacementPreserved": true,
+          "lateAddedLightPreserved": false,
+          "remainingInstallTextures": 0,
+          "callerSceneRestored": true
+        },
+        {
+          "mode": "borrowed-map-and-late-light",
+          "privatePointShadowHandles": [
+            {
+              "name": "PointShadowMap",
+              "physicalDestroys": 1
+            },
+            {
+              "name": "PointShadowDepthTexture",
+              "physicalDestroys": 1
+            }
+          ],
+          "allPrivateHandles": 11,
+          "callerPointShadowPreserved": true,
+          "borrowedReplacementPreserved": true,
+          "lateAddedLightPreserved": true,
+          "remainingInstallTextures": 0,
+          "callerSceneRestored": true
+        }
+      ],
+      "errors": [],
+      "uncaptured": []
+    }
+  ],
+  "originalFailure": {
+    "path": "/tmp/scenetoweb-node-ports-next-union/artifacts/verification-displace-single-next46/browser-baseline-metal/report.json",
+    "sha256": "726b77aa69944bc5b18126814b5f75516566c01367af274b3b054a19fa4aef37",
+    "status": "failed",
+    "credit": 0
+  },
+  "limits": [
+    "Cleanup targets WebGPURenderer on both actual backends. Legacy WebGLRenderer shadow lifetime is unchanged.",
+    "Only snapshot-owned imported light identities receive the base Light disposal event. Preexisting and late-added caller light objects remain borrowed.",
+    "No subclass Point/Spot/Directional dispose call; it would dispose the CURRENT potentially borrowed shadow map.",
+    "No source scene, castShadow, light intensity, sampler or pixel gate was disabled or rewritten.",
+    "The four-tuple control is not the full Displace native/Final/browser qualification."
+  ]
+}

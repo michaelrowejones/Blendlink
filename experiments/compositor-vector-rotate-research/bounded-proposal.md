@@ -1,0 +1,42 @@
+# Bounded Vector Rotate prototype
+
+This checkpoint has no source admission, native compositor, browser or saved Final credit. The TSL prototype preserves the source operation order using a private uniform integer OR with zero between Float32 stages. It adds one uniform, 21 Float32 stage barriers, no textures, no render passes and no readbacks. The graph rejects a mutated private rounding uniform before drawing. Actual compiler/backend behavior still needs an independent GPU proof.
+
+## Conditional arithmetic bound
+
+The proposed literal Vector and Center components are positive zero or normal Float32 values with absolute magnitude from 2^-16 through 16. Negative zero is refused. Every component is a multiple of 2^-39. A Normalized pixel-center coordinate for extents at most 8192 is at least 2^-14 and lies on that lattice too, provided the coordinate word itself is correctly supplied.
+
+Suppose each **true native matrix coefficient** is zero or a normal Float32 value with absolute magnitude from 2^-63 through 2. Its Float32 significand places it on the 2^-86 lattice. Each rounded centered component stays on the 2^-39 lattice. Each product and every subsequent rounded sum stays on the 2^-125 lattice. A nonzero result therefore cannot be subnormal: 2^-125 exceeds the minimum normal Float32 value, 2^-126. Magnitudes stay finite; a conservative intermediate/output bound is 208. This reasoning uses ordinary round-to-nearest Float32 arithmetic, separate multiply/add stages and the stated input classes.
+
+Changing the signs of internal zero coefficients can affect an all-zero dot product's zero sign. Adding a final Center component that is positive zero or normal removes that observable difference. This argument depends on the preceding no-underflow bound; it does not authorize negative-zero Center, arbitrary tiny coefficients, nonfinite fields or overflow.
+
+Seven host tests exercise 23,100 stages at the bounds and adjacent Float32 values, 576 zero-sign variants, malformed captures, a coordinate-error counterexample and a hidden-coefficient counterexample. The staged host interpreter independently replays all 30 retained native MF vectors, using the 66 retained basis evaluations, with zero word differences. These are bounded controls, not an exhaustive enumeration or renderer qualification.
+
+## Admission gaps and first useful scope
+
+Basis output hashes attest the output transport. They cannot alone prove that an exposed zero was an internal exact zero rather than an unobserved tiny coefficient. Do not admit all five modes by checking the exposed nine words alone. The simplest source-provable first coefficient family is fixed X, Y or Z rotation with Angle positive zero or absolute Angle from 2^-16 through 1 and either Invert value. The source then builds only unit/zero entries and the native `sinf`/`cosf` entries, safely separated from the tiny-coefficient bound. The library range assumption must remain explicit and be checked by native minimum/maximum/adjacent-angle controls. Arbitrary Axis and Euler, especially full inverse, remain separate work.
+
+The current qualified Image Coordinates Normalized producer permits up to two ULP of CPU difference. An identity matrix preserves a one-ULP input difference, so exact matvec staging cannot inherit a whole-graph exact CPU claim. Two honest paths remain:
+
+- First admit bounded literal Vector and evaluate the full native MF at export. This is a static bridge with existing VALUE/VECTOR constants, not a live field port.
+- For a live field, define a distinct reviewed normalized-axis consumer model backed by the existing owned row-table resource. Generate each native half-center division once per extent on the host, prove its Float32 rounding, preserve direct Render Layers domain/PassNode ownership, and then apply this matrix kernel. This costs one two-row R32F table, at most 64 KiB of CPU data and logical GPU data, with O(W+H) extent updates. It must not relabel the old approximate coordinate producer as exact or change its current contract.
+
+The latter is a reusable exact Normalized coordinate foundation, but it adds a separately reviewed producer/consumer model and lifecycle proof. There is no shader-reuse shortcut, author-input quantization, coefficient snapping, epsilon or output repair in this proposal. The safer alternative remains the literal native-MF bridge if that foundation does not fit the next bounded batch.
+
+## Exact Normalized consumer foundation
+
+The primary CPU implementation explicitly constructs `float2(data_offset + texel) + 0.5f` and divides by `float2(display_size)`. The generic vector division expands componentwise `/`. The installed Normalized callback also contains `fadd.2s` followed by `fdiv.2s`, independently excluding a compiler reciprocal-multiply substitution in that callback. `normalized-source-pins.json` records all primary files and the bounded disassembly. The proposal fixes data offset at zero and requires identical data, display and physical full-frame extents. It does not cover single-value input, transformed/cropped domains or native GPU authoring.
+
+For integer extent `d <= 8192` and texel `i`, the exact coordinate is `(2i+1)/(2d)`. Both the half-integer numerator and integer divisor are exact in Float32. Every coordinate lies in `[2^-14,1)`, so the division output is normal. Native CPU Float32 division under round-to-nearest-even has the target word `RN32((2i+1)/(2d))`.
+
+JavaScript's `Math.fround((i+.5)/d)` obtains the same word without a double-rounding ambiguity. Within binade exponent `e`, a Float32 midpoint is an odd multiple of `2^(e-24)`. A nonidentical rational with denominator `2d <= 2^14` is at least `2^(e-38)` from that midpoint, whereas correctly rounded double division has error at most `2^(e-53)`. The latter is smaller by a factor of 32768. An exact Float32 midpoint itself is exactly representable in double and the final ties-to-even rule agrees. Three host tests compare the host formula with a separate BigInt rational RNE implementation at every pixel of 14 odd/common/dyadic/boundary extents and verify the two-row layout and invalid bounds.
+
+The existing owned row resource admits physical extents from 4 through 8192. Keep that domain unchanged, with one two-row table shared across this consumer's coordinate users and at most two texture-load expressions per instance. A private CPU Vector Rotate consumer would validate the original direct Render Layers → Image Coordinates Normalized → FLOAT_VECTOR2-to-VECTOR padded edge, retain its real PassNode as a producer dependency, enforce matching zero-origin physical extents on every frame, and use the new exact rows only inside that consumer. Source JSON cannot instantiate an owned row by declaring a model string. Root guards must survive constant output optimization; disposal, epoch changes, cancellation, resize and DPR checks reuse the current owned resource laws. None of that integration is implemented by these host-only research files.
+
+## Fresh native fixed-axis boundary controls
+
+`bounded-native-receipt.json` records a fresh guarded no-render run. It retains the original 96 MF evaluations, then adds 36 fixed-axis control keys: three axes, both Invert values and six Angle classes (positive zero, minimum, adjacent Float32 above minimum, negative minimum, ordinary 0.9 and maximum 1). Each key has three unit-basis evaluations and three ordinary/bound/cancellation predictions. All 324 basis component words agree with their pre-store hashes, and all 108 predicted vectors / 324 component words match the same native MF and hashes exactly. Original scene/object/mesh/group ownership is restored. There are no compositor renders, saved Final exports, GPU initialization or support credits in this run.
+
+## Compiler evidence correction
+
+The previous README inferred double trigonometry from double local variables. The installed Blender function instead loads Float32 Euler angles and calls `___sincosf_stret`, then converts selected returned Float32 values to double for coefficient products. `compiler-evidence.json` pins the exact function disassembly and indirect-symbol table excerpts. It separately pins Apple's upstream `-ffp-contract=off` build policy; that policy is not a recovery of every installed binary flag. The public mathutils Euler route remains a different function. The original native report, raw words and earlier receipts are unchanged.
