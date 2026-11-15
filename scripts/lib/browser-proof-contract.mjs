@@ -6,6 +6,7 @@ import {pathToFileURL} from 'node:url'
 import ts from 'typescript'
 
 export const browserProofFamilies=Object.freeze({
+ 'compositor-vector-rotate':Object.freeze({schemaVersion:1,family:'compositor-vector-rotate',nativeStatus:'CAPTURED_COMPOSITOR_VECTOR_ROTATE',finalStatus:'PUBLISHED_COMPOSITOR_VECTOR_ROTATE',browserStatus:'PASSED_VECTOR_ROTATE_BUILT_PROOF'}),
  'compositor-displace-single':Object.freeze({schemaVersion:1,family:'compositor-displace-single',nativeStatus:'CAPTURED_DISPLACE_CPU_SAME_PIXEL_REFERENCES',finalStatus:'EXPORTED_DISPLACE_SAVED_FINAL',browserStatus:'PASSED_DISPLACE_ACTUAL_FINAL'}),
  'compositor-noise-default-field':Object.freeze({schemaVersion:1,family:'compositor-noise-default-field',nativeStatus:'CAPTURED_COMPOSITOR_NOISE_DEFAULT_FIELD',finalStatus:'PUBLISHED_COMPOSITOR_NOISE_DEFAULT_FIELD',browserStatus:'PASSED_NOISE_DEFAULT_FIELD_BUILT_PROOF'}),
  'compositor-blank-image':Object.freeze({schemaVersion:1,family:'compositor-blank-image',nativeStatus:'CAPTURED_COMPOSITOR_BLANK_IMAGE',finalStatus:'PUBLISHED_COMPOSITOR_BLANK_IMAGE',browserStatus:'PASSED_BLANK_IMAGE_BUILT_PROOF'}),

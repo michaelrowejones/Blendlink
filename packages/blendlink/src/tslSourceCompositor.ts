@@ -1,3 +1,5 @@
+import {CompositorVectorRotate,validateVectorRotateProgram} from './tslCompositorVectorRotate.js'
+import {buildCompositorIntegerVector,buildCompositorInt3Presentation,validateIntegerVectorGraph} from './tslCompositorIntegerVector.js'
 import { compositorProducerLookup, updateCompositorPassProducers } from './tslCompositorProducers.js'
 import {buildCompositorNoise,validateNoiseFieldGraph,noiseFieldKind} from './tslCompositorNoise.js'
 import {validateDisplaceProgram,guardDisplaceOutput} from './tslCompositorDisplace.js'
@@ -523,6 +525,9 @@ export function buildSourceCompositor(
     if (program.outputAlpha !== undefined && program.outputAlpha !== 'legacy-composite-opaque-v1')
       throw new SourceCompositorUnsupported('Composite output has an unknown alpha model')
     validateNoiseFieldGraph(program,message=>{throw new SourceCompositorUnsupported(message)})
+    const rotateContract=validateVectorRotateProgram(program)
+    const vectorRotate=rotateContract?new CompositorVectorRotate(rotateContract):undefined
+    if(vectorRotate)resources.push(vectorRotate)
     const displace=validateDisplaceProgram(program,message=>{throw new SourceCompositorUnsupported(message)})
     const blankImage=validateBlankImageProgram(program,message=>{throw new SourceCompositorUnsupported(message)})
     validateWaveAxisGraph(program,message=>{throw new SourceCompositorUnsupported(message)})
@@ -533,6 +538,7 @@ export function buildSourceCompositor(
     if(sceneMix) assertEllipseSceneFrameBinding(options.sceneFrame)
     validateBoxMaskGraph(program, message => { throw new SourceCompositorUnsupported(message) })
     validateTextureFieldGraph(program, message => { throw new SourceCompositorUnsupported(message) })
+    validateIntegerVectorGraph(program,message=>{throw new SourceCompositorUnsupported(message)})
     validateImageCoordinateGraph(program, message => { throw new SourceCompositorUnsupported(message) })
     const exactAxes=program.ops.some(op=>whiteNoiseFieldKind(op)||noiseFieldKind(op))?new CompositorExactAxes():undefined
     if(exactAxes)resources.push(exactAxes)
@@ -564,6 +570,7 @@ export function buildSourceCompositor(
       }
       if (v.kind === 'convert' && v.input) {
         if(imageInfoConversionSource(v,program.ops))return buildImageInfoConversion(v,program.ops,value,message=>{throw new SourceCompositorUnsupported(message)})
+        if(v.fromType==='INT_VECTOR3')return buildCompositorInt3Presentation(v,program.ops,message=>{throw new SourceCompositorUnsupported(message)})
         if(v.fromType==='FLOAT_VECTOR2')return buildCompositorFloat2Conversion(v,program.ops,value,message=>{throw new SourceCompositorUnsupported(message)})
         if (v.fromType === 'INT_VECTOR2') return buildCompositorInt2Conversion(v, program.ops, value, message => { throw new SourceCompositorUnsupported(message) })
         const input = value(v.input)
@@ -687,6 +694,9 @@ export function buildSourceCompositor(
           case 'translate':
             node = translatedCompositorField(op, input('Image'), domain, resources, domainFail)
             break
+          case 'integer-vector':
+            node=buildCompositorIntegerVector(op,domainFail)
+            break
           case 'utility-constant':
             node = sharedTypedConstant(op.type, op.value)
             break
@@ -699,8 +709,12 @@ export function buildSourceCompositor(
           case 'image-info':
             node = buildCompositorImageInfo(op,program.ops,input('Image'),domainFail)
             break
+          case 'vector-rotate-cpu':
+            if(!vectorRotate||vectorRotate.op!==op)return domainFail('Vector Rotate requires its closed native consumer plan')
+            node=vectorRotate.build(input('Vector'))
+            break
           case 'image-coordinates':
-            node = op.type==='FLOAT_VECTOR2'?buildCompositorFloatCoordinates(op,program.ops,input('Image'),domainFail):buildCompositorImageCoordinates(op, program.ops, input('Image'), domainFail)
+            node = vectorRotate?.coordinatesId===op.id?vectorRotate.coordinateNode():op.type==='FLOAT_VECTOR2'?buildCompositorFloatCoordinates(op,program.ops,input('Image'),domainFail):buildCompositorImageCoordinates(op, program.ops, input('Image'), domainFail)
             break
           case 'relative-to-pixel':
             node = buildCompositorRelativeToPixel(op, program.ops, value, domainFail)
@@ -1359,6 +1373,7 @@ export function buildSourceCompositor(
       exactAxes?.validate(frame.renderer)
       for(const table of waveTables.values())table.validate(frame.renderer)
     })
+    if(vectorRotate)finalNode=vectorRotate.guard(finalNode,nodes)
     finalNode=guardDisplaceOutput(finalNode,program)
     return { node: finalNode, dispose }
   } catch (error) {

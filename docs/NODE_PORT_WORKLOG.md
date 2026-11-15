@@ -1644,3 +1644,98 @@ coefficients, staged matvec and exact normalized axis rows have bounded native/
 host evidence, with explicit signed-zero and source-input limits. They add no
 runtime admission or node coverage at this checkpoint. No PR, hosted workflow,
 release tag, npm release or site publication ran.
+
+## 2026-11-14: typed constructors and fixed-axis compositor rotation
+
+Three additional Blender 5.3 compositor contexts now have reviewed partial
+routes: Integer Vector with three components, static Input Rotation components,
+and fixed X/Y/Z Vector Rotate. The retained inventory classifies 46 supported,
+140 partial, 132 unsupported and fourteen structural contexts. Compositor counts
+are 24/78/78/7; shader counts remain 22/62/54/7. Native catalogs, their original
+audit date, older versions and the shader Vector Rotate route are unchanged.
+This checkpoint does not complete all nodes, modes or graph combinations.
+
+All three families completed fresh automatic native, saved Final and actual
+browser transactions on shared runtime fingerprint
+`8102a0379e1e396d698021f9e70840df6373951959d9220d24286c0986c4d942`.
+Both independent automatic closes and a third Root replay are byte-identical
+for each family. The runners retain `workspaceStable: true`,
+`productionCredit: true` and `supportPromotion: false`; capability review remains
+separate from execution.
+
+| Family | Native graphs | Saved Finals | Browser cases | Primary exact words | Closed receipt SHA-256 |
+| --- | ---: | ---: | ---: | ---: | --- |
+| Integer Vector3, next56 | 16 (15 production, one calibration) | 8 (7 production) | 96 (88 production) | 24,576 (22,528 production) | `002be9743d6081b56cece4c03d841aba103c4d9e255828364e72c9cbc33311d4` |
+| Input Rotation, next57 | 48 | 8 | 224 | 14,336 | `5e6febcb5898694367e2abbd490149232e2ac9e2b6ce6ada049df483551e9892` |
+| Fixed-axis Vector Rotate, next56 | 25 | 10 | 140 | 2,166,416 | `06a4963d12e5d3c66ba96cc2dc8fb03ae7763c6c7c25ff0e1791a7fabe4e4815` |
+
+Integer Vector reads the actual signed Int32 RNA property and preserves a
+distinct INT_VECTOR3 identity. Host RN-even component conversion avoids the
+observed GPU integer-cast boundary; native scalar/Boolean/float4 consumers and
+the two-component constructor remain outside this slice. All 57,344 archived
+primary/repeated/installed words compare exactly, with no port-owned runtime
+texture, pass or readback. Earlier next53/54 evidence remains immutable history.
+
+Input Rotation uses the public whole-array `path_resolve(coerce=False)` and
+`foreach_get(array('f'))` API to inspect stored Euler words without mathutils
+promotion. Signed normal components through eight radians and positive zero
+are admitted only when all four native outputs pass normal/+0 and pre-store
+hash guards. Native signed-zero/subnormal output counterexamples still refuse;
+no normalization or sign repair was added. Its owned sixteen-node Geometry
+CPU-MF carrier produces compile-time scalar components, without live ROTATION
+transport or per-frame native work. The 152 CPU renders include 104 separate
+hash/oracle controls. All 560 browser readbacks, 37,824 words, 48 resize frames,
+96 installation cycles and ten guarded Python prefixes close independently.
+The source policy distinguishes 34 new admissions, two old-family regressions
+and 44 refusals. Only a typed pre-native producer signal dispatches between
+families; native/ownership/recursion failures never retry another evaluator.
+An inherited annotation incorrectly said W stays positive. That sentence was
+corrected and the entire next57 transaction freshly repeated; the byte-exact
+next56 receipt remains disclosed history, without extra numerical credit.
+
+Vector Rotate captures native fixed-axis basis coefficients and uses ordered
+Float32 arithmetic with private barriers. Its varying input is the qualified
+Normalized-coordinate field, with private exact half-center axis rows; original
+shader and standalone coordinate kernels remain unchanged. It owns at most one
+64 KiB R32F row table, updates in O(width+height) on valid resize and performs
+no warm upload or rotation-owned RTT. Source scene rendering and 21 arithmetic
+barriers remain costs, not an FPS improvement claim. Qualification independently
+compares 6,574,128 archived linear words, 752 orientation/calibration captures
+covering 8,777,984 control words, and 402,693 native pre-store component hashes.
+Sixteen resize frames, 120 installation cycles and thirteen native prefixes
+pass on actual Metal and SwiftShader WebGPU/WebGL2. The separate existing Raw
+display projection contract is preserved; its 112,320 observed words happen to
+be exact in this corpus.
+
+The first full Vector Final exposed a real producer-scheduling bug: a nested
+scene render in `onRenderUpdate` ran after the outer quad geometry was bound,
+leaving a cube silhouette and caller clear alpha. The original failure remains
+zero credit. The retained root now schedules the original FRAME PassNode in
+the before-render stage, before geometry setup; late updates only validate.
+An asymmetric-cube diagnostic and the fresh complete next56 transaction verify
+the correction without changing a numerical gate or native output.
+
+Automatic verifiers now hold an exclusive canonical-checkout lease through
+build, verification and cleanup. Overlapping runs retain a zero-command refusal;
+independent worktrees and dry runs remain independent. Cross-process exclusion,
+aliases, abandoned-owner preservation and cleanup-failure reporting have focused
+tests. Manual build commands and the global GPU queue still require coordination.
+
+Validation passes 1,840 unit tests (seven optional skips), 101 release-policy
+checks, 208 Node pipeline tests (three platform skips), eleven Python audits and
+115 combined proof preflight tests. Production dependency audit is clean.
+The 983-file package is 2,846,675 packed and 13,072,333 unpacked bytes, SHA-256
+`29ab6eb22a2a44b808f589b29621dcc455118619c44431ad4bf77208040ddc1d`.
+Tarball-based Vanilla/R3F consumers, committed examples, package identity and an
+independent empty-cache installation/CLI/root import/browser build pass. No npm
+release, site publication, release tag, PR or hosted workflow is requested.
+
+The next isolated lane extends Image Info to finite static/Blank Image domains
+and metadata arithmetic. Native research preserves the distinction between
+Dimensions and original Resolution after scaling. Its bounded Metal pilot has
+zero support/Final credit; unused static pixel payloads create no observed GPU
+texture/upload/binding, while their CPU decode/storage remains a separate cost.
+Signed unit-axis AXIS_ANGLE research targets the ordinary Vector Rotate default;
+it does not yet change the qualified fixed-axis scope. Original official-demo
+acceptance and the remaining scene/animation/bake bottlenecks are not inferred
+from these new node-level proofs.

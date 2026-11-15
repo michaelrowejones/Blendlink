@@ -1,0 +1,697 @@
+{
+  "rawCalibration": [
+    {
+      "target": "rotation-euler",
+      "inputWords": [
+        2147483648,
+        1,
+        2147483649
+      ],
+      "rawWords": [
+        2147483648,
+        1,
+        2147483649
+      ],
+      "indexedFalseDoubleBytes": "0000000000000000"
+    },
+    {
+      "target": "rotation-euler",
+      "inputWords": [
+        8388607,
+        2155872255,
+        8388608
+      ],
+      "rawWords": [
+        8388607,
+        2155872255,
+        8388608
+      ],
+      "indexedFalseDoubleBytes": "0000000000000080"
+    },
+    {
+      "target": "rotation-euler",
+      "inputWords": [
+        1048576000,
+        3204448256,
+        1065353216
+      ],
+      "rawWords": [
+        1048576000,
+        3204448256,
+        1065353216
+      ],
+      "indexedFalseDoubleBytes": "000000000000e0bf"
+    },
+    {
+      "target": "vector",
+      "inputWords": [
+        2147483648,
+        1,
+        2147483649
+      ],
+      "rawWords": [
+        2147483648,
+        1,
+        2147483649
+      ],
+      "indexedFalseDoubleBytes": "0000000000000000"
+    },
+    {
+      "target": "vector",
+      "inputWords": [
+        8388607,
+        2155872255,
+        8388608
+      ],
+      "rawWords": [
+        8388607,
+        2155872255,
+        8388608
+      ],
+      "indexedFalseDoubleBytes": "0000000000000080"
+    },
+    {
+      "target": "vector",
+      "inputWords": [
+        1048576000,
+        3204448256,
+        1065353216
+      ],
+      "rawWords": [
+        1048576000,
+        3204448256,
+        1065353216
+      ],
+      "indexedFalseDoubleBytes": "000000000000e0bf"
+    },
+    {
+      "target": "Vector",
+      "inputWords": [
+        2147483648,
+        1,
+        2147483649
+      ],
+      "rawWords": [
+        2147483648,
+        1,
+        2147483649
+      ],
+      "indexedFalseDoubleBytes": "0000000000000000"
+    },
+    {
+      "target": "Vector",
+      "inputWords": [
+        8388607,
+        2155872255,
+        8388608
+      ],
+      "rawWords": [
+        8388607,
+        2155872255,
+        8388608
+      ],
+      "indexedFalseDoubleBytes": "0000000000000080"
+    },
+    {
+      "target": "Vector",
+      "inputWords": [
+        1048576000,
+        3204448256,
+        1065353216
+      ],
+      "rawWords": [
+        1048576000,
+        3204448256,
+        1065353216
+      ],
+      "indexedFalseDoubleBytes": "000000000000e0bf"
+    },
+    {
+      "target": "Center",
+      "inputWords": [
+        2147483648,
+        1,
+        2147483649
+      ],
+      "rawWords": [
+        2147483648,
+        1,
+        2147483649
+      ],
+      "indexedFalseDoubleBytes": "0000000000000000"
+    },
+    {
+      "target": "Center",
+      "inputWords": [
+        8388607,
+        2155872255,
+        8388608
+      ],
+      "rawWords": [
+        8388607,
+        2155872255,
+        8388608
+      ],
+      "indexedFalseDoubleBytes": "0000000000000080"
+    },
+    {
+      "target": "Center",
+      "inputWords": [
+        1048576000,
+        3204448256,
+        1065353216
+      ],
+      "rawWords": [
+        1048576000,
+        3204448256,
+        1065353216
+      ],
+      "indexedFalseDoubleBytes": "000000000000e0bf"
+    }
+  ],
+  "readerRefusals": [
+    "indexed",
+    "width",
+    "missing",
+    "scalar",
+    "bool-length"
+  ],
+  "twins": [
+    {
+      "inputWords": [
+        0,
+        0,
+        0
+      ],
+      "results": {
+        "input": {
+          "words": [
+            1065353216,
+            0,
+            0,
+            0
+          ],
+          "hashes": [
+            1413797383,
+            2755625498,
+            2755625498,
+            2755625498
+          ],
+          "storedHashMatches": true,
+          "normalPositiveZero": true
+        },
+        "euler": {
+          "words": [
+            1065353216,
+            0,
+            0,
+            0
+          ],
+          "hashes": [
+            1413797383,
+            2755625498,
+            2755625498,
+            2755625498
+          ],
+          "storedHashMatches": true,
+          "normalPositiveZero": true
+        }
+      },
+      "exactTwinWords": true,
+      "exactTwinHashes": true
+    },
+    {
+      "inputWords": [
+        931135488,
+        0,
+        0
+      ],
+      "results": {
+        "input": {
+          "words": [
+            1065353216,
+            922746880,
+            0,
+            0
+          ],
+          "hashes": [
+            1413797383,
+            2592771766,
+            2755625498,
+            2755625498
+          ],
+          "storedHashMatches": true,
+          "normalPositiveZero": true
+        },
+        "euler": {
+          "words": [
+            1065353216,
+            922746880,
+            0,
+            0
+          ],
+          "hashes": [
+            1413797383,
+            2592771766,
+            2755625498,
+            2755625498
+          ],
+          "storedHashMatches": true,
+          "normalPositiveZero": true
+        }
+      },
+      "exactTwinWords": true,
+      "exactTwinHashes": true
+    },
+    {
+      "inputWords": [
+        0,
+        931135488,
+        0
+      ],
+      "results": {
+        "input": {
+          "words": [
+            1065353216,
+            0,
+            922746880,
+            0
+          ],
+          "hashes": [
+            1413797383,
+            2755625498,
+            2592771766,
+            2755625498
+          ],
+          "storedHashMatches": true,
+          "normalPositiveZero": true
+        },
+        "euler": {
+          "words": [
+            1065353216,
+            0,
+            922746880,
+            0
+          ],
+          "hashes": [
+            1413797383,
+            2755625498,
+            2592771766,
+            2755625498
+          ],
+          "storedHashMatches": true,
+          "normalPositiveZero": true
+        }
+      },
+      "exactTwinWords": true,
+      "exactTwinHashes": true
+    },
+    {
+      "inputWords": [
+        0,
+        0,
+        931135488
+      ],
+      "results": {
+        "input": {
+          "words": [
+            1065353216,
+            0,
+            0,
+            922746880
+          ],
+          "hashes": [
+            1413797383,
+            2755625498,
+            2755625498,
+            2592771766
+          ],
+          "storedHashMatches": true,
+          "normalPositiveZero": true
+        },
+        "euler": {
+          "words": [
+            1065353216,
+            0,
+            0,
+            922746880
+          ],
+          "hashes": [
+            1413797383,
+            2755625498,
+            2755625498,
+            2592771766
+          ],
+          "storedHashMatches": true,
+          "normalPositiveZero": true
+        }
+      },
+      "exactTwinWords": true,
+      "exactTwinHashes": true
+    },
+    {
+      "inputWords": [
+        1065353216,
+        0,
+        0
+      ],
+      "results": {
+        "input": {
+          "words": [
+            1063299392,
+            1056274244,
+            0,
+            0
+          ],
+          "hashes": [
+            1770475527,
+            2806319176,
+            2755625498,
+            2755625498
+          ],
+          "storedHashMatches": true,
+          "normalPositiveZero": true
+        },
+        "euler": {
+          "words": [
+            1063299392,
+            1056274244,
+            0,
+            0
+          ],
+          "hashes": [
+            1770475527,
+            2806319176,
+            2755625498,
+            2755625498
+          ],
+          "storedHashMatches": true,
+          "normalPositiveZero": true
+        }
+      },
+      "exactTwinWords": true,
+      "exactTwinHashes": true
+    },
+    {
+      "inputWords": [
+        0,
+        1065353216,
+        0
+      ],
+      "results": {
+        "input": {
+          "words": [
+            1063299392,
+            0,
+            1056274244,
+            0
+          ],
+          "hashes": [
+            1770475527,
+            2755625498,
+            2806319176,
+            2755625498
+          ],
+          "storedHashMatches": true,
+          "normalPositiveZero": true
+        },
+        "euler": {
+          "words": [
+            1063299392,
+            0,
+            1056274244,
+            0
+          ],
+          "hashes": [
+            1770475527,
+            2755625498,
+            2806319176,
+            2755625498
+          ],
+          "storedHashMatches": true,
+          "normalPositiveZero": true
+        }
+      },
+      "exactTwinWords": true,
+      "exactTwinHashes": true
+    },
+    {
+      "inputWords": [
+        0,
+        0,
+        1065353216
+      ],
+      "results": {
+        "input": {
+          "words": [
+            1063299392,
+            0,
+            0,
+            1056274244
+          ],
+          "hashes": [
+            1770475527,
+            2755625498,
+            2755625498,
+            2806319176
+          ],
+          "storedHashMatches": true,
+          "normalPositiveZero": true
+        },
+        "euler": {
+          "words": [
+            1063299392,
+            0,
+            0,
+            1056274244
+          ],
+          "hashes": [
+            1770475527,
+            2755625498,
+            2755625498,
+            2806319176
+          ],
+          "storedHashMatches": true,
+          "normalPositiveZero": true
+        }
+      },
+      "exactTwinWords": true,
+      "exactTwinHashes": true
+    },
+    {
+      "inputWords": [
+        931135488,
+        931135488,
+        931135488
+      ],
+      "results": {
+        "input": {
+          "words": [
+            1065353216,
+            922746752,
+            922746944,
+            922746752
+          ],
+          "hashes": [
+            1413797383,
+            1024145631,
+            2174858563,
+            1024145631
+          ],
+          "storedHashMatches": true,
+          "normalPositiveZero": true
+        },
+        "euler": {
+          "words": [
+            1065353216,
+            922746752,
+            922746944,
+            922746752
+          ],
+          "hashes": [
+            1413797383,
+            1024145631,
+            2174858563,
+            1024145631
+          ],
+          "storedHashMatches": true,
+          "normalPositiveZero": true
+        }
+      },
+      "exactTwinWords": true,
+      "exactTwinHashes": true
+    },
+    {
+      "inputWords": [
+        1065353216,
+        1065353216,
+        1065353216
+      ],
+      "results": {
+        "input": {
+          "words": [
+            1061764009,
+            1043040780,
+            1058154808,
+            1043040780
+          ],
+          "hashes": [
+            2445538501,
+            59458439,
+            2523627015,
+            59458439
+          ],
+          "storedHashMatches": true,
+          "normalPositiveZero": true
+        },
+        "euler": {
+          "words": [
+            1061764009,
+            1043040780,
+            1058154808,
+            1043040780
+          ],
+          "hashes": [
+            2445538501,
+            59458439,
+            2523627015,
+            59458439
+          ],
+          "storedHashMatches": true,
+          "normalPositiveZero": true
+        }
+      },
+      "exactTwinWords": true,
+      "exactTwinHashes": true
+    },
+    {
+      "inputWords": [
+        1051372203,
+        1056964609,
+        1065353215
+      ],
+      "results": {
+        "input": {
+          "words": [
+            1062974130,
+            1019567996,
+            1049957475,
+            1054349565
+          ],
+          "hashes": [
+            878655293,
+            3907006917,
+            3505835681,
+            1180534226
+          ],
+          "storedHashMatches": true,
+          "normalPositiveZero": true
+        },
+        "euler": {
+          "words": [
+            1062974130,
+            1019567996,
+            1049957475,
+            1054349565
+          ],
+          "hashes": [
+            878655293,
+            3907006917,
+            3505835681,
+            1180534226
+          ],
+          "storedHashMatches": true,
+          "normalPositiveZero": true
+        }
+      },
+      "exactTwinWords": true,
+      "exactTwinHashes": true
+    },
+    {
+      "inputWords": [
+        931135489,
+        931135490,
+        931135491
+      ],
+      "results": {
+        "input": {
+          "words": [
+            1065353216,
+            922746754,
+            922746946,
+            922746758
+          ],
+          "hashes": [
+            1413797383,
+            2250239262,
+            2458629154,
+            1345046094
+          ],
+          "storedHashMatches": true,
+          "normalPositiveZero": true
+        },
+        "euler": {
+          "words": [
+            1065353216,
+            922746754,
+            922746946,
+            922746758
+          ],
+          "hashes": [
+            1413797383,
+            2250239262,
+            2458629154,
+            1345046094
+          ],
+          "storedHashMatches": true,
+          "normalPositiveZero": true
+        }
+      },
+      "exactTwinWords": true,
+      "exactTwinHashes": true
+    },
+    {
+      "inputWords": [
+        1036831949,
+        1045220557,
+        1050253722
+      ],
+      "results": {
+        "input": {
+          "words": [
+            1065073833,
+            1024221066,
+            1037640008,
+            1041433750
+          ],
+          "hashes": [
+            640420798,
+            1528223953,
+            1427757364,
+            3110986681
+          ],
+          "storedHashMatches": true,
+          "normalPositiveZero": true
+        },
+        "euler": {
+          "words": [
+            1065073833,
+            1024221066,
+            1037640008,
+            1041433750
+          ],
+          "hashes": [
+            640420798,
+            1528223953,
+            1427757364,
+            3110986681
+          ],
+          "storedHashMatches": true,
+          "normalPositiveZero": true
+        }
+      },
+      "exactTwinWords": true,
+      "exactTwinHashes": true
+    }
+  ]
+}

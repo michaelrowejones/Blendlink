@@ -1,0 +1,353 @@
+{
+  "schemaVersion": 1,
+  "stage": "bounded-native-browser-pilot",
+  "supportCredit": 0,
+  "cases": [
+    {
+      "case": "axes-13x9",
+      "mode": "Z_AXIS",
+      "invert": false,
+      "angle": 0,
+      "center": [
+        0,
+        0,
+        0
+      ],
+      "kind": "normalized",
+      "width": 13,
+      "height": 9,
+      "pixelRatio": 1,
+      "axesControl": true
+    },
+    {
+      "case": "axes-26x18",
+      "mode": "Z_AXIS",
+      "invert": false,
+      "angle": 0,
+      "center": [
+        0,
+        0,
+        0
+      ],
+      "kind": "normalized",
+      "width": 26,
+      "height": 18,
+      "pixelRatio": 2,
+      "axesControl": true
+    },
+    {
+      "case": "axes-9x13",
+      "mode": "Z_AXIS",
+      "invert": false,
+      "angle": 0,
+      "center": [
+        0,
+        0,
+        0
+      ],
+      "kind": "normalized",
+      "width": 9,
+      "height": 13,
+      "pixelRatio": 1,
+      "axesControl": true
+    },
+    {
+      "case": "axes-8192x4",
+      "mode": "Z_AXIS",
+      "invert": false,
+      "angle": 0,
+      "center": [
+        0,
+        0,
+        0
+      ],
+      "kind": "normalized",
+      "width": 8192,
+      "height": 4,
+      "pixelRatio": 1,
+      "axesControl": true
+    },
+    {
+      "case": "axes-4x8192",
+      "mode": "Z_AXIS",
+      "invert": false,
+      "angle": 0,
+      "center": [
+        0,
+        0,
+        0
+      ],
+      "kind": "normalized",
+      "width": 4,
+      "height": 8192,
+      "pixelRatio": 1,
+      "axesControl": true
+    },
+    {
+      "case": "X_AXIS-forward-ordinary",
+      "mode": "X_AXIS",
+      "invert": false,
+      "angle": 0.9,
+      "center": [
+        0.5,
+        -0.5,
+        0.25
+      ],
+      "kind": "normalized",
+      "width": 13,
+      "height": 9,
+      "pixelRatio": 1
+    },
+    {
+      "case": "X_AXIS-forward-minimum",
+      "mode": "X_AXIS",
+      "invert": false,
+      "angle": 0.0000152587890625,
+      "center": [
+        16,
+        -16,
+        0.0000152587890625
+      ],
+      "kind": "normalized",
+      "width": 13,
+      "height": 9,
+      "pixelRatio": 1
+    },
+    {
+      "case": "X_AXIS-inverse-ordinary",
+      "mode": "X_AXIS",
+      "invert": true,
+      "angle": 0.9,
+      "center": [
+        0.5,
+        -0.5,
+        0.25
+      ],
+      "kind": "normalized",
+      "width": 13,
+      "height": 9,
+      "pixelRatio": 1
+    },
+    {
+      "case": "X_AXIS-inverse-minimum",
+      "mode": "X_AXIS",
+      "invert": true,
+      "angle": 0.0000152587890625,
+      "center": [
+        16,
+        -16,
+        0.0000152587890625
+      ],
+      "kind": "normalized",
+      "width": 13,
+      "height": 9,
+      "pixelRatio": 1
+    },
+    {
+      "case": "Y_AXIS-forward-ordinary",
+      "mode": "Y_AXIS",
+      "invert": false,
+      "angle": 0.9,
+      "center": [
+        0.5,
+        -0.5,
+        0.25
+      ],
+      "kind": "normalized",
+      "width": 13,
+      "height": 9,
+      "pixelRatio": 1
+    },
+    {
+      "case": "Y_AXIS-forward-minimum",
+      "mode": "Y_AXIS",
+      "invert": false,
+      "angle": 0.0000152587890625,
+      "center": [
+        16,
+        -16,
+        0.0000152587890625
+      ],
+      "kind": "normalized",
+      "width": 13,
+      "height": 9,
+      "pixelRatio": 1
+    },
+    {
+      "case": "Y_AXIS-inverse-ordinary",
+      "mode": "Y_AXIS",
+      "invert": true,
+      "angle": 0.9,
+      "center": [
+        0.5,
+        -0.5,
+        0.25
+      ],
+      "kind": "normalized",
+      "width": 13,
+      "height": 9,
+      "pixelRatio": 1
+    },
+    {
+      "case": "Y_AXIS-inverse-minimum",
+      "mode": "Y_AXIS",
+      "invert": true,
+      "angle": 0.0000152587890625,
+      "center": [
+        16,
+        -16,
+        0.0000152587890625
+      ],
+      "kind": "normalized",
+      "width": 13,
+      "height": 9,
+      "pixelRatio": 1
+    },
+    {
+      "case": "Z_AXIS-forward-ordinary",
+      "mode": "Z_AXIS",
+      "invert": false,
+      "angle": 0.9,
+      "center": [
+        0.5,
+        -0.5,
+        0.25
+      ],
+      "kind": "normalized",
+      "width": 13,
+      "height": 9,
+      "pixelRatio": 1
+    },
+    {
+      "case": "Z_AXIS-forward-minimum",
+      "mode": "Z_AXIS",
+      "invert": false,
+      "angle": 0.0000152587890625,
+      "center": [
+        16,
+        -16,
+        0.0000152587890625
+      ],
+      "kind": "normalized",
+      "width": 13,
+      "height": 9,
+      "pixelRatio": 1
+    },
+    {
+      "case": "Z_AXIS-inverse-ordinary",
+      "mode": "Z_AXIS",
+      "invert": true,
+      "angle": 0.9,
+      "center": [
+        0.5,
+        -0.5,
+        0.25
+      ],
+      "kind": "normalized",
+      "width": 13,
+      "height": 9,
+      "pixelRatio": 1
+    },
+    {
+      "case": "Z_AXIS-inverse-minimum",
+      "mode": "Z_AXIS",
+      "invert": true,
+      "angle": 0.0000152587890625,
+      "center": [
+        16,
+        -16,
+        0.0000152587890625
+      ],
+      "kind": "normalized",
+      "width": 13,
+      "height": 9,
+      "pixelRatio": 1
+    },
+    {
+      "case": "literal-X_AXIS",
+      "mode": "X_AXIS",
+      "invert": false,
+      "angle": 1,
+      "center": [
+        16,
+        -16,
+        -0.0000152587890625
+      ],
+      "vector": [
+        -16,
+        16,
+        0.0000152587890625
+      ],
+      "kind": "literal",
+      "width": 13,
+      "height": 9,
+      "pixelRatio": 1
+    },
+    {
+      "case": "literal-Z_AXIS",
+      "mode": "Z_AXIS",
+      "invert": true,
+      "angle": -1,
+      "center": [
+        16,
+        -16,
+        -0.0000152587890625
+      ],
+      "vector": [
+        -16,
+        16,
+        0.0000152587890625
+      ],
+      "kind": "literal",
+      "width": 13,
+      "height": 9,
+      "pixelRatio": 1
+    },
+    {
+      "case": "thin-8192x4",
+      "mode": "Y_AXIS",
+      "invert": false,
+      "angle": 1,
+      "center": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "kind": "normalized",
+      "width": 8192,
+      "height": 4,
+      "pixelRatio": 1
+    },
+    {
+      "case": "thin-4x8192",
+      "mode": "Y_AXIS",
+      "invert": false,
+      "angle": 1,
+      "center": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "kind": "normalized",
+      "width": 4,
+      "height": 8192,
+      "pixelRatio": 1
+    },
+    {
+      "case": "group-reroute",
+      "mode": "X_AXIS",
+      "invert": true,
+      "angle": 0.9,
+      "center": [
+        0.5,
+        -0.5,
+        0.25
+      ],
+      "kind": "normalized",
+      "width": 13,
+      "height": 9,
+      "pixelRatio": 1,
+      "group": true
+    }
+  ]
+}

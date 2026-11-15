@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "id": "compositor-input-rotation",
+  "nativeNode": "FunctionNodeInputRotation",
+  "domain": "compositor",
+  "lifecycle": "production",
+  "scope": "Partial pinned Blender5.3 macOS arm64 CPU compositor static InputRotation EulerXYZ property. Inputs raw positive zero or signed normal Float32 magnitude at most8 radians; every native quaternion output must pass normal/+0 and pre-Float-store hash guards. Scalar RotationToQuaternion endpoints only, bounded typed groups/reroutes; existing VALUE transport. Data-dependent signed-zero output refusals remain. No live ROTATION, normalization, shader/GPU-authored or other version/host credit.",
+  "upstream": {
+    "direct": [
+      "source/blender/nodes/function/nodes/node_fn_input_rotation.cc"
+    ],
+    "shared": [
+      "source/blender/nodes/function/nodes/node_fn_euler_to_rotation.cc",
+      "source/blender/nodes/function/nodes/node_fn_rotation_to_quaternion.cc",
+      "source/blender/blenlib/BLI_math_euler.hh",
+      "source/blender/blenlib/BLI_math_euler_types.hh",
+      "source/blender/python/intern/bpy_rna.cc",
+      "source/blender/compositor/intern/multi_function_procedure_operation.cc"
+    ]
+  },
+  "inputs": {
+    "native": [
+      "packages/blender-addon/*.py",
+      "packages/blender-addon/*.json",
+      "packages/blendlink/blender/**/*.py",
+      "experiments/compositor-static-euler/*.py",
+      "experiments/compositor-static-euler/input-rotation-cases.json",
+      "experiments/compositor-static-euler/input-rotation-contract.json",
+      "experiments/compositor-static-euler/input-rotation-sources.json",
+      "packages/blender-addon/tests/compositor_reference.py",
+      "packages/blender-addon/tests/compositor_input_rotation_check.py"
+    ],
+    "runtime": [
+      "packages/blendlink/src/**/*.ts"
+    ],
+    "sdk": [
+      "package.json",
+      "package-lock.json",
+      "packages/blendlink/package.json",
+      "packages/blendlink/tsconfig.json",
+      "packages/blendlink/scripts/*.mjs",
+      "scripts/test-node-port.mjs",
+      "scripts/run-node-port-family.mjs",
+      "scripts/lib/node-port-contract.mjs",
+      "scripts/lib/node-port-evidence.mjs",
+      "scripts/lib/node-port-family-evidence.mjs",
+      "scripts/lib/node-port-python.mjs",
+      "scripts/node-port-blender.mjs",
+      "scripts/lib/native-proof-archive.mjs",
+      "scripts/lib/runtime-provenance.mjs",
+      "scripts/lib/runtime-proof-archive.mjs",
+      "scripts/lib/runtime-compiler-trace.mjs",
+      "scripts/lib/runtime-transaction-snapshot.mjs",
+      "scripts/lib/browser-proof-contract.mjs",
+      "scripts/lib/node-port-displace-evidence.mjs"
+    ],
+    "tests": [
+      "experiments/compositor-static-euler/*.mjs",
+      "experiments/compositor-static-euler/*.ts",
+      "experiments/compositor-static-euler/*.js",
+      "experiments/compositor-static-euler/*.html",
+      "experiments/compositor-static-euler/*.json",
+      "scripts/lib/node-port-family-evidence.test.mjs",
+      "scripts/lib/node-port-contract.test.mjs",
+      "scripts/lib/node-port-python.*",
+      "scripts/lib/node-port-evidence*",
+      "scripts/lib/browser-proof-contract.test.mjs",
+      "node-ports/compositor-input-rotation.json"
+    ]
+  },
+  "commands": {
+    "build": [
+      {
+        "id": "clean",
+        "argv": [
+          "{node}",
+          "packages/blendlink/scripts/clean-dist.mjs"
+        ],
+        "timeoutMs": 60000
+      },
+      {
+        "id": "typescript",
+        "argv": [
+          "{node}",
+          "node_modules/typescript/bin/tsc",
+          "-p",
+          "packages/blendlink/tsconfig.json"
+        ],
+        "timeoutMs": 180000
+      },
+      {
+        "id": "assets",
+        "argv": [
+          "{node}",
+          "packages/blendlink/scripts/copy-assets.mjs"
+        ],
+        "timeoutMs": 60000
+      }
+    ],
+    "verify": {
+      "id": "suite",
+      "argv": [
+        "{node}",
+        "scripts/run-node-port-family.mjs",
+        "compositor-input-rotation",
+        "--evidence",
+        "{evidence}",
+        "--blender",
+        "{blender}"
+      ],
+      "timeoutMs": 1500000
+    }
+  },
+  "profiles": [
+    {
+      "id": "mac-53",
+      "hostPlatforms": [
+        "darwin"
+      ],
+      "blenderVersion": "5.3.0",
+      "blenderBuildHash": "02f0899d78e3",
+      "nativeSource": {
+        "profile": "darwin-arm64-53-input-rotation-cpu-v1",
+        "backend": null,
+        "evaluator": "CPU-compositor"
+      },
+      "runs": [
+        {
+          "id": "matrix",
+          "adapter": "matrix",
+          "env": {}
+        }
+      ]
+    }
+  ],
+  "evidence": {
+    "adapter": "compositor-input-rotation-v1",
+    "productionCases": 48,
+    "calibrationCases": 0,
+    "refusedNativeCases": 0
+  }
+}

@@ -1,0 +1,962 @@
+{
+  "status": "RESEARCH_SIGNED_INPUT_ROTATION_NATIVE_TWINS",
+  "supportCredit": 0,
+  "nativeCompositorCredit": 0,
+  "renderCredit": 0,
+  "browserCredit": 0,
+  "gpuCredit": 0,
+  "twins": 40,
+  "componentComparisons": 160,
+  "preStoreHashComparisons": 160,
+  "allTwinsExact": true,
+  "existingOutputGatePasses": 22,
+  "existingOutputGateRefuses": 18,
+  "nativePythonProof": {
+    "pythonInvocations": 1,
+    "finalInvocations": 0,
+    "uniqueCachePrefixes": 1,
+    "numericalCredit": 0
+  },
+  "ownershipRestored": true,
+  "renderCalls": 0,
+  "gpuInitializationCalls": 0,
+  "retainedArtifact": "artifacts/verification-public-input-rotation-signed-r1",
+  "artifactPins": {
+    "native-python-proof/blender-proof": "fed8cc0abf14b74086cab09db7bcd2a2b7537d9cc844d98e38ea7e2bd773bf49",
+    "native-python-proof/invocations/e393cf8c-1df5-41c0-9499-f2229fbf8156.json": "59ab8088c473444e67b5f2e8d8a30b24913001a403d287623e782597855accd5",
+    "native-python-proof/launcher.json": "69142dac6e57475e4ad601ec30fd7e19ef61e046044c75a69beb6cb674587de0",
+    "native-python-proof/lib/node-port-python.mjs": "33fc36d6c551583a119e558a60f77cd55ed25c92bcfd6d39e0171e7faaa33cde",
+    "native-python-proof/node-port-blender.mjs": "3390a410423e0cc921567a97473f6fd67f91cbe2987af7846346cb7cb51e9a8c",
+    "native-python-proof.json": "d8889f99632661b2d2ff5390b8396c045c04015d803bfd83cfd79cfe23390099",
+    "native.log": "c00e240f0255561436155f2e2f03d90d20438feb0f5a045d199b12496aa1b384",
+    "receipt.json": "77381350b191408f6c0d0f8344c839b182e39c5850c422d416df84ac9736c5d4",
+    "report.json": "07398340e7e052f8ed54b84f7b3937398a2c98b15145169ecf3b54d5d665c39c"
+  },
+  "scriptPins": {
+    "signed-probe.py": "1e312a09a41d58decf2ac0dcce7f7258366bd5807c6a58b9cceb75915e0ec975",
+    "signed-run.mjs": "c0900d04589b66831bb9d9ee8856c79dc24b199703f4f21c85dd74473975fa91",
+    "raw_float_array.py": "39813dcb3db255ff880744874b0eaf3c9a297e475821d7c1cac911ece7b137d9"
+  },
+  "rows": [
+    {
+      "inputWords": [
+        3078619136,
+        0,
+        0
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        1065353216,
+        3070230528,
+        0,
+        0
+      ],
+      "preStoreHashes": [
+        1413797383,
+        2814781228,
+        2755625498,
+        2755625498
+      ],
+      "storedHashMatches": true,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": true
+    },
+    {
+      "inputWords": [
+        0,
+        3078619136,
+        0
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        1065353216,
+        0,
+        3070230528,
+        0
+      ],
+      "preStoreHashes": [
+        1413797383,
+        2755625498,
+        2814781228,
+        2755625498
+      ],
+      "storedHashMatches": true,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": true
+    },
+    {
+      "inputWords": [
+        0,
+        0,
+        3078619136
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        1065353216,
+        0,
+        0,
+        3070230528
+      ],
+      "preStoreHashes": [
+        1413797383,
+        2755625498,
+        2755625498,
+        2814781228
+      ],
+      "storedHashMatches": true,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": true
+    },
+    {
+      "inputWords": [
+        3212836864,
+        0,
+        0
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        1063299392,
+        3203757892,
+        0,
+        0
+      ],
+      "preStoreHashes": [
+        1770475527,
+        371779446,
+        2755625498,
+        2755625498
+      ],
+      "storedHashMatches": true,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": true
+    },
+    {
+      "inputWords": [
+        0,
+        3212836864,
+        0
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        1063299392,
+        0,
+        3203757892,
+        0
+      ],
+      "preStoreHashes": [
+        1770475527,
+        2755625498,
+        371779446,
+        2755625498
+      ],
+      "storedHashMatches": true,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": true
+    },
+    {
+      "inputWords": [
+        0,
+        0,
+        3212836864
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        1063299392,
+        0,
+        0,
+        3203757892
+      ],
+      "preStoreHashes": [
+        1770475527,
+        2755625498,
+        2755625498,
+        371779446
+      ],
+      "storedHashMatches": true,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": true
+    },
+    {
+      "inputWords": [
+        1090519040,
+        0,
+        0
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        3207025968,
+        3208756687,
+        0,
+        0
+      ],
+      "preStoreHashes": [
+        1346829620,
+        3247599898,
+        3240288103,
+        2755625498
+      ],
+      "storedHashMatches": false,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": false
+    },
+    {
+      "inputWords": [
+        0,
+        1090519040,
+        0
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        3207025968,
+        0,
+        3208756687,
+        0
+      ],
+      "preStoreHashes": [
+        1346829620,
+        2755625498,
+        3247599898,
+        2755625498
+      ],
+      "storedHashMatches": true,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": true
+    },
+    {
+      "inputWords": [
+        0,
+        0,
+        1090519040
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        3207025968,
+        0,
+        0,
+        3208756687
+      ],
+      "preStoreHashes": [
+        1346829620,
+        2755625498,
+        3240288103,
+        3247599898
+      ],
+      "storedHashMatches": false,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": false
+    },
+    {
+      "inputWords": [
+        3238002688,
+        0,
+        0
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        3207025968,
+        1061273039,
+        0,
+        0
+      ],
+      "preStoreHashes": [
+        1346829620,
+        3739137614,
+        2755625498,
+        3240288103
+      ],
+      "storedHashMatches": false,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": false
+    },
+    {
+      "inputWords": [
+        0,
+        3238002688,
+        0
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        3207025968,
+        0,
+        1061273039,
+        0
+      ],
+      "preStoreHashes": [
+        1346829620,
+        3240288103,
+        3739137614,
+        3240288103
+      ],
+      "storedHashMatches": false,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": false
+    },
+    {
+      "inputWords": [
+        0,
+        0,
+        3238002688
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        3207025968,
+        0,
+        0,
+        1061273039
+      ],
+      "preStoreHashes": [
+        1346829620,
+        3240288103,
+        2755625498,
+        3739137614
+      ],
+      "storedHashMatches": false,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": false
+    },
+    {
+      "inputWords": [
+        1078530011,
+        0,
+        0
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        3007036718,
+        1065353216,
+        0,
+        0
+      ],
+      "preStoreHashes": [
+        4076026464,
+        1413797383,
+        2755625498,
+        3240288103
+      ],
+      "storedHashMatches": false,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": false
+    },
+    {
+      "inputWords": [
+        0,
+        1078530011,
+        0
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        3007036718,
+        0,
+        1065353216,
+        0
+      ],
+      "preStoreHashes": [
+        4076026464,
+        3240288103,
+        1413797383,
+        3240288103
+      ],
+      "storedHashMatches": false,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": false
+    },
+    {
+      "inputWords": [
+        0,
+        0,
+        1078530011
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        3007036718,
+        0,
+        0,
+        1065353216
+      ],
+      "preStoreHashes": [
+        4076026464,
+        3240288103,
+        2755625498,
+        1413797383
+      ],
+      "storedHashMatches": false,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": false
+    },
+    {
+      "inputWords": [
+        3226013659,
+        0,
+        0
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        3007036718,
+        3212836864,
+        0,
+        0
+      ],
+      "preStoreHashes": [
+        4076026464,
+        3663344972,
+        3240288103,
+        2755625498
+      ],
+      "storedHashMatches": false,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": false
+    },
+    {
+      "inputWords": [
+        0,
+        3226013659,
+        0
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        3007036718,
+        0,
+        3212836864,
+        0
+      ],
+      "preStoreHashes": [
+        4076026464,
+        2755625498,
+        3663344972,
+        2755625498
+      ],
+      "storedHashMatches": true,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": true
+    },
+    {
+      "inputWords": [
+        0,
+        0,
+        3226013659
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        3007036718,
+        0,
+        0,
+        3212836864
+      ],
+      "preStoreHashes": [
+        4076026464,
+        2755625498,
+        3240288103,
+        3663344972
+      ],
+      "storedHashMatches": false,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": false
+    },
+    {
+      "inputWords": [
+        1086918619,
+        0,
+        0
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        3212836864,
+        3015425326,
+        0,
+        0
+      ],
+      "preStoreHashes": [
+        3663344972,
+        2071399929,
+        3240288103,
+        2755625498
+      ],
+      "storedHashMatches": false,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": false
+    },
+    {
+      "inputWords": [
+        0,
+        1086918619,
+        0
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        3212836864,
+        0,
+        3015425326,
+        0
+      ],
+      "preStoreHashes": [
+        3663344972,
+        2755625498,
+        2071399929,
+        2755625498
+      ],
+      "storedHashMatches": true,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": true
+    },
+    {
+      "inputWords": [
+        0,
+        0,
+        1086918619
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        3212836864,
+        0,
+        0,
+        3015425326
+      ],
+      "preStoreHashes": [
+        3663344972,
+        2755625498,
+        3240288103,
+        2071399929
+      ],
+      "storedHashMatches": false,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": false
+    },
+    {
+      "inputWords": [
+        3234402267,
+        0,
+        0
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        3212836864,
+        867941678,
+        0,
+        0
+      ],
+      "preStoreHashes": [
+        3663344972,
+        948988109,
+        2755625498,
+        3240288103
+      ],
+      "storedHashMatches": false,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": false
+    },
+    {
+      "inputWords": [
+        0,
+        3234402267,
+        0
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        3212836864,
+        0,
+        867941678,
+        0
+      ],
+      "preStoreHashes": [
+        3663344972,
+        3240288103,
+        948988109,
+        3240288103
+      ],
+      "storedHashMatches": false,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": false
+    },
+    {
+      "inputWords": [
+        0,
+        0,
+        3234402267
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        3212836864,
+        0,
+        0,
+        867941678
+      ],
+      "preStoreHashes": [
+        3663344972,
+        3240288103,
+        2755625498,
+        948988109
+      ],
+      "storedHashMatches": false,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": false
+    },
+    {
+      "inputWords": [
+        8388608,
+        0,
+        0
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        1065353216,
+        0,
+        0,
+        0
+      ],
+      "preStoreHashes": [
+        1413797383,
+        2755625498,
+        2755625498,
+        2755625498
+      ],
+      "storedHashMatches": true,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": true
+    },
+    {
+      "inputWords": [
+        0,
+        8388608,
+        0
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        1065353216,
+        0,
+        0,
+        0
+      ],
+      "preStoreHashes": [
+        1413797383,
+        2755625498,
+        2755625498,
+        2755625498
+      ],
+      "storedHashMatches": true,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": true
+    },
+    {
+      "inputWords": [
+        0,
+        0,
+        8388608
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        1065353216,
+        0,
+        0,
+        0
+      ],
+      "preStoreHashes": [
+        1413797383,
+        2755625498,
+        2755625498,
+        2755625498
+      ],
+      "storedHashMatches": true,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": true
+    },
+    {
+      "inputWords": [
+        2155872256,
+        0,
+        0
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        1065353216,
+        0,
+        0,
+        0
+      ],
+      "preStoreHashes": [
+        1413797383,
+        3240288103,
+        2755625498,
+        2755625498
+      ],
+      "storedHashMatches": false,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": false
+    },
+    {
+      "inputWords": [
+        0,
+        2155872256,
+        0
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        1065353216,
+        0,
+        0,
+        0
+      ],
+      "preStoreHashes": [
+        1413797383,
+        2755625498,
+        2755625498,
+        2755625498
+      ],
+      "storedHashMatches": true,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": true
+    },
+    {
+      "inputWords": [
+        0,
+        0,
+        2155872256
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        1065353216,
+        0,
+        0,
+        0
+      ],
+      "preStoreHashes": [
+        1413797383,
+        2755625498,
+        2755625498,
+        3240288103
+      ],
+      "storedHashMatches": false,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": false
+    },
+    {
+      "inputWords": [
+        8388608,
+        8388608,
+        8388608
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        1065353216,
+        0,
+        0,
+        0
+      ],
+      "preStoreHashes": [
+        1413797383,
+        2755625498,
+        2755625498,
+        2755625498
+      ],
+      "storedHashMatches": true,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": true
+    },
+    {
+      "inputWords": [
+        2155872256,
+        2155872256,
+        2155872256
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        1065353216,
+        0,
+        0,
+        0
+      ],
+      "preStoreHashes": [
+        1413797383,
+        3240288103,
+        2755625498,
+        3240288103
+      ],
+      "storedHashMatches": false,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": false
+    },
+    {
+      "inputWords": [
+        8388608,
+        2155872256,
+        8388608
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        1065353216,
+        0,
+        0,
+        0
+      ],
+      "preStoreHashes": [
+        1413797383,
+        2755625498,
+        2755625498,
+        2755625498
+      ],
+      "storedHashMatches": true,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": true
+    },
+    {
+      "inputWords": [
+        3212836864,
+        1082130432,
+        3234402267
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        1052441577,
+        3192671422,
+        3209447590,
+        3202298774
+      ],
+      "preStoreHashes": [
+        1118339016,
+        3574611895,
+        2274508617,
+        4218630761
+      ],
+      "storedHashMatches": true,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": true
+    },
+    {
+      "inputWords": [
+        1090519040,
+        3238002688,
+        1086918619
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        3202007168,
+        3204269718,
+        1056786068,
+        3205668800
+      ],
+      "preStoreHashes": [
+        1516248723,
+        3937933759,
+        128235090,
+        1432413785
+      ],
+      "storedHashMatches": true,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": true
+    },
+    {
+      "inputWords": [
+        1045243769,
+        1056964608,
+        1061158912
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        1063778220,
+        2994733056,
+        1049064141,
+        1051263192
+      ],
+      "preStoreHashes": [
+        3485473350,
+        1014622241,
+        2019681974,
+        2264052991
+      ],
+      "storedHashMatches": true,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": true
+    },
+    {
+      "inputWords": [
+        1045243770,
+        1056964608,
+        1061158912
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        1063778220,
+        2986344448,
+        1049064141,
+        1051263192
+      ],
+      "preStoreHashes": [
+        3485473350,
+        51828139,
+        2019681974,
+        2264052991
+      ],
+      "storedHashMatches": true,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": true
+    },
+    {
+      "inputWords": [
+        1045243771,
+        1056964608,
+        1061158912
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        1063778220,
+        2986344448,
+        1049064141,
+        1051263192
+      ],
+      "preStoreHashes": [
+        3485473350,
+        51828139,
+        2019681974,
+        2264052991
+      ],
+      "storedHashMatches": true,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": true
+    },
+    {
+      "inputWords": [
+        1061158912,
+        1056964608,
+        1045243770
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        1063778220,
+        1051263192,
+        1049064141,
+        2986344448
+      ],
+      "preStoreHashes": [
+        3485473350,
+        2264052991,
+        2019681974,
+        51828139
+      ],
+      "storedHashMatches": true,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": true
+    },
+    {
+      "inputWords": [
+        1086918618,
+        3226013658,
+        1065353217
+      ],
+      "wordAndHashTwinsExact": true,
+      "outputWords": [
+        3021266680,
+        3203757893,
+        1063299392,
+        869193238
+      ],
+      "preStoreHashes": [
+        2931123696,
+        1349251255,
+        1770475527,
+        3418584618
+      ],
+      "storedHashMatches": true,
+      "normalPositiveZero": true,
+      "existingOutputGatePasses": true
+    }
+  ]
+}

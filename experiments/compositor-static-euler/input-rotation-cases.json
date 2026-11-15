@@ -1,0 +1,830 @@
+[
+  {
+    "case": "zero-0",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      0,
+      0,
+      0
+    ],
+    "indices": [
+      0,
+      1,
+      2
+    ],
+    "saved": true,
+    "manualQuaternionWords": [
+      1065353216,
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "case": "zero-1",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      0,
+      0,
+      0
+    ],
+    "indices": [
+      3
+    ],
+    "saved": true,
+    "manualQuaternionWords": [
+      1065353216,
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "case": "axis-x-min-0",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      931135488,
+      0,
+      0
+    ],
+    "indices": [
+      0,
+      1,
+      2
+    ],
+    "saved": false
+  },
+  {
+    "case": "axis-x-min-1",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      931135488,
+      0,
+      0
+    ],
+    "indices": [
+      3
+    ],
+    "saved": false
+  },
+  {
+    "case": "axis-y-min-0",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      0,
+      931135488,
+      0
+    ],
+    "indices": [
+      0,
+      1,
+      2
+    ],
+    "saved": false
+  },
+  {
+    "case": "axis-y-min-1",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      0,
+      931135488,
+      0
+    ],
+    "indices": [
+      3
+    ],
+    "saved": false
+  },
+  {
+    "case": "axis-z-min-0",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      0,
+      0,
+      931135488
+    ],
+    "indices": [
+      0,
+      1,
+      2
+    ],
+    "saved": false
+  },
+  {
+    "case": "axis-z-min-1",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      0,
+      0,
+      931135488
+    ],
+    "indices": [
+      3
+    ],
+    "saved": false
+  },
+  {
+    "case": "axis-x-one-0",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      1065353216,
+      0,
+      0
+    ],
+    "indices": [
+      0,
+      1,
+      2
+    ],
+    "saved": false
+  },
+  {
+    "case": "axis-x-one-1",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      1065353216,
+      0,
+      0
+    ],
+    "indices": [
+      3
+    ],
+    "saved": false
+  },
+  {
+    "case": "axis-y-one-0",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      0,
+      1065353216,
+      0
+    ],
+    "indices": [
+      0,
+      1,
+      2
+    ],
+    "saved": false
+  },
+  {
+    "case": "axis-y-one-1",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      0,
+      1065353216,
+      0
+    ],
+    "indices": [
+      3
+    ],
+    "saved": false
+  },
+  {
+    "case": "axis-z-one-0",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      0,
+      0,
+      1065353216
+    ],
+    "indices": [
+      0,
+      1,
+      2
+    ],
+    "saved": false
+  },
+  {
+    "case": "axis-z-one-1",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      0,
+      0,
+      1065353216
+    ],
+    "indices": [
+      3
+    ],
+    "saved": false
+  },
+  {
+    "case": "all-min-0",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      931135488,
+      931135488,
+      931135488
+    ],
+    "indices": [
+      0,
+      1,
+      2
+    ],
+    "saved": false
+  },
+  {
+    "case": "all-min-1",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      931135488,
+      931135488,
+      931135488
+    ],
+    "indices": [
+      3
+    ],
+    "saved": false
+  },
+  {
+    "case": "all-one-0",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      1065353216,
+      1065353216,
+      1065353216
+    ],
+    "indices": [
+      0,
+      1,
+      2
+    ],
+    "saved": false
+  },
+  {
+    "case": "all-one-1",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      1065353216,
+      1065353216,
+      1065353216
+    ],
+    "indices": [
+      3
+    ],
+    "saved": false
+  },
+  {
+    "case": "asymmetric-0",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      1036831949,
+      1045220557,
+      1050253722
+    ],
+    "indices": [
+      0,
+      1,
+      2
+    ],
+    "saved": false
+  },
+  {
+    "case": "asymmetric-1",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      1036831949,
+      1045220557,
+      1050253722
+    ],
+    "indices": [
+      3
+    ],
+    "saved": false
+  },
+  {
+    "case": "next-min-0",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      931135489,
+      931135490,
+      931135491
+    ],
+    "indices": [
+      0,
+      1,
+      2
+    ],
+    "saved": false
+  },
+  {
+    "case": "next-min-1",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      931135489,
+      931135490,
+      931135491
+    ],
+    "indices": [
+      3
+    ],
+    "saved": false
+  },
+  {
+    "case": "near-one-0",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      1051372203,
+      1056964609,
+      1065353215
+    ],
+    "indices": [
+      0,
+      1,
+      2
+    ],
+    "saved": false
+  },
+  {
+    "case": "near-one-1",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      1051372203,
+      1056964609,
+      1065353215
+    ],
+    "indices": [
+      3
+    ],
+    "saved": false
+  },
+  {
+    "case": "producer-group-0",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "producer-group",
+    "inputWords": [
+      1036831949,
+      1045220557,
+      1050253722
+    ],
+    "indices": [
+      0,
+      1,
+      2
+    ],
+    "saved": true
+  },
+  {
+    "case": "producer-group-1",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "producer-group",
+    "inputWords": [
+      1036831949,
+      1045220557,
+      1050253722
+    ],
+    "indices": [
+      3
+    ],
+    "saved": false
+  },
+  {
+    "case": "rotation-group-0",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "rotation-group",
+    "inputWords": [
+      1036831949,
+      1045220557,
+      1050253722
+    ],
+    "indices": [
+      0,
+      1,
+      2
+    ],
+    "saved": false
+  },
+  {
+    "case": "rotation-group-1",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "rotation-group",
+    "inputWords": [
+      1036831949,
+      1045220557,
+      1050253722
+    ],
+    "indices": [
+      3
+    ],
+    "saved": false
+  },
+  {
+    "case": "endpoint-group-0",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "endpoint-group",
+    "inputWords": [
+      1036831949,
+      1045220557,
+      1050253722
+    ],
+    "indices": [
+      0,
+      1,
+      2
+    ],
+    "saved": true
+  },
+  {
+    "case": "endpoint-group-1",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "endpoint-group",
+    "inputWords": [
+      1036831949,
+      1045220557,
+      1050253722
+    ],
+    "indices": [
+      3
+    ],
+    "saved": false
+  },
+  {
+    "case": "reroute-0",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "reroute",
+    "inputWords": [
+      1036831949,
+      1045220557,
+      1050253722
+    ],
+    "indices": [
+      0,
+      1,
+      2
+    ],
+    "saved": false
+  },
+  {
+    "case": "reroute-1",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "reroute",
+    "inputWords": [
+      1036831949,
+      1045220557,
+      1050253722
+    ],
+    "indices": [
+      3
+    ],
+    "saved": true
+  },
+  {
+    "case": "negative-one-x-0",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      3212836864,
+      0,
+      0
+    ],
+    "indices": [
+      0,
+      1,
+      2
+    ],
+    "saved": true
+  },
+  {
+    "case": "negative-one-x-1",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      3212836864,
+      0,
+      0
+    ],
+    "indices": [
+      3
+    ],
+    "saved": false
+  },
+  {
+    "case": "negative-min-y-0",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      0,
+      3078619136,
+      0
+    ],
+    "indices": [
+      0,
+      1,
+      2
+    ],
+    "saved": false
+  },
+  {
+    "case": "negative-min-y-1",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      0,
+      3078619136,
+      0
+    ],
+    "indices": [
+      3
+    ],
+    "saved": false
+  },
+  {
+    "case": "min-normal-0",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      8388608,
+      8388608,
+      8388608
+    ],
+    "indices": [
+      0,
+      1,
+      2
+    ],
+    "saved": false
+  },
+  {
+    "case": "min-normal-1",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      8388608,
+      8388608,
+      8388608
+    ],
+    "indices": [
+      3
+    ],
+    "saved": false
+  },
+  {
+    "case": "negative-min-normal-y-0",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      0,
+      2155872256,
+      0
+    ],
+    "indices": [
+      0,
+      1,
+      2
+    ],
+    "saved": false
+  },
+  {
+    "case": "negative-min-normal-y-1",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      0,
+      2155872256,
+      0
+    ],
+    "indices": [
+      3
+    ],
+    "saved": false
+  },
+  {
+    "case": "mixed-eight-0",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      1090519040,
+      3238002688,
+      1086918619
+    ],
+    "indices": [
+      0,
+      1,
+      2
+    ],
+    "saved": true
+  },
+  {
+    "case": "mixed-eight-1",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      1090519040,
+      3238002688,
+      1086918619
+    ],
+    "indices": [
+      3
+    ],
+    "saved": false
+  },
+  {
+    "case": "mixed-turn-0",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      3212836864,
+      1082130432,
+      3234402267
+    ],
+    "indices": [
+      0,
+      1,
+      2
+    ],
+    "saved": false
+  },
+  {
+    "case": "mixed-turn-1",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      3212836864,
+      1082130432,
+      3234402267
+    ],
+    "indices": [
+      3
+    ],
+    "saved": false
+  },
+  {
+    "case": "cancellation-0",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      1045243770,
+      1056964608,
+      1061158912
+    ],
+    "indices": [
+      0,
+      1,
+      2
+    ],
+    "saved": false
+  },
+  {
+    "case": "cancellation-1",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      1045243770,
+      1056964608,
+      1061158912
+    ],
+    "indices": [
+      3
+    ],
+    "saved": false
+  },
+  {
+    "case": "near-turn-0",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      1086918618,
+      3226013658,
+      1065353217
+    ],
+    "indices": [
+      0,
+      1,
+      2
+    ],
+    "saved": false
+  },
+  {
+    "case": "near-turn-1",
+    "width": 4,
+    "height": 4,
+    "pixelRatio": 1,
+    "route": "direct",
+    "inputWords": [
+      1086918618,
+      3226013658,
+      1065353217
+    ],
+    "indices": [
+      3
+    ],
+    "saved": true
+  }
+]

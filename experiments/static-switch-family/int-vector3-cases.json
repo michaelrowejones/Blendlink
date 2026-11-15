@@ -1,0 +1,270 @@
+[
+  {
+    "case": "calibration",
+    "kind": "control",
+    "route": "direct",
+    "value": null,
+    "saveFinal": true,
+    "expectedWords": [
+      1040187392,
+      1048576000,
+      1056964608,
+      1065353216
+    ]
+  },
+  {
+    "case": "int3-zero",
+    "kind": "integer-vector3",
+    "route": "direct",
+    "value": [
+      0,
+      0,
+      0
+    ],
+    "saveFinal": false,
+    "expectedWords": [
+      0,
+      0,
+      0,
+      1065353216
+    ]
+  },
+  {
+    "case": "int3-small",
+    "kind": "integer-vector3",
+    "route": "direct",
+    "value": [
+      -3,
+      0,
+      7
+    ],
+    "saveFinal": false,
+    "expectedWords": [
+      3225419776,
+      0,
+      1088421888,
+      1065353216
+    ]
+  },
+  {
+    "case": "int3-extremes",
+    "kind": "integer-vector3",
+    "route": "direct",
+    "value": [
+      -2147483648,
+      2147483647,
+      16777217
+    ],
+    "saveFinal": true,
+    "expectedWords": [
+      3472883712,
+      1325400064,
+      1266679808,
+      1065353216
+    ]
+  },
+  {
+    "case": "int3-extremes-swap",
+    "kind": "integer-vector3",
+    "route": "direct",
+    "value": [
+      2147483647,
+      -2147483648,
+      -16777217
+    ],
+    "saveFinal": false,
+    "expectedWords": [
+      1325400064,
+      3472883712,
+      3414163456,
+      1065353216
+    ]
+  },
+  {
+    "case": "int3-positive-ties",
+    "kind": "integer-vector3",
+    "route": "direct",
+    "value": [
+      16777215,
+      16777216,
+      16777217
+    ],
+    "saveFinal": true,
+    "expectedWords": [
+      1266679807,
+      1266679808,
+      1266679808,
+      1065353216
+    ]
+  },
+  {
+    "case": "int3-positive-odd",
+    "kind": "integer-vector3",
+    "route": "direct",
+    "value": [
+      16777218,
+      16777219,
+      16777220
+    ],
+    "saveFinal": false,
+    "expectedWords": [
+      1266679809,
+      1266679810,
+      1266679810,
+      1065353216
+    ]
+  },
+  {
+    "case": "int3-negative-ties",
+    "kind": "integer-vector3",
+    "route": "direct",
+    "value": [
+      -16777215,
+      -16777216,
+      -16777217
+    ],
+    "saveFinal": true,
+    "expectedWords": [
+      3414163455,
+      3414163456,
+      3414163456,
+      1065353216
+    ]
+  },
+  {
+    "case": "int3-negative-odd",
+    "kind": "integer-vector3",
+    "route": "direct",
+    "value": [
+      -16777218,
+      -16777219,
+      -16777220
+    ],
+    "saveFinal": false,
+    "expectedWords": [
+      3414163457,
+      3414163458,
+      3414163458,
+      1065353216
+    ]
+  },
+  {
+    "case": "int3-high-rounding",
+    "kind": "integer-vector3",
+    "route": "direct",
+    "value": [
+      2147483583,
+      2147483584,
+      2147483647
+    ],
+    "saveFinal": false,
+    "expectedWords": [
+      1325400063,
+      1325400064,
+      1325400064,
+      1065353216
+    ]
+  },
+  {
+    "case": "int3-low-rounding",
+    "kind": "integer-vector3",
+    "route": "direct",
+    "value": [
+      -2147483648,
+      -2147483584,
+      -2147483583
+    ],
+    "saveFinal": false,
+    "expectedWords": [
+      3472883712,
+      3472883712,
+      3472883711,
+      1065353216
+    ]
+  },
+  {
+    "case": "int3-reroute",
+    "kind": "integer-vector3",
+    "route": "reroute",
+    "value": [
+      -2147483648,
+      2147483647,
+      16777219
+    ],
+    "saveFinal": true,
+    "expectedWords": [
+      3472883712,
+      1325400064,
+      1266679810,
+      1065353216
+    ]
+  },
+  {
+    "case": "int3-group",
+    "kind": "integer-vector3",
+    "route": "nested-constructor",
+    "value": [
+      -2147483648,
+      2147483647,
+      -16777219
+    ],
+    "saveFinal": true,
+    "expectedWords": [
+      3472883712,
+      1325400064,
+      3414163458,
+      1065353216
+    ]
+  },
+  {
+    "case": "int3-vector-group",
+    "kind": "integer-vector3",
+    "route": "vector-group",
+    "value": [
+      16777217,
+      -16777219,
+      2147483647
+    ],
+    "saveFinal": true,
+    "expectedWords": [
+      1266679808,
+      3414163458,
+      1325400064,
+      1065353216
+    ]
+  },
+  {
+    "case": "int3-rgba-group",
+    "kind": "integer-vector3",
+    "route": "rgba-group",
+    "value": [
+      2147483647,
+      0,
+      -2147483648
+    ],
+    "saveFinal": true,
+    "expectedWords": [
+      1325400064,
+      0,
+      3472883712,
+      1065353216
+    ]
+  },
+  {
+    "case": "int3-neighbors",
+    "kind": "integer-vector3",
+    "route": "direct",
+    "value": [
+      2147483646,
+      -2147483647,
+      1
+    ],
+    "saveFinal": false,
+    "expectedWords": [
+      1325400064,
+      3472883712,
+      1065353216,
+      1065353216
+    ]
+  }
+]

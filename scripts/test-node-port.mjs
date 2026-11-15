@@ -1,8 +1,9 @@
 // One manifest-selected native -> Final -> built-runtime proof transaction.
 import { execFileSync } from 'node:child_process'
 import assert from 'node:assert/strict'
-import { mkdir, readFile, realpath, rm, stat, writeFile } from 'node:fs/promises'
+import { lstat, mkdir, readFile, realpath, rm, rmdir, stat, unlink, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
+import { tmpdir } from 'node:os'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { randomUUID } from 'node:crypto'
 import { createRequire } from 'node:module'
@@ -17,6 +18,48 @@ const defaultRoot = resolve(fileURLToPath(new URL('../', import.meta.url)))
 const json = async path => JSON.parse(await readFile(path, 'utf8'))
 const message = error => ({ name: error.name, message: error.message, stack: error.stack })
 function gitCommit(root) { try { return execFileSync('git', ['-C', root, 'rev-parse', 'HEAD'], { encoding: 'utf8', timeout: 5000, stdio: ['ignore', 'pipe', 'ignore'] }).trim() } catch { return null } }
+
+/** Serializes automatic proofs sharing a checkout's mutable build directory.
+ * No stale-owner takeover: an interrupted owner must be inspected explicitly.
+ * Independent worktrees use separate leases; dry runs never acquire one.
+ */
+export async function acquireNodePortVerificationLease(root, details = {}) {
+  root = await realpath(root)
+  const parent = join(await realpath(tmpdir()), 'scenetoweb-node-port-leases-v1-' + (process.getuid?.() ?? 'local'))
+  await mkdir(parent, { recursive: true, mode: 0o700 })
+  const parentInfo = await lstat(parent)
+  assert.ok(parentInfo.isDirectory() && !parentInfo.isSymbolicLink(), 'Verification lease parent must be a plain directory')
+  const directory = join(parent, nodePortHash(root)), ownerPath = join(directory, 'owner.json')
+  const owner = { schemaVersion: 1, id: randomUUID(), root, pid: process.pid, startedAt: new Date().toISOString(),
+    manifestId: details.id ?? null, profile: details.profile ?? null, evidence: details.evidence ?? null }
+  try { await mkdir(directory, { mode: 0o700 }) }
+  catch (error) {
+    if (error.code !== 'EEXIST') throw error
+    let previous = null
+    try {
+      const info = await lstat(directory), file = await lstat(ownerPath)
+      if (info.isDirectory() && !info.isSymbolicLink() && file.isFile() && !file.isSymbolicLink()) previous = await json(ownerPath)
+    } catch {} // A just-starting owner may not have written its record yet.
+    const busy = new Refused('Another automatic node-port verification owns this checkout. Inspect ' + ownerPath + '; no build or verifier was started.')
+    busy.code = 'SCENETOWEB_VERIFICATION_BUSY'; busy.lease = { directory, owner: previous }
+    throw busy
+  }
+  const identity = await lstat(directory), contents = JSON.stringify(owner, null, 2) + '\n'
+  try { await writeFile(ownerPath, contents, { flag: 'wx', mode: 0o600 }) }
+  catch (error) { await rmdir(directory).catch(() => {}); throw error }
+  let released = false
+  return { owner, directory, async release() {
+    if (released) return
+    const current = await lstat(directory), file = await lstat(ownerPath)
+    assert.ok(current.isDirectory() && !current.isSymbolicLink() && current.dev === identity.dev && current.ino === identity.ino,
+      'Verification lease directory ownership changed')
+    assert.ok(file.isFile() && !file.isSymbolicLink(), 'Verification lease owner must remain a plain file')
+    assert.ok(await readFile(ownerPath, 'utf8') === contents, 'Verification lease owner changed; refusing cleanup')
+    await unlink(ownerPath)
+    await rmdir(directory)
+    released = true
+  } }
+}
 async function browserIdentity(root, env) {
   let browser
   try {
@@ -159,21 +202,37 @@ export async function runNodePort(options) {
   const root = resolve(options.root ?? defaultRoot)
   const safeId = /^[a-z][a-z0-9-]*$/.test(options.id ?? '') ? options.id : 'invalid'
   const evidence = resolve(options.evidence ?? join(root, 'artifacts/node-ports', safeId, Date.now() + '-' + randomUUID().slice(0, 8)))
-  try { return await executePort({ ...options, root, evidence }) }
+  let lease, report
+  try {
+    if (!options.dryRun) lease = await acquireNodePortVerificationLease(root, { ...options, evidence })
+    report = await executePort({ ...options, root, evidence })
+  }
   catch (error) {
     // Parse/input failures happen before commands exist. Retain those too,
     // while never overwriting a directory owned by an earlier transaction.
-    const report = { schemaVersion: 1, kind: 'blendlink-node-port-verification-v1', manifestId: options.id ?? null,
-      status: 'failed', supportPromotion: false, productionCredit: false, inputValidationFailed: true,
-      error: message(error), steps: [], exitCode: 1 }
+    const busy = error.code === 'SCENETOWEB_VERIFICATION_BUSY'
+    report = { schemaVersion: 1, kind: 'blendlink-node-port-verification-v1', manifestId: options.id ?? null,
+      status: busy ? 'refused' : 'failed', supportPromotion: false, productionCredit: false, inputValidationFailed: !busy,
+      ...(busy ? { verificationLeaseConflict: error.lease } : {}), error: message(error), steps: [], exitCode: busy ? 2 : 1 }
     if (options.dryRun) return { ...report, dryRun: true }
     try {
       await mkdir(resolve(evidence, '..'), { recursive: true }); await mkdir(evidence)
       report.reportPath = join(evidence, 'report.json')
       await writeFile(report.reportPath, JSON.stringify(report, null, 2) + '\n')
     } catch (retentionError) { report.retentionError = message(retentionError) }
-    return report
   }
+  finally {
+    if (lease) {
+      try { await lease.release() }
+      catch (error) {
+        report ??= { schemaVersion: 1, kind: 'blendlink-node-port-verification-v1', manifestId: options.id ?? null, steps: [] }
+        Object.assign(report, { status: 'failed', supportPromotion: false, productionCredit: false, exitCode: 1, verificationLeaseCleanupError: message(error) })
+        // Only executePort/this invocation's exclusive mkdir supplies reportPath.
+        if (report.reportPath && !report.retentionError) await writeFile(report.reportPath, JSON.stringify(report, null, 2) + '\n')
+      }
+    }
+  }
+  return report
 }
 
 export function parseNodePortArguments(args) {

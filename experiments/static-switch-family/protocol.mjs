@@ -1,19 +1,21 @@
 import assert from 'node:assert/strict'
 import {readFileSync} from 'node:fs'
 export const variant=process.env.SCENETOWEB_SWITCH_VARIANT??'static'
-assert.ok(['static','mono-view'].includes(variant),'Unknown static selection proof variant')
-export const contexts=variant==='mono-view'?['CPU']:['shader','CPU','GPU']
-export const expectedSavedFinalCount=variant==='mono-view'?8:30
+assert.ok(['static','mono-view','integer-vector3'].includes(variant),'Unknown static selection proof variant')
+export const contexts=variant!=='static'?['CPU']:['shader','CPU','GPU']
+export const expectedSavedFinalCount=variant!=='static'?8:30
 // Version 1 shares the frozen report vocabulary between this family's runner and reader.
 export const browserProofContract=Object.freeze({schemaVersion:1,family:'static-selection',nativeStatus:'CAPTURED_STATIC_SELECTION',finalStatus:'PUBLISHED_STATIC_SELECTION',browserStatus:'PASSED_STATIC_SELECTION_BUILT_PROOF'})
 const legacyExpectedCases=['calibration',...['switch','index','menu'].flatMap(f=>['float','int','boolean','vector','rgba'].flatMap(m=>[0,1].map(c=>`${f}-${m}-${c}`))),...['switch','index','menu'].flatMap(f=>['field','inactive','group'].flatMap(k=>[0,1].map(c=>`${f}-${k}-${c}`))),...['switch','index'].flatMap(f=>[0,1].map(c=>`${f}-typed-${c}`)),...[0,1].flatMap(c=>[1,2].map(o=>`menu-mask-${c}-${o}`)),...['not','xor','or','imply'].map(o=>'switch-bool-'+o),...['index','menu'].flatMap(f=>['three-items','reordered'].map(k=>`${f}-${k}`)),...['direct','reroute','group'].flatMap(r=>[0,1].map(c=>`menu-source-${r}-${c}`))]
 export const viewCases=JSON.parse(readFileSync(new URL('./view-cases.json',import.meta.url)))
-export const expectedCases=variant==='mono-view'?viewCases.map(row=>row.case):legacyExpectedCases
+export const integerVectorCases=JSON.parse(readFileSync(new URL('./int-vector3-cases.json',import.meta.url)))
+export const expectedCases=variant==='integer-vector3'?integerVectorCases.map(row=>row.case):variant==='mono-view'?viewCases.map(row=>row.case):legacyExpectedCases
 export function assertQualification(q){
  assert.equal(q.status,browserProofContract.nativeStatus);assert.deepEqual(q.version,[5,3,0]);assert.equal(q.build,'02f0899d78e3');assert.ok(contexts.includes(q.context));assert.equal(q.sourcePreserved,true);assert.equal(q.width,8);assert.equal(q.height,8)
- if(variant==='mono-view')assert.deepEqual(q.nativeBackend,{evaluator:'native-cpu-compositor',requestedCompositorDevice:'CPU',gpuInitialized:false,gpuEvaluationCredit:false})
+ if(variant!=='static')assert.deepEqual(q.nativeBackend,{evaluator:'native-cpu-compositor',requestedCompositorDevice:'CPU',gpuInitialized:false,gpuEvaluationCredit:false})
  assert.deepEqual(q.cases.map(x=>x.case).sort(),[...expectedCases].sort());assert.equal(q.cases.filter(x=>x.sourceFile).length,expectedSavedFinalCount)
- for(const row of q.cases){if(variant==='mono-view'){const spec=viewCases.find(x=>x.case===row.case);for(const[k,v]of Object.entries(spec))assert.deepEqual(row[k],v)}assert.equal(row.sourcePreserved,true);assert.equal(row.context,q.context);for(const key of ['programSha256','pixelSha256'])assert.match(row[key],/^[a-f0-9]{64}$/)}return q
+ if(variant==='integer-vector3')assert.equal(q.pythonGpuInitializationCalls,0)
+ for(const row of q.cases){if(variant!=='static'){const spec=(variant==='integer-vector3'?integerVectorCases:viewCases).find(x=>x.case===row.case);for(const[k,v]of Object.entries(spec))assert.deepEqual(row[k],v)}assert.equal(row.sourcePreserved,true);assert.equal(row.context,q.context);for(const key of ['programSha256','pixelSha256'])assert.match(row[key],/^[a-f0-9]{64}$/)}return q
 }
 export function assertFinal(f,q,pin){assert.equal(f.status,browserProofContract.finalStatus);assert.equal(f.context,q.context);assert.equal(f.sourcePreserved,true);assert.equal(f.nativeQualificationSha256,pin);assert.deepEqual(f.rows.map(x=>x.case).sort(),q.cases.filter(x=>x.sourceFile).map(x=>x.case).sort());return f}
 export function assertBrowserReport(r,q,f,{profile,final}){
@@ -21,7 +23,7 @@ export function assertBrowserReport(r,q,f,{profile,final}){
  const expected=(final?f.rows:q.cases).map(x=>x.case)
  for(const api of r.rows){assert.equal(api.gpu.api,api.backend==='webgpu'?'WebGPU':'WebGL2');if(profile==='metal'){assert.match(JSON.stringify(api.gpu),/apple|metal/i);assert.doesNotMatch(JSON.stringify(api.gpu),/swiftshader/i)}else assert.match(JSON.stringify(api.gpu),/swiftshader/i)
  assert.deepEqual(api.pageErrors,[]);assert.deepEqual(api.errors,[]);assert.deepEqual(api.rows.map(x=>x.case),expected)
- for(const row of api.rows){if(variant==='mono-view'){assert.equal(row.comparedWords,256);assert.equal(row.lifecycleCycles,final?2:1)}assert.equal(row.wordMismatches,0);assert.equal(row.remainingTextures,0);assert.equal(row.finalBindings,final);assert.equal(row.ownershipPreserved,true);assert.equal(row.pinRejected,final?true:null)}}return r
+ for(const row of api.rows){if(variant!=='static'){assert.equal(row.comparedWords,256);assert.equal(row.lifecycleCycles,final?2:1)}assert.equal(row.wordMismatches,0);assert.equal(row.remainingTextures,0);assert.equal(row.finalBindings,final);assert.equal(row.ownershipPreserved,true);assert.equal(row.pinRejected,final?true:null);if(variant==='integer-vector3'){assert.deepEqual(row.readbacks.map(x=>x.phase),final?['primary','repeat','reinstalled']:['primary','repeat']);for(const readback of row.readbacks){assert.equal(readback.comparedWords,256);assert.equal(typeof readback.rowFlip,'boolean');assert.equal(readback.wordFile,'readbacks/'+api.backend+'-'+row.case+'-'+readback.phase+'.u32');assert.match(readback.wordSha256,/^[a-f0-9]{64}$/)}}}}return r
 }
 
 export function assertMonoProgram(program,entry){
@@ -35,4 +37,22 @@ export function assertMonoProgram(program,entry){
  assert.ok(program.ops.every(op=>!['CompositorNodeSwitchView','CompositorNodeSceneTime'].includes(op.source.nodeType)))
  if(entry.kind==='view-image'){assert.deepEqual(program.ops.map(op=>op.kind),['image-input']);assert.equal(program.output.kind,'ref')}
  if(entry.kind==='view-domain')assert.deepEqual(program.ops.map(op=>op.kind).sort(),['image-info','render-pass'])
+}
+
+export function assertIntegerVectorProgram(program,entry){
+ if(variant!=='integer-vector3')return
+ assert.equal(program.status,'extracted');assert.deepEqual(program.passes,[])
+ if(entry.kind==='control'){assert.equal(program.ops.length,1);assert.equal(program.ops[0].kind,'rgb');return}
+ assert.equal(program.ops.length,1);const op=program.ops[0]
+ assert.equal(op.kind,'integer-vector');assert.equal(op.type,'INT_VECTOR3');assert.equal(op.source.nodeType,'FunctionNodeInputIntVector');assert.equal(op.source.output,'Vector');assert.deepEqual(op.inputs,{});assert.deepEqual(op.value,entry.value)
+ assert.equal(op.properties.integer_vector_model,'native-int3-constant-53-v1');assert.equal(op.properties.integer_vector_profile,'darwin-arm64-53-int3-cpu-v1');assert.equal(op.properties.integer_vector_build,'02f0899d78e3');assert.deepEqual(op.properties.integer_vector_version,[5,3,0]);assert.equal(op.properties.integer_vector_dimensions,3);assert.equal(op.properties.evaluation_device,'CPU');assert.equal(op.properties.single_value_device,'CPU');assert.equal(op.properties.integer_vector_presentation,'component-rne-f32-alpha-one-v1')
+ const ref={kind:'ref',node:op.id,type:'INT_VECTOR3'},inner={kind:'convert',fromType:'INT_VECTOR3',type:entry.route==='vector-group'?'VECTOR':'RGBA',input:ref}
+ assert.deepEqual(program.output,entry.route==='vector-group'?{kind:'convert',fromType:'VECTOR',type:'RGBA',input:inner}:inner)
+}
+
+export function assertIntegerVectorWords(bytes,entry){
+ assert.equal(bytes.byteLength,1024,'Integer Vector readback must contain every RGBA Float32 word')
+ const view=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength)
+ for(let i=0;i<256;i++)assert.equal(view.getUint32(i*4,true),entry.expectedWords[i%4],entry.case+' independently recomputed word '+i)
+ return 256
 }

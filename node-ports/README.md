@@ -6,6 +6,16 @@ qualification. It never reuses numerical proof. The source watcher discovers
 all JSON manifests in this directory; a changed upstream dependency or native
 revision queues fresh verification, with zero automatic support promotion.
 
+Automatic executions hold an exclusive lease for the checkout from entry until
+verification and cleanup finish. A second execution against the same canonical
+checkout retains a zero-command refusal before building or launching Blender;
+its report identifies the owner record. Separate worktrees remain independent,
+and dry runs do not acquire a lease. An interrupted process leaves its lease for
+explicit inspection rather than silently taking over a possibly active build.
+Only remove that identified lease after confirming its owner and child jobs have
+ended. Manual build commands and standalone family scripts do not use this
+entrypoint, so coordinate those and the cross-worktree GPU queue separately.
+
 These compositor manifests use **family-owned matrices**:
 
 | Manifest | Source | Complete native / Final / browser census |

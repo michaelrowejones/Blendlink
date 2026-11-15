@@ -25,9 +25,10 @@ window.runStaticEulerProof=async proof=>{
  const liveTextures=new Map(),manager=renderer._textures,updateTexture=manager.updateTexture.bind(manager),destroyTexture=manager._destroyTexture.bind(manager)
  manager.updateTexture=(texture,options)=>{if(!liveTextures.has(texture))liveTextures.set(texture,{name:texture.name,uuid:texture.uuid,width:texture.image?.width,height:texture.image?.height,depth:texture.isDepthTexture,renderTarget:texture.isRenderTargetTexture,stack:new Error().stack});return updateTexture(texture,options)}
  manager._destroyTexture=texture=>{liveTextures.delete(texture);return destroyTexture(texture)}
- const errors=[],rows=[],negatives=[];renderer.debug.onShaderError=(context,program)=>errors.push(context.getProgramInfoLog(program))
+ const errors=[],rows=[],negatives=[],allReadbacks=proof.inputRotation?[]:null;if(allReadbacks)window.inputRotationReadbacks=allReadbacks;renderer.debug.onShaderError=(context,program)=>errors.push(context.getProgramInfoLog(program))
  let negativeDone=false
  for(const entry of proof.cases){
+  const readbacks=allReadbacks?[]:null;if(allReadbacks)allReadbacks.push({case:entry.case,readbacks})
   let manifest,presentation,glbBytes,ownedInput
   let program=JSON.parse(new TextDecoder().decode(await fetchPinned(entry.programUrl,entry.programSha256)))
   if(proof.final){
@@ -35,7 +36,7 @@ window.runStaticEulerProof=async proof=>{
    glbBytes=await fetchPinned(entry.glbUrl,entry.glbSha256)
    const body=await fetchPinned(entry.presentationUrl,entry.presentationSha256)
    if(body.byteLength!==manifest.sourcePresentation.bytes||(await hash(body)).slice(0,16)!==manifest.sourcePresentation.hash)throw new Error('Actual presentation descriptor pin mismatch')
-   presentation=JSON.parse(new TextDecoder().decode(body))
+   presentation=JSON.parse(new TextDecoder().decode(body));if(proof.inputRotation&&(presentation.display.view!=='Raw'||presentation.display.look!=='None'||JSON.stringify(presentation.display.ops)!=='[]'))throw new Error('Input Rotation exact Final comparison requires the actual identity Raw display')
    for(const key of ['ops','passes','output'])if(canonical(presentation.compositor[key])!==canonical(program[key]))throw new Error('Published compositor differs from native program '+key)
    program=presentation.compositor
   }
@@ -107,7 +108,7 @@ window.runStaticEulerProof=async proof=>{
     }catch(error){reject(new Error(renderPhase+': '+error))}
    }).catch(reject)
   })
-  const compare=async()=>{
+  const compare=async(phase)=>{
    const pixels=await renderer.readRenderTargetPixelsAsync(target,0,0,width,height)
    if(!(pixels instanceof Float32Array))throw new Error('Actual Float32 readback required')
    const raw=new Uint32Array(pixels.buffer,pixels.byteOffset,pixels.length),pad=Math.ceil(width*16/256)*256/16
@@ -127,23 +128,24 @@ window.runStaticEulerProof=async proof=>{
      contractViolations++;worst??={x,y,channel,actual:actualValue,expected:expectedValue,ulp,absolute,exact}
     }
    }
+   if(readbacks){const words=[];for(let y=0;y<height;y++)for(let x=0;x<width;x++)for(let c=0;c<4;c++)words.push(raw[(((rowFlip?height-1-y:y)*stride+x)*4)+c]);readbacks.push({phase,width,height,words})}
    if(contractViolations)throw new Error('Actual built static-euler contract violation '+entry.case+' '+contractViolations+' '+JSON.stringify(worst))
    return{exactWordMismatches,contractViolations,maxUlps,maxAbsoluteError,exactControlWords,comparedWords:width*height*4}
 
   }
-  device?.pushErrorScope('validation');await render();const mismatch=await compare();await render();await compare()
+  device?.pushErrorScope('validation');await render();const mismatch=await compare('primary');await render();await compare('repeat')
   // These are static scalar constants: resize changes only the existing render
   // target, without rerunning native MF or creating Rotation/runtime resources.
   if(entry.case==='zero-0'||entry.case==='producer-group-0'){
    for(const [w,h,dpr]of [[8,6,2],[3,5,1],[4,4,1]]){
     width=w;height=h;renderer.setPixelRatio(dpr);renderer.setSize(w/dpr,h/dpr);target.setSize(w,h)
     expected=new Uint32Array(w*h*4);for(let i=0;i<w*h;i++)expected.set(entry.rgbaWords,i*4)
-    await render();const measured=await compare();resizeResults.push({width,height,pixelRatio:dpr,...measured});resizeFrames++
+    await render();const measured=await compare('resize-'+resizeFrames);resizeResults.push({width,height,pixelRatio:dpr,...measured});resizeFrames++
    }
   }
   if(proof.final){
    for(let cycle=0;cycle<3;cycle++){
-    if(cycle){pipeline=await createPipeline();await render();await compare()}
+    if(cycle){pipeline=await createPipeline();await render();await compare('reapply-'+cycle)}
     pipeline.dispose();pipeline=undefined
     for(const original of originals)if(original.object.material!==original.material||original.object.onBeforeRender!==original.callback)throw new Error('Pipeline disposal changed authored material/callback ownership')
     if(sourceMaterialDisposals||warnings.length)throw new Error('Reapply bypassed a graph or disposed source material '+JSON.stringify(warnings))
@@ -158,7 +160,7 @@ window.runStaticEulerProof=async proof=>{
   renderer.setRenderTarget(null);target.dispose();ownedInput?.dispose()
   const remainingTextures=renderer.info.memory.textures;if(remainingTextures!==baselineCache.size||[...liveTextures.keys()].some(texture=>!baselineCache.has(texture)))throw new Error('Static Euler compositor retained non-baseline textures '+remainingTextures+' '+JSON.stringify([...liveTextures.values()]))
   if(renderer.info.memory.renderTargets!==0)throw new Error('Static Euler compositor retained render targets')
-  rows.push({case:entry.case,width,height,pixelRatio:entry.pixelRatio,route:entry.route,rowFlip,resizeFrames,resizeResults,extentRefused,extentRecovered,animationFrames,...mismatch,remainingTextures,portOwnedTextures:0,remainingRenderTargets:renderer.info.memory.renderTargets,...(proof.final?{pinRejected,meshCount,pipeline:'blender-compositor',sourceMaterialsPreserved:true,lifecycleCycles:3,baselineSceneDrawCalls,baselineCacheRestored:true,baselineCache:[...baselineCache].map(texture=>({name:texture.name,uuid:texture.uuid,width:texture.image.width,height:texture.image.height}))}: {})})
+  rows.push({case:entry.case,...(readbacks?{readbacks}:{}),width,height,pixelRatio:entry.pixelRatio,route:entry.route,rowFlip,resizeFrames,resizeResults,extentRefused,extentRecovered,animationFrames,...mismatch,remainingTextures,portOwnedTextures:0,remainingRenderTargets:renderer.info.memory.renderTargets,...(proof.final?{pinRejected,meshCount,pipeline:'blender-compositor',sourceMaterialsPreserved:true,lifecycleCycles:3,baselineSceneDrawCalls,baselineCacheRestored:true,baselineCache:[...baselineCache].map(texture=>({name:texture.name,uuid:texture.uuid,width:texture.image.width,height:texture.image.height}))}: {})})
  }
  renderer.dispose();supplied?.destroy();if(errors.length)throw new Error('Shader errors '+JSON.stringify(errors))
  return{backend,gpu,rows,negatives,errors}

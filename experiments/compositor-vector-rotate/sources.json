@@ -1,0 +1,79 @@
+[
+  {
+    "path": "source/blender/nodes/shader/nodes/node_shader_vector_rotate.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/shader/nodes/node_shader_vector_rotate.cc",
+    "sha256": "49b89be46a16f9bc9c89654a5ad04c07c5b1d72d0e185e2fa11c31157ddcdee5",
+    "bytes": 10568,
+    "license": "GPL-2.0-or-later"
+  },
+  {
+    "path": "source/blender/blenlib/intern/math_rotation_c.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/intern/math_rotation_c.cc",
+    "sha256": "236c4cc99d65108a2329c0c21845b5a1a4d8b41ed1dacab2c7a8c4cb0f9fc34a",
+    "bytes": 66592,
+    "license": "GPL-2.0-or-later"
+  },
+  {
+    "path": "source/blender/blenlib/intern/math_matrix_c.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/intern/math_matrix_c.cc",
+    "sha256": "bcbf99d6a2d3c838b99ec49072eccd633d94a9c0856f3d220b8be178af27f590",
+    "bytes": 77145,
+    "license": "GPL-2.0-or-later"
+  },
+  {
+    "path": "source/blender/blenlib/intern/math_vector_inline.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/intern/math_vector_inline.cc",
+    "sha256": "15c60e8a6119fac59928921d0f7e3dc2a6b3489ccec5b54342c238ff749f9104",
+    "bytes": 21649,
+    "license": "GPL-2.0-or-later"
+  },
+  {
+    "path": "source/blender/gpu/shaders/material/gpu_shader_material_vector_rotate.bsl.hh",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shaders/material/gpu_shader_material_vector_rotate.bsl.hh",
+    "sha256": "9c7e8cf92ba63272dc07eda39f1fa75edc183addfcc74f53b785c7cf0e1ab2d0",
+    "bytes": 3450,
+    "license": "GPL-2.0-or-later"
+  },
+  {
+    "path": "source/blender/gpu/shaders/common/gpu_shader_math_matrix_construct.bsl.hh",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/gpu/shaders/common/gpu_shader_math_matrix_construct.bsl.hh",
+    "sha256": "2c9b7c47149b0d072ece108f49a902602f3a0068c34314808e366b0dd36f5e46",
+    "bytes": 9513,
+    "license": "GPL-2.0-or-later"
+  },
+  {
+    "path": "source/blender/python/mathutils/mathutils_Matrix.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/python/mathutils/mathutils_Matrix.cc",
+    "sha256": "5116b8472b7c66b8ac16cb8e885093f9e004e4405ac3c0db1fec1b2b7ec7be1e",
+    "bytes": 124693,
+    "license": "GPL-2.0-or-later"
+  },
+  {
+    "path": "source/blender/nodes/composite/nodes/node_composite_image_coordinates.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/composite/nodes/node_composite_image_coordinates.cc",
+    "sha256": "12cc2c1adcbe5e793a27a0b436b4ff2a32dc9bb369e4846c6ee01af5d130800c",
+    "bytes": 3608,
+    "license": "GPL-2.0-or-later"
+  },
+  {
+    "path": "source/blender/compositor/cached_resources/intern/image_coordinates.cc",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/cached_resources/intern/image_coordinates.cc",
+    "sha256": "15fc47ea692a70c77c3af533fff6fa2f5ebffaa51fcf253b82bc114855df2bad",
+    "bytes": 5197,
+    "license": "GPL-2.0-or-later"
+  },
+  {
+    "path": "source/blender/blenlib/BLI_math_vector_types.hh",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/BLI_math_vector_types.hh",
+    "sha256": "b11dd5e4fa77f1179956befdab71dc12d65120de878249f13b00e0643e6c4b39",
+    "bytes": 17799,
+    "license": "GPL-2.0-or-later"
+  },
+  {
+    "path": "source/blender/compositor/shaders/compositor_image_coordinates_normalized.glsl",
+    "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/shaders/compositor_image_coordinates_normalized.glsl",
+    "sha256": "66f7f8c4dd318a82ac276ad2176359f4d377451fad4d9e7d3ce2d1ef51a59166",
+    "bytes": 516,
+    "license": "GPL-2.0-or-later"
+  }
+]

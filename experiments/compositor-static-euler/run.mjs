@@ -4,7 +4,8 @@ import {join,resolve} from 'node:path'
 import {createServer} from 'vite'
 import {chromium} from '@playwright/test'
 import {captureRuntimeSnapshot,hash} from '../../scripts/lib/runtime-provenance.mjs'
-import {assertFinal,assertQualification,browserProofContract} from './protocol.mjs'
+import {assertFinal,assertQualification,browserProofContract,isInputRotation} from './protocol.mjs'
+const {archiveInputRotationReadbacks}=isInputRotation?await import('./input-rotation-readbacks.mjs'):{}
 const root=resolve(import.meta.dirname,'../..'),directory=resolve(process.env.SCENETOWEB_STATIC_EULER_REFERENCES),built=process.argv.includes('--built'),final=process.argv.includes('--final')
 const profile=process.env.BLENDLINK_TEST_PROFILE??'software';assert.ok(['metal','software'].includes(profile))
 const qualification=assertQualification(JSON.parse(await readFile(join(directory,'qualification.json'))))
@@ -44,6 +45,7 @@ if(built){
 }
 provenance.fixturePins={}
 for(const name of ['browser.js','index.html']){const bytes=await readFile(join(import.meta.dirname,name));provenance.fixturePins[name]=hash(bytes);await copyFile(join(import.meta.dirname,name),join(fixture,name))}
+if(isInputRotation)provenance.readbackHelperSha256=hash(await readFile(join(import.meta.dirname,'input-rotation-readbacks.mjs')))
 provenance.runnerSha256=hash(await readFile(join(import.meta.dirname,'run.mjs')))
 provenance.protocolSha256=hash(await readFile(join(import.meta.dirname,'protocol.mjs')))
 const extension=built?'.js':'.ts',module=name=>join(destination,'runtime',name+extension)
@@ -60,10 +62,11 @@ try{
     const gpu=navigator.gpu;if(!gpu)throw new Error('Positive proof needs navigator.gpu')
     const previous=Object.getOwnPropertyDescriptor(gpu,'requestAdapter');Object.defineProperty(gpu,'requestAdapter',{value:async()=>null,configurable:true})
     try{await window.runStaticEulerProof(proof);return{refused:false}}catch(error){return{refused:true,error:String(error)}}finally{if(previous)Object.defineProperty(gpu,'requestAdapter',previous);else delete gpu.requestAdapter}
-   },{final,cases,resizeCases})
+   },{final,cases,resizeCases,inputRotation:isInputRotation})
    assert.equal(negative.refused,true);assert.match(negative.error,/actual WebGPU adapter/);report.missingAdapterControl=negative
   }
-  const row=await page.evaluate(proof=>window.runStaticEulerProof(proof),{final,cases,resizeCases});report.rows.push({...row,pageErrors:errors});await save()
+  let row;try{row=await page.evaluate(proof=>window.runStaticEulerProof(proof),{final,cases,resizeCases,inputRotation:isInputRotation})}catch(error){if(isInputRotation){const failed=await page.evaluate(()=>window.inputRotationReadbacks??[]);await archiveInputRotationReadbacks(destination,backend,failed);await writeFile(join(destination,'failed-readbacks-'+backend+'.json'),JSON.stringify(failed,null,2)+'\n')}throw error}
+  if(isInputRotation)await archiveInputRotationReadbacks(destination,backend,row.rows);report.rows.push({...row,pageErrors:errors});await save()
   assert.equal(row.backend,backend);assert.equal(row.gpu.api,backend==='webgpu'?'WebGPU':'WebGL2');assert.deepEqual(errors,[]);assert.deepEqual(row.errors,[]);assert.equal(row.rows.length,cases.length)
   if(profile==='metal'){assert.match(JSON.stringify(row.gpu),/apple|metal/i);assert.doesNotMatch(JSON.stringify(row.gpu),/swiftshader/i)}else assert.match(JSON.stringify(row.gpu),/swiftshader/i)
   await page.close()

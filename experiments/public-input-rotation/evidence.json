@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "status": "RESEARCH_INPUT_ROTATION_NATIVE_TWINS_EXACT",
+  "supportCredit": 0,
+  "nativeCompositorCredit": 0,
+  "renderCredit": 0,
+  "browserCredit": 0,
+  "gpuCredit": 0,
+  "profile": {
+    "version": [
+      5,
+      3,
+      0
+    ],
+    "build": "02f0899d78e3",
+    "stage": "private one-point Geometry Nodes CPU-MF; not native compositor pixels"
+  },
+  "rawCalibration": {
+    "patterns": 12,
+    "words": 36,
+    "allExact": true
+  },
+  "twins": {
+    "pairs": 12,
+    "componentWords": 48,
+    "preFloatStoreHashes": 48,
+    "wordDifferences": 0,
+    "hashDifferences": 0,
+    "allOutputsNormalPositiveZero": true
+  },
+  "ownershipRestored": true,
+  "sourceUnchanged": true,
+  "gpuInitializationCalls": 0,
+  "renderCalls": 0,
+  "nativeIdentity": {
+    "path": "/Applications/Blender.app/Contents/MacOS/Blender",
+    "bytes": 210043328,
+    "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da"
+  },
+  "nativePythonProof": {
+    "pythonInvocations": 1,
+    "finalInvocations": 0,
+    "uniqueCachePrefixes": 1,
+    "numericalCredit": 0
+  },
+  "retainedArtifact": "artifacts/verification-public-input-rotation-r3",
+  "artifactPins": {
+    "native-python-proof/blender-proof": "e2edafc5d39860778289ccff5ad8319dfca2596c9458cf7c1e0e8e29b9da1069",
+    "native-python-proof/invocations/9e62ccec-c8df-4e69-90d3-12ee2780e563.json": "d7277699852cacb137b1453fcc2f68a1627b5c88648800c353bb6a2eaf1c50c3",
+    "native-python-proof/launcher.json": "958889afb80b9acb61cbaf202dcb878b1f0841d0a9aa282eceec9c5f2f52a75b",
+    "native-python-proof/lib/node-port-python.mjs": "33fc36d6c551583a119e558a60f77cd55ed25c92bcfd6d39e0171e7faaa33cde",
+    "native-python-proof/node-port-blender.mjs": "3390a410423e0cc921567a97473f6fd67f91cbe2987af7846346cb7cb51e9a8c",
+    "native-python-proof.json": "f748fdebbb2396fae6fea492e985209abe7c009011f24efe65035ecd53504542",
+    "native.log": "f225f12a5ab16eed5cd9643a71bf69d60783955c988e65dfbca4e1015080ac0a",
+    "receipt.json": "c2f1a418ca6601efdd3d0a674a8d955705255992c66af9a17c0b9e2523412f42",
+    "report.json": "cbd1c73cd06f0138eef9c0df8a2e752ec4db49f3d43b0457863d927bbd251c28"
+  },
+  "fixturePins": {
+    "README.md": "6654be70244754167da486c172a4f545534bb01e2716f8442195c49a96636173",
+    "probe.py": "760a9007a4604d1050426089d5a845a3894a758545ad6905e5e16f19a56ed851",
+    "raw_float_array.py": "39813dcb3db255ff880744874b0eaf3c9a297e475821d7c1cac911ece7b137d9",
+    "run.mjs": "712485f84a3ddb06d63c9d059f10e53eeccb16baf79591788ea332022118122a",
+    "sources.json": "ddff7ecc658ae52040569f0edd793cbc40faa5a0c920fdf58117eef9da32f544"
+  },
+  "unchangedQualifiedHelperPins": {
+    "compositor_static_euler.py": "e387d5dd7f3bd981e4977b023ec49a1a7d6c3186db07183a40885456a3ff7b54",
+    "compositor_static_rotation.py": "9fb11262d1d717e9d9ffa8cb640872dad6fa5990258296ef25a4998b0a4bdb1e",
+    "compositor_static_matrix.py": "07c0b4b2c47ccad0697b76968c0e21c90b9cf5fdb6a8ef0d5d3232e908bbd1d7"
+  },
+  "rawReaderRefusals": [
+    "indexed",
+    "width",
+    "missing",
+    "scalar",
+    "bool-length"
+  ],
+  "history": [
+    {
+      "artifact": "artifacts/verification-public-input-rotation-r1",
+      "status": "research twins passed before helper extraction",
+      "supportCredit": 0
+    },
+    {
+      "artifact": "artifacts/verification-public-input-rotation-r2",
+      "status": "failed before ownership/evaluation: script directory missing from sys.path",
+      "supportCredit": 0
+    }
+  ]
+}

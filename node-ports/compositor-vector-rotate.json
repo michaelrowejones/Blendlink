@@ -1,0 +1,146 @@
+{
+  "schemaVersion": 1,
+  "id": "compositor-vector-rotate",
+  "nativeNode": "ShaderNodeVectorRotate",
+  "domain": "compositor",
+  "lifecycle": "production",
+  "scope": "Automatic execution grants bounded qualification only after fresh source/native, saved Final, all four actual API/profile loops, independent raw-word closure and a second authoritative reader; category promotion remains separate review. Pinned Blender 5.3 macOS arm64 CPU compositor fixed X/Y/Z modes, both Invert. Angle +0 or normal absolute [2^-16,1], Center/literal Vector +0 or normal absolute [2^-16,16]. Direct current-scene Normalized field only, private exact rows with physical extents 4..8192, mono full-frame; no arbitrary Axis/Euler, computed controls, other fields, spatial consumers, shader/EEVEE arithmetic or native default-mode credit.",
+  "upstream": {
+    "direct": [
+      "source/blender/nodes/shader/nodes/node_shader_vector_rotate.cc"
+    ],
+    "shared": [
+      "source/blender/blenlib/intern/math_rotation_c.cc",
+      "source/blender/blenlib/intern/math_matrix_c.cc",
+      "source/blender/blenlib/intern/math_vector_inline.cc",
+      "source/blender/gpu/shaders/material/gpu_shader_material_vector_rotate.bsl.hh",
+      "source/blender/gpu/shaders/common/gpu_shader_math_matrix_construct.bsl.hh",
+      "source/blender/python/mathutils/mathutils_Matrix.cc",
+      "source/blender/nodes/composite/nodes/node_composite_image_coordinates.cc",
+      "source/blender/compositor/cached_resources/intern/image_coordinates.cc",
+      "source/blender/blenlib/BLI_math_vector_types.hh",
+      "source/blender/compositor/shaders/compositor_image_coordinates_normalized.glsl"
+    ]
+  },
+  "inputs": {
+    "native": [
+      "packages/blender-addon/*.py",
+      "packages/blender-addon/*.json",
+      "packages/blendlink/blender/**/*.py",
+      "experiments/compositor-vector-rotate/policy.py",
+      "experiments/compositor-vector-rotate/reference.py",
+      "packages/blender-addon/tests/compositor_reference.py",
+      "packages/blender-addon/tests/compositor_vector_rotate_check.py"
+    ],
+    "runtime": [
+      "packages/blendlink/src/**/*.ts"
+    ],
+    "sdk": [
+      "package.json",
+      "package-lock.json",
+      "packages/blendlink/package.json",
+      "packages/blendlink/tsconfig.json",
+      "packages/blendlink/scripts/*.mjs",
+      "scripts/test-node-port.mjs",
+      "scripts/run-node-port-family.mjs",
+      "scripts/lib/node-port-contract.mjs",
+      "scripts/lib/node-port-evidence.mjs",
+      "scripts/lib/node-port-family-evidence.mjs",
+      "scripts/lib/node-port-python.mjs",
+      "scripts/node-port-blender.mjs",
+      "scripts/lib/native-proof-archive.mjs",
+      "scripts/lib/runtime-provenance.mjs",
+      "scripts/lib/runtime-proof-archive.mjs",
+      "scripts/lib/runtime-compiler-trace.mjs",
+      "scripts/lib/runtime-transaction-snapshot.mjs",
+      "scripts/lib/browser-proof-contract.mjs",
+      "scripts/lib/node-port-displace-evidence.mjs"
+    ],
+    "tests": [
+      "experiments/compositor-vector-rotate/*.mjs",
+      "experiments/compositor-vector-rotate/*.ts",
+      "experiments/compositor-vector-rotate/*.js",
+      "experiments/compositor-vector-rotate/*.html",
+      "experiments/compositor-vector-rotate/full-cases.json",
+      "experiments/compositor-vector-rotate/sources.json",
+      "experiments/compositor-vector-rotate/native-program-fixture.json",
+      "scripts/lib/node-port-family-evidence.test.mjs",
+      "scripts/lib/node-port-contract.test.mjs",
+      "scripts/lib/node-port-python.*",
+      "scripts/lib/node-port-evidence*",
+      "scripts/lib/browser-proof-contract.test.mjs",
+      "node-ports/compositor-vector-rotate.json"
+    ]
+  },
+  "commands": {
+    "build": [
+      {
+        "id": "clean",
+        "argv": [
+          "{node}",
+          "packages/blendlink/scripts/clean-dist.mjs"
+        ],
+        "timeoutMs": 60000
+      },
+      {
+        "id": "typescript",
+        "argv": [
+          "{node}",
+          "node_modules/typescript/bin/tsc",
+          "-p",
+          "packages/blendlink/tsconfig.json"
+        ],
+        "timeoutMs": 180000
+      },
+      {
+        "id": "assets",
+        "argv": [
+          "{node}",
+          "packages/blendlink/scripts/copy-assets.mjs"
+        ],
+        "timeoutMs": 60000
+      }
+    ],
+    "verify": {
+      "id": "suite",
+      "argv": [
+        "{node}",
+        "scripts/run-node-port-family.mjs",
+        "compositor-vector-rotate",
+        "--evidence",
+        "{evidence}",
+        "--blender",
+        "{blender}"
+      ],
+      "timeoutMs": 1500000
+    }
+  },
+  "profiles": [
+    {
+      "id": "mac-53",
+      "hostPlatforms": [
+        "darwin"
+      ],
+      "blenderVersion": "5.3.0",
+      "blenderBuildHash": "02f0899d78e3",
+      "nativeSource": {
+        "profile": "darwin-arm64-53-fixed-axis-vector-rotate-cpu-v1",
+        "backend": null,
+        "evaluator": "CPU-compositor"
+      },
+      "runs": [
+        {
+          "id": "matrix",
+          "adapter": "matrix",
+          "env": {}
+        }
+      ]
+    }
+  ],
+  "evidence": {
+    "adapter": "compositor-vector-rotate-v1",
+    "productionCases": 25,
+    "calibrationCases": 0,
+    "refusedNativeCases": 0
+  }
+}

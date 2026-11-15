@@ -7,10 +7,11 @@ import {createNodePortBlenderLauncher} from '../../scripts/lib/node-port-python.
 import {captureRuntimeTransaction} from '../../scripts/lib/runtime-transaction-snapshot.mjs'
 import {archiveNativeLauncher} from '../../scripts/lib/native-proof-archive.mjs'
 const root=resolve(import.meta.dirname,'../..'),args=process.argv.slice(2),output=resolve(process.env.SCENETOWEB_SWITCH_EVIDENCE??'artifacts/verification-switch-family'),blender=process.env.BLENDLINK_BLENDER??'/Applications/Blender.app/Contents/MacOS/Blender'
-assert.ok(args.every(x=>['--built','--mono-view'].includes(x)));
+assert.ok(args.every(x=>['--built','--mono-view','--integer-vector3'].includes(x)));
+if(args.includes('--integer-vector3'))process.env.SCENETOWEB_SWITCH_VARIANT='integer-vector3'
 if(args.includes('--mono-view'))process.env.SCENETOWEB_SWITCH_VARIANT='mono-view'
-const variant=process.env.SCENETOWEB_SWITCH_VARIANT??'static';assert.ok(['static','mono-view'].includes(variant));
-const contexts=variant==='mono-view'?['CPU']:['shader','CPU','GPU'],policy=variant==='mono-view'?'packages/blender-addon/tests/compositor_switch_view_check.py':'packages/blender-addon/tests/static_selection_check.py';assert.ok(args.includes('--built'))
+const variant=process.env.SCENETOWEB_SWITCH_VARIANT??'static';assert.ok(['static','mono-view','integer-vector3'].includes(variant));
+const contexts=variant!=='static'?['CPU']:['shader','CPU','GPU'],policy=variant==='integer-vector3'?'experiments/compositor-int-vector3/policy.py':variant==='mono-view'?'packages/blender-addon/tests/compositor_switch_view_check.py':'packages/blender-addon/tests/static_selection_check.py';assert.ok(args.includes('--built'))
 const preflight=await import('../../scripts/lib/browser-proof-contract.mjs')
 await preflight.preflightBrowserProofContracts(root,['static-switch-family'])
 const contracts=spawnSync(process.execPath,['--test','scripts/lib/browser-proof-contract.test.mjs'],{cwd:root,env:{...process.env,SCENETOWEB_SWITCH_VARIANT:'static'},stdio:'inherit'});assert.equal(contracts.status,0,'Browser proof contract preflight failed')
@@ -22,10 +23,10 @@ async function run(name,exe,argv,env={}){const start=performance.now(),r=spawnSy
 try{
  const start=performance.now();runtimeTransaction=await captureRuntimeTransaction({root,directory:join(output,'runtime-transaction'),label:'Static Switch transaction'});steps.push({name:'runtime-attestation',milliseconds:Math.round(performance.now()-start),exitCode:0})
  await run('protocol',process.execPath,['--test','experiments/static-switch-family/protocol.test.mjs'])
- await run('policy',launcher.executable,['--background','--factory-startup','--python-exit-code','1','--python',variant==='mono-view'?join(root,policy):policy])
+ await run('policy',launcher.executable,['--background','--factory-startup','--python-exit-code','1','--python',variant!=='static'?join(root,policy):policy,...(variant==='integer-vector3'?['--',join(output,'source-policy.json')]:[])])
  for(const context of contexts){
   const folder=join(output,context.toLowerCase()),env={SCENETOWEB_SWITCH_CONTEXT:context,SCENETOWEB_SWITCH_REFERENCES:folder,BLENDLINK_BLENDER:launcher.executable};await mkdir(folder,{recursive:true})
-  {await assert.rejects(readFile(join(folder,'qualification.json')),{code:'ENOENT'},'Start native qualification in a fresh output directory');await run(context+'-native',launcher.executable,['--background','--factory-startup','--python-exit-code','1','--python',variant==='mono-view'?join(root,'experiments/static-switch-family/reference.py'):'experiments/static-switch-family/reference.py'],env);await run(context+'-export',process.execPath,['node_modules/vitest/vitest.mjs','run','experiments/static-switch-family/export.test.ts'],env)}
+  {await assert.rejects(readFile(join(folder,'qualification.json')),{code:'ENOENT'},'Start native qualification in a fresh output directory');await run(context+'-native',launcher.executable,['--background','--factory-startup','--python-exit-code','1','--python',variant!=='static'?join(root,'experiments/static-switch-family/reference.py'):'experiments/static-switch-family/reference.py'],env);await run(context+'-export',process.execPath,['node_modules/vitest/vitest.mjs','run','experiments/static-switch-family/export.test.ts'],env)}
   for(const profile of ['metal','software'])for(const final of [false,true])await run(context+'-'+profile+'-'+(final?'final':'raw'),process.execPath,['experiments/static-switch-family/run.mjs','--built',...(final?['--final']:[])],{...env,BLENDLINK_TEST_PROFILE:profile,BLENDLINK_TEST_CHROMIUM_CHANNEL:'chromium',BLENDLINK_TEST_CHROMIUM_ARGS:JSON.stringify(profile==='software'?['--use-angle=swiftshader','--use-webgpu-adapter=swiftshader']:[])})
  }
  await archive(true)

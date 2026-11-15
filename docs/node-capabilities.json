@@ -2,6 +2,149 @@
   "schemaVersion": 1,
   "scope": "All actually creatable registered Node subclasses in shader/compositor contexts, including FunctionNode/GeometryNode/closure/bundle families. Explicit reviewed implementation routes, not blanket pixel parity; static fallback never counts as live. EEVEE is the live fidelity reference where applicable; Cycles generally uses baking, while existing engine-specific ports retain their declared limits.",
   "entries": {
+    "compositor:ShaderNodeVectorRotate": {
+      "category": "unsupported",
+      "limits": "No admitted compositor route outside the explicitly qualified Blender 5.3 CPU fixed-axis override. Native availability and the separate shader implementation do not grant compositor support.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "vector-rotate-cpu"
+      ],
+      "modes": {},
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Pinned Blender 5.3.0 build 02f0899d78e3 macOS arm64 CPU compositor FULL/AUTO. Fixed X/Y/Z modes, both Invert. Angle must be an unlinked raw positive zero or normal Float32 magnitude in [2^-16,1] radians; Center and literal Vector components positive zero or normal magnitude in [2^-16,16]. The only varying input is direct qualified Image Coordinates Normalized from the original current-scene full-frame Render Layers Image, padded to native VECTOR3 with Z=+0. Private exact half-center R32F rows leave the old public Normalized precision contract unchanged. Zero-offset square-pixel mono physical extents 4..8192, including actual resize/DPR. Same native fixed-axis MF captures three basis columns with raw/source/ownership and pre-store hash guards; exact staged subtract, three products, left-associated sums and recenter use private F32 barriers. At most one Rotate per closed graph, direct VECTOR-to-RGBA or qualified Separate XYZ/positive-zero-or-one RGB presentation with alpha one. Actual original FRAME producer binding, renderer epoch, target/viewport/mip/DPR, row/table binding and version guards survive constant outputs; producer scheduling precedes outer geometry setup. Closed native/actual saved Final/all four API-profile qualification. No native AXIS_ANGLE default, EULER_XYZ, linked/computed controls, other fields, scalar mean conversions, arbitrary amplification/spatial consumers, XR, external pipeline effects, animation/drivers/NLA, shader or EEVEE arithmetic, other source builds/hosts, or original-demo acceptance.",
+          "modes": {
+            "rotation_type": {
+              "supported": [
+                "X_AXIS",
+                "Y_AXIS",
+                "Z_AXIS"
+              ],
+              "unsupported": [
+                "AXIS_ANGLE",
+                "EULER_XYZ"
+              ]
+            }
+          }
+        }
+      },
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader measured. Legacy WebGLRenderer has no live installer.",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_vector_rotate.py",
+          "anchor": "def normalize"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_vector_rotate.py",
+          "anchor": "def validate_graph"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "\"ShaderNodeVectorRotate\": \"vector-rotate-cpu\""
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorVectorRotate.ts",
+          "anchor": "export class CompositorVectorRotate"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'vector-rotate-cpu':"
+        },
+        {
+          "path": "packages/blendlink/src/threeWebgpuPostPipeline.ts",
+          "anchor": "validateVectorRotatePresentation"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorRowTable.ts",
+          "anchor": "export class OwnedCompositorRowTable"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorVectorRotate.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_vector_rotate_check.py"
+        },
+        {
+          "path": "experiments/compositor-vector-rotate/sources.json"
+        },
+        {
+          "path": "experiments/compositor-vector-rotate/protocol.mjs"
+        },
+        {
+          "path": "experiments/compositor-vector-rotate/reference.py"
+        },
+        {
+          "path": "experiments/compositor-vector-rotate/native-reader.mjs"
+        },
+        {
+          "path": "experiments/compositor-vector-rotate/browser.js"
+        },
+        {
+          "path": "experiments/compositor-vector-rotate/verify.mjs"
+        },
+        {
+          "path": "experiments/compositor-vector-rotate/evidence.json"
+        },
+        {
+          "path": "experiments/compositor-vector-rotate/README.md"
+        },
+        {
+          "path": "node-ports/compositor-vector-rotate.json"
+        }
+      ],
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeCompositorDevices": [
+          "CPU"
+        ],
+        "nativeNodeEvaluator": "Static native Geometry MF coefficient capture and independent actual CPU compositor outputs with pre-store Hash Value witnesses; Cycles CPU carrier rendering, no native GPU/EEVEE arithmetic credit.",
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "nativeGraphs": 25,
+        "nativeOracleControls": 5,
+        "nativeRenders": 80,
+        "savedFinalScenes": 10,
+        "browserCaseRuns": 140,
+        "primaryFloat32Words": 2166416,
+        "archivedLinearFloat32Words": 6574128,
+        "independentCalibrationCaptures": 752,
+        "independentCalibrationWords": 8777984,
+        "preStoreComponentHashWords": 402693,
+        "exactWordMismatches": 0,
+        "resizeFrames": 16,
+        "lifecycleCycles": 120,
+        "uniqueActualPythonPrefixes": 13,
+        "runtimeFingerprint": "8102a0379e1e396d698021f9e70840df6373951959d9220d24286c0986c4d942",
+        "readerSha256": "06a4963d12e5d3c66ba96cc2dc8fb03ae7763c6c7c25ff0e1791a7fabe4e4815",
+        "sourcePolicy": {
+          "positiveControls": 19,
+          "namedRefusals": 29,
+          "nativeRenders": 0,
+          "gpuInitializations": 0
+        },
+        "displayContract": "Separate existing Raw clamp01 absolute 3e-5, alpha words/finite classes exact; observed 112320 display words with zero differences in this transaction.",
+        "resourceContract": "One private two-row R32F table, at most 64 KiB logical row storage, O(W+H) valid resize, no warm upload, no rotation-owned RTT; original Render Layers and complete pipeline costs remain. 21 F32 arithmetic barriers are not an FPS claim.",
+        "automaticManifest": "node-ports/compositor-vector-rotate.json",
+        "automaticProof": {
+          "workspaceStable": true,
+          "productionCredit": true,
+          "supportPromotion": false,
+          "inputDigest": "6b951f30a1857e37b8e43fee5460bcb1db7d0b9cef2a9a5f7a9116dce66060c5"
+        },
+        "sourceSnapshot": "Only this next56 Vector slice is refreshed. Existing shader/legacy and all other family receipts keep their original source snapshots."
+      }
+    },
     "shader:ShaderNodeValue": {
       "category": "supported",
       "limits": "Static value; keyed/driven node inputs refuse.",
@@ -7075,6 +7218,176 @@
         }
       ],
       "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer"
+    },
+    "compositor:FunctionNodeInputIntVector": {
+      "category": "unsupported",
+      "limits": "No admitted route outside the explicitly qualified pinned Blender 5.3 CPU three-component override. Native availability alone is not support.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "integer-vector"
+      ],
+      "modes": {},
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_integer_vector.py"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_integer_vector_check.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorIntegerVector.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorIntegerVector.test.ts"
+        },
+        {
+          "path": "experiments/static-switch-family/int-vector3-cases.json"
+        },
+        {
+          "path": "experiments/static-switch-family/int_vector3_cases.py"
+        },
+        {
+          "path": "experiments/static-switch-family/reference.py"
+        },
+        {
+          "path": "experiments/static-switch-family/export.test.ts"
+        },
+        {
+          "path": "experiments/static-switch-family/browser.js"
+        },
+        {
+          "path": "experiments/static-switch-family/run.mjs"
+        },
+        {
+          "path": "experiments/static-switch-family/protocol.mjs"
+        },
+        {
+          "path": "experiments/static-switch-family/protocol.test.mjs"
+        },
+        {
+          "path": "experiments/static-switch-family/verify.mjs"
+        },
+        {
+          "path": "experiments/compositor-int-vector3/sources.json"
+        },
+        {
+          "path": "experiments/compositor-int-vector3/README.md"
+        },
+        {
+          "path": "experiments/compositor-int-vector3/evidence.json"
+        },
+        {
+          "path": "experiments/compositor-int-vector3/evidence-next53-manual.json"
+        },
+        {
+          "path": "node-ports/compositor-integer-vector3.json"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'integer-vector':"
+        },
+        {
+          "path": "experiments/compositor-int-vector3/evidence-next54-automatic.json"
+        },
+        {
+          "path": "experiments/compositor-int-vector3/evidence-next56-automatic.json"
+        }
+      ],
+      "renderer": "WebGPURenderer actual WebGPU/WebGL2; observed Apple Metal and SwiftShader. Legacy WebGLRenderer has no qualified live program installer.",
+      "verification": {
+        "status": "qualified-integer-vector3-slice",
+        "variant": "integer-vector3",
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeSourceContext": {
+          "evaluator": "native-cpu-compositor",
+          "requestedCompositorDevice": "CPU",
+          "gpuInitialized": false,
+          "gpuEvaluationCredit": false
+        },
+        "totalNativeGraphs": 16,
+        "productionNativeGraphs": 15,
+        "calibrationNativeGraphs": 1,
+        "totalSavedFinalScenes": 8,
+        "productionSavedFinalScenes": 7,
+        "calibrationSavedFinalScenes": 1,
+        "totalBrowserCaseRuns": 96,
+        "productionBrowserCaseRuns": 88,
+        "calibrationBrowserCaseRuns": 8,
+        "totalComparedFloat32Words": 24576,
+        "productionComparedWords": 22528,
+        "calibrationComparedWords": 2048,
+        "archivedGpuReadbackWords": 57344,
+        "archivedGpuReadbackFiles": 224,
+        "wordMismatches": 0,
+        "independentlyRecomputedGpuWordDifferences": 0,
+        "remainingOwnedTextures": 0,
+        "uniqueActualPythonPrefixes": 10,
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "observed Apple Metal",
+          "observed SwiftShader"
+        ],
+        "calibrationScope": "One independent literal control, eight browser runs and 2048 primary words; zero node coverage. Physical GPU orientation is independently controlled.",
+        "coverageScope": "Pinned Blender 5.3.0 build 02f0899d78e3, macOS arm64 CPU compositor AUTO/FULL only. Static unmuted FunctionNodeInputIntVector with vector_dimensions=3 and exact signed Int32 RNA property; distinct INT_VECTOR3 identity. Exactly one terminal constructor with direct int3-to-RGBA or explicit int3-to-float3-to-RGBA presentation, componentwise RN-even Float32 and alpha one. Native typed groups/reroutes may forward that value; all operations must contribute. Source property/schema, group ancestry, used topology and scene/root/frame context are rechecked after extraction. Forged negative zero, Boolean/fractional/out-of-range components, linked controls, animation/actions/drivers/NLA and native mute bypass refuse. Dimensions two/other widths, scalar/INT/Boolean/float2/int2/int3-to-float4 conversions and arbitrary consumers remain unqualified; existing INT_VECTOR2 and legacy float3 semantics are unchanged. Actual 8x8 native CPU and exported/installed Final linear words are exact on observed Apple Metal and SwiftShader WebGPU/WebGL2 via WebGPURenderer. No EEVEE/native GPU compositor, other versions/hosts/devices, resize, whole-scene appearance, Cycles/Three plate or PBR equality claim.",
+        "costScope": "A static typed constructor and host component presentation cast; no port-owned textures, additional passes or runtime readbacks. Proof readbacks are fixture-only. No whole-renderer allocation, export latency or frame-time benchmark is claimed.",
+        "closedReader": {
+          "runtimeFingerprint": "8102a0379e1e396d698021f9e70840df6373951959d9220d24286c0986c4d942",
+          "verifierSha256": "a90f76af6f89c26be8183b27e1a408a7bda65c408eefa1e1c0e4d5fa38c08130",
+          "runtimeTransaction": {
+            "sha256": "096c5f2aee5e1fc0c25de82c179c4658c01bea24d6c243accaeaede6343564be",
+            "id": "baba168c-938a-4b80-8e28-7ac0e635c55e",
+            "independentlyReemittedAtClose": true
+          }
+        },
+        "evidence": "experiments/compositor-int-vector3/evidence.json",
+        "evidenceSha256": "b21ef2884c2d263d9d4d2d6a6374e48467f1e5c70e545b8e5f07986cc7d2a3a1",
+        "manualReceipt": "experiments/compositor-int-vector3/evidence-next53-manual.json",
+        "manualReceiptSha256": "4625f2b42795700e19d95c209fed9eb8d055495cd97c7a5ce01fc7165e47ac61",
+        "sourceSnapshotLimits": "Own fresh next56 automatic native/source/Final/runtime/fixture snapshot on the shared rotation batch SDK, with explicit owned transaction, two byte-identical authoritative closes and an independent Root replay. Next53 manual and next54 automatic receipts remain immutable history. Historical default static/mono and other port evidence is unchanged. No automatic support promotion or all-ports freshness claim.",
+        "automaticReceipt": "experiments/compositor-int-vector3/evidence-next56-automatic.json",
+        "automaticReceiptSha256": "002be9743d6081b56cece4c03d841aba103c4d9e255828364e72c9cbc33311d4",
+        "automaticVerification": {
+          "status": "qualified",
+          "workspaceStable": true,
+          "productionCredit": true,
+          "supportPromotion": false,
+          "inputDigest": "8368d024604bd46df9aa26a1f5b8135958dd5faa4ebedc8d4ec0606989d50256",
+          "nativeInputDigest": "c3d0778bff761d28a54790a4d859a393e06f0b18f94a8d5f90041910cf456745",
+          "runtimeInputDigest": "3dac52215de3b5c02e963fcb2e569fec5470b44325172e1e7e61c6d6c5c9d372",
+          "requestKey": "393d949ec84cb922ef16703d479c900fc499b177c290695524c2bb74d7ec9070",
+          "evidenceKey": "6426976bfa82cd0a17a7bac6ad24723166beb201e352d6790ba9f7a7491fd911",
+          "nativeIdentity": {
+            "path": "/Applications/Blender.app/Contents/MacOS/Blender",
+            "bytes": 210043328,
+            "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da",
+            "version": "5.3.0",
+            "buildHash": "02f0899d78e3"
+          },
+          "reportSha256": "1d378a48a052694fe430022456ab937479a70abec0120cbf1fb906081d50689b",
+          "familyClosedReceiptSha256": "002be9743d6081b56cece4c03d841aba103c4d9e255828364e72c9cbc33311d4",
+          "adapterClosedReceiptSha256": "002be9743d6081b56cece4c03d841aba103c4d9e255828364e72c9cbc33311d4",
+          "authoritativeReaderPasses": 2,
+          "closedReadersByteIdentical": true,
+          "numericalReuse": false,
+          "rootIndependentReaderSha256": "002be9743d6081b56cece4c03d841aba103c4d9e255828364e72c9cbc33311d4"
+        }
+      },
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Pinned Blender 5.3.0 build 02f0899d78e3, macOS arm64 CPU compositor AUTO/FULL only. Static unmuted FunctionNodeInputIntVector with vector_dimensions=3 and exact signed Int32 RNA property; distinct INT_VECTOR3 identity. Exactly one terminal constructor with direct int3-to-RGBA or explicit int3-to-float3-to-RGBA presentation, componentwise RN-even Float32 and alpha one. Native typed groups/reroutes may forward that value; all operations must contribute. Source property/schema, group ancestry, used topology and scene/root/frame context are rechecked after extraction. Forged negative zero, Boolean/fractional/out-of-range components, linked controls, animation/actions/drivers/NLA and native mute bypass refuse. Dimensions two/other widths, scalar/INT/Boolean/float2/int2/int3-to-float4 conversions and arbitrary consumers remain unqualified; existing INT_VECTOR2 and legacy float3 semantics are unchanged. Actual 8x8 native CPU and exported/installed Final linear words are exact on observed Apple Metal and SwiftShader WebGPU/WebGL2 via WebGPURenderer. No EEVEE/native GPU compositor, other versions/hosts/devices, resize, whole-scene appearance, Cycles/Three plate or PBR equality claim."
+        }
+      }
     },
     "compositor:ShaderNodeCombineXYZ": {
       "category": "supported",
@@ -18149,6 +18462,275 @@
           }
         }
       }
+    },
+    "compositor:FunctionNodeInputRotation": {
+      "category": "unsupported",
+      "limits": "No live route outside the explicitly qualified pinned Blender 5.3 CPU static Input Rotation override. Native availability and internal MF evaluation alone grant no support.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [],
+      "modes": {},
+      "compileTime": {
+        "path": "packages/blendlink/blender/compositor_input_rotation.py",
+        "function": "evaluate_output",
+        "nodeSet": "NODES",
+        "callers": [
+          {
+            "path": "packages/blendlink/blender/compositor_graph.py",
+            "anchor": "record=input_rotation.evaluate_output(socket,scene,input_rotation_cache,tuple(reversed(frames)),static_selection.static_selection)"
+          }
+        ]
+      },
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Pinned Blender 5.3.0 build 02f0899d78e3 macOS arm64 CPU compositor static FunctionNodeInputRotation -> RotationToQuaternion Float component presentation only. Each original rotation_euler Float32 component must be positive zero or signed normal with |angle| <= 8 radians; public whole-property path_resolve(coerce=False).foreach_get(array(f)) reads raw words before Python-number promotion. Negative zero, subnormal, nonfinite and out-of-range inputs refuse. All four actual native output words must be normal Float32 or positive zero and match independent pre-Float-store HashValue INT witnesses before tuple/cache commit: data-dependent native signed-zero/subnormal output failures refuse without sign repair, normalization, canonicalization or wrapping (including measured axis pi/multi-turn cases). Literal producer groups, linked opaque Rotation group forwarding, Float endpoint groups and reroutes use bounded typed traversal; actual constructor mute, unlinked Rotation defaults, implicit casts, animation/actions/drivers/NLA, mixed/recombined constructors and arbitrary Rotation arithmetic/fields remain unqualified. Separate extraction-owned flat-ID recipe/result cache bounds source node instances64, source/recipe depth16, socket visits/recipe records2048 and evaluated islands16, including cached subtree/group hops. Actual raw properties, source/group ancestry/bindings, selected topology and scene/root/frame/CPU context are rechecked before/after native evaluation and at whole-extraction close. One owned sixteen-node one-point Geometry CPU-MF reference captures all four components and pre-store hashes per unique island; this internal oracle is not a Geometry Nodes support claim. Native objects/meshes/scenes/trees are released in finally, including handler-deleted IDs. Existing VALUE constants carry exact components; no live ROTATION runtime value/kernel, GPU trig/normalization, added runtime texture/pass/readback or per-frame native work. Actual native CPU compositor FULL EXR32 and saved original Final sources compare exactly on observed Apple Metal and SwiftShader WebGPU/WebGL2 via WebGPURenderer. The qualified Final display is explicitly actual Raw/None with no OCIO operations and alpha1; it is not arbitrary display or whole-scene appearance fidelity. No shader-tree/EEVEE/native GPU compositor, other versions/builds/hosts, legacy WebGLRenderer or generic MF/Quaternion/Euler scope widening. Existing Euler and Quaternion models keep their own narrower contracts."
+        }
+      },
+      "provenanceRoute": {
+        "nativeClass": "FunctionNodeInputRotation",
+        "model": "native-static-input-rotation-euler-xyz-cpu-53-v1",
+        "serialized": "compileTimeRotations records actual InputRotation/RotationToQuaternion members and group paths, raw Euler property words, native build, exact terminal Float word/value, evaluation count and preFloatStoreHashGuard. Existing value ops preserve the original RotationToQuaternion source class and W/X/Y/Z identifier. ROTATION stays opaque in Python.",
+        "numericalCredit": "Only the static pinned CPU constructor/component route. Native/hash calibration controls and old-model source-policy controls do not count as new production graphs. No live Rotation transport, GPU trigonometry or geometry-context credit."
+      },
+      "renderer": "Existing VALUE/color operations in WebGPURenderer actual WebGPU/WebGL2; measured Apple Metal and SwiftShader. No qualified legacy WebGLRenderer live installer.",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_input_rotation.py",
+          "anchor": "def evaluate_output("
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_raw_arrays.py",
+          "anchor": "def raw_float_array_words("
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py",
+          "anchor": "record=input_rotation.evaluate_output(socket,scene,input_rotation_cache,tuple(reversed(frames)),static_selection.static_selection)"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts",
+          "anchor": "case 'value':"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_input_rotation_check.py"
+        },
+        {
+          "path": "experiments/compositor-static-euler/input-rotation-cases.json"
+        },
+        {
+          "path": "experiments/compositor-static-euler/input-rotation-contract.json"
+        },
+        {
+          "path": "experiments/compositor-static-euler/input-rotation-sources.json"
+        },
+        {
+          "path": "experiments/compositor-static-euler/policy.py"
+        },
+        {
+          "path": "experiments/compositor-static-euler/reference.py"
+        },
+        {
+          "path": "experiments/compositor-static-euler/export.test.ts"
+        },
+        {
+          "path": "experiments/compositor-static-euler/browser.js"
+        },
+        {
+          "path": "experiments/compositor-static-euler/run.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-euler/verify.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-euler/protocol.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-euler/protocol.test.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-euler/input-rotation-readbacks.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-euler/input-rotation-readbacks.test.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-euler/input-rotation-owned-files.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-euler/input-rotation-owned-files.test.mjs"
+        },
+        {
+          "path": "experiments/compositor-static-euler/README.md"
+        },
+        {
+          "path": "node-ports/compositor-input-rotation.json"
+        },
+        {
+          "path": "experiments/compositor-static-euler/input-rotation-evidence.json"
+        },
+        {
+          "path": "experiments/compositor-static-euler/input-rotation-evidence-next57.json"
+        },
+        {
+          "path": "experiments/compositor-static-euler/input-rotation-evidence-next56.json"
+        },
+        {
+          "path": "experiments/compositor-static-euler/input-rotation-evidence-next56-automatic.json"
+        },
+        {
+          "path": "experiments/public-rna-array/evidence.json"
+        },
+        {
+          "path": "experiments/public-input-rotation/evidence.json"
+        },
+        {
+          "path": "experiments/public-input-rotation/signed-evidence.json"
+        }
+      ],
+      "verification": {
+        "status": "QUALIFIED_PARTIAL_COMPOSITOR_INPUT_ROTATION",
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeCompositorDevices": [
+          "CPU"
+        ],
+        "nativeNodeEvaluator": "Actual InputRotation native EulerXYZ constructor and RotationToQuaternion component-copy callbacks; private Geometry CPU-MF raw FLOAT plus pre-store Hash INT reference independently compared against actual CPU compositor FULL EXR32 and high16/low16 hash frames. Cycles CPU is only the scene carrier; no shader/EEVEE/native GPU or geometry-node context credit.",
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "observed Apple Metal",
+          "observed SwiftShader"
+        ],
+        "productionNativeGraphs": 48,
+        "nativeCPURenders": 152,
+        "nativeOracleControls": 104,
+        "privateMFEndpointComparisons": 96,
+        "preFloatStoreHashComparisons": 96,
+        "hashCalibrationControls": 8,
+        "savedFinalScenes": 8,
+        "browserCaseRuns": 224,
+        "primaryFloat32Words": 14336,
+        "archivedGpuReadbackFiles": 560,
+        "archivedGpuReadbackWords": 37824,
+        "wordMismatches": 0,
+        "independentlyRecomputedGpuWordDifferences": 0,
+        "contractViolations": 0,
+        "resizeFrames": 48,
+        "lifecycleCycles": 96,
+        "uniqueActualPythonPrefixes": 10,
+        "primaryPackagedPythonAddonPins": 141,
+        "sourcePolicy": {
+          "positiveControls": 36,
+          "newInputAdmissionControls": 34,
+          "oldModelRegressionControls": 2,
+          "refusalControls": 44,
+          "dataDependentNativeOutputGuardRefusals": 8,
+          "numericalCredit": 0,
+          "hardFailuresNeverRetryAnotherNativeFamily": true
+        },
+        "strictFinalDisplay": {
+          "view": "Raw",
+          "look": "None",
+          "ops": [],
+          "alphaWord": 1065353216,
+          "identityVerified": true
+        },
+        "numericContract": {
+          "schemaVersion": 1,
+          "model": "native-static-input-rotation-euler-xyz-cpu-53-v1",
+          "source": "Pinned Blender5.3 build02f0899d78e3 macOS arm64 CPU compositor actual FunctionNodeInputRotation property → RotationToQuaternion. No shader/GPU context.",
+          "inputs": "Each original raw rotation_euler component is +0 or a signed normal Float32 with magnitude at most8 radians, read using whole-array public path_resolve(False).foreach_get(array(f)). Negative zero/subnormal/nonfinite/out-of-bound input words refuse.",
+          "operation": "Unchanged native EulerXYZ half-angle trig polynomial; no normalize(), canonicalize(), wrapping or JS arithmetic emulation. Quaternion W/X/Y/Z may be signed or cancel under the bounded signed inputs; all four outputs must still pass the unchanged normal/+0 and pre-store-hash guards.",
+          "wordContract": "Every component word, emitted VALUE and actual browser RGBA channel must be exact uint32 equality. Alpha1 and identity positive zeros exact. No tolerance/output repair/input quantization.",
+          "preStoreGuard": "Fixed16-node private Geometry MF graph returns4 Float attributes plus4 pre-Float-store native HashValue INT witnesses. All4 normal/+0 words and manual pinned hash comparisons must pass before native tuple/cache commit. Independent actual CPU compositor hash high16/low16 channels preserve every32 bits and calibrate +0/-0/subnormal source words.",
+          "normalityAssumptions": "No universal no-cancellation/zero-sign argument is assumed. Every actual native result component must pass normal/+0 raw-word and pre-Float-store hash equality before cache commit. Signed/multiturn cases producing negative zero at the native producer and +0 at the attribute sink refuse as data-dependent output cases.",
+          "runtime": "Existing VALUE constants only; no runtime ROTATION, Hash, texture/pass/readback or per-frame native work.",
+          "snapshot": "Separate InputRotation evaluator; inherited bounded typed traversal, complete source ancestry/root/context, raw constructor properties and private16-node carrier snapshots revalidated before cache/native commit and EOF. Old Euler/Quaternion routes unchanged."
+        },
+        "numericContractSha256": "369e7183b505594837117425bcba73f428b42b11db0c39b08000dd12a8707a0e",
+        "coverageScope": "Pinned Blender 5.3.0 build 02f0899d78e3 macOS arm64 CPU compositor static FunctionNodeInputRotation -> RotationToQuaternion Float component presentation only. Each original rotation_euler Float32 component must be positive zero or signed normal with |angle| <= 8 radians; public whole-property path_resolve(coerce=False).foreach_get(array(f)) reads raw words before Python-number promotion. Negative zero, subnormal, nonfinite and out-of-range inputs refuse. All four actual native output words must be normal Float32 or positive zero and match independent pre-Float-store HashValue INT witnesses before tuple/cache commit: data-dependent native signed-zero/subnormal output failures refuse without sign repair, normalization, canonicalization or wrapping (including measured axis pi/multi-turn cases). Literal producer groups, linked opaque Rotation group forwarding, Float endpoint groups and reroutes use bounded typed traversal; actual constructor mute, unlinked Rotation defaults, implicit casts, animation/actions/drivers/NLA, mixed/recombined constructors and arbitrary Rotation arithmetic/fields remain unqualified. Separate extraction-owned flat-ID recipe/result cache bounds source node instances64, source/recipe depth16, socket visits/recipe records2048 and evaluated islands16, including cached subtree/group hops. Actual raw properties, source/group ancestry/bindings, selected topology and scene/root/frame/CPU context are rechecked before/after native evaluation and at whole-extraction close. One owned sixteen-node one-point Geometry CPU-MF reference captures all four components and pre-store hashes per unique island; this internal oracle is not a Geometry Nodes support claim. Native objects/meshes/scenes/trees are released in finally, including handler-deleted IDs. Existing VALUE constants carry exact components; no live ROTATION runtime value/kernel, GPU trig/normalization, added runtime texture/pass/readback or per-frame native work. Actual native CPU compositor FULL EXR32 and saved original Final sources compare exactly on observed Apple Metal and SwiftShader WebGPU/WebGL2 via WebGPURenderer. The qualified Final display is explicitly actual Raw/None with no OCIO operations and alpha1; it is not arbitrary display or whole-scene appearance fidelity. No shader-tree/EEVEE/native GPU compositor, other versions/builds/hosts, legacy WebGLRenderer or generic MF/Quaternion/Euler scope widening. Existing Euler and Quaternion models keep their own narrower contracts.",
+        "costScope": "At most sixteen extraction-owned native islands, each evaluated once for all four components; fixed sixteen-node private one-point graph and existing scalar VALUE browser nodes. No port-owned runtime textures, added passes, runtime native work or runtime readbacks. Proof readbacks are fixture-only. No export latency, full-renderer allocation or FPS benchmark claim.",
+        "closedReader": {
+          "runtimeFingerprint": "8102a0379e1e396d698021f9e70840df6373951959d9220d24286c0986c4d942",
+          "verifierSha256": "9377adcb0e14764fe1b8596b976dd72c2f8689cec8f13780aa3fd4de125baa44",
+          "runtimeArchiveHelperSha256": "431b8a4e92a194d63a8db512aa84f3076c9951e083b873885d8115e0caf509ed",
+          "nativeArchiveHelperSha256": "3a2310c94ed3109230d3fa89dc1ac6ea5bed447155e98144a68d52dac568a3da"
+        },
+        "ownedCapturePathHelperSha256": "c83124e8ea773620f76b070b8ce0ad603470ce635a6071b3150a89544f6c524c",
+        "evidence": "experiments/compositor-static-euler/input-rotation-evidence.json",
+        "evidenceSha256": "deaf5f0957f3b43be85ccb27361d70ff6879f6f7d45597882838d1e201e664c0",
+        "closedReceipt": "experiments/compositor-static-euler/input-rotation-evidence-next57.json",
+        "closedReceiptSha256": "5e6febcb5898694367e2abbd490149232e2ac9e2b6ce6ada049df483551e9892",
+        "automaticVerification": {
+          "schemaVersion": 1,
+          "status": "qualified",
+          "manifestId": "compositor-input-rotation",
+          "sourceCommit": "4cb6650134a73284e311bf63d2935639668131ac",
+          "workspaceStable": true,
+          "productionCredit": true,
+          "supportPromotion": false,
+          "actualReceipt": "experiments/compositor-static-euler/input-rotation-evidence-next57.json",
+          "actualReceiptSha256": "5e6febcb5898694367e2abbd490149232e2ac9e2b6ce6ada049df483551e9892",
+          "familyClosedReceiptSha256": "5e6febcb5898694367e2abbd490149232e2ac9e2b6ce6ada049df483551e9892",
+          "adapterClosedReceiptSha256": "5e6febcb5898694367e2abbd490149232e2ac9e2b6ce6ada049df483551e9892",
+          "closedReadersByteIdentical": true,
+          "authoritativeReaderPasses": 2,
+          "reportPath": "artifacts/verification-input-rotation-next57-manifest/report.json",
+          "reportSha256": "6e70b00adae9a3edfeeacb08a62b7b9eff0ed7bb40f75ecb4d2976d86e9b408b",
+          "nativeIdentity": {
+            "path": "/Applications/Blender.app/Contents/MacOS/Blender",
+            "bytes": 210043328,
+            "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da",
+            "version": "5.3.0",
+            "buildHash": "02f0899d78e3"
+          },
+          "inputDigest": "23b136132cc95c137678a14370502d046a332d7fb5fd7e78683a009c8dcd6289",
+          "nativeInputDigest": "36b5495cb78901843f4e8b9c67ce0cd3bb2996b9c45815d323cb199a486d7707",
+          "runtimeInputDigest": "4a4af77f93b902c9e54c318c9ec0fe1c7504af23a63959bab1c74c60cc212500",
+          "requestKey": "7082f765f54c7895dd45afbbefc45e39bd6d4671abdaccefeb894b81b52f2232",
+          "evidenceKey": "484670bd6e98918632ffc4cef5804ed697ce97beb2189eecc9b5fb3eee9bc964",
+          "runtimeFingerprint": "8102a0379e1e396d698021f9e70840df6373951959d9220d24286c0986c4d942",
+          "nativeGraphs": 48,
+          "nativeRenders": 152,
+          "nativeOracleControls": 104,
+          "savedFinalScenes": 8,
+          "browserCaseRuns": 224,
+          "primaryFloat32Words": 14336,
+          "archivedGpuFrames": 560,
+          "archivedGpuWords": 37824,
+          "exactWordMismatches": 0,
+          "independentlyRecomputedGpuWordDifferences": 0,
+          "resizeFrames": 48,
+          "lifecycleCycles": 96,
+          "nativePythonProof": {
+            "pythonInvocations": 10,
+            "finalInvocations": 8,
+            "uniqueCachePrefixes": 10,
+            "numericalCredit": 0
+          },
+          "sourceOnlyPolicy": {
+            "newInputAdmissionControls": 34,
+            "oldModelRegressionControls": 2,
+            "refusalControls": 44,
+            "dataDependentNativeOutputRefusals": 8,
+            "numericalCredit": 0
+          },
+          "numericalReuse": false,
+          "scope": "Pinned Blender 5.3.0 build 02f0899d78e3 macOS arm64 CPU compositor static FunctionNodeInputRotation -> RotationToQuaternion Float component presentation only. Each original rotation_euler Float32 component must be positive zero or signed normal with |angle| <= 8 radians; public whole-property path_resolve(coerce=False).foreach_get(array(f)) reads raw words before Python-number promotion. Negative zero, subnormal, nonfinite and out-of-range inputs refuse. All four actual native output words must be normal Float32 or positive zero and match independent pre-Float-store HashValue INT witnesses before tuple/cache commit: data-dependent native signed-zero/subnormal output failures refuse without sign repair, normalization, canonicalization or wrapping (including measured axis pi/multi-turn cases). Literal producer groups, linked opaque Rotation group forwarding, Float endpoint groups and reroutes use bounded typed traversal; actual constructor mute, unlinked Rotation defaults, implicit casts, animation/actions/drivers/NLA, mixed/recombined constructors and arbitrary Rotation arithmetic/fields remain unqualified. Separate extraction-owned flat-ID recipe/result cache bounds source node instances64, source/recipe depth16, socket visits/recipe records2048 and evaluated islands16, including cached subtree/group hops. Actual raw properties, source/group ancestry/bindings, selected topology and scene/root/frame/CPU context are rechecked before/after native evaluation and at whole-extraction close. One owned sixteen-node one-point Geometry CPU-MF reference captures all four components and pre-store hashes per unique island; this internal oracle is not a Geometry Nodes support claim. Native objects/meshes/scenes/trees are released in finally, including handler-deleted IDs. Existing VALUE constants carry exact components; no live ROTATION runtime value/kernel, GPU trig/normalization, added runtime texture/pass/readback or per-frame native work. Actual native CPU compositor FULL EXR32 and saved original Final sources compare exactly on observed Apple Metal and SwiftShader WebGPU/WebGL2 via WebGPURenderer. The qualified Final display is explicitly actual Raw/None with no OCIO operations and alpha1; it is not arbitrary display or whole-scene appearance fidelity. No shader-tree/EEVEE/native GPU compositor, other versions/builds/hosts, legacy WebGLRenderer or generic MF/Quaternion/Euler scope widening. Existing Euler and Quaternion models keep their own narrower contracts.",
+          "sourceSnapshotLimits": "Own fresh next57 source/native/Final/runtime/fixture snapshot after annotation correction; two authoritative byte-identical closes. Default Euler and Quaternion evidence remains historical and unchanged. Earlier raw API and signed native-twin research grants zero Final/browser support credit; no all-ports freshness claim.",
+          "history": {
+            "supersededNext56ClosedReceipt": "experiments/compositor-static-euler/input-rotation-evidence-next56.json",
+            "supersededNext56ClosedReceiptSha256": "6d1be123a351ba6b51460440a416002db63b3eca5f93b772c845d6247a70341a",
+            "supersededAutomaticWrapper": "experiments/compositor-static-euler/input-rotation-evidence-next56-automatic.json",
+            "reason": "Annotation-only correction: the initial signed contract inherited an incorrect W-stays-positive sentence. No numerical gate assumed positivity; next57 freshly repeated all stages with corrected text. History grants no additional graph/case counts."
+          }
+        },
+        "sourceSnapshotLimits": "Own fresh next57 source/native/Final/runtime/fixture snapshot after annotation correction; two authoritative byte-identical closes. Default Euler and Quaternion evidence remains historical and unchanged. Earlier raw API and signed native-twin research grants zero Final/browser support credit; no all-ports freshness claim."
+      }
     }
   },
   "knownUnsupported": [
@@ -18208,9 +18790,7 @@
     "compositor:FunctionNodeFindInString",
     "compositor:FunctionNodeFormatString",
     "compositor:FunctionNodeHashValue",
-    "compositor:FunctionNodeInputIntVector",
     "compositor:FunctionNodeInputMenu",
-    "compositor:FunctionNodeInputRotation",
     "compositor:FunctionNodeInputSpecialCharacters",
     "compositor:FunctionNodeInputString",
     "compositor:FunctionNodeInvertMatrix",
@@ -18264,7 +18844,6 @@
     "compositor:ShaderNodeTexVoronoi",
     "compositor:ShaderNodeTexWhiteNoise",
     "compositor:ShaderNodeVectorMath",
-    "compositor:ShaderNodeVectorRotate",
     "shader:FunctionNodeFindInString",
     "shader:FunctionNodeFormatString",
     "shader:FunctionNodeInputMenu",

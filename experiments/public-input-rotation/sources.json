@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "supportCredit": 0,
+  "sources": [
+    {
+      "path": "source/blender/nodes/function/nodes/node_fn_input_rotation.cc",
+      "sha256": "f85d26ac88eca8e34484ead2333dcb75af5340d8b28b68a084f08be6f8e2186e",
+      "url": "https://projects.blender.org/blender/blender/src/commit/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/function/nodes/node_fn_input_rotation.cc"
+    },
+    {
+      "path": "source/blender/nodes/function/nodes/node_fn_euler_to_rotation.cc",
+      "sha256": "f45a672f30151c3cd97960f79b96170fbe7c6017218389060b177d7451bebe84",
+      "url": "https://projects.blender.org/blender/blender/src/commit/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/function/nodes/node_fn_euler_to_rotation.cc"
+    },
+    {
+      "path": "source/blender/nodes/function/nodes/node_fn_rotation_to_quaternion.cc",
+      "sha256": "8fe89ac9b6d713d0dd5571b1e957f6222bd4244d52655b6277760635573e5f0c",
+      "url": "https://projects.blender.org/blender/blender/src/commit/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/function/nodes/node_fn_rotation_to_quaternion.cc"
+    },
+    {
+      "path": "source/blender/blenlib/BLI_math_euler.hh",
+      "sha256": "91596c17076201c065454570c29ae011688b8d80bfb845595ba1d3ed8e257a08",
+      "url": "https://projects.blender.org/blender/blender/src/commit/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/BLI_math_euler.hh"
+    },
+    {
+      "path": "source/blender/blenlib/BLI_math_euler_types.hh",
+      "sha256": "4cc9f07fd895d0d095aa409a168258678d65bca8ee5138637a339089615bb1bc",
+      "url": "https://projects.blender.org/blender/blender/src/commit/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/BLI_math_euler_types.hh"
+    },
+    {
+      "path": "source/blender/python/intern/bpy_rna.cc",
+      "sha256": "83a95616ab6bf4222634ff61fe36fe978012ddf0af8af63322d4966f0874f2dc",
+      "url": "https://projects.blender.org/blender/blender/src/commit/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/python/intern/bpy_rna.cc"
+    },
+    {
+      "path": "source/blender/compositor/intern/multi_function_procedure_operation.cc",
+      "sha256": "d61a452a55f9d333ea8c5fca6e81bf9604627521b547e59fb4ebfe0a59762ce9",
+      "url": "https://projects.blender.org/blender/blender/src/commit/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/intern/multi_function_procedure_operation.cc"
+    }
+  ]
+}

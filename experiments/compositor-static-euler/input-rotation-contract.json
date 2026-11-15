@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "model": "native-static-input-rotation-euler-xyz-cpu-53-v1",
+  "source": "Pinned Blender5.3 build02f0899d78e3 macOS arm64 CPU compositor actual FunctionNodeInputRotation property \u2192 RotationToQuaternion. No shader/GPU context.",
+  "inputs": "Each original raw rotation_euler component is +0 or a signed normal Float32 with magnitude at most8 radians, read using whole-array public path_resolve(False).foreach_get(array(f)). Negative zero/subnormal/nonfinite/out-of-bound input words refuse.",
+  "operation": "Unchanged native EulerXYZ half-angle trig polynomial; no normalize(), canonicalize(), wrapping or JS arithmetic emulation. Quaternion W/X/Y/Z may be signed or cancel under the bounded signed inputs; all four outputs must still pass the unchanged normal/+0 and pre-store-hash guards.",
+  "wordContract": "Every component word, emitted VALUE and actual browser RGBA channel must be exact uint32 equality. Alpha1 and identity positive zeros exact. No tolerance/output repair/input quantization.",
+  "preStoreGuard": "Fixed16-node private Geometry MF graph returns4 Float attributes plus4 pre-Float-store native HashValue INT witnesses. All4 normal/+0 words and manual pinned hash comparisons must pass before native tuple/cache commit. Independent actual CPU compositor hash high16/low16 channels preserve every32 bits and calibrate +0/-0/subnormal source words.",
+  "normalityAssumptions": "No universal no-cancellation/zero-sign argument is assumed. Every actual native result component must pass normal/+0 raw-word and pre-Float-store hash equality before cache commit. Signed/multiturn cases producing negative zero at the native producer and +0 at the attribute sink refuse as data-dependent output cases.",
+  "runtime": "Existing VALUE constants only; no runtime ROTATION, Hash, texture/pass/readback or per-frame native work.",
+  "snapshot": "Separate InputRotation evaluator; inherited bounded typed traversal, complete source ancestry/root/context, raw constructor properties and private16-node carrier snapshots revalidated before cache/native commit and EOF. Old Euler/Quaternion routes unchanged."
+}

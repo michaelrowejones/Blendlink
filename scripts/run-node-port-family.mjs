@@ -9,10 +9,10 @@ import {DISPLACE_FAMILY,displaceSuitePlan,runDisplaceSuite} from './lib/node-por
 
 export function closedFamilySuitePlan(id,{root,evidence,blender}){
  if(id===DISPLACE_FAMILY)return displaceSuitePlan({root,evidence,blender})
- const f=closedNodePortFamily(id),mono=id==='mono-switch-view'
+ const f=closedNodePortFamily(id),selection=['mono-switch-view','compositor-integer-vector3'].includes(id),variant=id==='mono-switch-view'?'mono-view':'integer-vector3'
  assert.ok(blender&&evidence&&root)
- return {argv:[process.execPath,join(root,f.folder,mono?'suite.mjs':'matrix.mjs'),...(mono?['--built','--mono-view']:[evidence])],
-  env:{BLENDLINK_BLENDER:blender,SCENETOWEB_SWITCH_EVIDENCE:mono?evidence:null,SCENETOWEB_SWITCH_VARIANT:mono?'mono-view':'static',
+ return {argv:[process.execPath,join(root,f.folder,selection?'suite.mjs':'matrix.mjs'),...(selection?['--built','--'+variant]:[evidence])],
+  env:{BLENDLINK_BLENDER:blender,SCENETOWEB_STATIC_EULER_VARIANT:id==='compositor-input-rotation'?'input-rotation':null,SCENETOWEB_SWITCH_EVIDENCE:selection?evidence:null,SCENETOWEB_SWITCH_VARIANT:selection?variant:'static',
    SCENETOWEB_RUNTIME_TRANSACTION:null,SCENETOWEB_RUNTIME_TRANSACTION_SHA256:null,SCENETOWEB_NATIVE_IDENTITY_POLICY:'per-invocation-sha256-v1'},timeoutMs:1_200_000}
 }
 export async function runClosedFamily(id,{root,evidence,blender}){
@@ -21,7 +21,7 @@ export async function runClosedFamily(id,{root,evidence,blender}){
  await assert.rejects(readFile(path),{code:'ENOENT'},'Use a fresh family transaction')
  const result=await executeNodePortCommand({...command,cwd:root,logPath:join(evidence,'family-matrix.log')})
  assert.equal(result.exitCode,0,'Family matrix failed; inspect family-matrix.log');assert.equal(result.timedOut,false);assert.equal(result.error,undefined)
- const receiptPath=join(evidence,id==='mono-switch-view'?'closed-receipt.json':'qualified.json'),bytes=await readFile(receiptPath)
+ const receiptPath=join(evidence,['mono-switch-view','compositor-integer-vector3'].includes(id)?'closed-receipt.json':'qualified.json'),bytes=await readFile(receiptPath)
  const proof=assertClosedFamilyReceipt(id,JSON.parse(bytes))
  await writeFile(path,JSON.stringify({status:'passed',family:id,built:true,receiptSha256:nodePortHash(bytes),nativeGraphs:proof.nativeGraphs,savedFinalScenes:proof.savedFinalScenes,browserCaseRuns:proof.browserCaseRuns,reuseNative:false},null,2)+'\n',{flag:'wx'})
 }

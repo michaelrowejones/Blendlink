@@ -1,0 +1,42 @@
+{
+  "status": 1,
+  "signal": null,
+  "identity": {
+    "kind": "blendlink-proof-native-python-v1",
+    "platform": "darwin",
+    "native": {
+      "path": "/Applications/Blender.app/Contents/MacOS/Blender",
+      "bytes": 210043328,
+      "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da"
+    },
+    "node": {
+      "path": "/Users/michaeljones/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "bytes": 126827136,
+      "sha256": "eb96bdabfd1f6705345bbd459f9308d140c011fa55865efdb4fa8f61d048f55d"
+    },
+    "launcher": {
+      "path": "/private/tmp/scenetoweb-public-rna-array-probe/native-launcher-0xr45w/blender-proof",
+      "bytes": 654,
+      "sha256": "6d8485ee4eff2c28e9fa783d494082987c0cda910668b68030b8e22307e998ca"
+    },
+    "configuration": {
+      "path": "/private/tmp/scenetoweb-public-rna-array-probe/native-launcher-0xr45w/launcher.json",
+      "bytes": 1096,
+      "sha256": "1faf2136c87d27a42f5fd7ce4d171c1a8661d1888ee1ee809f15ad6197feb76e"
+    },
+    "helper": {
+      "path": "/private/tmp/scenetoweb-public-rna-array-probe/native-launcher-0xr45w/lib/node-port-python.mjs",
+      "bytes": 18855,
+      "sha256": "33fc36d6c551583a119e558a60f77cd55ed25c92bcfd6d39e0171e7faaa33cde"
+    },
+    "bridge": {
+      "path": "/private/tmp/scenetoweb-public-rna-array-probe/native-launcher-0xr45w/node-port-blender.mjs",
+      "bytes": 321,
+      "sha256": "3390a410423e0cc921567a97473f6fd67f91cbe2987af7846346cb7cb51e9a8c"
+    },
+    "cachePolicy": "Fresh per-invocation prefix before Python actions; no project/user cache deletion or numerical proof reuse",
+    "limit": "Subsequent imports only. Call dispose after owned commands stop. Whole-job SIGKILL may leave empty owned directories; it cannot run JavaScript cleanup."
+  },
+  "scriptSha256": "584378f177790888b5c6c6f1ffd4fbf32eab01dd0662aa524e0acbd4a093dbd2",
+  "reportSha256": "2cc9570891b59be1acd8182b68f86026f7d4558889ab3fcd622c1b8a16c8fe06"
+}

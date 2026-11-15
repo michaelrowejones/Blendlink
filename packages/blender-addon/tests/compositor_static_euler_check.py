@@ -22,7 +22,7 @@ def extracted(label):
  before=matrix._ownership();program=compositor_graph.extract(scene);assert program['status']=='extracted',(label,program);assert before==matrix._ownership();records=program['compileTimeRotations'];assert len(records)==3 and all(r['model']==euler.MODEL and r['preFloatStoreHashGuard']and r['nativeEvaluations']==1 for r in records);assert program['ops']and all(op['kind']in {'value','combine-color'}for op in program['ops']);positive.append(label);return program
 
 def refused(label):
- before=matrix._ownership();program=compositor_graph.extract(scene);assert program['status']=='unsupported',(label,program);assert before==matrix._ownership();assert any(r['code']in {'unsupported-static-rotation','animated-tree'}for r in program['diagnostics']),(label,program);refusals.append(label)
+ before=matrix._ownership();program=compositor_graph.extract(scene);assert program['status']=='unsupported',(label,program);assert before==matrix._ownership();assert any(r['code']in {'unsupported-static-rotation','animated-tree'}|({'unsupported-static-input-rotation'}if label in {'GPU-source','unlinked-rotation-default'}else set())for r in program['diagnostics']),(label,program);refusals.append(label)
 
 setup();program=extracted('zero-identity');assert [r['word']for r in program['compileTimeRotations']]==[0x3f800000,0,0]
 for label,angles in [('axis-min',(2**-16,0,0)),('axis-next-min',(struct.unpack('=f',struct.pack('=I',0x37800001))[0],0,0)),('axis-max',(0,0,1)),('asymmetric',(.1,.2,.3)),('all-min',(2**-16,)*3),('all-max',(1,1,1)),('symmetric',(.5,.5,.5)),('zero-x',(0,.5,.75)),('mixed-min',(2**-16,1,.1))]:setup(angles);extracted(label)
@@ -30,7 +30,12 @@ constructor,separate,sink,color=setup((.1,.2,.3));group=bpy.data.node_groups.new
 for label,word in [('negative-zero',0x80000000),('positive-subnormal',1),('negative-subnormal',0x80000001),('nonfinite',0x7f800000),('nan',0x7fc00000),('negative-angle',0xbdcccccd),('below-min',0x377fffff),('above-max',0x3f800001)]:setup(input_words=[word,0,0]);refused(label)
 constructor,separate,sink,color=setup();value=tree.nodes.new('FunctionNodeInputVector');value.vector=(.1,.2,.3);tree.links.new(value.outputs[0],constructor.inputs[0]);refused('linked-vector-literal')
 constructor,separate,sink,color=setup();combine=tree.nodes.new('ShaderNodeCombineXYZ');tree.links.new(combine.outputs[0],constructor.inputs[0]);refused('computed-vector')
-constructor,separate,sink,color=setup();other=tree.nodes.new('FunctionNodeInputRotation');tree.links.new(other.outputs[0],separate.inputs[0]);refused('input-rotation-unsafe-reader')
+constructor,separate,sink,color=setup();other=tree.nodes.new('FunctionNodeInputRotation');tree.links.new(other.outputs[0],separate.inputs[0])
+# Keep the historical ordered label: Input Rotation is now a separately guarded
+# model, while this old Euler evaluator must still reject that producer itself.
+try:euler.evaluate_output(separate.outputs['W'],scene,{});raise AssertionError('Input Rotation entered old Euler profile')
+except euler.NotEulerRoute:pass
+refusals.append('input-rotation-unsafe-reader')
 constructor,separate,sink,color=setup();tree.links.remove(separate.inputs[0].links[0]);refused('unlinked-rotation-default')
 constructor,separate,sink,color=setup();constructor.mute=True;refused('muted-euler')
 constructor,separate,sink,color=setup();scene.render.compositor_device='GPU';refused('GPU-source');scene.render.compositor_device='CPU'

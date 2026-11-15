@@ -1,0 +1,15 @@
+{
+  "status": "RESEARCH_PUBLIC_RNA_ARRAY",
+  "supportCredit": 0,
+  "renderCalls": 0,
+  "gpuInitializationCalls": 0,
+  "version": [
+    5,
+    3,
+    0
+  ],
+  "build": "02f0899d78e3",
+  "rows": [],
+  "guardCanariesRefused": true,
+  "ownershipRestored": true
+}

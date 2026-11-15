@@ -1,0 +1,815 @@
+{
+  "schemaVersion": 1,
+  "status": "QUALIFIED_PARTIAL_COMPOSITOR_INPUT_ROTATION",
+  "variant": "input-rotation",
+  "nativeRenders": 152,
+  "nativeOracleControls": 104,
+  "sourceInputAdmissionControls": 34,
+  "sourceRegressionControls": 2,
+  "sourceOutputGuardRefusals": 8,
+  "ownedCapturePathHelperSha256": "c83124e8ea773620f76b070b8ce0ad603470ce635a6071b3150a89544f6c524c",
+  "identityRawDisplayVerified": true,
+  "archivedGpuWords": 37824,
+  "archivedGpuPrimaryWords": 14336,
+  "archivedGpuFrames": 560,
+  "independentlyRecomputedGpuWordDifferences": 0,
+  "nativeGraphs": 48,
+  "nativeCPURenders": 152,
+  "preFloatStoreHashComparisons": 96,
+  "hashCalibrationControls": 8,
+  "savedFinalScenes": 8,
+  "browserCaseRuns": 224,
+  "primaryFloat32Words": 14336,
+  "exactWordMismatches": 0,
+  "contractViolations": 0,
+  "resizeFrames": 48,
+  "lifecycleCycles": 96,
+  "uniqueActualPythonPrefixes": 10,
+  "scope": "Pinned Blender5.3 macOS arm64 CPU compositor actual InputRotation signed normal literal EulerXYZ |angle|<=8 plus positive zero; data-dependent normal/+0 component and pre-store hash guards; no live ROTATION/shader/GPU claim.",
+  "numericContract": {
+    "schemaVersion": 1,
+    "model": "native-static-input-rotation-euler-xyz-cpu-53-v1",
+    "source": "Pinned Blender5.3 build02f0899d78e3 macOS arm64 CPU compositor actual FunctionNodeInputRotation property → RotationToQuaternion. No shader/GPU context.",
+    "inputs": "Each original raw rotation_euler component is +0 or a signed normal Float32 with magnitude at most8 radians, read using whole-array public path_resolve(False).foreach_get(array(f)). Negative zero/subnormal/nonfinite/out-of-bound input words refuse.",
+    "operation": "Unchanged native EulerXYZ half-angle trig polynomial; no normalize(), canonicalize(), wrapping or JS arithmetic emulation. Quaternion W/X/Y/Z may be signed or cancel under the bounded signed inputs; all four outputs must still pass the unchanged normal/+0 and pre-store-hash guards.",
+    "wordContract": "Every component word, emitted VALUE and actual browser RGBA channel must be exact uint32 equality. Alpha1 and identity positive zeros exact. No tolerance/output repair/input quantization.",
+    "preStoreGuard": "Fixed16-node private Geometry MF graph returns4 Float attributes plus4 pre-Float-store native HashValue INT witnesses. All4 normal/+0 words and manual pinned hash comparisons must pass before native tuple/cache commit. Independent actual CPU compositor hash high16/low16 channels preserve every32 bits and calibrate +0/-0/subnormal source words.",
+    "normalityAssumptions": "No universal no-cancellation/zero-sign argument is assumed. Every actual native result component must pass normal/+0 raw-word and pre-Float-store hash equality before cache commit. Signed/multiturn cases producing negative zero at the native producer and +0 at the attribute sink refuse as data-dependent output cases.",
+    "runtime": "Existing VALUE constants only; no runtime ROTATION, Hash, texture/pass/readback or per-frame native work.",
+    "snapshot": "Separate InputRotation evaluator; inherited bounded typed traversal, complete source ancestry/root/context, raw constructor properties and private16-node carrier snapshots revalidated before cache/native commit and EOF. Old Euler/Quaternion routes unchanged."
+  },
+  "numericContractSha256": "369e7183b505594837117425bcba73f428b42b11db0c39b08000dd12a8707a0e",
+  "upstream": {
+    "schemaVersion": 1,
+    "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+    "supportCredit": 0,
+    "sources": [
+      {
+        "path": "source/blender/nodes/function/nodes/node_fn_input_rotation.cc",
+        "sha256": "f85d26ac88eca8e34484ead2333dcb75af5340d8b28b68a084f08be6f8e2186e",
+        "url": "https://projects.blender.org/blender/blender/src/commit/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/function/nodes/node_fn_input_rotation.cc"
+      },
+      {
+        "path": "source/blender/nodes/function/nodes/node_fn_euler_to_rotation.cc",
+        "sha256": "f45a672f30151c3cd97960f79b96170fbe7c6017218389060b177d7451bebe84",
+        "url": "https://projects.blender.org/blender/blender/src/commit/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/function/nodes/node_fn_euler_to_rotation.cc"
+      },
+      {
+        "path": "source/blender/nodes/function/nodes/node_fn_rotation_to_quaternion.cc",
+        "sha256": "8fe89ac9b6d713d0dd5571b1e957f6222bd4244d52655b6277760635573e5f0c",
+        "url": "https://projects.blender.org/blender/blender/src/commit/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/function/nodes/node_fn_rotation_to_quaternion.cc"
+      },
+      {
+        "path": "source/blender/blenlib/BLI_math_euler.hh",
+        "sha256": "91596c17076201c065454570c29ae011688b8d80bfb845595ba1d3ed8e257a08",
+        "url": "https://projects.blender.org/blender/blender/src/commit/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/BLI_math_euler.hh"
+      },
+      {
+        "path": "source/blender/blenlib/BLI_math_euler_types.hh",
+        "sha256": "4cc9f07fd895d0d095aa409a168258678d65bca8ee5138637a339089615bb1bc",
+        "url": "https://projects.blender.org/blender/blender/src/commit/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/BLI_math_euler_types.hh"
+      },
+      {
+        "path": "source/blender/python/intern/bpy_rna.cc",
+        "sha256": "83a95616ab6bf4222634ff61fe36fe978012ddf0af8af63322d4966f0874f2dc",
+        "url": "https://projects.blender.org/blender/blender/src/commit/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/python/intern/bpy_rna.cc"
+      },
+      {
+        "path": "source/blender/compositor/intern/multi_function_procedure_operation.cc",
+        "sha256": "d61a452a55f9d333ea8c5fca6e81bf9604627521b547e59fb4ebfe0a59762ce9",
+        "url": "https://projects.blender.org/blender/blender/src/commit/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/intern/multi_function_procedure_operation.cc"
+      }
+    ]
+  },
+  "resources": "One fixed16-node private depsgraph evaluation yields all4 outputs plus pre-Float-store hash INT guards per unique island and extraction; no global cache. Source storage/topology/group ancestry/context/ownership checked. Private Scene/Object/Mesh/GeometryTree removed in finally. No Rotation browser op/pass/texture/readback. Three saved Final apply/dispose cycles preserve actual material/callback/renderer-cache identities. Static constants remain exact through target resize.",
+  "policy": {
+    "schemaVersion": 1,
+    "status": "STATIC_INPUT_ROTATION_SOURCE_POLICY_PASSED",
+    "positive": [
+      "zero-W",
+      "zero-X",
+      "zero-Y",
+      "zero-Z",
+      "min-W",
+      "min-X",
+      "min-Y",
+      "min-Z",
+      "one-W",
+      "one-X",
+      "one-Y",
+      "one-Z",
+      "nonhalf-W",
+      "nonhalf-X",
+      "nonhalf-Y",
+      "nonhalf-Z",
+      "negative-one-x",
+      "negative-one-y",
+      "negative-one-z",
+      "negative-min-x",
+      "negative-min-y",
+      "negative-min-z",
+      "positive-min-normal",
+      "negative-min-normal-y",
+      "mixed-eight",
+      "mixed-negative-turn",
+      "near-turn-tie",
+      "cancel-x-before",
+      "cancel-x-tie",
+      "cancel-x-after",
+      "cancel-z-tie",
+      "all-components-shared-cache",
+      "rotation-reroute",
+      "nested-constructor",
+      "old-Euler-unchanged",
+      "old-Quaternion-unchanged"
+    ],
+    "refusals": [
+      "negative-zero",
+      "subnormal",
+      "negative-subnormal",
+      "below-normal",
+      "above-eight",
+      "infinity",
+      "nan",
+      "positive-pi-output",
+      "negative-pi-output",
+      "positive-turn-output",
+      "negative-turn-output",
+      "positive-eight-output",
+      "negative-eight-output",
+      "negative-min-normal-x-output",
+      "negative-min-normal-z-output",
+      "muted-constructor",
+      "animated-property",
+      "driven-property",
+      "GPU-context",
+      "unlinked-rotation-default",
+      "opaque-rotation-output",
+      "late-raw-property",
+      "late-root",
+      "late-frame",
+      "late-group-binding",
+      "late-group-mute",
+      "late-group-animation",
+      "private-angle",
+      "private-hash-seed",
+      "private-selection",
+      "private-delete-tree",
+      "mixed-quaternion-W",
+      "mixed-quaternion-X",
+      "old-Euler-negative-refused",
+      "hard-input-native",
+      "hard-input-ownership",
+      "hard-input-recursion",
+      "hard-quaternion-native",
+      "hard-quaternion-ownership",
+      "hard-quaternion-recursion",
+      "hard-euler-native",
+      "hard-euler-ownership",
+      "hard-euler-recursion",
+      "cached-raw-property"
+    ],
+    "gpuInitializationCalls": 0,
+    "renders": 0,
+    "supportCredit": 0,
+    "scriptSha256": "a90684ee58533f8e5ae8524faa0416b2cd818fd20377171741c3271fc950d449",
+    "candidatePositive": [
+      "zero-W",
+      "zero-X",
+      "zero-Y",
+      "zero-Z",
+      "min-W",
+      "min-X",
+      "min-Y",
+      "min-Z",
+      "one-W",
+      "one-X",
+      "one-Y",
+      "one-Z",
+      "nonhalf-W",
+      "nonhalf-X",
+      "nonhalf-Y",
+      "nonhalf-Z",
+      "negative-one-x",
+      "negative-one-y",
+      "negative-one-z",
+      "negative-min-x",
+      "negative-min-y",
+      "negative-min-z",
+      "positive-min-normal",
+      "negative-min-normal-y",
+      "mixed-eight",
+      "mixed-negative-turn",
+      "near-turn-tie",
+      "cancel-x-before",
+      "cancel-x-tie",
+      "cancel-x-after",
+      "cancel-z-tie",
+      "all-components-shared-cache",
+      "rotation-reroute",
+      "nested-constructor"
+    ],
+    "regressionPositive": [
+      "old-Euler-unchanged",
+      "old-Quaternion-unchanged"
+    ],
+    "outputGuardRefusals": [
+      "positive-pi-output",
+      "negative-pi-output",
+      "positive-turn-output",
+      "negative-turn-output",
+      "positive-eight-output",
+      "negative-eight-output",
+      "negative-min-normal-x-output",
+      "negative-min-normal-z-output"
+    ],
+    "detailSha256": "66d1766978863008072028298b0341591ccb1342ddf317989409c05bea15791f"
+  },
+  "closedReader": {
+    "runtimeFingerprint": "8102a0379e1e396d698021f9e70840df6373951959d9220d24286c0986c4d942",
+    "verifierSha256": "9377adcb0e14764fe1b8596b976dd72c2f8689cec8f13780aa3fd4de125baa44",
+    "runtimeArchiveHelperSha256": "431b8a4e92a194d63a8db512aa84f3076c9951e083b873885d8115e0caf509ed",
+    "nativeArchiveHelperSha256": "3a2310c94ed3109230d3fa89dc1ac6ea5bed447155e98144a68d52dac568a3da"
+  },
+  "sources": [
+    {
+      "native": {
+        "path": "artifacts/verification-input-rotation-next57-manifest/cpu/qualification.json",
+        "sha256": "83236932c0dc1fed0459fe0daceb3e1c44bdd6c305ecf9dcfc90a03ad3629fab"
+      },
+      "final": {
+        "path": "artifacts/verification-input-rotation-next57-manifest/cpu/final-proof.json",
+        "sha256": "74b402f7738bcc686dfa74c1387610dc2831adeda84cb9d2921bd21d2a2b2777"
+      },
+      "sourceHashes": {
+        "experiments/compositor-static-euler/reference.py": "3eba10fa55540429e6b3ab9ae5a5c851a6e863833b3bda2c1e3bce826026c9c3",
+        "experiments/compositor-static-euler/policy.py": "967a3b68f0bd885072ff2701e5e1b78677dde346f6698b2171adcddf49f7e883",
+        "experiments/compositor-static-euler/input-rotation-cases.json": "bd69b6238e0a02889d6cd02c435edb80b9c9ce918c210c8b89a3127be3cfc3be",
+        "packages/blender-addon/tests/compositor_input_rotation_check.py": "a90684ee58533f8e5ae8524faa0416b2cd818fd20377171741c3271fc950d449",
+        "packages/blender-addon/tests/compositor_reference.py": "d52af8d60fec4bbd6f1b977e12a0c913c6f599e0e401b0b962b2bf2b101b5a55",
+        "packages/blendlink/blender/compositor_math.py": "fd2f9efc43f4b0bf1dfebbdc651190025c9e33ccf2ae3ab0baf653715dd00b78",
+        "packages/blendlink/blender/preparation_cache.py": "e3518eaa9999a0d51a0b7a9dd9810c68843dedd0d3bc119af3534ea8ec2db28d",
+        "packages/blendlink/blender/geometry_export.py": "3d147a218ee96f0bf72ffeb5add773396347fc39224501eb62d5d7f67551fd2d",
+        "packages/blendlink/blender/compositor_relative_to_pixel.py": "a276d2e5fa7b0743b26c5e6fdba67cff3f884f2535f88c01ca0c536a8ce85870",
+        "packages/blendlink/blender/compositor_integer_vector.py": "c5c9cccd9b2839e9698b4fd373d4652e11b70e6641c0141d605edf85efe656d4",
+        "packages/blendlink/blender/compositor_whitepoint.py": "a2beb2b16a1f7fbf6b02a31cb4690d0c98e23e144748e5962a0d4f755922d2e5",
+        "packages/blendlink/blender/compositor_chroma_key.py": "d304626d3aba0ed4bd560a11134f627536bb9dfe3e01d608a40fe677759512e5",
+        "packages/blendlink/blender/environment_compress.py": "397d332d28c72fbfc66ca5f4c85298efaf2a9dc23c8cf6ba7f020c22d09f8408",
+        "packages/blendlink/blender/compositor_color_key.py": "3d905f6f46171a0c9beb48edf280d3969d8f53ef77a11a0334124cdc176e84f5",
+        "packages/blendlink/blender/compositor_float_to_int.py": "6292f5a5904107b59591c282fcf9def24a5f98dc2ead0a92d950b6219226658d",
+        "packages/blendlink/blender/compositor_graph.py": "a134710c6ab837be4cea3a7e5add76f255a5845bb307b004f09c59128553445e",
+        "packages/blendlink/blender/compositor_ellipse_mask.py": "655933483b76b29bbe6f88968052faca74fb73ffd5d99841ef74b9cde5fc2039",
+        "packages/blendlink/blender/compositor_vector_math.py": "94a78be4e19d1b824b046665250fccb801e363b2339253a7f047c2e76532e0f9",
+        "packages/blendlink/blender/compositor_crop.py": "44ed9983ecac97b400a3ba7896a8eb66738e23cb61bb151d139dbdff7150351c",
+        "packages/blendlink/blender/compositor_alpha_conversion.py": "990390afa0f4d021d616802c9425dc0ab2ec706ce49b72327a1d22b16cdeb0db",
+        "packages/blendlink/blender/compositor_color.py": "7f2c441e1390c38537fd6e434c6963398a517492f00441e928f2c6708e8eea27",
+        "packages/blendlink/blender/compositor_wave_axis.py": "f36726191e86c79695e1dab086137002c6a71d2c6a2ba560928b6274b24f1f2c",
+        "packages/blendlink/blender/compositor_vector_rotate.py": "5abbdc82585d43a96cc5a54e994555a42eefcc13b84677ed73f144c1d2ea5350",
+        "packages/blendlink/blender/compositor_blur.py": "d86ffd87271a97563facacfedab6bcc3888ea0bff69926f12d32146736aff014",
+        "packages/blendlink/blender/compositor_displace.py": "aba7b3571143159acfdac94f5c11a39fecdb4d171f8d201dd373389968138cd9",
+        "packages/blendlink/blender/compositor_static_rotation.py": "9fb11262d1d717e9d9ffa8cb640872dad6fa5990258296ef25a4998b0a4bdb1e",
+        "packages/blendlink/blender/compositor_luminance_key.py": "5391ac3ca522590a0bffa0a2ef3ca25c8be44d0218381fa9f3bc48ab14edb3cd",
+        "packages/blendlink/blender/compositor_white_noise.py": "b98321026920b3d39c62a0e5331d74f758eb94d4d5c067a9c2d2b9d8eb4c23fa",
+        "packages/blendlink/blender/native_color_band.py": "23aa27b056846d42cdb96919da968d04f9e8e44d794ffa10c80871f786bfc8d4",
+        "packages/blendlink/blender/compositor_raw_arrays.py": "d0ac00a3f579d8ca7bb2d78025c1f0fb59591280d24df1a2333d95931dc1982f",
+        "packages/blendlink/blender/compositor_integer_bits.py": "1ea63649a2ae0a3760b9b02fe3ed9441aaa0bdfaa35eeb1e2ec77802466a4f99",
+        "packages/blendlink/blender/compositor_spill.py": "8a7774222b7f126bcc6a42f0a526d953b2fe858b4f47c7018cd741ee94f56269",
+        "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
+        "packages/blendlink/blender/compositor_static_matrix.py": "07c0b4b2c47ccad0697b76968c0e21c90b9cf5fdb6a8ef0d5d3232e908bbd1d7",
+        "packages/blendlink/blender/compositor_normal.py": "9dcd0e53d674560bb7c060a2a6a2b5ccdec361235ae67620c587a29136d2c94d",
+        "packages/blendlink/blender/compositor_channel_key.py": "a00e0f67b92ab817a401340c654758177eadc1b07d7a0ae92258b16760dc46dc",
+        "packages/blendlink/blender/compositor_box_mask.py": "6d1ad1f0953483c9c230ac3d49c5b3f4cb0fb30a8bb8d589fab19019056e6390",
+        "packages/blendlink/blender/compositor_blank_image.py": "b2d53c3e4e227773f20635be285441afd849c2099fbd62e35032ec23e5937b0b",
+        "packages/blendlink/blender/compositor_image.py": "55ee3b7800002331c4e30042a7d5da18538267b58ff60c006e03ad238da9e012",
+        "packages/blendlink/blender/compositor_static_euler.py": "e387d5dd7f3bd981e4977b023ec49a1a7d6c3186db07183a40885456a3ff7b54",
+        "packages/blendlink/blender/compositor_transform.py": "2f9ae73eb6e70f05fc53b755b1252e3bce4563ad013b08ed930304a4ae2ac42d",
+        "packages/blendlink/blender/compositor_distance_key.py": "132faffadf13bcc49db7556a7442ff039a06ab5a777d8b2effa74bcd5ec8adf9",
+        "packages/blendlink/blender/source_presentation.py": "da900105ad5bdf9f0a3586d856f29e64a3e169ba46a7c13975f065319dd7ea24",
+        "packages/blendlink/blender/compositor_float_coordinates.py": "a300cbfb6e5ea06806e2fb9b9d7795cd2e3b91cb21ada43e4c128ac89d8f0cec",
+        "packages/blendlink/blender/compositor_gpu.py": "9577b6df9abbf9820af6dab309b0ab2ec3a00db8a9bf60a4c5e0c9e4cb8600ae",
+        "packages/blendlink/blender/compositor_affine.py": "7df4327f10d8cb0d223cd4b2e5c67b2f62721e246831ce4a6fd98ec4653b03e4",
+        "packages/blendlink/blender/compositor_image_info.py": "92e3f2488f646b8f7f79de67940717c54bd3e4cfc69956090b31ebd9b0e64729",
+        "packages/blendlink/blender/compositor_input_rotation.py": "9c3dd43560d0f0c0d7761686cd223747a61f6d2fbf435b0f553c547b0ff65ba8",
+        "packages/blendlink/blender/compositor_group_defaults.py": "484fea6a45208531f189e65d627747f94c1386b98a9a6b460a21f51afa01889d",
+        "packages/blendlink/blender/compositor_map_value_domain.py": "ff43991bf956ed131835b671f9d44c0a80e23b9888c53903f6486c5a287448eb",
+        "packages/blendlink/blender/compositor_radial_width.py": "4b572924063f901030e779ac0c78a6a75229b22efc4df0741c55463a1f27d172",
+        "packages/blendlink/blender/compositor_mask_domains.py": "0a513ff741c657b0cee96387591e0640ebd9a04091bdce311cd4a2372743991c",
+        "packages/blendlink/blender/tangent_export.py": "4815854bd825e910009b42de73ecf5aa9cc0bb07966bb2d688731e5df12b514e",
+        "packages/blendlink/blender/compositor_image_coordinates.py": "4b796327c579e7c08ed487cce4758c899a1a11be648e93977c22a0536451054a",
+        "packages/blendlink/blender/compositor_difference_key.py": "4fce4d4ed1c082b3a2e7410dad2073672da8f2add7752f3b15883f82d3ed8c05",
+        "packages/blendlink/blender/compositor_map_value.py": "784d1ba979b02e2e665b41818d4efd8912c5fe35ae821ea39135912fda3fe5fe",
+        "packages/blendlink/blender/compositor_noise.py": "42d832609e94625f8bd6c40950905f4ec0955738468379b64a95a353eb200cd4",
+        "packages/blendlink/blender/uvgeometry.py": "2420caeccc225eddf3dce09c8dafe8ab9048d503689c0795c4a5513f7b3d705c",
+        "packages/blendlink/blender/compositor_procedural_texture.py": "70d34a56ea67a67aecd899fb05e66716746865c190e9d9f2bd4289b6df2bf025",
+        "packages/blendlink/blender/normal_bake_transport.py": "1e6211bb197f6e015262f80937112ec594e70977945fc1259133aa8ffd36429e",
+        "packages/blendlink/blender/compositor_ellipse_scene_mix.py": "c27c0740a6db7603c21f50b8dbd3069393a58a9f7211a8dbcd2138f77785de0e",
+        "packages/blendlink/blender/compositor_blackbody.py": "9646898a1b0b9b9e1dbfe97adf73b3a463e624f49f68a7d786b3255bbdf42424",
+        "packages/blendlink/blender/compositor_pixelate.py": "607f738a09fc75f15facb9cb0c261bfb72800663d5908826e5d105d980800b3d",
+        "packages/blendlink/blender/compositor_vector_component.py": "8b29742404fa7d80d2bdc661363a052bc1a2680b3306a2a47b20d0d9e5bfe20c",
+        "packages/blendlink/blender/export_scene.py": "d746ba319cdf24915ea8f718104639b2d17075fff6da46cb503caf2c225c171f",
+        "packages/blendlink/blender/compositor_utilities.py": "b92be3bb89c05d9a943a08298bb3114274cf67f14f985ba84e3f5dbc9eddc384",
+        "packages/blendlink/blender/camera_axes.py": "18360ba667a42691b0dc66b4827108e6bdfad00fdb246d61e9838f3bef596ff2",
+        "packages/blendlink/blender/bakelib.py": "51469367512aa77cf6da533499eebbdf035f54eb3247b5efecc7ec94b193ded3",
+        "packages/blendlink/blender/compositor_split.py": "1c25e68653abf9c8c8b2a88c3c7751a324fb4838a5feaacae309fe332e511a08",
+        "packages/blendlink/blender/compositor_view_selection.py": "f5ef756dfd61ca8047f55bb004c74372f7af27fff357a74476d8d0c5432ab491",
+        "packages/blender-addon/ui_state.py": "bbc3f335df8910029d76b0fa8334a85c9d21d9051410ff7a766714cb5966d23b",
+        "packages/blender-addon/bootstrap.py": "891bf5814e20e8b86bd5bfa5d78a4c6a8a67919122f1738bed7e4690b3e70202",
+        "packages/blender-addon/static_selection.py": "4ce1075f6f6823b344e7c67ae6cb296f8d4f96ecfb41b219aecb0bb7d33c0630",
+        "packages/blender-addon/ownership.py": "939b9822ae5646382e1a37031ab35f6c28ba2d8f6b3fc5cfc174b930d1f40c99",
+        "packages/blender-addon/procedural.py": "dd85b29a3293db0829f024941881e7ec068a0d7d9258e7d019484184ac2cf31c",
+        "packages/blender-addon/overlay.py": "261f479d6a54978111d6355f6748198e14a437e8a0e5df29b01b1b6e8ee1677c",
+        "packages/blender-addon/camera_data_ir.py": "956a074bad662f2a643335666ec62823643f955d6da8c75d056fa5f75928f1c8",
+        "packages/blender-addon/vector_transform_ir.py": "b8c9e02ec79253b24963566c64e81cf38f341e7a94bb36c7a6380fa72adfb3cc",
+        "packages/blender-addon/known_issues.py": "40aeda4a7a172e8e133cd94f0c663a4a6ccf2c9f79a8159bdf42b75df1395c52",
+        "packages/blender-addon/noise_mf_coordinates.py": "fc40bdf258c62a75977839e5af1250289f474595523fa67826b586f673bb3233",
+        "packages/blender-addon/normal_ir.py": "5884980ca27e5a12bbf239cd69bed3b5295ba80ad3b728b9011580f2c6ef3899",
+        "packages/blender-addon/noise_fractal_ir.py": "363c03bec9b463f582bd0014bca6ff54dba146e737e87d4f4367c4770bb44457",
+        "packages/blender-addon/magic_bounds.py": "9a15236ab29aac815e19688d3d054a474fd39ee880e076746b8cb693f494b9b8",
+        "packages/blender-addon/bakelib_loader.py": "8c2a30b0460e1cb28d6e5338b3a28134a966846f78fdb1131666bfe6233b4155",
+        "packages/blender-addon/vocab.py": "1778a646feb149b2594440350076868b7f07b4f02c4ef8f6114b93050d0e13ba",
+        "packages/blender-addon/math_modulo_native_ir.py": "89ee9a91f0a754ca9b7e3702085b8e90115ac993a3499946e5573f24b913ee63",
+        "packages/blender-addon/material_time.py": "7291aeb654d7db15bdaba36bce032e98e82f5bb650fe363c0300b1fa5c614828",
+        "packages/blender-addon/syncrun.py": "b1a80d00f7a45846e6d246dcbd1f5632e76f17ef2ae18a9024f609b2cde12a1a",
+        "packages/blender-addon/vector_component_ir.py": "bb4d7ed8e35f112e511056ce8968be269d0bcb2993f3dbc41ce47aa3497f7b4a",
+        "packages/blender-addon/presentation_ui.py": "a37fbf6cd240eab386d7dd6e0a525f299b59edbb95e3ac932b891c683ff0a2a7",
+        "packages/blender-addon/normal_direction_ir.py": "0aa3b1b0226320b6b92fce63b06d7e5202bd012ce9820085d3fc26c426b3857f",
+        "packages/blender-addon/ui.py": "50258c0153f14cac41dfa3c6b50ef11ca3c8c819306209f3d8e1909b107a16a4",
+        "packages/blender-addon/vertex_color_alpha.py": "b51729daa4316113e71a410cca7128a5629fa8d648b471e811af23a8ec145b00",
+        "packages/blender-addon/curves_ir.py": "8448897e0f3fa19761080c366e211b711051f0468025516e1eb3a8fdf1548ad5",
+        "packages/blender-addon/nla_sequence.py": "6bd3e380bc15cd177e9650008d5e47dc5f34ad76d5e8121249dcd2bbf7df7c35",
+        "packages/blender-addon/normal_map_tangent_ir.py": "44bf4a455b32489d632b6e2d5dd98c10e716b7df6aaf54817b086d34fad9375c",
+        "packages/blender-addon/normal_input_bounds.py": "7967ed668d1a4e9de8d437717f22b736bf3956a1f6d3816da140e9725b13c3c7",
+        "packages/blender-addon/component_schema.py": "5d1aeeb885077d71cecef78ca0aea2c381ce190428d745dafffb2126b64d70e0",
+        "packages/blender-addon/bump_ir.py": "438d0422d6106a489bb001ad65904e26f4861dd699f00eed559fa38d2ee19590",
+        "packages/blender-addon/ramps_ir.py": "fc9f2fd95a6e650a3bacde298fe92f2a63e85185763f17204d4e328a90c9ea96",
+        "packages/blender-addon/static_strings.py": "e551463dad7e3b1336a4dbc0f90e1c1ef1f70904eabf7b63e06b24a3a1cd28b9",
+        "packages/blender-addon/bump_height_ir.py": "c634d0eed632ffc62293ce1cd0985bc115951b02bdef88901b3e59ec164cd5d6",
+        "packages/blender-addon/consequence_gizmos.py": "e10e508a6612e73957f3dbe9c2125fbbac25a88499f08ca8ea8d34fb230486d7",
+        "packages/blender-addon/material_compiler.py": "36b7a24f10b6d30dc171e0c46823436d93aa8485b82d6bcbaedacde0c03ffb1b",
+        "packages/blender-addon/handlers.py": "90499ee38fbb16165d2f581a5235c853c502483d8de4ae435d8d3ea688f47a0c",
+        "packages/blender-addon/__init__.py": "de0e8534abcb690cc935eda33b827312e65901d944a540bb839c77dc1e871538",
+        "packages/blender-addon/probe_authoring.py": "1de592094d0c46252d2011da274e9843f5fdadf3782f4cd96bf92d75c002d90f",
+        "packages/blender-addon/shader_vector2_ir.py": "16c61afa4ab3557ae6f2b92a23fb83441a628437636d13ff7d3fbe70568ae4f3",
+        "packages/blender-addon/normal_noise_bounds.py": "af58552f1d0df0fa363d900d7995b1117e116c1e1702c974d93fc78cf94faa4f",
+        "packages/blender-addon/squeeze_ir.py": "426a76ec167e8c8c216f79e563b85a7fdc5072fb55c1dd54a9058de6321a4d64",
+        "packages/blender-addon/magic_ir.py": "0acb99dc9a916679a8f23e2e79ec01a646e5dd9b6b9b7ccb5f8159dd700df46d",
+        "packages/blender-addon/engine_fallback.py": "50cd190a34a0e2ff8df7e15a830b9a7d2af0f7fd0e527d84ba41390934ae97c3",
+        "packages/blender-addon/tsl_ir.py": "77fd45f056ceded7eb0e5a35b9ad5a7a3e65292538a18dcb2a2878497a5968b5",
+        "packages/blender-addon/geometry_ir.py": "78853507cbf569d01e7cb4c25b0cbfa543a73df4d134f593171b64bd2caf6205",
+        "packages/blender-addon/noise_static_inputs.py": "a73556da121f0a39f1df06c9037c845a778c97a612ed3ae08c2e2c1b9e005eaa",
+        "packages/blender-addon/shader_color_band.py": "dc9bf6130aaf4d972787aa5a7779500fb5ed6718b199d7c5069578d5bdc10508",
+        "packages/blender-addon/ops.py": "fb5280e257b385e80bdbe1c4790c2ea0030ae1b3865860214298e8748ee95ece",
+        "packages/blender-addon/prefs.py": "0995582b536b88f2d4bc62c6ddc1e163136fb22d44e11b81b4ad2ebe28615f28",
+        "packages/blender-addon/presentation.py": "ccbd9452654f88d60c5b7abe80f28985a52d3a2146f1ea4d1190d5ba4938c142",
+        "packages/blender-addon/noise_varying_ir.py": "8f949efe54b6b911df6987165299318d6ed3371f785e7fea5ec858c54249d7b0",
+        "packages/blender-addon/color_ir.py": "0b6fd4f61a5ce22d5fe84135b2fbdd484b5bc805889ff952e87e573053797e69",
+        "packages/blender-addon/spectral_ir.py": "fc084f57b018234ea0d3af607b5944b5ff10f510362cc3a040373c8bad3c930b",
+        "packages/blender-addon/components_ui.py": "77436f5bc00aee78670c6d5571e812d039090b13d2e2ece00fc5b0d3c450c2fc",
+        "packages/blender-addon/tsl_object_info.py": "beb2efc9684b53b1229b743d7b4206eb87f6206b9288d9454d4dd1c9d37d9f22",
+        "packages/blender-addon/web_runtime_limits.py": "ef269bf5ed2d3cd695820a242f53aa53f6ca3ef044c251a04d647033faef9e9c",
+        "packages/blender-addon/utility_ir.py": "d077031f6d9aec9e242bd3e7559753807dcbf29de53883b1c7bafc57fe2e97c5",
+        "packages/blender-addon/brick_ir.py": "c2c187ead624d429ef3e546034281bfe9ba31188ce35f8b0e40fc9890ebc2966",
+        "packages/blender-addon/props.py": "09e2ace896407b2a2d7aee4ef04a61d9303af764589a1f77f5617d56bea9d315",
+        "packages/blender-addon/syncstatus.py": "517f07d9066f6a3b7cb4173a8b1c4847edb7ea149c7334c4883b0519024c336f",
+        "packages/blender-addon/legacy_ramp_data.py": "8aa2a2cafdc0d46abb00633a97c65315bc8e93274e5ba0d3e0cb77ac5f8e36e0",
+        "packages/blender-addon/tangent_ir.py": "1aecd4299717841db15ec5a129cdaef44bbc5853fdd4d7c96e21ddcde2910d7d",
+        "packages/blender-addon/component_validation.py": "df23bb276c95d1068fe9a242ac6a3170433a900dc9c2338fbe34e562ab56bbb9",
+        "packages/blender-addon/glblib.py": "0ebdf44320d7e89b6954f1b09b7c28d0d814ad20e81239a9a389f0b4f596385f",
+        "packages/blender-addon/radial_coordinates_ir.py": "e7aa85fb79a16b57d280d0b8b331e269c6f0c1b079921083d4950a18327bb147",
+        "packages/blender-addon/shader_domains.py": "a72d1c466d2e68bfe3144c9184743ae590a2b8fb7adcecaaab0e86d457ca8757",
+        "packages/blender-addon/previewrun.py": "da775c4bf76c138f8f11d3415318968dee3e9df82e905877708435260e654006",
+        "packages/blender-addon/repeat_ir.py": "f2027e55c03d1c7a8e018e82c9ce0d5d8a35af528632173d1cdde0dfa293ed71",
+        "packages/blender-addon/compositor_group_defaults_bridge.py": "e9750188225632c122f9ed7e806fdbb0cbc63590b82e7b0479481d32f376ed7d",
+        "packages/blender-addon/noise_field_ir.py": "5f0a8bb9b209d1ffbcc695d879a229ee688f1e24dae2d66680f0176c005455f4",
+        "packages/blender-addon/weblights.py": "9addb7b2de3e2add3955df9cf344fcdf9d0fcf1d57a5a466057fdec9924dce93",
+        "packages/blender-addon/validation.py": "d78623aa5ba076756409bd8dd5cb041b2f876df7a75b23ed021a0bbd03377759",
+        "packages/blender-addon/radial_width_ir.py": "bac7aeee78bad23d28b6bafe62abd2675aa652adc24e29ebe32af729c1cc27e6",
+        "packages/blender-addon/static_string_case_data.json": "8fb83c1d86ae27a49e80bdbdbb8dddc5b66f155dac196d71ea033f3410139360",
+        "packages/blender-addon/web_runtime_limits.json": "93b72090fa6d08596bb36cb897c114531f25040d1cd96dd23c1cad468e65edec",
+        "packages/blender-addon/blender_known_issues.json": "e7d406bc7d3e7773309dc1ae6a13bd258885efe4e49c1799f6339b3071382aeb",
+        "packages/blender-addon/spectral_tables.json": "38733f76b437b81362e4cc018833ded1c5544ab1a944215baef7d08268040e78",
+        "experiments/compositor-static-euler/input-rotation-contract.json": "369e7183b505594837117425bcba73f428b42b11db0c39b08000dd12a8707a0e",
+        "experiments/compositor-static-euler/input-rotation-sources.json": "ddff7ecc658ae52040569f0edd793cbc40faa5a0c920fdf58117eef9da32f544"
+      },
+      "nativeArchive": {
+        "pythonInvocations": 10,
+        "finalInvocations": 8,
+        "uniqueCachePrefixes": 10,
+        "numericalCredit": 0
+      }
+    }
+  ],
+  "runs": [
+    {
+      "path": "artifacts/verification-input-rotation-next57-manifest/cpu/browser-raw-metal/report.json",
+      "sha256": "345fda5dede0895fc5609e45642914afd0f21b3d51558ff7bdf82a9f0837220e",
+      "profile": "metal",
+      "phase": "raw",
+      "browserVersion": "158.0.8127.18",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 48
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 48
+        }
+      ]
+    },
+    {
+      "path": "artifacts/verification-input-rotation-next57-manifest/cpu/browser-final-metal/report.json",
+      "sha256": "2bee94914e62bfbf2f5b3b067df9817c950ea5b31e480ac8ef74bbd29514db4b",
+      "profile": "metal",
+      "phase": "final",
+      "browserVersion": "158.0.8127.18",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          },
+          "cases": 8
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "cases": 8
+        }
+      ]
+    },
+    {
+      "path": "artifacts/verification-input-rotation-next57-manifest/cpu/browser-raw-software/report.json",
+      "sha256": "d706e7f620ce2ec20381582195a50fa5ca07152a8f794362401dc5bec63b6143",
+      "profile": "software",
+      "phase": "raw",
+      "browserVersion": "158.0.8127.18",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 48
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Google)",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 48
+        }
+      ]
+    },
+    {
+      "path": "artifacts/verification-input-rotation-next57-manifest/cpu/browser-final-software/report.json",
+      "sha256": "1b229a08651dc36bcdd0ee1883b472b5086ef67c89fde0daa713c0447c5872c5",
+      "profile": "software",
+      "phase": "final",
+      "browserVersion": "158.0.8127.18",
+      "actualApis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          },
+          "cases": 8
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Google)",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "cases": 8
+        }
+      ]
+    }
+  ],
+  "rawNative": [
+    {
+      "case": "zero-0",
+      "pixelSha256": "20c32b58f9dbd5416fe908e078a5ba1d76c369e08dc3c9d62c5c4e71ec4c9b05",
+      "programSha256": "19e78601c5a82ea929d19a6216771619c5d3f6b882effa2be0d873dc2db340c5",
+      "comparedWords": 64
+    },
+    {
+      "case": "zero-1",
+      "pixelSha256": "a6762b6243848979af865d7f4b3d4cbb3b057ae569ab8464395a13df59a04b8f",
+      "programSha256": "21c1e971948db3369f1286eacad0ee9c5170dc08e78cc57cd500e92ab9e0b103",
+      "comparedWords": 64
+    },
+    {
+      "case": "axis-x-min-0",
+      "pixelSha256": "c304a25847f1a484bd86e2e8788b86e1ba5ebd0f3bc87c1f6c865be8072d63fb",
+      "programSha256": "9f8a079b039090822aca191d05631eb001249a9a69ea608b11099d3f89fbf86c",
+      "comparedWords": 64
+    },
+    {
+      "case": "axis-x-min-1",
+      "pixelSha256": "a6762b6243848979af865d7f4b3d4cbb3b057ae569ab8464395a13df59a04b8f",
+      "programSha256": "7b8969db570a657d6b7c7e8d1b048c620aa0727805fb148ec67fe4b53f04bd23",
+      "comparedWords": 64
+    },
+    {
+      "case": "axis-y-min-0",
+      "pixelSha256": "3e25faf5d8d9799cb6178482e42f3cf7396079fd8f08a746457eb2d874f36471",
+      "programSha256": "f0f7f8b94c24aba10fab41ed48374518cc28322edd4aa2cd0902b07ae95ce81d",
+      "comparedWords": 64
+    },
+    {
+      "case": "axis-y-min-1",
+      "pixelSha256": "a6762b6243848979af865d7f4b3d4cbb3b057ae569ab8464395a13df59a04b8f",
+      "programSha256": "79ad28d4f6e1c14e66a08d42d60548b7ed6663b1cd7450a80d2d9b3f5e3104c9",
+      "comparedWords": 64
+    },
+    {
+      "case": "axis-z-min-0",
+      "pixelSha256": "20c32b58f9dbd5416fe908e078a5ba1d76c369e08dc3c9d62c5c4e71ec4c9b05",
+      "programSha256": "42f15c2460a991538c4ad0fedd3a1b4784f0d54e1aa0f78f4c774bfca9789dff",
+      "comparedWords": 64
+    },
+    {
+      "case": "axis-z-min-1",
+      "pixelSha256": "f79984380c1dceff730eeae86aa1e0e6cebc177c6c07ce3a1d8449921300e8ed",
+      "programSha256": "4f90f0a46eba65423137284698ea6b4f7c2c6a3d1f23eaea631746a77a3c9eb8",
+      "comparedWords": 64
+    },
+    {
+      "case": "axis-x-one-0",
+      "pixelSha256": "27bbebc1d3f41d6ab31cecd33b6f2bc13f9eedeb82ddd45c9a4c556a9efb2237",
+      "programSha256": "4a2fc8048798dc51a432a37cf1e6e0112a4bf7e0352d21fff4663145839ff5ea",
+      "comparedWords": 64
+    },
+    {
+      "case": "axis-x-one-1",
+      "pixelSha256": "a6762b6243848979af865d7f4b3d4cbb3b057ae569ab8464395a13df59a04b8f",
+      "programSha256": "41a0ffa0aba389eee06ea5e7c8448884b96d3246c0c16de68493e89ee47eac3b",
+      "comparedWords": 64
+    },
+    {
+      "case": "axis-y-one-0",
+      "pixelSha256": "ef2fa8551d6b83ed131f1b09e67e7a2f6e49497b062b98bc907d9e70942a5473",
+      "programSha256": "375cbdba28e30cfb743df3506d976bb210817bbfeda106113b5496abff88eaaa",
+      "comparedWords": 64
+    },
+    {
+      "case": "axis-y-one-1",
+      "pixelSha256": "a6762b6243848979af865d7f4b3d4cbb3b057ae569ab8464395a13df59a04b8f",
+      "programSha256": "a582b6adde06cdb05296be0f4a0d45514595522daa7c5b32df44da3165807c72",
+      "comparedWords": 64
+    },
+    {
+      "case": "axis-z-one-0",
+      "pixelSha256": "eca0ea34cc27677aa4c7affc6e0cb0955f10aca4e5cf75374dee26aa448ad2d1",
+      "programSha256": "249f3ab474ae27b885d42d594d0bb129cba700269cb357aad0d2459ad0b55cbc",
+      "comparedWords": 64
+    },
+    {
+      "case": "axis-z-one-1",
+      "pixelSha256": "bcc0c82d24a807e932ba25921e3ba4dbd85e5c9db4b463939cefb7caf83058ef",
+      "programSha256": "36c1d823291fb8a30f3ef5529e06636047820c41dfcd7dba4d8b0a92ce5ca7a6",
+      "comparedWords": 64
+    },
+    {
+      "case": "all-min-0",
+      "pixelSha256": "00f33013ad7ff6415dbf054b0379c884af279998cd9a90fe4868512a882c44b4",
+      "programSha256": "9fd6ada92a865bfb665846eade2eb8f1070ba954a1ed3ef677d9dfe47e92944b",
+      "comparedWords": 64
+    },
+    {
+      "case": "all-min-1",
+      "pixelSha256": "2ac6d35b1e0c9ba57e283ad0b332b8d5910c25da601f9246de9ef607a095471e",
+      "programSha256": "1a703c57a9ae31e2b2b71c08079301a7dc138eae60894f01be2837e67a9fd3fe",
+      "comparedWords": 64
+    },
+    {
+      "case": "all-one-0",
+      "pixelSha256": "ef791250605a5174d7638b2b92dc2a96398f90657a7fb5f7af7e12394d4f738e",
+      "programSha256": "bb3cbd8d936e685fcc3a24bf4a30ead26dbd4421c2655a61fc02b26c39ece73d",
+      "comparedWords": 64
+    },
+    {
+      "case": "all-one-1",
+      "pixelSha256": "9d2ab6d0907aba674a883ee927352b98c6f5ceb2ff09e961694ce4fab1835900",
+      "programSha256": "9ede4bc1c4707347259ca4b4930f61ff7112240ab140ee7bc9b40860c4031815",
+      "comparedWords": 64
+    },
+    {
+      "case": "asymmetric-0",
+      "pixelSha256": "45041c2b12614024a67c52c7445355dcce64831e7dae0bfe20df4dbb682e60ee",
+      "programSha256": "93b1ad59ecea93974dbc42fdb14b0d4510eef0bedd2d41cbf6dbd342e857e28f",
+      "comparedWords": 64
+    },
+    {
+      "case": "asymmetric-1",
+      "pixelSha256": "4be5a9f6a1e4b71392de4324f792711169309da5a0f0b018d8645fdbfaa9782b",
+      "programSha256": "0222227f7deff0eb25b96011ea856e698c3c59eb597310e5663d990a86938f17",
+      "comparedWords": 64
+    },
+    {
+      "case": "next-min-0",
+      "pixelSha256": "d46fe698cf6b1d3b94b704c7ae259d35097d2dcf6b3f2a3e0992415ad622eb14",
+      "programSha256": "613e452f63343247653d4384ec324f45fbc09a1b9d532ab764102ee57c45cbef",
+      "comparedWords": 64
+    },
+    {
+      "case": "next-min-1",
+      "pixelSha256": "1654ad0cf292945e8d1aab17872eb92253a7e827df0a36fd691d04e8641430bf",
+      "programSha256": "aadea18ad62a0002008357a09fa4d7cf087881593ac6f448059883ecbe8f177f",
+      "comparedWords": 64
+    },
+    {
+      "case": "near-one-0",
+      "pixelSha256": "c2c63374e15ae4aeadc8a2e917f31586693e6218b2725037a6d4303ee67322b0",
+      "programSha256": "776aab372905bb7f0bf5865620776dccb9e0887f1d89fd9e4e09842b781b3638",
+      "comparedWords": 64
+    },
+    {
+      "case": "near-one-1",
+      "pixelSha256": "1c0e3a496b2e58f705163894d0069461d2183944e86aaf556fc564fd87cb6505",
+      "programSha256": "98133c177c890c762f3834c2613a069bc19dbe0e081d54386fa0e6cbd8ee79c9",
+      "comparedWords": 64
+    },
+    {
+      "case": "producer-group-0",
+      "pixelSha256": "45041c2b12614024a67c52c7445355dcce64831e7dae0bfe20df4dbb682e60ee",
+      "programSha256": "502054a97e43c3081410b3feb878bda97039d1b21f1fe7728bc33331f8dc891b",
+      "comparedWords": 64
+    },
+    {
+      "case": "producer-group-1",
+      "pixelSha256": "4be5a9f6a1e4b71392de4324f792711169309da5a0f0b018d8645fdbfaa9782b",
+      "programSha256": "2c4b5e3b7df7fa81861072fda580a286c0083765a7b861b24644e8a6dcbc0f0e",
+      "comparedWords": 64
+    },
+    {
+      "case": "rotation-group-0",
+      "pixelSha256": "45041c2b12614024a67c52c7445355dcce64831e7dae0bfe20df4dbb682e60ee",
+      "programSha256": "93b1ad59ecea93974dbc42fdb14b0d4510eef0bedd2d41cbf6dbd342e857e28f",
+      "comparedWords": 64
+    },
+    {
+      "case": "rotation-group-1",
+      "pixelSha256": "4be5a9f6a1e4b71392de4324f792711169309da5a0f0b018d8645fdbfaa9782b",
+      "programSha256": "0222227f7deff0eb25b96011ea856e698c3c59eb597310e5663d990a86938f17",
+      "comparedWords": 64
+    },
+    {
+      "case": "endpoint-group-0",
+      "pixelSha256": "45041c2b12614024a67c52c7445355dcce64831e7dae0bfe20df4dbb682e60ee",
+      "programSha256": "37b97447427bbd140ce42498214674f46b58054172f391b9664e336737359860",
+      "comparedWords": 64
+    },
+    {
+      "case": "endpoint-group-1",
+      "pixelSha256": "4be5a9f6a1e4b71392de4324f792711169309da5a0f0b018d8645fdbfaa9782b",
+      "programSha256": "987ecb7c21d47898fa5febbe8b17d13c48b58f3adb2a44a5a58c96ae00f3bae8",
+      "comparedWords": 64
+    },
+    {
+      "case": "reroute-0",
+      "pixelSha256": "45041c2b12614024a67c52c7445355dcce64831e7dae0bfe20df4dbb682e60ee",
+      "programSha256": "93b1ad59ecea93974dbc42fdb14b0d4510eef0bedd2d41cbf6dbd342e857e28f",
+      "comparedWords": 64
+    },
+    {
+      "case": "reroute-1",
+      "pixelSha256": "4be5a9f6a1e4b71392de4324f792711169309da5a0f0b018d8645fdbfaa9782b",
+      "programSha256": "0222227f7deff0eb25b96011ea856e698c3c59eb597310e5663d990a86938f17",
+      "comparedWords": 64
+    },
+    {
+      "case": "negative-one-x-0",
+      "pixelSha256": "e0f3ced27444f86e301267487faa2b033ce2d908a874041e16f9213b88ab0493",
+      "programSha256": "bac7845609636b0b588bbd98bdd71f6b1870788a3bae562c7c94cb26243c1c9c",
+      "comparedWords": 64
+    },
+    {
+      "case": "negative-one-x-1",
+      "pixelSha256": "a6762b6243848979af865d7f4b3d4cbb3b057ae569ab8464395a13df59a04b8f",
+      "programSha256": "382c88cdd94d04b2fe5317a30c82f30052c02a631dbed3e92f8d0379e04dbb36",
+      "comparedWords": 64
+    },
+    {
+      "case": "negative-min-y-0",
+      "pixelSha256": "d75a5e47742a13e4dfe951b1d79e4df1c5480872bf048a79e71b855dc2010b83",
+      "programSha256": "71e3e52a915d823845c7dd4262ac1bb47ed107fd55c3c5de30fb05bc6ee5696f",
+      "comparedWords": 64
+    },
+    {
+      "case": "negative-min-y-1",
+      "pixelSha256": "a6762b6243848979af865d7f4b3d4cbb3b057ae569ab8464395a13df59a04b8f",
+      "programSha256": "0221ff80f15f621c845aa9d8891655f226a2a181f13b15796ced37bbed6893be",
+      "comparedWords": 64
+    },
+    {
+      "case": "min-normal-0",
+      "pixelSha256": "20c32b58f9dbd5416fe908e078a5ba1d76c369e08dc3c9d62c5c4e71ec4c9b05",
+      "programSha256": "098a4d8bf69bd79f18f486aaedb938872dd163c671e64bae0324ddc41211428c",
+      "comparedWords": 64
+    },
+    {
+      "case": "min-normal-1",
+      "pixelSha256": "a6762b6243848979af865d7f4b3d4cbb3b057ae569ab8464395a13df59a04b8f",
+      "programSha256": "479508e4878511a0d2f780d92d9d6394194fdb05aa045fffdc2de2fe6e2f5a6e",
+      "comparedWords": 64
+    },
+    {
+      "case": "negative-min-normal-y-0",
+      "pixelSha256": "20c32b58f9dbd5416fe908e078a5ba1d76c369e08dc3c9d62c5c4e71ec4c9b05",
+      "programSha256": "a8758ed0e03120f75a2511198bb095267587be65e33fd339c47237ff2fca8537",
+      "comparedWords": 64
+    },
+    {
+      "case": "negative-min-normal-y-1",
+      "pixelSha256": "a6762b6243848979af865d7f4b3d4cbb3b057ae569ab8464395a13df59a04b8f",
+      "programSha256": "210e69da46a249ac335cb73f18e163754b8a858defc8311888db8f6aba313765",
+      "comparedWords": 64
+    },
+    {
+      "case": "mixed-eight-0",
+      "pixelSha256": "b116e2afec418ecfabdbce318e541a554e80e17953578076a7d44b881eadd824",
+      "programSha256": "566840bea0f8fb9d9ca114ea14a24fc77d8c57f1810615c01530c6496350e049",
+      "comparedWords": 64
+    },
+    {
+      "case": "mixed-eight-1",
+      "pixelSha256": "4629f5b098250d7ad3b103565b55fe00e9af0fef1575f65971ca7a28b430f02e",
+      "programSha256": "6b5e1f5b0bf3057b1aafda187f4d7fc08b26f01b68934d26238b978ae25e2034",
+      "comparedWords": 64
+    },
+    {
+      "case": "mixed-turn-0",
+      "pixelSha256": "3576a51757aca8daaa5fdc2a6a0ab9d7b5cf64f88e39c1d76eda7e03c329d241",
+      "programSha256": "116a436aa256fef3c9f001df0e76440bb4814f50effa181b41fedcbeb5e48f20",
+      "comparedWords": 64
+    },
+    {
+      "case": "mixed-turn-1",
+      "pixelSha256": "88cd8b7627b0071d20abd8f8a1ecf519461f26bd225abe5ebdeb8cf47f76bd26",
+      "programSha256": "aed0c4cfd324fbfd5633c12ed5a8ff916a6f37ad00d1667aef747a79b062134b",
+      "comparedWords": 64
+    },
+    {
+      "case": "cancellation-0",
+      "pixelSha256": "5718938b093abad7a99bd02809413303d1b51097ee09bfcc90e4b91dfc756a75",
+      "programSha256": "44ae8871d58a59d3592cda639b1633f58a7cb1a3210532c0ff2afe4557022720",
+      "comparedWords": 64
+    },
+    {
+      "case": "cancellation-1",
+      "pixelSha256": "ac943c60374cc3ef1a88f1395f79f6c4a0a0de8ac2aa9b04b74c2254623a6362",
+      "programSha256": "909047817485d32ce75ed39aa32ede6b74f1557bc9c461fd8031c87cf58c5c48",
+      "comparedWords": 64
+    },
+    {
+      "case": "near-turn-0",
+      "pixelSha256": "2586deccc5fb7940d8a655512494928f83d22b34abfa4e43b95bf48b458910ad",
+      "programSha256": "a9f9d85822b94fe0c3ba7ea685f8089693995f9de8490f313346c1cf1a7fbaa0",
+      "comparedWords": 64
+    },
+    {
+      "case": "near-turn-1",
+      "pixelSha256": "0a5c9c4d43c768ecc2189916f8ee3878b32060b2263b08731bc679fa6ae7e474",
+      "programSha256": "deeb7aa69b817600a40c2a0e6423347578b30274cfc2c12282c8f60e4445edd1",
+      "comparedWords": 64
+    }
+  ],
+  "rawArtifacts": {
+    "machineLocal": true,
+    "ignored": true,
+    "path": "artifacts/verification-input-rotation-next57-manifest"
+  }
+}

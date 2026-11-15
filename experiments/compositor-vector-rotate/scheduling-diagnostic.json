@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "status": "CLOSED_RESEARCH_ONLY_VECTOR_ROTATE_SCHEDULING_DIAGNOSTIC",
+  "supportCredit": 0,
+  "FinalCredit": 0,
+  "nativeStage": "Retained original next55 CPU references and unchanged saved Final exports; no fresh native or publication credit.",
+  "runtimeStage": "Separately built isolated scheduling-only SDK correction; both actual Metal APIs.",
+  "nativeReport": {
+    "path": "../../../tmp/scenetoweb-node-ports-int3-rotate-next/artifacts/verification-vector-rotate-next55-manifest/cpu/qualification.json",
+    "sha256": "122fca7db6136083cb66e5481f12346202dcd1dc85e33ba65c7479d28a53a838"
+  },
+  "browserReport": {
+    "path": "artifacts/verification-vector-rotate-final-scheduling-diag-r3/report.json",
+    "sha256": "a12ba128bdfd3816ef80c5b28c638eb3256d1e158adb4dd7b44a52814e23d17e"
+  },
+  "runnerPinNote": "The diagnostic report inherited a pin of production run.mjs. The actual one-off diagnose-final.mjs runner is separately pinned here; original report bytes remain unchanged.",
+  "actualRunnerSha256": "678989e4a090152db867aa5ddf5525b37788b5057b6c42d423d6270d2fba9ddd",
+  "productionRunnerSha256": "07e92b3cd55da6a363859545e176aaabdd1d15ea04922cbc1bd91fdf3757ee01",
+  "verifierSha256": "cceb8245a24fe413d9f4608982719f7d16b8a393678a65d40c25c9a1bdec2c56",
+  "runtimeFingerprint": "951f542419e35629a81ed2eff7ac110359dc906b3bf3bb49f633bbb328be28fa",
+  "linearWords": 14040,
+  "displayWords": 14040,
+  "calibrationWords": 16848,
+  "wordDifferences": 0,
+  "actualApis": [
+    {
+      "backend": "webgpu",
+      "gpu": {
+        "api": "WebGPU",
+        "vendor": "apple",
+        "architecture": "metal-3",
+        "device": "",
+        "description": ""
+      },
+      "savedDispose": {
+        "error": "Error: Vector Rotate: renderer/device/context/allocation epoch changed",
+        "physicalDestroys": 1,
+        "perHandleDestroys": [
+          1
+        ],
+        "distinctHandles": 1,
+        "externalDevice": true,
+        "remainingOwnedTextures": 0,
+        "idempotentDisposal": true
+      }
+    },
+    {
+      "backend": "webgl2",
+      "gpu": {
+        "api": "WebGL2",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+      },
+      "savedDispose": {
+        "error": "Error: Vector Rotate: actual available renderer/device/context required",
+        "physicalDestroys": 1,
+        "perHandleDestroys": [
+          1
+        ],
+        "distinctHandles": 1,
+        "externalDevice": false,
+        "remainingOwnedTextures": 0,
+        "idempotentDisposal": true
+      }
+    }
+  ],
+  "failedAttempts": [
+    {
+      "namespace": "verification-vector-rotate-final-scheduling-diag-r1",
+      "stage": "Pre-browser runtime provenance rejected missing post-emit asset transform."
+    },
+    {
+      "namespace": "verification-vector-rotate-final-scheduling-diag-r2",
+      "stage": "Cross-worktree Vite realpath allowlist refused the actual saved manifest before comparison."
+    }
+  ],
+  "originalFailure": {
+    "namespace": "verification-vector-rotate-next55-manifest",
+    "credit": 0,
+    "reason": "Producer scheduling from onRenderUpdate occurred after outer geometry setup and rasterized only the source cube silhouette."
+  }
+}

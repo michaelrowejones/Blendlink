@@ -1,0 +1,214 @@
+{
+  "schemaVersion": 1,
+  "status": "qualified-integer-vector3-slice",
+  "variant": "integer-vector3",
+  "qualificationRoute": "fresh registered family-owned manifest, clean build, complete suite and second authoritative closing reader",
+  "sourceSnapshot": {
+    "commit": "00f290ec4361fff6f932ded7cc762b1bd65778e3",
+    "artifactDirectory": "artifacts/verification-integer-vector3-next56-manifest",
+    "receipt": "experiments/compositor-int-vector3/evidence-next56-automatic.json",
+    "receiptSha256": "002be9743d6081b56cece4c03d841aba103c4d9e255828364e72c9cbc33311d4",
+    "runtimeFingerprint": "8102a0379e1e396d698021f9e70840df6373951959d9220d24286c0986c4d942",
+    "verifierSha256": "a90f76af6f89c26be8183b27e1a408a7bda65c408eefa1e1c0e4d5fa38c08130",
+    "runtimeTransaction": {
+      "sha256": "096c5f2aee5e1fc0c25de82c179c4658c01bea24d6c243accaeaede6343564be",
+      "id": "baba168c-938a-4b80-8e28-7ac0e635c55e",
+      "independentlyReemittedAtClose": true
+    },
+    "nativePythonProof": {
+      "pythonInvocations": 10,
+      "finalInvocations": 8,
+      "uniqueCachePrefixes": 10,
+      "numericalCredit": 0,
+      "sha256": "0ebadad349edf8b44c2d4e876dce83bdc478200a7cd9b0cfdea215de8fc5e8d7"
+    },
+    "nativeQualificationSha256": "8304dc5486d4f71949cb177ba204ee4eab449abe2ddc57bc05eb230d1bdaaa4e",
+    "finalProofSha256": "a0409aa718e8aa7c15f986d1b415056a4b31f3c56c39418abc194fc4513ddc64"
+  },
+  "nativeVersion": "5.3.0",
+  "nativeBuild": "02f0899d78e3",
+  "nativeHost": "darwin-arm64",
+  "nativeSourceContext": {
+    "evaluator": "native-cpu-compositor",
+    "requestedCompositorDevice": "CPU",
+    "gpuInitialized": false,
+    "gpuEvaluationCredit": false
+  },
+  "census": {
+    "totalNativeGraphs": 16,
+    "productionNativeGraphs": 15,
+    "calibrationNativeGraphs": 1,
+    "totalSavedFinalScenes": 8,
+    "productionSavedFinalScenes": 7,
+    "calibrationSavedFinalScenes": 1,
+    "totalBrowserCaseRuns": 96,
+    "productionBrowserCaseRuns": 88,
+    "calibrationBrowserCaseRuns": 8,
+    "totalComparedFloat32Words": 24576,
+    "productionComparedWords": 22528,
+    "calibrationComparedWords": 2048,
+    "archivedGpuReadbackWords": 57344,
+    "archivedGpuReadbackFiles": 224,
+    "wordMismatches": 0,
+    "independentlyRecomputedGpuWordDifferences": 0,
+    "remainingOwnedTextures": 0,
+    "uniqueActualPythonPrefixes": 10
+  },
+  "actualBrowsers": [
+    {
+      "profile": "metal",
+      "phase": "raw",
+      "reportSha256": "2022c423bef014fbbbf15dacbf80ca4ecf80eddfac9da3e68e80e45de7a0cdfd",
+      "caseRuns": 32,
+      "APIs": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          }
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          }
+        }
+      ]
+    },
+    {
+      "profile": "metal",
+      "phase": "final",
+      "reportSha256": "56f7ed9f5cd56664c6179e6eacc395431fea1a0d375d79455b58004b5745666f",
+      "caseRuns": 16,
+      "APIs": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "device": "",
+            "description": ""
+          }
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          }
+        }
+      ]
+    },
+    {
+      "profile": "software",
+      "phase": "raw",
+      "reportSha256": "3e16fc19d4ec46f380728aac4ba036321679dbfa2dcb8f8f8853e169c70ae851",
+      "caseRuns": 32,
+      "APIs": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          }
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Google)",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          }
+        }
+      ]
+    },
+    {
+      "profile": "software",
+      "phase": "final",
+      "reportSha256": "d843993201e2896162ad11beb34a84f56e250b465f2561a8509f9a1471d19397",
+      "caseRuns": 16,
+      "APIs": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "api": "WebGPU",
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "device": "",
+            "description": ""
+          }
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "api": "WebGL2",
+            "vendor": "Google Inc. (Google)",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          }
+        }
+      ]
+    }
+  ],
+  "precisionContract": "Every native and primary/repeated/reinstalled browser word independently equals the predeclared expected Float32 encoding of authored Int32 components and alpha one. No tolerance or dynamic GPU int-to-float cast.",
+  "calibrationScope": "One independent literal control, eight browser runs and 2048 primary words; zero node coverage. Physical GPU orientation is independently controlled.",
+  "coverageScope": "Pinned Blender 5.3.0 build 02f0899d78e3, macOS arm64 CPU compositor AUTO/FULL only. Static unmuted FunctionNodeInputIntVector with vector_dimensions=3 and exact signed Int32 RNA property; distinct INT_VECTOR3 identity. Exactly one terminal constructor with direct int3-to-RGBA or explicit int3-to-float3-to-RGBA presentation, componentwise RN-even Float32 and alpha one. Native typed groups/reroutes may forward that value; all operations must contribute. Source property/schema, group ancestry, used topology and scene/root/frame context are rechecked after extraction. Forged negative zero, Boolean/fractional/out-of-range components, linked controls, animation/actions/drivers/NLA and native mute bypass refuse. Dimensions two/other widths, scalar/INT/Boolean/float2/int2/int3-to-float4 conversions and arbitrary consumers remain unqualified; existing INT_VECTOR2 and legacy float3 semantics are unchanged. Actual 8x8 native CPU and exported/installed Final linear words are exact on observed Apple Metal and SwiftShader WebGPU/WebGL2 via WebGPURenderer. No EEVEE/native GPU compositor, other versions/hosts/devices, resize, whole-scene appearance, Cycles/Three plate or PBR equality claim.",
+  "costScope": "A static typed constructor and host component presentation cast; no port-owned textures, additional passes or runtime readbacks. Proof readbacks are fixture-only. No whole-renderer allocation, export latency or frame-time benchmark is claimed.",
+  "sourcePolicy": {
+    "positiveControls": 8,
+    "namedRefusals": 19,
+    "renders": 0,
+    "gpuInitializationCalls": 0
+  },
+  "sourceSnapshotLimits": "Own fresh next56 automatic native/source/Final/runtime/fixture snapshot on the shared rotation batch SDK, with explicit owned transaction, two byte-identical authoritative closes and an independent Root replay. Next53 manual and next54 automatic receipts remain immutable history. Historical default static/mono and other port evidence is unchanged. No automatic support promotion or all-ports freshness claim.",
+  "automaticVerification": {
+    "status": "qualified",
+    "workspaceStable": true,
+    "productionCredit": true,
+    "supportPromotion": false,
+    "inputDigest": "8368d024604bd46df9aa26a1f5b8135958dd5faa4ebedc8d4ec0606989d50256",
+    "nativeInputDigest": "c3d0778bff761d28a54790a4d859a393e06f0b18f94a8d5f90041910cf456745",
+    "runtimeInputDigest": "3dac52215de3b5c02e963fcb2e569fec5470b44325172e1e7e61c6d6c5c9d372",
+    "requestKey": "393d949ec84cb922ef16703d479c900fc499b177c290695524c2bb74d7ec9070",
+    "evidenceKey": "6426976bfa82cd0a17a7bac6ad24723166beb201e352d6790ba9f7a7491fd911",
+    "nativeIdentity": {
+      "path": "/Applications/Blender.app/Contents/MacOS/Blender",
+      "bytes": 210043328,
+      "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da",
+      "version": "5.3.0",
+      "buildHash": "02f0899d78e3"
+    },
+    "reportSha256": "1d378a48a052694fe430022456ab937479a70abec0120cbf1fb906081d50689b",
+    "familyClosedReceiptSha256": "002be9743d6081b56cece4c03d841aba103c4d9e255828364e72c9cbc33311d4",
+    "adapterClosedReceiptSha256": "002be9743d6081b56cece4c03d841aba103c4d9e255828364e72c9cbc33311d4",
+    "authoritativeReaderPasses": 2,
+    "closedReadersByteIdentical": true,
+    "numericalReuse": false,
+    "rootIndependentReaderSha256": "002be9743d6081b56cece4c03d841aba103c4d9e255828364e72c9cbc33311d4"
+  },
+  "history": [
+    {
+      "kind": "initial-manual-family-qualification",
+      "commit": "b12b29889af2de2b6a268b4f1b96c842c3bb4c79",
+      "receipt": "experiments/compositor-int-vector3/evidence-next53-manual.json",
+      "receiptSha256": "4625f2b42795700e19d95c209fed9eb8d055495cd97c7a5ce01fc7165e47ac61"
+    },
+    {
+      "kind": "initial-automatic-family-qualification",
+      "commit": "73c32e0314e3606d01072623d5616441fef878bb",
+      "receipt": "experiments/compositor-int-vector3/evidence-next54-automatic.json",
+      "receiptSha256": "4b6ba394dca54c40e70ff6fb5d0f773c01a107478e135872001fcb4aa788f6e6",
+      "runtimeFingerprint": "3f3f255b6747ea818a8c40b029541146078e54e194dc684d01cbcc1d4122fa5e"
+    }
+  ]
+}

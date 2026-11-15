@@ -1,16 +1,23 @@
 import assert from'node:assert/strict'
 import{readFileSync}from'node:fs'
 export const browserProofContract=Object.freeze({schemaVersion:1,family:'compositor-static-euler',nativeStatus:'CAPTURED_COMPOSITOR_STATIC_EULER',finalStatus:'PUBLISHED_COMPOSITOR_STATIC_EULER',browserStatus:'PASSED_STATIC_EULER_BUILT_PROOF'})
-export const cases=JSON.parse(readFileSync(new URL('./cases.json',import.meta.url),'utf8'))
+export const variant=process.env.SCENETOWEB_STATIC_EULER_VARIANT??'euler'
+assert.ok(['euler','input-rotation'].includes(variant))
+export const isInputRotation=variant==='input-rotation'
+export const constructorType=isInputRotation?'FunctionNodeInputRotation':'FunctionNodeEulerToRotation'
+export const nativeModel=isInputRotation?'native-static-input-rotation-euler-xyz-cpu-53-v1':'native-static-euler-xyz-cpu-53-v1'
+export const cases=JSON.parse(readFileSync(new URL(isInputRotation?'./input-rotation-cases.json':'./cases.json',import.meta.url),'utf8'))
 export const expectedCases=()=>structuredClone(cases),expectedFinalCases=()=>expectedCases().filter(row=>row.saved)
-export const policyPositive=["zero-identity","axis-min","axis-next-min","axis-max","asymmetric","all-min","all-max","symmetric","zero-x","mixed-min","opaque-group-reroute"]
-export const policyRefusals=["negative-zero","positive-subnormal","negative-subnormal","nonfinite","nan","negative-angle","below-min","above-max","linked-vector-literal","computed-vector","input-rotation-unsafe-reader","unlinked-rotation-default","muted-euler","GPU-source","animation","changed-euler-raw-cache","hash-guard-no-cache-commit","old-native-hard-error","old-budget-hard-error","old-source-hard-error","quaternion-profile-separate","interleave-quaternion-then-matrix","interleave-matrix-then-euler","interleave-euler-then-quaternion"]
+const eulerPolicyPositive=["zero-identity","axis-min","axis-next-min","axis-max","asymmetric","all-min","all-max","symmetric","zero-x","mixed-min","opaque-group-reroute"]
+const eulerPolicyRefusals=["negative-zero","positive-subnormal","negative-subnormal","nonfinite","nan","negative-angle","below-min","above-max","linked-vector-literal","computed-vector","input-rotation-unsafe-reader","unlinked-rotation-default","muted-euler","GPU-source","animation","changed-euler-raw-cache","hash-guard-no-cache-commit","old-native-hard-error","old-budget-hard-error","old-source-hard-error","quaternion-profile-separate","interleave-quaternion-then-matrix","interleave-matrix-then-euler","interleave-euler-then-quaternion"]
+export const policyPositive=isInputRotation?["zero-W", "zero-X", "zero-Y", "zero-Z", "min-W", "min-X", "min-Y", "min-Z", "one-W", "one-X", "one-Y", "one-Z", "nonhalf-W", "nonhalf-X", "nonhalf-Y", "nonhalf-Z", "negative-one-x", "negative-one-y", "negative-one-z", "negative-min-x", "negative-min-y", "negative-min-z", "positive-min-normal", "negative-min-normal-y", "mixed-eight", "mixed-negative-turn", "near-turn-tie", "cancel-x-before", "cancel-x-tie", "cancel-x-after", "cancel-z-tie", "all-components-shared-cache", "rotation-reroute", "nested-constructor", "old-Euler-unchanged", "old-Quaternion-unchanged"]:eulerPolicyPositive
+export const policyRefusals=isInputRotation?["negative-zero", "subnormal", "negative-subnormal", "below-normal", "above-eight", "infinity", "nan", "positive-pi-output", "negative-pi-output", "positive-turn-output", "negative-turn-output", "positive-eight-output", "negative-eight-output", "negative-min-normal-x-output", "negative-min-normal-z-output", "muted-constructor", "animated-property", "driven-property", "GPU-context", "unlinked-rotation-default", "opaque-rotation-output", "late-raw-property", "late-root", "late-frame", "late-group-binding", "late-group-mute", "late-group-animation", "private-angle", "private-hash-seed", "private-selection", "private-delete-tree", "mixed-quaternion-W", "mixed-quaternion-X", "old-Euler-negative-refused", "hard-input-native","hard-input-ownership","hard-input-recursion","hard-quaternion-native","hard-quaternion-ownership","hard-quaternion-recursion","hard-euler-native","hard-euler-ownership","hard-euler-recursion","cached-raw-property"]:eulerPolicyRefusals
 export const resizeCount=row=>['zero-0','producer-group-0'].includes(row.case)?3:0
 const sha=value=>assert.match(value,/^[a-f0-9]{64}$/)
 const normal=word=>Number.isInteger(word)&&word>=0&&word<=0xffffffff&&word!==0x80000000&&((word&0x7fffffff)===0||(word&0x7fffffff)>=0x00800000&&(word&0x7fffffff)<0x7f800000)
-export function assertPolicy(p){assert.equal(p.status,'STATIC_EULER_SOURCE_POLICY_PASSED');assert.deepEqual(p.positive,policyPositive);assert.deepEqual(p.refusals,policyRefusals);assert.equal(p.gpuInitializationCalls,0);assert.equal(p.renders,0);assert.equal(p.supportCredit,0);sha(p.scriptSha256);return p}
+export function assertPolicy(p){assert.equal(p.status,isInputRotation?'STATIC_INPUT_ROTATION_SOURCE_POLICY_PASSED':'STATIC_EULER_SOURCE_POLICY_PASSED');assert.deepEqual(p.positive,policyPositive);assert.deepEqual(p.refusals,policyRefusals);assert.equal(p.gpuInitializationCalls,0);assert.equal(p.renders,0);assert.equal(p.supportCredit,0);sha(p.scriptSha256);if(isInputRotation){assert.deepEqual(p.candidatePositive,policyPositive.slice(0,-2));assert.deepEqual(p.regressionPositive,policyPositive.slice(-2));assert.deepEqual(p.outputGuardRefusals,policyRefusals.slice(7,15));sha(p.detailSha256)}return p}
 export function assertQualification(q){
- assert.equal(q.status,browserProofContract.nativeStatus);assert.deepEqual(q.version,[5,3,0]);assert.equal(q.build,'02f0899d78e3');assert.equal(q.device,'CPU');assert.equal(q.sceneEngine,'CYCLES');assert.equal(q.resultPrecision,'CPU_FLOAT32');assert.equal(q.wordDifferences,0);assert.equal(q.privateMFEndpointComparisons,cases.reduce((n,r)=>n+r.indices.length,0))
+ assert.equal(q.status,browserProofContract.nativeStatus);assert.deepEqual(q.version,[5,3,0]);assert.equal(q.build,'02f0899d78e3');assert.equal(q.device,'CPU');assert.equal(q.sceneEngine,'CYCLES');assert.equal(q.resultPrecision,'CPU_FLOAT32');assert.equal(q.wordDifferences,0);if(isInputRotation)assert.equal(q.variant,'input-rotation');assert.equal(q.privateMFEndpointComparisons,cases.reduce((n,r)=>n+r.indices.length,0))
  assert.equal(q.gpuInitializationCalls,0);assert.equal(q.nativeCPURenders,cases.length+cases.reduce((n,r)=>n+r.indices.length,0)+8);assert.deepEqual(q.hashCalibration.map(r=>r.sourceWord),[0,0x80000000,1,0x007fffff,0x80000001,0x807fffff,0x00800000,0x3dcccccd]);for(const row of q.hashCalibration){assert.equal(row.hashWord,hashFloatWord(row.sourceWord));assert.equal(row.pixelFile,'calibration-'+row.sourceWord+'.rgba32f');sha(row.pixelSha256);assert.equal(row.carrierWords.length,4)}
  assert.deepEqual(q.cases.map(row=>row.case),cases.map(row=>row.case));assert.equal(new Set(q.cases.map(row=>row.case)).size,cases.length)
  for(const[row,index]of q.cases.map((row,i)=>[row,i])){
@@ -37,3 +44,15 @@ export function assertBrowserRows(report,q,f,{profile,final}){
 }
 
 export function hashFloatWord(word){const rotate=(value,bits)=>((value<<bits)|(value>>>(32-bits)))>>>0;const hash=items=>{let a=(0xdeadbeef+(items.length<<2)+13)>>>0,b=a,c=a;a=(a+items[0])>>>0;if(items.length>1)b=(b+items[1])>>>0;c=((c^b)-rotate(b,14))>>>0;a=((a^c)-rotate(c,11))>>>0;b=((b^a)-rotate(a,25))>>>0;c=((c^b)-rotate(b,16))>>>0;a=((a^c)-rotate(c,4))>>>0;b=((b^a)-rotate(a,14))>>>0;c=((c^b)-rotate(b,24))>>>0;return c};return hash([hash([word]),0])}
+
+export function expectedFinalProvenance(q){
+ const roots=['packages/blendlink/blender/','packages/blender-addon/']
+ return Object.entries(q.sourceHashes).filter(([name])=>roots.some(root=>name.startsWith(root)&&!name.slice(root.length).includes('/')&&(name.endsWith('.py')||root.endsWith('addon/')&&name.endsWith('.json')))).sort(([a],[b])=>a<b?-1:a>b?1:0).map(([source,sha256])=>({source,artifact:source.replace('packages/blendlink/blender/','packages/blendlink/dist/blender/').replace('packages/blender-addon/','packages/blendlink/dist/addon/'),sha256}))
+}
+export function assertInputRotationProgram(program,row){
+ if(!isInputRotation)return
+ assert.equal(program.status,'extracted');assert.deepEqual(program.passes,[])
+ assert.equal(program.compileTimeRotations.length,row.indices.length)
+ for(const record of program.compileTimeRotations){assert.equal(record.model,nativeModel);assert.equal(record.rotationRuntimeTransport,false);assert.deepEqual(record.eulerInputWords,row.inputWords);assert.equal(record.rawArrayReader,'public-path-resolve-coerce-false-foreach-f32-v1');assert.equal(record.preFloatStoreHashGuard,true);assert.equal(record.nativeEvaluations,1);assert.deepEqual([...new Set(record.sources.map(x=>x.nodeType))].sort(),[constructorType,'FunctionNodeRotationToQuaternion'].sort())}
+ assert.deepEqual(program.ops.map(op=>op.kind),[...row.indices.map(()=> 'value'),'combine-color'])
+}

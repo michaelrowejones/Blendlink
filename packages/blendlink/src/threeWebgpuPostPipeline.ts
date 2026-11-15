@@ -1,3 +1,4 @@
+import {validateVectorRotatePresentation} from './tslCompositorVectorRotate.js'
 import {validateNoisePresentation} from './tslCompositorNoise.js'
 import {validateWaveAxisPresentation} from './tslCompositorWaveField.js'
 import {validateWhiteNoisePresentation} from './tslCompositorWhiteNoiseField.js'
@@ -224,6 +225,7 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
       .sort((left, right) => phaseRank(left.phase) - phaseRank(right.phase)
         || left.id.localeCompare(right.id))
 
+    validateVectorRotatePresentation(this.options.sourcePresentation,registrations.filter(entry=>entry.phase==='post-ldr').length,message=>{throw new SourceCompositorUnsupported(message)},registrations.filter(entry=>entry.phase!=='post-ldr').length)
     validateNoisePresentation(this.options.sourcePresentation,registrations.filter(entry=>entry.phase==='post-ldr').length,message=>{throw new SourceCompositorUnsupported(message)},registrations.filter(entry=>entry.phase!=='post-ldr').length)
     validateWaveAxisPresentation(this.options.sourcePresentation,registrations.filter(entry=>entry.phase==='post-ldr').length,message=>{throw new SourceCompositorUnsupported(message)},registrations.filter(entry=>entry.phase!=='post-ldr').length)
     validateWhiteNoisePresentation(this.options.sourcePresentation,registrations.filter(entry=>entry.phase==='post-ldr').length,message=>{throw new SourceCompositorUnsupported(message)},registrations.filter(entry=>entry.phase!=='post-ldr').length)

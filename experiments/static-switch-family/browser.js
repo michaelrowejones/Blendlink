@@ -22,8 +22,8 @@ window.staticSelectionProof=async proof=>{
  const gl=renderer.backend.gl,debug=gl?.getExtension('WEBGL_debug_renderer_info'),info=adapter?.info??renderer.backend.device?.adapterInfo
  const gpu=info?{api:'WebGPU',vendor:info.vendor,architecture:info.architecture,device:info.device,description:info.description}:{api:'WebGL2',vendor:gl.getParameter(debug?.UNMASKED_VENDOR_WEBGL??gl.VENDOR),renderer:gl.getParameter(debug?.UNMASKED_RENDERER_WEBGL??gl.RENDERER)}
  renderer.setPixelRatio(1);renderer.setSize(8,8);renderer.outputColorSpace=THREE.LinearSRGBColorSpace;renderer.toneMapping=THREE.NoToneMapping
- const rows=[],errors=[];renderer.debug.onShaderError=(gl,program)=>errors.push(gl.getProgramInfoLog(program));let flip
- if(proof.variant==='mono-view'){
+ const rows=[],errors=[],int3Captures=proof.variant==='integer-vector3'?[]:null;if(int3Captures)window.integerVector3Readbacks=int3Captures;renderer.debug.onShaderError=(gl,program)=>errors.push(gl.getProgramInfoLog(program));let flip
+ if(proof.variant!=='static'){
   const data=new Float32Array(256);for(let y=0;y<8;y++)for(let x=0;x<8;x++)data.set([x/16,y/16,.375,1],4*(y*8+x))
   const input=new THREE.DataTexture(data,8,8,THREE.RGBAFormat,THREE.FloatType);input.colorSpace=THREE.NoColorSpace;input.needsUpdate=true
   const output=new THREE.RenderTarget(8,8,{type:THREE.FloatType,depthBuffer:false});output.texture.colorSpace=THREE.NoColorSpace
@@ -32,6 +32,7 @@ window.staticSelectionProof=async proof=>{
  }
 
  for(const entry of proof.cases){
+  const int3Readbacks=int3Captures?[]:null;if(int3Captures)int3Captures.push({case:entry.case,readbacks:int3Readbacks})
   const expected=new Uint32Array(await bytes(entry.pixelUrl,entry.pixelSha256)),target=new THREE.RenderTarget(8,8,{type:THREE.FloatType,depthBuffer:!!proof.final});target.texture.colorSpace=THREE.NoColorSpace
   let sourceTexture,quad,material,built,pipeline,installation,gltf,scene,camera,bindings,source,originals=[],geometries=new Set(),materials=new Set(),pinRejected=false
   const make=async()=>{
@@ -75,6 +76,7 @@ window.staticSelectionProof=async proof=>{
    const measure=flipped=>{let count=0;for(let y=0;y<8;y++)for(let x=0;x<8;x++)for(let c=0;c<4;c++)if(words[((flipped?7-y:y)*stride+x)*4+c]!==expected[(y*8+x)*4+c])count++;return count}
    if(entry.case==='calibration'&&flip===undefined){flip=measure(true)<measure(false);if(measure(flip))throw new Error('Independent source/calibration mismatch '+measure(flip))}
    if(flip===undefined)throw new Error('Independent calibration is required')
+   if(int3Readbacks){const canonical=[];for(let y=0;y<8;y++)for(let x=0;x<8;x++)for(let c=0;c<4;c++)canonical.push(words[((flip?7-y:y)*stride+x)*4+c]);int3Readbacks.push({phase:['primary','repeat','reinstalled'][int3Readbacks.length],comparedWords:256,rowFlip:!!flip,words:canonical})}
    const mismatches=measure(flip);if(mismatches)throw new Error(entry.case+' '+proof.context+' has '+mismatches+' word mismatches')
    return mismatches
   }
@@ -91,7 +93,7 @@ window.staticSelectionProof=async proof=>{
   }
   const error=await renderer.backend.device?.popErrorScope();if(error)errors.push(error.message)
   renderer.setRenderTarget(null);target.dispose();if(renderer.info.memory.textures!==0)throw new Error('Owned textures leaked '+renderer.info.memory.textures)
-  rows.push({case:entry.case,wordMismatches:mismatches,remainingTextures:0,finalBindings:!!proof.final,pinRejected:proof.final?pinRejected:null,ownershipPreserved:true,...(proof.variant==='mono-view'?{comparedWords:256,lifecycleCycles:proof.final?2:1}:{})})
+  rows.push({case:entry.case,wordMismatches:mismatches,remainingTextures:0,finalBindings:!!proof.final,pinRejected:proof.final?pinRejected:null,ownershipPreserved:true,...(int3Readbacks?{readbacks:int3Readbacks}:{}),...(proof.variant!=='static'?{comparedWords:256,lifecycleCycles:proof.final?2:1}:{})})
  }
  renderer.dispose();device?.destroy();if(errors.length)throw new Error(JSON.stringify(errors))
  return{backend,gpu,rows,errors}

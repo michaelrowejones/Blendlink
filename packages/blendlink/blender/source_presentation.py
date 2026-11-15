@@ -210,7 +210,7 @@ def export_source_presentation(scene, glb_path):
         "model": "blendlink-source-presentation-v1",
         "warnings": [],
     }
-    from compositor_graph import extract, validate_mask_presentation, validate_noise_presentation
+    from compositor_graph import extract, validate_mask_presentation, validate_noise_presentation, validate_vector_rotate_presentation
 
     compositor = extract(scene)
     if compositor["status"] != "disabled":
@@ -254,11 +254,11 @@ def export_source_presentation(scene, glb_path):
             + str(error)
             + ". Native preview tone mapping remains active."
         )
-    budget_issue = validate_noise_presentation(result) or validate_mask_presentation(result)
+    budget_issue = validate_vector_rotate_presentation(result) or validate_noise_presentation(result) or validate_mask_presentation(result)
     if budget_issue:
         op, message = budget_issue
         result['compositor']['status'] = 'unsupported'
-        result['compositor']['diagnostics'].append({'code':('unsupported-noise-sampler-budget' if op['kind']=='noise-texture' else 'unsupported-wave-axis-sampler-budget' if op['kind']=='wave-texture' else 'unsupported-white-noise-sampler-budget' if op['kind']=='white-noise-texture' else 'unsupported-box-mask-sampler-budget' if op['kind']=='box-mask' else 'unsupported-ellipse-mask-sampler-budget'),
+        result['compositor']['diagnostics'].append({'code':('unsupported-vector-rotate-presentation' if op['kind']=='vector-rotate-cpu' else 'unsupported-noise-sampler-budget' if op['kind']=='noise-texture' else 'unsupported-wave-axis-sampler-budget' if op['kind']=='wave-texture' else 'unsupported-white-noise-sampler-budget' if op['kind']=='white-noise-texture' else 'unsupported-box-mask-sampler-budget' if op['kind']=='box-mask' else 'unsupported-ellipse-mask-sampler-budget'),
             'path':op['source']['path'], 'node':op['source']['node'],
             'socket':op['source']['output'], 'message':message})
     payload = json.dumps(

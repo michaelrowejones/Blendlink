@@ -46,6 +46,7 @@ static_strings = _sibling("static_strings")
 static_matrix = _sibling("compositor_static_matrix")
 static_rotation = _sibling("compositor_static_rotation")
 static_euler = _sibling("compositor_static_euler")
+input_rotation = _sibling("compositor_input_rotation")
 normalize_color_operation = _sibling("compositor_color").normalize_color_operation
 native_color_band = _sibling("native_color_band").native_color_band
 normalize_integer_bits = _sibling("compositor_integer_bits").normalize_integer_bits
@@ -86,6 +87,8 @@ noise_fixed_inputs = _sibling("compositor_white_noise").fixed_inputs
 validate_noise_presentation = noise_texture.validate_noise_presentation
 wave_axis = _sibling("compositor_wave_axis")
 displace_single = _sibling("compositor_displace")
+vector_rotate_cpu = _sibling("compositor_vector_rotate")
+validate_vector_rotate_presentation = vector_rotate_cpu.validate_presentation
 resolve_vector_math_literal = _sibling("compositor_procedural_texture").literal
 normalize_procedural_texture = _sibling("compositor_procedural_texture").normalize_procedural_texture
 validate_texture_field_graph = _sibling("compositor_procedural_texture").validate_texture_field_graph
@@ -103,6 +106,7 @@ validate_ellipse_mask_graph = _sibling("compositor_ellipse_mask").validate_ellip
 normalize_image_info = _sibling("compositor_image_info").normalize_image_info
 validate_image_info_edge = _sibling("compositor_image_info").validate_image_info_edge
 view_selection = _sibling("compositor_view_selection")
+integer_vector = _sibling("compositor_integer_vector")
 normalize_float_coordinates = _sibling("compositor_float_coordinates").normalize_float_coordinates
 validate_image_coordinate_graph = _sibling("compositor_image_coordinates").validate_image_coordinate_graph
 normalize_crop = _sibling("compositor_crop").normalize_crop
@@ -130,6 +134,8 @@ TYPES = {
     "CompositorNodeBoxMask": "box-mask",
     "CompositorNodeEllipseMask": "ellipse-mask",
     "FunctionNodeInputVector": "value",
+    "ShaderNodeVectorRotate": "vector-rotate-cpu",
+    "FunctionNodeInputIntVector": "integer-vector",
     "ShaderNodeCombineXYZ": "combine-vector",
     "ShaderNodeSeparateXYZ": "separate-vector",
     "FunctionNodeGetVectorComponent": "separate-vector",
@@ -322,6 +328,8 @@ def extract(scene):
     static_matrix_cache = {}
     static_rotation_cache = {}
     static_euler_cache = {}
+    integer_vector_reads = []
+    input_rotation_cache = {}
     noise_reads = []
     blank_image_reads = []
     blank_image_topology = {}
@@ -331,6 +339,8 @@ def extract(scene):
     field_topology = {}
     field_active = [None]
     displace_reads = []
+    vector_rotate_reads = []
+    vector_rotate_cache = {}
     source_nodes = {}
     view_selections = []
     used_group_interfaces = {}
@@ -438,7 +448,10 @@ def extract(scene):
             return const(socket)
         resolved = output_value(links[0].from_socket, ctx)
         validate_image_info_edge(resolved, socket, result["ops"], lambda message: fail("unsupported-image-info-conversion", ctx["path"], socket.node, socket, message))
-        target_type = socket.type
+        try:
+            target_type = integer_vector.validate_edge(resolved,socket)
+        except integer_vector.IntegerVectorUnsupported as error:
+            fail("unsupported-integer-vector-conversion",ctx["path"],socket.node,socket,str(error))
         if resolved.get("type") == "FLOAT_VECTOR2":
             default = getattr(socket, "default_value", None)
             if socket.type == "VECTOR" and socket.bl_idname == "NodeSocketVector2D" and default is not None and len(default) == 2:
@@ -475,6 +488,10 @@ def extract(scene):
             fail("cycle", path, node, socket, "Reachable compositor cycle")
         visiting.add(key)
         try:
+            if node.mute and node.bl_idname=='ShaderNodeVectorRotate':
+                fail('unsupported-vector-rotate',path,node,socket,'Vector Rotate muted bypass remains outside its qualified CPU operator profile')
+            if node.mute and node.bl_idname=='FunctionNodeInputIntVector':
+                fail('unsupported-integer-vector',path,node,socket,'Integer Vector mute bypass remains unqualified')
             if node.mute and node.bl_idname=='CompositorNodeBlankImage':
                 fail('unsupported-blank-image',path,node,socket,'Blank Image mute bypass is outside the qualified finite-domain producer profile')
             if node.mute:
@@ -618,16 +635,21 @@ def extract(scene):
                     while current.get('parent') is not None:
                         frames.append(current['instance']);current=current['parent']
                     try:
-                        record=static_rotation.evaluate_output(socket,scene,static_rotation_cache,tuple(reversed(frames)),static_selection.static_selection)
-                    except static_rotation.EulerProducer as original_error:
+                        record=input_rotation.evaluate_output(socket,scene,input_rotation_cache,tuple(reversed(frames)),static_selection.static_selection)
+                    except input_rotation.NotInputRotationRoute:
                         try:
-                            record=static_euler.evaluate_output(socket,scene,static_euler_cache,tuple(reversed(frames)),static_selection.static_selection)
-                        except static_euler.NotEulerRoute:
-                            fail('unsupported-static-rotation',path,node,socket,str(original_error))
+                            record=static_rotation.evaluate_output(socket,scene,static_rotation_cache,tuple(reversed(frames)),static_selection.static_selection)
+                        except static_rotation.EulerProducer as original_error:
+                            try:
+                                record=static_euler.evaluate_output(socket,scene,static_euler_cache,tuple(reversed(frames)),static_selection.static_selection)
+                            except static_euler.NotEulerRoute:
+                                fail('unsupported-static-rotation',path,node,socket,str(original_error))
+                            except (static_rotation.StaticRotationUnsupported, RecursionError) as error:
+                                fail('unsupported-static-rotation',path,node,socket,str(error))
                         except (static_rotation.StaticRotationUnsupported, RecursionError) as error:
                             fail('unsupported-static-rotation',path,node,socket,str(error))
-                    except (static_rotation.StaticRotationUnsupported, RecursionError) as error:
-                        fail('unsupported-static-rotation',path,node,socket,str(error))
+                    except (static_rotation.StaticRotationUnsupported, static_matrix.StaticMatrixUnsupported, RecursionError) as error:
+                        fail('unsupported-static-input-rotation',path,node,socket,str(error))
                     op['value']=record['value']
                     result.setdefault('compileTimeRotations',[]).append(dict(record,path=list(path),node=node.name,output=socket.identifier))
                 elif node.bl_idname == "FunctionNodeSeparateMatrix":
@@ -726,6 +748,20 @@ def extract(scene):
                     coordinate_normalizer = normalize_float_coordinates if socket.identifier in {"Uniform", "Normalized"} else normalize_image_coordinates
                     coordinate_normalizer(node, socket, op, scene, lambda incoming: input_value(incoming, ctx), result["ops"],
                         lambda incoming, message: fail("unsupported-image-coordinates", path, node, incoming, message))
+                elif node.bl_idname == "ShaderNodeVectorRotate":
+                    activate_field_topology('vector-rotate','Vector Rotate')
+                    observation=vector_rotate_cpu.normalize(node,socket,op,scene,lambda incoming:input_value(incoming,ctx),result['ops'],vector_rotate_cache,
+                        lambda incoming,message:fail('unsupported-vector-rotate',path,node,incoming,message))
+                    vector_rotate_reads.append((node,socket,observation,path))
+                elif node.bl_idname == "FunctionNodeInputIntVector":
+                    activate_field_topology('integer-vector','Integer Vector')
+                    frames=[];current=ctx
+                    while current.get('parent') is not None:
+                        frames.append(current['instance']);current=current['parent']
+                    stack=tuple(reversed(frames))
+                    signature=integer_vector.normalize(node,socket,op,scene,stack,
+                        lambda incoming,message:fail('unsupported-integer-vector',path,node,incoming,message))
+                    integer_vector_reads.append((node,socket,signature,path,stack))
                 elif node.bl_idname == "FunctionNodeInputVector":
                     op["value"] = list(node.vector)
                 elif node.bl_idname == "FunctionNodeGetVectorComponent":
@@ -1107,7 +1143,7 @@ def extract(scene):
                 source_nodes[op["id"]] = node
                 if single:
                     single_values.add(op["id"])
-                ref = {"kind": "ref", "node": op["id"], "type": op["type"] if op["kind"] in {"image-coordinates", "image-info"} else socket.type}
+                ref = {"kind": "ref", "node": op["id"], "type": op["type"] if op["kind"] in {"image-coordinates", "image-info", "integer-vector"} else socket.type}
             memo[key] = ref
             return ref
         finally:
@@ -1256,6 +1292,10 @@ def extract(scene):
             result["diagnostics"].append({"code": "unsupported-crop-domain", "path": op["source"]["path"],
                 "node": op["source"]["node"], "socket": op["source"]["output"], "message": message})
             raise Unsupported()
+        integer_vector_conflict=integer_vector.validate_graph(result)
+        if integer_vector_conflict:
+            op,message=integer_vector_conflict
+            fail('unsupported-integer-vector',op['source']['path'],source_nodes[op['id']],None,message)
         blank_conflict=blank_image.validate_graph(result)
         if blank_conflict:
             op,message=blank_conflict
@@ -1266,6 +1306,11 @@ def extract(scene):
             op, message = image_conflict
             result["diagnostics"].append({"code": "unsupported-image-domain", "path": op["source"]["path"],
                 "node": op["source"]["node"], "socket": op["source"]["output"], "message": message})
+            raise Unsupported()
+        rotate_conflict=vector_rotate_cpu.validate_graph(result,source_nodes)
+        if rotate_conflict:
+            op,message=rotate_conflict
+            result['diagnostics'].append({'code':'unsupported-vector-rotate','path':op['source']['path'],'node':op['source']['node'],'socket':op['source']['output'],'message':message})
             raise Unsupported()
         displace_conflict=displace_single.validate_graph(result)
         if displace_conflict:
@@ -1282,7 +1327,7 @@ def extract(scene):
         # A later private family evaluation may invoke handlers which mutate an
         # earlier family's already-emitted source. Close every owned snapshot
         # together, without another native evaluation, before accepting the IR.
-        for cache in (static_matrix_cache, static_rotation_cache, static_euler_cache):
+        for cache in (static_matrix_cache, static_rotation_cache, static_euler_cache, input_rotation_cache):
             evaluator = cache.get('evaluator')
             if evaluator is not None:
                 try:
@@ -1316,6 +1361,12 @@ def extract(scene):
             except (group_defaults.GroupDefaultUnsupported,ReferenceError,RuntimeError) as error:
                 # The node itself may have been removed by an evaluation handler.
                 fail('group-interface-changed',path,None,None,label+': '+str(error))
+        for node,socket,signature,path,stack in integer_vector_reads:
+            try:
+                if integer_vector.source_signature(node,socket,scene,stack)!=signature:
+                    raise integer_vector.IntegerVectorUnsupported('Integer Vector property/schema/context changed during extraction')
+            except (integer_vector.IntegerVectorUnsupported,ReferenceError,RuntimeError)as error:
+                fail('integer-vector-source-changed',path,node,socket,str(error))
         for node,socket,signature,path,stack in noise_reads:
             current={'inputs':{},'properties':{'evaluation_device':'CPU','single_value_device':'CPU'}}
             try:
@@ -1339,6 +1390,14 @@ def extract(scene):
                     raise wave_axis.WaveAxisUnsupported('Wave axis source/context changed during extraction')
             except (wave_axis.WaveAxisUnsupported,ReferenceError,RuntimeError) as error:
                 fail('wave-axis-source-changed',path,node,socket,str(error))
+        if vector_rotate_reads:
+            conflict=vector_rotate_cpu.validate_graph(result,source_nodes)
+            if conflict:
+                op,message=conflict
+                fail('vector-rotate-source-changed',op['source']['path'],None,None,message)
+        for node,socket,observation,path in vector_rotate_reads:
+            try:vector_rotate_cpu.check(node,scene,observation)
+            except (ValueError,ReferenceError,RuntimeError)as error:fail('vector-rotate-source-changed',path,node,socket,str(error))
         for node,socket,observation,path in displace_reads:
             try:displace_single.check(node,scene,observation)
             except (displace_single.DisplaceUnsupported,ReferenceError,RuntimeError) as error:

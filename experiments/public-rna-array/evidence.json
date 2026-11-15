@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "status": "OBSERVED_PUBLIC_RNA_RAW_ARRAY",
+  "supportCredit": 0,
+  "nativeEvaluationCredit": 0,
+  "renderCredit": 0,
+  "gpuCredit": 0,
+  "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "source": {
+    "path": "source/blender/python/intern/bpy_rna.cc",
+    "sha256": "83a95616ab6bf4222634ff61fe36fe978012ddf0af8af63322d4966f0874f2dc",
+    "url": "https://projects.blender.org/blender/blender/src/commit/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/python/intern/bpy_rna.cc",
+    "anchors": {
+      "documentationAndCoerceFalse": [
+        4116,
+        4175
+      ],
+      "arrayBulkBuffer": [
+        6387,
+        6545
+      ]
+    }
+  },
+  "publicDocumentation": {
+    "url": "https://docs.blender.org/api/current/bpy.types.bpy_struct.html#bpy.types.bpy_struct.path_resolve",
+    "observedFetchStatus": 402,
+    "authority": "Pinned local C++ documentation and implementation, not inaccessible web page"
+  },
+  "version": [
+    5,
+    3,
+    0
+  ],
+  "build": "02f0899d78e3",
+  "nativeIdentity": {
+    "path": "/Applications/Blender.app/Contents/MacOS/Blender",
+    "bytes": 210043328,
+    "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da"
+  },
+  "observations": {
+    "targets": 4,
+    "patternRows": 12,
+    "rawWords": 36,
+    "allRawExact": true,
+    "gpuInitializationCalls": 0,
+    "renderCalls": 0,
+    "ownershipRestored": true,
+    "scalarBulkSupported": false
+  },
+  "limits": [
+    "No evaluation, native rotation semantics, production helper replacement or support promotion tested.",
+    "coerce=False requires an unindexed whole-array path; indexed paths return promoted values.",
+    "array('f') buffer branch is essential; Python sequence fallback promotes Float32 values.",
+    "Actual invocation journal was not retained before launcher disposal; identity/script/output hashes and stdout are retained as research, not qualification.",
+    "Original r1 setup KeyError is retained with exit status1; corrected r2 uses one fresh owned Python prefix, exit0."
+  ],
+  "pins": {
+    "capture-run.mjs": "9d3e7674044d7f79d512a35a7c003f8fe54e6397706ddfac72b4fc223ba56644",
+    "failed-r1/native.log": "2dc1896381a3d7692c366761e092139950236644a7674894c7ced22b99fd2e30",
+    "failed-r1/probe.py": "584378f177790888b5c6c6f1ffd4fbf32eab01dd0662aa524e0acbd4a093dbd2",
+    "failed-r1/receipt.json": "1175ab066093e6901e435d7b76685ecf5cf7ac19a77b21bbc69252b61084972f",
+    "failed-r1/report.json": "2cc9570891b59be1acd8182b68f86026f7d4558889ab3fcd622c1b8a16c8fe06",
+    "native.log": "ff0cb94d4235238c6b675694fcf81bce0d06aa8600397068ce3c2676c2436e81",
+    "probe.py": "3a54a3a2a09de6faf171496105ca198a5834620140a7b9bb231adcaff20eda3b",
+    "receipt.json": "594c7f4bd1dc780c0e4b6c2910191a92550ccab9a5df5c6fe9b2085d7e4a63db",
+    "report.json": "c2ac2518c19e9c2ff554eea1fca25a4fdcd9b328ba0d47488b40878b87a83e4a"
+  }
+}

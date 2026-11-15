@@ -5,7 +5,8 @@ import { join, resolve } from 'node:path'
 import { tmpdir } from 'node:os'
 import { executeNodePortCommand, expandNodePortCommand, fingerprintNodePortInputs, loadNodePortManifests,
   nodePortHash, readNodePortManifest, readSqueezeNodePortEvidence, validateNodePortManifest, validateRepositoryPattern } from './node-port-contract.mjs'
-import { parseNodePortArguments, runNodePort } from '../test-node-port.mjs'
+import { acquireNodePortVerificationLease, parseNodePortArguments, runNodePort } from '../test-node-port.mjs'
+import { execFileSync } from 'node:child_process'
 
 const repository = resolve(import.meta.dirname, '../..')
 const example = await readNodePortManifest(join(repository, 'node-ports/squeeze.json'))
@@ -36,6 +37,76 @@ async function fixture(t) {
   await chmod(blender, 0o755)
   return { root, manifest, blender, profile: manifest.profiles[0], packet }
 }
+
+test('verification lease excludes another process and canonical checkout aliases, but not another worktree', async t => {
+  const root = await temporary(t), other = await temporary(t), alias = root + '-alias'
+  await symlink(root, alias); t.after(() => rm(alias, { force: true }))
+  const lease = await acquireNodePortVerificationLease(root, { id: 'squeeze' })
+  try {
+    await assert.rejects(acquireNodePortVerificationLease(alias), error => error.code === 'SCENETOWEB_VERIFICATION_BUSY' && error.lease.owner.id === lease.owner.id)
+    const module = new URL('../test-node-port.mjs', import.meta.url).href
+    const code = `import {acquireNodePortVerificationLease} from ${JSON.stringify(module)};try{await acquireNodePortVerificationLease(process.argv[1]);process.exitCode=9}catch(e){if(e.code!=='SCENETOWEB_VERIFICATION_BUSY')throw e;console.log(e.lease.owner.id)}`
+    assert.equal(execFileSync(process.execPath, ['--input-type=module', '-e', code, root], { encoding: 'utf8' }).trim(), lease.owner.id)
+    const independent = await acquireNodePortVerificationLease(other)
+    await independent.release(); await independent.release()
+  } finally { await lease.release() }
+  const next = await acquireNodePortVerificationLease(alias)
+  await next.release()
+})
+
+test('busy verifier retains a zero-command refusal, dry run remains read-only, and refused execution releases lease', async t => {
+  const {root,blender,profile} = await fixture(t), lease = await acquireNodePortVerificationLease(root)
+  const original = await readFile(join(lease.directory, 'owner.json'))
+  try {
+    const evidence = join(root, 'blocked'), result = await runNodePort({ root, id: 'squeeze', profile: profile.id, blender, evidence })
+    assert.equal(result.status, 'refused'); assert.equal(result.exitCode, 2)
+    assert.equal(result.productionCredit, false); assert.equal(result.inputValidationFailed, false)
+    assert.deepEqual(result.steps, []); assert.equal(result.verificationLeaseConflict.owner.id, lease.owner.id)
+    assert.deepEqual(JSON.parse(await readFile(join(evidence, 'report.json'))), result)
+    const dry = await runNodePort({ root, id: 'squeeze', profile: profile.id, blender, dryRun: true })
+    assert.equal(dry.status, 'planned'); assert.equal(dry.runnable, true)
+    assert.deepEqual(await readFile(join(lease.directory, 'owner.json')), original)
+  } finally { await lease.release() }
+  const result = await runNodePort({ root, id: 'squeeze', evidence: join(root, 'missing-profile') })
+  assert.equal(result.status, 'refused'); assert.equal(result.productionCredit, false)
+  const next = await acquireNodePortVerificationLease(root); await next.release()
+})
+
+test('changed lease ownership refuses cleanup without deleting the replacement owner', async t => {
+  const root = await temporary(t), lease = await acquireNodePortVerificationLease(root)
+  const path = join(lease.directory, 'owner.json'), original = await readFile(path)
+  try {
+    await writeFile(path, 'replacement owner\n')
+    await assert.rejects(lease.release(), /owner changed/)
+    assert.equal(await readFile(path, 'utf8'), 'replacement owner\n')
+    await assert.rejects(acquireNodePortVerificationLease(root), error => error.code === 'SCENETOWEB_VERIFICATION_BUSY')
+  } finally { await writeFile(path, original); await lease.release() }
+})
+
+test('an exited process lease is retained for inspection, never automatically stolen', async t => {
+  const root = await temporary(t), module = new URL('../test-node-port.mjs', import.meta.url).href
+  const code = `import {acquireNodePortVerificationLease} from ${JSON.stringify(module)};const l=await acquireNodePortVerificationLease(process.argv[1]);console.log(l.directory)`
+  const directory = execFileSync(process.execPath, ['--input-type=module', '-e', code, root], { encoding: 'utf8' }).trim()
+  t.after(() => rm(directory, { recursive: true, force: true })) // Only this test's owned synthetic abandoned lease.
+  const original = await readFile(join(directory, 'owner.json'))
+  await assert.rejects(acquireNodePortVerificationLease(root), error => error.code === 'SCENETOWEB_VERIFICATION_BUSY')
+  assert.deepEqual(await readFile(join(directory, 'owner.json')), original)
+})
+
+test('lease cleanup failure is recorded in the final verifier report and preserves changed ownership', async t => {
+  const {root,manifest,blender,profile} = await fixture(t), probe = await acquireNodePortVerificationLease(root)
+  const directory = probe.directory, owner = join(directory, 'owner.json')
+  await probe.release(); t.after(() => rm(directory, { recursive: true, force: true }))
+  await put(root, 'tamper.mjs', `import {writeFile} from 'node:fs/promises';await writeFile(${JSON.stringify(owner)},'synthetic replacement owner\\n')`)
+  manifest.inputs.tests.push('tamper.mjs')
+  manifest.commands.build = [{ id: 'lease-owner-control', argv: ['{node}', 'tamper.mjs'], timeoutMs: 10000 }]
+  await put(root, 'node-ports/squeeze.json', JSON.stringify(manifest))
+  const evidence = join(root, 'cleanup-failure'), result = await runNodePort({root,id:'squeeze',blender,profile:profile.id,evidence})
+  assert.equal(result.status, 'failed'); assert.equal(result.exitCode, 1); assert.equal(result.productionCredit, false)
+  assert.match(result.verificationLeaseCleanupError.message, /owner changed/)
+  assert.deepEqual(JSON.parse(await readFile(join(evidence, 'report.json'))), JSON.parse(JSON.stringify(result)))
+  assert.equal(await readFile(owner, 'utf8'), 'synthetic replacement owner\n')
+})
 
 test('production manifest is closed, scanner-compatible and uses argv only', () => {
   assert.equal(example.lifecycle, 'production'); assert.equal(example.nativeNode, 'ShaderNodeSqueeze')

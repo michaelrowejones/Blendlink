@@ -88,6 +88,8 @@ qualify other builds or GPU evaluators. Experimental kernel trials cannot
 promote production admission, and ordinary-value comparisons do not certify
 this boundary. These are partial ports; complete node parity remains unfinished.
 
+Compositor Vector Rotate has a separate [Blender 5.3 CPU fixed-axis port](../experiments/compositor-vector-rotate/README.md). X/Y/Z modes and both Invert values accept bounded raw static Angle/Center controls and either a bounded literal Vector or direct qualified Normalized coordinates from the original full-frame Render Layers. Private exact coordinate rows and staged Float32 arithmetic preserve the native CPU result through real resize and DPR changes. The 25 native graphs and 10 saved Finals closed on both actual APIs across Metal and SwiftShader with zero primary word differences. The source pass is scheduled before outer geometry setup; the earlier cube-silhouette failure is retained at zero credit. Native AXIS_ANGLE defaults, Euler mode, computed controls, other fields, arbitrary consumers and EEVEE rotation arithmetic remain unqualified. Existing shader Vector Rotate and older-version records are unchanged.
+
 ## How a port earns support
 
 The native inventory creates the nodes in isolated Blender processes and

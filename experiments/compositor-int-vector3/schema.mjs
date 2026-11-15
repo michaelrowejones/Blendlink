@@ -1,0 +1,16 @@
+/* SPDX-License-Identifier: MIT */
+import assert from 'node:assert/strict'
+import {spawnSync} from 'node:child_process'
+import {mkdir,readFile,writeFile,readdir} from 'node:fs/promises'
+import {resolve,join} from 'node:path'
+import {createHash} from 'node:crypto'
+import {createNodePortBlenderLauncher} from '../../scripts/lib/node-port-python.mjs'
+import {archiveNativeLauncher,validateNativeArchive} from '../../scripts/lib/native-proof-archive.mjs'
+const root=resolve(import.meta.dirname,'../..'),out=resolve(process.argv[2]);await mkdir(out);const policy=process.argv.includes('--policy'),script=join(import.meta.dirname,policy?'policy.py':'schema.py'),sha=x=>createHash('sha256').update(x).digest('hex'),pin=sha(await readFile(script));
+const sourcePaths=['experiments/compositor-int-vector3/schema.mjs','experiments/compositor-int-vector3/'+(policy?'policy.py':'schema.py')];if(policy){sourcePaths.push('packages/blender-addon/tests/compositor_integer_vector_check.py');for(const folder of['packages/blendlink/blender','packages/blender-addon'])for(const name of await readdir(join(root,folder)))if(name.endsWith('.py')||name.endsWith('.json'))sourcePaths.push(folder+'/'+name)};const capture=()=>Promise.all(sourcePaths.sort().map(async p=>[p,sha(await readFile(join(root,p)))])).then(Object.fromEntries),sourcePins=await capture();await writeFile(join(out,'source-pins.json'),JSON.stringify(sourcePins,null,2)+'\n');
+const launcher=await createNodePortBlenderLauncher({blender:'/Applications/Blender.app/Contents/MacOS/Blender',directory:join(out,'active')});let complete=false;
+try{const result=spawnSync(launcher.executable,['--background','--factory-startup','--disable-autoexec','-t','1','--python-exit-code','1','--python',script,'--',join(out,'report.json')],{cwd:root,encoding:'utf8',timeout:120000});await writeFile(join(out,'native.log'),String(result.stdout)+String(result.stderr));assert.equal(result.status,0);assert.equal(sha(await readFile(script)),pin);assert.deepEqual(await capture(),sourcePins);await launcher.finalize();complete=true}
+finally{try{await writeFile(join(out,'archive.json'),JSON.stringify({identity:launcher.identity,proof:await archiveNativeLauncher(launcher,out,complete)},null,2)+'\n')}finally{await launcher.dispose()}}
+const report=JSON.parse(await readFile(join(out,'report.json')));assert.equal(report.status,policy?'PASSED_INTEGER_VECTOR_SOURCE_POLICY':'OBSERVED_INTEGER_VECTOR_RNA');if(policy){assert.equal(report.positive.length,8);assert.equal(report.refusals.length,19)}else assert.equal(report.rows.length,4);assert.equal(report.renderCalls,0);assert.equal(report.gpuInitializationCalls,0);
+const archive=await validateNativeArchive(JSON.parse(await readFile(join(out,'archive.json'))),out,{expectedScripts:[{path:script,invocations:1}],expectedFinalSources:[],helperInputs:{helper:join(root,'scripts/lib/node-port-python.mjs'),bridge:join(root,'scripts/node-port-blender.mjs')}});
+await writeFile(join(out,'closed.json'),JSON.stringify({status:policy?'CLOSED_INTEGER_VECTOR_SOURCE_POLICY':'CLOSED_INTEGER_VECTOR_RNA_RESEARCH',supportCredit:0,sourcePins,scriptSha256:pin,reportSha256:sha(await readFile(join(out,'report.json'))),archive},null,2)+'\n');console.log(policy?'CLOSED_INTEGER_VECTOR_SOURCE_POLICY':'CLOSED_INTEGER_VECTOR_RNA_RESEARCH')

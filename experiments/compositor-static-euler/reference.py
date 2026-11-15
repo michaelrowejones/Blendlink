@@ -6,9 +6,20 @@ from pathlib import Path
 import bpy,numpy as np,gpu
 ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT/'packages/blendlink/blender'));sys.path.insert(0,str(ROOT/'packages/blender-addon/tests'))
 import compositor_graph,compositor_static_euler as euler,compositor_static_matrix as shared
+VARIANT=os.environ.get("SCENETOWEB_STATIC_EULER_VARIANT","euler");assert VARIANT in {"euler","input-rotation"}
+INPUT_ROTATION=VARIANT=="input-rotation"
+if INPUT_ROTATION:import compositor_input_rotation as family
+else:family=euler
+def constructor(tree):return tree.nodes.new("FunctionNodeInputRotation"if INPUT_ROTATION else"FunctionNodeEulerToRotation")
+def put_euler(node,words):
+ if INPUT_ROTATION:node.path_resolve("rotation_euler",False).foreach_set(floats(words))
+ else:node.inputs.foreach_set("default_value",floats(words))
+def get_euler(node):return family._raw_constructor(node)if INPUT_ROTATION else euler._raw_euler(node)
 from compositor_reference import NativeCompositorReference
-DEST=Path(os.environ['SCENETOWEB_STATIC_EULER_REFERENCES']).resolve();DEST.mkdir(parents=True,exist_ok=True);case_path=ROOT/'experiments/compositor-static-euler/cases.json';CASES=json.loads(case_path.read_text());sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
-paths=[Path(__file__),ROOT/'experiments/compositor-static-euler/policy.py',case_path,ROOT/'packages/blender-addon/tests/compositor_static_euler_check.py',ROOT/'packages/blender-addon/tests/compositor_reference.py',*(ROOT/'packages/blendlink/blender').glob('*.py'),*(ROOT/'packages/blender-addon').glob('*.py'),*(ROOT/'packages/blender-addon').glob('*.json')];pins={str(p.relative_to(ROOT)):sha(p)for p in paths}
+DEST=Path(os.environ['SCENETOWEB_STATIC_EULER_REFERENCES']).resolve();DEST.mkdir(parents=True,exist_ok=True);case_path=ROOT/('experiments/compositor-static-euler/input-rotation-cases.json'if INPUT_ROTATION else'experiments/compositor-static-euler/cases.json');CASES=json.loads(case_path.read_text());sha=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
+paths=[Path(__file__),ROOT/'experiments/compositor-static-euler/policy.py',case_path,ROOT/('packages/blender-addon/tests/compositor_input_rotation_check.py'if INPUT_ROTATION else'packages/blender-addon/tests/compositor_static_euler_check.py'),ROOT/'packages/blender-addon/tests/compositor_reference.py',*(ROOT/'packages/blendlink/blender').glob('*.py'),*(ROOT/'packages/blender-addon').glob('*.py'),*(ROOT/'packages/blender-addon').glob('*.json')];
+if INPUT_ROTATION:paths.extend([ROOT/'experiments/compositor-static-euler/input-rotation-contract.json',ROOT/'experiments/compositor-static-euler/input-rotation-sources.json'])
+pins={str(p.relative_to(ROOT)):sha(p)for p in paths}
 def floats(words):
  raw=array('f');raw.frombytes(struct.pack('='+str(len(words))+'I',*words));return raw
 def forbidden(*args,**kwargs):raise AssertionError('CPU Euler reference must not initialize GPU')
@@ -36,9 +47,9 @@ for word in [0,0x80000000,1,0x007fffff,0x80000001,0x807fffff,0x00800000,0x3dcccc
  sink,_=oracle.reset();value=oracle.tree.nodes.new('ShaderNodeValue');value.outputs.foreach_set('default_value',floats([word]));stored=array('f',[0]);value.outputs.foreach_get('default_value',stored);assert struct.unpack('=I',stored.tobytes())[0]==word;row={'sourceWord':word,**hash_carrier(value.outputs[0],'calibration-'+str(word))};assert row['hashWord']==euler._hash_word(word);calibration.append(row)
 assert len({r['hashWord']for r in calibration})==8
 for definition in CASES:
- sink,_=oracle.reset();tree=oracle.tree;route=definition['route'];constructor=tree.nodes.new('FunctionNodeEulerToRotation');constructor.inputs.foreach_set('default_value',floats(definition['inputWords']));assert list(euler._raw_euler(constructor))==definition['inputWords'];source=constructor.outputs['Rotation'];stack=()
+ sink,_=oracle.reset();tree=oracle.tree;route=definition['route'];producer=constructor(tree);put_euler(producer,definition['inputWords']);assert list(get_euler(producer))==definition['inputWords'];source=producer.outputs['Rotation'];stack=()
  if route=='producer-group':
-  group=bpy.data.node_groups.new('Artist Euler Literal','CompositorNodeTree');group.interface.new_socket(name='Rotation',in_out='OUTPUT',socket_type='NodeSocketRotation');exit=group.nodes.new('NodeGroupOutput');inside=group.nodes.new('FunctionNodeEulerToRotation');inside.inputs.foreach_set('default_value',floats(definition['inputWords']));group.links.new(inside.outputs[0],exit.inputs[0]);instance=tree.nodes.new('CompositorNodeGroup');instance.node_tree=group;source=instance.outputs[0];constructor=inside
+  group=bpy.data.node_groups.new('Artist Euler Literal','CompositorNodeTree');group.interface.new_socket(name='Rotation',in_out='OUTPUT',socket_type='NodeSocketRotation');exit=group.nodes.new('NodeGroupOutput');inside=constructor(group);put_euler(inside,definition['inputWords']);group.links.new(inside.outputs[0],exit.inputs[0]);instance=tree.nodes.new('CompositorNodeGroup');instance.node_tree=group;source=instance.outputs[0];producer=inside
  elif route=='rotation-group':
   group=bpy.data.node_groups.new('Artist Rotation Pass','CompositorNodeTree');group.interface.new_socket(name='Rotation',in_out='INPUT',socket_type='NodeSocketRotation');group.interface.new_socket(name='Rotation',in_out='OUTPUT',socket_type='NodeSocketRotation');entry=group.nodes.new('NodeGroupInput');exit=group.nodes.new('NodeGroupOutput');group.links.new(entry.outputs[0],exit.inputs[0]);instance=tree.nodes.new('CompositorNodeGroup');instance.node_tree=group;tree.links.new(source,instance.inputs[0]);source=instance.outputs[0]
  elif route=='reroute':
@@ -53,18 +64,18 @@ for definition in CASES:
   separate=tree.nodes.new('FunctionNodeRotationToQuaternion');tree.links.new(source,separate.inputs[0]);outputs=separate.outputs
  color=tree.nodes.new('CompositorNodeCombineColor');color.mode='RGB';color.inputs[3].default_value=1
  for channel,index in enumerate(definition['indices']):tree.links.new(outputs[euler.COMPONENTS[index]],color.inputs[channel])
- tree.links.new(color.outputs[0],sink.inputs[0]);before=shared._ownership();cache={};private=[euler.evaluate_output(separate.outputs[euler.COMPONENTS[index]],oracle.scene,cache,stack,compositor_graph.static_selection.static_selection)['word']for index in definition['indices']];assert before==shared._ownership();assert cache['evaluator'].native_evaluations==1
+ tree.links.new(color.outputs[0],sink.inputs[0]);before=shared._ownership();cache={};private=[family.evaluate_output(separate.outputs[euler.COMPONENTS[index]],oracle.scene,cache,stack,compositor_graph.static_selection.static_selection)['word']for index in definition['indices']];assert before==shared._ownership();assert cache['evaluator'].native_evaluations==1
  if 'manualQuaternionWords'in definition:assert private==[definition['manualQuaternionWords'][i]for i in definition['indices']]
- program=compositor_graph.extract(oracle.scene);assert program['status']=='extracted',program;assert len(program['compileTimeRotations'])==len(definition['indices']);assert all(op['kind']in{'value','combine-color'}for op in program['ops']);assert [r['word']for r in program['compileTimeRotations']]==private;assert all(r['model']==euler.MODEL and r['preFloatStoreHashGuard']and r['eulerInputWords']==definition['inputWords']for r in program['compileTimeRotations'])
+ program=compositor_graph.extract(oracle.scene);assert program['status']=='extracted',program;assert len(program['compileTimeRotations'])==len(definition['indices']);assert all(op['kind']in{'value','combine-color'}for op in program['ops']);assert [r['word']for r in program['compileTimeRotations']]==private;assert all(r['model']==family.MODEL and r['preFloatStoreHashGuard']and r['eulerInputWords']==definition['inputWords']for r in program['compileTimeRotations'])
  label=definition['case'];program_file=DEST/(label+'.program.json');program_file.write_text(json.dumps(program,indent=2)+'\n');source_file=DEST/(label+'.blend')if definition['saved']else None
  if source_file:bpy.ops.wm.save_as_mainfile(filepath=str(source_file));source_sha=sha(source_file)
  pixels=image_words(label);wanted=private+[0]*(3-len(private))+[0x3f800000];assert np.array_equal(pixels.view(np.uint32).reshape(16,4),np.tile(wanted,(16,1))),(label,pixels.view(np.uint32)[:4],wanted);pixel_file=DEST/(label+'.rgba32f');pixel_file.write_bytes(pixels.tobytes())
  witnesses=[]
  for position,index in enumerate(definition['indices']):
   witness={'componentIndex':index,**hash_carrier(outputs[euler.COMPONENTS[index]],label+'.hash-'+str(index))};assert witness['hashWord']==euler._hash_word(private[position]);witnesses.append(witness)
- assert list(euler._raw_euler(constructor))==definition['inputWords'];assert shared._ownership()==before;assert compositor_graph.extract(oracle.scene)['compileTimeRotations']==program['compileTimeRotations']
+ assert list(get_euler(producer))==definition['inputWords'];assert shared._ownership()==before;assert compositor_graph.extract(oracle.scene)['compileTimeRotations']==program['compileTimeRotations']
  yy,xx=np.mgrid[:4,:4];control=np.stack([xx/16,yy/16,(xx+3*yy)/64,np.ones_like(xx)],axis=-1).astype(np.float32);input_file=DEST/(label+'.input32f');input_file.write_bytes(control.tobytes());row={**definition,'rgbaWords':wanted,'privateMFWords':private,'nativeEvaluations':1,'programFile':program_file.name,'programSha256':sha(program_file),'pixelFile':pixel_file.name,'pixelSha256':sha(pixel_file),'inputFile':input_file.name,'inputSha256':sha(input_file),'hashWitnesses':witnesses}
  if source_file:assert sha(source_file)==source_sha;row.update(sourceFile=source_file.name,sourceSha256=source_sha)
  rows.append(row)
 assert pins=={str(p.relative_to(ROOT)):sha(p)for p in paths},'Source closure changed during native capture'
-report={'schemaVersion':1,'status':'CAPTURED_COMPOSITOR_STATIC_EULER','version':list(bpy.app.version),'build':bpy.app.build_hash.decode(),'device':'CPU','sceneEngine':oracle.scene.render.engine,'resultPrecision':'CPU_FLOAT32','sourceHashes':pins,'cases':rows,'wordDifferences':0,'privateMFEndpointComparisons':sum(len(r['indices'])for r in rows),'hashCalibration':calibration,'nativeCPURenders':renders,'gpuInitializationCalls':0,'finalCredit':0,'browserCredit':0};(DEST/'qualification.json').write_text(json.dumps(report,indent=2)+'\n');print(report['status'],len(rows),report['privateMFEndpointComparisons'],renders)
+report={'schemaVersion':1,'status':'CAPTURED_COMPOSITOR_STATIC_EULER','version':list(bpy.app.version),'build':bpy.app.build_hash.decode(),'device':'CPU','sceneEngine':oracle.scene.render.engine,'resultPrecision':'CPU_FLOAT32','sourceHashes':pins,'cases':rows,'wordDifferences':0,'privateMFEndpointComparisons':sum(len(r['indices'])for r in rows),'hashCalibration':calibration,'nativeCPURenders':renders,'gpuInitializationCalls':0,'finalCredit':0,'browserCredit':0,**({'variant':'input-rotation'}if INPUT_ROTATION else{})};(DEST/'qualification.json').write_text(json.dumps(report,indent=2)+'\n');print(report['status'],len(rows),report['privateMFEndpointComparisons'],renders)

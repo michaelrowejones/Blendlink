@@ -52,6 +52,17 @@ const extension=built?'.js':'.ts',module=name=>join(runtimeDirectory,name+extens
 const server=await createServer({root:fixture,configFile:false,publicDir:final?join(directory,'compiled/public'):false,logLevel:'warn',optimizeDeps:{noDiscovery:true},resolve:{dedupe:['three'],alias:{'@selection-recipe':module('tslNodeRecipe'),'@selection-materials':module('tslMaterialRuntime'),'@selection-compositor':module('tslSourceCompositor'),'@selection-source':module('sourceDisplay'),'@selection-pipeline':module('threeWebgpuPostPipeline'),'@selection-bindings':module('runtime')}},server:{host:'127.0.0.1',port:0,watch:null,hmr:false,fs:{allow:[root,directory,runtimeDirectory]}}})
 const report={status:'running',built,final,profile,sourceContext:qualification.context,provenance,rows:[]};let browser
 const save=()=>writeFile(join(destination,'report.json'),JSON.stringify(report,null,2)+'\n')
+const archiveInt3Readbacks=async(backend,rows)=>{
+ if(variant!=='integer-vector3')return
+ await mkdir(join(destination,'readbacks'),{recursive:true})
+ for(const entry of rows){assert.ok(cases.some(x=>x.case===entry.case),'Unknown readback case')
+  for(const capture of entry.readbacks){assert.ok(['primary','repeat','reinstalled'].includes(capture.phase));assert.equal(capture.words.length,256)
+   const bytes=Buffer.alloc(1024);for(let i=0;i<256;i++){assert.ok(Number.isInteger(capture.words[i])&&capture.words[i]>=0&&capture.words[i]<=0xffffffff);bytes.writeUInt32LE(capture.words[i],i*4)}
+   capture.wordFile='readbacks/'+backend+'-'+entry.case+'-'+capture.phase+'.u32';capture.wordSha256=hash(bytes);await writeFile(join(destination,capture.wordFile),bytes,{flag:'wx'});delete capture.words
+  }
+ }
+}
+
 try{
  await server.listen();browser=await chromium.launch({headless:true,...(process.env.BLENDLINK_TEST_CHROMIUM_CHANNEL?{channel:process.env.BLENDLINK_TEST_CHROMIUM_CHANNEL}:{}),args:['--enable-unsafe-webgpu','--enable-unsafe-swiftshader',...JSON.parse(process.env.BLENDLINK_TEST_CHROMIUM_ARGS??'[]')]});report.browserVersion=browser.version()
  for(const backend of ['webgpu','webgl2']){
@@ -65,7 +76,8 @@ try{
    },{context:qualification.context,final,cases,variant})
    assert.equal(negative.refused,true);assert.match(negative.error,/actual WebGPU adapter/);report.missingAdapterControl=negative
   }
-  const row=await page.evaluate(proof=>window.staticSelectionProof(proof),{context:qualification.context,final,cases,variant});report.rows.push({...row,pageErrors:errors});await save()
+  let row;try{row=await page.evaluate(proof=>window.staticSelectionProof(proof),{context:qualification.context,final,cases,variant})}catch(error){if(variant==='integer-vector3'){const failed=await page.evaluate(()=>window.integerVector3Readbacks??[]);await archiveInt3Readbacks(backend,failed);await writeFile(join(destination,'failed-readbacks-'+backend+'.json'),JSON.stringify(failed,null,2)+'\n')}throw error}
+  await archiveInt3Readbacks(backend,row.rows);report.rows.push({...row,pageErrors:errors});await save()
   assert.equal(row.backend,backend);assert.equal(row.gpu.api,backend==='webgpu'?'WebGPU':'WebGL2');assert.deepEqual(errors,[]);assert.deepEqual(row.errors,[]);assert.equal(row.rows.length,cases.length);assert.deepEqual(row.rows.map(x=>x.case),cases.map(x=>x.case));for(const x of row.rows){assert.equal(x.wordMismatches,0);assert.equal(x.remainingTextures,0);assert.equal(x.ownershipPreserved,true);assert.equal(x.finalBindings,final);if(final)assert.equal(x.pinRejected,true)}
   if(profile==='metal'){assert.match(JSON.stringify(row.gpu),/apple|metal/i);assert.doesNotMatch(JSON.stringify(row.gpu),/swiftshader/i)}else assert.match(JSON.stringify(row.gpu),/swiftshader/i)
   await page.close()

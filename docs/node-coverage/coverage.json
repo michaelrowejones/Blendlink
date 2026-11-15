@@ -1,5 +1,5 @@
 {
-  "capabilityMapSha256": "439e0e50a6538d9f4fbf7953b8c430c2da9a1138723c96f69a990cfdbfd9ec53",
+  "capabilityMapSha256": "d8c553e6370a0695e53e983a88543df22e551c04503b447941880dc8ab85cb63",
   "capabilityValidationFailures": [],
   "classificationRefresh": {
     "catalogSha256": {
@@ -12,7 +12,7 @@
     "nativeInventoryRefreshed": false,
     "reason": "Classification-only refresh against unchanged content-pinned full inventories; no native rediscovery or numerical qualification is performed."
   },
-  "generatedAt": "2026-11-15T00:32:49.188430+00:00",
+  "generatedAt": "2026-11-15T03:28:05.939156+00:00",
   "nativeAvailabilityChanges": [],
   "nativeCatalogSha256": {
     "docs/node-coverage/blender-4.2.0.json": "2f71cb192f6a62e0e343ba5fcb11a2d8e0c6f6af1e8ac663ec6c3350b016b151",
@@ -9914,11 +9914,81 @@
               "category": "unsupported",
               "declaredCategory": "unsupported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_integer_vector.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_integer_vector_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorIntegerVector.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorIntegerVector.test.ts"
+                },
+                {
+                  "path": "experiments/static-switch-family/int-vector3-cases.json"
+                },
+                {
+                  "path": "experiments/static-switch-family/int_vector3_cases.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/reference.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/export.test.ts"
+                },
+                {
+                  "path": "experiments/static-switch-family/browser.js"
+                },
+                {
+                  "path": "experiments/static-switch-family/run.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/protocol.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/protocol.test.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-int-vector3/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-int-vector3/README.md"
+                },
+                {
+                  "path": "experiments/compositor-int-vector3/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-int-vector3/evidence-next53-manual.json"
+                },
+                {
+                  "path": "node-ports/compositor-integer-vector3.json"
+                },
+                {
+                  "anchor": "case 'integer-vector':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "experiments/compositor-int-vector3/evidence-next54-automatic.json"
+                },
+                {
+                  "path": "experiments/compositor-int-vector3/evidence-next56-automatic.json"
+                }
+              ],
               "id": "FunctionNodeInputIntVector",
               "label": "Integer Vector",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "No admitted route outside the explicitly qualified pinned Blender 5.3 CPU three-component override. Native availability alone is not support.",
+              "runtimeOps": [
+                "integer-vector"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -9955,10 +10025,102 @@
               "category": "unsupported",
               "declaredCategory": "unsupported",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def evaluate_output(",
+                  "path": "packages/blendlink/blender/compositor_input_rotation.py"
+                },
+                {
+                  "anchor": "def raw_float_array_words(",
+                  "path": "packages/blendlink/blender/compositor_raw_arrays.py"
+                },
+                {
+                  "anchor": "record=input_rotation.evaluate_output(socket,scene,input_rotation_cache,tuple(reversed(frames)),static_selection.static_selection)",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "anchor": "case 'value':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_input_rotation_check.py"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/input-rotation-cases.json"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/input-rotation-contract.json"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/input-rotation-sources.json"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/policy.py"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/reference.py"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/export.test.ts"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/browser.js"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/run.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/protocol.test.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/input-rotation-readbacks.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/input-rotation-readbacks.test.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/input-rotation-owned-files.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/input-rotation-owned-files.test.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/README.md"
+                },
+                {
+                  "path": "node-ports/compositor-input-rotation.json"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/input-rotation-evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/input-rotation-evidence-next57.json"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/input-rotation-evidence-next56.json"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/input-rotation-evidence-next56-automatic.json"
+                },
+                {
+                  "path": "experiments/public-rna-array/evidence.json"
+                },
+                {
+                  "path": "experiments/public-input-rotation/evidence.json"
+                },
+                {
+                  "path": "experiments/public-input-rotation/signed-evidence.json"
+                }
+              ],
               "id": "FunctionNodeInputRotation",
               "label": "Rotation",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "No live route outside the explicitly qualified pinned Blender 5.3 CPU static Input Rotation override. Native availability and internal MF evaluation alone grant no support.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -12456,11 +12618,75 @@
                   "Z_AXIS": "unsupported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def normalize",
+                  "path": "packages/blendlink/blender/compositor_vector_rotate.py"
+                },
+                {
+                  "anchor": "def validate_graph",
+                  "path": "packages/blendlink/blender/compositor_vector_rotate.py"
+                },
+                {
+                  "anchor": "\"ShaderNodeVectorRotate\": \"vector-rotate-cpu\"",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "anchor": "export class CompositorVectorRotate",
+                  "path": "packages/blendlink/src/tslCompositorVectorRotate.ts"
+                },
+                {
+                  "anchor": "case 'vector-rotate-cpu':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "anchor": "validateVectorRotatePresentation",
+                  "path": "packages/blendlink/src/threeWebgpuPostPipeline.ts"
+                },
+                {
+                  "anchor": "export class OwnedCompositorRowTable",
+                  "path": "packages/blendlink/src/tslCompositorRowTable.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorVectorRotate.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_vector_rotate_check.py"
+                },
+                {
+                  "path": "experiments/compositor-vector-rotate/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-vector-rotate/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-vector-rotate/reference.py"
+                },
+                {
+                  "path": "experiments/compositor-vector-rotate/native-reader.mjs"
+                },
+                {
+                  "path": "experiments/compositor-vector-rotate/browser.js"
+                },
+                {
+                  "path": "experiments/compositor-vector-rotate/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-vector-rotate/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-vector-rotate/README.md"
+                },
+                {
+                  "path": "node-ports/compositor-vector-rotate.json"
+                }
+              ],
               "id": "ShaderNodeVectorRotate",
               "label": "Vector Rotate",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "No admitted compositor route outside the explicitly qualified Blender 5.3 CPU fixed-axis override. Native availability and the separate shader implementation do not grant compositor support.",
+              "runtimeOps": [
+                "vector-rotate-cpu"
+              ],
               "unreviewedCapability": false
             }
           ],
@@ -16174,16 +16400,16 @@
         "compositor": {
           "counts": {
             "bake-only": 0,
-            "partial": 75,
+            "partial": 78,
             "structural": 7,
             "supported": 24,
-            "unsupported": 81
+            "unsupported": 78
           },
           "enumValueCounts": {
             "partial": 42,
             "structural": 3,
-            "supported": 296,
-            "unsupported": 591
+            "supported": 299,
+            "unsupported": 588
           },
           "nodes": [
             {
@@ -19960,14 +20186,84 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "path": "packages/blendlink/blender/compositor_integer_vector.py"
+                },
+                {
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_integer_vector_check.py"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorIntegerVector.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorIntegerVector.test.ts"
+                },
+                {
+                  "path": "experiments/static-switch-family/int-vector3-cases.json"
+                },
+                {
+                  "path": "experiments/static-switch-family/int_vector3_cases.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/reference.py"
+                },
+                {
+                  "path": "experiments/static-switch-family/export.test.ts"
+                },
+                {
+                  "path": "experiments/static-switch-family/browser.js"
+                },
+                {
+                  "path": "experiments/static-switch-family/run.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/protocol.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/protocol.test.mjs"
+                },
+                {
+                  "path": "experiments/static-switch-family/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-int-vector3/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-int-vector3/README.md"
+                },
+                {
+                  "path": "experiments/compositor-int-vector3/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-int-vector3/evidence-next53-manual.json"
+                },
+                {
+                  "path": "node-ports/compositor-integer-vector3.json"
+                },
+                {
+                  "anchor": "case 'integer-vector':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "experiments/compositor-int-vector3/evidence-next54-automatic.json"
+                },
+                {
+                  "path": "experiments/compositor-int-vector3/evidence-next56-automatic.json"
+                }
+              ],
               "id": "FunctionNodeInputIntVector",
               "label": "Integer Vector",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Pinned Blender 5.3.0 build 02f0899d78e3, macOS arm64 CPU compositor AUTO/FULL only. Static unmuted FunctionNodeInputIntVector with vector_dimensions=3 and exact signed Int32 RNA property; distinct INT_VECTOR3 identity. Exactly one terminal constructor with direct int3-to-RGBA or explicit int3-to-float3-to-RGBA presentation, componentwise RN-even Float32 and alpha one. Native typed groups/reroutes may forward that value; all operations must contribute. Source property/schema, group ancestry, used topology and scene/root/frame context are rechecked after extraction. Forged negative zero, Boolean/fractional/out-of-range components, linked controls, animation/actions/drivers/NLA and native mute bypass refuse. Dimensions two/other widths, scalar/INT/Boolean/float2/int2/int3-to-float4 conversions and arbitrary consumers remain unqualified; existing INT_VECTOR2 and legacy float3 semantics are unchanged. Actual 8x8 native CPU and exported/installed Final linear words are exact on observed Apple Metal and SwiftShader WebGPU/WebGL2 via WebGPURenderer. No EEVEE/native GPU compositor, other versions/hosts/devices, resize, whole-scene appearance, Cycles/Three plate or PBR equality claim.",
+              "runtimeOps": [
+                "integer-vector"
+              ],
               "unreviewedCapability": false
             },
             {
@@ -20001,13 +20297,105 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {},
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def evaluate_output(",
+                  "path": "packages/blendlink/blender/compositor_input_rotation.py"
+                },
+                {
+                  "anchor": "def raw_float_array_words(",
+                  "path": "packages/blendlink/blender/compositor_raw_arrays.py"
+                },
+                {
+                  "anchor": "record=input_rotation.evaluate_output(socket,scene,input_rotation_cache,tuple(reversed(frames)),static_selection.static_selection)",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "anchor": "case 'value':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_input_rotation_check.py"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/input-rotation-cases.json"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/input-rotation-contract.json"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/input-rotation-sources.json"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/policy.py"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/reference.py"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/export.test.ts"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/browser.js"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/run.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/protocol.test.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/input-rotation-readbacks.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/input-rotation-readbacks.test.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/input-rotation-owned-files.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/input-rotation-owned-files.test.mjs"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/README.md"
+                },
+                {
+                  "path": "node-ports/compositor-input-rotation.json"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/input-rotation-evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/input-rotation-evidence-next57.json"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/input-rotation-evidence-next56.json"
+                },
+                {
+                  "path": "experiments/compositor-static-euler/input-rotation-evidence-next56-automatic.json"
+                },
+                {
+                  "path": "experiments/public-rna-array/evidence.json"
+                },
+                {
+                  "path": "experiments/public-input-rotation/evidence.json"
+                },
+                {
+                  "path": "experiments/public-input-rotation/signed-evidence.json"
+                }
+              ],
               "id": "FunctionNodeInputRotation",
               "label": "Rotation",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
+              "limits": "Pinned Blender 5.3.0 build 02f0899d78e3 macOS arm64 CPU compositor static FunctionNodeInputRotation -> RotationToQuaternion Float component presentation only. Each original rotation_euler Float32 component must be positive zero or signed normal with |angle| <= 8 radians; public whole-property path_resolve(coerce=False).foreach_get(array(f)) reads raw words before Python-number promotion. Negative zero, subnormal, nonfinite and out-of-range inputs refuse. All four actual native output words must be normal Float32 or positive zero and match independent pre-Float-store HashValue INT witnesses before tuple/cache commit: data-dependent native signed-zero/subnormal output failures refuse without sign repair, normalization, canonicalization or wrapping (including measured axis pi/multi-turn cases). Literal producer groups, linked opaque Rotation group forwarding, Float endpoint groups and reroutes use bounded typed traversal; actual constructor mute, unlinked Rotation defaults, implicit casts, animation/actions/drivers/NLA, mixed/recombined constructors and arbitrary Rotation arithmetic/fields remain unqualified. Separate extraction-owned flat-ID recipe/result cache bounds source node instances64, source/recipe depth16, socket visits/recipe records2048 and evaluated islands16, including cached subtree/group hops. Actual raw properties, source/group ancestry/bindings, selected topology and scene/root/frame/CPU context are rechecked before/after native evaluation and at whole-extraction close. One owned sixteen-node one-point Geometry CPU-MF reference captures all four components and pre-store hashes per unique island; this internal oracle is not a Geometry Nodes support claim. Native objects/meshes/scenes/trees are released in finally, including handler-deleted IDs. Existing VALUE constants carry exact components; no live ROTATION runtime value/kernel, GPU trig/normalization, added runtime texture/pass/readback or per-frame native work. Actual native CPU compositor FULL EXR32 and saved original Final sources compare exactly on observed Apple Metal and SwiftShader WebGPU/WebGL2 via WebGPURenderer. The qualified Final display is explicitly actual Raw/None with no OCIO operations and alpha1; it is not arbitrary display or whole-scene appearance fidelity. No shader-tree/EEVEE/native GPU compositor, other versions/builds/hosts, legacy WebGLRenderer or generic MF/Quaternion/Euler scope widening. Existing Euler and Quaternion models keep their own narrower contracts.",
               "runtimeOps": [],
               "unreviewedCapability": false
             },
@@ -22740,22 +23128,86 @@
               "unreviewedCapability": false
             },
             {
-              "category": "unsupported",
-              "declaredCategory": "unsupported",
+              "category": "partial",
+              "declaredCategory": "partial",
               "enumCoverage": {
                 "rotation_type": {
                   "AXIS_ANGLE": "unsupported",
                   "EULER_XYZ": "unsupported",
-                  "X_AXIS": "unsupported",
-                  "Y_AXIS": "unsupported",
-                  "Z_AXIS": "unsupported"
+                  "X_AXIS": "supported",
+                  "Y_AXIS": "supported",
+                  "Z_AXIS": "supported"
                 }
               },
-              "evidence": [],
+              "evidence": [
+                {
+                  "anchor": "def normalize",
+                  "path": "packages/blendlink/blender/compositor_vector_rotate.py"
+                },
+                {
+                  "anchor": "def validate_graph",
+                  "path": "packages/blendlink/blender/compositor_vector_rotate.py"
+                },
+                {
+                  "anchor": "\"ShaderNodeVectorRotate\": \"vector-rotate-cpu\"",
+                  "path": "packages/blendlink/blender/compositor_graph.py"
+                },
+                {
+                  "anchor": "export class CompositorVectorRotate",
+                  "path": "packages/blendlink/src/tslCompositorVectorRotate.ts"
+                },
+                {
+                  "anchor": "case 'vector-rotate-cpu':",
+                  "path": "packages/blendlink/src/tslSourceCompositor.ts"
+                },
+                {
+                  "anchor": "validateVectorRotatePresentation",
+                  "path": "packages/blendlink/src/threeWebgpuPostPipeline.ts"
+                },
+                {
+                  "anchor": "export class OwnedCompositorRowTable",
+                  "path": "packages/blendlink/src/tslCompositorRowTable.ts"
+                },
+                {
+                  "path": "packages/blendlink/src/tslCompositorVectorRotate.test.ts"
+                },
+                {
+                  "path": "packages/blender-addon/tests/compositor_vector_rotate_check.py"
+                },
+                {
+                  "path": "experiments/compositor-vector-rotate/sources.json"
+                },
+                {
+                  "path": "experiments/compositor-vector-rotate/protocol.mjs"
+                },
+                {
+                  "path": "experiments/compositor-vector-rotate/reference.py"
+                },
+                {
+                  "path": "experiments/compositor-vector-rotate/native-reader.mjs"
+                },
+                {
+                  "path": "experiments/compositor-vector-rotate/browser.js"
+                },
+                {
+                  "path": "experiments/compositor-vector-rotate/verify.mjs"
+                },
+                {
+                  "path": "experiments/compositor-vector-rotate/evidence.json"
+                },
+                {
+                  "path": "experiments/compositor-vector-rotate/README.md"
+                },
+                {
+                  "path": "node-ports/compositor-vector-rotate.json"
+                }
+              ],
               "id": "ShaderNodeVectorRotate",
               "label": "Vector Rotate",
-              "limits": "No audited compiler/extractor + runtime route; an Appearance capture is not a live node port.",
-              "runtimeOps": [],
+              "limits": "Pinned Blender 5.3.0 build 02f0899d78e3 macOS arm64 CPU compositor FULL/AUTO. Fixed X/Y/Z modes, both Invert. Angle must be an unlinked raw positive zero or normal Float32 magnitude in [2^-16,1] radians; Center and literal Vector components positive zero or normal magnitude in [2^-16,16]. The only varying input is direct qualified Image Coordinates Normalized from the original current-scene full-frame Render Layers Image, padded to native VECTOR3 with Z=+0. Private exact half-center R32F rows leave the old public Normalized precision contract unchanged. Zero-offset square-pixel mono physical extents 4..8192, including actual resize/DPR. Same native fixed-axis MF captures three basis columns with raw/source/ownership and pre-store hash guards; exact staged subtract, three products, left-associated sums and recenter use private F32 barriers. At most one Rotate per closed graph, direct VECTOR-to-RGBA or qualified Separate XYZ/positive-zero-or-one RGB presentation with alpha one. Actual original FRAME producer binding, renderer epoch, target/viewport/mip/DPR, row/table binding and version guards survive constant outputs; producer scheduling precedes outer geometry setup. Closed native/actual saved Final/all four API-profile qualification. No native AXIS_ANGLE default, EULER_XYZ, linked/computed controls, other fields, scalar mean conversions, arbitrary amplification/spatial consumers, XR, external pipeline effects, animation/drivers/NLA, shader or EEVEE arithmetic, other source builds/hosts, or original-demo acceptance.",
+              "runtimeOps": [
+                "vector-rotate-cpu"
+              ],
               "unreviewedCapability": false
             }
           ],
@@ -27426,12 +27878,14 @@
     "packages/blendlink/blender/compositor_filter.py": "75a44f5e55e070feac7420d5bff097dfe7aa23208f07672e1b0970406168d4e2",
     "packages/blendlink/blender/compositor_float_coordinates.py": "a300cbfb6e5ea06806e2fb9b9d7795cd2e3b91cb21ada43e4c128ac89d8f0cec",
     "packages/blendlink/blender/compositor_float_to_int.py": "6292f5a5904107b59591c282fcf9def24a5f98dc2ead0a92d950b6219226658d",
-    "packages/blendlink/blender/compositor_graph.py": "5fe0af4b6c9b69ad3fc60ded9f7134e4b6c8f2546da93e6cbf422e3e91a51c4d",
+    "packages/blendlink/blender/compositor_graph.py": "a134710c6ab837be4cea3a7e5add76f255a5845bb307b004f09c59128553445e",
     "packages/blendlink/blender/compositor_group_defaults.py": "484fea6a45208531f189e65d627747f94c1386b98a9a6b460a21f51afa01889d",
     "packages/blendlink/blender/compositor_image.py": "55ee3b7800002331c4e30042a7d5da18538267b58ff60c006e03ad238da9e012",
     "packages/blendlink/blender/compositor_image_coordinates.py": "4b796327c579e7c08ed487cce4758c899a1a11be648e93977c22a0536451054a",
     "packages/blendlink/blender/compositor_image_info.py": "92e3f2488f646b8f7f79de67940717c54bd3e4cfc69956090b31ebd9b0e64729",
+    "packages/blendlink/blender/compositor_input_rotation.py": "9c3dd43560d0f0c0d7761686cd223747a61f6d2fbf435b0f553c547b0ff65ba8",
     "packages/blendlink/blender/compositor_integer_bits.py": "1ea63649a2ae0a3760b9b02fe3ed9441aaa0bdfaa35eeb1e2ec77802466a4f99",
+    "packages/blendlink/blender/compositor_integer_vector.py": "c5c9cccd9b2839e9698b4fd373d4652e11b70e6641c0141d605edf85efe656d4",
     "packages/blendlink/blender/compositor_luminance_key.py": "5391ac3ca522590a0bffa0a2ef3ca25c8be44d0218381fa9f3bc48ab14edb3cd",
     "packages/blendlink/blender/compositor_map_value.py": "784d1ba979b02e2e665b41818d4efd8912c5fe35ae821ea39135912fda3fe5fe",
     "packages/blendlink/blender/compositor_map_value_domain.py": "ff43991bf956ed131835b671f9d44c0a80e23b9888c53903f6486c5a287448eb",
@@ -27441,6 +27895,7 @@
     "packages/blendlink/blender/compositor_pixelate.py": "607f738a09fc75f15facb9cb0c261bfb72800663d5908826e5d105d980800b3d",
     "packages/blendlink/blender/compositor_procedural_texture.py": "70d34a56ea67a67aecd899fb05e66716746865c190e9d9f2bd4289b6df2bf025",
     "packages/blendlink/blender/compositor_radial_width.py": "4b572924063f901030e779ac0c78a6a75229b22efc4df0741c55463a1f27d172",
+    "packages/blendlink/blender/compositor_raw_arrays.py": "d0ac00a3f579d8ca7bb2d78025c1f0fb59591280d24df1a2333d95931dc1982f",
     "packages/blendlink/blender/compositor_relative_to_pixel.py": "a276d2e5fa7b0743b26c5e6fdba67cff3f884f2535f88c01ca0c536a8ce85870",
     "packages/blendlink/blender/compositor_spill.py": "8a7774222b7f126bcc6a42f0a526d953b2fe858b4f47c7018cd741ee94f56269",
     "packages/blendlink/blender/compositor_split.py": "1c25e68653abf9c8c8b2a88c3c7751a324fb4838a5feaacae309fe332e511a08",
@@ -27451,6 +27906,7 @@
     "packages/blendlink/blender/compositor_utilities.py": "b92be3bb89c05d9a943a08298bb3114274cf67f14f985ba84e3f5dbc9eddc384",
     "packages/blendlink/blender/compositor_vector_component.py": "8b29742404fa7d80d2bdc661363a052bc1a2680b3306a2a47b20d0d9e5bfe20c",
     "packages/blendlink/blender/compositor_vector_math.py": "94a78be4e19d1b824b046665250fccb801e363b2339253a7f047c2e76532e0f9",
+    "packages/blendlink/blender/compositor_vector_rotate.py": "5abbdc82585d43a96cc5a54e994555a42eefcc13b84677ed73f144c1d2ea5350",
     "packages/blendlink/blender/compositor_view_selection.py": "f5ef756dfd61ca8047f55bb004c74372f7af27fff357a74476d8d0c5432ab491",
     "packages/blendlink/blender/compositor_wave_axis.py": "f36726191e86c79695e1dab086137002c6a71d2c6a2ba560928b6274b24f1f2c",
     "packages/blendlink/blender/compositor_white_noise.py": "b98321026920b3d39c62a0e5331d74f758eb94d4d5c067a9c2d2b9d8eb4c23fa",
@@ -27459,7 +27915,7 @@
     "packages/blendlink/blender/geometry_export.py": "3d147a218ee96f0bf72ffeb5add773396347fc39224501eb62d5d7f67551fd2d",
     "packages/blendlink/blender/native_color_band.py": "23aa27b056846d42cdb96919da968d04f9e8e44d794ffa10c80871f786bfc8d4",
     "packages/blendlink/blender/normal_bake_transport.py": "1e6211bb197f6e015262f80937112ec594e70977945fc1259133aa8ffd36429e",
-    "packages/blendlink/blender/source_presentation.py": "b6abe72f0c1bee19b20d118646751c1cae19a9b27a4f27ca3591ad313c2101d6",
+    "packages/blendlink/blender/source_presentation.py": "da900105ad5bdf9f0a3586d856f29e64a3e169ba46a7c13975f065319dd7ea24",
     "packages/blendlink/blender/tangent_export.py": "4815854bd825e910009b42de73ecf5aa9cc0bb07966bb2d688731e5df12b514e",
     "packages/blendlink/src/compiledMaterialPrograms.ts": "d6f2d9471ec145d7ed7b2abc395221eb316a7daa55a004ebf8b0c3d2fecc6cec",
     "packages/blendlink/src/compiledSceneAudit.ts": "08fded1eb26f0fb964401d24699bd6ea0bc26aa9c0536c764a8965f0124748a5",
@@ -27468,7 +27924,7 @@
     "packages/blendlink/src/sceneDiagnostics.ts": "48b8d220ad2b5216f496694ef1b29c19903e90cc65fc9ce01bda77e21c84dc0e",
     "packages/blendlink/src/staticNoise4d.ts": "0677ad1169801c601d74b8a5658d98691415bf313081ca0b4fa88ec762e62a76",
     "packages/blendlink/src/threeRuntime.ts": "05fc757a5c39a14180ef4407a51894f7fc60508679564f1267e74815231629ed",
-    "packages/blendlink/src/threeWebgpuPostPipeline.ts": "7c81531ffb120cdfe7217780a5b07a0b07ceeb86e1c044ae96adf5da82b1da46",
+    "packages/blendlink/src/threeWebgpuPostPipeline.ts": "d72dbc2e96e2fbee4e0007a3928611149ee0b8683ffb69e48afce4f98df3c848",
     "packages/blendlink/src/tslBlackbodyCoefficients.ts": "39d17f54a1bb7f394bae6393200badb5faa756e9772ea4d4ef92f878ff4fac18",
     "packages/blendlink/src/tslBrickNodes.ts": "5b61f5565af2b818d3a507b3cc0b408f1ef3537d5d8cb64517280f8473afde9b",
     "packages/blendlink/src/tslBumpHeight.ts": "3c8622196e1fcdbbbdafcd76a85f42a545e05a54fc8ad61002e5a259d2fd2f8f",
@@ -27510,6 +27966,7 @@
     "packages/blendlink/src/tslCompositorImageDomain.ts": "47200f793954bf2c7f6a4e0a049533f53e94c6063368dbed4861461b9e69c1e0",
     "packages/blendlink/src/tslCompositorImageInfo.ts": "c7124d8af5c3e5f02fc4780ad06faaf122daadf1d686e14aa2cfd87d58073390",
     "packages/blendlink/src/tslCompositorIntegerBits.ts": "cf59d1b7fe476b8489d6a2d28e745f2a088a8f03798c4d44dfe41fa9e482f748",
+    "packages/blendlink/src/tslCompositorIntegerVector.ts": "de53d13e41ce347a22af780041a9ab8c98a398cc1660378ad7b54be64ee61aa6",
     "packages/blendlink/src/tslCompositorLumaGradual.ts": "f6497d953d2371b323fbfb0c1d4e98b543d2387528b49c7538ccb1e25ee491ed",
     "packages/blendlink/src/tslCompositorLuminanceKey.ts": "3858b364150d9dc847ea05ee4ef768cb9b2ef5fae3c0ece240f3c3c1016e23c4",
     "packages/blendlink/src/tslCompositorMapValue.ts": "a3ec846d3af2a2e91e234a0c425c192f3dbaacad0319af11a4414f42baa7e538",
@@ -27531,6 +27988,7 @@
     "packages/blendlink/src/tslCompositorStaticImageDomain.ts": "9debeb93e0cf40596793d89629581f738d5e50bd55e2dc68ddfddb36e18e53e8",
     "packages/blendlink/src/tslCompositorTextureField.ts": "e4816ef165f41d5f667f0b6667a03a6d94283ef737aaa945f9912a42157d4023",
     "packages/blendlink/src/tslCompositorVectorMath.ts": "72e656d14d7a1a7d83e2102b36803a48af72392623ac7129db4ebda58717dd9a",
+    "packages/blendlink/src/tslCompositorVectorRotate.ts": "e19b94c528a8e3ac48dca62932e47d96f28739fa7442f78bfe788be221f7f4ee",
     "packages/blendlink/src/tslCompositorWaveAxis.ts": "19305925d6c13f172a4d44a082f4da51be94e4415126c567e088cce77153de2a",
     "packages/blendlink/src/tslCompositorWaveField.ts": "2377aec6dfe65cd3a14ddeeb52bd635755b9f2bf8169c99f73217268a95a080e",
     "packages/blendlink/src/tslCompositorWhiteNoise.ts": "3cd7b1e681bb3c4e93930d4d0c61ff2c6d12c086f0a292b0f2decedbc833a661",
@@ -27566,7 +28024,7 @@
     "packages/blendlink/src/tslRadialWidth.ts": "9ffc9e3a7e32b3d0676b2a90fffad64e2578cd30d160ddaf00278d2d9ff43719",
     "packages/blendlink/src/tslRepeat.ts": "4d7925f09220e54973155c6af8c41c98e3b32e141f5acbdc6d29741c701d9a93",
     "packages/blendlink/src/tslSharedUtilities.ts": "1f21b06a4d60a439b0549b7c6716c66945b4cce3cc00fc6e965acbe77c80d9b9",
-    "packages/blendlink/src/tslSourceCompositor.ts": "7684a2adc4b559ba0b9529907b7b228a4a67f851084a45669574156d60df5844",
+    "packages/blendlink/src/tslSourceCompositor.ts": "ba86ff7afbf635660a4ff56983ffe8e9dc1ec79c93af59fa7527fd1407c0d38b",
     "packages/blendlink/src/tslSpectralNodes.ts": "10719a4f7ceef71f80a9b3492561c382cd0904de209e0e93f9f578b5af529bf2",
     "packages/blendlink/src/tslSqueeze.ts": "14a56aa219ca2bb2dace54d512e8b9cfda754ea83991a92a1c270a1122ea492b",
     "packages/blendlink/src/tslTangentNodes.ts": "fb7ad452300be3e96a9f01b4f82f9ce59cb8577cf68e056df994876321cffcc1",

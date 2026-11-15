@@ -1,0 +1,63 @@
+{
+  "status": "RESEARCH_ONLY_NATIVE_SYMBOL_AVAILABILITY",
+  "supportCredit": 0,
+  "nativeFunctionCalls": 0,
+  "nativeRenders": 0,
+  "gpuInitializations": 0,
+  "version": [
+    5,
+    3,
+    0
+  ],
+  "build": "02f0899d78e3",
+  "lookup": "ctypes.CDLL(None), symbol availability only",
+  "control": {
+    "printf": true
+  },
+  "symbols": {
+    "eul_to_mat3": false,
+    "axis_angle_to_mat3": false,
+    "invert_m3_m3": false
+  },
+  "artifactDirectory": "artifacts/verification-vector-rotate-symbol-availability-r1",
+  "artifactPins": {
+    "report.json": {
+      "sha256": "80711381c3d2bc09273339a61de4aefa6cf81295413f14025eca6bea84a453bd",
+      "bytes": 428
+    },
+    "archive.json": {
+      "sha256": "141577d9ce4b74454ec917f1bd76b7f6e2d9c48d637f7c94646ed96ac6648daa",
+      "bytes": 5614
+    },
+    "native.log": {
+      "sha256": "b62e3c5a5d1239ac39420d6f7dee6a3c2c4e09ea1d8083b26a2d0ac29e146908",
+      "bytes": 190
+    }
+  },
+  "primarySources": [
+    {
+      "path": "source/blender/blenlib/BLI_math_rotation_c.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/BLI_math_rotation_c.hh",
+      "sha256": "c83e511770ae35027edd3f9313dca6c68b56fa4640e9ead47ab36730bd98ca40",
+      "bytes": 15498,
+      "license": "GPL-2.0-or-later",
+      "namespace": "blender",
+      "declarations": [
+        "void axis_angle_to_mat3(float R[3][3], const float axis[3], float angle);",
+        "void eul_to_mat3(float mat[3][3], const float eul[3]);"
+      ]
+    },
+    {
+      "path": "source/blender/blenlib/BLI_math_matrix_c.hh",
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/BLI_math_matrix_c.hh",
+      "sha256": "33ae7e421c625ef7cba29886cff2493bda5f62d1c210bda337915dfdaf29defe",
+      "bytes": 23991,
+      "license": "GPL-2.0-or-later",
+      "namespace": "blender",
+      "declarations": [
+        "bool invert_m3_m3(float inverse[3][3], const float mat[3][3]);"
+      ]
+    }
+  ],
+  "conclusion": "No legacy C-name entrypoint is available in CDLL(None). The pinned headers declare these functions inside namespace blender, not extern-C. No mangled entrypoint, guessed address or native ABI call was attempted; direct-coefficient FFI is deferred."
+}
