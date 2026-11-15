@@ -9,7 +9,7 @@ Do not require a new port to support older versions before admitting its measure
 The native Google Sheet is:
 https://docs.google.com/spreadsheets/d/1ISVg8n0WB60MtVdFkBPeBHRRfCPFylXer0cvwM9cwqk/edit
 
-The daily Codex chat automation `refresh-blendlink-node-coverage` runs at 9 a.m.
+The weekly Codex chat automation `refresh-blendlink-node-coverage` runs Mondays at 9 a.m.
 in the user's local schedule. It uses the connected Google Drive account and
 requires this computer/project and the desktop app to be available. No service
 account secret, public sharing or Google credentials are stored in the repository.
@@ -62,6 +62,10 @@ do not establish population-wide popularity. Completed declared scopes remain
 maintenance work; new input domains can reopen a work item.
 
 After each port, review its native/browser correctness, performance and actual
-scene evidence, update the audited capability map, then run a refresh. The daily
+scene evidence and update the audited capability map. Batch spreadsheet updates
+after meaningful published checkpoints; experimental ports and proof runs do not
+need Sheet writes. If the audited commit/content fingerprints match the last
+verified Sheet refresh, check its source marker and stop without rewriting rows
+or timestamps. The weekly
 schedule is a fallback for keeping the report current, not a replacement for
 that review or a guarantee that an unavailable computer can execute updates.

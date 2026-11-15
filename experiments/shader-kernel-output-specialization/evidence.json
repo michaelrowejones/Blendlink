@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "status": "OUTPUT_AWARE_SOURCE_CHECKPOINT",
+  "supportCredit": 0,
+  "FinalCredit": 0,
+  "productionFilesChanged": 0,
+  "generation": {
+    "path": "/tmp/scenetoweb-shader-output-specialization-r1/generation.json",
+    "sha256": "dcf08fe5f0327d16ef20c2e30708d2a5ff8c454e006ed36e56ac355be39534ba"
+  },
+  "module": {
+    "path": "/tmp/scenetoweb-shader-output-specialization-r1/module.json",
+    "sha256": "7a08abd6fa7b61003b58dea2331c271a1b75069196495aab9296fa4d29a681c7"
+  },
+  "kernelBodiesChanged": false,
+  "canonicalLibrarySha256": "d41ef47c89118dd1a1beed6e0cdaff7328db334f8cee96766b08e01fa6596c57",
+  "staticPreconditions": {
+    "noise": {
+      "dimensions": 3,
+      "type": "FBM",
+      "normalize": true,
+      "scale": 5,
+      "detail": 2,
+      "roughness": 0.5,
+      "lacunarity": 2,
+      "distortion": 0,
+      "selectedOutput": "Fac",
+      "compute_color": 0
+    },
+    "voronoi": {
+      "dimensions": 3,
+      "feature": "F1",
+      "metric": 0,
+      "scale": 5,
+      "detail": 0,
+      "normalize": false,
+      "roughness": 0.5,
+      "lacunarity": 2,
+      "randomness": 1,
+      "exponent": 0.5,
+      "smoothness": 1,
+      "selectedOutput": "Distance"
+    }
+  },
+  "sourceProof": {
+    "noise": {
+      "path": "source/blender/gpu/shaders/material/gpu_shader_material_tex_noise.bsl.hh",
+      "anchors": [
+        "noise_fractal_distorted compute_color branch",
+        "node_noise_tex_fbm_3d compute_color parameter"
+      ],
+      "selection": "Fac only; compute_color0; no uninitialized Color read"
+    },
+    "voronoi": {
+      "paths": [
+        "source/blender/gpu/shaders/material/gpu_shader_material_fractal_voronoi.bsl.hh",
+        "source/blender/gpu/shaders/material/gpu_shader_material_voronoi.bsl.hh"
+      ],
+      "anchors": [
+        "fractal_voronoi_x_fx(VoronoiParams,float3)",
+        "zero_input Detail0 copy-and-break",
+        "voronoi_f1(VoronoiParams,float3)"
+      ],
+      "selection": "Detail0 F1 Normalizefalse Distance equals unchanged one-octave helper; position-only postprocessing unobserved"
+    }
+  },
+  "sourceMetrics": {
+    "genericInternalFunctions": 43,
+    "specializedInternalFunctions": 28,
+    "genericWgslBytes": 64609,
+    "specializedWgslBytes": 31517,
+    "genericEsBytes": 72657,
+    "specializedEsBytes": 35405
+  },
+  "numericAndTimingAuthority": "Separate port-throughput-benchmark receipt; unchanged native64 input/reference packet, gate and timers. No timing claim in this source checkpoint.",
+  "baselinePreserved": [
+    "experiments/shader-kernel-bridge-next/adapter.mjs",
+    "/tmp/scenetoweb-shader-kernel-next-build/adapted-r2/module.json"
+  ],
+  "scope": "Only two fixed scalar output contexts over the retained64-input distribution; no arbitrary Color or artist-scene admission."
+}

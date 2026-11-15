@@ -1,0 +1,30 @@
+{
+  "integer-vector3": {
+    "casePlan": "experiments/static-switch-family/int-vector3-cases.json",
+    "casePlanSha256": "6745edd1fb099d465ff6e7c677a127f16984931e7362677d147ecdc578392ac7",
+    "nativeGraphs": 16,
+    "productionNativeGraphs": 15,
+    "savedFinalScenes": 8,
+    "productionSavedFinalScenes": 7,
+    "browserCaseRuns": 96,
+    "productionBrowserCaseRuns": 88,
+    "primaryWords": 24576,
+    "productionPrimaryWords": 22528,
+    "allReadWords": 57344,
+    "captures": 224
+  },
+  "finite-image-info": {
+    "casePlan": "experiments/compositor-finite-image-info/cases.json",
+    "casePlanSha256": "692d1f49de4b71e583088f8c118e4ef7250e4f4d89f589d3927cec99db94f6aa",
+    "nativeGraphs": 21,
+    "productionNativeGraphs": 20,
+    "savedFinalScenes": 8,
+    "productionSavedFinalScenes": 7,
+    "browserCaseRuns": 116,
+    "productionBrowserCaseRuns": 108,
+    "primaryWords": 29696,
+    "productionPrimaryWords": 27648,
+    "allReadWords": 67584,
+    "captures": 264
+  }
+}

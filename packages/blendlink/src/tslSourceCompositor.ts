@@ -707,7 +707,7 @@ export function buildSourceCompositor(
             node = buildCompositorBoxMask(op,program.ops,domainFail)
             break
           case 'image-info':
-            node = buildCompositorImageInfo(op,program.ops,input('Image'),domainFail)
+            node = buildCompositorImageInfo(op,program.ops,input('Image'),domainFail,program)
             break
           case 'vector-rotate-cpu':
             if(!vectorRotate||vectorRotate.op!==op)return domainFail('Vector Rotate requires its closed native consumer plan')
@@ -1373,6 +1373,9 @@ export function buildSourceCompositor(
       exactAxes?.validate(frame.renderer)
       for(const table of waveTables.values())table.validate(frame.renderer)
     })
+    if(blankImage&&program.ops.some(op=>op.kind==='image-info')){
+      const guard=createBlankImageFrameGuard();resources.push(guard);finalNode=finalNode.toVar().onRenderUpdate((frame:TslEffectNode)=>guard(frame.renderer))
+    }
     if(vectorRotate)finalNode=vectorRotate.guard(finalNode,nodes)
     finalNode=guardDisplaceOutput(finalNode,program)
     return { node: finalNode, dispose }

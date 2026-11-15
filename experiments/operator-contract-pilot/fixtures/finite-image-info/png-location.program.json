@@ -1,0 +1,105 @@
+{
+  "version": 1,
+  "blenderVersion": "5.3.0",
+  "engine": "CYCLES",
+  "frame": 1,
+  "status": "extracted",
+  "ops": [
+    {
+      "id": "n0",
+      "kind": "image-input",
+      "source": {
+        "path": [
+          "Artist static compositor png-location"
+        ],
+        "node": "Image",
+        "nodeType": "CompositorNodeImage",
+        "output": "Image"
+      },
+      "type": "RGBA",
+      "properties": {
+        "evaluation_device": "CPU",
+        "native_gpu_backend": "METAL",
+        "single_value_device": "CPU",
+        "image_id": "a7aec5cc54f6a940e0352664e7f65cfbd661cf40d1a88c65fd97cbad3be617de",
+        "image_window_model": "modern-cpu-v1"
+      },
+      "inputs": {}
+    },
+    {
+      "id": "n1",
+      "kind": "image-info",
+      "source": {
+        "path": [
+          "Artist static compositor png-location"
+        ],
+        "node": "Image Info",
+        "nodeType": "CompositorNodeImageInfo",
+        "output": "Location"
+      },
+      "type": "FLOAT_VECTOR2",
+      "properties": {
+        "evaluation_device": "CPU",
+        "native_gpu_backend": "METAL",
+        "single_value_device": "CPU",
+        "image_info_model": "finite-identity-image-info-v1",
+        "image_info_source_profile": "darwin-arm64-53-finite-image-info-v1",
+        "image_info_native_version": [
+          5,
+          3,
+          0
+        ],
+        "image_info_reference_model": "finite-image-identity-v1",
+        "image_info_scene": "Scene",
+        "image_info_finite_size": [
+          13,
+          9
+        ]
+      },
+      "inputs": {
+        "Image": {
+          "name": "Image",
+          "socketType": "RGBA",
+          "value": {
+            "kind": "ref",
+            "node": "n0",
+            "type": "RGBA"
+          }
+        }
+      }
+    }
+  ],
+  "passes": [],
+  "diagnostics": [],
+  "alphaConvention": "premultiplied",
+  "colorSpace": "scene-linear",
+  "displayTransform": "separate, after authored compositor",
+  "tree": "Artist static compositor png-location",
+  "images": {
+    "a7aec5cc54f6a940e0352664e7f65cfbd661cf40d1a88c65fd97cbad3be617de": {
+      "model": "native-cpu-static-image-v1",
+      "encoding": "zlib-le-rgba32f",
+      "width": 13,
+      "height": 9,
+      "decodedBytes": 1872,
+      "data": "eJxjYEAGDfYg8hSUBvERbOzyDGj6T6HowZSnh/kIMxDqYXx0eRgbWT0++YEwn9rhM9DxS+3wGej4pXb4DHT8Ujt8Bjp+qR0+Ax2/1A6fgY5faofPQMYvAJsdNfQ=",
+      "source": {
+        "name": "png-location.png",
+        "kind": "FILE",
+        "colorSpace": "sRGB",
+        "alphaMode": "STRAIGHT",
+        "storage": "native-byte-srgb-decode"
+      }
+    }
+  },
+  "output": {
+    "kind": "convert",
+    "fromType": "FLOAT_VECTOR2",
+    "type": "RGBA",
+    "input": {
+      "kind": "ref",
+      "node": "n1",
+      "type": "FLOAT_VECTOR2"
+    }
+  }
+}

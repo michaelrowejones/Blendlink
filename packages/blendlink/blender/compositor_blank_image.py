@@ -3,6 +3,11 @@
 from array import array
 import platform,struct,sys
 import bpy
+if __package__:
+    from .compositor_image_info import finite_metadata_graph
+else:
+    from compositor_image_info import finite_metadata_graph
+
 MODEL='native-compositor-blank-image-cpu-53-v1'
 PROFILE='darwin-arm64-53-blank-image-cpu-v1'
 MAX_PIXELS=4194304
@@ -49,6 +54,7 @@ def validate_graph(program):
     blanks=[op for op in program['ops']if op.get('source',{}).get('nodeType')=='CompositorNodeBlankImage']
     if not blanks:return None
     op=blanks[0]
-    if len(program['ops'])!=1 or len(blanks)!=1 or program.get('passes')or program.get('images')or program.get('output')!={'kind':'ref','node':op['id'],'type':'RGBA'}:
+    terminal=len(program['ops'])==1 and program.get('output')=={'kind':'ref','node':op['id'],'type':'RGBA'}
+    if len(blanks)!=1 or program.get('passes')or program.get('images')or not(terminal or finite_metadata_graph(program,op['id'])):
         return op,'Blank Image initially requires one terminal finite producer; Image Info, coordinates, mixed/pointwise/spatial consumers need separate domain proof'
     return None

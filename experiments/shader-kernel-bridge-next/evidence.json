@@ -1,0 +1,175 @@
+{
+  "schemaVersion": 1,
+  "status": "METAL_COMPOSABLE_COMPILER_PASSED_NUMERICAL_PARTIAL_SOFTWARE_DEVICE_LOST",
+  "supportCredit": 0,
+  "FinalCredit": 0,
+  "productionFilesChanged": 0,
+  "blenderCommit": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "nagaVersion": "30.0.2",
+  "moduleDirectory": "/tmp/scenetoweb-shader-kernel-next-build/adapted-r2",
+  "rawPins": [
+    {
+      "path": "/tmp/scenetoweb-shader-kernel-next-build/adapted-r2/generation.json",
+      "sha256": "a70dec96a12b7b89593adcc8ea4f78ba55dd41055e74cddf5f31e0f70c785817",
+      "bytes": 435779
+    },
+    {
+      "path": "/tmp/scenetoweb-shader-kernel-next-build/adapted-r2/module.json",
+      "sha256": "c22ff629a7acaa9aa34538506781bc431cb152cbd3b301fda4096edb69772563",
+      "bytes": 143960
+    },
+    {
+      "path": "/tmp/scenetoweb-shader-kernel-next-build/browser-r2-metal/report.json",
+      "sha256": "caa64f88d007f508b6d0d0be73badcdbe0dd0079ff53115d93911d993a5572f5",
+      "bytes": 33700
+    },
+    {
+      "path": "/tmp/scenetoweb-shader-kernel-next-build/browser-r2-software/report.json",
+      "sha256": "6c3e27c236db926f79e5ad0b72b1b559f7c472e117280913e00d78197ebdc7f2",
+      "bytes": 304348
+    },
+    {
+      "path": "/tmp/scenetoweb-native-kernel-direct-r4/report.json",
+      "sha256": "ab4ab1e46f98893589020d91696ff097a8f2043c2e869740b69dc151c8f7c7c2",
+      "bytes": 25423
+    },
+    {
+      "path": "/tmp/scenetoweb-native-kernel-closed-r1.json",
+      "sha256": "8bb0232c72227f94679f1e4e81e198dfd1177937122ae8250070423bbc5b215d",
+      "bytes": 2125
+    }
+  ],
+  "compiler": {
+    "families": [
+      "gradient",
+      "checker",
+      "white_noise",
+      "noise",
+      "voronoi"
+    ],
+    "discoveredNativeEntrypoints": 46,
+    "retainedWrappers": [
+      "bridge_gradient",
+      "bridge_checker",
+      "bridge_white",
+      "bridge_noise",
+      "bridge_voronoi_first",
+      "bridge_voronoi_second"
+    ],
+    "dependencyCount": 13,
+    "dependencyOrder": [
+      "gpu_shader_math_constants.bsl.hh",
+      "gpu_shader_material_tex_gradient.bsl.hh",
+      "gpu_shader_material_tex_checker.bsl.hh",
+      "gpu_shader_common_hash.bsl.hh",
+      "gpu_shader_material_tex_white_noise.bsl.hh",
+      "gpu_shader_math_safe.bsl.hh",
+      "gpu_shader_math_vector_safe.bsl.hh",
+      "gpu_shader_material_noise.bsl.hh",
+      "gpu_shader_material_fractal_noise.bsl.hh",
+      "gpu_shader_material_tex_noise.bsl.hh",
+      "gpu_shader_material_voronoi.bsl.hh",
+      "gpu_shader_material_fractal_voronoi.bsl.hh",
+      "gpu_shader_material_tex_voronoi.bsl.hh"
+    ],
+    "sharedHashCopies": 1,
+    "uniqueInternalFunctions": 43,
+    "nativeMetalPreprocess": {
+      "sourceGuardOwner": "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/struct.cc",
+      "guardBlocks": 20,
+      "forwardDeclarationsRemoved": 20,
+      "allBodyTokensUnchanged": true,
+      "sha256": "7a678514777219397fef15232066d8a52bc0a8aa5bfe4d39d33969cc3031f883",
+      "browserCanonicalSha256": "d41ef47c89118dd1a1beed6e0cdaff7328db334f8cee96766b08e01fa6596c57"
+    },
+    "literalCompatibility": {
+      "version": "naga30-f32max-exact-hex-v1",
+      "adapterSha256": "ffbc72a266385ae903ff3cbe052984dda9b3fa8f4382f6732f9802480c0e253b",
+      "source": "340282350000000000000000000000000000000f",
+      "target": "0x1.fffffep+127f",
+      "replacements": 3,
+      "decimalRoundedBits": 2139095039,
+      "hexBits": 2139095039,
+      "integerRneProof": true,
+      "nativeFltMaxSource": "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shaders/compat/gpu_shader_compat_glsl.glsl",
+      "originalWgslSha256": "a5bbfddf14905e3aefbeec1a239c8f0890e03cd2cdb27f8752e9533412a388d8",
+      "adaptedWgslSha256": "8d0de7a39287b0aec0e99c7c5a636218b3b8349fb8b4c8b5579886aa161ef08b",
+      "originalGenerationSha256": "112c7e7f20ab3d45096f5ff7643756c79e30bcf06addf74cefe4984c671929ae",
+      "nagaValidationMs": 13.994625000000003,
+      "kernelArithmeticChanged": false
+    }
+  },
+  "metal": {
+    "draws": 18,
+    "inputWords": 512,
+    "primaryWords": 4096,
+    "crossLanguageWordDifferences": 58,
+    "sourceClosure": "metal-closure.json",
+    "nativeComparison": "native-comparison.json",
+    "nativeComparedWords": 3072,
+    "nativeWordDifferences": 746,
+    "nativeGateViolations": 702,
+    "gate": {
+      "maximumAbsoluteError": 9.5367431640625e-07,
+      "maximumUlps": 8,
+      "bothRequired": true
+    },
+    "bitExactNativeCases": [
+      "gradient-radial",
+      "voronoi-f1-3d-default",
+      "voronoi-f2-3d-default"
+    ],
+    "noiseDirectLaneFacts": {
+      "R": "exact64samples/API",
+      "G": "64differences/API,max310ULP",
+      "B": "WebGPU4differences,max1ULP;WebGL2exact",
+      "Fac": "exact64samples/API"
+    },
+    "dependentComposition": "Actual Noise\u2192Noise and Noise\u2192Voronoi F1 compile with shared wrapper definitions once; both fail native numerical gate, no composed accuracy credit."
+  },
+  "software": {
+    "status": "FAILED_DEVICE_LOST",
+    "path": "/tmp/scenetoweb-shader-kernel-next-build/browser-r2-software",
+    "completedCases": [
+      "input",
+      "gradient-radial",
+      "checker",
+      "white-three"
+    ],
+    "failedCase": "noise-fbm3-default",
+    "failure": "WebGPU Device Lost: external Instance reference no longer exists during mapAsync; WebGL2 not reached",
+    "allFourTupleClaim": false
+  },
+  "history": [
+    {
+      "path": "/tmp/scenetoweb-shader-kernel-next-build/generated-r1",
+      "reason": "Full compatibility header included resource helper functions; pure compiler cannot accept sampler parameter."
+    },
+    {
+      "path": "/tmp/scenetoweb-shader-kernel-next-build/generated-r2",
+      "reason": "Known stage-output name collided with native local result; unique adapter sentinel fixed packaging only."
+    },
+    {
+      "path": "/tmp/scenetoweb-shader-kernel-next-build/browser-r1-metal",
+      "reason": "Naga decimal FLT_MAX spelling rejected by Dawn."
+    },
+    {
+      "path": "/tmp/scenetoweb-shader-kernel-next-build/browser-r1-software",
+      "reason": "Same WGSL literal rejection."
+    },
+    {
+      "path": "/tmp/scenetoweb-native-kernel-direct-r1",
+      "reason": "Generic preprocessing retained Metal-guarded method declarations."
+    },
+    {
+      "path": "/tmp/scenetoweb-native-kernel-direct-r2",
+      "reason": "Alternate typedef placement still refused declarations."
+    },
+    {
+      "path": "/tmp/scenetoweb-native-kernel-direct-r3",
+      "reason": "Typedef placement compiled but all-zero output failed functional canary; invalid oracle."
+    }
+  ],
+  "performance": "Independent benchmark lane owns timings. No measured runtime improvement claimed by this receipt.",
+  "scope": "Direct native Python GPU compiler comparison; actual EEVEE radial crosscheck is separately owned. No CPU-MF, source-node admission, lighting or production support claim."
+}

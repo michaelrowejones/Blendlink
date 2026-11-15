@@ -1,0 +1,168 @@
+{
+  "schemaVersion": 1,
+  "status": "PASSED_EXPERIMENTAL_NATIVE_REFERENCE_CACHE_PILOT",
+  "baseCommit": "5128f94dca6163047e35d1b6106b310974afd790",
+  "scope": "Exact retained Integer Vector3 native-reference cache-selection/integrity pilot only",
+  "productionCredit": false,
+  "numericalCredit": 0,
+  "supportCredit": 0,
+  "nativeRenders": 0,
+  "browserRuns": 0,
+  "gpuJobs": 0,
+  "inputKey": "d1da49bfdb9acd29b210987ad142437f53812f820d8b376df414351058998830",
+  "retainedCorpus": {
+    "closedReceiptSha256": "002be9743d6081b56cece4c03d841aba103c4d9e255828364e72c9cbc33311d4",
+    "nativeQualificationSha256": "8304dc5486d4f71949cb177ba204ee4eab449abe2ddc57bc05eb230d1bdaaa4e",
+    "sourcePins": 150,
+    "upstreamCppPins": 6,
+    "nativeGraphs": 16,
+    "productionGraphs": 15,
+    "nativeWords": 4096,
+    "guardedPythonInvocations": 10,
+    "nativeBinarySha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da",
+    "numericalCredit": 0
+  },
+  "artifactFiles": 41,
+  "artifactBytes": 826761,
+  "runtimeExperiment": {
+    "kind": "counterfactual-byte-change-only-no-SDK-edit",
+    "before": "ba86ff7afbf635660a4ff56983ffe8e9dc1ec79c93af59fa7527fd1407c0d38b",
+    "after": "a39df9fd6c107ba153e7776c3a8ec2b024a018309e844244612c04d195d0a9c2",
+    "nativeReferenceKeyBefore": "d1da49bfdb9acd29b210987ad142437f53812f820d8b376df414351058998830",
+    "nativeReferenceKeyAfter": "d1da49bfdb9acd29b210987ad142437f53812f820d8b376df414351058998830"
+  },
+  "outcomes": {
+    "cold": "miss",
+    "warm": "hit",
+    "runtimeOnly": "hit",
+    "misses": [
+      {
+        "mutation": "native-binary",
+        "key": "add657008a45811693c0743f31b0cec4f770483a180b132e99aacd8f8966a816",
+        "status": "miss"
+      },
+      {
+        "mutation": "upstream-source",
+        "key": "8ba745ff2cbb1d0c9a53d7704897705fb42e6914b62b16f75346ec05a6c97909",
+        "status": "miss"
+      },
+      {
+        "mutation": "reference-code",
+        "key": "b94ca0784758039a15ae3b383db3934194ea724a2da8aa3ca516e02f6a7ccd05",
+        "status": "miss"
+      },
+      {
+        "mutation": "settings",
+        "key": "4509c9b78ac6c3c9fa7e611a423922c52f5b5864348984724132beb63ad251ff",
+        "status": "miss"
+      }
+    ],
+    "tamper": {
+      "refused": true,
+      "error": "Cached stage bytes changed\n+ actual - expected\n\n+ 'ee57c30e527e5200fa6a488cf7f52aed73baceed5366e4f3ff37d4d121e7d4a7'\n- '1e5b3c94caea9b512b6a257200a26c5d3c91eb2b198f4602595dfb74f30df28d'\n",
+      "failedBytesPreserved": "/var/folders/xm/bwg2bm0s7j91bj4xdgzt45zc0000gn/T/port-stage-cache-pilot-WpilyT/d1da49bfdb9acd29b210987ad142437f53812f820d8b376df414351058998830/cpu/calibration.rgba32f"
+    }
+  },
+  "finalAcceptanceAlwaysFresh": true,
+  "acceptancePlans": [
+    {
+      "stage": "final-acceptance",
+      "reuse": false,
+      "status": "requires-fresh-public-install-and-independent-reader",
+      "nativeReferenceKey": "d1da49bfdb9acd29b210987ad142437f53812f820d8b376df414351058998830",
+      "runtimeKey": "ba86ff7afbf635660a4ff56983ffe8e9dc1ec79c93af59fa7527fd1407c0d38b",
+      "runNonce": "79846ead-4c75-4561-ad38-6ab3e9b7af37",
+      "required": [
+        "current-source-admission",
+        "actual-saved-Final-public-install",
+        "shared-installed-canary",
+        "all-required-browser-gates",
+        "independent-reader"
+      ],
+      "numericalCredit": 0
+    },
+    {
+      "stage": "final-acceptance",
+      "reuse": false,
+      "status": "requires-fresh-public-install-and-independent-reader",
+      "nativeReferenceKey": "d1da49bfdb9acd29b210987ad142437f53812f820d8b376df414351058998830",
+      "runtimeKey": "a39df9fd6c107ba153e7776c3a8ec2b024a018309e844244612c04d195d0a9c2",
+      "runNonce": "6ec7879d-2676-4183-bfef-3c7dcf901adf",
+      "required": [
+        "current-source-admission",
+        "actual-saved-Final-public-install",
+        "shared-installed-canary",
+        "all-required-browser-gates",
+        "independent-reader"
+      ],
+      "numericalCredit": 0
+    }
+  ],
+  "steps": [
+    {
+      "name": "validate-retained-native-source-schema-words-archive-binary",
+      "milliseconds": 265.885125
+    },
+    {
+      "name": "cold-lookup",
+      "milliseconds": 0.33308300000004465
+    },
+    {
+      "name": "import-verified-reference-bytes",
+      "milliseconds": 17.781791999999996
+    },
+    {
+      "name": "warm-content-verified-lookup",
+      "milliseconds": 5.688333999999998
+    },
+    {
+      "name": "runtime-only-revision-content-verified-lookup",
+      "milliseconds": 5.564999999999998
+    },
+    {
+      "name": "miss-native-binary",
+      "milliseconds": 0.25754100000000335
+    },
+    {
+      "name": "miss-upstream-source",
+      "milliseconds": 0.14412499999997408
+    },
+    {
+      "name": "miss-reference-code",
+      "milliseconds": 0.17074999999999818
+    },
+    {
+      "name": "miss-settings",
+      "milliseconds": 0.15504199999998036
+    },
+    {
+      "name": "tampered-cache-refusal",
+      "milliseconds": 1.0377080000000092
+    }
+  ],
+  "scriptPins": {
+    "stage-cache.mjs": "f31eb79affdb33aeaadc142b527156ddafe84a9e33dffb41657a500a3ee1eba2",
+    "stage-cache.test.mjs": "d70ddedc3d3fba8b491df6e3e6023d02b60c0bedb894ec6eeab8c6a284db8bd0",
+    "retained-int3.mjs": "a483feb452a96498a074b13b649414aeca9a0836b4c0028d62a684111239814a",
+    "pilot.mjs": "251e43391e822a6de08406fcca2380c1222555ac52d3a4b72dfac59e162c1466"
+  },
+  "rawReport": {
+    "path": "/tmp/scenetoweb-port-stage-cache-pilot-report-r2.json",
+    "sha256": "40d14ae43b3303696e7430457e137c7d55761e9ea759e09a5e951946430edec5"
+  },
+  "retainedFirstReport": {
+    "path": "/tmp/scenetoweb-port-stage-cache-pilot-report-r1.json",
+    "sha256": "882945c5ff677088d07159773541013c22458caf6e2338dd322b3891f5dd9354",
+    "numericalCredit": 0
+  },
+  "limitations": [
+    "Imported expected bytes from a historical qualification; no new numerical or current-SDK acceptance credit.",
+    "Native key conservatively includes all150 captured Python/addon/reference source pins; it does not claim a minimal semantic closure.",
+    "Runtime mutation is a key-selection counterfactual, not actual GPU validation of modified code.",
+    "Final acceptance is outside the native cache and always requires current admission/public install/canary/browser/independent close.",
+    "Full-tree compiler/package/vendor/native identity attestation still belongs to each frozen SDK checkpoint.",
+    "Canary implementation is reused from the separate Root experiments/port-speed-pilot; this pilot launches no canary.",
+    "Warm hit timings exclude full input/identity validation; no complete-install speedup measurement.",
+    "Current compiler/package full-tree integrity and a fresh actual public-install canary/independent close remain mandatory."
+  ]
+}

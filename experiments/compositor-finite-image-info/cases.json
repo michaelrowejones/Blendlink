@@ -1,0 +1,503 @@
+[
+  {
+    "case": "calibration",
+    "kind": "control",
+    "producer": "literal",
+    "size": null,
+    "output": "RGBA",
+    "route": "direct",
+    "saveFinal": true,
+    "expectedRgba": [
+      0.125,
+      0.25,
+      0.5,
+      1
+    ],
+    "expectedWords": [
+      1040187392,
+      1048576000,
+      1056964608,
+      1065353216
+    ]
+  },
+  {
+    "case": "blank-dimensions",
+    "kind": "finite-image-info",
+    "producer": "blank",
+    "size": [
+      5,
+      3
+    ],
+    "output": "Dimensions",
+    "route": "direct",
+    "saveFinal": false,
+    "expectedRgba": [
+      5,
+      3,
+      0,
+      1
+    ],
+    "expectedWords": [
+      1084227584,
+      1077936128,
+      0,
+      1065353216
+    ]
+  },
+  {
+    "case": "blank-resolution",
+    "kind": "finite-image-info",
+    "producer": "blank",
+    "size": [
+      8,
+      4
+    ],
+    "output": "Resolution",
+    "route": "direct",
+    "saveFinal": false,
+    "expectedRgba": [
+      8,
+      4,
+      0,
+      1
+    ],
+    "expectedWords": [
+      1090519040,
+      1082130432,
+      0,
+      1065353216
+    ]
+  },
+  {
+    "case": "blank-location",
+    "kind": "finite-image-info",
+    "producer": "blank",
+    "size": [
+      13,
+      9
+    ],
+    "output": "Location",
+    "route": "direct",
+    "saveFinal": false,
+    "expectedRgba": [
+      0,
+      0,
+      0,
+      1
+    ],
+    "expectedWords": [
+      0,
+      0,
+      0,
+      1065353216
+    ]
+  },
+  {
+    "case": "blank-rotation",
+    "kind": "finite-image-info",
+    "producer": "blank",
+    "size": [
+      1,
+      1
+    ],
+    "output": "Rotation",
+    "route": "direct",
+    "saveFinal": true,
+    "expectedRgba": [
+      0,
+      0,
+      0,
+      1
+    ],
+    "expectedWords": [
+      0,
+      0,
+      0,
+      1065353216
+    ]
+  },
+  {
+    "case": "blank-scale",
+    "kind": "finite-image-info",
+    "producer": "blank",
+    "size": [
+      0,
+      -2
+    ],
+    "output": "Scale",
+    "route": "direct",
+    "saveFinal": false,
+    "expectedRgba": [
+      1,
+      1,
+      0,
+      1
+    ],
+    "expectedWords": [
+      1065353216,
+      1065353216,
+      0,
+      1065353216
+    ]
+  },
+  {
+    "case": "png-dimensions",
+    "kind": "finite-image-info",
+    "producer": "png",
+    "size": [
+      3,
+      5
+    ],
+    "output": "Dimensions",
+    "route": "direct",
+    "saveFinal": false,
+    "expectedRgba": [
+      3,
+      5,
+      0,
+      1
+    ],
+    "expectedWords": [
+      1077936128,
+      1084227584,
+      0,
+      1065353216
+    ]
+  },
+  {
+    "case": "png-resolution",
+    "kind": "finite-image-info",
+    "producer": "png",
+    "size": [
+      8,
+      4
+    ],
+    "output": "Resolution",
+    "route": "direct",
+    "saveFinal": true,
+    "expectedRgba": [
+      8,
+      4,
+      0,
+      1
+    ],
+    "expectedWords": [
+      1090519040,
+      1082130432,
+      0,
+      1065353216
+    ]
+  },
+  {
+    "case": "png-location",
+    "kind": "finite-image-info",
+    "producer": "png",
+    "size": [
+      13,
+      9
+    ],
+    "output": "Location",
+    "route": "direct",
+    "saveFinal": true,
+    "expectedRgba": [
+      0,
+      0,
+      0,
+      1
+    ],
+    "expectedWords": [
+      0,
+      0,
+      0,
+      1065353216
+    ]
+  },
+  {
+    "case": "png-rotation",
+    "kind": "finite-image-info",
+    "producer": "png",
+    "size": [
+      1,
+      1
+    ],
+    "output": "Rotation",
+    "route": "direct",
+    "saveFinal": false,
+    "expectedRgba": [
+      0,
+      0,
+      0,
+      1
+    ],
+    "expectedWords": [
+      0,
+      0,
+      0,
+      1065353216
+    ]
+  },
+  {
+    "case": "png-scale",
+    "kind": "finite-image-info",
+    "producer": "png",
+    "size": [
+      5,
+      3
+    ],
+    "output": "Scale",
+    "route": "reroute",
+    "saveFinal": true,
+    "expectedRgba": [
+      1,
+      1,
+      0,
+      1
+    ],
+    "expectedWords": [
+      1065353216,
+      1065353216,
+      0,
+      1065353216
+    ]
+  },
+  {
+    "case": "blank-aspect",
+    "kind": "finite-image-info",
+    "producer": "blank",
+    "size": [
+      8,
+      4
+    ],
+    "output": "Dimensions",
+    "route": "aspect",
+    "saveFinal": true,
+    "expectedRgba": [
+      2,
+      2,
+      2,
+      1
+    ],
+    "expectedWords": [
+      1073741824,
+      1073741824,
+      1073741824,
+      1065353216
+    ]
+  },
+  {
+    "case": "blank-summary",
+    "kind": "finite-image-info",
+    "producer": "blank",
+    "size": [
+      13,
+      9
+    ],
+    "output": "Dimensions",
+    "route": "summary",
+    "saveFinal": false,
+    "expectedRgba": [
+      13,
+      9,
+      0,
+      1
+    ],
+    "expectedWords": [
+      1095761920,
+      1091567616,
+      0,
+      1065353216
+    ]
+  },
+  {
+    "case": "blank-group",
+    "kind": "finite-image-info",
+    "producer": "blank",
+    "size": [
+      5,
+      3
+    ],
+    "output": "Dimensions",
+    "route": "group-producer-output",
+    "saveFinal": true,
+    "expectedRgba": [
+      5,
+      3,
+      0,
+      1
+    ],
+    "expectedWords": [
+      1084227584,
+      1077936128,
+      0,
+      1065353216
+    ]
+  },
+  {
+    "case": "png-aspect",
+    "kind": "finite-image-info",
+    "producer": "png",
+    "size": [
+      8,
+      4
+    ],
+    "output": "Dimensions",
+    "route": "aspect",
+    "saveFinal": false,
+    "expectedRgba": [
+      2,
+      2,
+      2,
+      1
+    ],
+    "expectedWords": [
+      1073741824,
+      1073741824,
+      1073741824,
+      1065353216
+    ]
+  },
+  {
+    "case": "png-summary",
+    "kind": "finite-image-info",
+    "producer": "png",
+    "size": [
+      9,
+      13
+    ],
+    "output": "Dimensions",
+    "route": "summary",
+    "saveFinal": true,
+    "expectedRgba": [
+      9,
+      13,
+      0,
+      1
+    ],
+    "expectedWords": [
+      1091567616,
+      1095761920,
+      0,
+      1065353216
+    ]
+  },
+  {
+    "case": "png-group",
+    "kind": "finite-image-info",
+    "producer": "png",
+    "size": [
+      3,
+      5
+    ],
+    "output": "Dimensions",
+    "route": "group-producer-output",
+    "saveFinal": false,
+    "expectedRgba": [
+      3,
+      5,
+      0,
+      1
+    ],
+    "expectedWords": [
+      1077936128,
+      1084227584,
+      0,
+      1065353216
+    ]
+  },
+  {
+    "case": "float-dimensions",
+    "kind": "finite-image-info",
+    "producer": "float",
+    "size": [
+      7,
+      4
+    ],
+    "output": "Dimensions",
+    "route": "direct",
+    "saveFinal": false,
+    "expectedRgba": [
+      7,
+      4,
+      0,
+      1
+    ],
+    "expectedWords": [
+      1088421888,
+      1082130432,
+      0,
+      1065353216
+    ]
+  },
+  {
+    "case": "float-scale",
+    "kind": "finite-image-info",
+    "producer": "float",
+    "size": [
+      1,
+      1
+    ],
+    "output": "Scale",
+    "route": "direct",
+    "saveFinal": false,
+    "expectedRgba": [
+      1,
+      1,
+      0,
+      1
+    ],
+    "expectedWords": [
+      1065353216,
+      1065353216,
+      0,
+      1065353216
+    ]
+  },
+  {
+    "case": "blank-maximum-axis",
+    "kind": "finite-image-info",
+    "producer": "blank",
+    "size": [
+      8192,
+      1
+    ],
+    "output": "Dimensions",
+    "route": "direct",
+    "saveFinal": false,
+    "expectedRgba": [
+      8192,
+      1,
+      0,
+      1
+    ],
+    "expectedWords": [
+      1174405120,
+      1065353216,
+      0,
+      1065353216
+    ]
+  },
+  {
+    "case": "png-maximum-axis",
+    "kind": "finite-image-info",
+    "producer": "png",
+    "size": [
+      4096,
+      1
+    ],
+    "output": "Dimensions",
+    "route": "direct",
+    "saveFinal": false,
+    "expectedRgba": [
+      4096,
+      1,
+      0,
+      1
+    ],
+    "expectedWords": [
+      1166016512,
+      1065353216,
+      0,
+      1065353216
+    ]
+  }
+]

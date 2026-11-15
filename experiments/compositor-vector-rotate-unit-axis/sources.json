@@ -1,0 +1,46 @@
+{
+  "upstreamCommit": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "sources": [
+    {
+      "path": "source/blender/nodes/shader/nodes/node_shader_vector_rotate.cc",
+      "sha256": "49b89be46a16f9bc9c89654a5ad04c07c5b1d72d0e185e2fa11c31157ddcdee5",
+      "bytes": 10568,
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/shader/nodes/node_shader_vector_rotate.cc",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/blenlib/intern/math_rotation_c.cc",
+      "sha256": "236c4cc99d65108a2329c0c21845b5a1a4d8b41ed1dacab2c7a8c4cb0f9fc34a",
+      "bytes": 66592,
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/intern/math_rotation_c.cc",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/blenlib/intern/math_matrix_c.cc",
+      "sha256": "bcbf99d6a2d3c838b99ec49072eccd633d94a9c0856f3d220b8be178af27f590",
+      "bytes": 77145,
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/intern/math_matrix_c.cc",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/blenlib/intern/math_vector_inline.cc",
+      "sha256": "15c60e8a6119fac59928921d0f7e3dc2a6b3489ccec5b54342c238ff749f9104",
+      "bytes": 21649,
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/blenlib/intern/math_vector_inline.cc",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "build_files/cmake/platform/platform_apple.cmake",
+      "sha256": "b44ef820b863ae13a373b8791357cea004a95ee2c3c4bfb4a5374392953c5377",
+      "bytes": 15111,
+      "url": "https://raw.githubusercontent.com/blender/blender/02f0899d78e374b63e7181d9061e1f7ab03419cc/build_files/cmake/platform/platform_apple.cmake",
+      "license": "GPL-2.0-or-later"
+    }
+  ],
+  "sourceClaims": [
+    "Axis Angle and fixed modes share the same ordered around-axis function.",
+    "Exact signed unit vectors normalize with exact dot/sqrt/reciprocal equal to one.",
+    "Invert negates Angle; Euler uses another path and remains excluded.",
+    "Internal zero coefficient signs are not inferred from basis output words."
+  ]
+}

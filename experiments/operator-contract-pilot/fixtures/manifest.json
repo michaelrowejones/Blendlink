@@ -1,0 +1,463 @@
+{
+  "status": "REPLAY_ONLY_EXISTING_NATIVE_INPUTS",
+  "numericalCredit": 0,
+  "supportPromotion": false,
+  "origins": [
+    {
+      "family": "integer-vector3",
+      "path": "/tmp/scenetoweb-node-ports-int3-rotate-next/artifacts/verification-integer-vector3-next54-manifest/cpu",
+      "qualificationSha256": "481d3d27fb03e770904f46bb0fa3fcb23e71a1bc42a262c269f55db7b2689165"
+    },
+    {
+      "family": "finite-image-info",
+      "path": "/tmp/scenetoweb-compositor-finite-image-info-next/artifacts/verification-finite-info-metal-pilot-r1/cpu",
+      "qualificationSha256": "807272fb8dc88b0dbfcc08e23bff57055e569f6ab297f9686ea4a7265d8ccee4"
+    }
+  ],
+  "rows": [
+    {
+      "family": "integer-vector3",
+      "case": "calibration",
+      "programFile": {
+        "file": "integer-vector3/calibration.program.json",
+        "sha256": "69ed126bd15836be008ed22a3616af73d99c8d9fd84d13b3c421fe0e4eda201e"
+      },
+      "pixelFile": {
+        "file": "integer-vector3/calibration.rgba32f",
+        "sha256": "1e5b3c94caea9b512b6a257200a26c5d3c91eb2b198f4602595dfb74f30df28d"
+      }
+    },
+    {
+      "family": "integer-vector3",
+      "case": "int3-zero",
+      "programFile": {
+        "file": "integer-vector3/int3-zero.program.json",
+        "sha256": "120fca69b5f9f32ed246bb37e27581c676d68c01080c1737c3ba3f4cd90909cc"
+      },
+      "pixelFile": {
+        "file": "integer-vector3/int3-zero.rgba32f",
+        "sha256": "718ac3b3452de19698e211c7b4fcbe82b9bc8ddf1425396536fb096b95bb3d00"
+      }
+    },
+    {
+      "family": "integer-vector3",
+      "case": "int3-small",
+      "programFile": {
+        "file": "integer-vector3/int3-small.program.json",
+        "sha256": "49a2f41877b3619391dda46193a1e4a290bfe35b20405c2c2d38df5fa69c8da6"
+      },
+      "pixelFile": {
+        "file": "integer-vector3/int3-small.rgba32f",
+        "sha256": "97009445ffce2cc437a18a5615b90994914f281525e37e6933f6f4117d4802f6"
+      }
+    },
+    {
+      "family": "integer-vector3",
+      "case": "int3-extremes",
+      "programFile": {
+        "file": "integer-vector3/int3-extremes.program.json",
+        "sha256": "46e870618d02ed0dc4c3d937bf57a3b107908585beeafa521acf23a37191dd7c"
+      },
+      "pixelFile": {
+        "file": "integer-vector3/int3-extremes.rgba32f",
+        "sha256": "057017caabb8e79da5d7f10e06fdbcdbb72f167ef8655285e21ee6bd513ade38"
+      }
+    },
+    {
+      "family": "integer-vector3",
+      "case": "int3-extremes-swap",
+      "programFile": {
+        "file": "integer-vector3/int3-extremes-swap.program.json",
+        "sha256": "2a6fd48387ee62504cb0ce11c9e1f5f15455d0d424399ad7280131f725364150"
+      },
+      "pixelFile": {
+        "file": "integer-vector3/int3-extremes-swap.rgba32f",
+        "sha256": "04d07ccdbbe3e3b165ce2bfa9ce1fb9793150c8f33412ff4fe9aa8e017e2af65"
+      }
+    },
+    {
+      "family": "integer-vector3",
+      "case": "int3-positive-ties",
+      "programFile": {
+        "file": "integer-vector3/int3-positive-ties.program.json",
+        "sha256": "d92aad0eb102f9c659814acb52df86f4edacf9590fa091a2e21f7fe03e42f1ca"
+      },
+      "pixelFile": {
+        "file": "integer-vector3/int3-positive-ties.rgba32f",
+        "sha256": "a4eec9a8f5bf8d07535d5685bc539a185bc0bcb8f140feae1b088521c72018be"
+      }
+    },
+    {
+      "family": "integer-vector3",
+      "case": "int3-positive-odd",
+      "programFile": {
+        "file": "integer-vector3/int3-positive-odd.program.json",
+        "sha256": "9c1c461bc2b10aaed36ff1287355ce08ed319eeb03938e35ae87d4a6f6a6c7b9"
+      },
+      "pixelFile": {
+        "file": "integer-vector3/int3-positive-odd.rgba32f",
+        "sha256": "7949218b1db862d4d195906eb1b1ee8a394f86f4a09f32698326daf363bf583b"
+      }
+    },
+    {
+      "family": "integer-vector3",
+      "case": "int3-negative-ties",
+      "programFile": {
+        "file": "integer-vector3/int3-negative-ties.program.json",
+        "sha256": "cfc61fae2f033a0c4aaa19c764b4f6ee7f0177c66a259a54eacf56c1e9ece851"
+      },
+      "pixelFile": {
+        "file": "integer-vector3/int3-negative-ties.rgba32f",
+        "sha256": "d40a45cec9be0f1034715129926444998713217c1ecbab03e91757a26b951aff"
+      }
+    },
+    {
+      "family": "integer-vector3",
+      "case": "int3-negative-odd",
+      "programFile": {
+        "file": "integer-vector3/int3-negative-odd.program.json",
+        "sha256": "f469b66729b4f980503e52247db591c7c177c185ae7f66d7f3237db602edd89a"
+      },
+      "pixelFile": {
+        "file": "integer-vector3/int3-negative-odd.rgba32f",
+        "sha256": "6a9680d89768c8e0533f607771eb8807d01ea7d07e68d06ee24a20beb03d3a20"
+      }
+    },
+    {
+      "family": "integer-vector3",
+      "case": "int3-high-rounding",
+      "programFile": {
+        "file": "integer-vector3/int3-high-rounding.program.json",
+        "sha256": "bf331ce84864160f1d07bb3e90e9196b2024534b1d27a66317f56a2edd09dd52"
+      },
+      "pixelFile": {
+        "file": "integer-vector3/int3-high-rounding.rgba32f",
+        "sha256": "c65e56ccab75fc978cb5bfff6de0a9e52fe293998ae948fafa1fad83534a2d6a"
+      }
+    },
+    {
+      "family": "integer-vector3",
+      "case": "int3-low-rounding",
+      "programFile": {
+        "file": "integer-vector3/int3-low-rounding.program.json",
+        "sha256": "39865b31c5990f4f259ff8b03f95d40b76a3e915a2bc752b12c0ce74bd6751da"
+      },
+      "pixelFile": {
+        "file": "integer-vector3/int3-low-rounding.rgba32f",
+        "sha256": "8b13d9987dec64b8a3e28de25ac9051fba2edcb13ecb494fb695d8151dc46643"
+      }
+    },
+    {
+      "family": "integer-vector3",
+      "case": "int3-reroute",
+      "programFile": {
+        "file": "integer-vector3/int3-reroute.program.json",
+        "sha256": "48c106eb3210ea8a7f44d7e8ca8425cc656e1e449e363cfb7ee20da0cef1196a"
+      },
+      "pixelFile": {
+        "file": "integer-vector3/int3-reroute.rgba32f",
+        "sha256": "f33bb4c936a596c906dd782d2842f86ca9cda34f36fd2590bf23ce04a3f16d1b"
+      }
+    },
+    {
+      "family": "integer-vector3",
+      "case": "int3-group",
+      "programFile": {
+        "file": "integer-vector3/int3-group.program.json",
+        "sha256": "77c199afaedd15b3bcb0ef3254309703b0f134ae32f47a10b78adb6d22800838"
+      },
+      "pixelFile": {
+        "file": "integer-vector3/int3-group.rgba32f",
+        "sha256": "cec7f104d2ae2ddc09bbc82368d8eec7db88cd1f8dd6a580ef544432513800e6"
+      }
+    },
+    {
+      "family": "integer-vector3",
+      "case": "int3-vector-group",
+      "programFile": {
+        "file": "integer-vector3/int3-vector-group.program.json",
+        "sha256": "a8ec6a2d99ce06abaa10a9429aec451554d1e29b9a6fb2d3a876bd307a4f3feb"
+      },
+      "pixelFile": {
+        "file": "integer-vector3/int3-vector-group.rgba32f",
+        "sha256": "a1e8489d0ae3fa39f9c14a2ff44c8fbfbd0587e80d4245edfe30be8de1c15b5c"
+      }
+    },
+    {
+      "family": "integer-vector3",
+      "case": "int3-rgba-group",
+      "programFile": {
+        "file": "integer-vector3/int3-rgba-group.program.json",
+        "sha256": "ef205db83bbca151748761d47f6526a1a2f528733c6780b7a01429f9b1ff10ed"
+      },
+      "pixelFile": {
+        "file": "integer-vector3/int3-rgba-group.rgba32f",
+        "sha256": "6daea923ebd83153859e3e7282f51ec9753d20598d70c73ef3a0a2cf5039cf65"
+      }
+    },
+    {
+      "family": "integer-vector3",
+      "case": "int3-neighbors",
+      "programFile": {
+        "file": "integer-vector3/int3-neighbors.program.json",
+        "sha256": "ff589e06f995819379364dd3af54a8915e89dd84eefc7685a1ec07b63e7c56a3"
+      },
+      "pixelFile": {
+        "file": "integer-vector3/int3-neighbors.rgba32f",
+        "sha256": "f577134e118e7bd12b41d4319c9301b213b9b9aac492d5533e9fab978613f0e2"
+      }
+    },
+    {
+      "family": "finite-image-info",
+      "case": "calibration",
+      "programFile": {
+        "file": "finite-image-info/calibration.program.json",
+        "sha256": "69ed126bd15836be008ed22a3616af73d99c8d9fd84d13b3c421fe0e4eda201e"
+      },
+      "pixelFile": {
+        "file": "finite-image-info/calibration.rgba32f",
+        "sha256": "1e5b3c94caea9b512b6a257200a26c5d3c91eb2b198f4602595dfb74f30df28d"
+      }
+    },
+    {
+      "family": "finite-image-info",
+      "case": "blank-dimensions",
+      "programFile": {
+        "file": "finite-image-info/blank-dimensions.program.json",
+        "sha256": "96b963ba81bf5004fbf5dc982a4fde5fcf3e5c93a3f1c4c930546766a8a7f5b1"
+      },
+      "pixelFile": {
+        "file": "finite-image-info/blank-dimensions.rgba32f",
+        "sha256": "59b97350104fe4d9b512bdd1c140bd2586f0e955a18d5ba73dd0a6cd343d867b"
+      }
+    },
+    {
+      "family": "finite-image-info",
+      "case": "blank-resolution",
+      "programFile": {
+        "file": "finite-image-info/blank-resolution.program.json",
+        "sha256": "55dbc5367d5c93a337c93eb29bddbc52517d4cfae0b7c5e871b5669cfa39e0df"
+      },
+      "pixelFile": {
+        "file": "finite-image-info/blank-resolution.rgba32f",
+        "sha256": "2525710a047b744282f4cb028cd95ac0072ccd50ec56a3d8793b7c570fe13209"
+      }
+    },
+    {
+      "family": "finite-image-info",
+      "case": "blank-location",
+      "programFile": {
+        "file": "finite-image-info/blank-location.program.json",
+        "sha256": "e7d2a6bf070d93434dde2c6707b6c1f16720d384aeaf71ec27270c3f282c6dea"
+      },
+      "pixelFile": {
+        "file": "finite-image-info/blank-location.rgba32f",
+        "sha256": "718ac3b3452de19698e211c7b4fcbe82b9bc8ddf1425396536fb096b95bb3d00"
+      }
+    },
+    {
+      "family": "finite-image-info",
+      "case": "blank-rotation",
+      "programFile": {
+        "file": "finite-image-info/blank-rotation.program.json",
+        "sha256": "d85ef714f869bf394b6ff568285f6e10909ec089dd849be84e64518e5642af75"
+      },
+      "pixelFile": {
+        "file": "finite-image-info/blank-rotation.rgba32f",
+        "sha256": "718ac3b3452de19698e211c7b4fcbe82b9bc8ddf1425396536fb096b95bb3d00"
+      }
+    },
+    {
+      "family": "finite-image-info",
+      "case": "blank-scale",
+      "programFile": {
+        "file": "finite-image-info/blank-scale.program.json",
+        "sha256": "66396ff9cfecc381e9426a3c6e68de1a60f4177179e45fa415f0b3da352db255"
+      },
+      "pixelFile": {
+        "file": "finite-image-info/blank-scale.rgba32f",
+        "sha256": "dc13b52bb4b15f37b9cafaced1f22e6095b6c3bcf4fc2a8da20651b44e33751b"
+      }
+    },
+    {
+      "family": "finite-image-info",
+      "case": "png-dimensions",
+      "programFile": {
+        "file": "finite-image-info/png-dimensions.program.json",
+        "sha256": "82bffca10f164ecb0e045f574771cd68cd4862eed25acb2852472cedddece321"
+      },
+      "pixelFile": {
+        "file": "finite-image-info/png-dimensions.rgba32f",
+        "sha256": "121c6c17a061556dcd810fca44b99486014e5ca3bef39cfdc5849ca976fd140d"
+      }
+    },
+    {
+      "family": "finite-image-info",
+      "case": "png-resolution",
+      "programFile": {
+        "file": "finite-image-info/png-resolution.program.json",
+        "sha256": "631e1d9f54d35a6b58a913e515dc410ecede95a3eafdc120bd6c769755b37aac"
+      },
+      "pixelFile": {
+        "file": "finite-image-info/png-resolution.rgba32f",
+        "sha256": "2525710a047b744282f4cb028cd95ac0072ccd50ec56a3d8793b7c570fe13209"
+      }
+    },
+    {
+      "family": "finite-image-info",
+      "case": "png-location",
+      "programFile": {
+        "file": "finite-image-info/png-location.program.json",
+        "sha256": "b48299f096c2cdc44cd86cd56a8a3c71c06003e9c74c627332bbb0f73da00209"
+      },
+      "pixelFile": {
+        "file": "finite-image-info/png-location.rgba32f",
+        "sha256": "718ac3b3452de19698e211c7b4fcbe82b9bc8ddf1425396536fb096b95bb3d00"
+      }
+    },
+    {
+      "family": "finite-image-info",
+      "case": "png-rotation",
+      "programFile": {
+        "file": "finite-image-info/png-rotation.program.json",
+        "sha256": "91679e15cac2f61d361e3665c5b85187da27f77650deedbe517e296994cc7bbd"
+      },
+      "pixelFile": {
+        "file": "finite-image-info/png-rotation.rgba32f",
+        "sha256": "718ac3b3452de19698e211c7b4fcbe82b9bc8ddf1425396536fb096b95bb3d00"
+      }
+    },
+    {
+      "family": "finite-image-info",
+      "case": "png-scale",
+      "programFile": {
+        "file": "finite-image-info/png-scale.program.json",
+        "sha256": "3112b0c9ff6de12339b8774dc9ca4d67bb67e15697a313d6efbe52a397a1fad8"
+      },
+      "pixelFile": {
+        "file": "finite-image-info/png-scale.rgba32f",
+        "sha256": "dc13b52bb4b15f37b9cafaced1f22e6095b6c3bcf4fc2a8da20651b44e33751b"
+      }
+    },
+    {
+      "family": "finite-image-info",
+      "case": "blank-aspect",
+      "programFile": {
+        "file": "finite-image-info/blank-aspect.program.json",
+        "sha256": "6401265e8acf2ec01b053371f81d7683f42ecd7264793201c4550b71bab78780"
+      },
+      "pixelFile": {
+        "file": "finite-image-info/blank-aspect.rgba32f",
+        "sha256": "56dbcddac181f168156cc4a4fd02eacdfd250e39a09b9b5a0d8fa23446eba452"
+      }
+    },
+    {
+      "family": "finite-image-info",
+      "case": "blank-summary",
+      "programFile": {
+        "file": "finite-image-info/blank-summary.program.json",
+        "sha256": "ad6a2c9d3a1df5d5fce46e5b238616ad52b014f914fd5b4f842b05d62e88e7a8"
+      },
+      "pixelFile": {
+        "file": "finite-image-info/blank-summary.rgba32f",
+        "sha256": "b6ff5dd7e1e7766a1235b4f5b7c56f50952d75b18082f31fcfed490896563173"
+      }
+    },
+    {
+      "family": "finite-image-info",
+      "case": "blank-group",
+      "programFile": {
+        "file": "finite-image-info/blank-group.program.json",
+        "sha256": "362129a836d9a86b5c61e5aacfb7aec18edf4ced4a588e6f4c646db5d3c6ebee"
+      },
+      "pixelFile": {
+        "file": "finite-image-info/blank-group.rgba32f",
+        "sha256": "59b97350104fe4d9b512bdd1c140bd2586f0e955a18d5ba73dd0a6cd343d867b"
+      }
+    },
+    {
+      "family": "finite-image-info",
+      "case": "png-aspect",
+      "programFile": {
+        "file": "finite-image-info/png-aspect.program.json",
+        "sha256": "e60cd09c69e1e211a733074ce8df354c849c4a36caa671235f378c326d4d1a66"
+      },
+      "pixelFile": {
+        "file": "finite-image-info/png-aspect.rgba32f",
+        "sha256": "56dbcddac181f168156cc4a4fd02eacdfd250e39a09b9b5a0d8fa23446eba452"
+      }
+    },
+    {
+      "family": "finite-image-info",
+      "case": "png-summary",
+      "programFile": {
+        "file": "finite-image-info/png-summary.program.json",
+        "sha256": "3b4c96e5676ce203aafd1a74b11247b8bdaa6906d3a8440fbcc0e2c72de492eb"
+      },
+      "pixelFile": {
+        "file": "finite-image-info/png-summary.rgba32f",
+        "sha256": "93fe584af04032f2d9f5a7db3a21db22c35a9a6a559cae3e75588882f4160a47"
+      }
+    },
+    {
+      "family": "finite-image-info",
+      "case": "png-group",
+      "programFile": {
+        "file": "finite-image-info/png-group.program.json",
+        "sha256": "6f0e27c55855876685386893ef49d0742893bf33ba27701c52d076b6dc9d8899"
+      },
+      "pixelFile": {
+        "file": "finite-image-info/png-group.rgba32f",
+        "sha256": "121c6c17a061556dcd810fca44b99486014e5ca3bef39cfdc5849ca976fd140d"
+      }
+    },
+    {
+      "family": "finite-image-info",
+      "case": "float-dimensions",
+      "programFile": {
+        "file": "finite-image-info/float-dimensions.program.json",
+        "sha256": "e5891c325fd90aba4068ae6d964b95276590f74ebfff4ff09e0a310e8e78d20f"
+      },
+      "pixelFile": {
+        "file": "finite-image-info/float-dimensions.rgba32f",
+        "sha256": "0228bfdc151b8f991778fc8e2a144c1dfe0b60ac01ff42e7e695b334faed82dc"
+      }
+    },
+    {
+      "family": "finite-image-info",
+      "case": "float-scale",
+      "programFile": {
+        "file": "finite-image-info/float-scale.program.json",
+        "sha256": "8f83e1f62112c603c1ae9a9ed9b20fe53604cd1942dfe8840809766a98a03b6c"
+      },
+      "pixelFile": {
+        "file": "finite-image-info/float-scale.rgba32f",
+        "sha256": "dc13b52bb4b15f37b9cafaced1f22e6095b6c3bcf4fc2a8da20651b44e33751b"
+      }
+    },
+    {
+      "family": "finite-image-info",
+      "case": "blank-maximum-axis",
+      "programFile": {
+        "file": "finite-image-info/blank-maximum-axis.program.json",
+        "sha256": "42cc71a7f18e91bbef18fbc716c49bf668b8b69ecbd46b002f0da8b39ab256f8"
+      },
+      "pixelFile": {
+        "file": "finite-image-info/blank-maximum-axis.rgba32f",
+        "sha256": "533f7e593397e51f2b357d6e2702a723ad8ee19ca49a39fd3460f3f954dc8f3f"
+      }
+    },
+    {
+      "family": "finite-image-info",
+      "case": "png-maximum-axis",
+      "programFile": {
+        "file": "finite-image-info/png-maximum-axis.program.json",
+        "sha256": "b4428769d03f453eebfb3422551a15240efd4d5020056273788b11d98a658b5d"
+      },
+      "pixelFile": {
+        "file": "finite-image-info/png-maximum-axis.rgba32f",
+        "sha256": "f794dd0f013d2151f328d75970e80e6887d693e27fb9dcd31fba17be0a66fe47"
+      }
+    }
+  ]
+}

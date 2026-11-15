@@ -1,0 +1,213 @@
+{
+  "schemaVersion": 1,
+  "status": "CLOSED_NATIVE_REFERENCE_RESEARCH",
+  "baseCommit": "ebd502f83d63f354447f0e8a17522a117b9bf395",
+  "supportCredit": 0,
+  "FinalCredit": 0,
+  "nativeCpuParityCredit": 0,
+  "closedReceipt": {
+    "path": "/tmp/scenetoweb-native-kernel-closed-r1.json",
+    "sha256": "8bb0232c72227f94679f1e4e81e198dfd1177937122ae8250070423bbc5b215d",
+    "summary": {
+      "schemaVersion": 1,
+      "status": "CLOSED_NATIVE_REFERENCE_RESEARCH",
+      "supportCredit": 0,
+      "FinalCredit": 0,
+      "nativeCpuParityCredit": 0,
+      "calibration": {
+        "eeveeCarrierWords": 64,
+        "coordinateWords": 192,
+        "directStorageWords": 1280,
+        "directInputWords": 256,
+        "wordMismatches": 0
+      },
+      "nativeDirectCases": 6,
+      "nativeDirectWords": 1536,
+      "actualEeveeCases": 1,
+      "actualEeveeWords": 256,
+      "nativeBackend": "METAL",
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "consumedTargetCompilerOutput": false,
+      "guardedForwardDeclarationsRemoved": 20,
+      "remainingBodyTokensUnchanged": true,
+      "comparisons": [
+        {
+          "case": "gradient-radial",
+          "words": 256,
+          "wordDifferences": 0,
+          "maxAbsoluteError": 0,
+          "maxUlps": 0,
+          "violations": 0,
+          "gate": {
+            "maximumAbsoluteError": 9.5367431640625e-07,
+            "maximumUlps": 8,
+            "bothRequired": true,
+            "allFourOutputLanes": true,
+            "fixedBeforeCapture": true
+          }
+        }
+      ],
+      "models": {
+        "direct": "Blender53-PythonGPU-original-lowered-GLSL-Metal-RGBA32F-v1",
+        "eevee": "Actual EEVEE scalar values through independently calibrated exact-half carrier; material/film alpha remains1"
+      },
+      "reports": {
+        "eevee": {
+          "path": "/tmp/scenetoweb-native-kernel-eevee-r2/report.json",
+          "sha256": "59bfd8c0bcf80a18c899a19d5d37658cbbddc70eaec0f53c0fcaab8d5f1651d6"
+        },
+        "direct": {
+          "path": "/tmp/scenetoweb-native-kernel-direct-r4/report.json",
+          "sha256": "ab4ab1e46f98893589020d91696ff097a8f2043c2e869740b69dc151c8f7c7c2"
+        }
+      },
+      "limitations": [
+        "Pure explicit-input PythonGPU source kernel is not automatically actual EEVEE material context.",
+        "Only radial Gradient has an actual EEVEE material crosscheck; Noise/Voronoi/compositions are direct source-kernel oracles only.",
+        "Native zero-sign cannot be recovered through the arithmetic material carrier; tested radial outputs are nonzero.",
+        "No source node/Final/whole-scene promotion; preserved failed compile/zero namespaces grant no numeric credit."
+      ]
+    }
+  },
+  "nativeInput": {
+    "path": "/tmp/scenetoweb-native-kernel-direct-r4/input.rgba32f",
+    "sha256": "42b93a1a549bd2761a903c1764c3f9b3ca5dfafce5dfb3df25ce251ab1b0bc39",
+    "words": 256,
+    "order": "bottom-row-first,x-fastest,RGBA32F-LE"
+  },
+  "nativeOutputAbi": "Color.rgb,Fac or Distance;6 direct cases,256words each; no display/film alpha substitution",
+  "nativeOutputFiles": [
+    {
+      "case": "gradient-radial",
+      "path": "/tmp/scenetoweb-native-kernel-direct-r4/gradient-radial.rgba32f",
+      "sha256": "4b6e0200a5d4417f58dc7c1ab0f4a21b68c61296a692e38456fa964431709672",
+      "words": 256
+    },
+    {
+      "case": "noise-fbm3-default",
+      "path": "/tmp/scenetoweb-native-kernel-direct-r4/noise-fbm3-default.rgba32f",
+      "sha256": "24bb31fcc1d5a68a199dfa369542ab37fe5c2174b207066f4069a484a6f33de0",
+      "words": 256
+    },
+    {
+      "case": "voronoi-f1-3d-default",
+      "path": "/tmp/scenetoweb-native-kernel-direct-r4/voronoi-f1-3d-default.rgba32f",
+      "sha256": "7d79a2ef23dc032df756785e364a230549aa1b8da7abb0a8ff49c10a5d9312ac",
+      "words": 256
+    },
+    {
+      "case": "voronoi-f2-3d-default",
+      "path": "/tmp/scenetoweb-native-kernel-direct-r4/voronoi-f2-3d-default.rgba32f",
+      "sha256": "62095bae503879d0280f3256bca5602c860f5393e4d94c50113893821ae313f2",
+      "words": 256
+    },
+    {
+      "case": "noise-twice",
+      "path": "/tmp/scenetoweb-native-kernel-direct-r4/noise-twice.rgba32f",
+      "sha256": "834fa329b02dd848313083fe45d1345f372dc36bbab660b5f02e85a68c90e64a",
+      "words": 256
+    },
+    {
+      "case": "noise-to-voronoi-first",
+      "path": "/tmp/scenetoweb-native-kernel-direct-r4/noise-to-voronoi-first.rgba32f",
+      "sha256": "2c5530fadc3f0c13cfe485e0548a622e8eb7f0974f80fc2c5452866bc1c6e8e2",
+      "words": 256
+    }
+  ],
+  "eeveeRadial": {
+    "path": "/tmp/scenetoweb-native-kernel-eevee-r2/gradient-radial.kernel-rgba32f",
+    "sha256": "4b6e0200a5d4417f58dc7c1ab0f4a21b68c61296a692e38456fa964431709672",
+    "words": 256,
+    "exactVsDirect": true
+  },
+  "timings": {
+    "eeveeRenders": 12,
+    "eeveeRenderCallsMs": 2043.793539982289,
+    "eeveeGuardedCaptureMs": 3111.00975,
+    "directDraws": 12,
+    "directInnerMs": 517.6306670182385,
+    "directGuardedCaptureMs": 1631
+  },
+  "sourceBoundary": {
+    "genericLibrarySha256": "d41ef47c89118dd1a1beed6e0cdaff7328db334f8cee96766b08e01fa6596c57",
+    "nativeMetalLibrarySha256": "7a678514777219397fef15232066d8a52bc0a8aa5bfe4d39d33969cc3031f883",
+    "canonicalAbiSha256": "b90dc6a14e62ad8391d31e1562491d950a06fcca0e55ed66b36682a7822d67c0",
+    "generationSha256": "112c7e7f20ab3d45096f5ff7643756c79e30bcf06addf74cefe4984c671929ae",
+    "guardedDeclarationsRemoved": 20,
+    "remainingTokensIdentical": true,
+    "consumedTargetWgsl": false,
+    "consumedTargetEsGlsl": false
+  },
+  "preservedFailures": [
+    {
+      "path": "/tmp/scenetoweb-native-kernel-schema-r1",
+      "qualificationCredit": 0,
+      "files": {
+        "native.log": "37f30c255fbc7e70263a1f42566a5e055dc88009abc8cd40e1887246ed87952a",
+        "native-archive.json": "276891a884374c067f8783a8397c663fa90d9d6b84dddcb58d91d021c320ed1a"
+      }
+    },
+    {
+      "path": "/tmp/scenetoweb-native-kernel-schema-r2",
+      "qualificationCredit": 0,
+      "files": {
+        "native.log": "312e337a372fa0ef6afa7c5f1c21e0a23c8b101364670827aa6efb3bacc50514",
+        "native-archive.json": "ac9012243dc48d3d52272f6a7385c9a005674896a963759b77d045b07d37c413"
+      }
+    },
+    {
+      "path": "/tmp/scenetoweb-native-kernel-eevee-r1",
+      "qualificationCredit": 0,
+      "files": {
+        "native.log": "4d2a7fb41341415b969e14e8b105afcbfd089094b86d6a8126b3fb06a68dd700",
+        "native-archive.json": "e26bf604bd518890587647c6f4ac2e91f47902596c1f823a6a44cb4d67639b68"
+      }
+    },
+    {
+      "path": "/tmp/scenetoweb-native-kernel-direct-r1",
+      "qualificationCredit": 0,
+      "files": {
+        "native.log": "c78e0952862b002f1dbfe463134f82e243afcfd2c10f50ac1827fea41a524578",
+        "native-archive.json": "06a4638b94c85dd0fce9f9b9e59cb17ef41b2ef632d716fbe0fa69e9d7fe4de4"
+      }
+    },
+    {
+      "path": "/tmp/scenetoweb-native-kernel-direct-r2",
+      "qualificationCredit": 0,
+      "files": {
+        "native.log": "e5bdf1a812846a0f38e9f6f3315ce28bae4f34da088ffe6fcf3fbba89f1055b9",
+        "native-archive.json": "cd401395626a6504d8fdf829f0a85e7fb255397944341b92d20fd5238207522b"
+      }
+    },
+    {
+      "path": "/tmp/scenetoweb-native-kernel-direct-r3",
+      "qualificationCredit": 0,
+      "files": {
+        "native.log": "a647fd39f612970786ebe7d4f5a6099737b31800ba39950bfa3d159bf78d46b1",
+        "native-archive.json": "fcb70c4ed73d9cf8bd8c4f97f10caf6c657eaa6c4fe57ee792d335a3d2dd39e1",
+        "report.json": "81e0200b11fd112672ddd7f02f90efa7f255e5287576517f7af9d0c1ab7785ba"
+      }
+    }
+  ],
+  "prototypePins": {
+    "capture.py": "c4c0c57b5635935c6520be485d3ad0e749c10ae76e382fa0b11e2d11ffa93a58",
+    "contract.json": "4f37f378267daacd5872da36b0e30083d06b74cd795c0cea2e3d6e5f2fcc1866",
+    "direct-r2-failed.py": "74ffc36f476a96ad6f77476ae5ee39834aaff012b4f8a05350888f5dc37b3c6a",
+    "direct-r3-failed.py": "7b78873f63058e0f157d5b3f9155779478d7534f00a5a861962295aeb1c6432b",
+    "direct-run.mjs": "16c1edf10eba4d1518773eaae18a44b177bda585b5bb6a4ac3c07166ae5779a4",
+    "direct.py": "ef22351ef6856894bb0b213db777a0e0264b7c0f29f471b1993a35f2ae831d56",
+    "run.mjs": "aa3d429c05dfd30096b408e9ab919bc50fd51f04d267ba4dd456de64d063b84a",
+    "verify.mjs": "3afbb81435b8ed7b5ae8f925548a8697b2559a8caf3f315225d83db0c9f74c3d"
+  },
+  "limits": [
+    "Pure explicit-input PythonGPU source kernel is not automatically actual EEVEE material context.",
+    "Only radial Gradient has an actual EEVEE material crosscheck; Noise/Voronoi/compositions are direct source-kernel oracles only.",
+    "Native zero-sign cannot be recovered through the arithmetic material carrier; tested radial outputs are nonzero.",
+    "No source node/Final/whole-scene promotion; preserved failed compile/zero namespaces grant no numeric credit."
+  ]
+}

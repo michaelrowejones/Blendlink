@@ -1,0 +1,34 @@
+{
+  "projectRoot": "/absolute/repo-with-installed-dependencies",
+  "adapterFile": "/absolute/shader-kernel-bridge-next/adapter.mjs",
+  "moduleFile": "/absolute/generated-r5/module.json",
+  "productionFile": "/absolute/repo/packages/blendlink/dist/tslNodeRecipe.js",
+  "handParametersFile": "/absolute/shader-kernel-bridge-next/hand-parameters.json",
+  "oracleFile": "/absolute/repo/experiments/port-throughput-benchmark/native64-oracle.mjs",
+  "oracleContractFile": "/absolute/repo/experiments/port-throughput-benchmark/oracle-contract.json",
+  "nativeInputFile": "/absolute/independent-native-source/inputs.rgba32f",
+  "referenceFiles": {
+    "noise-fbm3-default": "/absolute/independent-native-source/noise.rgba32f",
+    "voronoi-f1-3d-default": "/absolute/independent-native-source/voronoi-f1.rgba32f"
+  },
+  "sourceDirectories": [
+    "/absolute/repo/packages/blendlink/dist",
+    "/absolute/generated-r5"
+  ],
+  "sourceFiles": [
+    "/absolute/independent-native-source/report.json"
+  ],
+  "profile": "metal",
+  "leaseId": "ROOT-GRANTED-LEASE-IDENTIFIER",
+  "kinds": [
+    "noise-fbm3-default",
+    "voronoi-f1-3d-default"
+  ],
+  "shapes": [
+    "single"
+  ],
+  "projection": "scalar",
+  "output": "/absolute/fresh-benchmark-namespace",
+  "nativeClosedReceiptFile": "/absolute/independent-native-source/closed.json",
+  "nativeClosedReceiptSha256": "REVIEWED_64_HEX_CLOSED_RECEIPT_SHA256"
+}

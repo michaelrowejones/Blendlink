@@ -1,0 +1,17 @@
+{
+  "source": "experiments/tsl-node-differential/output/reference/ir/noise-color.json",
+  "colorOffsets": [
+    [
+      165.44527757573996,
+      162.76821379148592,
+      193.4084041028769
+    ],
+    [
+      155.58091529076475,
+      177.15463090621742,
+      138.140034568063
+    ]
+  ],
+  "profile": "noise_normalized/native-standard-f32",
+  "note": "Existing production builder; these retained source-emitter offsets are not a new arithmetic implementation."
+}

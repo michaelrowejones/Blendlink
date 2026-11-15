@@ -28,6 +28,30 @@ Live classifications in version overrides require the same evidence as base
 classifications. This route metadata describes implementation, not qualification;
 native, saved Final and actual browser proofs still determine the supported slice.
 
+## Runtime strategy selection
+
+Use automation for native source/dependency discovery, structural contracts,
+reference generation and shared proof transport. Choose the runtime separately
+per output, static mode, source precision profile and actual backend. Preserve
+the current qualified implementation until a replacement passes independent
+correctness and its declared performance budget on the same workload.
+
+The [canonical bridge](../experiments/shader-kernel-bridge-next/README.md) provides
+a fast implementation/reference starting point for pure shader functions, not
+a universal runtime replacement. The paired Noise/Voronoi experiment found
+generic native wrappers slower than the existing TSL. Output selection improved
+them but retained regressions. Request only live outputs (Noise exposes an
+actual `compute_color` flag), specialize proven static modes and deduplicate
+common helpers before considering manual arithmetic changes. Keep every generic
+baseline and failed numeric result unchanged.
+
+Full-color Noise and dependent graphs require a separate contract from Fac-only
+Noise. Tiny differences in source-static offsets can amplify downstream. Use
+the [staged diagnostic](../experiments/noise-offset-fma-diagnostic/README.md)
+before writing another hash/RNE/FMA primitive. Proven fixed helper inputs may
+use [source-pinned observation tables](../experiments/native-shader-constant-table-pilot/README.md)
+as an experiment; those six observations do not qualify a general constant folder.
+
 ## Workflow
 
 1. **Discover upstream.** Resolve an official daily archive, its checksum, and
@@ -69,6 +93,34 @@ and repeated install/dispose checks. These remain separate evidence; neither a
 small graph nor a fast fallback carrier qualifies a port's source appearance.
 
 ## Catch fixture errors before expensive proof
+
+Choose an existing reference surface before constructing another fixture:
+
+| Evaluated behavior | Reusable starting point | What it does not establish |
+| --- | --- | --- |
+| Pure native shader function, exact Float32 storage | [Direct native GPU oracle](../experiments/native-f32-oracle-research/README.md), [Radial integration](../experiments/radial-f32-oracle/README.md) | Python GPU/create-info differs from EEVEE material context; retain a smaller actual-material crosscheck |
+| Native CPU single values / constant islands | `packages/blendlink/blender/compositor_static_matrix.py` and existing typed constructor families | Varying fields, hidden coordinates and time dependencies are not constant folding |
+| Actual installed scene, scheduling and cleanup | [Early Final canary](../experiments/port-speed-pilot/README.md) | A retained scene check is not a fresh export or full family qualification |
+| Structural packets and case inventories | [Generated contracts](../experiments/operator-contract-pilot/README.md) | Existing semantic and independent numerical gates remain authoritative |
+
+Blender 5.3's `gpu.init()` supports background direct `RGBA32F` capture. Reuse
+the calibrated framebuffer surface for pure-kernel regression instead of
+encoding every kernel output through half-float EEVEE film. Direct shader
+capture preserves more information but has a different source/compiler context.
+Actual EEVEE material checks still cover node defaults, conversions, geometry,
+fusion and transport; calibrated carriers remain appropriate when that specific
+material Float32 claim is needed. Do not relabel a direct-kernel capture as an
+EEVEE node or full-scene proof.
+
+For mechanically imported libraries, the [compiler bridge](../experiments/shader-kernel-bridge-pilot/README.md)
+and [incremental update planner](../experiments/shader-update-plan-pilot/README.md)
+are experimental starting points. Reuse canonical dependency metadata and
+shared tool identities; a changed compiler invalidates every dependent family.
+These experiments grant no automatic support and do not replace closed readers.
+
+Run `npm run test:node-pipeline` before native/browser jobs. Its explicit
+protocol variants run in separate Node processes so import-time mode caches
+cannot make one variant accidentally exercise another.
 
 Start with actual no-render RNA controls. Use the retained native catalog to
 check socket/menu/precision names, then exercise the real stored defaults and

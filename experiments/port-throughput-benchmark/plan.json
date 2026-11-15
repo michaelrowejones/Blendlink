@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "role": "research-only-port-throughput-benchmark",
+  "supportCredit": 0,
+  "nativeParityCredit": 0,
+  "modes": [
+    "hand-tsl",
+    "native-generated"
+  ],
+  "availableKinds": [
+    "gradient-radial",
+    "checker",
+    "white-three",
+    "noise-fbm3-default",
+    "voronoi-f1-3d-default",
+    "voronoi-f2-3d-default",
+    "noise-twice",
+    "noise-to-voronoi-first"
+  ],
+  "shapes": [
+    "single",
+    "adapter-composed"
+  ],
+  "extents": [
+    [
+      256,
+      256
+    ],
+    [
+      1024,
+      512
+    ]
+  ],
+  "accuracyExtent": [
+    8,
+    8
+  ],
+  "accuracyPhases": [
+    0,
+    17,
+    43
+  ],
+  "warmupFramesDiscardedPerBlock": 12,
+  "framesPerSubmissionBatch": 20,
+  "repetitions": 3,
+  "gpuQueriesPerBlock": 3,
+  "drawsPerGpuQuery": 1,
+  "readbacksPerBlock": 1,
+  "maximumWorkloadsPerLease": 8,
+  "maximumLeaseMs": 120000,
+  "maximumCompileMs": 15000,
+  "maximumFragmentBytes": 1048576,
+  "gpuTimerTimeoutMs": 2000,
+  "minimumVerifiedGpuSamplesPerMode": 9,
+  "performancePolicy": {
+    "profile": "metal",
+    "regressionMedianRatioAbove": 1.1,
+    "regressionP95RatioAbove": 1.15,
+    "improvementMedianRatioBelow": 0.9,
+    "improvementP95RatioBelow": 0.95,
+    "ratio": "native-generated GPU duration divided by paired hand-tsl duration",
+    "submissionOnlyWinnerAllowed": false,
+    "scope": "bounded workload signal, not universal renderer or authoring speedup"
+  },
+  "softwarePolicy": "correctness-only; no throughput samples or performance winner",
+  "renderTarget": {
+    "format": "RGBA",
+    "type": "Float32",
+    "samples": 0,
+    "depthBuffer": false,
+    "colorSpace": "none"
+  },
+  "stageBudgetsMs": {
+    "tooling": 600000,
+    "generation": 120000,
+    "adapter": 300000,
+    "preflight": 60000,
+    "validation": 180000
+  },
+  "accuracyPolicy": "unchanged independently pinned adapter oracle; either mode failure disables pair comparison; never infer correctness from pair equality",
+  "composedKinds": [
+    "noise-twice",
+    "noise-to-voronoi-first"
+  ],
+  "projections": [
+    "rgba",
+    "scalar"
+  ],
+  "inputModel": {
+    "model": "native64-repeat-v1",
+    "extent": [
+      8,
+      8
+    ],
+    "encoding": "little-endian-rgba32f",
+    "addressing": "integer screen XY modulo8, linear index plus integer phase modulo64",
+    "coordinateChanges": "none; exact source words only",
+    "commonInputTextureCount": 1
+  },
+  "gpuQueryConsumption": "Each available verified one-draw query is resolved, then that target is explicitly read before another query; avoids ambiguous multi-write hidden-surface/dead-store elimination"
+}

@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 1,
+  "status": "NATIVE_COMPILER_COMPARISON_FAILED_ZERO_CREDIT",
+  "profileScope": [
+    "metal"
+  ],
+  "supportCredit": 0,
+  "FinalCredit": 0,
+  "eeveeMaterialCredit": 0,
+  "nativeModel": "Blender53-PythonGPU-original-lowered-GLSL-Metal-RGBA32F-v1",
+  "nativeReportSha256": "ab4ab1e46f98893589020d91696ff097a8f2043c2e869740b69dc151c8f7c7c2",
+  "inputSha256": "c006a141f143c66ab2e730744180e5005eb9e6c346cd6697a56eb3ea891f464b",
+  "gate": {
+    "maximumAbsoluteError": 9.5367431640625e-7,
+    "maximumUlps": 8,
+    "bothRequired": true
+  },
+  "profiles": [
+    {
+      "profile": "metal",
+      "reportSha256": "caa64f88d007f508b6d0d0be73badcdbe0dd0079ff53115d93911d993a5572f5",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "flip": false,
+          "rows": [
+            {
+              "case": "gradient-radial",
+              "words": 256,
+              "wordDifferences": 0,
+              "contractViolations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "noise-fbm3-default",
+              "words": 256,
+              "wordDifferences": 68,
+              "contractViolations": 62,
+              "maxAbs": 0.000010907649993896484,
+              "maxUlps": 310
+            },
+            {
+              "case": "voronoi-f1-3d-default",
+              "words": 256,
+              "wordDifferences": 0,
+              "contractViolations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "voronoi-f2-3d-default",
+              "words": 256,
+              "wordDifferences": 0,
+              "contractViolations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "noise-twice",
+              "words": 256,
+              "wordDifferences": 245,
+              "contractViolations": 228,
+              "maxAbs": 0.000034421682357788086,
+              "maxUlps": 1155
+            },
+            {
+              "case": "noise-to-voronoi-first",
+              "words": 256,
+              "wordDifferences": 63,
+              "contractViolations": 61,
+              "maxAbs": 0.000037342309951782227,
+              "maxUlps": 2009
+            }
+          ]
+        },
+        {
+          "backend": "webgl2",
+          "flip": true,
+          "rows": [
+            {
+              "case": "gradient-radial",
+              "words": 256,
+              "wordDifferences": 0,
+              "contractViolations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "noise-fbm3-default",
+              "words": 256,
+              "wordDifferences": 64,
+              "contractViolations": 62,
+              "maxAbs": 0.000010907649993896484,
+              "maxUlps": 310
+            },
+            {
+              "case": "voronoi-f1-3d-default",
+              "words": 256,
+              "wordDifferences": 0,
+              "contractViolations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "voronoi-f2-3d-default",
+              "words": 256,
+              "wordDifferences": 0,
+              "contractViolations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "noise-twice",
+              "words": 256,
+              "wordDifferences": 243,
+              "contractViolations": 228,
+              "maxAbs": 0.000034421682357788086,
+              "maxUlps": 1155
+            },
+            {
+              "case": "noise-to-voronoi-first",
+              "words": 256,
+              "wordDifferences": 63,
+              "contractViolations": 61,
+              "maxAbs": 0.000037342309951782227,
+              "maxUlps": 2006
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "comparedWords": 3072,
+  "wordDifferences": 746,
+  "contractViolations": 702,
+  "maxAbs": 0.000037342309951782227,
+  "maxUlps": 2009,
+  "limits": [
+    "Direct Blender Python GPU Metal compilation differs from EEVEE material compilation; the independent EEVEE radial crosscheck is owned by a separate receipt.",
+    "No generic source-node/default/context admission or production support is granted."
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "status": "COMPOSABLE_CAPTURE_WITH_NUMERICAL_DIFFERENCES",
+  "profileScope": [
+    "metal"
+  ],
+  "supportCredit": 0,
+  "nativeBlenderParityCredit": 0,
+  "finalExports": 0,
+  "generationSha256": "a70dec96a12b7b89593adcc8ea4f78ba55dd41055e74cddf5f31e0f70c785817",
+  "inputSha256": "c006a141f143c66ab2e730744180e5005eb9e6c346cd6697a56eb3ea891f464b",
+  "profiles": [
+    {
+      "profile": "metal",
+      "reportSha256": "caa64f88d007f508b6d0d0be73badcdbe0dd0079ff53115d93911d993a5572f5",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "description": ""
+          },
+          "flip": false,
+          "maximumShaderBytes": 64681,
+          "compileMs": 754.3999999761581,
+          "cases": 9
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "flip": true,
+          "maximumShaderBytes": 73243,
+          "compileMs": 670.2999999523163,
+          "cases": 9
+        }
+      ],
+      "crossLanguageWordDifferences": 58
+    }
+  ],
+  "draws": 18,
+  "inputWords": 512,
+  "primaryWords": 4096,
+  "crossLanguageWordDifferences": 58
+}

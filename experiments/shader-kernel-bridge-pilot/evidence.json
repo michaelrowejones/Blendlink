@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 1,
+  "status": "COMPILER_INTEGRATION_PASSED_NUMERICAL_GATE_FAILED",
+  "supportCredit": 0,
+  "nativeBlenderParityCredit": 0,
+  "finalExports": 0,
+  "productionFilesChanged": 0,
+  "blenderCommit": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "toolchain": {
+    "shaderToolBuildSeconds": 24.632691542,
+    "shaderToolBuildCommand": [
+      "clang++",
+      "-std=c++20",
+      "-O1",
+      "-DNDEBUG",
+      "-I/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool",
+      "-I/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/bsl",
+      "-I/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/lexit",
+      "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/ast.cc",
+      "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/attribute.cc",
+      "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/enum.cc",
+      "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/flow_control.cc",
+      "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/function.cc",
+      "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/grammar.cc",
+      "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/intermediate.cc",
+      "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/metadata.cc",
+      "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/namespace.cc",
+      "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/processor.cc",
+      "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/resource_table.cc",
+      "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/shader_tool.cc",
+      "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/string.cc",
+      "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/struct.cc",
+      "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/template.cc",
+      "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/union.cc",
+      "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/bsl/codegen.cc",
+      "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/bsl/constructor.cc",
+      "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/bsl/grammar.cc",
+      "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/bsl/operator.cc",
+      "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/bsl/resource.cc",
+      "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/bsl/symbol.cc",
+      "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/bsl/symbol_class.cc",
+      "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/bsl/symbol_function.cc",
+      "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/bsl/symbol_scope.cc",
+      "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/bsl/symbol_table.cc",
+      "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/bsl/symbol_template.cc",
+      "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/bsl/symbol_variable.cc",
+      "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/bsl/type_checker.cc",
+      "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shader_tool/lexit/lexit.cc",
+      "-o",
+      "/tmp/scenetoweb-shader-kernel-build/shader_tool"
+    ],
+    "nagaVersion": "30.0.2",
+    "nagaBottleSha256": "18205ddf1be0fd9c7bad1c3c34d7207ea6a89b47d67bbdbfc528424d5048354e",
+    "nagaBottleUrl": "https://ghcr.io/v2/homebrew/core/naga-cli/blobs/sha256:18205ddf1be0fd9c7bad1c3c34d7207ea6a89b47d67bbdbfc528424d5048354e",
+    "generationCommandSeconds": 0.187818207,
+    "toolLicensePins": {
+      "/tmp/scenetoweb-shader-kernel-build/naga/naga-cli/30.0.2/LICENSE.MIT": "dc0d97139e8205818c703741c7be7cb3b96888bd5917b8d6fc6133731e403c21",
+      "/tmp/scenetoweb-shader-kernel-build/naga/naga-cli/30.0.2/LICENSE.APACHE": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9",
+      "/tmp/scenetoweb-shader-kernel-build/naga/naga-cli/30.0.2/.crates2.json": "b4b425d4930505f76276e4106260b49a5bd15bdad5d584e325c008afd5885c64",
+      "/tmp/scenetoweb-shader-kernel-build/naga/naga-cli/30.0.2/sbom.spdx.json": "e398ecc237a05d6db05aaa1979eaf8d36bb511411b727701986e0288be0e9ac5"
+    }
+  },
+  "captures": [
+    {
+      "path": "/tmp/scenetoweb-shader-kernel-build/generated-r4/generation.json",
+      "sha256": "d7c564a6c03327fb3908c0d725abce6b3d9c0a9fc9ef7d37103195b8114df06c",
+      "bytes": 44394
+    },
+    {
+      "path": "/tmp/scenetoweb-shader-kernel-build/generated-r4/modules.json",
+      "sha256": "6de07bedca00161a1811f51c57ff2ae25cb50a995776c23c86d316c4ee845429",
+      "bytes": 67077
+    },
+    {
+      "path": "/tmp/scenetoweb-shader-kernel-build/browser-r4-metal/report.json",
+      "sha256": "ee5df359d36eaf4da5d2c916f4aff3395c3e665d50d64f26245c649088acc32d",
+      "bytes": 35770
+    },
+    {
+      "path": "/tmp/scenetoweb-shader-kernel-build/browser-r4-software/report.json",
+      "sha256": "5fdc610367843d010f95970f74abb05459d252aec52a4ccaddce2ae2e316ed82",
+      "bytes": 35951
+    },
+    {
+      "path": "/tmp/scenetoweb-shader-kernel-build/closed-r3.json",
+      "sha256": "46942bbf3be5f2aebbaeaf32625ea1d7df61bf62dacf317c7f786a6712f9b572",
+      "bytes": 16739
+    }
+  ],
+  "modules": {
+    "gradient": {
+      "dependencies": [
+        "gpu_shader_math_constants.bsl.hh",
+        "gpu_shader_material_tex_gradient.bsl.hh"
+      ],
+      "entrypoints": [
+        "node_tex_gradient"
+      ],
+      "wrappers": [
+        "bridge_gradient"
+      ],
+      "glslSha256": "a805060245f3ebd1af929161eb06dbad7c2876421985a0256208558f1658682b",
+      "wgslSha256": "248c398fcbc379a9fff6bf6cb878cd72d4d603e6efb879dc7f09b810e0ab429d",
+      "esSha256": "6cef509032f85e719d6889c43792dc265fdfbf87438d43bd1d25eedaadb5e546",
+      "esBytes": 3749,
+      "glslBytes": 1342,
+      "wgslBytes": 3395
+    },
+    "checker": {
+      "dependencies": [
+        "gpu_shader_material_tex_checker.bsl.hh"
+      ],
+      "entrypoints": [
+        "node_tex_checker"
+      ],
+      "wrappers": [
+        "bridge_checker"
+      ],
+      "glslSha256": "160b6be241a6984b1fd75fe1536675fccd802c41eab6a8d08b5d2846fa4f04c4",
+      "wgslSha256": "474347d713dfd969b85c82519240ecc9d99bde995da6f90c933a699a31b0cbe8",
+      "esSha256": "00b028681473c1970f8f72ee45a8ed4fcdebf7be809e055cea2ae48abaf5f8bd",
+      "esBytes": 2527,
+      "glslBytes": 917,
+      "wgslBytes": 2322
+    },
+    "white_noise": {
+      "dependencies": [
+        "gpu_shader_common_hash.bsl.hh",
+        "gpu_shader_material_tex_white_noise.bsl.hh"
+      ],
+      "entrypoints": [
+        "node_white_noise_1d",
+        "node_white_noise_2d",
+        "node_white_noise_3d",
+        "node_white_noise_4d"
+      ],
+      "wrappers": [
+        "bridge_white_one",
+        "bridge_white_two",
+        "bridge_white_three",
+        "bridge_white_four",
+        "bridge_hash_words"
+      ],
+      "glslSha256": "f6512c9de903022b18ae067b11ee2cba27d52468df3df2c4babb38def7e6403c",
+      "wgslSha256": "e7ab6b098b1ffcc2a31af0fe39085dbbbc775ae9087f5f03aabb4e0f6596afc7",
+      "esSha256": "a70cc3007a9687f726f9218472eca58bbe9f7bf4b26e48b67a8332814af9e3ba",
+      "esBytes": 27988,
+      "glslBytes": 8587,
+      "wgslBytes": 25810
+    }
+  },
+  "summary": {
+    "words": 14336,
+    "calibrationExactMismatches": 0,
+    "analyticExactMismatches": 0,
+    "analyticFloatViolations": 16,
+    "translationWordDifferences": 0,
+    "maximumAbsoluteError": 5.960464477539063e-08,
+    "maximumUlps": 16
+  },
+  "actualDraws": 64,
+  "controlWords": 2048,
+  "primaryWords": 14336,
+  "sourcePins": 83,
+  "gateFailure": "Radial Gradient: four violating words per tuple; Metal max 14 ULP and SwiftShader max 16 ULP. Absolute gate passed; conjunctive 8 ULP gate failed. Unchanged gates.",
+  "historicalFailures": [
+    {
+      "path": "/tmp/scenetoweb-shader-kernel-build/generated-r1",
+      "reason": "Adapter expected trailing-digit wrapper names unchanged; Naga appends underscore.",
+      "credit": 0
+    },
+    {
+      "path": "/tmp/scenetoweb-shader-kernel-build/generated-r3",
+      "reason": "ES envelope adapter uint declaration recognition; no kernel change.",
+      "credit": 0
+    },
+    {
+      "path": "/tmp/scenetoweb-shader-kernel-build/browser-r1-metal",
+      "reason": "Vite fixture realpath/alias setup stopped before shader work.",
+      "credit": 0
+    },
+    {
+      "path": "/tmp/scenetoweb-shader-kernel-build/browser-r2-metal",
+      "reason": "Canonical desktop GLSL implicit promotions fail WebGL2; WGSL all 16 cases drawn.",
+      "credit": 0
+    },
+    {
+      "path": "/tmp/scenetoweb-shader-kernel-build/browser-r3-metal",
+      "reason": "Round-trip compiler integration passed; interpolated UV calibration not exact.",
+      "credit": 0
+    },
+    {
+      "path": "/tmp/scenetoweb-shader-kernel-build/browser-r3-software",
+      "reason": "Same interpolated UV calibration failure.",
+      "credit": 0
+    },
+    {
+      "path": "/tmp/scenetoweb-shader-kernel-build/closed-r2.json",
+      "reason": "Eight calibration mismatches; diagnostic numeric gate failed.",
+      "sha256": "0e887d524843b3c716bb26a941a5e4099380ca3caed4c1eba9ac255383a734ca",
+      "credit": 0
+    }
+  ],
+  "readerOutcome": "Expected nonzero exit; complete failed result retained. No output repair, input quantization, or gate widening."
+}

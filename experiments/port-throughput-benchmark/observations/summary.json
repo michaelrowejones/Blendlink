@@ -1,0 +1,34 @@
+{
+  "role": "command-time-only-sum-not-critical-path-or-llm-time",
+  "trials": [
+    {
+      "method": "shared",
+      "trial": 1,
+      "observedElapsedSumMs": 162.440374,
+      "stages": {
+        "preflight": [
+          {
+            "attempt": 1,
+            "elapsedMs": 21.670166,
+            "exitCode": 0,
+            "timedOut": false
+          }
+        ],
+        "validation": [
+          {
+            "attempt": 1,
+            "elapsedMs": 140.770208,
+            "exitCode": 0,
+            "timedOut": false
+          }
+        ]
+      },
+      "allPassed": true,
+      "unobservedStages": [
+        "tooling",
+        "generation",
+        "adapter"
+      ]
+    }
+  ]
+}

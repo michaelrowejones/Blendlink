@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "blenderVersion": "5.3.0",
+  "engine": "CYCLES",
+  "frame": 1,
+  "status": "extracted",
+  "ops": [
+    {
+      "id": "n0",
+      "kind": "rgb",
+      "source": {
+        "path": [
+          "Artist static compositor calibration"
+        ],
+        "node": "Color",
+        "nodeType": "CompositorNodeRGB",
+        "output": "Color"
+      },
+      "type": "RGBA",
+      "properties": {
+        "evaluation_device": "CPU",
+        "native_gpu_backend": "METAL",
+        "single_value_device": "CPU"
+      },
+      "inputs": {},
+      "value": [
+        0.125,
+        0.25,
+        0.5,
+        1.0
+      ]
+    }
+  ],
+  "passes": [],
+  "diagnostics": [],
+  "alphaConvention": "premultiplied",
+  "colorSpace": "scene-linear",
+  "displayTransform": "separate, after authored compositor",
+  "tree": "Artist static compositor calibration",
+  "output": {
+    "kind": "ref",
+    "node": "n0",
+    "type": "RGBA"
+  }
+}

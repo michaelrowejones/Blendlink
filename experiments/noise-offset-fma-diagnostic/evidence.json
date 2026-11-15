@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "status": "FIXED_INPUT_OFFSET_CONTRACTION_DIAGNOSIS_CONFIRMED",
+  "supportCredit": 0,
+  "FinalCredit": 0,
+  "productionFilesChanged": 0,
+  "nativeDraws": 19,
+  "browserDraws": 40,
+  "browserStageWords": 320,
+  "profile": "Apple M5 Pro Metal WebGPU and WebGL2",
+  "fixedInputs": {
+    "seeds": [
+      3,
+      4
+    ],
+    "lanes": [
+      0,
+      1,
+      2
+    ],
+    "count": 6
+  },
+  "rawPins": [
+    {
+      "path": "/tmp/scenetoweb-noise-offset-native-r1/report.json",
+      "sha256": "9a0e467a9cf06a9d2cfc7a550d2bd51e0ed6659a9376eca409c198121096193b",
+      "bytes": 28506
+    },
+    {
+      "path": "/tmp/scenetoweb-noise-offset-browser-r2/report.json",
+      "sha256": "217eb4c097fd67888b13cc0e94077ec3fd22c172da1cb1b1d583db4cb6971195",
+      "bytes": 37514
+    },
+    {
+      "path": "/tmp/scenetoweb-noise-offset-native-closed-r1.json",
+      "sha256": "69278565ef2726c77ecc98d7fb496496922cca91e067d19202b44b456fbfb0f0",
+      "bytes": 3584
+    },
+    {
+      "path": "/tmp/scenetoweb-noise-offset-comparison-r2.json",
+      "sha256": "c0c7ee2b777e0dcd40f10d985135817032c7601fade3179733887532e6bc2098",
+      "bytes": 5493
+    }
+  ],
+  "witness": {
+    "seed": 3,
+    "lane": 2,
+    "hashU32": 4011860407,
+    "unitWord": 1064247330,
+    "nativeLiteralOffsetWord": 1128360077,
+    "nativeUniformOffsetWord": 1128360077,
+    "browserLiteralOffsetWord": 1128360078,
+    "browserUniformOffsetWord": 1128360077,
+    "existingFmaHelperWord": 1128360077,
+    "existingStagedHelperWord": 1128360078
+  },
+  "unchanged": "Original kernel, parameters, float gates and generic bridge artifacts remain frozen. No RNE/FMA helper reimplementation.",
+  "limitations": [
+    "Six fixed hash-derived operands only, no new general FMA range qualification.",
+    "Separate stage programs may affect optimizer choices; no register instrumentation claim."
+  ],
+  "failedAttempt": {
+    "path": "/tmp/scenetoweb-noise-offset-browser-r1",
+    "reason": "Diagnostic vector shift packed scalar RHS incompatible with WGSL; componentwise scalar packing fixed, no kernel body changes.",
+    "supportCredit": 0
+  }
+}

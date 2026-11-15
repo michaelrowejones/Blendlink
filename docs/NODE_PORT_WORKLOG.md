@@ -1739,3 +1739,15 @@ Signed unit-axis AXIS_ANGLE research targets the ordinary Vector Rotate default;
 it does not yet change the qualified fixed-axis scope. Original official-demo
 acceptance and the remaining scene/animation/bake bottlenecks are not inferred
 from these new node-level proofs.
+# Port-speed research checkpoint
+
+The local `codex/port-speed-phase2` worktree retains source-only experiments
+and independently replayed native/browser evidence. See
+[strategy results](NODE_PORT_STRATEGY_RESULTS.md) for the decision and bounds.
+Generic import, output-aware specialization and actual production TSL were
+compared on the same scalar workloads. Existing TSL remains faster; automated
+references/contracts and targeted source import form the recommended hybrid.
+No coverage, support promotion, release or spreadsheet refresh follows from
+these experiments. Unreleased finite ImageInfo/unit-axis work remains separate
+from qualified scope even where its source is present in this worktree.
+

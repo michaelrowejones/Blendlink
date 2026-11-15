@@ -1,0 +1,101 @@
+{
+  "status": "CPU_ONLY_STRUCTURAL_PILOT_MEASUREMENTS",
+  "sourceBase": "61df48b64b09f27d1cbf2cf0d13e9c568e839934",
+  "node": "v24.22.1",
+  "platform": "darwin",
+  "architecture": "arm64",
+  "samples": 7,
+  "timingScope": "One host process; file I/O and Python startup included as named; not renderer, GPU or development-speed measurements",
+  "timings": {
+    "tsStructuralDecode37": {
+      "medianMs": 2.164332999999999,
+      "minimumMs": 2.021667000000008,
+      "maximumMs": 4.732583000000005
+    },
+    "pythonStructuralDecode37IncludingStartup": {
+      "medianMs": 25.113042000000007,
+      "minimumMs": 24.618291,
+      "maximumMs": 27.112040999999998
+    },
+    "sharedPinnedNativeReplay37": {
+      "medianMs": 9.97833300000002,
+      "minimumMs": 9.669333999999992,
+      "maximumMs": 13.427791999999997
+    }
+  },
+  "programs": 37,
+  "historicalNativeWords": 9472,
+  "structuralMutations": 32,
+  "numericalCredit": 0,
+  "supportPromotion": false,
+  "handwritten": {
+    "correspondence.mjs": {
+      "bytes": 820,
+      "lines": 12,
+      "sha256": "a99c582c83dfce83606a09c8f91da40653220723600995c540e88e8fe8d79932"
+    },
+    "descriptor.mjs": {
+      "bytes": 5550,
+      "lines": 28,
+      "sha256": "750c934303de7ebd6d271c140d1aae84310ba28d339b8bbd4c1cef05b235d29d"
+    },
+    "generate.mjs": {
+      "bytes": 2769,
+      "lines": 15,
+      "sha256": "d93779a37e4e6b8eeb0bbb36937d9ce57f44f18c75ae48bcebf74ddb6b49d0ee"
+    },
+    "measure.mjs": {
+      "bytes": 2702,
+      "lines": 19,
+      "sha256": "e8c495330baacbf309bb8930209d50a4c50c71bb3002e11389d7d2edbc6627a3"
+    },
+    "pilot.test.mjs": {
+      "bytes": 8575,
+      "lines": 70,
+      "sha256": "408c1691a06158a6b79fd7e264eb7d36e4f99e20aae4b14ffb47cfe1808fe78d"
+    },
+    "python-check.py": {
+      "bytes": 504,
+      "lines": 11,
+      "sha256": "a90af62915bf55bd70131a1328be3d09ff9b29269b1a78f2bdd416308a59231b"
+    },
+    "replay.mjs": {
+      "bytes": 119,
+      "lines": 2,
+      "sha256": "4d2dffaae7195a167670f64b150d6e1c5e605dfcef0809bfdf05775fc858dcb8"
+    },
+    "runtime.py": {
+      "bytes": 2758,
+      "lines": 54,
+      "sha256": "9f67f9d215e30ac2718aa1d095764bcb158b2c023033794f921802710a3f03ee"
+    },
+    "runtime.ts": {
+      "bytes": 2903,
+      "lines": 17,
+      "sha256": "8a99e706315a30cf4a8474fb08e4092181d6de83f19b82cb0fa42524109b7664"
+    },
+    "transport.mjs": {
+      "bytes": 3312,
+      "lines": 32,
+      "sha256": "6d517ea19f7f4db51c0f58773e68d5406714df62009726a5082faec8c94f3bd4"
+    }
+  },
+  "generated": {
+    "contracts.py": {
+      "bytes": 16776,
+      "lines": 13,
+      "sha256": "253aee372952dc633de28e92c397ef1d4e79a2a845f2982ff8a8be7ee09170d8"
+    },
+    "contracts.ts": {
+      "bytes": 14502,
+      "lines": 7,
+      "sha256": "23c7be638181bc21929255ace4e8783c2500267362d9f147f7af0090898bbf33"
+    },
+    "counts.json": {
+      "bytes": 983,
+      "lines": 30,
+      "sha256": "2aa6e1da20e97d87d4e899e5b81de747035c068a405b6caf3a1710c85162e6ee"
+    }
+  },
+  "sourceFixtureManifestSha256": "e39d4f3bfbf3afc3cfed0badee1a9857627c7b1f894ec8d3f7ce45372bc65796"
+}

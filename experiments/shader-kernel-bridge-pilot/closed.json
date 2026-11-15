@@ -1,0 +1,602 @@
+{
+  "schemaVersion": 1,
+  "status": "RESEARCH_GATES_FAILED_ZERO_CREDIT",
+  "supportCredit": 0,
+  "nativeBlenderParityCredit": 0,
+  "finalExports": 0,
+  "generationSha256": "d7c564a6c03327fb3908c0d725abce6b3d9c0a9fc9ef7d37103195b8114df06c",
+  "profiles": [
+    {
+      "profile": "metal",
+      "reportSha256": "ee5df359d36eaf4da5d2c916f4aff3395c3e665d50d64f26245c649088acc32d",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "vendor": "apple",
+            "architecture": "metal-3",
+            "description": "",
+            "device": ""
+          },
+          "flip": false,
+          "calibrationExactMismatches": 0,
+          "analyticOutputsAreDiagnosticOnly": false,
+          "rows": [
+            {
+              "case": "gradient-0",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "gradient-1",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "gradient-2",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "gradient-3",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "gradient-4",
+              "words": 256,
+              "wordDifferences": 72,
+              "violations": 4,
+              "maxAbs": 5.960464477539063e-8,
+              "maxUlps": 14
+            },
+            {
+              "case": "gradient-5",
+              "words": 256,
+              "wordDifferences": 16,
+              "violations": 0,
+              "maxAbs": 5.587935447692871e-9,
+              "maxUlps": 3
+            },
+            {
+              "case": "gradient-6",
+              "words": 256,
+              "wordDifferences": 16,
+              "violations": 0,
+              "maxAbs": 1.4901161193847656e-8,
+              "maxUlps": 1
+            },
+            {
+              "case": "checker",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "checker-grid-boundaries",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "white-one",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "white-two",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "white-three",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "white-four",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "hash-words",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            }
+          ],
+          "maximumShaderBytes": 24676,
+          "compileMs": 280.00000005960464,
+          "drawSubmissionMs": 12.499999940395355,
+          "readbackMs": 78.79999995231628
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "vendor": "Google Inc. (Apple)",
+            "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+          },
+          "flip": true,
+          "calibrationExactMismatches": 0,
+          "analyticOutputsAreDiagnosticOnly": false,
+          "rows": [
+            {
+              "case": "gradient-0",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "gradient-1",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "gradient-2",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "gradient-3",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "gradient-4",
+              "words": 256,
+              "wordDifferences": 72,
+              "violations": 4,
+              "maxAbs": 5.960464477539063e-8,
+              "maxUlps": 14
+            },
+            {
+              "case": "gradient-5",
+              "words": 256,
+              "wordDifferences": 16,
+              "violations": 0,
+              "maxAbs": 5.587935447692871e-9,
+              "maxUlps": 3
+            },
+            {
+              "case": "gradient-6",
+              "words": 256,
+              "wordDifferences": 16,
+              "violations": 0,
+              "maxAbs": 1.4901161193847656e-8,
+              "maxUlps": 1
+            },
+            {
+              "case": "checker",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "checker-grid-boundaries",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "white-one",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "white-two",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "white-three",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "white-four",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "hash-words",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            }
+          ],
+          "maximumShaderBytes": 27056,
+          "compileMs": 569.3000003099442,
+          "drawSubmissionMs": 11.999999821186066,
+          "readbackMs": 252.29999995231628
+        }
+      ],
+      "translationWordDifferences": 0
+    },
+    {
+      "profile": "software",
+      "reportSha256": "5fdc610367843d010f95970f74abb05459d252aec52a4ccaddce2ae2e316ed82",
+      "apis": [
+        {
+          "backend": "webgpu",
+          "gpu": {
+            "vendor": "google",
+            "architecture": "swiftshader",
+            "description": "",
+            "device": ""
+          },
+          "flip": false,
+          "calibrationExactMismatches": 0,
+          "analyticOutputsAreDiagnosticOnly": false,
+          "rows": [
+            {
+              "case": "gradient-0",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "gradient-1",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "gradient-2",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "gradient-3",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "gradient-4",
+              "words": 256,
+              "wordDifferences": 28,
+              "violations": 4,
+              "maxAbs": 5.960464477539063e-8,
+              "maxUlps": 16
+            },
+            {
+              "case": "gradient-5",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "gradient-6",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "checker",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "checker-grid-boundaries",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "white-one",
+              "words": 256,
+              "wordDifferences": 8,
+              "violations": 0,
+              "maxAbs": 5.960464477539063e-8,
+              "maxUlps": 1
+            },
+            {
+              "case": "white-two",
+              "words": 256,
+              "wordDifferences": 19,
+              "violations": 0,
+              "maxAbs": 5.960464477539063e-8,
+              "maxUlps": 1
+            },
+            {
+              "case": "white-three",
+              "words": 256,
+              "wordDifferences": 32,
+              "violations": 0,
+              "maxAbs": 5.960464477539063e-8,
+              "maxUlps": 1
+            },
+            {
+              "case": "white-four",
+              "words": 256,
+              "wordDifferences": 22,
+              "violations": 0,
+              "maxAbs": 5.960464477539063e-8,
+              "maxUlps": 1
+            },
+            {
+              "case": "hash-words",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            }
+          ],
+          "maximumShaderBytes": 24676,
+          "compileMs": 115.60000014305115,
+          "drawSubmissionMs": 12.100000083446503,
+          "readbackMs": 520.5999999046326
+        },
+        {
+          "backend": "webgl2",
+          "gpu": {
+            "vendor": "Google Inc. (Google)",
+            "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+          },
+          "flip": true,
+          "calibrationExactMismatches": 0,
+          "analyticOutputsAreDiagnosticOnly": false,
+          "rows": [
+            {
+              "case": "gradient-0",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "gradient-1",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "gradient-2",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "gradient-3",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "gradient-4",
+              "words": 256,
+              "wordDifferences": 28,
+              "violations": 4,
+              "maxAbs": 5.960464477539063e-8,
+              "maxUlps": 16
+            },
+            {
+              "case": "gradient-5",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "gradient-6",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "checker",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "checker-grid-boundaries",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            },
+            {
+              "case": "white-one",
+              "words": 256,
+              "wordDifferences": 8,
+              "violations": 0,
+              "maxAbs": 5.960464477539063e-8,
+              "maxUlps": 1
+            },
+            {
+              "case": "white-two",
+              "words": 256,
+              "wordDifferences": 19,
+              "violations": 0,
+              "maxAbs": 5.960464477539063e-8,
+              "maxUlps": 1
+            },
+            {
+              "case": "white-three",
+              "words": 256,
+              "wordDifferences": 32,
+              "violations": 0,
+              "maxAbs": 5.960464477539063e-8,
+              "maxUlps": 1
+            },
+            {
+              "case": "white-four",
+              "words": 256,
+              "wordDifferences": 22,
+              "violations": 0,
+              "maxAbs": 5.960464477539063e-8,
+              "maxUlps": 1
+            },
+            {
+              "case": "hash-words",
+              "words": 256,
+              "wordDifferences": 0,
+              "violations": 0,
+              "maxAbs": 0,
+              "maxUlps": 0
+            }
+          ],
+          "maximumShaderBytes": 27056,
+          "compileMs": 39.19999998807907,
+          "drawSubmissionMs": 11.100000083446503,
+          "readbackMs": 589.4999998807907
+        }
+      ],
+      "translationWordDifferences": 0
+    }
+  ],
+  "words": 14336,
+  "calibrationExactMismatches": 0,
+  "analyticExactMismatches": 0,
+  "analyticFloatViolations": 16,
+  "translationWordDifferences": 0,
+  "maximumAbsoluteError": 5.960464477539063e-8,
+  "maximumUlps": 16,
+  "limits": {
+    "schemaVersion": 1,
+    "role": "compiler-and-three-function-integration-research",
+    "supportCredit": 0,
+    "nativeBlenderParityCredit": 0,
+    "finalExports": 0,
+    "extent": [
+      8,
+      8
+    ],
+    "families": [
+      "gradient",
+      "checker",
+      "white_noise"
+    ],
+    "profiles": [
+      "metal",
+      "software"
+    ],
+    "apis": [
+      "webgpu",
+      "webgl2"
+    ],
+    "caseIds": [
+      "input",
+      "grid-input",
+      "gradient-0",
+      "gradient-1",
+      "gradient-2",
+      "gradient-3",
+      "gradient-4",
+      "gradient-5",
+      "gradient-6",
+      "checker",
+      "checker-grid-boundaries",
+      "white-one",
+      "white-two",
+      "white-three",
+      "white-four",
+      "hash-words"
+    ],
+    "analyticDiscreteGate": "every Checker RGB/Fac and split U32 hash word exactly equals independent host evaluation",
+    "analyticFloatGate": {
+      "maximumAbsoluteError": 9.5367431640625e-7,
+      "maximumUlps": 8,
+      "bothRequired": true
+    },
+    "translationComparison": "archive and compare GLSL and WGSL words separately; never infer Blender CPU or EEVEE parity",
+    "limits": {
+      "maximumCompileMsPerCase": 15000,
+      "maximumFragmentShaderBytes": 262144,
+      "maximumTotalCases": 64,
+      "maximumBrowserRunMs": 120000
+    }
+  }
+}

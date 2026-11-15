@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "role": "compiler-and-three-function-integration-research",
+  "supportCredit": 0,
+  "nativeBlenderParityCredit": 0,
+  "finalExports": 0,
+  "extent": [8, 8],
+  "families": ["gradient", "checker", "white_noise"],
+  "profiles": ["metal", "software"],
+  "apis": ["webgpu", "webgl2"],
+  "caseIds": ["input", "grid-input", "gradient-0", "gradient-1", "gradient-2", "gradient-3", "gradient-4", "gradient-5", "gradient-6", "checker", "checker-grid-boundaries", "white-one", "white-two", "white-three", "white-four", "hash-words"],
+  "analyticDiscreteGate": "every Checker RGB/Fac and split U32 hash word exactly equals independent host evaluation",
+  "analyticFloatGate": {"maximumAbsoluteError": 0.00000095367431640625, "maximumUlps": 8, "bothRequired": true},
+  "translationComparison": "archive and compare GLSL and WGSL words separately; never infer Blender CPU or EEVEE parity",
+  "limits": {"maximumCompileMsPerCase": 15000, "maximumFragmentShaderBytes": 262144, "maximumTotalCases": 64, "maximumBrowserRunMs": 120000}
+}

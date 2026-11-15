@@ -1,0 +1,37 @@
+{
+  "status": "DIAGNOSTIC_FINITE_IMAGE_INFO_METAL_RAW_PASSED",
+  "nativeGraphs": 21,
+  "savedSources": 8,
+  "exportedFinals": 0,
+  "actualApis": [
+    {
+      "api": "WebGPU",
+      "vendor": "apple",
+      "architecture": "metal-3",
+      "device": "",
+      "description": ""
+    },
+    {
+      "api": "WebGL2",
+      "vendor": "Google Inc. (Apple)",
+      "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+    }
+  ],
+  "primaryBrowserCases": 42,
+  "primaryWords": 10752,
+  "independentlyRecomputedAllReadWords": 21504,
+  "wordDifferences": 0,
+  "browserReportSha256": "8570472affe385ca20c5e05dd4ec57b2c28b199b32e003ccea03a84994397222",
+  "runtimeTransaction": {
+    "sha256": "3fb233db6eacf66dc36141927ae5e58614e4648f5f8722b315339ed704a17655"
+  },
+  "supportCredit": 0,
+  "productionCredit": false,
+  "finalCredit": 0,
+  "artifactDirectory": "artifacts/verification-finite-info-metal-pilot-r1",
+  "diagnosticSha256": "f15a9cf0c59f254ec1d323699991e059c13d3d431175b68c1ad03a02abe69db7",
+  "independentReviewSha256": "2306d3e1783c2473b52546f196b30c361c47212b0c0d71ec35a9a016ee2f3509",
+  "nativeArchiveSha256": "5ea8f1a65394e9a54f4961a073cfb586d1676611ed2df2cb4c32e0e0571c6765",
+  "sourceRuntimeScope": "Own frozen SDK plus d680 Vector scheduling peer fix; diagnostic only. No saved Final export/browser phase or Software profile qualification.",
+  "noRootEdits": true
+}

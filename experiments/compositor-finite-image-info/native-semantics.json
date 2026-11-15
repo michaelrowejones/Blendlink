@@ -1,0 +1,692 @@
+{
+  "status": "OBSERVED_FINITE_IMAGE_INFO_NATIVE_CPU",
+  "version": [
+    5,
+    3,
+    0
+  ],
+  "build": "02f0899d78e3",
+  "rows": [
+    {
+      "case": "blank-5x3",
+      "producer": "blank",
+      "requestedSourceSize": [
+        5,
+        3
+      ],
+      "actualSourceSize": [
+        5,
+        3
+      ],
+      "output": "Dimensions",
+      "rgba": [
+        5.0,
+        3.0,
+        0.0,
+        1.0
+      ],
+      "words": [
+        1084227584,
+        1077936128,
+        0,
+        1065353216
+      ],
+      "pixelFile": "blank-5x3-Dimensions.rgba32f",
+      "pixelSha256": "4ba387a55db2c37ed7e4f29d21cd9b512334917856af221b44b7e938240f7375"
+    },
+    {
+      "case": "blank-5x3",
+      "producer": "blank",
+      "requestedSourceSize": [
+        5,
+        3
+      ],
+      "actualSourceSize": [
+        5,
+        3
+      ],
+      "output": "Resolution",
+      "rgba": [
+        5.0,
+        3.0,
+        0.0,
+        1.0
+      ],
+      "words": [
+        1084227584,
+        1077936128,
+        0,
+        1065353216
+      ],
+      "pixelFile": "blank-5x3-Resolution.rgba32f",
+      "pixelSha256": "4ba387a55db2c37ed7e4f29d21cd9b512334917856af221b44b7e938240f7375"
+    },
+    {
+      "case": "blank-5x3",
+      "producer": "blank",
+      "requestedSourceSize": [
+        5,
+        3
+      ],
+      "actualSourceSize": [
+        5,
+        3
+      ],
+      "output": "Location",
+      "rgba": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "words": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "pixelFile": "blank-5x3-Location.rgba32f",
+      "pixelSha256": "213aec83b934358b1e12903a77b13a70be806e3f57b3f5f5b086fb5dd7c7ec2b"
+    },
+    {
+      "case": "blank-5x3",
+      "producer": "blank",
+      "requestedSourceSize": [
+        5,
+        3
+      ],
+      "actualSourceSize": [
+        5,
+        3
+      ],
+      "output": "Rotation",
+      "rgba": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "words": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "pixelFile": "blank-5x3-Rotation.rgba32f",
+      "pixelSha256": "213aec83b934358b1e12903a77b13a70be806e3f57b3f5f5b086fb5dd7c7ec2b"
+    },
+    {
+      "case": "blank-5x3",
+      "producer": "blank",
+      "requestedSourceSize": [
+        5,
+        3
+      ],
+      "actualSourceSize": [
+        5,
+        3
+      ],
+      "output": "Scale",
+      "rgba": [
+        1.0,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "words": [
+        1065353216,
+        1065353216,
+        0,
+        1065353216
+      ],
+      "pixelFile": "blank-5x3-Scale.rgba32f",
+      "pixelSha256": "8a0ccac25e962a98207177c3dbe92d155819d26e2495659d58a3f41be2d8bde7"
+    },
+    {
+      "case": "blank-zero-negative",
+      "producer": "blank",
+      "requestedSourceSize": [
+        0,
+        -2
+      ],
+      "actualSourceSize": [
+        0,
+        -2
+      ],
+      "output": "Dimensions",
+      "rgba": [
+        1.0,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "words": [
+        1065353216,
+        1065353216,
+        0,
+        1065353216
+      ],
+      "pixelFile": "blank-zero-negative-Dimensions.rgba32f",
+      "pixelSha256": "8a0ccac25e962a98207177c3dbe92d155819d26e2495659d58a3f41be2d8bde7"
+    },
+    {
+      "case": "blank-zero-negative",
+      "producer": "blank",
+      "requestedSourceSize": [
+        0,
+        -2
+      ],
+      "actualSourceSize": [
+        0,
+        -2
+      ],
+      "output": "Resolution",
+      "rgba": [
+        1.0,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "words": [
+        1065353216,
+        1065353216,
+        0,
+        1065353216
+      ],
+      "pixelFile": "blank-zero-negative-Resolution.rgba32f",
+      "pixelSha256": "8a0ccac25e962a98207177c3dbe92d155819d26e2495659d58a3f41be2d8bde7"
+    },
+    {
+      "case": "blank-zero-negative",
+      "producer": "blank",
+      "requestedSourceSize": [
+        0,
+        -2
+      ],
+      "actualSourceSize": [
+        0,
+        -2
+      ],
+      "output": "Location",
+      "rgba": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "words": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "pixelFile": "blank-zero-negative-Location.rgba32f",
+      "pixelSha256": "213aec83b934358b1e12903a77b13a70be806e3f57b3f5f5b086fb5dd7c7ec2b"
+    },
+    {
+      "case": "blank-zero-negative",
+      "producer": "blank",
+      "requestedSourceSize": [
+        0,
+        -2
+      ],
+      "actualSourceSize": [
+        0,
+        -2
+      ],
+      "output": "Rotation",
+      "rgba": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "words": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "pixelFile": "blank-zero-negative-Rotation.rgba32f",
+      "pixelSha256": "213aec83b934358b1e12903a77b13a70be806e3f57b3f5f5b086fb5dd7c7ec2b"
+    },
+    {
+      "case": "blank-zero-negative",
+      "producer": "blank",
+      "requestedSourceSize": [
+        0,
+        -2
+      ],
+      "actualSourceSize": [
+        0,
+        -2
+      ],
+      "output": "Scale",
+      "rgba": [
+        1.0,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "words": [
+        1065353216,
+        1065353216,
+        0,
+        1065353216
+      ],
+      "pixelFile": "blank-zero-negative-Scale.rgba32f",
+      "pixelSha256": "8a0ccac25e962a98207177c3dbe92d155819d26e2495659d58a3f41be2d8bde7"
+    },
+    {
+      "case": "generated-7x4",
+      "producer": "image",
+      "requestedSourceSize": [
+        7,
+        4
+      ],
+      "actualSourceSize": [
+        7,
+        4
+      ],
+      "output": "Dimensions",
+      "rgba": [
+        7.0,
+        4.0,
+        0.0,
+        1.0
+      ],
+      "words": [
+        1088421888,
+        1082130432,
+        0,
+        1065353216
+      ],
+      "pixelFile": "generated-7x4-Dimensions.rgba32f",
+      "pixelSha256": "e022c8cf6988555a12d55317bf6658139df2fae7d38e12859aa55ee20b743211"
+    },
+    {
+      "case": "generated-7x4",
+      "producer": "image",
+      "requestedSourceSize": [
+        7,
+        4
+      ],
+      "actualSourceSize": [
+        7,
+        4
+      ],
+      "output": "Resolution",
+      "rgba": [
+        7.0,
+        4.0,
+        0.0,
+        1.0
+      ],
+      "words": [
+        1088421888,
+        1082130432,
+        0,
+        1065353216
+      ],
+      "pixelFile": "generated-7x4-Resolution.rgba32f",
+      "pixelSha256": "e022c8cf6988555a12d55317bf6658139df2fae7d38e12859aa55ee20b743211"
+    },
+    {
+      "case": "generated-7x4",
+      "producer": "image",
+      "requestedSourceSize": [
+        7,
+        4
+      ],
+      "actualSourceSize": [
+        7,
+        4
+      ],
+      "output": "Location",
+      "rgba": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "words": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "pixelFile": "generated-7x4-Location.rgba32f",
+      "pixelSha256": "213aec83b934358b1e12903a77b13a70be806e3f57b3f5f5b086fb5dd7c7ec2b"
+    },
+    {
+      "case": "generated-7x4",
+      "producer": "image",
+      "requestedSourceSize": [
+        7,
+        4
+      ],
+      "actualSourceSize": [
+        7,
+        4
+      ],
+      "output": "Rotation",
+      "rgba": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "words": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "pixelFile": "generated-7x4-Rotation.rgba32f",
+      "pixelSha256": "213aec83b934358b1e12903a77b13a70be806e3f57b3f5f5b086fb5dd7c7ec2b"
+    },
+    {
+      "case": "generated-7x4",
+      "producer": "image",
+      "requestedSourceSize": [
+        7,
+        4
+      ],
+      "actualSourceSize": [
+        7,
+        4
+      ],
+      "output": "Scale",
+      "rgba": [
+        1.0,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "words": [
+        1065353216,
+        1065353216,
+        0,
+        1065353216
+      ],
+      "pixelFile": "generated-7x4-Scale.rgba32f",
+      "pixelSha256": "8a0ccac25e962a98207177c3dbe92d155819d26e2495659d58a3f41be2d8bde7"
+    },
+    {
+      "case": "packed-byte-3x5",
+      "producer": "png",
+      "requestedSourceSize": [
+        3,
+        5
+      ],
+      "actualSourceSize": [
+        3,
+        5
+      ],
+      "output": "Dimensions",
+      "rgba": [
+        3.0,
+        5.0,
+        0.0,
+        1.0
+      ],
+      "words": [
+        1077936128,
+        1084227584,
+        0,
+        1065353216
+      ],
+      "pixelFile": "packed-byte-3x5-Dimensions.rgba32f",
+      "pixelSha256": "b63c535c49c16bd4a4843475fa10e90755dbd806890b52c228ed1955a2d4e62e"
+    },
+    {
+      "case": "packed-byte-3x5",
+      "producer": "png",
+      "requestedSourceSize": [
+        3,
+        5
+      ],
+      "actualSourceSize": [
+        3,
+        5
+      ],
+      "output": "Resolution",
+      "rgba": [
+        3.0,
+        5.0,
+        0.0,
+        1.0
+      ],
+      "words": [
+        1077936128,
+        1084227584,
+        0,
+        1065353216
+      ],
+      "pixelFile": "packed-byte-3x5-Resolution.rgba32f",
+      "pixelSha256": "b63c535c49c16bd4a4843475fa10e90755dbd806890b52c228ed1955a2d4e62e"
+    },
+    {
+      "case": "packed-byte-3x5",
+      "producer": "png",
+      "requestedSourceSize": [
+        3,
+        5
+      ],
+      "actualSourceSize": [
+        3,
+        5
+      ],
+      "output": "Location",
+      "rgba": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "words": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "pixelFile": "packed-byte-3x5-Location.rgba32f",
+      "pixelSha256": "213aec83b934358b1e12903a77b13a70be806e3f57b3f5f5b086fb5dd7c7ec2b"
+    },
+    {
+      "case": "packed-byte-3x5",
+      "producer": "png",
+      "requestedSourceSize": [
+        3,
+        5
+      ],
+      "actualSourceSize": [
+        3,
+        5
+      ],
+      "output": "Rotation",
+      "rgba": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "words": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "pixelFile": "packed-byte-3x5-Rotation.rgba32f",
+      "pixelSha256": "213aec83b934358b1e12903a77b13a70be806e3f57b3f5f5b086fb5dd7c7ec2b"
+    },
+    {
+      "case": "packed-byte-3x5",
+      "producer": "png",
+      "requestedSourceSize": [
+        3,
+        5
+      ],
+      "actualSourceSize": [
+        3,
+        5
+      ],
+      "output": "Scale",
+      "rgba": [
+        1.0,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "words": [
+        1065353216,
+        1065353216,
+        0,
+        1065353216
+      ],
+      "pixelFile": "packed-byte-3x5-Scale.rgba32f",
+      "pixelSha256": "8a0ccac25e962a98207177c3dbe92d155819d26e2495659d58a3f41be2d8bde7"
+    },
+    {
+      "case": "blank-scaled-control",
+      "producer": "scaled",
+      "requestedSourceSize": [
+        5,
+        3
+      ],
+      "actualSourceSize": [
+        5,
+        3
+      ],
+      "output": "Dimensions",
+      "rgba": [
+        10.0,
+        6.0,
+        0.0,
+        1.0
+      ],
+      "words": [
+        1092616192,
+        1086324736,
+        0,
+        1065353216
+      ],
+      "pixelFile": "blank-scaled-control-Dimensions.rgba32f",
+      "pixelSha256": "ab0421a07b264e71b283970ccf41d7d0d15624488b6e808c580ad19d6d8b3157"
+    },
+    {
+      "case": "blank-scaled-control",
+      "producer": "scaled",
+      "requestedSourceSize": [
+        5,
+        3
+      ],
+      "actualSourceSize": [
+        5,
+        3
+      ],
+      "output": "Resolution",
+      "rgba": [
+        5.0,
+        3.0,
+        0.0,
+        1.0
+      ],
+      "words": [
+        1084227584,
+        1077936128,
+        0,
+        1065353216
+      ],
+      "pixelFile": "blank-scaled-control-Resolution.rgba32f",
+      "pixelSha256": "4ba387a55db2c37ed7e4f29d21cd9b512334917856af221b44b7e938240f7375"
+    },
+    {
+      "case": "blank-scaled-control",
+      "producer": "scaled",
+      "requestedSourceSize": [
+        5,
+        3
+      ],
+      "actualSourceSize": [
+        5,
+        3
+      ],
+      "output": "Location",
+      "rgba": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "words": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "pixelFile": "blank-scaled-control-Location.rgba32f",
+      "pixelSha256": "213aec83b934358b1e12903a77b13a70be806e3f57b3f5f5b086fb5dd7c7ec2b"
+    },
+    {
+      "case": "blank-scaled-control",
+      "producer": "scaled",
+      "requestedSourceSize": [
+        5,
+        3
+      ],
+      "actualSourceSize": [
+        5,
+        3
+      ],
+      "output": "Rotation",
+      "rgba": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "words": [
+        0,
+        0,
+        0,
+        1065353216
+      ],
+      "pixelFile": "blank-scaled-control-Rotation.rgba32f",
+      "pixelSha256": "213aec83b934358b1e12903a77b13a70be806e3f57b3f5f5b086fb5dd7c7ec2b"
+    },
+    {
+      "case": "blank-scaled-control",
+      "producer": "scaled",
+      "requestedSourceSize": [
+        5,
+        3
+      ],
+      "actualSourceSize": [
+        5,
+        3
+      ],
+      "output": "Scale",
+      "rgba": [
+        2.0,
+        2.0,
+        0.0,
+        1.0
+      ],
+      "words": [
+        1073741824,
+        1073741824,
+        0,
+        1065353216
+      ],
+      "pixelFile": "blank-scaled-control-Scale.rgba32f",
+      "pixelSha256": "58d3e26ceabb4df8506de3885b914e6fc96b518929368a649600d99be0eb60d4"
+    }
+  ],
+  "nativeRenders": 25,
+  "gpuInitializationCalls": 0,
+  "gpuInitGuardProved": true,
+  "supportCredit": 0,
+  "finalCredit": 0,
+  "browserCredit": 0
+}

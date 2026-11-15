@@ -1,0 +1,1184 @@
+{
+  "schemaVersion": 1,
+  "status": "RECHECKED_OUTPUT_AWARE_SCALAR_METAL_BENCHMARK",
+  "sourceCommit": "a8d2201",
+  "supportCredit": 0,
+  "nativeParityCredit": 0,
+  "scope": "Output-aware native Noise compute_color0 and detail0 Voronoi F1 leaf. Two direct scalar outputs only; repeated native64 inputs; no Color/composition/SwiftShader performance authority.",
+  "artifacts": {
+    "config": {
+      "path": "/tmp/scenetoweb-port-throughput-metal-specialized-r1-config.json",
+      "sha256": "8ef43b127305e6765b81a293317a6389ddba06803cccc28bd7c57d5ad9f711e8"
+    },
+    "report": {
+      "path": "/tmp/scenetoweb-port-throughput-metal-specialized-r1/report.json",
+      "sha256": "ce9c7be686d37c9790be0426a7203b1dcad5a206ddc179c424f0c05d256a30af"
+    },
+    "closed": {
+      "path": "/tmp/scenetoweb-port-throughput-metal-specialized-r1/closed.json",
+      "sha256": "fbba83bfab78afd9cb15dff05aec3dc9a843727d6c0366e5d71a43a44339b937"
+    }
+  },
+  "nativeClosed": {
+    "path": "/tmp/scenetoweb-native-kernel-root-close.json",
+    "sha256": "8bb0232c72227f94679f1e4e81e198dfd1177937122ae8250070423bbc5b215d"
+  },
+  "independentChecks": {
+    "fullFrameWords": 18874368,
+    "fullFrameWordDifferences": 0,
+    "smallAccuracyWords": 12288,
+    "smallAccuracyWordDifferences": 0,
+    "exactInputWords": 1536,
+    "contractViolations": 0,
+    "fullFrameMaxUlps": 0,
+    "primaryFullFrameBytes": 75497472
+  },
+  "actualGpuSampleCount": 72,
+  "captureWallMsByApi": {
+    "webgpu": 1490.5999999642372,
+    "webgl2": 3569
+  },
+  "rows": [
+    {
+      "api": "webgpu",
+      "workload": "noise-fbm3-default/single/scalar/256x256",
+      "decision": {
+        "status": "insufficient-verified-gpu-timing",
+        "gpu": null
+      },
+      "genericBaselineDecision": {
+        "status": "insufficient-verified-gpu-timing",
+        "gpu": null
+      },
+      "modes": {
+        "hand-tsl": {
+          "gpuMs": null,
+          "cpuApiSubmissionMsPerFrame": {
+            "n": 3,
+            "minimum": 0.019999998807907104,
+            "p50": 0.020000001788139342,
+            "p90": 0.025,
+            "p95": 0.025,
+            "maximum": 0.025,
+            "mean": 0.021666666865348818,
+            "standardDeviation": 0.0023570224634659786
+          },
+          "sourceBuildMs": 17.399999976158142,
+          "pipelineCompileAwaitMs": 0.10000002384185791,
+          "firstRenderCompletionMs": 1.399999976158142,
+          "warmCompileAwaitMs": 0.10000002384185791,
+          "fragmentBytes": 30720,
+          "fullFrameWordDifferences": 0,
+          "fullFrameMaxUlps": 0,
+          "fullFrameMaxAbsoluteError": 0
+        },
+        "native-generated": {
+          "gpuMs": null,
+          "cpuApiSubmissionMsPerFrame": {
+            "n": 3,
+            "minimum": 0.015000000596046448,
+            "p50": 0.015000000596046448,
+            "p90": 0.020000001788139342,
+            "p95": 0.020000001788139342,
+            "maximum": 0.020000001788139342,
+            "mean": 0.016666667660077412,
+            "standardDeviation": 0.0023570231659131376
+          },
+          "sourceBuildMs": 138,
+          "pipelineCompileAwaitMs": 0,
+          "firstRenderCompletionMs": 13.299999952316284,
+          "warmCompileAwaitMs": 0.09999996423721313,
+          "fragmentBytes": 33108,
+          "fullFrameWordDifferences": 0,
+          "fullFrameMaxUlps": 0,
+          "fullFrameMaxAbsoluteError": 0
+        }
+      }
+    },
+    {
+      "api": "webgpu",
+      "workload": "noise-fbm3-default/single/scalar/1024x512",
+      "decision": {
+        "status": "insufficient-verified-gpu-timing",
+        "gpu": null
+      },
+      "genericBaselineDecision": {
+        "status": "insufficient-verified-gpu-timing",
+        "gpu": null
+      },
+      "modes": {
+        "native-generated": {
+          "gpuMs": null,
+          "cpuApiSubmissionMsPerFrame": {
+            "n": 3,
+            "minimum": 0.01499999761581421,
+            "p50": 0.020000001788139342,
+            "p90": 0.025,
+            "p95": 0.025,
+            "maximum": 0.025,
+            "mean": 0.01999999980131785,
+            "standardDeviation": 0.004082483877978646
+          },
+          "sourceBuildMs": 1.5,
+          "pipelineCompileAwaitMs": 0.09999996423721313,
+          "firstRenderCompletionMs": 1,
+          "warmCompileAwaitMs": 0.10000002384185791,
+          "fragmentBytes": 33108,
+          "fullFrameWordDifferences": 0,
+          "fullFrameMaxUlps": 0,
+          "fullFrameMaxAbsoluteError": 0
+        },
+        "hand-tsl": {
+          "gpuMs": null,
+          "cpuApiSubmissionMsPerFrame": {
+            "n": 3,
+            "minimum": 0.015000000596046448,
+            "p50": 0.015000000596046448,
+            "p90": 0.019999998807907104,
+            "p95": 0.019999998807907104,
+            "maximum": 0.019999998807907104,
+            "mean": 0.016666666666666666,
+            "standardDeviation": 0.002357021761018188
+          },
+          "sourceBuildMs": 1.800000011920929,
+          "pipelineCompileAwaitMs": 0,
+          "firstRenderCompletionMs": 1.600000023841858,
+          "warmCompileAwaitMs": 0,
+          "fragmentBytes": 30720,
+          "fullFrameWordDifferences": 0,
+          "fullFrameMaxUlps": 0,
+          "fullFrameMaxAbsoluteError": 0
+        }
+      }
+    },
+    {
+      "api": "webgpu",
+      "workload": "voronoi-f1-3d-default/single/scalar/256x256",
+      "decision": {
+        "status": "insufficient-verified-gpu-timing",
+        "gpu": null
+      },
+      "genericBaselineDecision": {
+        "status": "insufficient-verified-gpu-timing",
+        "gpu": null
+      },
+      "modes": {
+        "hand-tsl": {
+          "gpuMs": null,
+          "cpuApiSubmissionMsPerFrame": {
+            "n": 3,
+            "minimum": 0.015000000596046448,
+            "p50": 0.019999998807907104,
+            "p90": 0.020000001788139342,
+            "p95": 0.020000001788139342,
+            "maximum": 0.020000001788139342,
+            "mean": 0.01833333373069763,
+            "standardDeviation": 0.002357022463465977
+          },
+          "sourceBuildMs": 40.80000001192093,
+          "pipelineCompileAwaitMs": 0.09999996423721313,
+          "firstRenderCompletionMs": 1.9000000357627869,
+          "warmCompileAwaitMs": 0,
+          "fragmentBytes": 124574,
+          "fullFrameWordDifferences": 0,
+          "fullFrameMaxUlps": 0,
+          "fullFrameMaxAbsoluteError": 0
+        },
+        "native-generated": {
+          "gpuMs": null,
+          "cpuApiSubmissionMsPerFrame": {
+            "n": 3,
+            "minimum": 0.010000002384185792,
+            "p50": 0.020000001788139342,
+            "p90": 0.025,
+            "p95": 0.025,
+            "maximum": 0.025,
+            "mean": 0.018333334724108377,
+            "standardDeviation": 0.006236094741922607
+          },
+          "sourceBuildMs": 91.59999996423721,
+          "pipelineCompileAwaitMs": 0.10000002384185791,
+          "firstRenderCompletionMs": 9,
+          "warmCompileAwaitMs": 0,
+          "fragmentBytes": 33605,
+          "fullFrameWordDifferences": 0,
+          "fullFrameMaxUlps": 0,
+          "fullFrameMaxAbsoluteError": 0
+        }
+      }
+    },
+    {
+      "api": "webgpu",
+      "workload": "voronoi-f1-3d-default/single/scalar/1024x512",
+      "decision": {
+        "status": "insufficient-verified-gpu-timing",
+        "gpu": null
+      },
+      "genericBaselineDecision": {
+        "status": "insufficient-verified-gpu-timing",
+        "gpu": null
+      },
+      "modes": {
+        "native-generated": {
+          "gpuMs": null,
+          "cpuApiSubmissionMsPerFrame": {
+            "n": 3,
+            "minimum": 0.004999998211860657,
+            "p50": 0.005000001192092896,
+            "p90": 0.01499999761581421,
+            "p95": 0.01499999761581421,
+            "maximum": 0.01499999761581421,
+            "mean": 0.008333332339922587,
+            "standardDeviation": 0.004714044224484009
+          },
+          "sourceBuildMs": 0.8999999761581421,
+          "pipelineCompileAwaitMs": 0,
+          "firstRenderCompletionMs": 0.8999999761581421,
+          "warmCompileAwaitMs": 0,
+          "fragmentBytes": 33605,
+          "fullFrameWordDifferences": 0,
+          "fullFrameMaxUlps": 0,
+          "fullFrameMaxAbsoluteError": 0
+        },
+        "hand-tsl": {
+          "gpuMs": null,
+          "cpuApiSubmissionMsPerFrame": {
+            "n": 3,
+            "minimum": 0.005000001192092896,
+            "p50": 0.010000002384185792,
+            "p90": 0.015000000596046448,
+            "p95": 0.015000000596046448,
+            "maximum": 0.015000000596046448,
+            "mean": 0.010000001390775044,
+            "standardDeviation": 0.004082482661303747
+          },
+          "sourceBuildMs": 17.69999998807907,
+          "pipelineCompileAwaitMs": 0,
+          "firstRenderCompletionMs": 1.199999988079071,
+          "warmCompileAwaitMs": 0.10000002384185791,
+          "fragmentBytes": 124574,
+          "fullFrameWordDifferences": 0,
+          "fullFrameMaxUlps": 0,
+          "fullFrameMaxAbsoluteError": 0
+        }
+      }
+    },
+    {
+      "api": "webgl2",
+      "workload": "noise-fbm3-default/single/scalar/256x256",
+      "decision": {
+        "status": "bounded-regression-signal",
+        "pairedGpuRatio": {
+          "n": 9,
+          "minimum": 1.5182846572516095,
+          "p50": 1.5904741312741315,
+          "p90": 1.6344732647442402,
+          "p95": 1.6344732647442402,
+          "maximum": 1.6344732647442402,
+          "mean": 1.584185570479416,
+          "standardDeviation": 0.03643283209987477
+        }
+      },
+      "genericBaselineDecision": {
+        "status": "bounded-regression-signal",
+        "pairedGpuRatio": {
+          "n": 9,
+          "minimum": 4.071759340878907,
+          "p50": 4.136192001147132,
+          "p90": 4.34595790278413,
+          "p95": 4.34595790278413,
+          "maximum": 4.34595790278413,
+          "mean": 4.18118207732369,
+          "standardDeviation": 0.0852340558864792
+        }
+      },
+      "modes": {
+        "hand-tsl": {
+          "gpuMs": {
+            "n": 9,
+            "minimum": 0.16175,
+            "p50": 0.164625,
+            "p90": 0.168666,
+            "p95": 0.168666,
+            "maximum": 0.168666,
+            "mean": 0.16452266666666668,
+            "standardDeviation": 0.0020371853131220074
+          },
+          "cpuApiSubmissionMsPerFrame": {
+            "n": 3,
+            "minimum": 0.015000000596046448,
+            "p50": 0.019999998807907104,
+            "p90": 0.05,
+            "p95": 0.05,
+            "maximum": 0.05,
+            "mean": 0.028333333134651185,
+            "standardDeviation": 0.015456030868675086
+          },
+          "sourceBuildMs": 29.80000001192093,
+          "pipelineCompileAwaitMs": 0.19999998807907104,
+          "firstRenderCompletionMs": 0.30000001192092896,
+          "warmCompileAwaitMs": 0.40000003576278687,
+          "fragmentBytes": 30114,
+          "fullFrameWordDifferences": 0,
+          "fullFrameMaxUlps": 0,
+          "fullFrameMaxAbsoluteError": 0
+        },
+        "native-generated": {
+          "gpuMs": {
+            "n": 9,
+            "minimum": 0.255624,
+            "p50": 0.260791,
+            "p90": 0.270708,
+            "p95": 0.270708,
+            "maximum": 0.270708,
+            "mean": 0.2605873333333333,
+            "standardDeviation": 0.004709738232876873
+          },
+          "cpuApiSubmissionMsPerFrame": {
+            "n": 3,
+            "minimum": 0.015000000596046448,
+            "p50": 0.030000001192092896,
+            "p90": 0.04500000178813934,
+            "p95": 0.04500000178813934,
+            "maximum": 0.04500000178813934,
+            "mean": 0.030000001192092896,
+            "standardDeviation": 0.012247449200585776
+          },
+          "sourceBuildMs": 80.19999998807907,
+          "pipelineCompileAwaitMs": 0.10000002384185791,
+          "firstRenderCompletionMs": 0.30000001192092896,
+          "warmCompileAwaitMs": 0.10000002384185791,
+          "fragmentBytes": 37246,
+          "fullFrameWordDifferences": 0,
+          "fullFrameMaxUlps": 0,
+          "fullFrameMaxAbsoluteError": 0
+        }
+      }
+    },
+    {
+      "api": "webgl2",
+      "workload": "noise-fbm3-default/single/scalar/1024x512",
+      "decision": {
+        "status": "bounded-regression-signal",
+        "pairedGpuRatio": {
+          "n": 9,
+          "minimum": 0.9791064408455927,
+          "p50": 1.7441823479517469,
+          "p90": 2.1918640512281096,
+          "p95": 2.1918640512281096,
+          "maximum": 2.1918640512281096,
+          "mean": 1.6746156703015984,
+          "standardDeviation": 0.2977704107531172
+        }
+      },
+      "genericBaselineDecision": {
+        "status": "bounded-regression-signal",
+        "pairedGpuRatio": {
+          "n": 9,
+          "minimum": 1.7006474000465162,
+          "p50": 3.5048072674572732,
+          "p90": 3.9547375113533154,
+          "p95": 3.9547375113533154,
+          "maximum": 3.9547375113533154,
+          "mean": 3.035550704746326,
+          "standardDeviation": 0.8432094348773628
+        }
+      },
+      "modes": {
+        "native-generated": {
+          "gpuMs": {
+            "n": 9,
+            "minimum": 0.989999,
+            "p50": 1.784374,
+            "p90": 2.380958,
+            "p95": 2.380958,
+            "maximum": 2.380958,
+            "mean": 1.8674484444444444,
+            "standardDeviation": 0.3916886199067687
+          },
+          "cpuApiSubmissionMsPerFrame": {
+            "n": 3,
+            "minimum": 0.005000001192092896,
+            "p50": 0.01499999761581421,
+            "p90": 0.0550000011920929,
+            "p95": 0.0550000011920929,
+            "maximum": 0.0550000011920929,
+            "mean": 0.025000000000000005,
+            "standardDeviation": 0.021602469546524707
+          },
+          "sourceBuildMs": 13.199999988079071,
+          "pipelineCompileAwaitMs": 0,
+          "firstRenderCompletionMs": 0.30000001192092896,
+          "warmCompileAwaitMs": 0.3999999761581421,
+          "fragmentBytes": 37246,
+          "fullFrameWordDifferences": 0,
+          "fullFrameMaxUlps": 0,
+          "fullFrameMaxAbsoluteError": 0
+        },
+        "hand-tsl": {
+          "gpuMs": {
+            "n": 9,
+            "minimum": 1.006291,
+            "p50": 1.011125,
+            "p90": 1.468375,
+            "p95": 1.468375,
+            "maximum": 1.468375,
+            "mean": 1.1199763333333335,
+            "standardDeviation": 0.18646166690710927
+          },
+          "cpuApiSubmissionMsPerFrame": {
+            "n": 3,
+            "minimum": 0.009999999403953552,
+            "p50": 0.01499999761581421,
+            "p90": 0.015000000596046448,
+            "p95": 0.015000000596046448,
+            "maximum": 0.015000000596046448,
+            "mean": 0.013333332538604739,
+            "standardDeviation": 0.0023570224634659777
+          },
+          "sourceBuildMs": 18.69999998807907,
+          "pipelineCompileAwaitMs": 0,
+          "firstRenderCompletionMs": 0.09999996423721313,
+          "warmCompileAwaitMs": 0,
+          "fragmentBytes": 30114,
+          "fullFrameWordDifferences": 0,
+          "fullFrameMaxUlps": 0,
+          "fullFrameMaxAbsoluteError": 0
+        }
+      }
+    },
+    {
+      "api": "webgl2",
+      "workload": "voronoi-f1-3d-default/single/scalar/256x256",
+      "decision": {
+        "status": "bounded-regression-signal",
+        "pairedGpuRatio": {
+          "n": 9,
+          "minimum": 0.6280677056169695,
+          "p50": 3.5788721732362383,
+          "p90": 5.1083473592261965,
+          "p95": 5.1083473592261965,
+          "maximum": 5.1083473592261965,
+          "mean": 2.988340833984487,
+          "standardDeviation": 1.4109199080731947
+        }
+      },
+      "genericBaselineDecision": {
+        "status": "bounded-regression-signal",
+        "pairedGpuRatio": {
+          "n": 9,
+          "minimum": 4.869886056431103,
+          "p50": 5.180302638942701,
+          "p90": 5.616214905799778,
+          "p95": 5.616214905799778,
+          "maximum": 5.616214905799778,
+          "mean": 5.2042325723179665,
+          "standardDeviation": 0.20616535353168305
+        }
+      },
+      "modes": {
+        "hand-tsl": {
+          "gpuMs": {
+            "n": 9,
+            "minimum": 0.08725,
+            "p50": 0.093999,
+            "p90": 0.548374,
+            "p95": 0.548374,
+            "maximum": 0.548374,
+            "mean": 0.2036058888888889,
+            "standardDeviation": 0.18529520605865926
+          },
+          "cpuApiSubmissionMsPerFrame": {
+            "n": 3,
+            "minimum": 0.010000002384185792,
+            "p50": 0.010000002384185792,
+            "p90": 0.015000000596046448,
+            "p95": 0.015000000596046448,
+            "maximum": 0.015000000596046448,
+            "mean": 0.01166666845480601,
+            "standardDeviation": 0.002357021761018188
+          },
+          "sourceBuildMs": 59.09999996423721,
+          "pipelineCompileAwaitMs": 0.10000002384185791,
+          "firstRenderCompletionMs": 0.10000002384185791,
+          "warmCompileAwaitMs": 0.10000002384185791,
+          "fragmentBytes": 109360,
+          "fullFrameWordDifferences": 0,
+          "fullFrameMaxUlps": 0,
+          "fullFrameMaxAbsoluteError": 0
+        },
+        "native-generated": {
+          "gpuMs": {
+            "n": 9,
+            "minimum": 0.335666,
+            "p50": 0.340291,
+            "p90": 0.531791,
+            "p95": 0.531791,
+            "maximum": 0.531791,
+            "mean": 0.3763466666666667,
+            "standardDeviation": 0.07025463731946019
+          },
+          "cpuApiSubmissionMsPerFrame": {
+            "n": 3,
+            "minimum": 0.004999998211860657,
+            "p50": 0.025,
+            "p90": 0.025,
+            "p95": 0.025,
+            "maximum": 0.025,
+            "mean": 0.01833333273728689,
+            "standardDeviation": 0.009428091258757605
+          },
+          "sourceBuildMs": 66.80000001192093,
+          "pipelineCompileAwaitMs": 0,
+          "firstRenderCompletionMs": 0.10000002384185791,
+          "warmCompileAwaitMs": 0.20000004768371582,
+          "fragmentBytes": 37925,
+          "fullFrameWordDifferences": 0,
+          "fullFrameMaxUlps": 0,
+          "fullFrameMaxAbsoluteError": 0
+        }
+      }
+    },
+    {
+      "api": "webgl2",
+      "workload": "voronoi-f1-3d-default/single/scalar/1024x512",
+      "decision": {
+        "status": "bounded-regression-signal",
+        "pairedGpuRatio": {
+          "n": 9,
+          "minimum": 3.7201252908775904,
+          "p50": 5.349531506075163,
+          "p90": 6.384346289186362,
+          "p95": 6.384346289186362,
+          "maximum": 6.384346289186362,
+          "mean": 5.248119938542202,
+          "standardDeviation": 0.7581173208925753
+        }
+      },
+      "genericBaselineDecision": {
+        "status": "bounded-regression-signal",
+        "pairedGpuRatio": {
+          "n": 9,
+          "minimum": 3.6490667757948865,
+          "p50": 6.115411699164346,
+          "p90": 8.033235037912307,
+          "p95": 8.033235037912307,
+          "maximum": 8.033235037912307,
+          "mean": 6.262273532875556,
+          "standardDeviation": 1.639750337974483
+        }
+      },
+      "modes": {
+        "native-generated": {
+          "gpuMs": {
+            "n": 9,
+            "minimum": 1.676999,
+            "p50": 2.360125,
+            "p90": 2.801499,
+            "p95": 2.801499,
+            "maximum": 2.801499,
+            "mean": 2.360434777777778,
+            "standardDeviation": 0.31665120668815044
+          },
+          "cpuApiSubmissionMsPerFrame": {
+            "n": 3,
+            "minimum": 0,
+            "p50": 0,
+            "p90": 0.004999998211860657,
+            "p95": 0.004999998211860657,
+            "maximum": 0.004999998211860657,
+            "mean": 0.001666666070620219,
+            "standardDeviation": 0.0023570217610181885
+          },
+          "sourceBuildMs": 11.400000035762787,
+          "pipelineCompileAwaitMs": 0.10000002384185791,
+          "firstRenderCompletionMs": 0.10000002384185791,
+          "warmCompileAwaitMs": 0.30000001192092896,
+          "fragmentBytes": 37925,
+          "fullFrameWordDifferences": 0,
+          "fullFrameMaxUlps": 0,
+          "fullFrameMaxAbsoluteError": 0
+        },
+        "hand-tsl": {
+          "gpuMs": {
+            "n": 9,
+            "minimum": 0.435624,
+            "p50": 0.442375,
+            "p90": 0.514416,
+            "p95": 0.514416,
+            "maximum": 0.514416,
+            "mean": 0.4509762222222223,
+            "standardDeviation": 0.023500344459781754
+          },
+          "cpuApiSubmissionMsPerFrame": {
+            "n": 3,
+            "minimum": 0,
+            "p50": 0.004999998211860657,
+            "p90": 0.009999999403953552,
+            "p95": 0.009999999403953552,
+            "maximum": 0.009999999403953552,
+            "mean": 0.004999999205271403,
+            "standardDeviation": 0.004082482661303747
+          },
+          "sourceBuildMs": 47.89999997615814,
+          "pipelineCompileAwaitMs": 0.10000002384185791,
+          "firstRenderCompletionMs": 0.19999998807907104,
+          "warmCompileAwaitMs": 0.10000002384185791,
+          "fragmentBytes": 109360,
+          "fullFrameWordDifferences": 0,
+          "fullFrameMaxUlps": 0,
+          "fullFrameMaxAbsoluteError": 0
+        }
+      }
+    }
+  ],
+  "sourceGroups": [
+    {
+      "api": "webgpu",
+      "kind": "noise-fbm3-default",
+      "mode": "hand-tsl",
+      "scope": "Two first-material instances at different extents with shared renderer/driver caches; not repeated cold-process compiler measurements",
+      "sourceBuildMs": {
+        "n": 2,
+        "minimum": 1.800000011920929,
+        "p50": 1.800000011920929,
+        "p90": 17.399999976158142,
+        "p95": 17.399999976158142,
+        "maximum": 17.399999976158142,
+        "mean": 9.599999994039536,
+        "standardDeviation": 7.799999982118607
+      },
+      "pipelineCompileAwaitMs": {
+        "n": 2,
+        "minimum": 0,
+        "p50": 0,
+        "p90": 0.10000002384185791,
+        "p95": 0.10000002384185791,
+        "maximum": 0.10000002384185791,
+        "mean": 0.050000011920928955,
+        "standardDeviation": 0.050000011920928955
+      },
+      "firstRenderCompletionMs": {
+        "n": 2,
+        "minimum": 1.399999976158142,
+        "p50": 1.399999976158142,
+        "p90": 1.600000023841858,
+        "p95": 1.600000023841858,
+        "maximum": 1.600000023841858,
+        "mean": 1.5,
+        "standardDeviation": 0.10000002384185791
+      },
+      "warmCompileAwaitMs": {
+        "n": 2,
+        "minimum": 0,
+        "p50": 0,
+        "p90": 0.10000002384185791,
+        "p95": 0.10000002384185791,
+        "maximum": 0.10000002384185791,
+        "mean": 0.050000011920928955,
+        "standardDeviation": 0.050000011920928955
+      },
+      "fragmentBytes": {
+        "n": 2,
+        "minimum": 30720,
+        "p50": 30720,
+        "p90": 30720,
+        "p95": 30720,
+        "maximum": 30720,
+        "mean": 30720,
+        "standardDeviation": 0.0
+      }
+    },
+    {
+      "api": "webgpu",
+      "kind": "noise-fbm3-default",
+      "mode": "native-generated",
+      "scope": "Two first-material instances at different extents with shared renderer/driver caches; not repeated cold-process compiler measurements",
+      "sourceBuildMs": {
+        "n": 2,
+        "minimum": 1.5,
+        "p50": 1.5,
+        "p90": 138,
+        "p95": 138,
+        "maximum": 138,
+        "mean": 69.75,
+        "standardDeviation": 68.25
+      },
+      "pipelineCompileAwaitMs": {
+        "n": 2,
+        "minimum": 0,
+        "p50": 0,
+        "p90": 0.09999996423721313,
+        "p95": 0.09999996423721313,
+        "maximum": 0.09999996423721313,
+        "mean": 0.04999998211860657,
+        "standardDeviation": 0.04999998211860657
+      },
+      "firstRenderCompletionMs": {
+        "n": 2,
+        "minimum": 1,
+        "p50": 1,
+        "p90": 13.299999952316284,
+        "p95": 13.299999952316284,
+        "maximum": 13.299999952316284,
+        "mean": 7.149999976158142,
+        "standardDeviation": 6.149999976158142
+      },
+      "warmCompileAwaitMs": {
+        "n": 2,
+        "minimum": 0.09999996423721313,
+        "p50": 0.09999996423721313,
+        "p90": 0.10000002384185791,
+        "p95": 0.10000002384185791,
+        "maximum": 0.10000002384185791,
+        "mean": 0.09999999403953552,
+        "standardDeviation": 2.9802322387695312e-08
+      },
+      "fragmentBytes": {
+        "n": 2,
+        "minimum": 33108,
+        "p50": 33108,
+        "p90": 33108,
+        "p95": 33108,
+        "maximum": 33108,
+        "mean": 33108,
+        "standardDeviation": 0.0
+      }
+    },
+    {
+      "api": "webgpu",
+      "kind": "voronoi-f1-3d-default",
+      "mode": "hand-tsl",
+      "scope": "Two first-material instances at different extents with shared renderer/driver caches; not repeated cold-process compiler measurements",
+      "sourceBuildMs": {
+        "n": 2,
+        "minimum": 17.69999998807907,
+        "p50": 17.69999998807907,
+        "p90": 40.80000001192093,
+        "p95": 40.80000001192093,
+        "maximum": 40.80000001192093,
+        "mean": 29.25,
+        "standardDeviation": 11.550000011920929
+      },
+      "pipelineCompileAwaitMs": {
+        "n": 2,
+        "minimum": 0,
+        "p50": 0,
+        "p90": 0.09999996423721313,
+        "p95": 0.09999996423721313,
+        "maximum": 0.09999996423721313,
+        "mean": 0.04999998211860657,
+        "standardDeviation": 0.04999998211860657
+      },
+      "firstRenderCompletionMs": {
+        "n": 2,
+        "minimum": 1.199999988079071,
+        "p50": 1.199999988079071,
+        "p90": 1.9000000357627869,
+        "p95": 1.9000000357627869,
+        "maximum": 1.9000000357627869,
+        "mean": 1.550000011920929,
+        "standardDeviation": 0.3500000238418579
+      },
+      "warmCompileAwaitMs": {
+        "n": 2,
+        "minimum": 0,
+        "p50": 0,
+        "p90": 0.10000002384185791,
+        "p95": 0.10000002384185791,
+        "maximum": 0.10000002384185791,
+        "mean": 0.050000011920928955,
+        "standardDeviation": 0.050000011920928955
+      },
+      "fragmentBytes": {
+        "n": 2,
+        "minimum": 124574,
+        "p50": 124574,
+        "p90": 124574,
+        "p95": 124574,
+        "maximum": 124574,
+        "mean": 124574,
+        "standardDeviation": 0.0
+      }
+    },
+    {
+      "api": "webgpu",
+      "kind": "voronoi-f1-3d-default",
+      "mode": "native-generated",
+      "scope": "Two first-material instances at different extents with shared renderer/driver caches; not repeated cold-process compiler measurements",
+      "sourceBuildMs": {
+        "n": 2,
+        "minimum": 0.8999999761581421,
+        "p50": 0.8999999761581421,
+        "p90": 91.59999996423721,
+        "p95": 91.59999996423721,
+        "maximum": 91.59999996423721,
+        "mean": 46.24999997019768,
+        "standardDeviation": 45.349999994039536
+      },
+      "pipelineCompileAwaitMs": {
+        "n": 2,
+        "minimum": 0,
+        "p50": 0,
+        "p90": 0.10000002384185791,
+        "p95": 0.10000002384185791,
+        "maximum": 0.10000002384185791,
+        "mean": 0.050000011920928955,
+        "standardDeviation": 0.050000011920928955
+      },
+      "firstRenderCompletionMs": {
+        "n": 2,
+        "minimum": 0.8999999761581421,
+        "p50": 0.8999999761581421,
+        "p90": 9,
+        "p95": 9,
+        "maximum": 9,
+        "mean": 4.949999988079071,
+        "standardDeviation": 4.050000011920929
+      },
+      "warmCompileAwaitMs": {
+        "n": 2,
+        "minimum": 0,
+        "p50": 0,
+        "p90": 0,
+        "p95": 0,
+        "maximum": 0,
+        "mean": 0,
+        "standardDeviation": 0.0
+      },
+      "fragmentBytes": {
+        "n": 2,
+        "minimum": 33605,
+        "p50": 33605,
+        "p90": 33605,
+        "p95": 33605,
+        "maximum": 33605,
+        "mean": 33605,
+        "standardDeviation": 0.0
+      }
+    },
+    {
+      "api": "webgl2",
+      "kind": "noise-fbm3-default",
+      "mode": "hand-tsl",
+      "scope": "Two first-material instances at different extents with shared renderer/driver caches; not repeated cold-process compiler measurements",
+      "sourceBuildMs": {
+        "n": 2,
+        "minimum": 18.69999998807907,
+        "p50": 18.69999998807907,
+        "p90": 29.80000001192093,
+        "p95": 29.80000001192093,
+        "maximum": 29.80000001192093,
+        "mean": 24.25,
+        "standardDeviation": 5.550000011920929
+      },
+      "pipelineCompileAwaitMs": {
+        "n": 2,
+        "minimum": 0,
+        "p50": 0,
+        "p90": 0.19999998807907104,
+        "p95": 0.19999998807907104,
+        "maximum": 0.19999998807907104,
+        "mean": 0.09999999403953552,
+        "standardDeviation": 0.09999999403953552
+      },
+      "firstRenderCompletionMs": {
+        "n": 2,
+        "minimum": 0.09999996423721313,
+        "p50": 0.09999996423721313,
+        "p90": 0.30000001192092896,
+        "p95": 0.30000001192092896,
+        "maximum": 0.30000001192092896,
+        "mean": 0.19999998807907104,
+        "standardDeviation": 0.10000002384185791
+      },
+      "warmCompileAwaitMs": {
+        "n": 2,
+        "minimum": 0,
+        "p50": 0,
+        "p90": 0.40000003576278687,
+        "p95": 0.40000003576278687,
+        "maximum": 0.40000003576278687,
+        "mean": 0.20000001788139343,
+        "standardDeviation": 0.20000001788139343
+      },
+      "fragmentBytes": {
+        "n": 2,
+        "minimum": 30114,
+        "p50": 30114,
+        "p90": 30114,
+        "p95": 30114,
+        "maximum": 30114,
+        "mean": 30114,
+        "standardDeviation": 0.0
+      }
+    },
+    {
+      "api": "webgl2",
+      "kind": "noise-fbm3-default",
+      "mode": "native-generated",
+      "scope": "Two first-material instances at different extents with shared renderer/driver caches; not repeated cold-process compiler measurements",
+      "sourceBuildMs": {
+        "n": 2,
+        "minimum": 13.199999988079071,
+        "p50": 13.199999988079071,
+        "p90": 80.19999998807907,
+        "p95": 80.19999998807907,
+        "maximum": 80.19999998807907,
+        "mean": 46.69999998807907,
+        "standardDeviation": 33.5
+      },
+      "pipelineCompileAwaitMs": {
+        "n": 2,
+        "minimum": 0,
+        "p50": 0,
+        "p90": 0.10000002384185791,
+        "p95": 0.10000002384185791,
+        "maximum": 0.10000002384185791,
+        "mean": 0.050000011920928955,
+        "standardDeviation": 0.050000011920928955
+      },
+      "firstRenderCompletionMs": {
+        "n": 2,
+        "minimum": 0.30000001192092896,
+        "p50": 0.30000001192092896,
+        "p90": 0.30000001192092896,
+        "p95": 0.30000001192092896,
+        "maximum": 0.30000001192092896,
+        "mean": 0.30000001192092896,
+        "standardDeviation": 0.0
+      },
+      "warmCompileAwaitMs": {
+        "n": 2,
+        "minimum": 0.10000002384185791,
+        "p50": 0.10000002384185791,
+        "p90": 0.3999999761581421,
+        "p95": 0.3999999761581421,
+        "maximum": 0.3999999761581421,
+        "mean": 0.25,
+        "standardDeviation": 0.1499999761581421
+      },
+      "fragmentBytes": {
+        "n": 2,
+        "minimum": 37246,
+        "p50": 37246,
+        "p90": 37246,
+        "p95": 37246,
+        "maximum": 37246,
+        "mean": 37246,
+        "standardDeviation": 0.0
+      }
+    },
+    {
+      "api": "webgl2",
+      "kind": "voronoi-f1-3d-default",
+      "mode": "hand-tsl",
+      "scope": "Two first-material instances at different extents with shared renderer/driver caches; not repeated cold-process compiler measurements",
+      "sourceBuildMs": {
+        "n": 2,
+        "minimum": 47.89999997615814,
+        "p50": 47.89999997615814,
+        "p90": 59.09999996423721,
+        "p95": 59.09999996423721,
+        "maximum": 59.09999996423721,
+        "mean": 53.49999997019768,
+        "standardDeviation": 5.5999999940395355
+      },
+      "pipelineCompileAwaitMs": {
+        "n": 2,
+        "minimum": 0.10000002384185791,
+        "p50": 0.10000002384185791,
+        "p90": 0.10000002384185791,
+        "p95": 0.10000002384185791,
+        "maximum": 0.10000002384185791,
+        "mean": 0.10000002384185791,
+        "standardDeviation": 0.0
+      },
+      "firstRenderCompletionMs": {
+        "n": 2,
+        "minimum": 0.10000002384185791,
+        "p50": 0.10000002384185791,
+        "p90": 0.19999998807907104,
+        "p95": 0.19999998807907104,
+        "maximum": 0.19999998807907104,
+        "mean": 0.15000000596046448,
+        "standardDeviation": 0.04999998211860657
+      },
+      "warmCompileAwaitMs": {
+        "n": 2,
+        "minimum": 0.10000002384185791,
+        "p50": 0.10000002384185791,
+        "p90": 0.10000002384185791,
+        "p95": 0.10000002384185791,
+        "maximum": 0.10000002384185791,
+        "mean": 0.10000002384185791,
+        "standardDeviation": 0.0
+      },
+      "fragmentBytes": {
+        "n": 2,
+        "minimum": 109360,
+        "p50": 109360,
+        "p90": 109360,
+        "p95": 109360,
+        "maximum": 109360,
+        "mean": 109360,
+        "standardDeviation": 0.0
+      }
+    },
+    {
+      "api": "webgl2",
+      "kind": "voronoi-f1-3d-default",
+      "mode": "native-generated",
+      "scope": "Two first-material instances at different extents with shared renderer/driver caches; not repeated cold-process compiler measurements",
+      "sourceBuildMs": {
+        "n": 2,
+        "minimum": 11.400000035762787,
+        "p50": 11.400000035762787,
+        "p90": 66.80000001192093,
+        "p95": 66.80000001192093,
+        "maximum": 66.80000001192093,
+        "mean": 39.10000002384186,
+        "standardDeviation": 27.69999998807907
+      },
+      "pipelineCompileAwaitMs": {
+        "n": 2,
+        "minimum": 0,
+        "p50": 0,
+        "p90": 0.10000002384185791,
+        "p95": 0.10000002384185791,
+        "maximum": 0.10000002384185791,
+        "mean": 0.050000011920928955,
+        "standardDeviation": 0.050000011920928955
+      },
+      "firstRenderCompletionMs": {
+        "n": 2,
+        "minimum": 0.10000002384185791,
+        "p50": 0.10000002384185791,
+        "p90": 0.10000002384185791,
+        "p95": 0.10000002384185791,
+        "maximum": 0.10000002384185791,
+        "mean": 0.10000002384185791,
+        "standardDeviation": 0.0
+      },
+      "warmCompileAwaitMs": {
+        "n": 2,
+        "minimum": 0.20000004768371582,
+        "p50": 0.20000004768371582,
+        "p90": 0.30000001192092896,
+        "p95": 0.30000001192092896,
+        "maximum": 0.30000001192092896,
+        "mean": 0.2500000298023224,
+        "standardDeviation": 0.04999998211860657
+      },
+      "fragmentBytes": {
+        "n": 2,
+        "minimum": 37925,
+        "p50": 37925,
+        "p90": 37925,
+        "p95": 37925,
+        "maximum": 37925,
+        "mean": 37925,
+        "standardDeviation": 0.0
+      }
+    }
+  ],
+  "sourceFiles": {
+    "plan.json": "3c517814c49078d4b4b21cf511376372dc873003f84d89677d7bc03618e7fd7e",
+    "oracle-contract.json": "f3095719f38baa577f6d425d43b503f1be881b5c796f762a7c688d465534ffba",
+    "browser.js": "b6ee13bd425d33c15bdb5e77251ae015e2cd27e8038c62df3b8157ec9b01fd15",
+    "run.mjs": "74ffd42ee4bc67bf428c2d2e80ea54fdf53a5d578535eaba756736dffa391510",
+    "verify.mjs": "dc95169bc275f7d390485147bb5eec44ee7d0dd1f669613c7f5eb6503c9adbed",
+    "metrics.mjs": "a37a8ebe8736be0e5108a83c49a82a3d5b69cf9b9fa3c896766acb4b05588153",
+    "native64-oracle.mjs": "30a541af225a4db995da3391dc408c6bb5e775658dcbce3eca13501f9fe00215",
+    "native-binding.mjs": "2cc3e8253e38449a656061d9b97a29330de9f9f96d7d4f613bea26c9cfb85114",
+    "readback-server.mjs": "f791473288168a9682147b5a8fe68cead1facd52bdc57f822ed0b6c53ccbc4ff",
+    "gpu-timer.mjs": "9491edc78935bd1df8100cd9f186c04861e1d211f372517da270e87de05ff3f9"
+  },
+  "failures": [],
+  "limitations": [
+    "Nine verified samples/mode/workload; p95 equals maximum at n9; local signals only.",
+    "WebGPU GPU durations null; no WebGPU performance winner or inferred timing from CPU/waits.",
+    "All full-sized accuracy words exact here; generic baseline retains110592 one-ULP full-frame differences, both within unchanged gates.",
+    "Input entropy is64 repeated points; no whole-scene/pipeline performance or general continuous-field qualification.",
+    "Source/debug timing includes compileAsync internally; first-instance/cache observations are not controlled cold compiler benchmarks.",
+    "No broader optimization rewrite or runtime replacement is justified by this bounded result."
+  ],
+  "harnessTreeAtCapture": "8aaa905",
+  "genericBaseline": {
+    "evidenceFile": "experiments/port-throughput-benchmark/evidence.json",
+    "evidenceSha256": "d517de5e96067f7234939c8fab0d1eb56c660c08ccc9c4201250ec20ff4cc1e6",
+    "reportSha256": "40c8e9b21872beb27df931820fc5b6adbe8cc13d7dcdd6b8c35ecd0af9ab1d4f",
+    "rawRecordsUnchanged": true
+  },
+  "workloadCorrespondence": {
+    "planSha256": "3c517814c49078d4b4b21cf511376372dc873003f84d89677d7bc03618e7fd7e",
+    "unchangedConfigFields": [
+      "projectRoot",
+      "productionFile",
+      "handParametersFile",
+      "oracleFile",
+      "oracleContractFile",
+      "nativeInputFile",
+      "referenceFiles",
+      "nativeClosedReceiptFile",
+      "nativeClosedReceiptSha256",
+      "profile",
+      "kinds",
+      "shapes",
+      "projection"
+    ],
+    "allFourteenFieldsEqual": true,
+    "handShaderCorrespondence": [
+      {
+        "api": "webgpu",
+        "workload": "noise-fbm3-default/single/scalar/256x256",
+        "handFragmentByteIdentical": true
+      },
+      {
+        "api": "webgpu",
+        "workload": "noise-fbm3-default/single/scalar/1024x512",
+        "handFragmentByteIdentical": true
+      },
+      {
+        "api": "webgpu",
+        "workload": "voronoi-f1-3d-default/single/scalar/256x256",
+        "handFragmentByteIdentical": true
+      },
+      {
+        "api": "webgpu",
+        "workload": "voronoi-f1-3d-default/single/scalar/1024x512",
+        "handFragmentByteIdentical": true
+      },
+      {
+        "api": "webgl2",
+        "workload": "noise-fbm3-default/single/scalar/256x256",
+        "handFragmentByteIdentical": true
+      },
+      {
+        "api": "webgl2",
+        "workload": "noise-fbm3-default/single/scalar/1024x512",
+        "handFragmentByteIdentical": true
+      },
+      {
+        "api": "webgl2",
+        "workload": "voronoi-f1-3d-default/single/scalar/256x256",
+        "handFragmentByteIdentical": true
+      },
+      {
+        "api": "webgl2",
+        "workload": "voronoi-f1-3d-default/single/scalar/1024x512",
+        "handFragmentByteIdentical": true
+      }
+    ],
+    "comparisonScope": "Each run has independently paired hand/native timings; cross-run changes are descriptive, not a controlled direct estimate of optimization speedup."
+  },
+  "sourceTimingInterpretation": {
+    "legacyField": "sourceBuildMs",
+    "actualCall": "renderer.debug.getShaderAsync",
+    "includesCompileAsync": true,
+    "source": "/Users/michaeljones/Documents/GitHub/Blendlink/node_modules/three/src/renderers/common/Renderer.js",
+    "sourceSha256": "24a8580179438da25865c986c298e29c3ceadf270bd6625cc849bbd17aaf6e2e",
+    "sourceLines": "717-730, await this.compileAsync at719",
+    "meaning": "Combined API wall: source/build plus compilation work. Subsequent pipelineCompileAwaitMs is warm. Neither measures isolated CPU generation or pure GPU compiler time. Raw baseline/specialized reports retain original field labels."
+  }
+}

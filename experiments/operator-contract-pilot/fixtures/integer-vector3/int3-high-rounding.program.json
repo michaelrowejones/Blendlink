@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "blenderVersion": "5.3.0",
+  "engine": "CYCLES",
+  "frame": 1,
+  "status": "extracted",
+  "ops": [
+    {
+      "id": "n0",
+      "kind": "integer-vector",
+      "source": {
+        "path": [
+          "Artist static compositor int3-high-rounding"
+        ],
+        "node": "Integer Vector",
+        "nodeType": "FunctionNodeInputIntVector",
+        "output": "Vector"
+      },
+      "type": "INT_VECTOR3",
+      "properties": {
+        "evaluation_device": "CPU",
+        "native_gpu_backend": "METAL",
+        "single_value_device": "CPU",
+        "integer_vector_model": "native-int3-constant-53-v1",
+        "integer_vector_profile": "darwin-arm64-53-int3-cpu-v1",
+        "integer_vector_version": [
+          5,
+          3,
+          0
+        ],
+        "integer_vector_build": "02f0899d78e3",
+        "integer_vector_dimensions": 3,
+        "integer_vector_precision": "CPU_INT32",
+        "integer_vector_presentation": "component-rne-f32-alpha-one-v1"
+      },
+      "inputs": {},
+      "value": [
+        2147483583,
+        2147483584,
+        2147483647
+      ]
+    }
+  ],
+  "passes": [],
+  "diagnostics": [],
+  "alphaConvention": "premultiplied",
+  "colorSpace": "scene-linear",
+  "displayTransform": "separate, after authored compositor",
+  "tree": "Artist static compositor int3-high-rounding",
+  "output": {
+    "kind": "convert",
+    "fromType": "INT_VECTOR3",
+    "type": "RGBA",
+    "input": {
+      "kind": "ref",
+      "node": "n0",
+      "type": "INT_VECTOR3"
+    }
+  }
+}

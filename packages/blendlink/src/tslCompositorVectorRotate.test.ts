@@ -3,7 +3,7 @@ import {expect,it,vi} from 'vitest'
 import {DataTexture,FloatType,RGBAFormat,Scene,PerspectiveCamera} from 'three'
 import {pass as renderPass,texture,vec3} from 'three/tsl'
 import {buildSourceCompositor} from './tslSourceCompositor.js'
-import {CompositorVectorRotate,VECTOR_ROTATE_CPU_MODEL,VECTOR_ROTATE_CPU_PROFILE,VECTOR_ROTATE_COORDINATES,compositorRotateNormalizedRows,validateVectorRotateProgram,validateVectorRotatePresentation} from './tslCompositorVectorRotate.js'
+import {CompositorVectorRotate,VECTOR_ROTATE_CPU_MODEL,VECTOR_ROTATE_CPU_PROFILE,VECTOR_ROTATE_UNIT_AXIS_MODEL,VECTOR_ROTATE_UNIT_AXIS_PROFILE,VECTOR_ROTATE_COORDINATES,compositorRotateNormalizedRows,validateVectorRotateProgram,validateVectorRotatePresentation} from './tslCompositorVectorRotate.js'
 const word=(value:number)=>new Uint32Array(new Float32Array([value]).buffer)[0]!
 const source=(nodeType:string,output:string)=>({path:['Compositor'],node:nodeType,nodeType,output})
 const common={evaluation_device:'CPU',single_value_device:'CPU'}
@@ -104,4 +104,13 @@ it('schedules the original FRAME producer before outer geometry, never during la
  frame.frameId=2;frame.renderId=3;frame.updateBeforeNode(root);expect(producer.updateBefore).toHaveBeenCalledTimes(2)
  r.setSize(3,9);frame.frameId=3;frame.renderId=4;expect(()=>frame.updateBeforeNode(root)).toThrow(/physical extents/);expect(producer.updateBefore).toHaveBeenCalledTimes(2)
  owner.dispose();producer.dispose()
+})
+
+it('keeps original AXIS_ANGLE and exact signed unit words under a distinct closed source model',()=>{
+ for(const field of[false,true])for(const axis of[0,1,2])for(const sign of[1,-1])for(const invert of[false,true]){
+  const p=program(field),op=p.ops.find((op:any)=>op.kind==='vector-rotate-cpu');Object.assign(op.properties,{vector_rotate_model:VECTOR_ROTATE_UNIT_AXIS_MODEL,vector_rotate_profile:VECTOR_ROTATE_UNIT_AXIS_PROFILE,vector_rotate_mode:'AXIS_ANGLE',vector_rotate_axis_words:[0,0,0].map((_,i)=>i===axis?word(sign):0),vector_rotate_invert:invert})
+  expect(()=>validateVectorRotateProgram(p)).not.toThrow()
+  for(const mutate of[(p:any)=>p.vector_rotate_model=VECTOR_ROTATE_CPU_MODEL,(p:any)=>p.vector_rotate_profile=VECTOR_ROTATE_CPU_PROFILE,(p:any)=>p.vector_rotate_mode='Z_AXIS',(p:any)=>delete p.vector_rotate_axis_words,(p:any)=>p.vector_rotate_axis_words=[0,0,0],(p:any)=>p.vector_rotate_axis_words=[word(1),word(1),0],(p:any)=>p.vector_rotate_axis_words=[0,0,word(.5)],(p:any)=>p.vector_rotate_axis_words=[0x80000000,0,word(1)],(p:any)=>p.vector_rotate_axis_words=[1,0,word(1)]]){const copy=structuredClone(p);mutate(copy.ops.find((op:any)=>op.kind==='vector-rotate-cpu').properties);expect(()=>validateVectorRotateProgram(copy)).toThrow(/Vector Rotate/)}
+ }
+ const old=program();old.ops[0].properties.vector_rotate_axis_words=[0,0,word(1)];expect(()=>validateVectorRotateProgram(old)).toThrow(/Vector Rotate/)
 })

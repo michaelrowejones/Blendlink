@@ -15,17 +15,21 @@ else:
 MODEL='native-fixed-axis-vector-rotate-cpu-53-v1'
 PROFILE='darwin-arm64-53-fixed-axis-vector-rotate-cpu-v1'
 COORDINATES='private-normalized-r32f-vector-rotate-v1'
-MODES={'X_AXIS','Y_AXIS','Z_AXIS'}
+MODES={'X_AXIS','Y_AXIS','Z_AXIS','AXIS_ANGLE'}
+UNIT_AXIS_MODEL='native-unit-axis-vector-rotate-cpu-53-v1'
+UNIT_AXIS_PROFILE='darwin-arm64-53-unit-axis-vector-rotate-cpu-v1'
+UNIT_AXES={tuple((0xbf800000 if sign<0 else 0x3f800000)if index==axis else 0 for index in range(3))for axis in range(3)for sign in[-1,1]}
 class VectorRotateUnsupported(ValueError):pass
 
 def _carrier_state(tree,obj):
     rotations=[node for node in tree.nodes if node.bl_idname=='ShaderNodeVectorRotate']
+    if any(node.rotation_type not in MODES for node in rotations):raise VectorRotateUnsupported('Vector Rotate owned coefficient mode/schema changed during evaluation')
     angles=shared._raw_scalars(tuple(node.inputs['Angle']for node in rotations))
     def vector(socket):
         raw=array('f',[0])*3;socket.default_value.foreach_get(raw);return struct.unpack('=3I',raw.tobytes())
     return(tuple((node.as_pointer(),node.bl_idname,node.mute)for node in tree.nodes),
         tuple((link.from_socket.as_pointer(),link.to_socket.as_pointer(),link.is_valid,link.is_muted)for link in tree.links),
-        tuple((node.rotation_type,node.invert,vector(node.inputs['Vector']),vector(node.inputs['Center']),angle)for node,angle in zip(rotations,angles)),
+        tuple((node.rotation_type,node.invert,vector(node.inputs['Vector']),vector(node.inputs['Center']),angle,vector(node.inputs['Axis'])if node.rotation_type=='AXIS_ANGLE'else None)for node,angle in zip(rotations,angles)),
         tuple((node.data_type,node.inputs['Seed'].default_value)for node in tree.nodes if node.bl_idname=='FunctionNodeHashValue'),
         tuple((node.data_type,node.domain,node.inputs['Name'].default_value,node.inputs['Selection'].default_value)for node in tree.nodes if node.bl_idname=='GeometryNodeStoreNamedAttribute'),
         tuple((modifier.as_pointer(),modifier.type,modifier.node_group.as_pointer())for modifier in obj.modifiers))
@@ -40,13 +44,19 @@ def signature(node,scene):
     if tuple(bpy.app.version)!=(5,3,0)or bpy.app.build_hash!=b'02f0899d78e3'or sys.platform!='darwin'or platform.machine()!='arm64'or r.compositor_device!='CPU':
         raise VectorRotateUnsupported('Vector Rotate has only its pinned Blender 5.3 macOS arm64 CPU compositor profile')
     if node.bl_idname!='ShaderNodeVectorRotate'or node.mute or node.rotation_type not in MODES or [s.identifier for s in node.inputs]!=['Vector','Center','Axis','Angle','Rotation']:
-        raise VectorRotateUnsupported('Vector Rotate requires its unmuted fixed X/Y/Z native schema; arbitrary Axis and Euler remain unqualified')
+        raise VectorRotateUnsupported('Vector Rotate requires its unmuted fixed X/Y/Z or exact signed unit-axis native schema; arbitrary Axis and Euler remain unqualified')
     shared._static(node)
     if any(socket.is_linked for socket in node.inputs if socket.identifier!='Vector'):
         raise VectorRotateUnsupported('Vector Rotate Center/Angle and inactive controls must be unlinked static literals')
     vector=node.inputs['Vector'];center=node.inputs['Center'];angle=node.inputs['Angle']
     if any(s.type!='VECTOR'or s.bl_idname!='NodeSocketVector'or len(s.default_value)!=3 for s in (vector,center))or angle.type!='VALUE'or angle.bl_idname!='NodeSocketFloatAngle':
         raise VectorRotateUnsupported('Vector Rotate requires native float3 Vector/Center and scalar Angle storage')
+    axis_words=None
+    if node.rotation_type=='AXIS_ANGLE':
+        axis=node.inputs['Axis']
+        if axis.type!='VECTOR'or axis.bl_idname!='NodeSocketVector'or len(axis.default_value)!=3:raise VectorRotateUnsupported('Vector Rotate Axis requires actual native float3 storage')
+        axis_words=tuple(_raw((axis,),'VECTOR')[0])
+        if axis_words not in UNIT_AXES:raise VectorRotateUnsupported('Vector Rotate Axis requires an exact signed unit X/Y/Z axis with positive-zero other components')
     center_words=_bounded(_raw((center,),'VECTOR')[0],0x41800000)
     angle_word=shared._raw_scalar(angle);absolute=angle_word&0x7fffffff
     if absolute and not 0x37800000<=absolute<=0x3f800000:
@@ -58,9 +68,9 @@ def signature(node,scene):
     root=scene.compositing_node_group
     return(node.as_pointer(),node.id_data.as_pointer(),node.rotation_type,bool(node.invert),center_words,angle_word,vector_words,
         (scene.as_pointer(),scene.frame_current,scene.frame_subframe,width,height,r.compositor_precision,r.engine,root.as_pointer()if root else None,scene.name,r.resolution_x,r.resolution_y,r.resolution_percentage),
-        shared._Evaluator.signature(node))
+        shared._Evaluator.signature(node),axis_words)
 
-def _native_columns(mode,invert,angle_word):
+def _native_columns(mode,invert,angle_word,axis_words=None):
     before=shared._ownership();scene=mesh=obj=tree=None
     try:
         tag=uuid.uuid4().hex;scene=bpy.data.scenes.new('.SceneToWeb Vector Rotate '+tag)
@@ -72,6 +82,9 @@ def _native_columns(mode,invert,angle_word):
         for column in range(3):
             rotate=tree.nodes.new('ShaderNodeVectorRotate');rotate.rotation_type=mode;rotate.invert=invert
             basis=[0,0,0];basis[column]=1;rotate.inputs['Vector'].default_value=basis;rotate.inputs['Center'].default_value=(0,0,0);rotate.inputs['Angle'].default_value=shared._float(angle_word)
+            if mode=='AXIS_ANGLE':
+                if axis_words not in UNIT_AXES:raise VectorRotateUnsupported('Vector Rotate owned Axis must retain exact signed unit words')
+                raw_axis=array('f');raw_axis.frombytes(struct.pack('=3I',*axis_words));rotate.inputs['Axis'].default_value.foreach_set(raw_axis)
             separate=tree.nodes.new('ShaderNodeSeparateXYZ');tree.links.new(rotate.outputs['Vector'],separate.inputs['Vector'])
             for lane,source in enumerate(separate.outputs):
                 witness=tree.nodes.new('FunctionNodeHashValue');witness.data_type='FLOAT';witness.inputs['Seed'].default_value=0;tree.links.new(source,shared._active(witness.inputs,'Value','VALUE'))
@@ -81,6 +94,8 @@ def _native_columns(mode,invert,angle_word):
         if len(tree.nodes)!=35:raise VectorRotateUnsupported('Vector Rotate private 35-node basis carrier schema changed')
         tree.links.new(geometry,out.inputs[0]);modifier=obj.modifiers.new('.SceneToWeb Vector Rotate MF','NODES');modifier.node_group=tree
         carrier=_carrier_state(tree,obj)
+        requested=tuple((mode,bool(invert),tuple(0x3f800000 if lane==column else 0 for lane in range(3)),(0,0,0),angle_word,axis_words if mode=='AXIS_ANGLE'else None)for column in range(3))
+        if carrier[2]!=requested:raise VectorRotateUnsupported('Vector Rotate owned initial basis/Center/Angle/Axis controls differ from requested raw values')
         with bpy.context.temp_override(scene=scene,view_layer=scene.view_layers[0]):
             evaluated=obj.evaluated_get(bpy.context.evaluated_depsgraph_get());result=evaluated.to_mesh()
             try:
@@ -110,19 +125,20 @@ def _native_columns(mode,invert,angle_word):
     if before!=shared._ownership():raise VectorRotateUnsupported('Vector Rotate private coefficient capture changed source/context ownership')
     return tuple(columns)
 
-def _coefficient_shape(mode,invert,angle_word,columns):
+def _coefficient_shape(mode,invert,angle_word,columns,axis_words=None):
     """Fixed-axis source zeros are exact; do not infer them from basis zeros.
 
     Require the nontrivial captured pair to be normal and separated from zero.
     Thus a hidden tiny native sin/cos cannot acquire admission as exposed zero.
     """
+    if mode=='AXIS_ANGLE'and axis_words not in UNIT_AXES:raise VectorRotateUnsupported('Vector Rotate coefficient shape requires exact signed unit Axis words')
     matrix=[[shared._float(bits)for bits in column]for column in columns]
-    axis={'X_AXIS':0,'Y_AXIS':1,'Z_AXIS':2}[mode];others=[i for i in range(3)if i!=axis];a,b=others
+    axis=next(i for i,bits in enumerate(axis_words)if bits&0x7fffffff)if mode=='AXIS_ANGLE'else {'X_AXIS':0,'Y_AXIS':1,'Z_AXIS':2}[mode];others=[i for i in range(3)if i!=axis];a,b=others
     if matrix[axis][axis]!=1 or any(matrix[axis][i]!=0 or matrix[i][axis]!=0 for i in others):raise VectorRotateUnsupported('Vector Rotate fixed-axis unit/zero coefficient schema changed')
     cosine=matrix[a][a];sine=matrix[a][b]
     if cosine!=matrix[b][b]or sine!=-matrix[b][a]or not .5<=cosine<=1:raise VectorRotateUnsupported('Vector Rotate fixed-axis native sin/cos pair is unqualified')
     if angle_word&0x7fffffff:
-        sign=(-1 if angle_word&0x80000000 else 1)*(-1 if invert else 1)*(-1 if mode=='Y_AXIS'else 1)
+        sign=(-1 if angle_word&0x80000000 else 1)*(-1 if invert else 1)*(-1 if axis==1 else 1)*(-1 if axis_words is not None and axis_words[axis]&0x80000000 else 1)
         if not 2**-17<=abs(sine)<=1 or(sine>0)!=(sign>0):raise VectorRotateUnsupported('Vector Rotate nonzero native sine must stay normal with the fixed-axis sign')
     elif cosine!=1 or sine!=0:raise VectorRotateUnsupported('Vector Rotate exact zero-angle native coefficients changed')
 
@@ -140,17 +156,19 @@ def normalize(node,socket,op,scene,read,ops,cache,fail):
             if not producer or producer['kind']!='image-coordinates'or producer['source']['output']!='Normalized'or producer['properties'].get('image_coordinates_model')!='render-layer-float2-v1':raise VectorRotateUnsupported('Vector Rotate accepts only direct qualified Image Coordinates Normalized; other fields/conversions remain unsupported')
             image=producer['inputs']['Image']['value'];source=next((item for item in ops if item['id']==image.get('node')),None)
             if not source or source.get('pass',{}).get('scene')!=scene.name:raise VectorRotateUnsupported('Vector Rotate Normalized requires its current-scene full-frame Render Layers domain')
-        key=before[2:4]+(before[5],)
+        axis_words=before[9]
+        key=before[2:4]+(before[5],)+((axis_words,)if axis_words is not None else())
         if key not in cache:
             if len(cache)>=8:raise VectorRotateUnsupported('Vector Rotate exceeds eight private coefficient keys per extraction')
-            columns=_native_columns(before[2],before[3],before[5])
-            _coefficient_shape(before[2],before[3],before[5],columns)
+            columns=_native_columns(before[2],before[3],before[5],axis_words)if axis_words is not None else _native_columns(before[2],before[3],before[5])
+            _coefficient_shape(before[2],before[3],before[5],columns,axis_words)
             if signature(node,scene)!=before:raise VectorRotateUnsupported('Vector Rotate source changed during coefficient capture')
             cache[key]=columns
         columns=cache[key]
         if signature(node,scene)!=before:raise VectorRotateUnsupported('Vector Rotate source changed before publishing coefficients')
         op['kind']='vector-rotate-cpu';op['inputs']['Vector']={'name':'Vector','socketType':'VECTOR','value':vector}
-        op['properties'].update(vector_rotate_model=MODEL,vector_rotate_profile=PROFILE,vector_rotate_version=[5,3,0],vector_rotate_build=bpy.app.build_hash.decode(),vector_rotate_mode=before[2],vector_rotate_invert=before[3],vector_rotate_center_words=list(before[4]),vector_rotate_angle_word=before[5],vector_rotate_columns=[list(column)for column in columns],vector_rotate_input=kind,vector_rotate_vector_words=list(before[6])if before[6]is not None else None,vector_rotate_coordinates=COORDINATES if kind=='normalized'else None,vector_rotate_export_extent=list(before[7][3:5]),vector_rotate_precision=before[7][5],vector_rotate_scene=before[7][8])
+        op['properties'].update(vector_rotate_model=UNIT_AXIS_MODEL if axis_words is not None else MODEL,vector_rotate_profile=UNIT_AXIS_PROFILE if axis_words is not None else PROFILE,vector_rotate_version=[5,3,0],vector_rotate_build=bpy.app.build_hash.decode(),vector_rotate_mode=before[2],vector_rotate_invert=before[3],vector_rotate_center_words=list(before[4]),vector_rotate_angle_word=before[5],vector_rotate_columns=[list(column)for column in columns],vector_rotate_input=kind,vector_rotate_vector_words=list(before[6])if before[6]is not None else None,vector_rotate_coordinates=COORDINATES if kind=='normalized'else None,vector_rotate_export_extent=list(before[7][3:5]),vector_rotate_precision=before[7][5],vector_rotate_scene=before[7][8])
+        if axis_words is not None:op['properties']['vector_rotate_axis_words']=list(axis_words)
         return before
     except (ValueError,ReferenceError,RuntimeError)as error:fail(socket,str(error))
 

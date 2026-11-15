@@ -74,6 +74,7 @@ normalize_map_value = _sibling("compositor_map_value").normalize_map_value
 normalize_spill = _sibling("compositor_spill").normalize_spill
 normalize_color_key = _sibling("compositor_color_key").normalize_color_key
 normalize_static_image = _sibling("compositor_image").normalize_image
+image_info = _sibling("compositor_image_info")
 blank_image = _sibling("compositor_blank_image")
 normalize_vector_component = _sibling("compositor_vector_component").normalize_vector_component
 normalize_float_to_int = _sibling("compositor_float_to_int").normalize_float_to_int
@@ -103,7 +104,7 @@ normalize_box_mask = _sibling("compositor_box_mask").normalize_box_mask
 validate_box_mask_graph = _sibling("compositor_box_mask").validate_box_mask_graph
 normalize_ellipse_mask = _sibling("compositor_ellipse_mask").normalize_ellipse_mask
 validate_ellipse_mask_graph = _sibling("compositor_ellipse_mask").validate_ellipse_mask_graph
-normalize_image_info = _sibling("compositor_image_info").normalize_image_info
+normalize_image_info = image_info.normalize_image_info
 validate_image_info_edge = _sibling("compositor_image_info").validate_image_info_edge
 view_selection = _sibling("compositor_view_selection")
 integer_vector = _sibling("compositor_integer_vector")
@@ -331,6 +332,7 @@ def extract(scene):
     integer_vector_reads = []
     input_rotation_cache = {}
     noise_reads = []
+    finite_image_info_reads=[]
     blank_image_reads = []
     blank_image_topology = {}
     blank_image_active = [False]
@@ -742,8 +744,11 @@ def extract(scene):
                     normalize_box_mask(node, socket, op, scene,
                         lambda incoming, message: fail("unsupported-box-mask", path, node, incoming, message))
                 elif node.bl_idname == "CompositorNodeImageInfo":
-                    normalize_image_info(node, socket, op, scene, lambda incoming: input_value(incoming, ctx), result["ops"],
-                        lambda incoming, message: fail("unsupported-image-info", path, node, incoming, message))
+                    activate_field_topology('image-info','Image Info')
+                    signature=normalize_image_info(node, socket, op, scene, lambda incoming: input_value(incoming, ctx), result["ops"],
+                        lambda incoming, message: fail("unsupported-image-info", path, node, incoming, message),result,source_nodes,static_image_cache)
+                    if signature is not None:
+                        finite_image_info_reads.append((node,source_nodes[op['inputs']['Image']['value']['node']],signature,path))
                 elif node.bl_idname == "CompositorNodeImageCoordinates":
                     coordinate_normalizer = normalize_float_coordinates if socket.identifier in {"Uniform", "Normalized"} else normalize_image_coordinates
                     coordinate_normalizer(node, socket, op, scene, lambda incoming: input_value(incoming, ctx), result["ops"],
@@ -1301,6 +1306,10 @@ def extract(scene):
             op,message=blank_conflict
             result['diagnostics'].append({'code':'unsupported-blank-image','path':op['source']['path'],'node':op['source']['node'],'socket':op['source']['output'],'message':message})
             raise Unsupported()
+        finite_info_conflict=image_info.validate_finite_graph(result)
+        if finite_info_conflict:
+            op,message=finite_info_conflict
+            fail('unsupported-image-info',op['source']['path'],source_nodes[op['id']],None,message)
         image_conflict = validate_static_image_graph(result)
         if image_conflict:
             op, message = image_conflict
@@ -1380,6 +1389,11 @@ def extract(scene):
                 blank_image._static(node.id_data)
                 if static_matrix._Evaluator.signature(node)!=signature:raise blank_image.BlankImageUnsupported('Blank Image used topology changed during extraction')
             except (ValueError,ReferenceError,RuntimeError)as error:fail('blank-image-source-changed',path,None,None,label+': '+str(error))
+        for node,source,signature,path in finite_image_info_reads:
+            try:
+                if image_info.finite_source_signature(node,source,scene)!=signature:
+                    fail('image-info-source-changed',path,node,None,'Finite Image Info source/schema/domain/context changed during extraction')
+            except (ValueError,ReferenceError,RuntimeError)as error:fail('image-info-source-changed',path,node,None,str(error))
         for node,socket,signature,path in blank_image_reads:
             try:
                 if blank_image.source_signature(node,scene)!=signature:raise blank_image.BlankImageUnsupported('Blank Image source or context changed during extraction')

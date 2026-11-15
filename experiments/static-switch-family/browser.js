@@ -22,16 +22,19 @@ window.staticSelectionProof=async proof=>{
  const gl=renderer.backend.gl,debug=gl?.getExtension('WEBGL_debug_renderer_info'),info=adapter?.info??renderer.backend.device?.adapterInfo
  const gpu=info?{api:'WebGPU',vendor:info.vendor,architecture:info.architecture,device:info.device,description:info.description}:{api:'WebGL2',vendor:gl.getParameter(debug?.UNMASKED_VENDOR_WEBGL??gl.VENDOR),renderer:gl.getParameter(debug?.UNMASKED_RENDERER_WEBGL??gl.RENDERER)}
  renderer.setPixelRatio(1);renderer.setSize(8,8);renderer.outputColorSpace=THREE.LinearSRGBColorSpace;renderer.toneMapping=THREE.NoToneMapping
- const rows=[],errors=[],int3Captures=proof.variant==='integer-vector3'?[]:null;if(int3Captures)window.integerVector3Readbacks=int3Captures;renderer.debug.onShaderError=(gl,program)=>errors.push(gl.getProgramInfoLog(program));let flip
+ const rows=[],errors=[],int3Captures=['integer-vector3','finite-image-info'].includes(proof.variant)?[]:null;if(int3Captures)window.integerVector3Readbacks=int3Captures;renderer.debug.onShaderError=(gl,program)=>errors.push(gl.getProgramInfoLog(program));let flip
+ const finiteCost=proof.variant==='finite-image-info'?(await import('./finite-cost.mjs')).observeFinitePayloadCosts(renderer):null;let costCanary,finiteFrameGuard
+ try{
  if(proof.variant!=='static'){
   const data=new Float32Array(256);for(let y=0;y<8;y++)for(let x=0;x<8;x++)data.set([x/16,y/16,.375,1],4*(y*8+x))
   const input=new THREE.DataTexture(data,8,8,THREE.RGBAFormat,THREE.FloatType);input.colorSpace=THREE.NoColorSpace;input.needsUpdate=true
   const output=new THREE.RenderTarget(8,8,{type:THREE.FloatType,depthBuffer:false});output.texture.colorSpace=THREE.NoColorSpace
   const material=new NodeMaterial();material.fragmentNode=textureLoad(input,ivec2(uv().mul(vec2(8,8))));renderer.setRenderTarget(output);new QuadMesh(material).render(renderer)
-  try{const values=await renderer.readRenderTargetPixelsAsync(output,0,0,8,8);if(!(values instanceof Float32Array))throw Error('Independent orientation needs Float32 pixels');const width=values.length===256?8:backend==='webgpu'&&values.length===480?16:0;if(!width)throw Error('Unknown independent orientation layout');const got=new Uint32Array(values.buffer,values.byteOffset,values.length),expected=new Uint32Array(data.buffer),measure=flipped=>{let n=0;for(let y=0;y<8;y++)for(let x=0;x<8;x++)for(let c=0;c<4;c++)if(got[((flipped?7-y:y)*width+x)*4+c]!==expected[4*(y*8+x)+c])n++;return n};flip=measure(true)<measure(false);if(measure(flip))throw Error('Independent physical orientation control failed')}finally{renderer.setRenderTarget(null);material.dispose();input.dispose();output.dispose()}
+  try{const values=await renderer.readRenderTargetPixelsAsync(output,0,0,8,8);if(!(values instanceof Float32Array))throw Error('Independent orientation needs Float32 pixels');const width=values.length===256?8:backend==='webgpu'&&values.length===480?16:0;if(!width)throw Error('Unknown independent orientation layout');const got=new Uint32Array(values.buffer,values.byteOffset,values.length),expected=new Uint32Array(data.buffer),measure=flipped=>{let n=0;for(let y=0;y<8;y++)for(let x=0;x<8;x++)for(let c=0;c<4;c++)if(got[((flipped?7-y:y)*width+x)*4+c]!==expected[4*(y*8+x)+c])n++;return n};flip=measure(true)<measure(false);if(measure(flip))throw Error('Independent physical orientation control failed');if(finiteCost)costCanary=finiteCost.canary(input)}finally{renderer.setRenderTarget(null);material.dispose();input.dispose();output.dispose()}
  }
 
  for(const entry of proof.cases){
+  const costMark=finiteCost?.mark()
   const int3Readbacks=int3Captures?[]:null;if(int3Captures)int3Captures.push({case:entry.case,readbacks:int3Readbacks})
   const expected=new Uint32Array(await bytes(entry.pixelUrl,entry.pixelSha256)),target=new THREE.RenderTarget(8,8,{type:THREE.FloatType,depthBuffer:!!proof.final});target.texture.colorSpace=THREE.NoColorSpace
   let sourceTexture,quad,material,built,pipeline,installation,gltf,scene,camera,bindings,source,originals=[],geometries=new Set(),materials=new Set(),pinRejected=false
@@ -80,7 +83,14 @@ window.staticSelectionProof=async proof=>{
    const mismatches=measure(flip);if(mismatches)throw new Error(entry.case+' '+proof.context+' has '+mismatches+' word mismatches')
    return mismatches
   }
-  renderer.backend.device?.pushErrorScope('validation');render();const mismatches=await read();render();await read()
+  renderer.backend.device?.pushErrorScope('validation');render();const mismatches=await read()
+  if(finiteCost&&entry.case==='blank-group'){
+   const before={x:target.viewport.x,y:target.viewport.y,z:target.viewport.z,w:target.viewport.w};target.viewport.z=7;let error
+   try{render()}catch(cause){error=String(cause)}finally{target.viewport.set(before.x,before.y,before.z,before.w)}
+   if(!error||!/Blank Image.*full-frame/.test(error))throw Error('Retained finite metadata frame guard did not refuse actual invalid viewport: '+error)
+   finiteFrameGuard={case:entry.case,refused:true,error,recovered:false}
+  }
+  render();await read();if(finiteFrameGuard?.case===entry.case)finiteFrameGuard.recovered=true
   const dispose=()=>{pipeline?.dispose();installation?.dispose();built?.dispose();if(!proof.final)material.dispose();sourceTexture?.dispose()}
   dispose()
   if(proof.final){
@@ -93,8 +103,10 @@ window.staticSelectionProof=async proof=>{
   }
   const error=await renderer.backend.device?.popErrorScope();if(error)errors.push(error.message)
   renderer.setRenderTarget(null);target.dispose();if(renderer.info.memory.textures!==0)throw new Error('Owned textures leaked '+renderer.info.memory.textures)
-  rows.push({case:entry.case,wordMismatches:mismatches,remainingTextures:0,finalBindings:!!proof.final,pinRejected:proof.final?pinRejected:null,ownershipPreserved:true,...(int3Readbacks?{readbacks:int3Readbacks}:{}),...(proof.variant!=='static'?{comparedWords:256,lifecycleCycles:proof.final?2:1}:{})})
+  const payloadCost=finiteCost?await finiteCost.finish(costMark,entry,[sourceTexture],hash):undefined
+  rows.push({case:entry.case,wordMismatches:mismatches,remainingTextures:0,finalBindings:!!proof.final,pinRejected:proof.final?pinRejected:null,ownershipPreserved:true,...(int3Readbacks?{readbacks:int3Readbacks}:{}),...(payloadCost?{payloadCost}:{}),...(proof.variant!=='static'?{comparedWords:256,lifecycleCycles:proof.final?2:1}:{})})
  }
  renderer.dispose();device?.destroy();if(errors.length)throw new Error(JSON.stringify(errors))
- return{backend,gpu,rows,errors}
+ return{backend,gpu,rows,errors,...(finiteCost?{payloadCostCanary:costCanary,finiteFrameGuard}:{})}
+ }finally{finiteCost?.restore()}
 }

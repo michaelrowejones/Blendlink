@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "role": "observed-command-stage-not-authoring-time",
+  "stage": "preflight",
+  "method": "shared",
+  "trial": 1,
+  "attempt": 1,
+  "argv": [
+    "/tmp/mrj-tooling/node",
+    "--check",
+    "experiments/port-throughput-benchmark/browser.js"
+  ],
+  "cwd": "/private/tmp/scenetoweb-port-throughput-benchmark",
+  "startedAt": "2026-11-15T05:17:00.384Z",
+  "elapsedMs": 21.670166,
+  "budgetMs": 60000,
+  "timedOut": false,
+  "exitCode": 0,
+  "signal": null,
+  "error": null,
+  "logBytes": 0,
+  "logs": {
+    "stdout.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "planSha256": "3106c2f1c4f1b981054702d777569c445797e75a01b5ebf3bcbe0101cd8f30de",
+  "instrumentationSha256": "e51358bc79e504fd7ccf0c895ff685d0173bd4b1af10e47bbd5bd86ff2313be0",
+  "llmTimeMeasured": false,
+  "supportCredit": 0
+}

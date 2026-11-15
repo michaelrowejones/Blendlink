@@ -24,6 +24,7 @@ export async function runNodePortCost(args){
   report.input.path=input;report.limitsInput=limitsInput
   report.cliSha256=createHash('sha256').update(await readFile(new URL(import.meta.url))).digest('hex')
   report.analyzerSha256=createHash('sha256').update(await readFile(new URL('./lib/node-port-cost.mjs',import.meta.url))).digest('hex')
+  report.compositorAnalyzerSha256=createHash('sha256').update(await readFile(new URL('./lib/compositor-structural-cost.mjs',import.meta.url))).digest('hex')
  }catch(error){report={schemaVersion:1,kind:'blendlink-node-port-static-cost-v1',status:'analysis-failed',productionCases:0,performanceQualified:false,input:inputRecord,limitsInput,error:{name:error.name,message:error.message}}}
  finally{try{await handle.writeFile(JSON.stringify(report,null,2)+'\n')}finally{await handle.close()}}
  return report

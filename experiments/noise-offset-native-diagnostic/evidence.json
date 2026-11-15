@@ -1,0 +1,248 @@
+{
+  "schemaVersion": 1,
+  "status": "RESEARCH_NATIVE_OFFSET_ARITHMETIC_CLOSED",
+  "supportCredit": 0,
+  "FinalCredit": 0,
+  "nativeReport": {
+    "path": "/tmp/scenetoweb-noise-offset-native-r1/report.json",
+    "sha256": "9a0e467a9cf06a9d2cfc7a550d2bd51e0ed6659a9376eca409c198121096193b"
+  },
+  "closed": {
+    "path": "/tmp/scenetoweb-noise-offset-native-closed-r1.json",
+    "sha256": "69278565ef2726c77ecc98d7fb496496922cca91e067d19202b44b456fbfb0f0"
+  },
+  "nativeArchive": {
+    "path": "/tmp/scenetoweb-noise-offset-native-r1/native-archive.json",
+    "sha256": "7a787507c8759dc9c58a9fad0efb4d4c13fc7e1c8c3c1cb2e8e3ba7df480b14b"
+  },
+  "sourceFiles": {
+    "README.md": "b0c270c81bc7b4bcf45d7b2c1dd72738e138742c78e4314986ccad8919da89ad",
+    "capture.py": "a64294cfb93a2f035c53321bca1202a63fcf2f8a5986ee591f671a5b54ba0f0c",
+    "run.mjs": "ec7520c684261e2bfc9c6baebf8859b1f64b8587871fed22c4d07c00a18db5b6",
+    "verify.mjs": "ada8b4f8dc877012d9e36b759c19c67d9a41b65813f1526bfb0e5a3365be195e",
+    "verify.test.mjs": "5e683efa28d277319e80f579070fc7a258f42af731474d6c47c5aabaeaa0f134"
+  },
+  "raw": [
+    {
+      "source": "literal",
+      "stage": "seed-control",
+      "file": "/tmp/scenetoweb-noise-offset-native-r1/literal-seed-control.rgba32f",
+      "sha256": "0996de5e19a5d6e524cee6dcf4ef51882e45dc0c54caf8ca4a87b1ec322fa148",
+      "shader": "/tmp/scenetoweb-noise-offset-native-r1/literal-seed-control.glsl",
+      "shaderSha256": "e9777ccdcfd8c89901df7cc119c85ecbe9068f1f07b036177d613f84762734ac"
+    },
+    {
+      "source": "literal",
+      "stage": "hash-low",
+      "file": "/tmp/scenetoweb-noise-offset-native-r1/literal-hash-low.rgba32f",
+      "sha256": "b2ce34dd22747e3e2527acdded4862a4f3e6e9456dcba7ba61f7bfe0c200bd00",
+      "shader": "/tmp/scenetoweb-noise-offset-native-r1/literal-hash-low.glsl",
+      "shaderSha256": "b2c3fb55f3e778bd23661edf3bb75c91bc01ede4958435c4a3ee7d9f59459a94"
+    },
+    {
+      "source": "literal",
+      "stage": "hash-high",
+      "file": "/tmp/scenetoweb-noise-offset-native-r1/literal-hash-high.rgba32f",
+      "sha256": "cd6c2d7dddddbfd560da978ffe20111761785b182d3407a59a692e2268ae3b02",
+      "shader": "/tmp/scenetoweb-noise-offset-native-r1/literal-hash-high.glsl",
+      "shaderSha256": "6aff125b0eee69efc46ca4821d62fcd5ed3011d76f25fb02029f98256094e501"
+    },
+    {
+      "source": "literal",
+      "stage": "uint-float",
+      "file": "/tmp/scenetoweb-noise-offset-native-r1/literal-uint-float.rgba32f",
+      "sha256": "d7f6aead52d6ea047d4a76989e98694f598717f779f40a20280e638cab8904e2",
+      "shader": "/tmp/scenetoweb-noise-offset-native-r1/literal-uint-float.glsl",
+      "shaderSha256": "71f0dd46d44a80017eb45ab8ffd6c81adb72a5a2a571186695a7dc0504de8069"
+    },
+    {
+      "source": "literal",
+      "stage": "unit",
+      "file": "/tmp/scenetoweb-noise-offset-native-r1/literal-unit.rgba32f",
+      "sha256": "8368a5918d23a34b32af1b0c82497b340e2e86f45f2e67693ea4533cdc353192",
+      "shader": "/tmp/scenetoweb-noise-offset-native-r1/literal-unit.glsl",
+      "shaderSha256": "76c085ba278f9dc094a0f10ad63eafd859394bad4a658a565f930eced2d62dc1"
+    },
+    {
+      "source": "literal",
+      "stage": "offset",
+      "file": "/tmp/scenetoweb-noise-offset-native-r1/literal-offset.rgba32f",
+      "sha256": "54656afe39fa5085bfcf2582847095edab878bd27d849cccb36f87f14f959792",
+      "shader": "/tmp/scenetoweb-noise-offset-native-r1/literal-offset.glsl",
+      "shaderSha256": "4d21b009a9082bf6ca7b9c770f5c3fa503d7aa3a9d853bdca931322eb0882f6e"
+    },
+    {
+      "source": "literal",
+      "stage": "fma",
+      "file": "/tmp/scenetoweb-noise-offset-native-r1/literal-fma.rgba32f",
+      "sha256": "54656afe39fa5085bfcf2582847095edab878bd27d849cccb36f87f14f959792",
+      "shader": "/tmp/scenetoweb-noise-offset-native-r1/literal-fma.glsl",
+      "shaderSha256": "660549c9876a8e3cc3a4396c230a518df1e3ffaa2520574fb82394d47ef4982d"
+    },
+    {
+      "source": "uniform",
+      "stage": "seed-control",
+      "file": "/tmp/scenetoweb-noise-offset-native-r1/uniform-seed-control.rgba32f",
+      "sha256": "0996de5e19a5d6e524cee6dcf4ef51882e45dc0c54caf8ca4a87b1ec322fa148",
+      "shader": "/tmp/scenetoweb-noise-offset-native-r1/uniform-seed-control.glsl",
+      "shaderSha256": "1ba59c8442b9ddc8517ab9ab9fc10ad5f7dabc9732328525acee861671e3f0dd"
+    },
+    {
+      "source": "uniform",
+      "stage": "hash-low",
+      "file": "/tmp/scenetoweb-noise-offset-native-r1/uniform-hash-low.rgba32f",
+      "sha256": "b2ce34dd22747e3e2527acdded4862a4f3e6e9456dcba7ba61f7bfe0c200bd00",
+      "shader": "/tmp/scenetoweb-noise-offset-native-r1/uniform-hash-low.glsl",
+      "shaderSha256": "aa71296b68f47f5d26bda91cd09330602f3d5c4fb1c705b6ee7cfc460bb0880b"
+    },
+    {
+      "source": "uniform",
+      "stage": "hash-high",
+      "file": "/tmp/scenetoweb-noise-offset-native-r1/uniform-hash-high.rgba32f",
+      "sha256": "cd6c2d7dddddbfd560da978ffe20111761785b182d3407a59a692e2268ae3b02",
+      "shader": "/tmp/scenetoweb-noise-offset-native-r1/uniform-hash-high.glsl",
+      "shaderSha256": "64d8a797dbdba74cadd1afb13543d5e3718d5b94adcde96d3c0c00f358e37f5a"
+    },
+    {
+      "source": "uniform",
+      "stage": "uint-float",
+      "file": "/tmp/scenetoweb-noise-offset-native-r1/uniform-uint-float.rgba32f",
+      "sha256": "d7f6aead52d6ea047d4a76989e98694f598717f779f40a20280e638cab8904e2",
+      "shader": "/tmp/scenetoweb-noise-offset-native-r1/uniform-uint-float.glsl",
+      "shaderSha256": "7ee92acc5c9ff4f4468c802bc89c11b12d5235213747310850a02786e0da1614"
+    },
+    {
+      "source": "uniform",
+      "stage": "unit",
+      "file": "/tmp/scenetoweb-noise-offset-native-r1/uniform-unit.rgba32f",
+      "sha256": "8368a5918d23a34b32af1b0c82497b340e2e86f45f2e67693ea4533cdc353192",
+      "shader": "/tmp/scenetoweb-noise-offset-native-r1/uniform-unit.glsl",
+      "shaderSha256": "e17596011be7f796c0b43bca959acef22de6ff94e1e2a01601f7d6e0fb577950"
+    },
+    {
+      "source": "uniform",
+      "stage": "offset",
+      "file": "/tmp/scenetoweb-noise-offset-native-r1/uniform-offset.rgba32f",
+      "sha256": "54656afe39fa5085bfcf2582847095edab878bd27d849cccb36f87f14f959792",
+      "shader": "/tmp/scenetoweb-noise-offset-native-r1/uniform-offset.glsl",
+      "shaderSha256": "6c86e4f0ab90bb1f2113c3fcafc25e34249b9845fc569495d1754a6a7948d20f"
+    },
+    {
+      "source": "uniform",
+      "stage": "fma",
+      "file": "/tmp/scenetoweb-noise-offset-native-r1/uniform-fma.rgba32f",
+      "sha256": "54656afe39fa5085bfcf2582847095edab878bd27d849cccb36f87f14f959792",
+      "shader": "/tmp/scenetoweb-noise-offset-native-r1/uniform-fma.glsl",
+      "shaderSha256": "368f8310de1b731b9e9b54288a149e853a0f8110e18cb536f7c886238743d0c1"
+    }
+  ],
+  "summary": {
+    "schemaVersion": 1,
+    "status": "CLOSED_NATIVE_NOISE_OFFSET_DIAGNOSTIC",
+    "supportCredit": 0,
+    "FinalCredit": 0,
+    "draws": 19,
+    "calibrationWords": 40,
+    "stageWords": 112,
+    "literalUniformWordDifferences": 0,
+    "hashSplitWordDifferences": 0,
+    "uintRneWordDifferences": 0,
+    "unitRneWordDifferences": 0,
+    "nativeOffsetVsExplicitFmaDifferences": 0,
+    "nativeOffsetVsSeparateDifferences": 1,
+    "comparisons": [
+      {
+        "seed": 3,
+        "lane": 0,
+        "hash": 2810853268,
+        "normalizedWord": 1059555896,
+        "nativeUintFloatWord": 1327991352,
+        "separateWord": 1126527486,
+        "fusedWord": 1126527486,
+        "nativeOffsetWord": 1126527486,
+        "nativeFmaWord": 1126527486,
+        "separateDiffers": false
+      },
+      {
+        "seed": 3,
+        "lane": 1,
+        "hash": 2695874254,
+        "normalizedWord": 1059106759,
+        "nativeUintFloatWord": 1327542215,
+        "separateWord": 1126352042,
+        "fusedWord": 1126352042,
+        "nativeOffsetWord": 1126352042,
+        "nativeFmaWord": 1126352042,
+        "separateDiffers": false
+      },
+      {
+        "seed": 3,
+        "lane": 2,
+        "hash": 4011860407,
+        "normalizedWord": 1064247330,
+        "nativeUintFloatWord": 1332682786,
+        "separateWord": 1128360078,
+        "fusedWord": 1128360077,
+        "nativeOffsetWord": 1128360077,
+        "nativeFmaWord": 1128360077,
+        "separateDiffers": true
+      },
+      {
+        "seed": 4,
+        "lane": 0,
+        "hash": 2387182134,
+        "normalizedWord": 1057900930,
+        "nativeUintFloatWord": 1326336386,
+        "separateWord": 1125881015,
+        "fusedWord": 1125881015,
+        "nativeOffsetWord": 1125881015,
+        "nativeFmaWord": 1125881015,
+        "separateDiffers": false
+      },
+      {
+        "seed": 4,
+        "lane": 1,
+        "hash": 3313766164,
+        "normalizedWord": 1061520399,
+        "nativeUintFloatWord": 1329955855,
+        "separateWord": 1127294870,
+        "fusedWord": 1127294870,
+        "nativeOffsetWord": 1127294870,
+        "nativeFmaWord": 1127294870,
+        "separateDiffers": false
+      },
+      {
+        "seed": 4,
+        "lane": 2,
+        "hash": 1638102011,
+        "normalizedWord": 1052985064,
+        "nativeUintFloatWord": 1321420520,
+        "separateWord": 1124738009,
+        "fusedWord": 1124738009,
+        "nativeOffsetWord": 1124738009,
+        "nativeFmaWord": 1124738009,
+        "separateDiffers": false
+      }
+    ],
+    "timing": {
+      "innerMilliseconds": 830.5027500027791,
+      "guardedProcessMilliseconds": 2237
+    },
+    "pins": {
+      "report": {
+        "path": "/private/tmp/scenetoweb-noise-offset-native-r1/report.json",
+        "sha256": "9a0e467a9cf06a9d2cfc7a550d2bd51e0ed6659a9376eca409c198121096193b"
+      },
+      "nativeLibrarySha256": "7a678514777219397fef15232066d8a52bc0a8aa5bfe4d39d33969cc3031f883",
+      "hashHostHelperSha256": "200c638ad2f7e264e010320915c7c585a3b706ad42aaa3f63bb07c88e296bd01",
+      "verifierSha256": "ada8b4f8dc877012d9e36b759c19c67d9a41b65813f1526bfb0e5a3365be195e"
+    },
+    "limits": [
+      "Two seeds and six lanes only; not an exhaustive compiler arithmetic proof.",
+      "Native original source result matches fused arithmetic with literal AND uniform seeds; this excludes literal-only folding as the cause of the seed3.z witness.",
+      "This observes results, not emitted Metal ISA: contraction is the matching arithmetic model, not a claim about a specific hardware instruction.",
+      "Native PythonGPU Metal stage, not EEVEE material/film; no new port or numerical support credit.",
+      "Host fused control is exact for these bounded binary32 values: multiplication by100 and addition100 require fewer than53 significand bits."
+    ]
+  }
+}

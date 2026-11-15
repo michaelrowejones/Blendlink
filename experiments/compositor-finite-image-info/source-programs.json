@@ -1,0 +1,3037 @@
+[
+  {
+    "case": "blank-Dimensions",
+    "program": {
+      "version": 1,
+      "blenderVersion": "5.3.0",
+      "engine": "CYCLES",
+      "frame": 1,
+      "status": "extracted",
+      "ops": [
+        {
+          "id": "n0",
+          "kind": "blank-image",
+          "source": {
+            "path": [
+              "Owned finite Info policy"
+            ],
+            "node": "Blank Image",
+            "nodeType": "CompositorNodeBlankImage",
+            "output": "Image"
+          },
+          "type": "RGBA",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "blank_image_model": "native-compositor-blank-image-cpu-53-v1",
+            "blank_image_profile": "darwin-arm64-53-blank-image-cpu-v1",
+            "blank_image_version": [
+              5,
+              3,
+              0
+            ],
+            "blank_image_build": "02f0899d78e3",
+            "blank_image_color_words": [
+              0,
+              0,
+              0,
+              1065353216
+            ],
+            "blank_image_size": [
+              5,
+              3
+            ],
+            "blank_image_effective_size": [
+              5,
+              3
+            ],
+            "blank_image_max_pixels": 4194304,
+            "blank_image_sampling_model": "modern-cpu-v1",
+            "blank_image_source_precision": "FULL"
+          },
+          "inputs": {
+            "Color": {
+              "name": "Color",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "constant",
+                "type": "RGBA",
+                "value": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              }
+            },
+            "Size": {
+              "name": "Size",
+              "socketType": "INT_VECTOR",
+              "value": {
+                "kind": "constant",
+                "type": "INT_VECTOR2",
+                "value": [
+                  5,
+                  3
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "n1",
+          "kind": "image-info",
+          "source": {
+            "path": [
+              "Owned finite Info policy"
+            ],
+            "node": "Image Info",
+            "nodeType": "CompositorNodeImageInfo",
+            "output": "Dimensions"
+          },
+          "type": "INT_VECTOR2",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_info_model": "finite-identity-image-info-v1",
+            "image_info_source_profile": "darwin-arm64-53-finite-image-info-v1",
+            "image_info_native_version": [
+              5,
+              3,
+              0
+            ],
+            "image_info_reference_model": "finite-image-identity-v1",
+            "image_info_scene": "Scene",
+            "image_info_finite_size": [
+              5,
+              3
+            ]
+          },
+          "inputs": {
+            "Image": {
+              "name": "Image",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "ref",
+                "node": "n0",
+                "type": "RGBA"
+              }
+            }
+          }
+        }
+      ],
+      "passes": [],
+      "diagnostics": [],
+      "alphaConvention": "premultiplied",
+      "colorSpace": "scene-linear",
+      "displayTransform": "separate, after authored compositor",
+      "tree": "Owned finite Info policy",
+      "output": {
+        "kind": "convert",
+        "fromType": "INT_VECTOR2",
+        "type": "RGBA",
+        "input": {
+          "kind": "ref",
+          "node": "n1",
+          "type": "INT_VECTOR2"
+        }
+      }
+    }
+  },
+  {
+    "case": "blank-Resolution",
+    "program": {
+      "version": 1,
+      "blenderVersion": "5.3.0",
+      "engine": "CYCLES",
+      "frame": 1,
+      "status": "extracted",
+      "ops": [
+        {
+          "id": "n0",
+          "kind": "blank-image",
+          "source": {
+            "path": [
+              "Owned finite Info policy.001"
+            ],
+            "node": "Blank Image",
+            "nodeType": "CompositorNodeBlankImage",
+            "output": "Image"
+          },
+          "type": "RGBA",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "blank_image_model": "native-compositor-blank-image-cpu-53-v1",
+            "blank_image_profile": "darwin-arm64-53-blank-image-cpu-v1",
+            "blank_image_version": [
+              5,
+              3,
+              0
+            ],
+            "blank_image_build": "02f0899d78e3",
+            "blank_image_color_words": [
+              0,
+              0,
+              0,
+              1065353216
+            ],
+            "blank_image_size": [
+              5,
+              3
+            ],
+            "blank_image_effective_size": [
+              5,
+              3
+            ],
+            "blank_image_max_pixels": 4194304,
+            "blank_image_sampling_model": "modern-cpu-v1",
+            "blank_image_source_precision": "FULL"
+          },
+          "inputs": {
+            "Color": {
+              "name": "Color",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "constant",
+                "type": "RGBA",
+                "value": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              }
+            },
+            "Size": {
+              "name": "Size",
+              "socketType": "INT_VECTOR",
+              "value": {
+                "kind": "constant",
+                "type": "INT_VECTOR2",
+                "value": [
+                  5,
+                  3
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "n1",
+          "kind": "image-info",
+          "source": {
+            "path": [
+              "Owned finite Info policy.001"
+            ],
+            "node": "Image Info",
+            "nodeType": "CompositorNodeImageInfo",
+            "output": "Resolution"
+          },
+          "type": "INT_VECTOR2",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_info_model": "finite-identity-image-info-v1",
+            "image_info_source_profile": "darwin-arm64-53-finite-image-info-v1",
+            "image_info_native_version": [
+              5,
+              3,
+              0
+            ],
+            "image_info_reference_model": "finite-image-identity-v1",
+            "image_info_scene": "Scene",
+            "image_info_finite_size": [
+              5,
+              3
+            ]
+          },
+          "inputs": {
+            "Image": {
+              "name": "Image",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "ref",
+                "node": "n0",
+                "type": "RGBA"
+              }
+            }
+          }
+        }
+      ],
+      "passes": [],
+      "diagnostics": [],
+      "alphaConvention": "premultiplied",
+      "colorSpace": "scene-linear",
+      "displayTransform": "separate, after authored compositor",
+      "tree": "Owned finite Info policy.001",
+      "output": {
+        "kind": "convert",
+        "fromType": "INT_VECTOR2",
+        "type": "RGBA",
+        "input": {
+          "kind": "ref",
+          "node": "n1",
+          "type": "INT_VECTOR2"
+        }
+      }
+    }
+  },
+  {
+    "case": "blank-Location",
+    "program": {
+      "version": 1,
+      "blenderVersion": "5.3.0",
+      "engine": "CYCLES",
+      "frame": 1,
+      "status": "extracted",
+      "ops": [
+        {
+          "id": "n0",
+          "kind": "blank-image",
+          "source": {
+            "path": [
+              "Owned finite Info policy.002"
+            ],
+            "node": "Blank Image",
+            "nodeType": "CompositorNodeBlankImage",
+            "output": "Image"
+          },
+          "type": "RGBA",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "blank_image_model": "native-compositor-blank-image-cpu-53-v1",
+            "blank_image_profile": "darwin-arm64-53-blank-image-cpu-v1",
+            "blank_image_version": [
+              5,
+              3,
+              0
+            ],
+            "blank_image_build": "02f0899d78e3",
+            "blank_image_color_words": [
+              0,
+              0,
+              0,
+              1065353216
+            ],
+            "blank_image_size": [
+              5,
+              3
+            ],
+            "blank_image_effective_size": [
+              5,
+              3
+            ],
+            "blank_image_max_pixels": 4194304,
+            "blank_image_sampling_model": "modern-cpu-v1",
+            "blank_image_source_precision": "FULL"
+          },
+          "inputs": {
+            "Color": {
+              "name": "Color",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "constant",
+                "type": "RGBA",
+                "value": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              }
+            },
+            "Size": {
+              "name": "Size",
+              "socketType": "INT_VECTOR",
+              "value": {
+                "kind": "constant",
+                "type": "INT_VECTOR2",
+                "value": [
+                  5,
+                  3
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "n1",
+          "kind": "image-info",
+          "source": {
+            "path": [
+              "Owned finite Info policy.002"
+            ],
+            "node": "Image Info",
+            "nodeType": "CompositorNodeImageInfo",
+            "output": "Location"
+          },
+          "type": "FLOAT_VECTOR2",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_info_model": "finite-identity-image-info-v1",
+            "image_info_source_profile": "darwin-arm64-53-finite-image-info-v1",
+            "image_info_native_version": [
+              5,
+              3,
+              0
+            ],
+            "image_info_reference_model": "finite-image-identity-v1",
+            "image_info_scene": "Scene",
+            "image_info_finite_size": [
+              5,
+              3
+            ]
+          },
+          "inputs": {
+            "Image": {
+              "name": "Image",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "ref",
+                "node": "n0",
+                "type": "RGBA"
+              }
+            }
+          }
+        }
+      ],
+      "passes": [],
+      "diagnostics": [],
+      "alphaConvention": "premultiplied",
+      "colorSpace": "scene-linear",
+      "displayTransform": "separate, after authored compositor",
+      "tree": "Owned finite Info policy.002",
+      "output": {
+        "kind": "convert",
+        "fromType": "FLOAT_VECTOR2",
+        "type": "RGBA",
+        "input": {
+          "kind": "ref",
+          "node": "n1",
+          "type": "FLOAT_VECTOR2"
+        }
+      }
+    }
+  },
+  {
+    "case": "blank-Rotation",
+    "program": {
+      "version": 1,
+      "blenderVersion": "5.3.0",
+      "engine": "CYCLES",
+      "frame": 1,
+      "status": "extracted",
+      "ops": [
+        {
+          "id": "n0",
+          "kind": "blank-image",
+          "source": {
+            "path": [
+              "Owned finite Info policy.003"
+            ],
+            "node": "Blank Image",
+            "nodeType": "CompositorNodeBlankImage",
+            "output": "Image"
+          },
+          "type": "RGBA",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "blank_image_model": "native-compositor-blank-image-cpu-53-v1",
+            "blank_image_profile": "darwin-arm64-53-blank-image-cpu-v1",
+            "blank_image_version": [
+              5,
+              3,
+              0
+            ],
+            "blank_image_build": "02f0899d78e3",
+            "blank_image_color_words": [
+              0,
+              0,
+              0,
+              1065353216
+            ],
+            "blank_image_size": [
+              5,
+              3
+            ],
+            "blank_image_effective_size": [
+              5,
+              3
+            ],
+            "blank_image_max_pixels": 4194304,
+            "blank_image_sampling_model": "modern-cpu-v1",
+            "blank_image_source_precision": "FULL"
+          },
+          "inputs": {
+            "Color": {
+              "name": "Color",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "constant",
+                "type": "RGBA",
+                "value": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              }
+            },
+            "Size": {
+              "name": "Size",
+              "socketType": "INT_VECTOR",
+              "value": {
+                "kind": "constant",
+                "type": "INT_VECTOR2",
+                "value": [
+                  5,
+                  3
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "n1",
+          "kind": "image-info",
+          "source": {
+            "path": [
+              "Owned finite Info policy.003"
+            ],
+            "node": "Image Info",
+            "nodeType": "CompositorNodeImageInfo",
+            "output": "Rotation"
+          },
+          "type": "VALUE",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_info_model": "finite-identity-image-info-v1",
+            "image_info_source_profile": "darwin-arm64-53-finite-image-info-v1",
+            "image_info_native_version": [
+              5,
+              3,
+              0
+            ],
+            "image_info_reference_model": "finite-image-identity-v1",
+            "image_info_scene": "Scene",
+            "image_info_finite_size": [
+              5,
+              3
+            ]
+          },
+          "inputs": {
+            "Image": {
+              "name": "Image",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "ref",
+                "node": "n0",
+                "type": "RGBA"
+              }
+            }
+          }
+        }
+      ],
+      "passes": [],
+      "diagnostics": [],
+      "alphaConvention": "premultiplied",
+      "colorSpace": "scene-linear",
+      "displayTransform": "separate, after authored compositor",
+      "tree": "Owned finite Info policy.003",
+      "output": {
+        "kind": "convert",
+        "fromType": "VALUE",
+        "type": "RGBA",
+        "input": {
+          "kind": "ref",
+          "node": "n1",
+          "type": "VALUE"
+        }
+      }
+    }
+  },
+  {
+    "case": "blank-Scale",
+    "program": {
+      "version": 1,
+      "blenderVersion": "5.3.0",
+      "engine": "CYCLES",
+      "frame": 1,
+      "status": "extracted",
+      "ops": [
+        {
+          "id": "n0",
+          "kind": "blank-image",
+          "source": {
+            "path": [
+              "Owned finite Info policy.004"
+            ],
+            "node": "Blank Image",
+            "nodeType": "CompositorNodeBlankImage",
+            "output": "Image"
+          },
+          "type": "RGBA",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "blank_image_model": "native-compositor-blank-image-cpu-53-v1",
+            "blank_image_profile": "darwin-arm64-53-blank-image-cpu-v1",
+            "blank_image_version": [
+              5,
+              3,
+              0
+            ],
+            "blank_image_build": "02f0899d78e3",
+            "blank_image_color_words": [
+              0,
+              0,
+              0,
+              1065353216
+            ],
+            "blank_image_size": [
+              5,
+              3
+            ],
+            "blank_image_effective_size": [
+              5,
+              3
+            ],
+            "blank_image_max_pixels": 4194304,
+            "blank_image_sampling_model": "modern-cpu-v1",
+            "blank_image_source_precision": "FULL"
+          },
+          "inputs": {
+            "Color": {
+              "name": "Color",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "constant",
+                "type": "RGBA",
+                "value": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              }
+            },
+            "Size": {
+              "name": "Size",
+              "socketType": "INT_VECTOR",
+              "value": {
+                "kind": "constant",
+                "type": "INT_VECTOR2",
+                "value": [
+                  5,
+                  3
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "n1",
+          "kind": "image-info",
+          "source": {
+            "path": [
+              "Owned finite Info policy.004"
+            ],
+            "node": "Image Info",
+            "nodeType": "CompositorNodeImageInfo",
+            "output": "Scale"
+          },
+          "type": "FLOAT_VECTOR2",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_info_model": "finite-identity-image-info-v1",
+            "image_info_source_profile": "darwin-arm64-53-finite-image-info-v1",
+            "image_info_native_version": [
+              5,
+              3,
+              0
+            ],
+            "image_info_reference_model": "finite-image-identity-v1",
+            "image_info_scene": "Scene",
+            "image_info_finite_size": [
+              5,
+              3
+            ]
+          },
+          "inputs": {
+            "Image": {
+              "name": "Image",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "ref",
+                "node": "n0",
+                "type": "RGBA"
+              }
+            }
+          }
+        }
+      ],
+      "passes": [],
+      "diagnostics": [],
+      "alphaConvention": "premultiplied",
+      "colorSpace": "scene-linear",
+      "displayTransform": "separate, after authored compositor",
+      "tree": "Owned finite Info policy.004",
+      "output": {
+        "kind": "convert",
+        "fromType": "FLOAT_VECTOR2",
+        "type": "RGBA",
+        "input": {
+          "kind": "ref",
+          "node": "n1",
+          "type": "FLOAT_VECTOR2"
+        }
+      }
+    }
+  },
+  {
+    "case": "blank-reroute",
+    "program": {
+      "version": 1,
+      "blenderVersion": "5.3.0",
+      "engine": "CYCLES",
+      "frame": 1,
+      "status": "extracted",
+      "ops": [
+        {
+          "id": "n0",
+          "kind": "blank-image",
+          "source": {
+            "path": [
+              "Owned finite Info policy.005"
+            ],
+            "node": "Blank Image",
+            "nodeType": "CompositorNodeBlankImage",
+            "output": "Image"
+          },
+          "type": "RGBA",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "blank_image_model": "native-compositor-blank-image-cpu-53-v1",
+            "blank_image_profile": "darwin-arm64-53-blank-image-cpu-v1",
+            "blank_image_version": [
+              5,
+              3,
+              0
+            ],
+            "blank_image_build": "02f0899d78e3",
+            "blank_image_color_words": [
+              0,
+              0,
+              0,
+              1065353216
+            ],
+            "blank_image_size": [
+              5,
+              3
+            ],
+            "blank_image_effective_size": [
+              5,
+              3
+            ],
+            "blank_image_max_pixels": 4194304,
+            "blank_image_sampling_model": "modern-cpu-v1",
+            "blank_image_source_precision": "FULL"
+          },
+          "inputs": {
+            "Color": {
+              "name": "Color",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "constant",
+                "type": "RGBA",
+                "value": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              }
+            },
+            "Size": {
+              "name": "Size",
+              "socketType": "INT_VECTOR",
+              "value": {
+                "kind": "constant",
+                "type": "INT_VECTOR2",
+                "value": [
+                  5,
+                  3
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "n1",
+          "kind": "image-info",
+          "source": {
+            "path": [
+              "Owned finite Info policy.005"
+            ],
+            "node": "Image Info",
+            "nodeType": "CompositorNodeImageInfo",
+            "output": "Dimensions"
+          },
+          "type": "INT_VECTOR2",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_info_model": "finite-identity-image-info-v1",
+            "image_info_source_profile": "darwin-arm64-53-finite-image-info-v1",
+            "image_info_native_version": [
+              5,
+              3,
+              0
+            ],
+            "image_info_reference_model": "finite-image-identity-v1",
+            "image_info_scene": "Scene",
+            "image_info_finite_size": [
+              5,
+              3
+            ]
+          },
+          "inputs": {
+            "Image": {
+              "name": "Image",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "ref",
+                "node": "n0",
+                "type": "RGBA"
+              }
+            }
+          }
+        }
+      ],
+      "passes": [],
+      "diagnostics": [],
+      "alphaConvention": "premultiplied",
+      "colorSpace": "scene-linear",
+      "displayTransform": "separate, after authored compositor",
+      "tree": "Owned finite Info policy.005",
+      "output": {
+        "kind": "convert",
+        "fromType": "INT_VECTOR2",
+        "type": "RGBA",
+        "input": {
+          "kind": "ref",
+          "node": "n1",
+          "type": "INT_VECTOR2"
+        }
+      }
+    }
+  },
+  {
+    "case": "blank-group",
+    "program": {
+      "version": 1,
+      "blenderVersion": "5.3.0",
+      "engine": "CYCLES",
+      "frame": 1,
+      "status": "extracted",
+      "ops": [
+        {
+          "id": "n0",
+          "kind": "blank-image",
+          "source": {
+            "path": [
+              "Owned finite Info policy.006"
+            ],
+            "node": "Blank Image",
+            "nodeType": "CompositorNodeBlankImage",
+            "output": "Image"
+          },
+          "type": "RGBA",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "blank_image_model": "native-compositor-blank-image-cpu-53-v1",
+            "blank_image_profile": "darwin-arm64-53-blank-image-cpu-v1",
+            "blank_image_version": [
+              5,
+              3,
+              0
+            ],
+            "blank_image_build": "02f0899d78e3",
+            "blank_image_color_words": [
+              0,
+              0,
+              0,
+              1065353216
+            ],
+            "blank_image_size": [
+              5,
+              3
+            ],
+            "blank_image_effective_size": [
+              5,
+              3
+            ],
+            "blank_image_max_pixels": 4194304,
+            "blank_image_sampling_model": "modern-cpu-v1",
+            "blank_image_source_precision": "FULL"
+          },
+          "inputs": {
+            "Color": {
+              "name": "Color",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "constant",
+                "type": "RGBA",
+                "value": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              }
+            },
+            "Size": {
+              "name": "Size",
+              "socketType": "INT_VECTOR",
+              "value": {
+                "kind": "constant",
+                "type": "INT_VECTOR2",
+                "value": [
+                  5,
+                  3
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "n1",
+          "kind": "image-info",
+          "source": {
+            "path": [
+              "Owned finite Info policy.006"
+            ],
+            "node": "Image Info",
+            "nodeType": "CompositorNodeImageInfo",
+            "output": "Dimensions"
+          },
+          "type": "INT_VECTOR2",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_info_model": "finite-identity-image-info-v1",
+            "image_info_source_profile": "darwin-arm64-53-finite-image-info-v1",
+            "image_info_native_version": [
+              5,
+              3,
+              0
+            ],
+            "image_info_reference_model": "finite-image-identity-v1",
+            "image_info_scene": "Scene",
+            "image_info_finite_size": [
+              5,
+              3
+            ]
+          },
+          "inputs": {
+            "Image": {
+              "name": "Image",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "ref",
+                "node": "n0",
+                "type": "RGBA"
+              }
+            }
+          }
+        }
+      ],
+      "passes": [],
+      "diagnostics": [],
+      "alphaConvention": "premultiplied",
+      "colorSpace": "scene-linear",
+      "displayTransform": "separate, after authored compositor",
+      "tree": "Owned finite Info policy.006",
+      "output": {
+        "kind": "convert",
+        "fromType": "VECTOR",
+        "type": "RGBA",
+        "input": {
+          "kind": "convert",
+          "fromType": "INT_VECTOR2",
+          "type": "VECTOR",
+          "input": {
+            "kind": "ref",
+            "node": "n1",
+            "type": "INT_VECTOR2"
+          }
+        }
+      }
+    }
+  },
+  {
+    "case": "blank-aspect",
+    "program": {
+      "version": 1,
+      "blenderVersion": "5.3.0",
+      "engine": "CYCLES",
+      "frame": 1,
+      "status": "extracted",
+      "ops": [
+        {
+          "id": "n0",
+          "kind": "blank-image",
+          "source": {
+            "path": [
+              "Owned finite Info policy.007"
+            ],
+            "node": "Blank Image",
+            "nodeType": "CompositorNodeBlankImage",
+            "output": "Image"
+          },
+          "type": "RGBA",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "blank_image_model": "native-compositor-blank-image-cpu-53-v1",
+            "blank_image_profile": "darwin-arm64-53-blank-image-cpu-v1",
+            "blank_image_version": [
+              5,
+              3,
+              0
+            ],
+            "blank_image_build": "02f0899d78e3",
+            "blank_image_color_words": [
+              0,
+              0,
+              0,
+              1065353216
+            ],
+            "blank_image_size": [
+              5,
+              3
+            ],
+            "blank_image_effective_size": [
+              5,
+              3
+            ],
+            "blank_image_max_pixels": 4194304,
+            "blank_image_sampling_model": "modern-cpu-v1",
+            "blank_image_source_precision": "FULL"
+          },
+          "inputs": {
+            "Color": {
+              "name": "Color",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "constant",
+                "type": "RGBA",
+                "value": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              }
+            },
+            "Size": {
+              "name": "Size",
+              "socketType": "INT_VECTOR",
+              "value": {
+                "kind": "constant",
+                "type": "INT_VECTOR2",
+                "value": [
+                  5,
+                  3
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "n1",
+          "kind": "image-info",
+          "source": {
+            "path": [
+              "Owned finite Info policy.007"
+            ],
+            "node": "Image Info",
+            "nodeType": "CompositorNodeImageInfo",
+            "output": "Dimensions"
+          },
+          "type": "INT_VECTOR2",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_info_model": "finite-identity-image-info-v1",
+            "image_info_source_profile": "darwin-arm64-53-finite-image-info-v1",
+            "image_info_native_version": [
+              5,
+              3,
+              0
+            ],
+            "image_info_reference_model": "finite-image-identity-v1",
+            "image_info_scene": "Scene",
+            "image_info_finite_size": [
+              5,
+              3
+            ]
+          },
+          "inputs": {
+            "Image": {
+              "name": "Image",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "ref",
+                "node": "n0",
+                "type": "RGBA"
+              }
+            }
+          }
+        },
+        {
+          "id": "n2",
+          "kind": "separate-vector",
+          "source": {
+            "path": [
+              "Owned finite Info policy.007"
+            ],
+            "node": "Separate XYZ",
+            "nodeType": "ShaderNodeSeparateXYZ",
+            "output": "X"
+          },
+          "type": "VALUE",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU"
+          },
+          "inputs": {
+            "Vector": {
+              "name": "Vector",
+              "socketType": "VECTOR",
+              "value": {
+                "kind": "convert",
+                "fromType": "INT_VECTOR2",
+                "type": "VECTOR",
+                "input": {
+                  "kind": "ref",
+                  "node": "n1",
+                  "type": "INT_VECTOR2"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "n3",
+          "kind": "separate-vector",
+          "source": {
+            "path": [
+              "Owned finite Info policy.007"
+            ],
+            "node": "Separate XYZ",
+            "nodeType": "ShaderNodeSeparateXYZ",
+            "output": "Y"
+          },
+          "type": "VALUE",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU"
+          },
+          "inputs": {
+            "Vector": {
+              "name": "Vector",
+              "socketType": "VECTOR",
+              "value": {
+                "kind": "convert",
+                "fromType": "INT_VECTOR2",
+                "type": "VECTOR",
+                "input": {
+                  "kind": "ref",
+                  "node": "n1",
+                  "type": "INT_VECTOR2"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "n4",
+          "kind": "math",
+          "source": {
+            "path": [
+              "Owned finite Info policy.007"
+            ],
+            "node": "Math",
+            "nodeType": "ShaderNodeMath",
+            "output": "Value"
+          },
+          "type": "VALUE",
+          "properties": {
+            "operation": "DIVIDE",
+            "use_clamp": false,
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU"
+          },
+          "inputs": {
+            "Value": {
+              "name": "Value",
+              "socketType": "VALUE",
+              "value": {
+                "kind": "ref",
+                "node": "n2",
+                "type": "VALUE"
+              }
+            },
+            "Value_001": {
+              "name": "Value",
+              "socketType": "VALUE",
+              "value": {
+                "kind": "ref",
+                "node": "n3",
+                "type": "VALUE"
+              }
+            }
+          }
+        }
+      ],
+      "passes": [],
+      "diagnostics": [],
+      "alphaConvention": "premultiplied",
+      "colorSpace": "scene-linear",
+      "displayTransform": "separate, after authored compositor",
+      "tree": "Owned finite Info policy.007",
+      "output": {
+        "kind": "convert",
+        "fromType": "VALUE",
+        "type": "RGBA",
+        "input": {
+          "kind": "ref",
+          "node": "n4",
+          "type": "VALUE"
+        }
+      }
+    }
+  },
+  {
+    "case": "blank-summary",
+    "program": {
+      "version": 1,
+      "blenderVersion": "5.3.0",
+      "engine": "CYCLES",
+      "frame": 1,
+      "status": "extracted",
+      "ops": [
+        {
+          "id": "n0",
+          "kind": "blank-image",
+          "source": {
+            "path": [
+              "Owned finite Info policy.008"
+            ],
+            "node": "Blank Image",
+            "nodeType": "CompositorNodeBlankImage",
+            "output": "Image"
+          },
+          "type": "RGBA",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "blank_image_model": "native-compositor-blank-image-cpu-53-v1",
+            "blank_image_profile": "darwin-arm64-53-blank-image-cpu-v1",
+            "blank_image_version": [
+              5,
+              3,
+              0
+            ],
+            "blank_image_build": "02f0899d78e3",
+            "blank_image_color_words": [
+              0,
+              0,
+              0,
+              1065353216
+            ],
+            "blank_image_size": [
+              5,
+              3
+            ],
+            "blank_image_effective_size": [
+              5,
+              3
+            ],
+            "blank_image_max_pixels": 4194304,
+            "blank_image_sampling_model": "modern-cpu-v1",
+            "blank_image_source_precision": "FULL"
+          },
+          "inputs": {
+            "Color": {
+              "name": "Color",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "constant",
+                "type": "RGBA",
+                "value": [
+                  0.0,
+                  0.0,
+                  0.0,
+                  1.0
+                ]
+              }
+            },
+            "Size": {
+              "name": "Size",
+              "socketType": "INT_VECTOR",
+              "value": {
+                "kind": "constant",
+                "type": "INT_VECTOR2",
+                "value": [
+                  5,
+                  3
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "n1",
+          "kind": "image-info",
+          "source": {
+            "path": [
+              "Owned finite Info policy.008"
+            ],
+            "node": "Image Info",
+            "nodeType": "CompositorNodeImageInfo",
+            "output": "Dimensions"
+          },
+          "type": "INT_VECTOR2",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_info_model": "finite-identity-image-info-v1",
+            "image_info_source_profile": "darwin-arm64-53-finite-image-info-v1",
+            "image_info_native_version": [
+              5,
+              3,
+              0
+            ],
+            "image_info_reference_model": "finite-image-identity-v1",
+            "image_info_scene": "Scene",
+            "image_info_finite_size": [
+              5,
+              3
+            ]
+          },
+          "inputs": {
+            "Image": {
+              "name": "Image",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "ref",
+                "node": "n0",
+                "type": "RGBA"
+              }
+            }
+          }
+        },
+        {
+          "id": "n2",
+          "kind": "separate-vector",
+          "source": {
+            "path": [
+              "Owned finite Info policy.008"
+            ],
+            "node": "Separate XYZ",
+            "nodeType": "ShaderNodeSeparateXYZ",
+            "output": "X"
+          },
+          "type": "VALUE",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU"
+          },
+          "inputs": {
+            "Vector": {
+              "name": "Vector",
+              "socketType": "VECTOR",
+              "value": {
+                "kind": "convert",
+                "fromType": "INT_VECTOR2",
+                "type": "VECTOR",
+                "input": {
+                  "kind": "ref",
+                  "node": "n1",
+                  "type": "INT_VECTOR2"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "n3",
+          "kind": "image-info",
+          "source": {
+            "path": [
+              "Owned finite Info policy.008"
+            ],
+            "node": "Image Info",
+            "nodeType": "CompositorNodeImageInfo",
+            "output": "Resolution"
+          },
+          "type": "INT_VECTOR2",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_info_model": "finite-identity-image-info-v1",
+            "image_info_source_profile": "darwin-arm64-53-finite-image-info-v1",
+            "image_info_native_version": [
+              5,
+              3,
+              0
+            ],
+            "image_info_reference_model": "finite-image-identity-v1",
+            "image_info_scene": "Scene",
+            "image_info_finite_size": [
+              5,
+              3
+            ]
+          },
+          "inputs": {
+            "Image": {
+              "name": "Image",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "ref",
+                "node": "n0",
+                "type": "RGBA"
+              }
+            }
+          }
+        },
+        {
+          "id": "n4",
+          "kind": "separate-vector",
+          "source": {
+            "path": [
+              "Owned finite Info policy.008"
+            ],
+            "node": "Separate XYZ.001",
+            "nodeType": "ShaderNodeSeparateXYZ",
+            "output": "Y"
+          },
+          "type": "VALUE",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU"
+          },
+          "inputs": {
+            "Vector": {
+              "name": "Vector",
+              "socketType": "VECTOR",
+              "value": {
+                "kind": "convert",
+                "fromType": "INT_VECTOR2",
+                "type": "VECTOR",
+                "input": {
+                  "kind": "ref",
+                  "node": "n3",
+                  "type": "INT_VECTOR2"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "n5",
+          "kind": "image-info",
+          "source": {
+            "path": [
+              "Owned finite Info policy.008"
+            ],
+            "node": "Image Info",
+            "nodeType": "CompositorNodeImageInfo",
+            "output": "Rotation"
+          },
+          "type": "VALUE",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_info_model": "finite-identity-image-info-v1",
+            "image_info_source_profile": "darwin-arm64-53-finite-image-info-v1",
+            "image_info_native_version": [
+              5,
+              3,
+              0
+            ],
+            "image_info_reference_model": "finite-image-identity-v1",
+            "image_info_scene": "Scene",
+            "image_info_finite_size": [
+              5,
+              3
+            ]
+          },
+          "inputs": {
+            "Image": {
+              "name": "Image",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "ref",
+                "node": "n0",
+                "type": "RGBA"
+              }
+            }
+          }
+        },
+        {
+          "id": "n6",
+          "kind": "image-info",
+          "source": {
+            "path": [
+              "Owned finite Info policy.008"
+            ],
+            "node": "Image Info",
+            "nodeType": "CompositorNodeImageInfo",
+            "output": "Scale"
+          },
+          "type": "FLOAT_VECTOR2",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_info_model": "finite-identity-image-info-v1",
+            "image_info_source_profile": "darwin-arm64-53-finite-image-info-v1",
+            "image_info_native_version": [
+              5,
+              3,
+              0
+            ],
+            "image_info_reference_model": "finite-image-identity-v1",
+            "image_info_scene": "Scene",
+            "image_info_finite_size": [
+              5,
+              3
+            ]
+          },
+          "inputs": {
+            "Image": {
+              "name": "Image",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "ref",
+                "node": "n0",
+                "type": "RGBA"
+              }
+            }
+          }
+        },
+        {
+          "id": "n7",
+          "kind": "separate-vector",
+          "source": {
+            "path": [
+              "Owned finite Info policy.008"
+            ],
+            "node": "Separate XYZ.002",
+            "nodeType": "ShaderNodeSeparateXYZ",
+            "output": "X"
+          },
+          "type": "VALUE",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU"
+          },
+          "inputs": {
+            "Vector": {
+              "name": "Vector",
+              "socketType": "VECTOR",
+              "value": {
+                "kind": "convert",
+                "fromType": "FLOAT_VECTOR2",
+                "type": "VECTOR",
+                "input": {
+                  "kind": "ref",
+                  "node": "n6",
+                  "type": "FLOAT_VECTOR2"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "n8",
+          "kind": "combine-color",
+          "source": {
+            "path": [
+              "Owned finite Info policy.008"
+            ],
+            "node": "Combine Color",
+            "nodeType": "CompositorNodeCombineColor",
+            "output": "Image"
+          },
+          "type": "RGBA",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "mode": "RGB",
+            "ycc_mode": "ITUBT709",
+            "color_conversion_device": "CPU",
+            "legacy_hsv_clamp": false,
+            "legacy_hsl_clamp": false
+          },
+          "inputs": {
+            "Red": {
+              "name": "Red",
+              "socketType": "VALUE",
+              "value": {
+                "kind": "ref",
+                "node": "n2",
+                "type": "VALUE"
+              }
+            },
+            "Green": {
+              "name": "Green",
+              "socketType": "VALUE",
+              "value": {
+                "kind": "ref",
+                "node": "n4",
+                "type": "VALUE"
+              }
+            },
+            "Blue": {
+              "name": "Blue",
+              "socketType": "VALUE",
+              "value": {
+                "kind": "ref",
+                "node": "n5",
+                "type": "VALUE"
+              }
+            },
+            "Alpha": {
+              "name": "Alpha",
+              "socketType": "VALUE",
+              "value": {
+                "kind": "ref",
+                "node": "n7",
+                "type": "VALUE"
+              }
+            }
+          }
+        }
+      ],
+      "passes": [],
+      "diagnostics": [],
+      "alphaConvention": "premultiplied",
+      "colorSpace": "scene-linear",
+      "displayTransform": "separate, after authored compositor",
+      "tree": "Owned finite Info policy.008",
+      "output": {
+        "kind": "ref",
+        "node": "n8",
+        "type": "RGBA"
+      }
+    }
+  },
+  {
+    "case": "image-Dimensions",
+    "program": {
+      "version": 1,
+      "blenderVersion": "5.3.0",
+      "engine": "CYCLES",
+      "frame": 1,
+      "status": "extracted",
+      "ops": [
+        {
+          "id": "n0",
+          "kind": "image-input",
+          "source": {
+            "path": [
+              "Owned finite Info policy.009"
+            ],
+            "node": "Image",
+            "nodeType": "CompositorNodeImage",
+            "output": "Image"
+          },
+          "type": "RGBA",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_id": "87a1b3b5001ea4cb6bed01ff09a2d40c339d0c553b3d4176ea4d8d09000d32fe",
+            "image_window_model": "modern-cpu-v1"
+          },
+          "inputs": {}
+        },
+        {
+          "id": "n1",
+          "kind": "image-info",
+          "source": {
+            "path": [
+              "Owned finite Info policy.009"
+            ],
+            "node": "Image Info",
+            "nodeType": "CompositorNodeImageInfo",
+            "output": "Dimensions"
+          },
+          "type": "INT_VECTOR2",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_info_model": "finite-identity-image-info-v1",
+            "image_info_source_profile": "darwin-arm64-53-finite-image-info-v1",
+            "image_info_native_version": [
+              5,
+              3,
+              0
+            ],
+            "image_info_reference_model": "finite-image-identity-v1",
+            "image_info_scene": "Scene",
+            "image_info_finite_size": [
+              7,
+              4
+            ]
+          },
+          "inputs": {
+            "Image": {
+              "name": "Image",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "ref",
+                "node": "n0",
+                "type": "RGBA"
+              }
+            }
+          }
+        }
+      ],
+      "passes": [],
+      "diagnostics": [],
+      "alphaConvention": "premultiplied",
+      "colorSpace": "scene-linear",
+      "displayTransform": "separate, after authored compositor",
+      "tree": "Owned finite Info policy.009",
+      "images": {
+        "87a1b3b5001ea4cb6bed01ff09a2d40c339d0c553b3d4176ea4d8d09000d32fe": {
+          "model": "native-cpu-static-image-v1",
+          "encoding": "zlib-le-rgba32f",
+          "width": 7,
+          "height": 4,
+          "decodedBytes": 448,
+          "data": "eJxjYGiwY2BgsGdgcADiBhAe5Q8hPgCATj51",
+          "source": {
+            "name": "Owned policy image",
+            "kind": "GENERATED",
+            "colorSpace": "Linear Rec.709",
+            "alphaMode": "STRAIGHT",
+            "storage": "direct-float-buffer"
+          }
+        }
+      },
+      "output": {
+        "kind": "convert",
+        "fromType": "INT_VECTOR2",
+        "type": "RGBA",
+        "input": {
+          "kind": "ref",
+          "node": "n1",
+          "type": "INT_VECTOR2"
+        }
+      }
+    }
+  },
+  {
+    "case": "image-Resolution",
+    "program": {
+      "version": 1,
+      "blenderVersion": "5.3.0",
+      "engine": "CYCLES",
+      "frame": 1,
+      "status": "extracted",
+      "ops": [
+        {
+          "id": "n0",
+          "kind": "image-input",
+          "source": {
+            "path": [
+              "Owned finite Info policy.010"
+            ],
+            "node": "Image",
+            "nodeType": "CompositorNodeImage",
+            "output": "Image"
+          },
+          "type": "RGBA",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_id": "87a1b3b5001ea4cb6bed01ff09a2d40c339d0c553b3d4176ea4d8d09000d32fe",
+            "image_window_model": "modern-cpu-v1"
+          },
+          "inputs": {}
+        },
+        {
+          "id": "n1",
+          "kind": "image-info",
+          "source": {
+            "path": [
+              "Owned finite Info policy.010"
+            ],
+            "node": "Image Info",
+            "nodeType": "CompositorNodeImageInfo",
+            "output": "Resolution"
+          },
+          "type": "INT_VECTOR2",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_info_model": "finite-identity-image-info-v1",
+            "image_info_source_profile": "darwin-arm64-53-finite-image-info-v1",
+            "image_info_native_version": [
+              5,
+              3,
+              0
+            ],
+            "image_info_reference_model": "finite-image-identity-v1",
+            "image_info_scene": "Scene",
+            "image_info_finite_size": [
+              7,
+              4
+            ]
+          },
+          "inputs": {
+            "Image": {
+              "name": "Image",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "ref",
+                "node": "n0",
+                "type": "RGBA"
+              }
+            }
+          }
+        }
+      ],
+      "passes": [],
+      "diagnostics": [],
+      "alphaConvention": "premultiplied",
+      "colorSpace": "scene-linear",
+      "displayTransform": "separate, after authored compositor",
+      "tree": "Owned finite Info policy.010",
+      "images": {
+        "87a1b3b5001ea4cb6bed01ff09a2d40c339d0c553b3d4176ea4d8d09000d32fe": {
+          "model": "native-cpu-static-image-v1",
+          "encoding": "zlib-le-rgba32f",
+          "width": 7,
+          "height": 4,
+          "decodedBytes": 448,
+          "data": "eJxjYGiwY2BgsGdgcADiBhAe5Q8hPgCATj51",
+          "source": {
+            "name": "Owned policy image.001",
+            "kind": "GENERATED",
+            "colorSpace": "Linear Rec.709",
+            "alphaMode": "STRAIGHT",
+            "storage": "direct-float-buffer"
+          }
+        }
+      },
+      "output": {
+        "kind": "convert",
+        "fromType": "INT_VECTOR2",
+        "type": "RGBA",
+        "input": {
+          "kind": "ref",
+          "node": "n1",
+          "type": "INT_VECTOR2"
+        }
+      }
+    }
+  },
+  {
+    "case": "image-Location",
+    "program": {
+      "version": 1,
+      "blenderVersion": "5.3.0",
+      "engine": "CYCLES",
+      "frame": 1,
+      "status": "extracted",
+      "ops": [
+        {
+          "id": "n0",
+          "kind": "image-input",
+          "source": {
+            "path": [
+              "Owned finite Info policy.011"
+            ],
+            "node": "Image",
+            "nodeType": "CompositorNodeImage",
+            "output": "Image"
+          },
+          "type": "RGBA",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_id": "87a1b3b5001ea4cb6bed01ff09a2d40c339d0c553b3d4176ea4d8d09000d32fe",
+            "image_window_model": "modern-cpu-v1"
+          },
+          "inputs": {}
+        },
+        {
+          "id": "n1",
+          "kind": "image-info",
+          "source": {
+            "path": [
+              "Owned finite Info policy.011"
+            ],
+            "node": "Image Info",
+            "nodeType": "CompositorNodeImageInfo",
+            "output": "Location"
+          },
+          "type": "FLOAT_VECTOR2",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_info_model": "finite-identity-image-info-v1",
+            "image_info_source_profile": "darwin-arm64-53-finite-image-info-v1",
+            "image_info_native_version": [
+              5,
+              3,
+              0
+            ],
+            "image_info_reference_model": "finite-image-identity-v1",
+            "image_info_scene": "Scene",
+            "image_info_finite_size": [
+              7,
+              4
+            ]
+          },
+          "inputs": {
+            "Image": {
+              "name": "Image",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "ref",
+                "node": "n0",
+                "type": "RGBA"
+              }
+            }
+          }
+        }
+      ],
+      "passes": [],
+      "diagnostics": [],
+      "alphaConvention": "premultiplied",
+      "colorSpace": "scene-linear",
+      "displayTransform": "separate, after authored compositor",
+      "tree": "Owned finite Info policy.011",
+      "images": {
+        "87a1b3b5001ea4cb6bed01ff09a2d40c339d0c553b3d4176ea4d8d09000d32fe": {
+          "model": "native-cpu-static-image-v1",
+          "encoding": "zlib-le-rgba32f",
+          "width": 7,
+          "height": 4,
+          "decodedBytes": 448,
+          "data": "eJxjYGiwY2BgsGdgcADiBhAe5Q8hPgCATj51",
+          "source": {
+            "name": "Owned policy image.002",
+            "kind": "GENERATED",
+            "colorSpace": "Linear Rec.709",
+            "alphaMode": "STRAIGHT",
+            "storage": "direct-float-buffer"
+          }
+        }
+      },
+      "output": {
+        "kind": "convert",
+        "fromType": "FLOAT_VECTOR2",
+        "type": "RGBA",
+        "input": {
+          "kind": "ref",
+          "node": "n1",
+          "type": "FLOAT_VECTOR2"
+        }
+      }
+    }
+  },
+  {
+    "case": "image-Rotation",
+    "program": {
+      "version": 1,
+      "blenderVersion": "5.3.0",
+      "engine": "CYCLES",
+      "frame": 1,
+      "status": "extracted",
+      "ops": [
+        {
+          "id": "n0",
+          "kind": "image-input",
+          "source": {
+            "path": [
+              "Owned finite Info policy.012"
+            ],
+            "node": "Image",
+            "nodeType": "CompositorNodeImage",
+            "output": "Image"
+          },
+          "type": "RGBA",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_id": "87a1b3b5001ea4cb6bed01ff09a2d40c339d0c553b3d4176ea4d8d09000d32fe",
+            "image_window_model": "modern-cpu-v1"
+          },
+          "inputs": {}
+        },
+        {
+          "id": "n1",
+          "kind": "image-info",
+          "source": {
+            "path": [
+              "Owned finite Info policy.012"
+            ],
+            "node": "Image Info",
+            "nodeType": "CompositorNodeImageInfo",
+            "output": "Rotation"
+          },
+          "type": "VALUE",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_info_model": "finite-identity-image-info-v1",
+            "image_info_source_profile": "darwin-arm64-53-finite-image-info-v1",
+            "image_info_native_version": [
+              5,
+              3,
+              0
+            ],
+            "image_info_reference_model": "finite-image-identity-v1",
+            "image_info_scene": "Scene",
+            "image_info_finite_size": [
+              7,
+              4
+            ]
+          },
+          "inputs": {
+            "Image": {
+              "name": "Image",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "ref",
+                "node": "n0",
+                "type": "RGBA"
+              }
+            }
+          }
+        }
+      ],
+      "passes": [],
+      "diagnostics": [],
+      "alphaConvention": "premultiplied",
+      "colorSpace": "scene-linear",
+      "displayTransform": "separate, after authored compositor",
+      "tree": "Owned finite Info policy.012",
+      "images": {
+        "87a1b3b5001ea4cb6bed01ff09a2d40c339d0c553b3d4176ea4d8d09000d32fe": {
+          "model": "native-cpu-static-image-v1",
+          "encoding": "zlib-le-rgba32f",
+          "width": 7,
+          "height": 4,
+          "decodedBytes": 448,
+          "data": "eJxjYGiwY2BgsGdgcADiBhAe5Q8hPgCATj51",
+          "source": {
+            "name": "Owned policy image.003",
+            "kind": "GENERATED",
+            "colorSpace": "Linear Rec.709",
+            "alphaMode": "STRAIGHT",
+            "storage": "direct-float-buffer"
+          }
+        }
+      },
+      "output": {
+        "kind": "convert",
+        "fromType": "VALUE",
+        "type": "RGBA",
+        "input": {
+          "kind": "ref",
+          "node": "n1",
+          "type": "VALUE"
+        }
+      }
+    }
+  },
+  {
+    "case": "image-Scale",
+    "program": {
+      "version": 1,
+      "blenderVersion": "5.3.0",
+      "engine": "CYCLES",
+      "frame": 1,
+      "status": "extracted",
+      "ops": [
+        {
+          "id": "n0",
+          "kind": "image-input",
+          "source": {
+            "path": [
+              "Owned finite Info policy.013"
+            ],
+            "node": "Image",
+            "nodeType": "CompositorNodeImage",
+            "output": "Image"
+          },
+          "type": "RGBA",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_id": "87a1b3b5001ea4cb6bed01ff09a2d40c339d0c553b3d4176ea4d8d09000d32fe",
+            "image_window_model": "modern-cpu-v1"
+          },
+          "inputs": {}
+        },
+        {
+          "id": "n1",
+          "kind": "image-info",
+          "source": {
+            "path": [
+              "Owned finite Info policy.013"
+            ],
+            "node": "Image Info",
+            "nodeType": "CompositorNodeImageInfo",
+            "output": "Scale"
+          },
+          "type": "FLOAT_VECTOR2",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_info_model": "finite-identity-image-info-v1",
+            "image_info_source_profile": "darwin-arm64-53-finite-image-info-v1",
+            "image_info_native_version": [
+              5,
+              3,
+              0
+            ],
+            "image_info_reference_model": "finite-image-identity-v1",
+            "image_info_scene": "Scene",
+            "image_info_finite_size": [
+              7,
+              4
+            ]
+          },
+          "inputs": {
+            "Image": {
+              "name": "Image",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "ref",
+                "node": "n0",
+                "type": "RGBA"
+              }
+            }
+          }
+        }
+      ],
+      "passes": [],
+      "diagnostics": [],
+      "alphaConvention": "premultiplied",
+      "colorSpace": "scene-linear",
+      "displayTransform": "separate, after authored compositor",
+      "tree": "Owned finite Info policy.013",
+      "images": {
+        "87a1b3b5001ea4cb6bed01ff09a2d40c339d0c553b3d4176ea4d8d09000d32fe": {
+          "model": "native-cpu-static-image-v1",
+          "encoding": "zlib-le-rgba32f",
+          "width": 7,
+          "height": 4,
+          "decodedBytes": 448,
+          "data": "eJxjYGiwY2BgsGdgcADiBhAe5Q8hPgCATj51",
+          "source": {
+            "name": "Owned policy image.004",
+            "kind": "GENERATED",
+            "colorSpace": "Linear Rec.709",
+            "alphaMode": "STRAIGHT",
+            "storage": "direct-float-buffer"
+          }
+        }
+      },
+      "output": {
+        "kind": "convert",
+        "fromType": "FLOAT_VECTOR2",
+        "type": "RGBA",
+        "input": {
+          "kind": "ref",
+          "node": "n1",
+          "type": "FLOAT_VECTOR2"
+        }
+      }
+    }
+  },
+  {
+    "case": "image-reroute",
+    "program": {
+      "version": 1,
+      "blenderVersion": "5.3.0",
+      "engine": "CYCLES",
+      "frame": 1,
+      "status": "extracted",
+      "ops": [
+        {
+          "id": "n0",
+          "kind": "image-input",
+          "source": {
+            "path": [
+              "Owned finite Info policy.014"
+            ],
+            "node": "Image",
+            "nodeType": "CompositorNodeImage",
+            "output": "Image"
+          },
+          "type": "RGBA",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_id": "87a1b3b5001ea4cb6bed01ff09a2d40c339d0c553b3d4176ea4d8d09000d32fe",
+            "image_window_model": "modern-cpu-v1"
+          },
+          "inputs": {}
+        },
+        {
+          "id": "n1",
+          "kind": "image-info",
+          "source": {
+            "path": [
+              "Owned finite Info policy.014"
+            ],
+            "node": "Image Info",
+            "nodeType": "CompositorNodeImageInfo",
+            "output": "Dimensions"
+          },
+          "type": "INT_VECTOR2",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_info_model": "finite-identity-image-info-v1",
+            "image_info_source_profile": "darwin-arm64-53-finite-image-info-v1",
+            "image_info_native_version": [
+              5,
+              3,
+              0
+            ],
+            "image_info_reference_model": "finite-image-identity-v1",
+            "image_info_scene": "Scene",
+            "image_info_finite_size": [
+              7,
+              4
+            ]
+          },
+          "inputs": {
+            "Image": {
+              "name": "Image",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "ref",
+                "node": "n0",
+                "type": "RGBA"
+              }
+            }
+          }
+        }
+      ],
+      "passes": [],
+      "diagnostics": [],
+      "alphaConvention": "premultiplied",
+      "colorSpace": "scene-linear",
+      "displayTransform": "separate, after authored compositor",
+      "tree": "Owned finite Info policy.014",
+      "images": {
+        "87a1b3b5001ea4cb6bed01ff09a2d40c339d0c553b3d4176ea4d8d09000d32fe": {
+          "model": "native-cpu-static-image-v1",
+          "encoding": "zlib-le-rgba32f",
+          "width": 7,
+          "height": 4,
+          "decodedBytes": 448,
+          "data": "eJxjYGiwY2BgsGdgcADiBhAe5Q8hPgCATj51",
+          "source": {
+            "name": "Owned policy image.005",
+            "kind": "GENERATED",
+            "colorSpace": "Linear Rec.709",
+            "alphaMode": "STRAIGHT",
+            "storage": "direct-float-buffer"
+          }
+        }
+      },
+      "output": {
+        "kind": "convert",
+        "fromType": "INT_VECTOR2",
+        "type": "RGBA",
+        "input": {
+          "kind": "ref",
+          "node": "n1",
+          "type": "INT_VECTOR2"
+        }
+      }
+    }
+  },
+  {
+    "case": "image-group",
+    "program": {
+      "version": 1,
+      "blenderVersion": "5.3.0",
+      "engine": "CYCLES",
+      "frame": 1,
+      "status": "extracted",
+      "ops": [
+        {
+          "id": "n0",
+          "kind": "image-input",
+          "source": {
+            "path": [
+              "Owned finite Info policy.015"
+            ],
+            "node": "Image",
+            "nodeType": "CompositorNodeImage",
+            "output": "Image"
+          },
+          "type": "RGBA",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_id": "87a1b3b5001ea4cb6bed01ff09a2d40c339d0c553b3d4176ea4d8d09000d32fe",
+            "image_window_model": "modern-cpu-v1"
+          },
+          "inputs": {}
+        },
+        {
+          "id": "n1",
+          "kind": "image-info",
+          "source": {
+            "path": [
+              "Owned finite Info policy.015"
+            ],
+            "node": "Image Info",
+            "nodeType": "CompositorNodeImageInfo",
+            "output": "Dimensions"
+          },
+          "type": "INT_VECTOR2",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_info_model": "finite-identity-image-info-v1",
+            "image_info_source_profile": "darwin-arm64-53-finite-image-info-v1",
+            "image_info_native_version": [
+              5,
+              3,
+              0
+            ],
+            "image_info_reference_model": "finite-image-identity-v1",
+            "image_info_scene": "Scene",
+            "image_info_finite_size": [
+              7,
+              4
+            ]
+          },
+          "inputs": {
+            "Image": {
+              "name": "Image",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "ref",
+                "node": "n0",
+                "type": "RGBA"
+              }
+            }
+          }
+        }
+      ],
+      "passes": [],
+      "diagnostics": [],
+      "alphaConvention": "premultiplied",
+      "colorSpace": "scene-linear",
+      "displayTransform": "separate, after authored compositor",
+      "tree": "Owned finite Info policy.015",
+      "images": {
+        "87a1b3b5001ea4cb6bed01ff09a2d40c339d0c553b3d4176ea4d8d09000d32fe": {
+          "model": "native-cpu-static-image-v1",
+          "encoding": "zlib-le-rgba32f",
+          "width": 7,
+          "height": 4,
+          "decodedBytes": 448,
+          "data": "eJxjYGiwY2BgsGdgcADiBhAe5Q8hPgCATj51",
+          "source": {
+            "name": "Owned policy image.006",
+            "kind": "GENERATED",
+            "colorSpace": "Linear Rec.709",
+            "alphaMode": "STRAIGHT",
+            "storage": "direct-float-buffer"
+          }
+        }
+      },
+      "output": {
+        "kind": "convert",
+        "fromType": "VECTOR",
+        "type": "RGBA",
+        "input": {
+          "kind": "convert",
+          "fromType": "INT_VECTOR2",
+          "type": "VECTOR",
+          "input": {
+            "kind": "ref",
+            "node": "n1",
+            "type": "INT_VECTOR2"
+          }
+        }
+      }
+    }
+  },
+  {
+    "case": "image-aspect",
+    "program": {
+      "version": 1,
+      "blenderVersion": "5.3.0",
+      "engine": "CYCLES",
+      "frame": 1,
+      "status": "extracted",
+      "ops": [
+        {
+          "id": "n0",
+          "kind": "image-input",
+          "source": {
+            "path": [
+              "Owned finite Info policy.016"
+            ],
+            "node": "Image",
+            "nodeType": "CompositorNodeImage",
+            "output": "Image"
+          },
+          "type": "RGBA",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_id": "87a1b3b5001ea4cb6bed01ff09a2d40c339d0c553b3d4176ea4d8d09000d32fe",
+            "image_window_model": "modern-cpu-v1"
+          },
+          "inputs": {}
+        },
+        {
+          "id": "n1",
+          "kind": "image-info",
+          "source": {
+            "path": [
+              "Owned finite Info policy.016"
+            ],
+            "node": "Image Info",
+            "nodeType": "CompositorNodeImageInfo",
+            "output": "Dimensions"
+          },
+          "type": "INT_VECTOR2",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_info_model": "finite-identity-image-info-v1",
+            "image_info_source_profile": "darwin-arm64-53-finite-image-info-v1",
+            "image_info_native_version": [
+              5,
+              3,
+              0
+            ],
+            "image_info_reference_model": "finite-image-identity-v1",
+            "image_info_scene": "Scene",
+            "image_info_finite_size": [
+              7,
+              4
+            ]
+          },
+          "inputs": {
+            "Image": {
+              "name": "Image",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "ref",
+                "node": "n0",
+                "type": "RGBA"
+              }
+            }
+          }
+        },
+        {
+          "id": "n2",
+          "kind": "separate-vector",
+          "source": {
+            "path": [
+              "Owned finite Info policy.016"
+            ],
+            "node": "Separate XYZ",
+            "nodeType": "ShaderNodeSeparateXYZ",
+            "output": "X"
+          },
+          "type": "VALUE",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU"
+          },
+          "inputs": {
+            "Vector": {
+              "name": "Vector",
+              "socketType": "VECTOR",
+              "value": {
+                "kind": "convert",
+                "fromType": "INT_VECTOR2",
+                "type": "VECTOR",
+                "input": {
+                  "kind": "ref",
+                  "node": "n1",
+                  "type": "INT_VECTOR2"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "n3",
+          "kind": "separate-vector",
+          "source": {
+            "path": [
+              "Owned finite Info policy.016"
+            ],
+            "node": "Separate XYZ",
+            "nodeType": "ShaderNodeSeparateXYZ",
+            "output": "Y"
+          },
+          "type": "VALUE",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU"
+          },
+          "inputs": {
+            "Vector": {
+              "name": "Vector",
+              "socketType": "VECTOR",
+              "value": {
+                "kind": "convert",
+                "fromType": "INT_VECTOR2",
+                "type": "VECTOR",
+                "input": {
+                  "kind": "ref",
+                  "node": "n1",
+                  "type": "INT_VECTOR2"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "n4",
+          "kind": "math",
+          "source": {
+            "path": [
+              "Owned finite Info policy.016"
+            ],
+            "node": "Math",
+            "nodeType": "ShaderNodeMath",
+            "output": "Value"
+          },
+          "type": "VALUE",
+          "properties": {
+            "operation": "DIVIDE",
+            "use_clamp": false,
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU"
+          },
+          "inputs": {
+            "Value": {
+              "name": "Value",
+              "socketType": "VALUE",
+              "value": {
+                "kind": "ref",
+                "node": "n2",
+                "type": "VALUE"
+              }
+            },
+            "Value_001": {
+              "name": "Value",
+              "socketType": "VALUE",
+              "value": {
+                "kind": "ref",
+                "node": "n3",
+                "type": "VALUE"
+              }
+            }
+          }
+        }
+      ],
+      "passes": [],
+      "diagnostics": [],
+      "alphaConvention": "premultiplied",
+      "colorSpace": "scene-linear",
+      "displayTransform": "separate, after authored compositor",
+      "tree": "Owned finite Info policy.016",
+      "images": {
+        "87a1b3b5001ea4cb6bed01ff09a2d40c339d0c553b3d4176ea4d8d09000d32fe": {
+          "model": "native-cpu-static-image-v1",
+          "encoding": "zlib-le-rgba32f",
+          "width": 7,
+          "height": 4,
+          "decodedBytes": 448,
+          "data": "eJxjYGiwY2BgsGdgcADiBhAe5Q8hPgCATj51",
+          "source": {
+            "name": "Owned policy image.007",
+            "kind": "GENERATED",
+            "colorSpace": "Linear Rec.709",
+            "alphaMode": "STRAIGHT",
+            "storage": "direct-float-buffer"
+          }
+        }
+      },
+      "output": {
+        "kind": "convert",
+        "fromType": "VALUE",
+        "type": "RGBA",
+        "input": {
+          "kind": "ref",
+          "node": "n4",
+          "type": "VALUE"
+        }
+      }
+    }
+  },
+  {
+    "case": "image-summary",
+    "program": {
+      "version": 1,
+      "blenderVersion": "5.3.0",
+      "engine": "CYCLES",
+      "frame": 1,
+      "status": "extracted",
+      "ops": [
+        {
+          "id": "n0",
+          "kind": "image-input",
+          "source": {
+            "path": [
+              "Owned finite Info policy.017"
+            ],
+            "node": "Image",
+            "nodeType": "CompositorNodeImage",
+            "output": "Image"
+          },
+          "type": "RGBA",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_id": "87a1b3b5001ea4cb6bed01ff09a2d40c339d0c553b3d4176ea4d8d09000d32fe",
+            "image_window_model": "modern-cpu-v1"
+          },
+          "inputs": {}
+        },
+        {
+          "id": "n1",
+          "kind": "image-info",
+          "source": {
+            "path": [
+              "Owned finite Info policy.017"
+            ],
+            "node": "Image Info",
+            "nodeType": "CompositorNodeImageInfo",
+            "output": "Dimensions"
+          },
+          "type": "INT_VECTOR2",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_info_model": "finite-identity-image-info-v1",
+            "image_info_source_profile": "darwin-arm64-53-finite-image-info-v1",
+            "image_info_native_version": [
+              5,
+              3,
+              0
+            ],
+            "image_info_reference_model": "finite-image-identity-v1",
+            "image_info_scene": "Scene",
+            "image_info_finite_size": [
+              7,
+              4
+            ]
+          },
+          "inputs": {
+            "Image": {
+              "name": "Image",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "ref",
+                "node": "n0",
+                "type": "RGBA"
+              }
+            }
+          }
+        },
+        {
+          "id": "n2",
+          "kind": "separate-vector",
+          "source": {
+            "path": [
+              "Owned finite Info policy.017"
+            ],
+            "node": "Separate XYZ",
+            "nodeType": "ShaderNodeSeparateXYZ",
+            "output": "X"
+          },
+          "type": "VALUE",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU"
+          },
+          "inputs": {
+            "Vector": {
+              "name": "Vector",
+              "socketType": "VECTOR",
+              "value": {
+                "kind": "convert",
+                "fromType": "INT_VECTOR2",
+                "type": "VECTOR",
+                "input": {
+                  "kind": "ref",
+                  "node": "n1",
+                  "type": "INT_VECTOR2"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "n3",
+          "kind": "image-info",
+          "source": {
+            "path": [
+              "Owned finite Info policy.017"
+            ],
+            "node": "Image Info",
+            "nodeType": "CompositorNodeImageInfo",
+            "output": "Resolution"
+          },
+          "type": "INT_VECTOR2",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_info_model": "finite-identity-image-info-v1",
+            "image_info_source_profile": "darwin-arm64-53-finite-image-info-v1",
+            "image_info_native_version": [
+              5,
+              3,
+              0
+            ],
+            "image_info_reference_model": "finite-image-identity-v1",
+            "image_info_scene": "Scene",
+            "image_info_finite_size": [
+              7,
+              4
+            ]
+          },
+          "inputs": {
+            "Image": {
+              "name": "Image",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "ref",
+                "node": "n0",
+                "type": "RGBA"
+              }
+            }
+          }
+        },
+        {
+          "id": "n4",
+          "kind": "separate-vector",
+          "source": {
+            "path": [
+              "Owned finite Info policy.017"
+            ],
+            "node": "Separate XYZ.001",
+            "nodeType": "ShaderNodeSeparateXYZ",
+            "output": "Y"
+          },
+          "type": "VALUE",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU"
+          },
+          "inputs": {
+            "Vector": {
+              "name": "Vector",
+              "socketType": "VECTOR",
+              "value": {
+                "kind": "convert",
+                "fromType": "INT_VECTOR2",
+                "type": "VECTOR",
+                "input": {
+                  "kind": "ref",
+                  "node": "n3",
+                  "type": "INT_VECTOR2"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "n5",
+          "kind": "image-info",
+          "source": {
+            "path": [
+              "Owned finite Info policy.017"
+            ],
+            "node": "Image Info",
+            "nodeType": "CompositorNodeImageInfo",
+            "output": "Rotation"
+          },
+          "type": "VALUE",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_info_model": "finite-identity-image-info-v1",
+            "image_info_source_profile": "darwin-arm64-53-finite-image-info-v1",
+            "image_info_native_version": [
+              5,
+              3,
+              0
+            ],
+            "image_info_reference_model": "finite-image-identity-v1",
+            "image_info_scene": "Scene",
+            "image_info_finite_size": [
+              7,
+              4
+            ]
+          },
+          "inputs": {
+            "Image": {
+              "name": "Image",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "ref",
+                "node": "n0",
+                "type": "RGBA"
+              }
+            }
+          }
+        },
+        {
+          "id": "n6",
+          "kind": "image-info",
+          "source": {
+            "path": [
+              "Owned finite Info policy.017"
+            ],
+            "node": "Image Info",
+            "nodeType": "CompositorNodeImageInfo",
+            "output": "Scale"
+          },
+          "type": "FLOAT_VECTOR2",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "image_info_model": "finite-identity-image-info-v1",
+            "image_info_source_profile": "darwin-arm64-53-finite-image-info-v1",
+            "image_info_native_version": [
+              5,
+              3,
+              0
+            ],
+            "image_info_reference_model": "finite-image-identity-v1",
+            "image_info_scene": "Scene",
+            "image_info_finite_size": [
+              7,
+              4
+            ]
+          },
+          "inputs": {
+            "Image": {
+              "name": "Image",
+              "socketType": "RGBA",
+              "value": {
+                "kind": "ref",
+                "node": "n0",
+                "type": "RGBA"
+              }
+            }
+          }
+        },
+        {
+          "id": "n7",
+          "kind": "separate-vector",
+          "source": {
+            "path": [
+              "Owned finite Info policy.017"
+            ],
+            "node": "Separate XYZ.002",
+            "nodeType": "ShaderNodeSeparateXYZ",
+            "output": "X"
+          },
+          "type": "VALUE",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU"
+          },
+          "inputs": {
+            "Vector": {
+              "name": "Vector",
+              "socketType": "VECTOR",
+              "value": {
+                "kind": "convert",
+                "fromType": "FLOAT_VECTOR2",
+                "type": "VECTOR",
+                "input": {
+                  "kind": "ref",
+                  "node": "n6",
+                  "type": "FLOAT_VECTOR2"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "n8",
+          "kind": "combine-color",
+          "source": {
+            "path": [
+              "Owned finite Info policy.017"
+            ],
+            "node": "Combine Color",
+            "nodeType": "CompositorNodeCombineColor",
+            "output": "Image"
+          },
+          "type": "RGBA",
+          "properties": {
+            "evaluation_device": "CPU",
+            "native_gpu_backend": "METAL",
+            "single_value_device": "CPU",
+            "mode": "RGB",
+            "ycc_mode": "ITUBT709",
+            "color_conversion_device": "CPU",
+            "legacy_hsv_clamp": false,
+            "legacy_hsl_clamp": false
+          },
+          "inputs": {
+            "Red": {
+              "name": "Red",
+              "socketType": "VALUE",
+              "value": {
+                "kind": "ref",
+                "node": "n2",
+                "type": "VALUE"
+              }
+            },
+            "Green": {
+              "name": "Green",
+              "socketType": "VALUE",
+              "value": {
+                "kind": "ref",
+                "node": "n4",
+                "type": "VALUE"
+              }
+            },
+            "Blue": {
+              "name": "Blue",
+              "socketType": "VALUE",
+              "value": {
+                "kind": "ref",
+                "node": "n5",
+                "type": "VALUE"
+              }
+            },
+            "Alpha": {
+              "name": "Alpha",
+              "socketType": "VALUE",
+              "value": {
+                "kind": "ref",
+                "node": "n7",
+                "type": "VALUE"
+              }
+            }
+          }
+        }
+      ],
+      "passes": [],
+      "diagnostics": [],
+      "alphaConvention": "premultiplied",
+      "colorSpace": "scene-linear",
+      "displayTransform": "separate, after authored compositor",
+      "tree": "Owned finite Info policy.017",
+      "images": {
+        "87a1b3b5001ea4cb6bed01ff09a2d40c339d0c553b3d4176ea4d8d09000d32fe": {
+          "model": "native-cpu-static-image-v1",
+          "encoding": "zlib-le-rgba32f",
+          "width": 7,
+          "height": 4,
+          "decodedBytes": 448,
+          "data": "eJxjYGiwY2BgsGdgcADiBhAe5Q8hPgCATj51",
+          "source": {
+            "name": "Owned policy image.008",
+            "kind": "GENERATED",
+            "colorSpace": "Linear Rec.709",
+            "alphaMode": "STRAIGHT",
+            "storage": "direct-float-buffer"
+          }
+        }
+      },
+      "output": {
+        "kind": "ref",
+        "node": "n8",
+        "type": "RGBA"
+      }
+    }
+  }
+]

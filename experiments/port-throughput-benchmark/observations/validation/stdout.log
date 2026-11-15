@@ -1,0 +1,15 @@
+✔ declared workload bound and balanced paired order (1.055042ms)
+✔ distributions retain tails; no performance winner without meaningful GPU evidence (0.187792ms)
+✔ same parameter/output/resource contracts and independent gate are mandatory (0.179833ms)
+✔ only actual available nondisjoint query duration becomes GPU time (0.518667ms)
+✔ stage recorder observes actual command intervals/failures and never commit-clock authoring time (75.755125ms)
+✔ native64 integer phase permutation is bitwise exact and catches changing source floats (0.409208ms)
+✔ native64 oracle independently enforces BOTH numeric gates and scalar alpha (1.093709ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 115.046375

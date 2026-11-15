@@ -1,6 +1,7 @@
 /** Structural graph facts only. This is not a shader compiler or timing model. */
 import assert from 'node:assert/strict'
 import {createHash} from 'node:crypto'
+import {inspectCompositorCost} from './compositor-structural-cost.mjs'
 
 export const NODE_PORT_COST_MODEL='material-ir-structure-v1'
 export const NODE_PORT_COST_METRICS=Object.freeze([
@@ -183,7 +184,8 @@ export function analyzeNodePortCostBytes(bytes,options={}){
  assert.ok(bytes instanceof Uint8Array,'Analyze pinned UTF-8 JSON bytes')
  assert.ok(bytes.byteLength<=NODE_PORT_COST_BOUNDS.inputBytes,'Input exceeds bounded static analysis size')
  const document=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes))
- const report=inspectNodePortCost(document,options)
+ const report=document?.model==='blendlink-source-presentation-v1'||document?.version===1&&Array.isArray(document.ops)
+  ?inspectCompositorCost(document,options):inspectNodePortCost(document,options)
  report.input={source:'json-bytes',bytes:bytes.byteLength,sha256:hash(bytes)}
  return report
 }

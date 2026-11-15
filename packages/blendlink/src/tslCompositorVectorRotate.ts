@@ -10,6 +10,8 @@ import {updateCompositorPassProducers} from './tslCompositorProducers.js'
 const {Fn,bitcast,float,uniform,vec2,vec3}=TSL as unknown as Record<'Fn'|'bitcast'|'float'|'uniform'|'vec2'|'vec3',(...args:any[])=>TslEffectNode>
 export const VECTOR_ROTATE_CPU_MODEL='native-fixed-axis-vector-rotate-cpu-53-v1'
 export const VECTOR_ROTATE_CPU_PROFILE='darwin-arm64-53-fixed-axis-vector-rotate-cpu-v1'
+export const VECTOR_ROTATE_UNIT_AXIS_MODEL='native-unit-axis-vector-rotate-cpu-53-v1'
+export const VECTOR_ROTATE_UNIT_AXIS_PROFILE='darwin-arm64-53-unit-axis-vector-rotate-cpu-v1'
 export const VECTOR_ROTATE_COORDINATES='private-normalized-r32f-vector-rotate-v1'
 const fail=(reason:string):never=>{throw Error('Vector Rotate: '+reason)}
 const keys=(value:unknown,names:string[]):boolean=>!!value&&typeof value==='object'&&!Array.isArray(value)&&Object.keys(value).sort().join('|')===[...names].sort().join('|')
@@ -29,18 +31,20 @@ export function validateVectorRotateProgram(program:SourceCompositorProgram):Con
  if(!candidates.length)return null
  if(candidates.length!==1||program.ops.length>8||new Set(program.ops.map(op=>op.id)).size!==program.ops.length||program.ops.some(op=>typeof op.id!=='string'||!op.id||!actualSource(op)))return fail('requires one bounded native producer and unique typed operation IDs')
  const op=candidates[0]!,p=op.properties,v=op.inputs?.Vector?.value
- const names=['vector_rotate_model','vector_rotate_profile','vector_rotate_version','vector_rotate_build','vector_rotate_mode','vector_rotate_invert','vector_rotate_center_words','vector_rotate_angle_word','vector_rotate_columns','vector_rotate_input','vector_rotate_vector_words','vector_rotate_coordinates','vector_rotate_export_extent','vector_rotate_precision','vector_rotate_scene']
- if(op.kind!=='vector-rotate-cpu'||op.type!=='VECTOR'||op.source.nodeType!=='ShaderNodeVectorRotate'||op.source.output!=='Vector'||!p||Object.keys(p).some(key=>key.startsWith('vector_rotate_')&&!names.includes(key))||p.vector_rotate_model!==VECTOR_ROTATE_CPU_MODEL||p.vector_rotate_profile!==VECTOR_ROTATE_CPU_PROFILE||JSON.stringify(p.vector_rotate_version)!=='[5,3,0]'||p.vector_rotate_build!=='02f0899d78e3'||p.evaluation_device!=='CPU'||p.single_value_device!=='CPU'||!['AUTO','FULL'].includes(String(p.vector_rotate_precision))||!['X_AXIS','Y_AXIS','Z_AXIS'].includes(String(p.vector_rotate_mode))||typeof p.vector_rotate_invert!=='boolean'||typeof p.vector_rotate_scene!=='string'||!p.vector_rotate_scene)return fail('requires its pinned CPU fixed X/Y/Z model, schema and static controls')
+ const names=['vector_rotate_model','vector_rotate_profile','vector_rotate_version','vector_rotate_build','vector_rotate_mode','vector_rotate_invert','vector_rotate_center_words','vector_rotate_angle_word','vector_rotate_columns','vector_rotate_input','vector_rotate_vector_words','vector_rotate_coordinates','vector_rotate_export_extent','vector_rotate_precision','vector_rotate_scene','vector_rotate_axis_words']
+ const unitAxis=p?.vector_rotate_model===VECTOR_ROTATE_UNIT_AXIS_MODEL,axisWords=p?.vector_rotate_axis_words
+ const unitAxisValid=array(axisWords,3,word)&&axisWords.filter(n=>(n&0x7fffffff)===0x3f800000).length===1&&axisWords.every(n=>n===0||(n&0x7fffffff)===0x3f800000)
+ if(op.kind!=='vector-rotate-cpu'||op.type!=='VECTOR'||op.source.nodeType!=='ShaderNodeVectorRotate'||op.source.output!=='Vector'||!p||Object.keys(p).some(key=>key.startsWith('vector_rotate_')&&!names.includes(key))||(unitAxis?p.vector_rotate_profile!==VECTOR_ROTATE_UNIT_AXIS_PROFILE||p.vector_rotate_mode!=='AXIS_ANGLE'||!unitAxisValid:p.vector_rotate_model!==VECTOR_ROTATE_CPU_MODEL||p.vector_rotate_profile!==VECTOR_ROTATE_CPU_PROFILE||Object.hasOwn(p,'vector_rotate_axis_words'))||JSON.stringify(p.vector_rotate_version)!=='[5,3,0]'||p.vector_rotate_build!=='02f0899d78e3'||p.evaluation_device!=='CPU'||p.single_value_device!=='CPU'||!['AUTO','FULL'].includes(String(p.vector_rotate_precision))||!(unitAxis?['AXIS_ANGLE']:['X_AXIS','Y_AXIS','Z_AXIS']).includes(String(p.vector_rotate_mode))||typeof p.vector_rotate_invert!=='boolean'||typeof p.vector_rotate_scene!=='string'||!p.vector_rotate_scene)return fail('requires its pinned CPU fixed X/Y/Z or exact signed unit-axis model, schema and static controls')
  if(!array(p.vector_rotate_export_extent,2,n=>typeof n==='number'&&Number.isInteger(n)&&n>=4&&n<=8192)||!array(p.vector_rotate_center_words,3,n=>literalWord(n))||!literalWord(p.vector_rotate_angle_word,0x3f800000)||!Array.isArray(p.vector_rotate_columns)||p.vector_rotate_columns.length!==3||![...p.vector_rotate_columns].every(column=>array(column,3,coefficientWord)))return fail('requires reviewed raw center/angle/coefficient/extent bounds')
  if(!keys(op.inputs,['Vector'])||!keys(op.inputs.Vector,['name','socketType','value'])||op.inputs.Vector.name!=='Vector'||op.inputs.Vector.socketType!=='VECTOR'||!v)return fail('requires one typed native VECTOR3 input')
  const columns=(p.vector_rotate_columns as number[][]).map(column=>column.map(fromWord)),center=(p.vector_rotate_center_words as number[]).map(fromWord)
  // Fixed-axis captures cannot describe arbitrary matrices. The remaining pair
  // is native sin/cos; the full source capture is independently pinned in proof.
- const axis=({X_AXIS:0,Y_AXIS:1,Z_AXIS:2}as Record<string,number>)[String(p.vector_rotate_mode)]!,others=[0,1,2].filter(i=>i!==axis)
+ const axis=unitAxis?(axisWords as number[]).findIndex(n=>(n&0x7fffffff)!==0):({X_AXIS:0,Y_AXIS:1,Z_AXIS:2}as Record<string,number>)[String(p.vector_rotate_mode)]!,others=[0,1,2].filter(i=>i!==axis)
  const a=others[0]!,b=others[1]!,cosine=columns[a]![a]!,sine=columns[a]![b]!
  if(columns[axis]![axis]!==1||others.some(i=>columns[axis]![i]!==0||columns[i]![axis]!==0)||cosine!==columns[b]![b]||sine!==-columns[b]![a]!||cosine<.5||cosine>1)return fail('coefficient capture is not a bounded fixed-axis native matrix')
  if((p.vector_rotate_angle_word as number)&0x7fffffff){
-  const sign=((p.vector_rotate_angle_word as number)&0x80000000?-1:1)*(p.vector_rotate_invert?-1:1)*(p.vector_rotate_mode==='Y_AXIS'?-1:1)
+  const sign=((p.vector_rotate_angle_word as number)&0x80000000?-1:1)*(p.vector_rotate_invert?-1:1)*(axis===1?-1:1)*(unitAxis&&((axisWords as number[])[axis]!&0x80000000)?-1:1)
   if(Math.abs(sine)<2**-17||Math.abs(sine)>1||(sine>0)!==(sign>0))return fail('nonzero native sine must retain its normal bound and fixed-axis sign')
  }else if(cosine!==1||sine!==0)return fail('zero-angle native coefficients must be exact identity')
  let coordinates:SourceCompositorOperation|undefined,pass:SourceCompositorOperation|undefined

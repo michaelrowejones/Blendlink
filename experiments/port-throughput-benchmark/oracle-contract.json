@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "contractId": "independent-native64-kernel-output-research-v1",
+  "scope": "comparison to separately captured native source-kernel outputs at exactly 64 pinned inputs; no new Blender whole-scene, CPU compositor, EEVEE shading or support claim",
+  "projections": ["rgba", "scalar"],
+  "maximumAbsoluteError": 0.00000095367431640625,
+  "maximumUlps": 8,
+  "bothRequired": true,
+  "scalarPresentation": "captured output lane3 to RGB, exact Float32 alpha1",
+  "failurePolicy": "disable timing comparison; do not widen bounds or silently change projection"
+}

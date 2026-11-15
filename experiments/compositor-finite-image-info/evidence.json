@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "status": "CLOSED_FINITE_IMAGE_INFO_RESEARCH",
+  "supportCredit": 0,
+  "nativeRenders": 25,
+  "gpuInitializationCalls": 0,
+  "finalCredit": 0,
+  "browserCredit": 0,
+  "reportSha256": "81eca90b77e18582c66cae2225d1a2f89c42c2645237a1c6c8385cdc98b7ec60",
+  "closingReceipt": "/tmp/scenetoweb-finite-image-info-probe-r2/closed.json",
+  "closingReceiptSha256": "5d051ce7de225b15e08b39c461e9c0acdd161dfdb6477e90894407106af90ba7",
+  "nativeArchive": "/tmp/scenetoweb-finite-image-info-probe-r2/archive.json",
+  "failedNamespaces": [
+    {
+      "path": "/tmp/scenetoweb-finite-image-info-probe-r1",
+      "failure": "Controller passed report.json as directory;25 numerical observations exist but closing reader rejected EISDIR. Zero qualification."
+    }
+  ]
+}

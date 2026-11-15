@@ -1,0 +1,1 @@
+{"private":true,"type":"module","scripts":{"test":"node --test pilot.test.mjs","replay":"node replay.mjs"}}

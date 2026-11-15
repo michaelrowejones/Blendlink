@@ -1,0 +1,224 @@
+{
+  "schemaVersion": 1,
+  "status": "EXACT_STAGE_DIAGNOSTIC_RECORDED",
+  "supportCredit": 0,
+  "FinalCredit": 0,
+  "nativeReportSha256": "9a0e467a9cf06a9d2cfc7a550d2bd51e0ed6659a9376eca409c198121096193b",
+  "browserReportSha256": "217eb4c097fd67888b13cc0e94077ec3fd22c172da1cb1b1d583db4cb6971195",
+  "expected": {
+    "3": [
+      {
+        "lane": 0,
+        "integer": 2810853268,
+        "uintFloat": 1327991352,
+        "unit": 1059555896,
+        "separate": 1126527486,
+        "fused": 1126527486
+      },
+      {
+        "lane": 1,
+        "integer": 2695874254,
+        "uintFloat": 1327542215,
+        "unit": 1059106759,
+        "separate": 1126352042,
+        "fused": 1126352042
+      },
+      {
+        "lane": 2,
+        "integer": 4011860407,
+        "uintFloat": 1332682786,
+        "unit": 1064247330,
+        "separate": 1128360078,
+        "fused": 1128360077
+      }
+    ],
+    "4": [
+      {
+        "lane": 0,
+        "integer": 2387182134,
+        "uintFloat": 1326336386,
+        "unit": 1057900930,
+        "separate": 1125881015,
+        "fused": 1125881015
+      },
+      {
+        "lane": 1,
+        "integer": 3313766164,
+        "uintFloat": 1329955855,
+        "unit": 1061520399,
+        "separate": 1127294870,
+        "fused": 1127294870
+      },
+      {
+        "lane": 2,
+        "integer": 1638102011,
+        "uintFloat": 1321420520,
+        "unit": 1052985064,
+        "separate": 1124738009,
+        "fused": 1124738009
+      }
+    ]
+  },
+  "sourceControlsExact": true,
+  "validatedFmaInputs": 6,
+  "sourceHypothesis": "Target literal constant evaluation uses separate rounding; native and target uniform evaluation contract multiply-add.",
+  "profiles": [
+    {
+      "backend": "webgpu",
+      "gpu": {
+        "vendor": "apple",
+        "architecture": "metal-3",
+        "description": ""
+      },
+      "modes": [
+        {
+          "mode": "literal",
+          "seed3z": {
+            "native": 1128360077,
+            "targetOriginal": 1128360078,
+            "fmaHelper": 1128360077,
+            "stagedHelper": 1128360078,
+            "classification": "separate"
+          },
+          "offsetWords": [
+            1126527486,
+            1126352042,
+            1128360078,
+            1065353216,
+            1125881015,
+            1127294870,
+            1124738009,
+            1065353216
+          ]
+        },
+        {
+          "mode": "uniform",
+          "seed3z": {
+            "native": 1128360077,
+            "targetOriginal": 1128360077,
+            "fmaHelper": 1128360077,
+            "stagedHelper": 1128360078,
+            "classification": "fused"
+          },
+          "offsetWords": [
+            1126527486,
+            1126352042,
+            1128360077,
+            1065353216,
+            1125881015,
+            1127294870,
+            1124738009,
+            1065353216
+          ]
+        }
+      ]
+    },
+    {
+      "backend": "webgl2",
+      "gpu": {
+        "vendor": "Google Inc. (Apple)",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+      },
+      "modes": [
+        {
+          "mode": "literal",
+          "seed3z": {
+            "native": 1128360077,
+            "targetOriginal": 1128360078,
+            "fmaHelper": 1128360077,
+            "stagedHelper": 1128360078,
+            "classification": "separate"
+          },
+          "offsetWords": [
+            1126527486,
+            1126352042,
+            1128360078,
+            1065353216,
+            1125881015,
+            1127294870,
+            1124738009,
+            1065353216
+          ]
+        },
+        {
+          "mode": "uniform",
+          "seed3z": {
+            "native": 1128360077,
+            "targetOriginal": 1128360077,
+            "fmaHelper": 1128360077,
+            "stagedHelper": 1128360078,
+            "classification": "fused"
+          },
+          "offsetWords": [
+            1126527486,
+            1126352042,
+            1128360077,
+            1065353216,
+            1125881015,
+            1127294870,
+            1124738009,
+            1065353216
+          ]
+        }
+      ]
+    }
+  ],
+  "native": [
+    {
+      "mode": "literal",
+      "offsetWords": [
+        1126527486,
+        1126352042,
+        1128360077,
+        1065353216,
+        1125881015,
+        1127294870,
+        1124738009,
+        1065353216
+      ],
+      "fmaWords": [
+        1126527486,
+        1126352042,
+        1128360077,
+        1065353216,
+        1125881015,
+        1127294870,
+        1124738009,
+        1065353216
+      ],
+      "allOffsetEqualsFma": true
+    },
+    {
+      "mode": "uniform",
+      "offsetWords": [
+        1126527486,
+        1126352042,
+        1128360077,
+        1065353216,
+        1125881015,
+        1127294870,
+        1124738009,
+        1065353216
+      ],
+      "fmaWords": [
+        1126527486,
+        1126352042,
+        1128360077,
+        1065353216,
+        1125881015,
+        1127294870,
+        1124738009,
+        1065353216
+      ],
+      "allOffsetEqualsFma": true
+    }
+  ],
+  "browserDraws": 40,
+  "archivedBrowserWords": 320,
+  "hypothesisConfirmed": true,
+  "limits": [
+    "The FMA helper is witnessed at these six fixed inputs only; this does not qualify a generic new FMA operand range.",
+    "Diagnostic programs can alter optimizer choices; these are separate observable stages, not register instrumentation inside original Noise.",
+    "No production kernel body, source input or numerical gate changed."
+  ]
+}

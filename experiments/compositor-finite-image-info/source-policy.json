@@ -1,0 +1,149 @@
+{
+  "status": "PASSED_FINITE_IMAGE_INFO_SOURCE_POLICY",
+  "positive": [
+    "blank-Dimensions",
+    "blank-Resolution",
+    "blank-Location",
+    "blank-Rotation",
+    "blank-Scale",
+    "blank-reroute",
+    "blank-group",
+    "blank-aspect",
+    "blank-summary",
+    "image-Dimensions",
+    "image-Resolution",
+    "image-Location",
+    "image-Rotation",
+    "image-Scale",
+    "image-reroute",
+    "image-group",
+    "image-aspect",
+    "image-summary",
+    "late-unchanged"
+  ],
+  "refusals": [
+    {
+      "case": "single",
+      "codes": [
+        "unsupported-image-info"
+      ]
+    },
+    {
+      "case": "transformed",
+      "codes": [
+        "unsupported-image-info"
+      ]
+    },
+    {
+      "case": "Alpha",
+      "codes": [
+        "unsupported-image-info"
+      ]
+    },
+    {
+      "case": "blank-outside-metadata-consumer",
+      "codes": [
+        "unsupported-blank-image"
+      ]
+    },
+    {
+      "case": "image-outside-metadata-consumer",
+      "codes": [
+        "unsupported-image-info"
+      ]
+    },
+    {
+      "case": "during-producer-root",
+      "codes": [
+        "unsupported-image-info"
+      ]
+    },
+    {
+      "case": "during-producer-size",
+      "codes": [
+        "unsupported-image-info"
+      ]
+    },
+    {
+      "case": "during-producer-binding",
+      "codes": [
+        "unsupported-image-info"
+      ]
+    },
+    {
+      "case": "late-blank-size",
+      "codes": [
+        "blank-image-source-changed"
+      ]
+    },
+    {
+      "case": "late-image-size",
+      "codes": [
+        "image-info-source-changed"
+      ]
+    },
+    {
+      "case": "late-image-id",
+      "codes": [
+        "image-info-source-changed"
+      ]
+    },
+    {
+      "case": "late-root",
+      "codes": [
+        "image-info-source-changed"
+      ]
+    },
+    {
+      "case": "late-frame",
+      "codes": [
+        "image-info-source-changed"
+      ]
+    },
+    {
+      "case": "late-disabled",
+      "codes": [
+        "image-info-source-changed"
+      ]
+    },
+    {
+      "case": "late-render-size",
+      "codes": [
+        "image-info-source-changed"
+      ]
+    },
+    {
+      "case": "late-group-mute",
+      "codes": [
+        "blank-image-source-changed"
+      ]
+    },
+    {
+      "case": "late-reroute-relink",
+      "codes": [
+        "blank-image-source-changed"
+      ]
+    },
+    {
+      "case": "late-image-link",
+      "codes": [
+        "image-info-source-changed"
+      ]
+    }
+  ],
+  "renderCalls": 0,
+  "gpuInitializationCalls": 0,
+  "guardCanaries": {
+    "renderRefused": true,
+    "gpuInitializationRefused": true
+  },
+  "supportCredit": 0,
+  "fullCapturedReport": "/tmp/scenetoweb-finite-image-info-policy-r10/report.json",
+  "fullCapturedReportSha256": "c377bf3ab2e275c2932daa80642af65ce25ea8dfbf77baeb0c7766f918414d98",
+  "closingReceipt": "/tmp/scenetoweb-finite-image-info-policy-r10/closed.json",
+  "closingReceiptSha256": "6825af92611849ddcf65de93b4493ec80bcbee2ae5f1d55cb36cb6bf774a74d2",
+  "sourceCandidateCommit": "0bb327b",
+  "sourcePrograms": "experiments/compositor-finite-image-info/source-programs.json",
+  "sourceProgramsSha256": "3e802a794ca082d69ee71d74ff284636d9ab9a47dce12e348834af5e6d493447",
+  "scope": "Source-only policy under proved render/GPU denial; no native numerical, Final/browser or support credit."
+}

@@ -1,0 +1,105 @@
+{
+  "version": 1,
+  "blenderVersion": "5.3.0",
+  "engine": "CYCLES",
+  "frame": 1,
+  "status": "extracted",
+  "ops": [
+    {
+      "id": "n0",
+      "kind": "image-input",
+      "source": {
+        "path": [
+          "Artist static compositor png-scale"
+        ],
+        "node": "Image",
+        "nodeType": "CompositorNodeImage",
+        "output": "Image"
+      },
+      "type": "RGBA",
+      "properties": {
+        "evaluation_device": "CPU",
+        "native_gpu_backend": "METAL",
+        "single_value_device": "CPU",
+        "image_id": "645c45c9eb4bf62e0c933c8b91068eaa3639924f944175e203acb636deaa9fb9",
+        "image_window_model": "modern-cpu-v1"
+      },
+      "inputs": {}
+    },
+    {
+      "id": "n1",
+      "kind": "image-info",
+      "source": {
+        "path": [
+          "Artist static compositor png-scale"
+        ],
+        "node": "Image Info",
+        "nodeType": "CompositorNodeImageInfo",
+        "output": "Scale"
+      },
+      "type": "FLOAT_VECTOR2",
+      "properties": {
+        "evaluation_device": "CPU",
+        "native_gpu_backend": "METAL",
+        "single_value_device": "CPU",
+        "image_info_model": "finite-identity-image-info-v1",
+        "image_info_source_profile": "darwin-arm64-53-finite-image-info-v1",
+        "image_info_native_version": [
+          5,
+          3,
+          0
+        ],
+        "image_info_reference_model": "finite-image-identity-v1",
+        "image_info_scene": "Scene",
+        "image_info_finite_size": [
+          5,
+          3
+        ]
+      },
+      "inputs": {
+        "Image": {
+          "name": "Image",
+          "socketType": "RGBA",
+          "value": {
+            "kind": "ref",
+            "node": "n0",
+            "type": "RGBA"
+          }
+        }
+      }
+    }
+  ],
+  "passes": [],
+  "diagnostics": [],
+  "alphaConvention": "premultiplied",
+  "colorSpace": "scene-linear",
+  "displayTransform": "separate, after authored compositor",
+  "tree": "Artist static compositor png-scale",
+  "images": {
+    "645c45c9eb4bf62e0c933c8b91068eaa3639924f944175e203acb636deaa9fb9": {
+      "model": "native-cpu-static-image-v1",
+      "encoding": "zlib-le-rgba32f",
+      "width": 5,
+      "height": 3,
+      "decodedBytes": 240,
+      "data": "eJxjYEAGDfYg8hSUBvERbOzyDFj0I9RA9J+Cm4MpD2Mjq0fXT4r9p1D0YMoDAEkhI8I=",
+      "source": {
+        "name": "png-scale.png",
+        "kind": "FILE",
+        "colorSpace": "sRGB",
+        "alphaMode": "STRAIGHT",
+        "storage": "native-byte-srgb-decode"
+      }
+    }
+  },
+  "output": {
+    "kind": "convert",
+    "fromType": "FLOAT_VECTOR2",
+    "type": "RGBA",
+    "input": {
+      "kind": "ref",
+      "node": "n1",
+      "type": "FLOAT_VECTOR2"
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "role": "independent-native-EEVEE-kernel-reference-research",
+  "supportCredit": 0,
+  "nativeBlenderParityCredit": 0,
+  "finalExports": 0,
+  "extent": [
+    8,
+    8
+  ],
+  "input": {
+    "order": "bottom-row-first,x-fastest,RGBA32F-LE",
+    "rgb": [
+      "(x+.5)/8*4-2",
+      "(y+.5)/8*4-2",
+      "(x+y+1)/8-1"
+    ],
+    "alpha": 1,
+    "sampling": "Non-Color float image, Window coordinates, Closest, EXTEND"
+  },
+  "caseIds": [
+    "gradient-radial",
+    "noise-fbm3-default",
+    "voronoi-f1-3d-default",
+    "voronoi-f2-3d-default"
+  ],
+  "output": "RGBA32F-LE assembled from native Color.r/g/b and Fac or Distance; material/film alpha is separately one",
+  "capture": {
+    "engine": "BLENDER_EEVEE",
+    "backend": "METAL",
+    "samples": 1,
+    "view": "Raw",
+    "look": "None",
+    "exposure": 0,
+    "gamma": 1,
+    "format": "OPEN_EXR-32-RGBA",
+    "maximumRenders": 12,
+    "scope": "Small actual EEVEE radial material crosscheck; bulk native32F baseline uses existing FramebufferOracle"
+  },
+  "carrier": {
+    "planesPerScalar": 2,
+    "base": 2048,
+    "firstFractionBits": 32,
+    "secondFractionBits": 33,
+    "minimumPositive": 2.2737367544323206e-13,
+    "maximumExclusive": 2,
+    "zeroSignObservable": false,
+    "calibrationMustPassBeforeCases": true,
+    "rangeGuardPerCase": true
+  },
+  "comparisonGate": {
+    "maximumAbsoluteError": 9.5367431640625e-07,
+    "maximumUlps": 8,
+    "bothRequired": true,
+    "allFourOutputLanes": true,
+    "fixedBeforeCapture": true
+  },
+  "limits": [
+    "The emission EXR itself is not asserted raw kernel F32; independently calibrated exact-half digit planes carry each scalar.",
+    "Arithmetic carrier does not witness the sign of native zero; zero-sign parity is excluded.",
+    "No native CPU-MF alias, Cycles kernel, production port, Final/public installer or whole-scene credit."
+  ],
+  "eeveeCrosscheckCases": [
+    "gradient-radial"
+  ]
+}

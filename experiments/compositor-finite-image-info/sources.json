@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "supportCredit": 0,
+  "sources": [
+    {
+      "path": "source/blender/nodes/composite/nodes/node_composite_image_info.cc",
+      "sha256": "6e2e8fd7aa80888eeba932c6ca7e0318807c810ab2a82d6ef9540991ac196cab",
+      "url": "https://projects.blender.org/blender/blender/src/commit/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/composite/nodes/node_composite_image_info.cc"
+    },
+    {
+      "path": "source/blender/nodes/composite/nodes/node_composite_blank_image.cc",
+      "sha256": "6a1d23271f728fa828aed285756beb96fff53028e8417035472fee473943532f",
+      "url": "https://projects.blender.org/blender/blender/src/commit/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/nodes/composite/nodes/node_composite_blank_image.cc"
+    },
+    {
+      "path": "source/blender/compositor/cached_resources/intern/cached_image.cc",
+      "sha256": "c9fee8622b61d85192cfe91c5c636ff52a9d4ed3d2ce6230f9f8f67bf2951cf0",
+      "url": "https://projects.blender.org/blender/blender/src/commit/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/cached_resources/intern/cached_image.cc"
+    },
+    {
+      "path": "source/blender/compositor/intern/domain.cc",
+      "sha256": "f942718b88970678375f7e2b720cfcb12073934ccd568c2d7d1ed61a97c82e4d",
+      "url": "https://projects.blender.org/blender/blender/src/commit/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/intern/domain.cc"
+    },
+    {
+      "path": "source/blender/compositor/COM_domain.hh",
+      "sha256": "fff861d849906af5df3d1b4d7fcda28d168c6033ea49edbf1d0a3e1a82bdbc1e",
+      "url": "https://projects.blender.org/blender/blender/src/commit/02f0899d78e374b63e7181d9061e1f7ab03419cc/source/blender/compositor/COM_domain.hh"
+    }
+  ]
+}

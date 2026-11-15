@@ -48,6 +48,21 @@ after the first draw, so compare repeated warmed cycles as well as initial state
 
 ## Measurement protocol
 
+The [paired kernel harness](../experiments/port-throughput-benchmark/README.md)
+compares the actual production TSL builder against generic and output-aware
+source imports. It binds independent native closed references, checks exact
+input repetition and every timed-target pixel outside the timing interval, and
+uses observable single-draw nondisjoint GPU queries. Its repeated 64-input
+distribution is a kernel microbenchmark, not a general scene benchmark.
+Metal WebGL2 supplies verified GPU durations in this experiment; WebGPU GPU
+durations remain unknown. Do not use one backend's ratio as another's result.
+
+In pinned Three r184, `renderer.debug.getShaderAsync` awaits `compileAsync`
+before returning source. The experimental raw field `sourceBuildMs` therefore
+includes preparation/compilation wall time; it is not isolated CPU generation.
+The subsequent compile call is warmed. Preserve these raw reports and describe
+the actual method rather than comparing their labels as cold compile metrics.
+
 Keep two fixture levels:
 
 1. Small production-builder cases isolate a node or graph pattern. Include
@@ -86,6 +101,27 @@ blank or its correctness domain changed. A fallback carrier is a cost control,
 not a visually equivalent implementation of the source scene.
 
 ## Structural analysis
+
+The same `nodes:cost` command also accepts an extracted compositor program or a
+`blendlink-source-presentation-v1` document. Compositor reports count unique
+operations, typed reference occurrences, conversion occurrences, dependency
+depth, maximum fanout, reachable/unused operations and declared image storage.
+Repeated references are sharing candidates, not proof of runtime reuse. The
+analysis covers the compositor only; display LUTs and their runtime cost remain
+outside this report. Image payloads are not decompressed or hash-validated, and
+declared pass counts are not measured draws. No instruction, sampler, physical
+allocation or frame-time estimate is inferred from these facts.
+
+Use separate optional limits for this DAG model, for example:
+
+```json
+{"schemaVersion":1,"model":"compositor-structural-limits-v1","maximum":{"operations":64,"unusedOperations":0,"maximumDependencyDepth":16}}
+```
+
+The existing material limits and bounded pixel-digest option remain material
+contracts. A compositor input with a nonzero pixel-digest request refuses rather
+than reporting uninspected image values as verified. Both analyzer module hashes
+and the complete input-byte digest are retained by the CLI.
 
 ```sh
 npm run nodes:cost -- --input /path/to/actual.materials.json \

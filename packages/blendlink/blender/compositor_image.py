@@ -142,6 +142,10 @@ def validate_image_graph(result):
     for op in result['ops']:
         if op['kind'] == 'render-pass':
             return op, 'Static Image and Render Layers currently need separate canvas-domain realization; mixed render/image canvases remain unqualified'
+        if op['kind'] == 'image-info':
+            # Native metadata results allocate a single value, never the input canvas.
+            domains[op['id']] = None
+            continue
         if op['kind'] == 'image-input':
             record = result['images'][op['properties']['image_id']]
             domains[op['id']] = (record['width'], record['height'])

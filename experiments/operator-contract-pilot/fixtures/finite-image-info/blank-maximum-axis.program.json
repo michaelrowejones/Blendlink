@@ -1,0 +1,138 @@
+{
+  "version": 1,
+  "blenderVersion": "5.3.0",
+  "engine": "CYCLES",
+  "frame": 1,
+  "status": "extracted",
+  "ops": [
+    {
+      "id": "n0",
+      "kind": "blank-image",
+      "source": {
+        "path": [
+          "Artist static compositor blank-maximum-axis"
+        ],
+        "node": "Blank Image",
+        "nodeType": "CompositorNodeBlankImage",
+        "output": "Image"
+      },
+      "type": "RGBA",
+      "properties": {
+        "evaluation_device": "CPU",
+        "native_gpu_backend": "METAL",
+        "single_value_device": "CPU",
+        "blank_image_model": "native-compositor-blank-image-cpu-53-v1",
+        "blank_image_profile": "darwin-arm64-53-blank-image-cpu-v1",
+        "blank_image_version": [
+          5,
+          3,
+          0
+        ],
+        "blank_image_build": "02f0899d78e3",
+        "blank_image_color_words": [
+          1048576000,
+          1056964608,
+          1061158912,
+          1065353216
+        ],
+        "blank_image_size": [
+          8192,
+          1
+        ],
+        "blank_image_effective_size": [
+          8192,
+          1
+        ],
+        "blank_image_max_pixels": 4194304,
+        "blank_image_sampling_model": "modern-cpu-v1",
+        "blank_image_source_precision": "FULL"
+      },
+      "inputs": {
+        "Color": {
+          "name": "Color",
+          "socketType": "RGBA",
+          "value": {
+            "kind": "constant",
+            "type": "RGBA",
+            "value": [
+              0.25,
+              0.5,
+              0.75,
+              1.0
+            ]
+          }
+        },
+        "Size": {
+          "name": "Size",
+          "socketType": "INT_VECTOR",
+          "value": {
+            "kind": "constant",
+            "type": "INT_VECTOR2",
+            "value": [
+              8192,
+              1
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "n1",
+      "kind": "image-info",
+      "source": {
+        "path": [
+          "Artist static compositor blank-maximum-axis"
+        ],
+        "node": "Image Info",
+        "nodeType": "CompositorNodeImageInfo",
+        "output": "Dimensions"
+      },
+      "type": "INT_VECTOR2",
+      "properties": {
+        "evaluation_device": "CPU",
+        "native_gpu_backend": "METAL",
+        "single_value_device": "CPU",
+        "image_info_model": "finite-identity-image-info-v1",
+        "image_info_source_profile": "darwin-arm64-53-finite-image-info-v1",
+        "image_info_native_version": [
+          5,
+          3,
+          0
+        ],
+        "image_info_reference_model": "finite-image-identity-v1",
+        "image_info_scene": "Scene",
+        "image_info_finite_size": [
+          8192,
+          1
+        ]
+      },
+      "inputs": {
+        "Image": {
+          "name": "Image",
+          "socketType": "RGBA",
+          "value": {
+            "kind": "ref",
+            "node": "n0",
+            "type": "RGBA"
+          }
+        }
+      }
+    }
+  ],
+  "passes": [],
+  "diagnostics": [],
+  "alphaConvention": "premultiplied",
+  "colorSpace": "scene-linear",
+  "displayTransform": "separate, after authored compositor",
+  "tree": "Artist static compositor blank-maximum-axis",
+  "output": {
+    "kind": "convert",
+    "fromType": "INT_VECTOR2",
+    "type": "RGBA",
+    "input": {
+      "kind": "ref",
+      "node": "n1",
+      "type": "INT_VECTOR2"
+    }
+  }
+}
