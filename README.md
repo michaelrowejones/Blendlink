@@ -4,6 +4,8 @@
 
 SceneToWeb (formerly Blendlink) is public source in pre-release development. An npm release and
 matching downloadable Blender extension have not been published yet.
+The [1.0 release plan](docs/V1_RELEASE_PLAN.md) defines the promised workflows,
+complete-scene acceptance criteria, release milestones and remaining gates.
 Start with [your first scene on a website](docs/FIRST_SCENE.md) for local
 installation, Blender preparation, preview, and an existing Three.js/R3F site.
 The [September first-user audit](docs/FIRST_USER_AUDIT_2026-09-07.md) records

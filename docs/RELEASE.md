@@ -1,5 +1,9 @@
 # Release process
 
+The [1.0 release plan](V1_RELEASE_PLAN.md) defines product scope and acceptance
+milestones. This file defines artifact and distribution gates; its current
+public-beta policy must gain a tested stable-release mode before 1.0.
+
 This is the release interface for SceneToWeb. It produces two separately
 installable artifacts from one tagged source revision:
 
