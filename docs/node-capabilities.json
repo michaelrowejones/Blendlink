@@ -18966,18 +18966,26 @@
           "hostRestored": true
         },
         "sourceSnapshot": {
-          "sourceCommit": "b3b8495c7397a95b46adf6ba3cc5d0b8b56f739c",
+          "sourceCommit": "7ab9995096c7dd33735dc5e2de44370ed56b30f5",
           "evidence": "experiments/compositor-lens-horizontal/qualified-evidence.json",
-          "evidenceSha256": "fc2fea261a03fc39375caa8f2716f4cccc4975acc3fb0ce0b548a85a561eb99e",
-          "automaticReportSha256": "57669e23b76f499d6cb32ce5f263e15484aa1e5da8b6897c3ece6012ced74bee",
-          "receiptSha256": "8b1e29336d6bbc311aebe15d0f983dcdbe42396958c7d7f484871a9e83ef6953",
+          "evidenceSha256": "9da8e8e400dfd20242494c39428d740f8d6e85ab1229dc3ce71c25f2f718366d",
+          "automaticReportSha256": "584f0e9cbd0d12ae27160f4fc743467f49d3e9ba7fa700a8acc38ec872fe3496",
+          "receiptSha256": "7db33d9893975d6f4c7d9102a81ce8f7658870e7a7e2df364c898c930e24ba46",
           "allFourClosesByteIdentical": true,
           "workspaceStable": true,
           "productionCredit": true,
           "automaticSupportPromotion": false,
-          "runtimeFingerprint": "942c50762a4f6fff15df52dc6bb8a1c3fbd3081a0076762f6ea7dae373439987",
-          "inputDigest": "bad9a2e69a797060a6e400c826c2034b05f25d53ce264bc3338ee4a091bcb28a",
-          "limits": "Fresh frozen b3 Lens slice only; other ports retain their own source snapshots. No all-port freshness, Image producer, beauty or original Classroom acceptance claim."
+          "runtimeFingerprint": "f32c9f08d47c38559565f1e26a05386f4e617616a85c37006f3707f1f987f711",
+          "inputDigest": "95c1691b332683b0bdcdbfb1542318afa03acf00fdf81d69e297531e9fe4a584",
+          "limits": "Fresh frozen 7ab99950 combined-checkpoint Lens slice only; other ports retain their own source snapshots. No all-port freshness, Image producer, beauty or original Classroom acceptance claim.",
+          "initialQualification": {
+            "path": "experiments/compositor-lens-horizontal/qualified-evidence-initial-b3.json",
+            "sha256": "fc2fea261a03fc39375caa8f2716f4cccc4975acc3fb0ce0b548a85a561eb99e",
+            "sourceCommit": "b3b8495c7397a95b46adf6ba3cc5d0b8b56f739c",
+            "receiptSha256": "8b1e29336d6bbc311aebe15d0f983dcdbe42396958c7d7f484871a9e83ef6953",
+            "runtimeFingerprint": "942c50762a4f6fff15df52dc6bb8a1c3fbd3081a0076762f6ea7dae373439987",
+            "inputDigest": "bad9a2e69a797060a6e400c826c2034b05f25d53ce264bc3338ee4a091bcb28a"
+          }
         }
       },
       "versionOverrides": {

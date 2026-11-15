@@ -1,0 +1,1761 @@
+{
+  "status": "BOX_STORAGE_AND_ROW_ORIGIN_RESEARCH_ZERO_SUPPORT_CREDIT",
+  "supportCredit": 0,
+  "installedSceneCredit": 0,
+  "fullArchvizCredit": 0,
+  "sourceSha256": "9f636b2e1a59b3d181f90caf1b1703658eeadebad57f3c6207737d2fe3ffd85e",
+  "nativeDirectory": "/tmp/scenetoweb-box-storage-native-r3",
+  "browserDirectory": "/tmp/scenetoweb-box-storage-browser-r3",
+  "nativeSha256": "6e130f37b63586d8922548e88806502cb5faec29f4f35b0acd36e38f733629d1",
+  "browserSha256": "f4f0f1af3f75de7129fd33a5771adb560c2c31f243d686b1e9c0394e9bb14764",
+  "closedSha256": "d4028776d2835ed125d76aacdd4cdca9e090bbc3a6676826fb5eec485a376eac",
+  "orientedDiagnosticSha256": "b071f63e542e7670bf77e80ca35777025458befbdcd4d36993da14fae31a9180",
+  "modelDiagnosticSha256": "fd297f82366066c70d479d452805de33e2cb796d2be37b6ae28d41d25fb57418",
+  "actualEeveeRenders": 102,
+  "browserGeometryReadbacks": 348,
+  "browserLodReadbacks": 88,
+  "nativeTextureObservations": [
+    {
+      "image": "Plaster-Overlay.png",
+      "isFloat": false,
+      "depth": 24,
+      "channels": 4,
+      "alphaMode": "STRAIGHT",
+      "colorSpace": "sRGB",
+      "useHalfPrecision": true,
+      "gpuFormat": "SRGB8_A8",
+      "gpuWidth": 1024,
+      "gpuHeight": 1024,
+      "observedMipSizes": [
+        [
+          1024,
+          1024
+        ],
+        [
+          512,
+          512
+        ],
+        [
+          256,
+          256
+        ],
+        [
+          128,
+          128
+        ],
+        [
+          64,
+          64
+        ],
+        [
+          32,
+          32
+        ],
+        [
+          16,
+          16
+        ],
+        [
+          8,
+          8
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    {
+      "image": "Plaster-normal.png",
+      "isFloat": false,
+      "depth": 24,
+      "channels": 4,
+      "alphaMode": "STRAIGHT",
+      "colorSpace": "Non-Color",
+      "useHalfPrecision": true,
+      "gpuFormat": "RGBA8",
+      "gpuWidth": 1024,
+      "gpuHeight": 1024,
+      "observedMipSizes": [
+        [
+          1024,
+          1024
+        ],
+        [
+          512,
+          512
+        ],
+        [
+          256,
+          256
+        ],
+        [
+          128,
+          128
+        ],
+        [
+          64,
+          64
+        ],
+        [
+          32,
+          32
+        ],
+        [
+          16,
+          16
+        ],
+        [
+          8,
+          8
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    }
+  ],
+  "candidateTextureObservations": {
+    "webgpu": [
+      {
+        "image": "Plaster-Overlay.png",
+        "type": 1009,
+        "colorSpace": "srgb",
+        "webgpu": "rgba8unorm-srgb",
+        "webglInternalFormat": null
+      },
+      {
+        "image": "Plaster-normal.png",
+        "type": 1009,
+        "colorSpace": "",
+        "webgpu": "rgba8unorm",
+        "webglInternalFormat": null
+      }
+    ],
+    "webgl2": [
+      {
+        "image": "Plaster-Overlay.png",
+        "type": 1009,
+        "colorSpace": "srgb",
+        "webgpu": null,
+        "webglInternalFormat": 35907
+      },
+      {
+        "image": "Plaster-normal.png",
+        "type": 1009,
+        "colorSpace": "",
+        "webgpu": null,
+        "webglInternalFormat": 32856
+      }
+    ]
+  },
+  "rawStageTotals": [
+    {
+      "kind": "mask",
+      "words": 24576,
+      "violations": 0,
+      "maxAbs": 0
+    },
+    {
+      "kind": "input",
+      "words": 12288,
+      "violations": 0,
+      "maxAbs": 0
+    },
+    {
+      "kind": "normal",
+      "words": 24576,
+      "violations": 53,
+      "maxAbs": 0.3536376953125
+    },
+    {
+      "kind": "weights",
+      "words": 24576,
+      "violations": 24,
+      "maxAbs": 0.500244140625
+    },
+    {
+      "kind": "face",
+      "words": 24576,
+      "violations": 24,
+      "maxAbs": 0.36767578125
+    },
+    {
+      "kind": "position",
+      "words": 24576,
+      "violations": 1840,
+      "maxAbs": 0.007495105266571045
+    },
+    {
+      "kind": "sampler",
+      "words": 221184,
+      "violations": 40989,
+      "maxAbs": 0.27051930129528046
+    }
+  ],
+  "orientedStageTotals": [
+    {
+      "kind": "mask",
+      "words": 24576,
+      "violations": 0,
+      "maxAbs": 0
+    },
+    {
+      "kind": "input",
+      "words": 12288,
+      "violations": 0,
+      "maxAbs": 0
+    },
+    {
+      "kind": "normal",
+      "words": 24576,
+      "violations": 0,
+      "maxAbs": 0.00048744678497314453
+    },
+    {
+      "kind": "weights",
+      "words": 24576,
+      "violations": 0,
+      "maxAbs": 0.0004163980484008789
+    },
+    {
+      "kind": "face",
+      "words": 24576,
+      "violations": 0,
+      "maxAbs": 0
+    },
+    {
+      "kind": "position",
+      "words": 24576,
+      "violations": 0,
+      "maxAbs": 0.00048798322677612305
+    },
+    {
+      "kind": "sampler",
+      "words": 221184,
+      "violations": 40741,
+      "maxAbs": 0.25391773879528046
+    }
+  ],
+  "explicitLodRows": [
+    {
+      "api": "webgpu",
+      "image": "Plaster-Overlay.png",
+      "level": 0,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-Overlay.png",
+      "level": 0,
+      "kind": "linear",
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-Overlay.png",
+      "level": 1,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 180,
+      "maxAbs": 0.056166067719459534,
+      "maxUlp": 3627894
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-Overlay.png",
+      "level": 1,
+      "kind": "linear",
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-Overlay.png",
+      "level": 2,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 175,
+      "maxAbs": 0.06788766384124756,
+      "maxUlp": 4555864
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-Overlay.png",
+      "level": 2,
+      "kind": "linear",
+      "words": 256,
+      "violations": 29,
+      "maxAbs": 0.002442002296447754,
+      "maxUlp": 163880
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-Overlay.png",
+      "level": 3,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 169,
+      "maxAbs": 0.04566545784473419,
+      "maxUlp": 2933452
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-Overlay.png",
+      "level": 3,
+      "kind": "linear",
+      "words": 256,
+      "violations": 20,
+      "maxAbs": 0.003663003444671631,
+      "maxUlp": 245820
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-Overlay.png",
+      "level": 4,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 175,
+      "maxAbs": 0.04639805853366852,
+      "maxUlp": 2783912
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-Overlay.png",
+      "level": 4,
+      "kind": "linear",
+      "words": 256,
+      "violations": 41,
+      "maxAbs": 0.0029304027557373047,
+      "maxUlp": 196656
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-Overlay.png",
+      "level": 5,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 179,
+      "maxAbs": 0.038583651185035706,
+      "maxUlp": 2490976
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-Overlay.png",
+      "level": 5,
+      "kind": "linear",
+      "words": 256,
+      "violations": 58,
+      "maxAbs": 0.003663003444671631,
+      "maxUlp": 245820
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-Overlay.png",
+      "level": 6,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 180,
+      "maxAbs": 0.0356532484292984,
+      "maxUlp": 2292272
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-Overlay.png",
+      "level": 6,
+      "kind": "linear",
+      "words": 256,
+      "violations": 99,
+      "maxAbs": 0.003663003444671631,
+      "maxUlp": 245820
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-Overlay.png",
+      "level": 7,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 168,
+      "maxAbs": 0.025152623653411865,
+      "maxUlp": 1687964
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-Overlay.png",
+      "level": 7,
+      "kind": "linear",
+      "words": 256,
+      "violations": 74,
+      "maxAbs": 0.001953601837158203,
+      "maxUlp": 131104
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-Overlay.png",
+      "level": 8,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 192,
+      "maxAbs": 0.01807081699371338,
+      "maxUlp": 1212712
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-Overlay.png",
+      "level": 8,
+      "kind": "linear",
+      "words": 256,
+      "violations": 91,
+      "maxAbs": 0.003663003444671631,
+      "maxUlp": 245820
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-Overlay.png",
+      "level": 9,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 192,
+      "maxAbs": 0.01807081699371338,
+      "maxUlp": 1212712
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-Overlay.png",
+      "level": 9,
+      "kind": "linear",
+      "words": 256,
+      "violations": 128,
+      "maxAbs": 0.003663003444671631,
+      "maxUlp": 245820
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-Overlay.png",
+      "level": 10,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 192,
+      "maxAbs": 0.02173382043838501,
+      "maxUlp": 1458532
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-Overlay.png",
+      "level": 10,
+      "kind": "linear",
+      "words": 256,
+      "violations": 128,
+      "maxAbs": 0.003663003444671631,
+      "maxUlp": 245820
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-normal.png",
+      "level": 0,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-normal.png",
+      "level": 0,
+      "kind": "linear",
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-normal.png",
+      "level": 1,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 182,
+      "maxAbs": 0.33725491166114807,
+      "maxUlp": 10395295
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-normal.png",
+      "level": 1,
+      "kind": "linear",
+      "words": 256,
+      "violations": 37,
+      "maxAbs": 0.0019608139991760254,
+      "maxUlp": 65793
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-normal.png",
+      "level": 2,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 183,
+      "maxAbs": 0.49803921580314636,
+      "maxUlp": 12336188
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-normal.png",
+      "level": 2,
+      "kind": "linear",
+      "words": 256,
+      "violations": 90,
+      "maxAbs": 0.003921568393707275,
+      "maxUlp": 131586
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-normal.png",
+      "level": 3,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 179,
+      "maxAbs": 0.33725492656230927,
+      "maxUlp": 12171706
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-normal.png",
+      "level": 3,
+      "kind": "linear",
+      "words": 256,
+      "violations": 59,
+      "maxAbs": 0.003921568393707275,
+      "maxUlp": 131586
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-normal.png",
+      "level": 4,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 185,
+      "maxAbs": 0.1764705777168274,
+      "maxUlp": 4506821
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-normal.png",
+      "level": 4,
+      "kind": "linear",
+      "words": 256,
+      "violations": 83,
+      "maxAbs": 0.004166662693023682,
+      "maxUlp": 98690
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-normal.png",
+      "level": 5,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 180,
+      "maxAbs": 0.16078433394432068,
+      "maxUlp": 3914684
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-normal.png",
+      "level": 5,
+      "kind": "linear",
+      "words": 256,
+      "violations": 96,
+      "maxAbs": 0.003921568393707275,
+      "maxUlp": 82242
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-normal.png",
+      "level": 6,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 188,
+      "maxAbs": 0.13725489377975464,
+      "maxUlp": 4605510
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-normal.png",
+      "level": 6,
+      "kind": "linear",
+      "words": 256,
+      "violations": 135,
+      "maxAbs": 0.003921598196029663,
+      "maxUlp": 98690
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-normal.png",
+      "level": 7,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 192,
+      "maxAbs": 0.14901959896087646,
+      "maxUlp": 2730410
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-normal.png",
+      "level": 7,
+      "kind": "linear",
+      "words": 256,
+      "violations": 82,
+      "maxAbs": 0.003921568393707275,
+      "maxUlp": 65793
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-normal.png",
+      "level": 8,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 192,
+      "maxAbs": 0.10980391502380371,
+      "maxUlp": 1842204
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-normal.png",
+      "level": 8,
+      "kind": "linear",
+      "words": 256,
+      "violations": 28,
+      "maxAbs": 0.0075980424880981445,
+      "maxUlp": 127474
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-normal.png",
+      "level": 9,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 160,
+      "maxAbs": 0.12156862020492554,
+      "maxUlp": 2039583
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-normal.png",
+      "level": 9,
+      "kind": "linear",
+      "words": 256,
+      "violations": 64,
+      "maxAbs": 0.003921568393707275,
+      "maxUlp": 65793
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-normal.png",
+      "level": 10,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 192,
+      "maxAbs": 0.07450979948043823,
+      "maxUlp": 1250067
+    },
+    {
+      "api": "webgpu",
+      "image": "Plaster-normal.png",
+      "level": 10,
+      "kind": "linear",
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-Overlay.png",
+      "level": 0,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-Overlay.png",
+      "level": 0,
+      "kind": "linear",
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-Overlay.png",
+      "level": 1,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 180,
+      "maxAbs": 0.056166067719459534,
+      "maxUlp": 3627894
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-Overlay.png",
+      "level": 1,
+      "kind": "linear",
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-Overlay.png",
+      "level": 2,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 180,
+      "maxAbs": 0.06788766384124756,
+      "maxUlp": 4555864
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-Overlay.png",
+      "level": 2,
+      "kind": "linear",
+      "words": 256,
+      "violations": 52,
+      "maxAbs": 0.003663003444671631,
+      "maxUlp": 245820
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-Overlay.png",
+      "level": 3,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 169,
+      "maxAbs": 0.04908426105976105,
+      "maxUlp": 3152642
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-Overlay.png",
+      "level": 3,
+      "kind": "linear",
+      "words": 256,
+      "violations": 35,
+      "maxAbs": 0.003663003444671631,
+      "maxUlp": 245820
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-Overlay.png",
+      "level": 4,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 173,
+      "maxAbs": 0.04639805853366852,
+      "maxUlp": 2783912
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-Overlay.png",
+      "level": 4,
+      "kind": "linear",
+      "words": 256,
+      "violations": 55,
+      "maxAbs": 0.003663003444671631,
+      "maxUlp": 245820
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-Overlay.png",
+      "level": 5,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 174,
+      "maxAbs": 0.038583651185035706,
+      "maxUlp": 2490976
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-Overlay.png",
+      "level": 5,
+      "kind": "linear",
+      "words": 256,
+      "violations": 50,
+      "maxAbs": 0.00317460298538208,
+      "maxUlp": 213044
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-Overlay.png",
+      "level": 6,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 183,
+      "maxAbs": 0.03956045210361481,
+      "maxUlp": 2538092
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-Overlay.png",
+      "level": 6,
+      "kind": "linear",
+      "words": 256,
+      "violations": 59,
+      "maxAbs": 0.0034188032150268555,
+      "maxUlp": 229432
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-Overlay.png",
+      "level": 7,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 176,
+      "maxAbs": 0.025152623653411865,
+      "maxUlp": 1687964
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-Overlay.png",
+      "level": 7,
+      "kind": "linear",
+      "words": 256,
+      "violations": 33,
+      "maxAbs": 0.001953601837158203,
+      "maxUlp": 131104
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-Overlay.png",
+      "level": 8,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 175,
+      "maxAbs": 0.01807081699371338,
+      "maxUlp": 1212712
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-Overlay.png",
+      "level": 8,
+      "kind": "linear",
+      "words": 256,
+      "violations": 75,
+      "maxAbs": 0.003663003444671631,
+      "maxUlp": 245820
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-Overlay.png",
+      "level": 9,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 160,
+      "maxAbs": 0.01807081699371338,
+      "maxUlp": 1212712
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-Overlay.png",
+      "level": 9,
+      "kind": "linear",
+      "words": 256,
+      "violations": 54,
+      "maxAbs": 0.0026862025260925293,
+      "maxUlp": 180268
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-Overlay.png",
+      "level": 10,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 128,
+      "maxAbs": 0.01807081699371338,
+      "maxUlp": 1212712
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-Overlay.png",
+      "level": 10,
+      "kind": "linear",
+      "words": 256,
+      "violations": 64,
+      "maxAbs": 0.003663003444671631,
+      "maxUlp": 245820
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-normal.png",
+      "level": 0,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-normal.png",
+      "level": 0,
+      "kind": "linear",
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-normal.png",
+      "level": 1,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 182,
+      "maxAbs": 0.33725491166114807,
+      "maxUlp": 10395295
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-normal.png",
+      "level": 1,
+      "kind": "linear",
+      "words": 256,
+      "violations": 37,
+      "maxAbs": 0.0019608139991760254,
+      "maxUlp": 65793
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-normal.png",
+      "level": 2,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 182,
+      "maxAbs": 0.49803921580314636,
+      "maxUlp": 12336188
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-normal.png",
+      "level": 2,
+      "kind": "linear",
+      "words": 256,
+      "violations": 70,
+      "maxAbs": 0.0031862854957580566,
+      "maxUlp": 90465
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-normal.png",
+      "level": 3,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 181,
+      "maxAbs": 0.33725492656230927,
+      "maxUlp": 12171706
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-normal.png",
+      "level": 3,
+      "kind": "linear",
+      "words": 256,
+      "violations": 47,
+      "maxAbs": 0.003921568393707275,
+      "maxUlp": 131586
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-normal.png",
+      "level": 4,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 187,
+      "maxAbs": 0.1764705777168274,
+      "maxUlp": 4572614
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-normal.png",
+      "level": 4,
+      "kind": "linear",
+      "words": 256,
+      "violations": 53,
+      "maxAbs": 0.003921568393707275,
+      "maxUlp": 115137
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-normal.png",
+      "level": 5,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 181,
+      "maxAbs": 0.16078433394432068,
+      "maxUlp": 3914684
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-normal.png",
+      "level": 5,
+      "kind": "linear",
+      "words": 256,
+      "violations": 77,
+      "maxAbs": 0.003676474094390869,
+      "maxUlp": 123362
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-normal.png",
+      "level": 6,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 189,
+      "maxAbs": 0.13725489377975464,
+      "maxUlp": 4605510
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-normal.png",
+      "level": 6,
+      "kind": "linear",
+      "words": 256,
+      "violations": 90,
+      "maxAbs": 0.003921568393707275,
+      "maxUlp": 69905
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-normal.png",
+      "level": 7,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 192,
+      "maxAbs": 0.14901959896087646,
+      "maxUlp": 2730410
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-normal.png",
+      "level": 7,
+      "kind": "linear",
+      "words": 256,
+      "violations": 61,
+      "maxAbs": 0.0022059082984924316,
+      "maxUlp": 37009
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-normal.png",
+      "level": 8,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 175,
+      "maxAbs": 0.10980391502380371,
+      "maxUlp": 1842204
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-normal.png",
+      "level": 8,
+      "kind": "linear",
+      "words": 256,
+      "violations": 50,
+      "maxAbs": 0.003921568393707275,
+      "maxUlp": 65793
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-normal.png",
+      "level": 9,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 192,
+      "maxAbs": 0.12156862020492554,
+      "maxUlp": 2039583
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-normal.png",
+      "level": 9,
+      "kind": "linear",
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-normal.png",
+      "level": 10,
+      "kind": "fetch",
+      "words": 256,
+      "violations": 192,
+      "maxAbs": 0.07450979948043823,
+      "maxUlp": 1250067
+    },
+    {
+      "api": "webgl2",
+      "image": "Plaster-normal.png",
+      "level": 10,
+      "kind": "linear",
+      "words": 256,
+      "violations": 64,
+      "maxAbs": 0.003921568393707275,
+      "maxUlp": 65793
+    }
+  ],
+  "cpuModelRows": [
+    {
+      "image": "Plaster-Overlay.png",
+      "model": "stored-box",
+      "level": 0,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0.0001766979694366455,
+      "maxUlp": 11591
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "model": "stored-box",
+      "level": 1,
+      "words": 256,
+      "violations": 20,
+      "maxAbs": 0.0022055059671401978,
+      "maxUlp": 148009
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "model": "stored-box",
+      "level": 2,
+      "words": 256,
+      "violations": 51,
+      "maxAbs": 0.0037428438663482666,
+      "maxUlp": 251178
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "model": "stored-box",
+      "level": 3,
+      "words": 256,
+      "violations": 54,
+      "maxAbs": 0.0040506720542907715,
+      "maxUlp": 271836
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "model": "stored-box",
+      "level": 4,
+      "words": 256,
+      "violations": 88,
+      "maxAbs": 0.00396353006362915,
+      "maxUlp": 265988
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "model": "stored-box",
+      "level": 5,
+      "words": 256,
+      "violations": 130,
+      "maxAbs": 0.003935828804969788,
+      "maxUlp": 264129
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "model": "stored-box",
+      "level": 6,
+      "words": 256,
+      "violations": 147,
+      "maxAbs": 0.0038829445838928223,
+      "maxUlp": 260580
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "model": "stored-box",
+      "level": 7,
+      "words": 256,
+      "violations": 161,
+      "maxAbs": 0.0038779526948928833,
+      "maxUlp": 260245
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "model": "stored-box",
+      "level": 8,
+      "words": 256,
+      "violations": 118,
+      "maxAbs": 0.003850415349006653,
+      "maxUlp": 258397
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "model": "stored-box",
+      "level": 9,
+      "words": 256,
+      "violations": 191,
+      "maxAbs": 0.0037900209426879883,
+      "maxUlp": 254344
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "model": "stored-box",
+      "level": 10,
+      "words": 256,
+      "violations": 192,
+      "maxAbs": 0.003691956400871277,
+      "maxUlp": 247763
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "model": "native-paired-shared-srgb",
+      "level": 0,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0.0001766979694366455,
+      "maxUlp": 11591
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "model": "native-paired-shared-srgb",
+      "level": 1,
+      "words": 256,
+      "violations": 20,
+      "maxAbs": 0.0022055059671401978,
+      "maxUlp": 148009
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "model": "native-paired-shared-srgb",
+      "level": 2,
+      "words": 256,
+      "violations": 51,
+      "maxAbs": 0.0037428438663482666,
+      "maxUlp": 251178
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "model": "native-paired-shared-srgb",
+      "level": 3,
+      "words": 256,
+      "violations": 54,
+      "maxAbs": 0.0040506720542907715,
+      "maxUlp": 271836
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "model": "native-paired-shared-srgb",
+      "level": 4,
+      "words": 256,
+      "violations": 88,
+      "maxAbs": 0.00396353006362915,
+      "maxUlp": 265988
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "model": "native-paired-shared-srgb",
+      "level": 5,
+      "words": 256,
+      "violations": 130,
+      "maxAbs": 0.003935828804969788,
+      "maxUlp": 264129
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "model": "native-paired-shared-srgb",
+      "level": 6,
+      "words": 256,
+      "violations": 147,
+      "maxAbs": 0.0038829445838928223,
+      "maxUlp": 260580
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "model": "native-paired-shared-srgb",
+      "level": 7,
+      "words": 256,
+      "violations": 161,
+      "maxAbs": 0.0038779526948928833,
+      "maxUlp": 260245
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "model": "native-paired-shared-srgb",
+      "level": 8,
+      "words": 256,
+      "violations": 118,
+      "maxAbs": 0.003850415349006653,
+      "maxUlp": 258397
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "model": "native-paired-shared-srgb",
+      "level": 9,
+      "words": 256,
+      "violations": 191,
+      "maxAbs": 0.0037900209426879883,
+      "maxUlp": 254344
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "model": "native-paired-shared-srgb",
+      "level": 10,
+      "words": 256,
+      "violations": 192,
+      "maxAbs": 0.003691956400871277,
+      "maxUlp": 247763
+    },
+    {
+      "image": "Plaster-normal.png",
+      "model": "stored-box",
+      "level": 0,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0.00020873546600341797,
+      "maxUlp": 6938
+    },
+    {
+      "image": "Plaster-normal.png",
+      "model": "stored-box",
+      "level": 1,
+      "words": 256,
+      "violations": 34,
+      "maxAbs": 0.0020450353622436523,
+      "maxUlp": 68620
+    },
+    {
+      "image": "Plaster-normal.png",
+      "model": "stored-box",
+      "level": 2,
+      "words": 256,
+      "violations": 83,
+      "maxAbs": 0.003964781761169434,
+      "maxUlp": 128003
+    },
+    {
+      "image": "Plaster-normal.png",
+      "model": "stored-box",
+      "level": 3,
+      "words": 256,
+      "violations": 65,
+      "maxAbs": 0.004005849361419678,
+      "maxUlp": 120061
+    },
+    {
+      "image": "Plaster-normal.png",
+      "model": "stored-box",
+      "level": 4,
+      "words": 256,
+      "violations": 81,
+      "maxAbs": 0.006470620632171631,
+      "maxUlp": 119740
+    },
+    {
+      "image": "Plaster-normal.png",
+      "model": "stored-box",
+      "level": 5,
+      "words": 256,
+      "violations": 92,
+      "maxAbs": 0.0049019455909729,
+      "maxUlp": 91354
+    },
+    {
+      "image": "Plaster-normal.png",
+      "model": "stored-box",
+      "level": 6,
+      "words": 256,
+      "violations": 136,
+      "maxAbs": 0.00784313678741455,
+      "maxUlp": 131586
+    },
+    {
+      "image": "Plaster-normal.png",
+      "model": "stored-box",
+      "level": 7,
+      "words": 256,
+      "violations": 118,
+      "maxAbs": 0.0040343403816223145,
+      "maxUlp": 67685
+    },
+    {
+      "image": "Plaster-normal.png",
+      "model": "stored-box",
+      "level": 8,
+      "words": 256,
+      "violations": 57,
+      "maxAbs": 0.004102587699890137,
+      "maxUlp": 68830
+    },
+    {
+      "image": "Plaster-normal.png",
+      "model": "stored-box",
+      "level": 9,
+      "words": 256,
+      "violations": 64,
+      "maxAbs": 0.004042387008666992,
+      "maxUlp": 67820
+    },
+    {
+      "image": "Plaster-normal.png",
+      "model": "stored-box",
+      "level": 10,
+      "words": 256,
+      "violations": 64,
+      "maxAbs": 0.00784313678741455,
+      "maxUlp": 131586
+    },
+    {
+      "image": "Plaster-normal.png",
+      "model": "native-paired-shared-srgb",
+      "level": 0,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0.00020873546600341797,
+      "maxUlp": 6938
+    },
+    {
+      "image": "Plaster-normal.png",
+      "model": "native-paired-shared-srgb",
+      "level": 1,
+      "words": 256,
+      "violations": 34,
+      "maxAbs": 0.0020450353622436523,
+      "maxUlp": 68620
+    },
+    {
+      "image": "Plaster-normal.png",
+      "model": "native-paired-shared-srgb",
+      "level": 2,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0.00021183490753173828,
+      "maxUlp": 7108
+    },
+    {
+      "image": "Plaster-normal.png",
+      "model": "native-paired-shared-srgb",
+      "level": 3,
+      "words": 256,
+      "violations": 39,
+      "maxAbs": 0.003921568393707275,
+      "maxUlp": 130173
+    },
+    {
+      "image": "Plaster-normal.png",
+      "model": "native-paired-shared-srgb",
+      "level": 4,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0.00013148784637451172,
+      "maxUlp": 4353
+    },
+    {
+      "image": "Plaster-normal.png",
+      "model": "native-paired-shared-srgb",
+      "level": 5,
+      "words": 256,
+      "violations": 19,
+      "maxAbs": 0.0023412108421325684,
+      "maxUlp": 75136
+    },
+    {
+      "image": "Plaster-normal.png",
+      "model": "native-paired-shared-srgb",
+      "level": 6,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0.00012362003326416016,
+      "maxUlp": 4112
+    },
+    {
+      "image": "Plaster-normal.png",
+      "model": "native-paired-shared-srgb",
+      "level": 7,
+      "words": 256,
+      "violations": 26,
+      "maxAbs": 0.0021744966506958008,
+      "maxUlp": 36482
+    },
+    {
+      "image": "Plaster-normal.png",
+      "model": "native-paired-shared-srgb",
+      "level": 8,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0.00011974573135375977,
+      "maxUlp": 2009
+    },
+    {
+      "image": "Plaster-normal.png",
+      "model": "native-paired-shared-srgb",
+      "level": 9,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0.00012236833572387695,
+      "maxUlp": 2053
+    },
+    {
+      "image": "Plaster-normal.png",
+      "model": "native-paired-shared-srgb",
+      "level": 10,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    }
+  ],
+  "fetchBaseAlias": [
+    {
+      "image": "Plaster-Overlay.png",
+      "level": 0,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0.00011837482452392578,
+      "maxUlp": 7944
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "level": 1,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0.00011837482452392578,
+      "maxUlp": 7944
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "level": 2,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0.00011837482452392578,
+      "maxUlp": 7944
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "level": 3,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0.00011837482452392578,
+      "maxUlp": 7944
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "level": 4,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0.00011837482452392578,
+      "maxUlp": 7944
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "level": 5,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0.00011837482452392578,
+      "maxUlp": 7944
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "level": 6,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0.00011837482452392578,
+      "maxUlp": 7944
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "level": 7,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0.00011837482452392578,
+      "maxUlp": 7944
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "level": 8,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0.00010387599468231201,
+      "maxUlp": 6971
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "level": 9,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 9.104609489440918e-05,
+      "maxUlp": 6110
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "level": 10,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 9.104609489440918e-05,
+      "maxUlp": 6110
+    },
+    {
+      "image": "Plaster-normal.png",
+      "level": 0,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "image": "Plaster-normal.png",
+      "level": 1,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "image": "Plaster-normal.png",
+      "level": 2,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "image": "Plaster-normal.png",
+      "level": 3,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "image": "Plaster-normal.png",
+      "level": 4,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "image": "Plaster-normal.png",
+      "level": 5,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "image": "Plaster-normal.png",
+      "level": 6,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "image": "Plaster-normal.png",
+      "level": 7,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "image": "Plaster-normal.png",
+      "level": 8,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "image": "Plaster-normal.png",
+      "level": 9,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "image": "Plaster-normal.png",
+      "level": 10,
+      "words": 256,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    }
+  ],
+  "additionalSourcePins": {
+    "/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shaders/compat/gpu_shader_msl_sampler.msl": "34e777ad4ad66c787bb8bb706ef2508e0af304fab6b6f7a1285a04e588bf4738",
+    "/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shaders/compat/gpu_shader_msl_builtin.msl": "8aa30ed3eff2cbd0e41fc8bc7d1d8a94dda915a98fd83135d6356aef419844b6"
+  },
+  "correctionsToPreviousAnalysis": [
+    "Actual image mip generation enters generic gpu_texture_mipmap.cc compute path for available formats; Metal blit is fallback, not established image path.",
+    "Sparse WebGPU controls are whole-image readback row inversion, not proved depth/raster disagreement. A fixed backend row reversal closes independent polygon, world-position, normal and weight controls.",
+    "Native Metal texelFetch at positive LOD aliases base-image pixels at level-scaled integer coordinates in this probe; positive-LOD fetch results cannot qualify mip contents."
+  ],
+  "retainedFailures": [
+    {
+      "directory": "/tmp/scenetoweb-box-storage-native-r1",
+      "status": "NATIVE_SIGABRT",
+      "reason": "Cold from_image after existing oracle calibration sequence aborts in GPU_shader_bind via generic mip compute path; cause not repaired",
+      "capturedScript": "capture-at-failure.py",
+      "capturedScriptSha256": "ab8f80441b69220dbd5ea87c588eb43c0beb207c94ceb0e089331dba33ce7eab"
+    },
+    {
+      "directory": "/tmp/scenetoweb-box-storage-native-r2",
+      "status": "NATIVE_SIGABRT",
+      "reason": "Same sequence, flushed before_from_image marker and SIGABRT stack; cause not repaired",
+      "capturedScript": "capture-at-failure.py",
+      "capturedScriptSha256": "c711ab9ff8b75749d2e64d5c8cdcd8c1c1a11add6f67c1d6bfc2dba5be908c09"
+    }
+  ],
+  "qualificationLimits": [
+    "No direct public Python ImBuf pointer/type inspection; image metadata plus actual GPU format observed.",
+    "44 native explicit-LOD probe rows; fetch positive LOD invalid, filtered probes retained separately.",
+    "CPU power-of-two mip candidate corrects shared intermediate semantics only; odd Non-Color and sRGB storage/filter precision still fail.",
+    "No new browser/native proof of custom mip upload; no Mapping/NormalMap material or Final/installed scene proof."
+  ],
+  "fixedOrientationAuthority": {
+    "webgpu": "https://www.w3.org/TR/webgpu/#coordinate-systems",
+    "glReadPixels": "https://registry.khronos.org/OpenGL/specs/es/2.0/es_full_spec_2.0.pdf",
+    "pinnedThreeWebgpu": "src/renderers/webgpu/utils/WebGPUTextureUtils.js:639-696",
+    "pinnedThreeWebgl": "src/renderers/webgl-fallback/utils/WebGLTextureUtils.js:1215"
+  },
+  "nativeColdFailureStack": [
+    "__cxa_pure_virtual",
+    "blender::GPU_shader_bind",
+    "blender::texture_update_mipmap_chain",
+    "blender::GPU_texture_update_mipmap_chain",
+    "blender::IMB_acquire_gpu_texture",
+    "blender::BKE_image_acquire_gpu_texture",
+    "blender::pygpu_texture_from_image"
+  ]
+}

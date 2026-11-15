@@ -1402,6 +1402,15 @@ def evaluated_non_bezier_curve_points(
         evaluated.to_mesh_clear()
 
 
+def camera_depth_of_field_warning(scene, recipe=None):
+    import camera_fidelity
+    components = recipe.get('components', ()) if isinstance(recipe, dict) else ()
+    return camera_fidelity.depth_of_field_warning(scene, explicit_website_effect=any(
+        item.get('type') == 'blendlink.depth-of-field' and item.get('enabled') is True
+        and isinstance(item.get('target'), dict) and item['target'].get('kind') == 'scene'
+        for item in components if isinstance(item, dict)))
+
+
 def collect_sidecar(
     settings: dict, recipe: dict | None = None,
     export_kwargs: dict | None = None,
@@ -1526,6 +1535,11 @@ def collect_sidecar(
     light_analysis = weblights.analyze_scene(
         scene, view_layer=bpy.context.view_layer, source_version=bpy.app.version[:3],
     )
+    diagnostics = procedural.analyze_scene(scene, full=True, fixed_camera=fixed_camera,
+                                          objects=scoped_objects)
+    dof_warning = camera_depth_of_field_warning(scene, recipe)
+    if dof_warning is not None:
+        diagnostics['cameraFidelity'] = [dof_warning]
     return {
         "fps": fps,
         **({"animationSequence": recipe["animationSequence"]}
@@ -1540,10 +1554,7 @@ def collect_sidecar(
         ),
         "lightDiagnostics": light_analysis.as_dict(),
         "externalDependencies": collect_external_dependencies(scoped_objects),
-        "diagnostics": procedural.analyze_scene(
-            scene, full=True, fixed_camera=fixed_camera,
-            objects=scoped_objects,
-        ),
+        "diagnostics": diagnostics,
     }
 
 
@@ -5471,7 +5482,7 @@ def noimp_objects() -> set:
     return excluded
 
 
-def remove_noimp_objects() -> list[str]:
+def remove_noimp_objects(*, removal_journal=None) -> list[str]:
     """Godot's -noimp convention: never export object or descendants.
 
     The blendlink_role custom property is the explicit override channel. The
@@ -5495,7 +5506,10 @@ def remove_noimp_objects() -> list[str]:
     # an explicitly reported child from this disposable export transaction.
     for obj in sorted(excluded, key=parent_depth, reverse=True):
         if obj.name in bpy.data.objects:
+            key = (obj.name, obj.as_pointer())
             bpy.data.objects.remove(obj, do_unlink=True)
+            if removal_journal is not None:
+                removal_journal.add(key)
     return sorted(removed)
 
 
@@ -6506,6 +6520,12 @@ def plan_export_materials(
 
 
 def main() -> None:
+    import source_export_mode
+    with source_export_mode.object_mode() as removed_objects:
+        return _export_main(removed_objects)
+
+
+def _export_main(removed_objects=None) -> None:
     bakelib.ensure_progress_heartbeat()
     out_path, settings_path, result_path = parse_argv()
     with open(settings_path, "r", encoding="utf-8") as handle:
@@ -6515,6 +6535,9 @@ def main() -> None:
     # still needs an unambiguous identity in this export and its preview recipe.
     source_camera = bpy.context.scene.camera
     source_camera_warnings = []
+    dof_warning = camera_depth_of_field_warning(bpy.context.scene, recipe)
+    if dof_warning is not None:
+        source_camera_warnings.append(dof_warning['code'] + ': ' + dof_warning['message'])
     if source_camera is not None and not source_camera.get("blendlink_id"):
         try:
             source_camera["blendlink_id"] = "blendlink-source-camera-" + hashlib.sha256(
@@ -6545,17 +6568,29 @@ def main() -> None:
         missing = missing_libraries()
         if missing:
             warnings.append(f"missing linked libraries: {', '.join(missing)}")
-        excluded = remove_noimp_objects()
+        excluded = remove_noimp_objects(removal_journal=removed_objects)
         sidecar = collect_sidecar(settings, recipe, export_kwargs=kwargs)
-        _material_plan, export_objects = plan_export_materials(
-            settings, sidecar, kwargs,
-        )
-        apply_material_exporter_contract(_material_plan, kwargs)
+        binding_inspection_failed = False
+        try:
+            _material_plan, export_objects = plan_export_materials(
+                settings, sidecar, kwargs,
+            )
+            apply_material_exporter_contract(_material_plan, kwargs)
+        except material_compiler.MaterialBindingInspectionError as error:
+            # A failed inspection is not an empty/safe geometry result. Only
+            # planOnly serializes this typed refusal; real exports still raise.
+            binding_inspection_failed = True
+            sidecar["diagnostics"]["materialBindingIssues"] = [error.as_dict()]
+            export_objects = diagnostic_export_objects(
+                bpy.context.scene, view_layer=bpy.context.view_layer,
+                export_kwargs=kwargs,
+            )
+            warnings.append("Material binding inspection is incomplete; no bake estimate or export approval was produced.")
         warnings.extend(bevel_uv_reproducibility_warnings(
             export_objects,
             kwargs,
         ))
-        plan = compute_bake_plan(settings, recipe) if settings.get("mode") == "baked" else None
+        plan = compute_bake_plan(settings, recipe) if settings.get("mode") == "baked" and not binding_inspection_failed else None
         result = {
             "ok": True,
             "blenderVersion": bpy.app.version_string,
@@ -6583,7 +6618,7 @@ def main() -> None:
     if missing:
         warnings.append(f"missing linked libraries: {', '.join(missing)}")
 
-    excluded = remove_noimp_objects()
+    excluded = remove_noimp_objects(removal_journal=removed_objects)
     sidecar = collect_sidecar(settings, recipe, export_kwargs=kwargs)
     material_plan, export_objects = plan_export_materials(settings, sidecar, kwargs)
     warnings.extend(row["message"] for row in sidecar["diagnostics"].get("sceneTime", ())

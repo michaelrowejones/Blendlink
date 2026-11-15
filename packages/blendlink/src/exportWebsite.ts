@@ -119,6 +119,7 @@ async function load(): Promise<void> {
     const candidate = await installThreeCompiledScene({
       renderer: graphics, scene: new THREE.Scene(), descriptor, createBakedScene,
       assetBaseUrl: new URL('./', location.href), useAuthoringPreview: true,
+      nodeRectAreaLights: 'renderer-local',
       signal: loading.signal,
       onWarning(message) { console.warn(message) },
     })

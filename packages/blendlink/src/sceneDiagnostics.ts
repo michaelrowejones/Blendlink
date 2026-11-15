@@ -614,6 +614,13 @@ export interface BlenderSceneDiagnostics {
   procedural: ProceduralDiagnostic[]
   instances: InstanceSourceDiagnostic[]
   materials?: MaterialPortabilityDiagnostic[]
+  /** Hard inspection refusals: unknown evaluated bindings never imply empty geometry. */
+  materialBindingIssues?: Array<{
+    code: 'material.binding-inspection-failed'
+    object: string
+    problem: string
+    fix: string
+  }>
   materialCompilation?: MaterialCompilationEvidence
   /** GEO-EVAL-001: budgeted evaluated-geometry realizations (Grease Pencil,
    * Hair Curves, childless legacy HAIR/PATH particle parents) and the

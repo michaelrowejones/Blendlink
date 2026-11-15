@@ -20,7 +20,7 @@ await renderer.init()
 document.body.appendChild(renderer.domElement)
 
 const scene = new THREE.Scene()
-const installed = await installHeroScene({ scene, renderer })
+const installed = await installHeroScene({ scene, renderer, nodeRectAreaLights: 'renderer-local' })
 
 window.addEventListener('resize', () => {
   installed.resize(window.innerWidth, window.innerHeight)

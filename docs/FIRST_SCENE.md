@@ -19,6 +19,12 @@ extension data. Later uses reuse those tools. Blender remains responsive during
 setup. Allow Online Access must be enabled for the first download; existing
 cached tools can be used offline.
 
+If offline setup reports that website tools are not cached, enable **Allow
+Online Access** in **Preferences → System** and retry the same action. The
+private Node runtime, matching compiler and preview viewer need their own first
+successful setup before that workflow can run offline. A failed setup shows its
+cause in the SceneToWeb panel; **Open Log** keeps the complete diagnostic output.
+
 A public registry release is still pending. When testing an unpublished build,
 follow the source installation below. `addon install` connects that local
 compiler automatically. For a ZIP installed separately, set **Local Preview Package**
@@ -90,6 +96,13 @@ not install those materials or approve an export. An application material adapte
 can acknowledge stock-payload limitations; it cannot waive a blocked native
 compiler route. Preview and Final export remain blocked until those errors are
 resolved.
+
+If Blender cannot inspect an object's evaluated material bindings, `plan --json`
+returns a hard `material.binding-inspection-failed` error with the object and
+repair guidance, and marks inspection `incomplete`. No bake estimate or safe
+empty-geometry result is implied. Repair the object's Geometry Nodes/modifiers
+or convert the intended renderable result to a Mesh before retrying; Preview
+and Final export retain the refusal.
 
 For an HDR environment, load a real Radiance `.hdr` or OpenEXR `.exr` file.
 If you create one from a generated Blender image, save it, reload that saved
@@ -246,7 +259,7 @@ const renderer = new WebGPURenderer({ antialias: true })
 await renderer.init()
 const scene = new Scene()
 // Attach renderer.domElement and size it for your container.
-const installed = await installHeroScene({ renderer, scene })
+const installed = await installHeroScene({ renderer, scene, nodeRectAreaLights: 'renderer-local' })
 // Inside your existing animation loop, with elapsed time in seconds:
 installed.update(deltaSeconds)
 installed.render(deltaSeconds)
@@ -255,6 +268,12 @@ installed.resize(width, height)
 // On page/route teardown:
 installed.dispose()
 ```
+
+The renderer-local Area light option owns private LTC textures for this renderer.
+It preserves application light registrations and Three's shared LTC globals;
+generated Three/R3F integrations and Preview Studio enable it. Direct SDK callers
+opt in explicitly. Rectangular Area lighting remains Three's approximation, with
+no emitted-light shadow or EEVEE numeric-equivalence claim.
 
 These are lifecycle excerpts, not calls to run once in sequence. The
 [complete Three example](../examples/vanilla-three/src/main.ts) shows the loop.

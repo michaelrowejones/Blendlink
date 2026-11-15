@@ -1852,3 +1852,29 @@ Metadata validation passes 92 focused schema/family/tracker checks and eleven
 Python audit tests. Existing capability values, all native catalog bytes and
 legacy classifications/mode coverage were compared against the frozen base.
 The 5.3 totals are 46 supported, 141 partial, 131 unsupported and 14 structural.
+
+
+## Lens requalification at the combined 1.0 checkpoint
+
+Exporter/worker Python and the Three runtime SDK changed after initial Lens
+qualification. A fresh full shared `mac-53` transaction on frozen `7ab99950`
+passes all four actual Metal/SwiftShader × WebGPU/WebGL2 tuples, four saved
+Final scenes, 40 native renders and all installed lifecycle/refusal controls.
+The 41,760 primary and 41,760 supporting Float32 words remain exact, with no
+kernel, tolerance, profile, category or scope changes. Both automatic closes,
+third replay and independent root replay agree byte-for-byte (receipt
+`7db33d9893975d6f4c7d9102a81ce8f7658870e7a7e2df364c898c930e24ba46`).
+
+[The current evidence](../experiments/compositor-lens-horizontal/qualified-evidence.json)
+pins the new runtime/input identities; the initial b3 qualified record is
+retained byte-for-byte separately, and all old failed namespaces remain failed.
+Only Lens verification provenance changes. Native catalog bytes/date and every
+capability category, mode and domain limit remain unchanged. Original Classroom
+is still blocked; no beauty, Image producer, all-port freshness or scene
+acceptance claim follows.
+
+Focused validation passes 92 schema/family/tracker checks and eleven Python
+audits against the temporary retained classification refresh. Every category,
+mode, limit, native catalog byte/date and other capability record is unchanged.
+The integrator regenerates retained coverage once after merging this provenance
+record and the final corpus receipts; generated coverage is not changed here.

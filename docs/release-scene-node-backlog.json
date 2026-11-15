@@ -7,6 +7,7 @@
       "authoredScenes": [
         "archiviz",
         "classroom",
+        "impact-fracture",
         "lone-monk"
       ],
       "catalogCategory53": "partial",
@@ -17,6 +18,7 @@
       "reachableScenes": [
         "archiviz",
         "classroom",
+        "impact-fracture",
         "lone-monk"
       ],
       "releaseQualification": "pending",
@@ -45,6 +47,11 @@
           "node": "Background",
           "scene": "lone-monk",
           "tree": "shader:world:World - nishita"
+        },
+        {
+          "node": "Background",
+          "scene": "impact-fracture",
+          "tree": "shader:world:World"
         }
       ]
     },
@@ -52,6 +59,7 @@
       "authoredScenes": [
         "archiviz",
         "classroom",
+        "impact-fracture",
         "lone-monk"
       ],
       "catalogCategory53": "partial",
@@ -64,12 +72,14 @@
           "MULTI_GGX"
         ],
         "subsurface_method": [
-          "BURLEY"
+          "BURLEY",
+          "RANDOM_WALK_LEGACY"
         ]
       },
       "reachableScenes": [
         "archiviz",
         "classroom",
+        "impact-fracture",
         "lone-monk"
       ],
       "releaseQualification": "pending",
@@ -78,6 +88,7 @@
         "shader:NodeReroute",
         "shader:ShaderNodeBump",
         "shader:ShaderNodeHueSaturation",
+        "shader:ShaderNodeMapRange",
         "shader:ShaderNodeMath",
         "shader:ShaderNodeMix",
         "shader:ShaderNodeNormalMap",
@@ -315,6 +326,940 @@
           "node": "Principled BSDF",
           "scene": "lone-monk",
           "tree": "shader:material:wood - table"
+        },
+        {
+          "node": "Principled BSDF",
+          "scene": "impact-fracture",
+          "tree": "shader:material:Material"
+        },
+        {
+          "node": "Principled BSDF",
+          "scene": "impact-fracture",
+          "tree": "shader:material:ground"
+        }
+      ]
+    },
+    {
+      "authoredScenes": [
+        "archiviz",
+        "classroom",
+        "impact-fracture",
+        "lone-monk"
+      ],
+      "catalogCategory53": "structural",
+      "key": "shader:ShaderNodeOutputMaterial",
+      "newSupportCredit": false,
+      "priority": "P0 Shared scene dependency",
+      "reachableModes": {
+        "is_active_output": [
+          "True"
+        ],
+        "target": [
+          "ALL",
+          "CYCLES",
+          "EEVEE"
+        ]
+      },
+      "reachableScenes": [
+        "archiviz",
+        "classroom",
+        "impact-fracture",
+        "lone-monk"
+      ],
+      "releaseQualification": "pending",
+      "scope": "shader-compositor-port",
+      "upstreamNodeKinds": [
+        "shader:ShaderNodeBsdfAnisotropic",
+        "shader:ShaderNodeBsdfDiffuse",
+        "shader:ShaderNodeBsdfGlass",
+        "shader:ShaderNodeBsdfPrincipled",
+        "shader:ShaderNodeDisplacement",
+        "shader:ShaderNodeEmission",
+        "shader:ShaderNodeGroup",
+        "shader:ShaderNodeMixShader"
+      ],
+      "witnesses": [
+        {
+          "node": "Material Output.001",
+          "scene": "archiviz",
+          "tree": "shader:material:Ceramics"
+        },
+        {
+          "node": "Material Output.001",
+          "scene": "archiviz",
+          "tree": "shader:material:Chrome"
+        },
+        {
+          "node": "Material Output.001",
+          "scene": "archiviz",
+          "tree": "shader:material:Chrome.001"
+        },
+        {
+          "node": "Material Output.001",
+          "scene": "archiviz",
+          "tree": "shader:material:Display"
+        },
+        {
+          "node": "Material Output",
+          "scene": "archiviz",
+          "tree": "shader:material:Glass"
+        },
+        {
+          "node": "Material Output.001",
+          "scene": "archiviz",
+          "tree": "shader:material:Glass.001"
+        },
+        {
+          "node": "Material Output",
+          "scene": "archiviz",
+          "tree": "shader:material:Grass"
+        },
+        {
+          "node": "Material Output.001",
+          "scene": "archiviz",
+          "tree": "shader:material:Holdout"
+        },
+        {
+          "node": "Material Output.001",
+          "scene": "archiviz",
+          "tree": "shader:material:Material"
+        },
+        {
+          "node": "Material Output.001",
+          "scene": "archiviz",
+          "tree": "shader:material:Metal-White"
+        },
+        {
+          "node": "Material Output.001",
+          "scene": "archiviz",
+          "tree": "shader:material:PBR-Metal-Roughness.002"
+        },
+        {
+          "node": "Material Output.001",
+          "scene": "archiviz",
+          "tree": "shader:material:Plaster"
+        },
+        {
+          "node": "Material Output.001",
+          "scene": "archiviz",
+          "tree": "shader:material:Plastic-White"
+        },
+        {
+          "node": "Material Output",
+          "scene": "archiviz",
+          "tree": "shader:material:Steny"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:LeatherBook_cover [lib.009]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:base_PlastiqueNoir [lib.010]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:base_brass [lib.010]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:base_carbon [lib.010]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:base_metal [lib.010]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:beigeBook_cover [lib.009]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:beigeBook_pages [lib.009]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:beigePaint"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:beigePaintedPlastic"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:beigePaintedwood"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:beigeWall"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:beige_paintedPipe"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:blackBoard"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:blackBoardLight"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:blackPaintedWood"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:boardFrame"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:ceilingAirVent"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:ceilingLamp_BlackPlastic [lib]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:ceilingLamp_metal [lib]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:ceillingLamp_light [lib]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:coloredPlastic"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:cork"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:crinkledPaper_paper [lib.008]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:dayLight_portal"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:drawing.001"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:drawing.002"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:drawing.003"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:drawing.005"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:drawing.006"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:drawing.007"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:drawing.008"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:dust"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:dustBin_wireframe [lib.004]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:dustbin_bottom_metal [lib.004]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:dustbin_metal [lib.004]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:frostedGlass"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:greyDiffusePaint"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:largeBox_glossyWhitePaper [lib.010]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:largeBox_greyPaper [lib.010]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:leatherBook_pages [lib.009]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:leatherChair_blackPlastic [lib.001]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:leatherChair_leather [lib.001]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:leatherChair_metal [lib.001]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:leatherCoat"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:paintedBlind"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:paintedCeiling"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:paper"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:pencil [lib.010]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:plaster"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:plasticGoldPen_greenPlastic [lib.010]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:porcelainHandle"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:postit"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:radiator_glossyPaint [lib.005]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:sc.blade"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:schoolDesk_blackPlastic [lib.003]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:schoolDesk_metal [lib.003]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:schoolDesk_plastic [lib.003]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:schoolDesk_wood [lib.003]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:suitCase_leather [lib.006]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:suitCase_metal [lib.006]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:suitCoat_darkWood [lib.002]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:suitCoat_metal [lib.002]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:teacherDesk_blackPlastic [lib.003]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:teacherDesk_metal [lib.003]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:teacherDesk_plastic [lib.003]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:teacherDesk_wood [lib.003]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:varnishedWoodDoor"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:wallClock_Glass [lib.007]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:wallClock_blackPlastic [lib.007]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:wallClock_darkWood [lib.007]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:wallClock_whiteBackground [lib.007]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:whiteChalk"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:whitePaintedWindow"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:white_glossPaint"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:woodFloor"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:woodPlanks"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:worldMap"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:yellowLetter"
+        },
+        {
+          "node": "Material Output",
+          "scene": "classroom",
+          "tree": "shader:material:zapBook_color [lib.009]"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:Greenleaf Treeline 003"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:brick clay"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:brick marble"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:brick marble smooth"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:brick pavement"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:bush"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:church brick"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:column marble"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:copper pipe"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:dark"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:glass far"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:grass - ground"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:grass blade"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:ink"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:ink bottle"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:iron_nail"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:leather - book - cover 1"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:leather - book - cover 2"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:leather - book - cover 3"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:outdoor pavement"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:paper - book"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:paper - page"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:pen"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:plaster - white"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:plaster med old"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:plaster no brick"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:plaster old"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:roof"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:sky1"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:stone pavement"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:terracotta"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:wood - chair"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:wood - charcoal"
+        },
+        {
+          "node": "Material Output",
+          "scene": "lone-monk",
+          "tree": "shader:material:wood - table"
+        },
+        {
+          "node": "Material Output",
+          "scene": "impact-fracture",
+          "tree": "shader:material:Material"
+        },
+        {
+          "node": "Material Output",
+          "scene": "impact-fracture",
+          "tree": "shader:material:ground"
+        }
+      ]
+    },
+    {
+      "authoredScenes": [
+        "archiviz",
+        "classroom",
+        "impact-fracture",
+        "lone-monk"
+      ],
+      "catalogCategory53": "partial",
+      "key": "shader:ShaderNodeOutputWorld",
+      "newSupportCredit": false,
+      "priority": "P0 Shared scene dependency",
+      "reachableModes": {
+        "is_active_output": [
+          "True"
+        ],
+        "target": [
+          "ALL"
+        ]
+      },
+      "reachableScenes": [
+        "archiviz",
+        "classroom",
+        "impact-fracture",
+        "lone-monk"
+      ],
+      "releaseQualification": "pending",
+      "scope": "shader-compositor-port",
+      "upstreamNodeKinds": [
+        "shader:ShaderNodeBackground"
+      ],
+      "witnesses": [
+        {
+          "node": "World Output",
+          "scene": "archiviz",
+          "tree": "shader:world:World"
+        },
+        {
+          "node": "World Output",
+          "scene": "classroom",
+          "tree": "shader:world:World"
+        },
+        {
+          "node": "World Output",
+          "scene": "classroom",
+          "tree": "shader:world:previz"
+        },
+        {
+          "node": "World Output",
+          "scene": "lone-monk",
+          "tree": "shader:world:World - nishita"
+        },
+        {
+          "node": "World Output",
+          "scene": "impact-fracture",
+          "tree": "shader:world:World"
+        }
+      ]
+    },
+    {
+      "authoredScenes": [
+        "classroom",
+        "impact-fracture",
+        "lone-monk"
+      ],
+      "catalogCategory53": "partial",
+      "key": "compositor:CompositorNodeGlare",
+      "newSupportCredit": false,
+      "priority": "P0 Shared scene dependency",
+      "reachableModes": {},
+      "reachableScenes": [
+        "classroom",
+        "impact-fracture",
+        "lone-monk"
+      ],
+      "releaseQualification": "pending",
+      "scope": "shader-compositor-port",
+      "upstreamNodeKinds": [
+        "compositor:CompositorNodeExposure",
+        "compositor:CompositorNodeInvert",
+        "compositor:CompositorNodeNormalize",
+        "compositor:CompositorNodeRLayers"
+      ],
+      "witnesses": [
+        {
+          "node": "Glare",
+          "scene": "classroom",
+          "tree": "compositor:Compositing Nodetree"
+        },
+        {
+          "node": "Glare.001",
+          "scene": "classroom",
+          "tree": "compositor:Compositing Nodetree"
+        },
+        {
+          "node": "Glare.002",
+          "scene": "classroom",
+          "tree": "compositor:Compositing Nodetree"
+        },
+        {
+          "node": "Glare",
+          "scene": "lone-monk",
+          "tree": "compositor:Compositing Nodetree"
+        },
+        {
+          "node": "Glare",
+          "scene": "impact-fracture",
+          "tree": "compositor:Compositing Nodetree"
+        }
+      ]
+    },
+    {
+      "authoredScenes": [
+        "classroom",
+        "impact-fracture",
+        "lone-monk"
+      ],
+      "catalogCategory53": "partial",
+      "key": "compositor:CompositorNodeRLayers",
+      "newSupportCredit": false,
+      "priority": "P0 Shared scene dependency",
+      "reachableModes": {
+        "layer": [
+          "RenderLayer",
+          "View Layer",
+          "ViewLayer",
+          "blackboardLamp_volumeLight",
+          "interior",
+          "windows_volumeLight"
+        ]
+      },
+      "reachableScenes": [
+        "classroom",
+        "impact-fracture",
+        "lone-monk"
+      ],
+      "releaseQualification": "pending",
+      "scope": "shader-compositor-port",
+      "upstreamNodeKinds": [],
+      "witnesses": [
+        {
+          "node": "Render Layers",
+          "scene": "classroom",
+          "tree": "compositor:Compositing Nodetree"
+        },
+        {
+          "node": "Render Layers.001",
+          "scene": "classroom",
+          "tree": "compositor:Compositing Nodetree"
+        },
+        {
+          "node": "Render Layers.002",
+          "scene": "classroom",
+          "tree": "compositor:Compositing Nodetree"
+        },
+        {
+          "node": "Render Layers.003",
+          "scene": "classroom",
+          "tree": "compositor:Compositing Nodetree"
+        },
+        {
+          "node": "Render Layers.004",
+          "scene": "classroom",
+          "tree": "compositor:Compositing Nodetree"
+        },
+        {
+          "node": "Render Layers.005",
+          "scene": "classroom",
+          "tree": "compositor:Compositing Nodetree"
+        },
+        {
+          "node": "Render Layers.007",
+          "scene": "classroom",
+          "tree": "compositor:Compositing Nodetree"
+        },
+        {
+          "node": "Render Layers",
+          "scene": "lone-monk",
+          "tree": "compositor:Compositing Nodetree"
+        },
+        {
+          "node": "Render Layers",
+          "scene": "impact-fracture",
+          "tree": "compositor:Compositing Nodetree"
+        }
+      ]
+    },
+    {
+      "authoredScenes": [
+        "classroom",
+        "impact-fracture",
+        "lone-monk"
+      ],
+      "catalogCategory53": "structural",
+      "key": "compositor:NodeGroupOutput",
+      "newSupportCredit": false,
+      "priority": "P0 Shared scene dependency",
+      "reachableModes": {
+        "is_active_output": [
+          "True"
+        ]
+      },
+      "reachableScenes": [
+        "classroom",
+        "impact-fracture",
+        "lone-monk"
+      ],
+      "releaseQualification": "pending",
+      "scope": "shader-compositor-port",
+      "upstreamNodeKinds": [
+        "compositor:CompositorNodeLensdist",
+        "compositor:CompositorNodeSetAlpha",
+        "compositor:GeometryNodeSwitch",
+        "compositor:NodeReroute"
+      ],
+      "witnesses": [
+        {
+          "node": "Group Output",
+          "scene": "classroom",
+          "tree": "compositor:Compositing Nodetree"
+        },
+        {
+          "node": "Group Output",
+          "scene": "classroom",
+          "tree": "compositor:PassCombine"
+        },
+        {
+          "node": "Group Output",
+          "scene": "lone-monk",
+          "tree": "compositor:Compositing Nodetree"
+        },
+        {
+          "node": "Group Output",
+          "scene": "impact-fracture",
+          "tree": "compositor:Compositing Nodetree"
         }
       ]
     },
@@ -732,6 +1677,470 @@
           "node": "Mapping.002",
           "scene": "lone-monk",
           "tree": "shader:material:wood - charcoal"
+        }
+      ]
+    },
+    {
+      "authoredScenes": [
+        "archiviz",
+        "classroom",
+        "impact-fracture",
+        "lone-monk"
+      ],
+      "catalogCategory53": "supported",
+      "key": "shader:ShaderNodeMath",
+      "newSupportCredit": false,
+      "priority": "P0 Shared scene dependency",
+      "reachableModes": {
+        "operation": [
+          "ADD",
+          "DIVIDE",
+          "GREATER_THAN",
+          "LESS_THAN",
+          "MULTIPLY",
+          "POWER"
+        ],
+        "use_clamp": [
+          "False",
+          "True"
+        ]
+      },
+      "reachableScenes": [
+        "classroom",
+        "impact-fracture",
+        "lone-monk"
+      ],
+      "releaseQualification": "pending",
+      "scope": "shader-compositor-port",
+      "upstreamNodeKinds": [
+        "shader:NodeGroupInput",
+        "shader:ShaderNodeBump",
+        "shader:ShaderNodeInvert",
+        "shader:ShaderNodeLayerWeight",
+        "shader:ShaderNodeMath",
+        "shader:ShaderNodeObjectInfo",
+        "shader:ShaderNodeParticleInfo",
+        "shader:ShaderNodeRGBCurve",
+        "shader:ShaderNodeTexImage",
+        "shader:ShaderNodeTexNoise",
+        "shader:ShaderNodeValToRGB",
+        "shader:ShaderNodeVertexColor"
+      ],
+      "witnesses": [
+        {
+          "node": "Math",
+          "scene": "classroom",
+          "tree": "shader:Plastique"
+        },
+        {
+          "node": "Math.001",
+          "scene": "classroom",
+          "tree": "shader:Plastique"
+        },
+        {
+          "node": "Math",
+          "scene": "classroom",
+          "tree": "shader:Plastique [lib.010]"
+        },
+        {
+          "node": "Math",
+          "scene": "classroom",
+          "tree": "shader:material:LeatherBook_cover [lib.009]"
+        },
+        {
+          "node": "Math",
+          "scene": "classroom",
+          "tree": "shader:material:ceilingLamp_metal [lib]"
+        },
+        {
+          "node": "Math",
+          "scene": "classroom",
+          "tree": "shader:material:coloredPlastic"
+        },
+        {
+          "node": "Math",
+          "scene": "classroom",
+          "tree": "shader:material:crinkledPaper_paper [lib.008]"
+        },
+        {
+          "node": "Math.001",
+          "scene": "classroom",
+          "tree": "shader:material:crinkledPaper_paper [lib.008]"
+        },
+        {
+          "node": "Math",
+          "scene": "classroom",
+          "tree": "shader:material:dustbin_bottom_metal [lib.004]"
+        },
+        {
+          "node": "Math",
+          "scene": "classroom",
+          "tree": "shader:material:frostedGlass"
+        },
+        {
+          "node": "Math",
+          "scene": "classroom",
+          "tree": "shader:material:leatherChair_leather [lib.001]"
+        },
+        {
+          "node": "Math",
+          "scene": "classroom",
+          "tree": "shader:material:leatherChair_metal [lib.001]"
+        },
+        {
+          "node": "Math",
+          "scene": "classroom",
+          "tree": "shader:material:paintedCeiling"
+        },
+        {
+          "node": "Math",
+          "scene": "classroom",
+          "tree": "shader:material:pencil [lib.010]"
+        },
+        {
+          "node": "Math.001",
+          "scene": "classroom",
+          "tree": "shader:material:pencil [lib.010]"
+        },
+        {
+          "node": "Math",
+          "scene": "classroom",
+          "tree": "shader:material:radiator_glossyPaint [lib.005]"
+        },
+        {
+          "node": "Math.001",
+          "scene": "classroom",
+          "tree": "shader:material:radiator_glossyPaint [lib.005]"
+        },
+        {
+          "node": "Math",
+          "scene": "classroom",
+          "tree": "shader:material:schoolDesk_metal [lib.003]"
+        },
+        {
+          "node": "Math",
+          "scene": "classroom",
+          "tree": "shader:material:schoolDesk_wood [lib.003]"
+        },
+        {
+          "node": "Math.001",
+          "scene": "classroom",
+          "tree": "shader:material:schoolDesk_wood [lib.003]"
+        },
+        {
+          "node": "Math",
+          "scene": "classroom",
+          "tree": "shader:material:suitCase_leather [lib.006]"
+        },
+        {
+          "node": "Math",
+          "scene": "classroom",
+          "tree": "shader:material:suitCoat_metal [lib.002]"
+        },
+        {
+          "node": "Math",
+          "scene": "classroom",
+          "tree": "shader:material:teacherDesk_metal [lib.003]"
+        },
+        {
+          "node": "Math",
+          "scene": "classroom",
+          "tree": "shader:material:teacherDesk_plastic [lib.003]"
+        },
+        {
+          "node": "Math",
+          "scene": "classroom",
+          "tree": "shader:material:woodPlanks"
+        },
+        {
+          "node": "Math",
+          "scene": "lone-monk",
+          "tree": "shader:material:brick clay"
+        },
+        {
+          "node": "Math.001",
+          "scene": "lone-monk",
+          "tree": "shader:material:brick clay"
+        },
+        {
+          "node": "Math",
+          "scene": "lone-monk",
+          "tree": "shader:material:brick marble"
+        },
+        {
+          "node": "Math.001",
+          "scene": "lone-monk",
+          "tree": "shader:material:brick marble"
+        },
+        {
+          "node": "Math",
+          "scene": "lone-monk",
+          "tree": "shader:material:brick marble smooth"
+        },
+        {
+          "node": "Math.001",
+          "scene": "lone-monk",
+          "tree": "shader:material:brick marble smooth"
+        },
+        {
+          "node": "Math",
+          "scene": "lone-monk",
+          "tree": "shader:material:brick pavement"
+        },
+        {
+          "node": "Math.001",
+          "scene": "lone-monk",
+          "tree": "shader:material:brick pavement"
+        },
+        {
+          "node": "Math",
+          "scene": "lone-monk",
+          "tree": "shader:material:bush"
+        },
+        {
+          "node": "Math.001",
+          "scene": "lone-monk",
+          "tree": "shader:material:bush"
+        },
+        {
+          "node": "Math",
+          "scene": "lone-monk",
+          "tree": "shader:material:church brick"
+        },
+        {
+          "node": "Math.001",
+          "scene": "lone-monk",
+          "tree": "shader:material:church brick"
+        },
+        {
+          "node": "Math",
+          "scene": "lone-monk",
+          "tree": "shader:material:column marble"
+        },
+        {
+          "node": "Math.001",
+          "scene": "lone-monk",
+          "tree": "shader:material:column marble"
+        },
+        {
+          "node": "Math.002",
+          "scene": "lone-monk",
+          "tree": "shader:material:column marble"
+        },
+        {
+          "node": "Math.003",
+          "scene": "lone-monk",
+          "tree": "shader:material:column marble"
+        },
+        {
+          "node": "Math",
+          "scene": "lone-monk",
+          "tree": "shader:material:copper pipe"
+        },
+        {
+          "node": "Math.001",
+          "scene": "lone-monk",
+          "tree": "shader:material:copper pipe"
+        },
+        {
+          "node": "Math.002",
+          "scene": "lone-monk",
+          "tree": "shader:material:glass far"
+        },
+        {
+          "node": "Math.003",
+          "scene": "lone-monk",
+          "tree": "shader:material:glass far"
+        },
+        {
+          "node": "Math",
+          "scene": "lone-monk",
+          "tree": "shader:material:grass - ground"
+        },
+        {
+          "node": "Math.001",
+          "scene": "lone-monk",
+          "tree": "shader:material:grass - ground"
+        },
+        {
+          "node": "Math",
+          "scene": "lone-monk",
+          "tree": "shader:material:ink bottle"
+        },
+        {
+          "node": "Math.001",
+          "scene": "lone-monk",
+          "tree": "shader:material:ink bottle"
+        },
+        {
+          "node": "Math",
+          "scene": "lone-monk",
+          "tree": "shader:material:iron_nail"
+        },
+        {
+          "node": "Math.001",
+          "scene": "lone-monk",
+          "tree": "shader:material:iron_nail"
+        },
+        {
+          "node": "Math",
+          "scene": "lone-monk",
+          "tree": "shader:material:leather - book - cover 1"
+        },
+        {
+          "node": "Math.001",
+          "scene": "lone-monk",
+          "tree": "shader:material:leather - book - cover 1"
+        },
+        {
+          "node": "Math.002",
+          "scene": "lone-monk",
+          "tree": "shader:material:leather - book - cover 1"
+        },
+        {
+          "node": "Math",
+          "scene": "lone-monk",
+          "tree": "shader:material:leather - book - cover 2"
+        },
+        {
+          "node": "Math.001",
+          "scene": "lone-monk",
+          "tree": "shader:material:leather - book - cover 2"
+        },
+        {
+          "node": "Math.002",
+          "scene": "lone-monk",
+          "tree": "shader:material:leather - book - cover 2"
+        },
+        {
+          "node": "Math",
+          "scene": "lone-monk",
+          "tree": "shader:material:leather - book - cover 3"
+        },
+        {
+          "node": "Math.001",
+          "scene": "lone-monk",
+          "tree": "shader:material:leather - book - cover 3"
+        },
+        {
+          "node": "Math.002",
+          "scene": "lone-monk",
+          "tree": "shader:material:leather - book - cover 3"
+        },
+        {
+          "node": "Math",
+          "scene": "lone-monk",
+          "tree": "shader:material:outdoor pavement"
+        },
+        {
+          "node": "Math.001",
+          "scene": "lone-monk",
+          "tree": "shader:material:outdoor pavement"
+        },
+        {
+          "node": "Math",
+          "scene": "lone-monk",
+          "tree": "shader:material:pen"
+        },
+        {
+          "node": "Math.001",
+          "scene": "lone-monk",
+          "tree": "shader:material:pen"
+        },
+        {
+          "node": "Math",
+          "scene": "lone-monk",
+          "tree": "shader:material:plaster - white"
+        },
+        {
+          "node": "Math.001",
+          "scene": "lone-monk",
+          "tree": "shader:material:plaster - white"
+        },
+        {
+          "node": "Math",
+          "scene": "lone-monk",
+          "tree": "shader:material:plaster med old"
+        },
+        {
+          "node": "Math.001",
+          "scene": "lone-monk",
+          "tree": "shader:material:plaster med old"
+        },
+        {
+          "node": "Math",
+          "scene": "lone-monk",
+          "tree": "shader:material:plaster no brick"
+        },
+        {
+          "node": "Math.001",
+          "scene": "lone-monk",
+          "tree": "shader:material:plaster no brick"
+        },
+        {
+          "node": "Math",
+          "scene": "lone-monk",
+          "tree": "shader:material:plaster old"
+        },
+        {
+          "node": "Math.001",
+          "scene": "lone-monk",
+          "tree": "shader:material:plaster old"
+        },
+        {
+          "node": "Math",
+          "scene": "lone-monk",
+          "tree": "shader:material:roof"
+        },
+        {
+          "node": "Math.001",
+          "scene": "lone-monk",
+          "tree": "shader:material:roof"
+        },
+        {
+          "node": "Math",
+          "scene": "lone-monk",
+          "tree": "shader:material:stone pavement"
+        },
+        {
+          "node": "Math.001",
+          "scene": "lone-monk",
+          "tree": "shader:material:stone pavement"
+        },
+        {
+          "node": "Math",
+          "scene": "lone-monk",
+          "tree": "shader:material:terracotta"
+        },
+        {
+          "node": "Math.001",
+          "scene": "lone-monk",
+          "tree": "shader:material:terracotta"
+        },
+        {
+          "node": "Math",
+          "scene": "lone-monk",
+          "tree": "shader:material:wood - chair"
+        },
+        {
+          "node": "Math.001",
+          "scene": "lone-monk",
+          "tree": "shader:material:wood - chair"
+        },
+        {
+          "node": "Math",
+          "scene": "lone-monk",
+          "tree": "shader:material:wood - charcoal"
+        },
+        {
+          "node": "Math.001",
+          "scene": "lone-monk",
+          "tree": "shader:material:wood - charcoal"
+        },
+        {
+          "node": "Math",
+          "scene": "impact-fracture",
+          "tree": "shader:material:Material"
         }
       ]
     },
@@ -1486,732 +2895,6 @@
           "node": "Mix Shader",
           "scene": "lone-monk",
           "tree": "shader:material:pen"
-        }
-      ]
-    },
-    {
-      "authoredScenes": [
-        "archiviz",
-        "classroom",
-        "lone-monk"
-      ],
-      "catalogCategory53": "structural",
-      "key": "shader:ShaderNodeOutputMaterial",
-      "newSupportCredit": false,
-      "priority": "P0 Shared scene dependency",
-      "reachableModes": {
-        "is_active_output": [
-          "True"
-        ],
-        "target": [
-          "ALL",
-          "CYCLES",
-          "EEVEE"
-        ]
-      },
-      "reachableScenes": [
-        "archiviz",
-        "classroom",
-        "lone-monk"
-      ],
-      "releaseQualification": "pending",
-      "scope": "shader-compositor-port",
-      "upstreamNodeKinds": [
-        "shader:ShaderNodeBsdfAnisotropic",
-        "shader:ShaderNodeBsdfDiffuse",
-        "shader:ShaderNodeBsdfGlass",
-        "shader:ShaderNodeBsdfPrincipled",
-        "shader:ShaderNodeDisplacement",
-        "shader:ShaderNodeEmission",
-        "shader:ShaderNodeGroup",
-        "shader:ShaderNodeMixShader"
-      ],
-      "witnesses": [
-        {
-          "node": "Material Output.001",
-          "scene": "archiviz",
-          "tree": "shader:material:Ceramics"
-        },
-        {
-          "node": "Material Output.001",
-          "scene": "archiviz",
-          "tree": "shader:material:Chrome"
-        },
-        {
-          "node": "Material Output.001",
-          "scene": "archiviz",
-          "tree": "shader:material:Chrome.001"
-        },
-        {
-          "node": "Material Output.001",
-          "scene": "archiviz",
-          "tree": "shader:material:Display"
-        },
-        {
-          "node": "Material Output",
-          "scene": "archiviz",
-          "tree": "shader:material:Glass"
-        },
-        {
-          "node": "Material Output.001",
-          "scene": "archiviz",
-          "tree": "shader:material:Glass.001"
-        },
-        {
-          "node": "Material Output",
-          "scene": "archiviz",
-          "tree": "shader:material:Grass"
-        },
-        {
-          "node": "Material Output.001",
-          "scene": "archiviz",
-          "tree": "shader:material:Holdout"
-        },
-        {
-          "node": "Material Output.001",
-          "scene": "archiviz",
-          "tree": "shader:material:Material"
-        },
-        {
-          "node": "Material Output.001",
-          "scene": "archiviz",
-          "tree": "shader:material:Metal-White"
-        },
-        {
-          "node": "Material Output.001",
-          "scene": "archiviz",
-          "tree": "shader:material:PBR-Metal-Roughness.002"
-        },
-        {
-          "node": "Material Output.001",
-          "scene": "archiviz",
-          "tree": "shader:material:Plaster"
-        },
-        {
-          "node": "Material Output.001",
-          "scene": "archiviz",
-          "tree": "shader:material:Plastic-White"
-        },
-        {
-          "node": "Material Output",
-          "scene": "archiviz",
-          "tree": "shader:material:Steny"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:LeatherBook_cover [lib.009]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:base_PlastiqueNoir [lib.010]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:base_brass [lib.010]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:base_carbon [lib.010]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:base_metal [lib.010]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:beigeBook_cover [lib.009]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:beigeBook_pages [lib.009]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:beigePaint"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:beigePaintedPlastic"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:beigePaintedwood"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:beigeWall"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:beige_paintedPipe"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:blackBoard"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:blackBoardLight"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:blackPaintedWood"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:boardFrame"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:ceilingAirVent"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:ceilingLamp_BlackPlastic [lib]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:ceilingLamp_metal [lib]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:ceillingLamp_light [lib]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:coloredPlastic"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:cork"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:crinkledPaper_paper [lib.008]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:dayLight_portal"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:drawing.001"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:drawing.002"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:drawing.003"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:drawing.005"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:drawing.006"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:drawing.007"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:drawing.008"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:dust"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:dustBin_wireframe [lib.004]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:dustbin_bottom_metal [lib.004]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:dustbin_metal [lib.004]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:frostedGlass"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:greyDiffusePaint"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:largeBox_glossyWhitePaper [lib.010]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:largeBox_greyPaper [lib.010]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:leatherBook_pages [lib.009]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:leatherChair_blackPlastic [lib.001]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:leatherChair_leather [lib.001]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:leatherChair_metal [lib.001]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:leatherCoat"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:paintedBlind"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:paintedCeiling"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:paper"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:pencil [lib.010]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:plaster"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:plasticGoldPen_greenPlastic [lib.010]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:porcelainHandle"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:postit"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:radiator_glossyPaint [lib.005]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:sc.blade"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:schoolDesk_blackPlastic [lib.003]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:schoolDesk_metal [lib.003]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:schoolDesk_plastic [lib.003]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:schoolDesk_wood [lib.003]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:suitCase_leather [lib.006]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:suitCase_metal [lib.006]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:suitCoat_darkWood [lib.002]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:suitCoat_metal [lib.002]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:teacherDesk_blackPlastic [lib.003]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:teacherDesk_metal [lib.003]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:teacherDesk_plastic [lib.003]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:teacherDesk_wood [lib.003]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:varnishedWoodDoor"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:wallClock_Glass [lib.007]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:wallClock_blackPlastic [lib.007]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:wallClock_darkWood [lib.007]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:wallClock_whiteBackground [lib.007]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:whiteChalk"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:whitePaintedWindow"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:white_glossPaint"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:woodFloor"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:woodPlanks"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:worldMap"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:yellowLetter"
-        },
-        {
-          "node": "Material Output",
-          "scene": "classroom",
-          "tree": "shader:material:zapBook_color [lib.009]"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:Greenleaf Treeline 003"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:brick clay"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:brick marble"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:brick marble smooth"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:brick pavement"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:bush"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:church brick"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:column marble"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:copper pipe"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:dark"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:glass far"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:grass - ground"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:grass blade"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:ink"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:ink bottle"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:iron_nail"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:leather - book - cover 1"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:leather - book - cover 2"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:leather - book - cover 3"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:outdoor pavement"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:paper - book"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:paper - page"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:pen"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:plaster - white"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:plaster med old"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:plaster no brick"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:plaster old"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:roof"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:sky1"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:stone pavement"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:terracotta"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:wood - chair"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:wood - charcoal"
-        },
-        {
-          "node": "Material Output",
-          "scene": "lone-monk",
-          "tree": "shader:material:wood - table"
-        }
-      ]
-    },
-    {
-      "authoredScenes": [
-        "archiviz",
-        "classroom",
-        "lone-monk"
-      ],
-      "catalogCategory53": "partial",
-      "key": "shader:ShaderNodeOutputWorld",
-      "newSupportCredit": false,
-      "priority": "P0 Shared scene dependency",
-      "reachableModes": {
-        "is_active_output": [
-          "True"
-        ],
-        "target": [
-          "ALL"
-        ]
-      },
-      "reachableScenes": [
-        "archiviz",
-        "classroom",
-        "lone-monk"
-      ],
-      "releaseQualification": "pending",
-      "scope": "shader-compositor-port",
-      "upstreamNodeKinds": [
-        "shader:ShaderNodeBackground"
-      ],
-      "witnesses": [
-        {
-          "node": "World Output",
-          "scene": "archiviz",
-          "tree": "shader:world:World"
-        },
-        {
-          "node": "World Output",
-          "scene": "classroom",
-          "tree": "shader:world:World"
-        },
-        {
-          "node": "World Output",
-          "scene": "classroom",
-          "tree": "shader:world:previz"
-        },
-        {
-          "node": "World Output",
-          "scene": "lone-monk",
-          "tree": "shader:world:World - nishita"
         }
       ]
     },
@@ -3369,45 +4052,215 @@
     },
     {
       "authoredScenes": [
+        "archiviz",
         "classroom",
+        "impact-fracture",
         "lone-monk"
       ],
       "catalogCategory53": "partial",
-      "key": "compositor:CompositorNodeGlare",
+      "key": "shader:ShaderNodeTexNoise",
       "newSupportCredit": false,
       "priority": "P0 Shared scene dependency",
-      "reachableModes": {},
+      "reachableModes": {
+        "noise_dimensions": [
+          "2D",
+          "3D"
+        ],
+        "noise_type": [
+          "FBM"
+        ],
+        "normalize": [
+          "False",
+          "True"
+        ]
+      },
       "reachableScenes": [
         "classroom",
+        "impact-fracture",
         "lone-monk"
       ],
       "releaseQualification": "pending",
       "scope": "shader-compositor-port",
       "upstreamNodeKinds": [
-        "compositor:CompositorNodeExposure",
-        "compositor:CompositorNodeInvert",
-        "compositor:CompositorNodeNormalize"
+        "shader:ShaderNodeMapping",
+        "shader:ShaderNodeTexCoord",
+        "shader:ShaderNodeTexNoise"
       ],
       "witnesses": [
         {
-          "node": "Glare",
+          "node": "Noise Texture",
           "scene": "classroom",
-          "tree": "compositor:Compositing Nodetree"
+          "tree": "shader:material:beigePaint"
         },
         {
-          "node": "Glare.001",
+          "node": "Noise Texture",
           "scene": "classroom",
-          "tree": "compositor:Compositing Nodetree"
+          "tree": "shader:material:beige_paintedPipe"
         },
         {
-          "node": "Glare.002",
+          "node": "Noise Texture",
           "scene": "classroom",
-          "tree": "compositor:Compositing Nodetree"
+          "tree": "shader:material:blackPaintedWood"
         },
         {
-          "node": "Glare",
+          "node": "Noise Texture.001",
+          "scene": "classroom",
+          "tree": "shader:material:blackPaintedWood"
+        },
+        {
+          "node": "Noise Texture",
+          "scene": "classroom",
+          "tree": "shader:material:ceilingAirVent"
+        },
+        {
+          "node": "Noise Texture",
+          "scene": "classroom",
+          "tree": "shader:material:dustbin_metal [lib.004]"
+        },
+        {
+          "node": "Noise Texture",
+          "scene": "classroom",
+          "tree": "shader:material:leatherCoat"
+        },
+        {
+          "node": "Noise Texture",
+          "scene": "classroom",
+          "tree": "shader:material:paintedCeiling"
+        },
+        {
+          "node": "Noise Texture.001",
+          "scene": "classroom",
+          "tree": "shader:material:paintedCeiling"
+        },
+        {
+          "node": "Noise Texture",
+          "scene": "classroom",
+          "tree": "shader:material:radiator_glossyPaint [lib.005]"
+        },
+        {
+          "node": "Noise Texture.001",
+          "scene": "classroom",
+          "tree": "shader:material:radiator_glossyPaint [lib.005]"
+        },
+        {
+          "node": "Noise Texture",
+          "scene": "classroom",
+          "tree": "shader:material:schoolDesk_plastic [lib.003]"
+        },
+        {
+          "node": "Noise Texture",
+          "scene": "classroom",
+          "tree": "shader:material:teacherDesk_plastic [lib.003]"
+        },
+        {
+          "node": "Noise Texture",
+          "scene": "classroom",
+          "tree": "shader:material:wallClock_blackPlastic [lib.007]"
+        },
+        {
+          "node": "Noise Texture.001",
+          "scene": "classroom",
+          "tree": "shader:material:wallClock_blackPlastic [lib.007]"
+        },
+        {
+          "node": "Noise Texture",
+          "scene": "classroom",
+          "tree": "shader:material:wallClock_darkWood [lib.007]"
+        },
+        {
+          "node": "Noise Texture.001",
+          "scene": "classroom",
+          "tree": "shader:material:wallClock_darkWood [lib.007]"
+        },
+        {
+          "node": "Noise Texture",
+          "scene": "classroom",
+          "tree": "shader:material:whitePaintedWindow"
+        },
+        {
+          "node": "Noise Texture",
           "scene": "lone-monk",
-          "tree": "compositor:Compositing Nodetree"
+          "tree": "shader:material:church brick"
+        },
+        {
+          "node": "Noise Texture",
+          "scene": "lone-monk",
+          "tree": "shader:material:copper pipe"
+        },
+        {
+          "node": "Noise Texture.001",
+          "scene": "lone-monk",
+          "tree": "shader:material:copper pipe"
+        },
+        {
+          "node": "Noise Texture",
+          "scene": "lone-monk",
+          "tree": "shader:material:glass far"
+        },
+        {
+          "node": "Musgrave Texture",
+          "scene": "lone-monk",
+          "tree": "shader:material:ink"
+        },
+        {
+          "node": "Noise Texture",
+          "scene": "lone-monk",
+          "tree": "shader:material:ink"
+        },
+        {
+          "node": "Noise Texture.001",
+          "scene": "lone-monk",
+          "tree": "shader:material:ink"
+        },
+        {
+          "node": "Noise Texture",
+          "scene": "lone-monk",
+          "tree": "shader:material:ink bottle"
+        },
+        {
+          "node": "Noise Texture.001",
+          "scene": "lone-monk",
+          "tree": "shader:material:ink bottle"
+        },
+        {
+          "node": "Noise Texture",
+          "scene": "lone-monk",
+          "tree": "shader:material:iron_nail"
+        },
+        {
+          "node": "Noise Texture.001",
+          "scene": "lone-monk",
+          "tree": "shader:material:iron_nail"
+        },
+        {
+          "node": "Noise Texture",
+          "scene": "lone-monk",
+          "tree": "shader:material:paper - book"
+        },
+        {
+          "node": "Noise Texture",
+          "scene": "lone-monk",
+          "tree": "shader:material:plaster - white"
+        },
+        {
+          "node": "Noise Texture.001",
+          "scene": "lone-monk",
+          "tree": "shader:material:plaster - white"
+        },
+        {
+          "node": "Noise Texture",
+          "scene": "lone-monk",
+          "tree": "shader:material:plaster med old"
+        },
+        {
+          "node": "Noise Texture",
+          "scene": "impact-fracture",
+          "tree": "shader:material:Material"
+        },
+        {
+          "node": "Noise Texture.001",
+          "scene": "impact-fracture",
+          "tree": "shader:material:Material"
         }
       ]
     },
@@ -3416,7 +4269,7 @@
         "classroom",
         "lone-monk"
       ],
-      "catalogCategory53": "unsupported",
+      "catalogCategory53": "partial",
       "key": "compositor:CompositorNodeLensdist",
       "newSupportCredit": false,
       "priority": "P0 Shared scene dependency",
@@ -3444,74 +4297,6 @@
         },
         {
           "node": "Lens Distortion",
-          "scene": "lone-monk",
-          "tree": "compositor:Compositing Nodetree"
-        }
-      ]
-    },
-    {
-      "authoredScenes": [
-        "classroom",
-        "lone-monk"
-      ],
-      "catalogCategory53": "partial",
-      "key": "compositor:CompositorNodeRLayers",
-      "newSupportCredit": false,
-      "priority": "P0 Shared scene dependency",
-      "reachableModes": {
-        "layer": [
-          "RenderLayer",
-          "View Layer",
-          "blackboardLamp_volumeLight",
-          "interior",
-          "windows_volumeLight"
-        ]
-      },
-      "reachableScenes": [
-        "classroom",
-        "lone-monk"
-      ],
-      "releaseQualification": "pending",
-      "scope": "shader-compositor-port",
-      "upstreamNodeKinds": [],
-      "witnesses": [
-        {
-          "node": "Render Layers",
-          "scene": "classroom",
-          "tree": "compositor:Compositing Nodetree"
-        },
-        {
-          "node": "Render Layers.001",
-          "scene": "classroom",
-          "tree": "compositor:Compositing Nodetree"
-        },
-        {
-          "node": "Render Layers.002",
-          "scene": "classroom",
-          "tree": "compositor:Compositing Nodetree"
-        },
-        {
-          "node": "Render Layers.003",
-          "scene": "classroom",
-          "tree": "compositor:Compositing Nodetree"
-        },
-        {
-          "node": "Render Layers.004",
-          "scene": "classroom",
-          "tree": "compositor:Compositing Nodetree"
-        },
-        {
-          "node": "Render Layers.005",
-          "scene": "classroom",
-          "tree": "compositor:Compositing Nodetree"
-        },
-        {
-          "node": "Render Layers.007",
-          "scene": "classroom",
-          "tree": "compositor:Compositing Nodetree"
-        },
-        {
-          "node": "Render Layers",
           "scene": "lone-monk",
           "tree": "compositor:Compositing Nodetree"
         }
@@ -3599,42 +4384,53 @@
     {
       "authoredScenes": [
         "classroom",
-        "lone-monk"
+        "impact-fracture"
       ],
       "catalogCategory53": "structural",
-      "key": "compositor:NodeGroupOutput",
+      "key": "compositor:NodeReroute",
       "newSupportCredit": false,
       "priority": "P0 Shared scene dependency",
-      "reachableModes": {
-        "is_active_output": [
-          "True"
-        ]
-      },
+      "reachableModes": {},
       "reachableScenes": [
         "classroom",
-        "lone-monk"
+        "impact-fracture"
       ],
       "releaseQualification": "pending",
       "scope": "shader-compositor-port",
       "upstreamNodeKinds": [
-        "compositor:CompositorNodeLensdist",
-        "compositor:CompositorNodeSetAlpha",
-        "compositor:GeometryNodeSwitch"
+        "compositor:CompositorNodeFilter",
+        "compositor:CompositorNodeRLayers",
+        "compositor:NodeReroute"
       ],
       "witnesses": [
         {
-          "node": "Group Output",
+          "node": "Reroute.001",
           "scene": "classroom",
           "tree": "compositor:Compositing Nodetree"
         },
         {
-          "node": "Group Output",
+          "node": "Reroute.005",
           "scene": "classroom",
-          "tree": "compositor:PassCombine"
+          "tree": "compositor:Compositing Nodetree"
         },
         {
-          "node": "Group Output",
-          "scene": "lone-monk",
+          "node": "Reroute.012",
+          "scene": "classroom",
+          "tree": "compositor:Compositing Nodetree"
+        },
+        {
+          "node": "Reroute.018",
+          "scene": "classroom",
+          "tree": "compositor:Compositing Nodetree"
+        },
+        {
+          "node": "Reroute.020",
+          "scene": "classroom",
+          "tree": "compositor:Compositing Nodetree"
+        },
+        {
+          "node": "Reroute",
+          "scene": "impact-fracture",
           "tree": "compositor:Compositing Nodetree"
         }
       ]
@@ -3967,7 +4763,8 @@
     {
       "authoredScenes": [
         "archiviz",
-        "classroom"
+        "classroom",
+        "impact-fracture"
       ],
       "catalogCategory53": "not-in-shader-compositor-catalog",
       "key": "geometry:FunctionNodeBooleanMath",
@@ -4009,7 +4806,8 @@
     {
       "authoredScenes": [
         "archiviz",
-        "classroom"
+        "classroom",
+        "impact-fracture"
       ],
       "catalogCategory53": "not-in-shader-compositor-catalog",
       "key": "geometry:FunctionNodeCompare",
@@ -4222,7 +5020,8 @@
     {
       "authoredScenes": [
         "archiviz",
-        "classroom"
+        "classroom",
+        "impact-fracture"
       ],
       "catalogCategory53": "not-in-shader-compositor-catalog",
       "key": "geometry:NodeGroupInput",
@@ -4272,7 +5071,8 @@
     {
       "authoredScenes": [
         "archiviz",
-        "classroom"
+        "classroom",
+        "impact-fracture"
       ],
       "catalogCategory53": "not-in-shader-compositor-catalog",
       "key": "geometry:NodeGroupOutput",
@@ -5259,6 +6059,7 @@
       "authoredScenes": [
         "archiviz",
         "classroom",
+        "impact-fracture",
         "lone-monk"
       ],
       "catalogCategory53": "partial",
@@ -6322,463 +7123,6 @@
         "classroom",
         "lone-monk"
       ],
-      "catalogCategory53": "supported",
-      "key": "shader:ShaderNodeMath",
-      "newSupportCredit": false,
-      "priority": "P0 Shared scene dependency",
-      "reachableModes": {
-        "operation": [
-          "ADD",
-          "DIVIDE",
-          "GREATER_THAN",
-          "LESS_THAN",
-          "MULTIPLY",
-          "POWER"
-        ],
-        "use_clamp": [
-          "False",
-          "True"
-        ]
-      },
-      "reachableScenes": [
-        "classroom",
-        "lone-monk"
-      ],
-      "releaseQualification": "pending",
-      "scope": "shader-compositor-port",
-      "upstreamNodeKinds": [
-        "shader:NodeGroupInput",
-        "shader:ShaderNodeBump",
-        "shader:ShaderNodeInvert",
-        "shader:ShaderNodeLayerWeight",
-        "shader:ShaderNodeMath",
-        "shader:ShaderNodeObjectInfo",
-        "shader:ShaderNodeParticleInfo",
-        "shader:ShaderNodeRGBCurve",
-        "shader:ShaderNodeTexImage",
-        "shader:ShaderNodeTexNoise",
-        "shader:ShaderNodeValToRGB",
-        "shader:ShaderNodeVertexColor"
-      ],
-      "witnesses": [
-        {
-          "node": "Math",
-          "scene": "classroom",
-          "tree": "shader:Plastique"
-        },
-        {
-          "node": "Math.001",
-          "scene": "classroom",
-          "tree": "shader:Plastique"
-        },
-        {
-          "node": "Math",
-          "scene": "classroom",
-          "tree": "shader:Plastique [lib.010]"
-        },
-        {
-          "node": "Math",
-          "scene": "classroom",
-          "tree": "shader:material:LeatherBook_cover [lib.009]"
-        },
-        {
-          "node": "Math",
-          "scene": "classroom",
-          "tree": "shader:material:ceilingLamp_metal [lib]"
-        },
-        {
-          "node": "Math",
-          "scene": "classroom",
-          "tree": "shader:material:coloredPlastic"
-        },
-        {
-          "node": "Math",
-          "scene": "classroom",
-          "tree": "shader:material:crinkledPaper_paper [lib.008]"
-        },
-        {
-          "node": "Math.001",
-          "scene": "classroom",
-          "tree": "shader:material:crinkledPaper_paper [lib.008]"
-        },
-        {
-          "node": "Math",
-          "scene": "classroom",
-          "tree": "shader:material:dustbin_bottom_metal [lib.004]"
-        },
-        {
-          "node": "Math",
-          "scene": "classroom",
-          "tree": "shader:material:frostedGlass"
-        },
-        {
-          "node": "Math",
-          "scene": "classroom",
-          "tree": "shader:material:leatherChair_leather [lib.001]"
-        },
-        {
-          "node": "Math",
-          "scene": "classroom",
-          "tree": "shader:material:leatherChair_metal [lib.001]"
-        },
-        {
-          "node": "Math",
-          "scene": "classroom",
-          "tree": "shader:material:paintedCeiling"
-        },
-        {
-          "node": "Math",
-          "scene": "classroom",
-          "tree": "shader:material:pencil [lib.010]"
-        },
-        {
-          "node": "Math.001",
-          "scene": "classroom",
-          "tree": "shader:material:pencil [lib.010]"
-        },
-        {
-          "node": "Math",
-          "scene": "classroom",
-          "tree": "shader:material:radiator_glossyPaint [lib.005]"
-        },
-        {
-          "node": "Math.001",
-          "scene": "classroom",
-          "tree": "shader:material:radiator_glossyPaint [lib.005]"
-        },
-        {
-          "node": "Math",
-          "scene": "classroom",
-          "tree": "shader:material:schoolDesk_metal [lib.003]"
-        },
-        {
-          "node": "Math",
-          "scene": "classroom",
-          "tree": "shader:material:schoolDesk_wood [lib.003]"
-        },
-        {
-          "node": "Math.001",
-          "scene": "classroom",
-          "tree": "shader:material:schoolDesk_wood [lib.003]"
-        },
-        {
-          "node": "Math",
-          "scene": "classroom",
-          "tree": "shader:material:suitCase_leather [lib.006]"
-        },
-        {
-          "node": "Math",
-          "scene": "classroom",
-          "tree": "shader:material:suitCoat_metal [lib.002]"
-        },
-        {
-          "node": "Math",
-          "scene": "classroom",
-          "tree": "shader:material:teacherDesk_metal [lib.003]"
-        },
-        {
-          "node": "Math",
-          "scene": "classroom",
-          "tree": "shader:material:teacherDesk_plastic [lib.003]"
-        },
-        {
-          "node": "Math",
-          "scene": "classroom",
-          "tree": "shader:material:woodPlanks"
-        },
-        {
-          "node": "Math",
-          "scene": "lone-monk",
-          "tree": "shader:material:brick clay"
-        },
-        {
-          "node": "Math.001",
-          "scene": "lone-monk",
-          "tree": "shader:material:brick clay"
-        },
-        {
-          "node": "Math",
-          "scene": "lone-monk",
-          "tree": "shader:material:brick marble"
-        },
-        {
-          "node": "Math.001",
-          "scene": "lone-monk",
-          "tree": "shader:material:brick marble"
-        },
-        {
-          "node": "Math",
-          "scene": "lone-monk",
-          "tree": "shader:material:brick marble smooth"
-        },
-        {
-          "node": "Math.001",
-          "scene": "lone-monk",
-          "tree": "shader:material:brick marble smooth"
-        },
-        {
-          "node": "Math",
-          "scene": "lone-monk",
-          "tree": "shader:material:brick pavement"
-        },
-        {
-          "node": "Math.001",
-          "scene": "lone-monk",
-          "tree": "shader:material:brick pavement"
-        },
-        {
-          "node": "Math",
-          "scene": "lone-monk",
-          "tree": "shader:material:bush"
-        },
-        {
-          "node": "Math.001",
-          "scene": "lone-monk",
-          "tree": "shader:material:bush"
-        },
-        {
-          "node": "Math",
-          "scene": "lone-monk",
-          "tree": "shader:material:church brick"
-        },
-        {
-          "node": "Math.001",
-          "scene": "lone-monk",
-          "tree": "shader:material:church brick"
-        },
-        {
-          "node": "Math",
-          "scene": "lone-monk",
-          "tree": "shader:material:column marble"
-        },
-        {
-          "node": "Math.001",
-          "scene": "lone-monk",
-          "tree": "shader:material:column marble"
-        },
-        {
-          "node": "Math.002",
-          "scene": "lone-monk",
-          "tree": "shader:material:column marble"
-        },
-        {
-          "node": "Math.003",
-          "scene": "lone-monk",
-          "tree": "shader:material:column marble"
-        },
-        {
-          "node": "Math",
-          "scene": "lone-monk",
-          "tree": "shader:material:copper pipe"
-        },
-        {
-          "node": "Math.001",
-          "scene": "lone-monk",
-          "tree": "shader:material:copper pipe"
-        },
-        {
-          "node": "Math.002",
-          "scene": "lone-monk",
-          "tree": "shader:material:glass far"
-        },
-        {
-          "node": "Math.003",
-          "scene": "lone-monk",
-          "tree": "shader:material:glass far"
-        },
-        {
-          "node": "Math",
-          "scene": "lone-monk",
-          "tree": "shader:material:grass - ground"
-        },
-        {
-          "node": "Math.001",
-          "scene": "lone-monk",
-          "tree": "shader:material:grass - ground"
-        },
-        {
-          "node": "Math",
-          "scene": "lone-monk",
-          "tree": "shader:material:ink bottle"
-        },
-        {
-          "node": "Math.001",
-          "scene": "lone-monk",
-          "tree": "shader:material:ink bottle"
-        },
-        {
-          "node": "Math",
-          "scene": "lone-monk",
-          "tree": "shader:material:iron_nail"
-        },
-        {
-          "node": "Math.001",
-          "scene": "lone-monk",
-          "tree": "shader:material:iron_nail"
-        },
-        {
-          "node": "Math",
-          "scene": "lone-monk",
-          "tree": "shader:material:leather - book - cover 1"
-        },
-        {
-          "node": "Math.001",
-          "scene": "lone-monk",
-          "tree": "shader:material:leather - book - cover 1"
-        },
-        {
-          "node": "Math.002",
-          "scene": "lone-monk",
-          "tree": "shader:material:leather - book - cover 1"
-        },
-        {
-          "node": "Math",
-          "scene": "lone-monk",
-          "tree": "shader:material:leather - book - cover 2"
-        },
-        {
-          "node": "Math.001",
-          "scene": "lone-monk",
-          "tree": "shader:material:leather - book - cover 2"
-        },
-        {
-          "node": "Math.002",
-          "scene": "lone-monk",
-          "tree": "shader:material:leather - book - cover 2"
-        },
-        {
-          "node": "Math",
-          "scene": "lone-monk",
-          "tree": "shader:material:leather - book - cover 3"
-        },
-        {
-          "node": "Math.001",
-          "scene": "lone-monk",
-          "tree": "shader:material:leather - book - cover 3"
-        },
-        {
-          "node": "Math.002",
-          "scene": "lone-monk",
-          "tree": "shader:material:leather - book - cover 3"
-        },
-        {
-          "node": "Math",
-          "scene": "lone-monk",
-          "tree": "shader:material:outdoor pavement"
-        },
-        {
-          "node": "Math.001",
-          "scene": "lone-monk",
-          "tree": "shader:material:outdoor pavement"
-        },
-        {
-          "node": "Math",
-          "scene": "lone-monk",
-          "tree": "shader:material:pen"
-        },
-        {
-          "node": "Math.001",
-          "scene": "lone-monk",
-          "tree": "shader:material:pen"
-        },
-        {
-          "node": "Math",
-          "scene": "lone-monk",
-          "tree": "shader:material:plaster - white"
-        },
-        {
-          "node": "Math.001",
-          "scene": "lone-monk",
-          "tree": "shader:material:plaster - white"
-        },
-        {
-          "node": "Math",
-          "scene": "lone-monk",
-          "tree": "shader:material:plaster med old"
-        },
-        {
-          "node": "Math.001",
-          "scene": "lone-monk",
-          "tree": "shader:material:plaster med old"
-        },
-        {
-          "node": "Math",
-          "scene": "lone-monk",
-          "tree": "shader:material:plaster no brick"
-        },
-        {
-          "node": "Math.001",
-          "scene": "lone-monk",
-          "tree": "shader:material:plaster no brick"
-        },
-        {
-          "node": "Math",
-          "scene": "lone-monk",
-          "tree": "shader:material:plaster old"
-        },
-        {
-          "node": "Math.001",
-          "scene": "lone-monk",
-          "tree": "shader:material:plaster old"
-        },
-        {
-          "node": "Math",
-          "scene": "lone-monk",
-          "tree": "shader:material:roof"
-        },
-        {
-          "node": "Math.001",
-          "scene": "lone-monk",
-          "tree": "shader:material:roof"
-        },
-        {
-          "node": "Math",
-          "scene": "lone-monk",
-          "tree": "shader:material:stone pavement"
-        },
-        {
-          "node": "Math.001",
-          "scene": "lone-monk",
-          "tree": "shader:material:stone pavement"
-        },
-        {
-          "node": "Math",
-          "scene": "lone-monk",
-          "tree": "shader:material:terracotta"
-        },
-        {
-          "node": "Math.001",
-          "scene": "lone-monk",
-          "tree": "shader:material:terracotta"
-        },
-        {
-          "node": "Math",
-          "scene": "lone-monk",
-          "tree": "shader:material:wood - chair"
-        },
-        {
-          "node": "Math.001",
-          "scene": "lone-monk",
-          "tree": "shader:material:wood - chair"
-        },
-        {
-          "node": "Math",
-          "scene": "lone-monk",
-          "tree": "shader:material:wood - charcoal"
-        },
-        {
-          "node": "Math.001",
-          "scene": "lone-monk",
-          "tree": "shader:material:wood - charcoal"
-        }
-      ]
-    },
-    {
-      "authoredScenes": [
-        "archiviz",
-        "classroom",
-        "lone-monk"
-      ],
       "catalogCategory53": "partial",
       "key": "shader:ShaderNodeNewGeometry",
       "newSupportCredit": false,
@@ -7283,207 +7627,6 @@
           "node": "RGB Curves",
           "scene": "lone-monk",
           "tree": "shader:material:wood - charcoal"
-        }
-      ]
-    },
-    {
-      "authoredScenes": [
-        "archiviz",
-        "classroom",
-        "lone-monk"
-      ],
-      "catalogCategory53": "partial",
-      "key": "shader:ShaderNodeTexNoise",
-      "newSupportCredit": false,
-      "priority": "P0 Shared scene dependency",
-      "reachableModes": {
-        "noise_dimensions": [
-          "2D",
-          "3D"
-        ],
-        "noise_type": [
-          "FBM"
-        ],
-        "normalize": [
-          "False",
-          "True"
-        ]
-      },
-      "reachableScenes": [
-        "classroom",
-        "lone-monk"
-      ],
-      "releaseQualification": "pending",
-      "scope": "shader-compositor-port",
-      "upstreamNodeKinds": [
-        "shader:ShaderNodeMapping",
-        "shader:ShaderNodeTexCoord"
-      ],
-      "witnesses": [
-        {
-          "node": "Noise Texture",
-          "scene": "classroom",
-          "tree": "shader:material:beigePaint"
-        },
-        {
-          "node": "Noise Texture",
-          "scene": "classroom",
-          "tree": "shader:material:beige_paintedPipe"
-        },
-        {
-          "node": "Noise Texture",
-          "scene": "classroom",
-          "tree": "shader:material:blackPaintedWood"
-        },
-        {
-          "node": "Noise Texture.001",
-          "scene": "classroom",
-          "tree": "shader:material:blackPaintedWood"
-        },
-        {
-          "node": "Noise Texture",
-          "scene": "classroom",
-          "tree": "shader:material:ceilingAirVent"
-        },
-        {
-          "node": "Noise Texture",
-          "scene": "classroom",
-          "tree": "shader:material:dustbin_metal [lib.004]"
-        },
-        {
-          "node": "Noise Texture",
-          "scene": "classroom",
-          "tree": "shader:material:leatherCoat"
-        },
-        {
-          "node": "Noise Texture",
-          "scene": "classroom",
-          "tree": "shader:material:paintedCeiling"
-        },
-        {
-          "node": "Noise Texture.001",
-          "scene": "classroom",
-          "tree": "shader:material:paintedCeiling"
-        },
-        {
-          "node": "Noise Texture",
-          "scene": "classroom",
-          "tree": "shader:material:radiator_glossyPaint [lib.005]"
-        },
-        {
-          "node": "Noise Texture.001",
-          "scene": "classroom",
-          "tree": "shader:material:radiator_glossyPaint [lib.005]"
-        },
-        {
-          "node": "Noise Texture",
-          "scene": "classroom",
-          "tree": "shader:material:schoolDesk_plastic [lib.003]"
-        },
-        {
-          "node": "Noise Texture",
-          "scene": "classroom",
-          "tree": "shader:material:teacherDesk_plastic [lib.003]"
-        },
-        {
-          "node": "Noise Texture",
-          "scene": "classroom",
-          "tree": "shader:material:wallClock_blackPlastic [lib.007]"
-        },
-        {
-          "node": "Noise Texture.001",
-          "scene": "classroom",
-          "tree": "shader:material:wallClock_blackPlastic [lib.007]"
-        },
-        {
-          "node": "Noise Texture",
-          "scene": "classroom",
-          "tree": "shader:material:wallClock_darkWood [lib.007]"
-        },
-        {
-          "node": "Noise Texture.001",
-          "scene": "classroom",
-          "tree": "shader:material:wallClock_darkWood [lib.007]"
-        },
-        {
-          "node": "Noise Texture",
-          "scene": "classroom",
-          "tree": "shader:material:whitePaintedWindow"
-        },
-        {
-          "node": "Noise Texture",
-          "scene": "lone-monk",
-          "tree": "shader:material:church brick"
-        },
-        {
-          "node": "Noise Texture",
-          "scene": "lone-monk",
-          "tree": "shader:material:copper pipe"
-        },
-        {
-          "node": "Noise Texture.001",
-          "scene": "lone-monk",
-          "tree": "shader:material:copper pipe"
-        },
-        {
-          "node": "Noise Texture",
-          "scene": "lone-monk",
-          "tree": "shader:material:glass far"
-        },
-        {
-          "node": "Musgrave Texture",
-          "scene": "lone-monk",
-          "tree": "shader:material:ink"
-        },
-        {
-          "node": "Noise Texture",
-          "scene": "lone-monk",
-          "tree": "shader:material:ink"
-        },
-        {
-          "node": "Noise Texture.001",
-          "scene": "lone-monk",
-          "tree": "shader:material:ink"
-        },
-        {
-          "node": "Noise Texture",
-          "scene": "lone-monk",
-          "tree": "shader:material:ink bottle"
-        },
-        {
-          "node": "Noise Texture.001",
-          "scene": "lone-monk",
-          "tree": "shader:material:ink bottle"
-        },
-        {
-          "node": "Noise Texture",
-          "scene": "lone-monk",
-          "tree": "shader:material:iron_nail"
-        },
-        {
-          "node": "Noise Texture.001",
-          "scene": "lone-monk",
-          "tree": "shader:material:iron_nail"
-        },
-        {
-          "node": "Noise Texture",
-          "scene": "lone-monk",
-          "tree": "shader:material:paper - book"
-        },
-        {
-          "node": "Noise Texture",
-          "scene": "lone-monk",
-          "tree": "shader:material:plaster - white"
-        },
-        {
-          "node": "Noise Texture.001",
-          "scene": "lone-monk",
-          "tree": "shader:material:plaster - white"
-        },
-        {
-          "node": "Noise Texture",
-          "scene": "lone-monk",
-          "tree": "shader:material:plaster med old"
         }
       ]
     },
@@ -8018,6 +8161,31 @@
     },
     {
       "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "partial",
+      "key": "compositor:CompositorNodeFilter",
+      "newSupportCredit": false,
+      "priority": "P1 Selected scene dependency",
+      "reachableModes": {},
+      "reachableScenes": [
+        "impact-fracture"
+      ],
+      "releaseQualification": "pending",
+      "scope": "shader-compositor-port",
+      "upstreamNodeKinds": [
+        "compositor:CompositorNodeGlare"
+      ],
+      "witnesses": [
+        {
+          "node": "Filter",
+          "scene": "impact-fracture",
+          "tree": "compositor:Compositing Nodetree"
+        }
+      ]
+    },
+    {
+      "authoredScenes": [
         "classroom"
       ],
       "catalogCategory53": "structural",
@@ -8197,52 +8365,6 @@
           "node": "Group Input",
           "scene": "classroom",
           "tree": "compositor:PassCombine"
-        }
-      ]
-    },
-    {
-      "authoredScenes": [
-        "classroom"
-      ],
-      "catalogCategory53": "structural",
-      "key": "compositor:NodeReroute",
-      "newSupportCredit": false,
-      "priority": "P1 Selected scene dependency",
-      "reachableModes": {},
-      "reachableScenes": [
-        "classroom"
-      ],
-      "releaseQualification": "pending",
-      "scope": "shader-compositor-port",
-      "upstreamNodeKinds": [
-        "compositor:CompositorNodeRLayers",
-        "compositor:NodeReroute"
-      ],
-      "witnesses": [
-        {
-          "node": "Reroute.001",
-          "scene": "classroom",
-          "tree": "compositor:Compositing Nodetree"
-        },
-        {
-          "node": "Reroute.005",
-          "scene": "classroom",
-          "tree": "compositor:Compositing Nodetree"
-        },
-        {
-          "node": "Reroute.012",
-          "scene": "classroom",
-          "tree": "compositor:Compositing Nodetree"
-        },
-        {
-          "node": "Reroute.018",
-          "scene": "classroom",
-          "tree": "compositor:Compositing Nodetree"
-        },
-        {
-          "node": "Reroute.020",
-          "scene": "classroom",
-          "tree": "compositor:Compositing Nodetree"
         }
       ]
     },
@@ -8684,6 +8806,41 @@
     },
     {
       "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "partial",
+      "key": "shader:ShaderNodeMapRange",
+      "newSupportCredit": false,
+      "priority": "P1 Selected scene dependency",
+      "reachableModes": {
+        "clamp": [
+          "True"
+        ],
+        "data_type": [
+          "FLOAT"
+        ],
+        "interpolation_type": [
+          "LINEAR"
+        ]
+      },
+      "reachableScenes": [
+        "impact-fracture"
+      ],
+      "releaseQualification": "pending",
+      "scope": "shader-compositor-port",
+      "upstreamNodeKinds": [
+        "shader:ShaderNodeMath"
+      ],
+      "witnesses": [
+        {
+          "node": "Map Range",
+          "scene": "impact-fracture",
+          "tree": "shader:material:Material"
+        }
+      ]
+    },
+    {
+      "authoredScenes": [
         "lone-monk"
       ],
       "catalogCategory53": "unsupported",
@@ -9005,6 +9162,7 @@
     {
       "authoredScenes": [
         "classroom",
+        "impact-fracture",
         "lone-monk"
       ],
       "catalogCategory53": "structural",
@@ -9035,8 +9193,1074 @@
     },
     {
       "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:FunctionNodeAlignRotationToVector",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:FunctionNodeInputBool",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:FunctionNodeInvertMatrix",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:FunctionNodeMatrixMultiply",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:FunctionNodeProjectPoint",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:FunctionNodeRandomValue",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:FunctionNodeSeparateTransform",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeAccumulateField",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeAttributeStatistic",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeBlurAttribute",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeBoundBox",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeCaptureAttribute",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeCurveEndpointSelection",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeCurveOfPoint",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeCurveSplineType",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeCurveToMesh",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeDeleteGeometry",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeDuplicateElements",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeExtrudeMesh",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeFieldAtIndex",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeFieldOnDomain",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeFlipFaces",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeGroup",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeInputID",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeInputIndex",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeInputMeshIsland",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeInputNamedAttribute",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeInputNormal",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeInputPosition",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeInputSplineResolution",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeInputTangent",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeJoinGeometry",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeMeshBoolean",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeMeshGrid",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeMeshToCurve",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeMeshToPoints",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeMeshToVolume",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeOffsetPointInCurve",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodePointsOfCurve",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodePointsToCurves",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeRaycast",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeRepeatInput",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeRepeatOutput",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeResampleCurve",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeSampleCurve",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeSampleIndex",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeSeparateComponents",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeSeparateGeometry",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeSetPosition",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeSetSplineResolution",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeSplineLength",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeSplineParameter",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeSubdivideCurve",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeSwitch",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeToolMousePosition",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeToolSelection",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeToolSetSelection",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeTransform",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeViewportTransform",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:GeometryNodeVolumeToMesh",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:NodeFrame",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:NodeReroute",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:ShaderNodeCombineXYZ",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:ShaderNodeMapRange",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:ShaderNodeMath",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:ShaderNodeMix",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:ShaderNodeSeparateXYZ",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:ShaderNodeTexNoise",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:ShaderNodeValue",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:ShaderNodeVectorMath",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
+        "impact-fracture"
+      ],
+      "catalogCategory53": "not-in-shader-compositor-catalog",
+      "key": "geometry:ShaderNodeVectorRotate",
+      "newSupportCredit": false,
+      "priority": "P2 Authored but unreachable",
+      "reachableModes": {},
+      "reachableScenes": [],
+      "releaseQualification": "pending",
+      "scope": "evaluated-geometry-ingest-separate",
+      "upstreamNodeKinds": [],
+      "witnesses": []
+    },
+    {
+      "authoredScenes": [
         "archiviz",
         "classroom",
+        "impact-fracture",
         "lone-monk"
       ],
       "catalogCategory53": "structural",
@@ -13713,10 +14937,1601 @@
         "externalImages": [],
         "libraries": []
       }
+    },
+    {
+      "acceptance": {
+        "allUsedNodeModes": "pending",
+        "export": "pending",
+        "installedBrowser": "pending",
+        "nativeVisualReference": "pending",
+        "originalSceneAccepted": false,
+        "performance": "pending",
+        "sourceInventory": "passed-read-only"
+      },
+      "authoredNodeKinds": 90,
+      "id": "impact-fracture",
+      "nodeUsage": {
+        "compositor:CompositorNodeFilter": {
+          "authoredNodes": 1,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "compositor:Compositing Nodetree"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 1
+        },
+        "compositor:CompositorNodeGlare": {
+          "authoredNodes": 1,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "compositor:Compositing Nodetree"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 1
+        },
+        "compositor:CompositorNodeRLayers": {
+          "authoredNodes": 1,
+          "groupDependencies": [],
+          "modes": {
+            "layer": [
+              "ViewLayer"
+            ]
+          },
+          "owners": [
+            "compositor:Compositing Nodetree"
+          ],
+          "reachableModes": {
+            "layer": [
+              "ViewLayer"
+            ]
+          },
+          "reachableNodes": 1
+        },
+        "compositor:CompositorNodeViewer": {
+          "authoredNodes": 1,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "compositor:Compositing Nodetree"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "compositor:NodeGroupOutput": {
+          "authoredNodes": 1,
+          "groupDependencies": [],
+          "modes": {
+            "is_active_output": [
+              "True"
+            ]
+          },
+          "owners": [
+            "compositor:Compositing Nodetree"
+          ],
+          "reachableModes": {
+            "is_active_output": [
+              "True"
+            ]
+          },
+          "reachableNodes": 1
+        },
+        "compositor:NodeReroute": {
+          "authoredNodes": 1,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "compositor:Compositing Nodetree"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 1
+        },
+        "geometry:FunctionNodeAlignRotationToVector": {
+          "authoredNodes": 3,
+          "groupDependencies": [],
+          "modes": {
+            "axis": [
+              "X",
+              "Z"
+            ],
+            "pivot_axis": [
+              "AUTO",
+              "X"
+            ]
+          },
+          "owners": [
+            "geometry:Impact Fracture"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:FunctionNodeBooleanMath": {
+          "authoredNodes": 17,
+          "groupDependencies": [],
+          "modes": {
+            "operation": [
+              "AND",
+              "NOT",
+              "OR"
+            ]
+          },
+          "owners": [
+            "geometry:Hair Curves Noise",
+            "geometry:Restore Curve Segment Length",
+            "geometry:Restore Curve Segment Length.001",
+            "geometry:Roll Hair Curves",
+            "geometry:Smooth Hair Curves",
+            "geometry:Tool.004",
+            "geometry:shape_range",
+            "geometry:shape_range.001"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:FunctionNodeCompare": {
+          "authoredNodes": 34,
+          "groupDependencies": [],
+          "modes": {
+            "data_type": [
+              "FLOAT",
+              "INT",
+              "VECTOR"
+            ],
+            "mode": [
+              "ELEMENT"
+            ],
+            "operation": [
+              "EQUAL",
+              "GREATER_THAN",
+              "LESS_THAN",
+              "NOT_EQUAL"
+            ]
+          },
+          "owners": [
+            "geometry:Hair Curves Noise",
+            "geometry:Impact Fracture",
+            "geometry:Impact Fracture Tool",
+            "geometry:Restore Curve Segment Length",
+            "geometry:Restore Curve Segment Length.001",
+            "geometry:Roll Hair Curves",
+            "geometry:Smooth Hair Curves",
+            "geometry:shape_range",
+            "geometry:shape_range.001"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:FunctionNodeInputBool": {
+          "authoredNodes": 2,
+          "groupDependencies": [],
+          "modes": {
+            "boolean": [
+              "True"
+            ]
+          },
+          "owners": [
+            "geometry:Curve Segment",
+            "geometry:Curve Segment.001"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:FunctionNodeInvertMatrix": {
+          "authoredNodes": 2,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Impact Fracture Tool"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:FunctionNodeMatrixMultiply": {
+          "authoredNodes": 1,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Impact Fracture Tool"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:FunctionNodeProjectPoint": {
+          "authoredNodes": 1,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Impact Fracture Tool"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:FunctionNodeRandomValue": {
+          "authoredNodes": 15,
+          "groupDependencies": [],
+          "modes": {
+            "data_type": [
+              "BOOLEAN",
+              "FLOAT",
+              "FLOAT_VECTOR",
+              "INT"
+            ]
+          },
+          "owners": [
+            "geometry:Curve Info",
+            "geometry:Curve Info.001",
+            "geometry:Hair Curves Noise",
+            "geometry:Impact Fracture",
+            "geometry:Impact Fracture Tool",
+            "geometry:Randomize Islands",
+            "geometry:Roll Hair Curves",
+            "geometry:Tool.004"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:FunctionNodeSeparateTransform": {
+          "authoredNodes": 1,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Impact Fracture Tool"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeAccumulateField": {
+          "authoredNodes": 8,
+          "groupDependencies": [],
+          "modes": {
+            "data_type": [
+              "FLOAT",
+              "FLOAT_VECTOR",
+              "INT"
+            ],
+            "domain": [
+              "CURVE",
+              "POINT"
+            ]
+          },
+          "owners": [
+            "geometry:Hair Curves Noise",
+            "geometry:Randomize Islands",
+            "geometry:Restore Curve Segment Length",
+            "geometry:Restore Curve Segment Length.001",
+            "geometry:Roll Hair Curves",
+            "geometry:Smooth Hair Curves"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeAttributeStatistic": {
+          "authoredNodes": 3,
+          "groupDependencies": [],
+          "modes": {
+            "data_type": [
+              "FLOAT",
+              "FLOAT_VECTOR"
+            ],
+            "domain": [
+              "CURVE",
+              "POINT"
+            ]
+          },
+          "owners": [
+            "geometry:Randomize Islands",
+            "geometry:Restore Curve Segment Length",
+            "geometry:Restore Curve Segment Length.001"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeBlurAttribute": {
+          "authoredNodes": 1,
+          "groupDependencies": [],
+          "modes": {
+            "data_type": [
+              "FLOAT_VECTOR"
+            ]
+          },
+          "owners": [
+            "geometry:Smooth Hair Curves"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeBoundBox": {
+          "authoredNodes": 2,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Impact Fracture"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeCaptureAttribute": {
+          "authoredNodes": 13,
+          "groupDependencies": [],
+          "modes": {
+            "domain": [
+              "CURVE",
+              "POINT"
+            ]
+          },
+          "owners": [
+            "geometry:Hair Curves Noise",
+            "geometry:Impact Fracture",
+            "geometry:Roll Hair Curves",
+            "geometry:Smooth Hair Curves",
+            "geometry:Tool.004"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeCurveEndpointSelection": {
+          "authoredNodes": 4,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Curve Root",
+            "geometry:Curve Root.001",
+            "geometry:Curve Tip",
+            "geometry:Curve Tip.001"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeCurveOfPoint": {
+          "authoredNodes": 5,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Hair Curves Noise",
+            "geometry:Restore Curve Segment Length",
+            "geometry:Restore Curve Segment Length.001"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeCurveSplineType": {
+          "authoredNodes": 6,
+          "groupDependencies": [],
+          "modes": {
+            "spline_type": [
+              "CATMULL_ROM",
+              "POLY"
+            ]
+          },
+          "owners": [
+            "geometry:Hair Curves Noise",
+            "geometry:Roll Hair Curves",
+            "geometry:Smooth Hair Curves"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeCurveToMesh": {
+          "authoredNodes": 2,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Tool.004"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeDeleteGeometry": {
+          "authoredNodes": 1,
+          "groupDependencies": [],
+          "modes": {
+            "domain": [
+              "POINT"
+            ],
+            "mode": [
+              "ALL"
+            ]
+          },
+          "owners": [
+            "geometry:Tool.004"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeDuplicateElements": {
+          "authoredNodes": 1,
+          "groupDependencies": [],
+          "modes": {
+            "domain": [
+              "EDGE"
+            ]
+          },
+          "owners": [
+            "geometry:Tool.004"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeExtrudeMesh": {
+          "authoredNodes": 1,
+          "groupDependencies": [],
+          "modes": {
+            "mode": [
+              "VERTICES"
+            ]
+          },
+          "owners": [
+            "geometry:Tool"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeFieldAtIndex": {
+          "authoredNodes": 19,
+          "groupDependencies": [],
+          "modes": {
+            "data_type": [
+              "FLOAT",
+              "FLOAT_VECTOR",
+              "INT"
+            ],
+            "domain": [
+              "POINT"
+            ]
+          },
+          "owners": [
+            "geometry:Curve Info",
+            "geometry:Curve Info.001",
+            "geometry:Curve Root",
+            "geometry:Curve Root.001",
+            "geometry:Curve Segment",
+            "geometry:Curve Segment.001",
+            "geometry:Curve Tip",
+            "geometry:Curve Tip.001",
+            "geometry:Hair Curves Noise",
+            "geometry:Restore Curve Segment Length",
+            "geometry:Restore Curve Segment Length.001",
+            "geometry:Smooth Hair Curves"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeFieldOnDomain": {
+          "authoredNodes": 30,
+          "groupDependencies": [],
+          "modes": {
+            "data_type": [
+              "BOOLEAN",
+              "FLOAT",
+              "FLOAT_VECTOR",
+              "INT"
+            ],
+            "domain": [
+              "CURVE",
+              "POINT"
+            ]
+          },
+          "owners": [
+            "geometry:Curve Info",
+            "geometry:Curve Info.001",
+            "geometry:Curve Root",
+            "geometry:Curve Root.001",
+            "geometry:Curve Segment",
+            "geometry:Curve Segment.001",
+            "geometry:Curve Tip",
+            "geometry:Curve Tip.001",
+            "geometry:Hair Curves Noise",
+            "geometry:Restore Curve Segment Length",
+            "geometry:Restore Curve Segment Length.001",
+            "geometry:Roll Hair Curves"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeFlipFaces": {
+          "authoredNodes": 2,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Impact Fracture"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeGroup": {
+          "authoredNodes": 34,
+          "groupDependencies": [
+            "geometry:Curve Info",
+            "geometry:Curve Info.001",
+            "geometry:Curve Root",
+            "geometry:Curve Root.001",
+            "geometry:Curve Segment",
+            "geometry:Curve Segment.001",
+            "geometry:Curve Tip",
+            "geometry:Curve Tip.001",
+            "geometry:Hair Curves Noise",
+            "geometry:Impact Fracture",
+            "geometry:Impact Fracture Tool",
+            "geometry:Randomize Islands",
+            "geometry:Restore Curve Segment Length",
+            "geometry:Restore Curve Segment Length.001",
+            "geometry:Roll Hair Curves",
+            "geometry:Smooth Hair Curves",
+            "geometry:shape_range",
+            "geometry:shape_range.001"
+          ],
+          "modes": {},
+          "owners": [
+            "geometry:Curve Info",
+            "geometry:Curve Info.001",
+            "geometry:Hair Curves Noise",
+            "geometry:Impact Fracture Tool",
+            "geometry:Restore Curve Segment Length",
+            "geometry:Restore Curve Segment Length.001",
+            "geometry:Roll",
+            "geometry:Roll Hair Curves",
+            "geometry:Smooth Hair Curves",
+            "geometry:Tool.001",
+            "geometry:Tool.003"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeInputID": {
+          "authoredNodes": 2,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Curve Info",
+            "geometry:Curve Info.001"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeInputIndex": {
+          "authoredNodes": 8,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Curve Info",
+            "geometry:Curve Info.001",
+            "geometry:Curve Segment",
+            "geometry:Curve Segment.001",
+            "geometry:Restore Curve Segment Length",
+            "geometry:Restore Curve Segment Length.001"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeInputMeshIsland": {
+          "authoredNodes": 5,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Impact Fracture",
+            "geometry:Impact Fracture Tool",
+            "geometry:Randomize Islands"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeInputNamedAttribute": {
+          "authoredNodes": 4,
+          "groupDependencies": [],
+          "modes": {
+            "data_type": [
+              "FLOAT_VECTOR"
+            ]
+          },
+          "owners": [
+            "geometry:Curve Info",
+            "geometry:Curve Info.001",
+            "geometry:Restore Curve Segment Length",
+            "geometry:Restore Curve Segment Length.001"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeInputNormal": {
+          "authoredNodes": 3,
+          "groupDependencies": [],
+          "modes": {
+            "legacy_corner_normals": [
+              "True"
+            ]
+          },
+          "owners": [
+            "geometry:Hair Curves Noise",
+            "geometry:Roll Hair Curves"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeInputPosition": {
+          "authoredNodes": 20,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Curve Root",
+            "geometry:Curve Root.001",
+            "geometry:Curve Segment",
+            "geometry:Curve Segment.001",
+            "geometry:Curve Tip",
+            "geometry:Curve Tip.001",
+            "geometry:Hair Curves Noise",
+            "geometry:Randomize Islands",
+            "geometry:Restore Curve Segment Length",
+            "geometry:Restore Curve Segment Length.001",
+            "geometry:Roll Hair Curves",
+            "geometry:Smooth Hair Curves"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeInputSplineResolution": {
+          "authoredNodes": 3,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Hair Curves Noise",
+            "geometry:Roll Hair Curves",
+            "geometry:Smooth Hair Curves"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeInputTangent": {
+          "authoredNodes": 7,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Curve Root",
+            "geometry:Curve Root.001",
+            "geometry:Curve Tip",
+            "geometry:Curve Tip.001",
+            "geometry:Hair Curves Noise",
+            "geometry:Roll Hair Curves"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeJoinGeometry": {
+          "authoredNodes": 9,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Hair Curves Noise",
+            "geometry:Impact Fracture",
+            "geometry:Impact Fracture Tool",
+            "geometry:Roll Hair Curves",
+            "geometry:Smooth Hair Curves",
+            "geometry:Tool.004"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeMeshBoolean": {
+          "authoredNodes": 4,
+          "groupDependencies": [],
+          "modes": {
+            "operation": [
+              "DIFFERENCE"
+            ],
+            "solver": [
+              "EXACT"
+            ]
+          },
+          "owners": [
+            "geometry:Impact Fracture"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeMeshGrid": {
+          "authoredNodes": 2,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Impact Fracture"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeMeshToCurve": {
+          "authoredNodes": 1,
+          "groupDependencies": [],
+          "modes": {
+            "mode": [
+              "EDGES"
+            ]
+          },
+          "owners": [
+            "geometry:Tool.004"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeMeshToPoints": {
+          "authoredNodes": 1,
+          "groupDependencies": [],
+          "modes": {
+            "mode": [
+              "VERTICES"
+            ]
+          },
+          "owners": [
+            "geometry:Tool.004"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeMeshToVolume": {
+          "authoredNodes": 1,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Tool.002"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeOffsetPointInCurve": {
+          "authoredNodes": 2,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Curve Segment",
+            "geometry:Curve Segment.001"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodePointsOfCurve": {
+          "authoredNodes": 4,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Curve Root",
+            "geometry:Curve Root.001",
+            "geometry:Curve Tip",
+            "geometry:Curve Tip.001"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodePointsToCurves": {
+          "authoredNodes": 1,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Tool.004"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeRaycast": {
+          "authoredNodes": 1,
+          "groupDependencies": [],
+          "modes": {
+            "data_type": [
+              "INT"
+            ]
+          },
+          "owners": [
+            "geometry:Impact Fracture Tool"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeRepeatInput": {
+          "authoredNodes": 4,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Impact Fracture",
+            "geometry:Tool",
+            "geometry:Tool.004"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeRepeatOutput": {
+          "authoredNodes": 4,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Impact Fracture",
+            "geometry:Tool",
+            "geometry:Tool.004"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeResampleCurve": {
+          "authoredNodes": 1,
+          "groupDependencies": [],
+          "modes": {
+            "keep_last_segment": [
+              "False"
+            ]
+          },
+          "owners": [
+            "geometry:Tool.004"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeSampleCurve": {
+          "authoredNodes": 3,
+          "groupDependencies": [],
+          "modes": {
+            "data_type": [
+              "FLOAT_VECTOR"
+            ],
+            "mode": [
+              "FACTOR",
+              "LENGTH"
+            ],
+            "use_all_curves": [
+              "False"
+            ]
+          },
+          "owners": [
+            "geometry:Restore Curve Segment Length",
+            "geometry:Restore Curve Segment Length.001",
+            "geometry:Roll Hair Curves"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeSampleIndex": {
+          "authoredNodes": 3,
+          "groupDependencies": [],
+          "modes": {
+            "clamp": [
+              "False"
+            ],
+            "data_type": [
+              "INT"
+            ],
+            "domain": [
+              "CURVE",
+              "POINT"
+            ]
+          },
+          "owners": [
+            "geometry:Hair Curves Noise",
+            "geometry:Impact Fracture",
+            "geometry:Smooth Hair Curves"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeSeparateComponents": {
+          "authoredNodes": 3,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Hair Curves Noise",
+            "geometry:Roll Hair Curves",
+            "geometry:Smooth Hair Curves"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeSeparateGeometry": {
+          "authoredNodes": 3,
+          "groupDependencies": [],
+          "modes": {
+            "domain": [
+              "FACE"
+            ]
+          },
+          "owners": [
+            "geometry:Impact Fracture",
+            "geometry:Impact Fracture Tool"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeSetPosition": {
+          "authoredNodes": 10,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Hair Curves Noise",
+            "geometry:Randomize Islands",
+            "geometry:Restore Curve Segment Length",
+            "geometry:Restore Curve Segment Length.001",
+            "geometry:Roll Hair Curves",
+            "geometry:Smooth Hair Curves",
+            "geometry:Tool.004"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeSetSplineResolution": {
+          "authoredNodes": 3,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Hair Curves Noise",
+            "geometry:Roll Hair Curves",
+            "geometry:Smooth Hair Curves"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeSplineLength": {
+          "authoredNodes": 3,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Curve Info",
+            "geometry:Curve Info.001",
+            "geometry:Tool.004"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeSplineParameter": {
+          "authoredNodes": 5,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Hair Curves Noise",
+            "geometry:Roll Hair Curves",
+            "geometry:Smooth Hair Curves",
+            "geometry:Tool.004"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeSubdivideCurve": {
+          "authoredNodes": 1,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Roll Hair Curves"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeSwitch": {
+          "authoredNodes": 33,
+          "groupDependencies": [],
+          "modes": {
+            "input_type": [
+              "BOOLEAN",
+              "FLOAT",
+              "GEOMETRY",
+              "INT",
+              "VECTOR"
+            ]
+          },
+          "owners": [
+            "geometry:Curve Segment",
+            "geometry:Curve Segment.001",
+            "geometry:Hair Curves Noise",
+            "geometry:Restore Curve Segment Length",
+            "geometry:Restore Curve Segment Length.001",
+            "geometry:Roll",
+            "geometry:Roll Hair Curves",
+            "geometry:Smooth Hair Curves",
+            "geometry:shape_range",
+            "geometry:shape_range.001"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeToolMousePosition": {
+          "authoredNodes": 3,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Impact Fracture Tool",
+            "geometry:Mouse Position Factor"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeToolSelection": {
+          "authoredNodes": 6,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Randomize Islands",
+            "geometry:Roll",
+            "geometry:Tool",
+            "geometry:Tool.003",
+            "geometry:Tool.004"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeToolSetSelection": {
+          "authoredNodes": 2,
+          "groupDependencies": [],
+          "modes": {
+            "domain": [
+              "POINT"
+            ],
+            "selection_type": [
+              "BOOLEAN"
+            ]
+          },
+          "owners": [
+            "geometry:Impact Fracture Tool",
+            "geometry:Tool.004"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeTransform": {
+          "authoredNodes": 2,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Impact Fracture"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeViewportTransform": {
+          "authoredNodes": 2,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Impact Fracture Tool"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:GeometryNodeVolumeToMesh": {
+          "authoredNodes": 1,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Tool.002"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:NodeFrame": {
+          "authoredNodes": 40,
+          "groupDependencies": [],
+          "modes": {
+            "shrink": [
+              "True"
+            ]
+          },
+          "owners": [
+            "geometry:Curve Info",
+            "geometry:Curve Info.001",
+            "geometry:Hair Curves Noise",
+            "geometry:Impact Fracture Tool",
+            "geometry:Restore Curve Segment Length",
+            "geometry:Restore Curve Segment Length.001",
+            "geometry:Roll Hair Curves",
+            "geometry:Smooth Hair Curves"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:NodeGroupInput": {
+          "authoredNodes": 79,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Hair Curves Noise",
+            "geometry:Impact Fracture",
+            "geometry:Impact Fracture Tool",
+            "geometry:Randomize Islands",
+            "geometry:Restore Curve Segment Length",
+            "geometry:Restore Curve Segment Length.001",
+            "geometry:Roll",
+            "geometry:Roll Hair Curves",
+            "geometry:Smooth Hair Curves",
+            "geometry:Tool",
+            "geometry:Tool.001",
+            "geometry:Tool.002",
+            "geometry:Tool.003",
+            "geometry:Tool.004",
+            "geometry:shape_range",
+            "geometry:shape_range.001"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:NodeGroupOutput": {
+          "authoredNodes": 25,
+          "groupDependencies": [],
+          "modes": {
+            "is_active_output": [
+              "True"
+            ]
+          },
+          "owners": [
+            "geometry:Curve Info",
+            "geometry:Curve Info.001",
+            "geometry:Curve Root",
+            "geometry:Curve Root.001",
+            "geometry:Curve Segment",
+            "geometry:Curve Segment.001",
+            "geometry:Curve Tip",
+            "geometry:Curve Tip.001",
+            "geometry:Hair Curves Noise",
+            "geometry:Impact Fracture",
+            "geometry:Impact Fracture Tool",
+            "geometry:Mouse Position Factor",
+            "geometry:Randomize Islands",
+            "geometry:Restore Curve Segment Length",
+            "geometry:Restore Curve Segment Length.001",
+            "geometry:Roll",
+            "geometry:Roll Hair Curves",
+            "geometry:Smooth Hair Curves",
+            "geometry:Tool",
+            "geometry:Tool.001",
+            "geometry:Tool.002",
+            "geometry:Tool.003",
+            "geometry:Tool.004",
+            "geometry:shape_range",
+            "geometry:shape_range.001"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:NodeReroute": {
+          "authoredNodes": 115,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Curve Info",
+            "geometry:Curve Info.001",
+            "geometry:Curve Segment",
+            "geometry:Curve Segment.001",
+            "geometry:Hair Curves Noise",
+            "geometry:Impact Fracture",
+            "geometry:Impact Fracture Tool",
+            "geometry:Restore Curve Segment Length",
+            "geometry:Restore Curve Segment Length.001",
+            "geometry:Roll Hair Curves",
+            "geometry:Smooth Hair Curves",
+            "geometry:Tool.004",
+            "geometry:shape_range",
+            "geometry:shape_range.001"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:ShaderNodeCombineXYZ": {
+          "authoredNodes": 7,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Impact Fracture Tool",
+            "geometry:Mouse Position Factor",
+            "geometry:Roll Hair Curves",
+            "geometry:Tool.004"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:ShaderNodeMapRange": {
+          "authoredNodes": 4,
+          "groupDependencies": [],
+          "modes": {
+            "clamp": [
+              "False",
+              "True"
+            ],
+            "data_type": [
+              "FLOAT"
+            ],
+            "interpolation_type": [
+              "LINEAR"
+            ]
+          },
+          "owners": [
+            "geometry:shape_range",
+            "geometry:shape_range.001"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:ShaderNodeMath": {
+          "authoredNodes": 75,
+          "groupDependencies": [],
+          "modes": {
+            "operation": [
+              "ABSOLUTE",
+              "ADD",
+              "COSINE",
+              "DIVIDE",
+              "LOGARITHM",
+              "MAXIMUM",
+              "MINIMUM",
+              "MULTIPLY",
+              "PINGPONG",
+              "POWER",
+              "SINE",
+              "SUBTRACT"
+            ],
+            "use_clamp": [
+              "False"
+            ]
+          },
+          "owners": [
+            "geometry:Hair Curves Noise",
+            "geometry:Impact Fracture",
+            "geometry:Impact Fracture Tool",
+            "geometry:Restore Curve Segment Length",
+            "geometry:Restore Curve Segment Length.001",
+            "geometry:Roll Hair Curves",
+            "geometry:Smooth Hair Curves",
+            "geometry:Tool.003",
+            "geometry:Tool.004",
+            "geometry:shape_range",
+            "geometry:shape_range.001"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:ShaderNodeMix": {
+          "authoredNodes": 5,
+          "groupDependencies": [],
+          "modes": {
+            "blend_type": [
+              "MIX"
+            ],
+            "clamp_factor": [
+              "True"
+            ],
+            "clamp_result": [
+              "False"
+            ],
+            "data_type": [
+              "FLOAT",
+              "VECTOR"
+            ],
+            "factor_mode": [
+              "UNIFORM"
+            ]
+          },
+          "owners": [
+            "geometry:Restore Curve Segment Length",
+            "geometry:Restore Curve Segment Length.001",
+            "geometry:Roll Hair Curves"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:ShaderNodeSeparateXYZ": {
+          "authoredNodes": 3,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Hair Curves Noise",
+            "geometry:Impact Fracture Tool",
+            "geometry:Roll Hair Curves"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:ShaderNodeTexNoise": {
+          "authoredNodes": 2,
+          "groupDependencies": [],
+          "modes": {
+            "noise_dimensions": [
+              "3D"
+            ],
+            "noise_type": [
+              "FBM"
+            ],
+            "normalize": [
+              "False",
+              "True"
+            ]
+          },
+          "owners": [
+            "geometry:Hair Curves Noise",
+            "geometry:Tool"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:ShaderNodeValue": {
+          "authoredNodes": 2,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "geometry:Impact Fracture Tool",
+            "geometry:Mouse Position Factor"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:ShaderNodeVectorMath": {
+          "authoredNodes": 83,
+          "groupDependencies": [],
+          "modes": {
+            "operation": [
+              "ADD",
+              "CROSS_PRODUCT",
+              "DISTANCE",
+              "DIVIDE",
+              "DOT_PRODUCT",
+              "LENGTH",
+              "NORMALIZE",
+              "PROJECT",
+              "SCALE",
+              "SUBTRACT"
+            ]
+          },
+          "owners": [
+            "geometry:Curve Info",
+            "geometry:Curve Info.001",
+            "geometry:Curve Segment",
+            "geometry:Curve Segment.001",
+            "geometry:Hair Curves Noise",
+            "geometry:Impact Fracture",
+            "geometry:Impact Fracture Tool",
+            "geometry:Mouse Position Factor",
+            "geometry:Randomize Islands",
+            "geometry:Restore Curve Segment Length",
+            "geometry:Restore Curve Segment Length.001",
+            "geometry:Roll Hair Curves",
+            "geometry:Smooth Hair Curves",
+            "geometry:Tool.004"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "geometry:ShaderNodeVectorRotate": {
+          "authoredNodes": 2,
+          "groupDependencies": [],
+          "modes": {
+            "invert": [
+              "False"
+            ],
+            "rotation_type": [
+              "AXIS_ANGLE"
+            ]
+          },
+          "owners": [
+            "geometry:Randomize Islands",
+            "geometry:Roll Hair Curves"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "shader:NodeFrame": {
+          "authoredNodes": 1,
+          "groupDependencies": [],
+          "modes": {
+            "shrink": [
+              "True"
+            ]
+          },
+          "owners": [
+            "shader:material:Dots Stroke"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "shader:ShaderNodeBackground": {
+          "authoredNodes": 1,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "shader:world:World"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 1
+        },
+        "shader:ShaderNodeBsdfDiffuse": {
+          "authoredNodes": 1,
+          "groupDependencies": [],
+          "modes": {},
+          "owners": [
+            "shader:material:Dots Stroke"
+          ],
+          "reachableModes": {},
+          "reachableNodes": 0
+        },
+        "shader:ShaderNodeBsdfPrincipled": {
+          "authoredNodes": 3,
+          "groupDependencies": [],
+          "modes": {
+            "distribution": [
+              "MULTI_GGX"
+            ],
+            "subsurface_method": [
+              "RANDOM_WALK",
+              "RANDOM_WALK_LEGACY"
+            ]
+          },
+          "owners": [
+            "shader:material:Dots Stroke",
+            "shader:material:Material",
+            "shader:material:ground"
+          ],
+          "reachableModes": {
+            "distribution": [
+              "MULTI_GGX"
+            ],
+            "subsurface_method": [
+              "RANDOM_WALK_LEGACY"
+            ]
+          },
+          "reachableNodes": 2
+        },
+        "shader:ShaderNodeMapRange": {
+          "authoredNodes": 1,
+          "groupDependencies": [],
+          "modes": {
+            "clamp": [
+              "True"
+            ],
+            "data_type": [
+              "FLOAT"
+            ],
+            "interpolation_type": [
+              "LINEAR"
+            ]
+          },
+          "owners": [
+            "shader:material:Material"
+          ],
+          "reachableModes": {
+            "clamp": [
+              "True"
+            ],
+            "data_type": [
+              "FLOAT"
+            ],
+            "interpolation_type": [
+              "LINEAR"
+            ]
+          },
+          "reachableNodes": 1
+        },
+        "shader:ShaderNodeMath": {
+          "authoredNodes": 1,
+          "groupDependencies": [],
+          "modes": {
+            "operation": [
+              "POWER"
+            ],
+            "use_clamp": [
+              "False"
+            ]
+          },
+          "owners": [
+            "shader:material:Material"
+          ],
+          "reachableModes": {
+            "operation": [
+              "POWER"
+            ],
+            "use_clamp": [
+              "False"
+            ]
+          },
+          "reachableNodes": 1
+        },
+        "shader:ShaderNodeOutputMaterial": {
+          "authoredNodes": 4,
+          "groupDependencies": [],
+          "modes": {
+            "is_active_output": [
+              "False",
+              "True"
+            ],
+            "target": [
+              "ALL",
+              "CYCLES",
+              "EEVEE"
+            ]
+          },
+          "owners": [
+            "shader:material:Dots Stroke",
+            "shader:material:Material",
+            "shader:material:ground"
+          ],
+          "reachableModes": {
+            "is_active_output": [
+              "True"
+            ],
+            "target": [
+              "ALL"
+            ]
+          },
+          "reachableNodes": 2
+        },
+        "shader:ShaderNodeOutputWorld": {
+          "authoredNodes": 1,
+          "groupDependencies": [],
+          "modes": {
+            "is_active_output": [
+              "True"
+            ],
+            "target": [
+              "ALL"
+            ]
+          },
+          "owners": [
+            "shader:world:World"
+          ],
+          "reachableModes": {
+            "is_active_output": [
+              "True"
+            ],
+            "target": [
+              "ALL"
+            ]
+          },
+          "reachableNodes": 1
+        },
+        "shader:ShaderNodeTexNoise": {
+          "authoredNodes": 2,
+          "groupDependencies": [],
+          "modes": {
+            "noise_dimensions": [
+              "3D"
+            ],
+            "noise_type": [
+              "FBM"
+            ],
+            "normalize": [
+              "False",
+              "True"
+            ]
+          },
+          "owners": [
+            "shader:material:Material"
+          ],
+          "reachableModes": {
+            "noise_dimensions": [
+              "3D"
+            ],
+            "noise_type": [
+              "FBM"
+            ],
+            "normalize": [
+              "False",
+              "True"
+            ]
+          },
+          "reachableNodes": 2
+        }
+      },
+      "particleSystems": [],
+      "reachableNodeKinds": 12,
+      "scene": {
+        "camera": "Camera",
+        "engine": "BLENDER_EEVEE",
+        "frame": 0,
+        "name": "Scene",
+        "objects": 285
+      },
+      "sceneDependencies": [
+        "Scene"
+      ],
+      "source": {
+        "bytes": 1156334,
+        "fileName": "impact-fracture.blend",
+        "sha256": "6785c3b4c5b50e2eab7b088914f6558b90aa3dad9cd105ef57d2973495c7b69c"
+      },
+      "sourceClosure": {
+        "externalImages": [],
+        "libraries": []
+      }
     }
   ],
   "schemaVersion": 1,
-  "sourceCommit": "b38aa79ca424c92cb4c9b9bcb4f7f626fc75fef4",
+  "sourceCommit": "5ef60b87d70513207c91b3ffeb3feafb85fe5e2e",
   "supportPromotions": 0,
   "targetBlender": "5.3.0"
 }

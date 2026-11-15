@@ -58,25 +58,32 @@ acceptance criteria in [Component acceptance](COMPONENT_ACCEPTANCE.md).
 | --- | --- | --- |
 | Install and preview | Private verified tools, save refresh, last-good recovery, orbit/portrait/capture/compare | Recheck exact candidate from clean profiles; remove confusing states and stale instructions |
 | Scene compilation | Live node programs, Hybrid/bake routes, guarded assets and runtime ownership | Prove whole scenes across the selected versions/devices; prioritize failures that prevent promised workflows |
-| Coverage | 5.3 has 46 supported, 140 partial, 132 unsupported and 14 structural entries | Track modes and scene success; never present partial scope or research as complete support |
+| Coverage | 5.3 has 46 supported, 141 partial, 131 unsupported and 14 structural entries | Track modes and scene success; never present partial scope or research as complete support |
 | Developer integration | Packed Three/R3F consumers and public installers | Make node-capable examples copy-paste defaults; test real existing-site update/unmount/retry paths |
 | Release assembly | Exact npm tarball/extension ZIP, fingerprints, licenses and checksums | Complete stable release mode, current compatibility matrix and external distribution setup |
 | Evidence | Numerous bounded native/browser proofs and historical hosted passes | Bind the complete candidate to current receipts; historical/software browser passes do not certify every physical device |
 
-Concrete first fixes identified in the review:
+The first implementation batch completed these source fixes and local checks;
+the remaining original-scene and distribution gates stay in force:
 
-- The full material suite is pinned to Blender 5.2/exporter 5.2.39. Establish a
-  complete, independently pinned 5.3 lane; retain 4.2/5.2 regression history.
-- `scripts/verify-retained-release.mjs` requires a GitHub prerelease, and
-  `.github/workflows/blender-contract.yml` forces public-beta labeling. Add and
-  test explicit stable-versus-prerelease policy before a 1.0 tag.
-- [First scene](FIRST_SCENE.md) uses a default WebGL R3F Canvas while translated
-  node programs require the WebGPURenderer family. Align the example, readiness
-  warnings and installation evidence.
-- Reconcile the extension prerequisite policy in [Release process](RELEASE.md)
-  with the implemented private-tool bootstrap. Review marketplace requirements
-  before submission; downloadable ZIP distribution and marketplace approval are
-  separate statuses.
+- A complete, independently pinned Blender 5.3/exporter 5.3.43 local lane passed
+  on macOS arm64. Its four unqualified stock-material shortcuts stay disabled
+  and separately accounted for; 4.2/5.2 history remains intact.
+- Stable-versus-prerelease policy is implemented and locally tested in both
+  retained-release verification and workflow source. No tag, hosted workflow or
+  publication was executed.
+- [First scene](FIRST_SCENE.md), the committed examples and existing-site setup
+  now default to the WebGPURenderer family. Packed consumers and the actual
+  guide snippets pass.
+- [Release process](RELEASE.md) now agrees with private-tool bootstrap.
+  Marketplace review, clean installation on the other desktop platforms and
+  exact public-download verification remain pending.
+
+The selected original Archviz scene still refuses Glass and Plaster. Structured
+plan diagnostics now retain both errors. Horizontal Lens Distortion earned only
+its independently qualified bounded partial scope; the original Classroom graph
+is not accepted. Current evidence and next dependencies are recorded in
+[release scene progress](RELEASE_SCENE_PROGRESS.md).
 
 ## Compatibility to establish
 

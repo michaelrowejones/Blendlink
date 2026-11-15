@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "kind": "release-scene-corpus-shortlist-v1",
-  "sourceCommit": "b38aa79ca424c92cb4c9b9bcb4f7f626fc75fef4",
+  "sourceCommit": "5ef60b87d70513207c91b3ffeb3feafb85fe5e2e",
   "reviewedDate": "2026-11-15",
   "targetBlender": "5.3.0",
   "assetsRedistributed": false,
   "positiveSelectionFrozen": false,
-  "decision": "Select Archviz as the first fixed live-scene porting target. Classroom and Lone Monk remain provisional until scene complexity is bounded. The complete positive corpus is not frozen. No source inventory is export acceptance or live-node support.",
+  "decision": "Archviz and Impact Fracture remain fixed scene-driven porting targets. Impact source plan and standalone Final artifact smoke pass; installed browser baseline refuses authored Rect Area lighting. Neither scene is visually accepted. Classroom/Lone Monk remain provisional; the complete positive corpus is not frozen.",
   "officialDemoPage": "https://www.blender.org/download/demo-files/",
   "scenes": [
     {
@@ -88,6 +88,102 @@
       },
       "downloadBytes": 33452252,
       "downloadSha256": "eea2bbfb3f9271050f523c8351fca40f2f559ce84b42b0143e949ecdb4594c3b"
+    },
+    {
+      "id": "impact-fracture",
+      "title": "Impact Fracture",
+      "role": "Static authored EEVEE product/geometry presentation with procedural material and compositor",
+      "selectionStatus": "selected-for-porting",
+      "positiveAcceptance": false,
+      "url": "https://download.blender.org/demo/geometry-nodes/click_tools-impact_fracture.blend",
+      "downloadFile": "impact-fracture.blend",
+      "sourcePath": "impact-fracture.blend",
+      "source": {
+        "bytes": 1156334,
+        "fileName": "impact-fracture.blend",
+        "sha256": "6785c3b4c5b50e2eab7b088914f6558b90aa3dad9cd105ef57d2973495c7b69c"
+      },
+      "license": "CC0-1.0",
+      "licenseEvidence": "Official Blender Demo Files page lists Impact Fracture: CC0, Click Tools Impact Fracture by Simon Thommes, Blender Studio.",
+      "author": "Simon Thommes / Blender Studio",
+      "inventoryFile": "impact-fracture.json",
+      "inventorySha256": "a763261c642431fc13d6c240d0e142380fc86c4347b9d02cdd176d5e52a821a3",
+      "inventoryBlender": {
+        "buildHash": "02f0899d78e3",
+        "version": "5.3.0"
+      },
+      "downloadBytes": 1156334,
+      "downloadSha256": "6785c3b4c5b50e2eab7b088914f6558b90aa3dad9cd105ef57d2973495c7b69c",
+      "audition": {
+        "sourceCommit": "5ef60b87d70513207c91b3ffeb3feafb85fe5e2e",
+        "planExitCode": 0,
+        "planReportSha256": "7628ab41347533a901ad195b1a8f4f293b0c0f597f7115cea1c641be81c01e87",
+        "planSidecarSha256": "b1ff55cc9ee216ae02100f85fd28560f8988ba495f83f3e86d46d79dade6bffd",
+        "structureReportSha256": "c226172c7593994d0f419162cdad86e8610ce5327a7680810c179fd5e4df7afa",
+        "evaluatedRenderTriangles": 20537,
+        "objectTypes": {
+          "MESH": 282,
+          "LIGHT": 2,
+          "CAMERA": 1
+        },
+        "actions": 0,
+        "nodeAnimationOwners": 0,
+        "particleSystems": 0,
+        "undefinedNodes": 0,
+        "liveMaterialChannels": 8,
+        "stockMaterials": 1,
+        "sourceUnchanged": true,
+        "qualificationStatus": "pending-native-reference-export-installed-browser-performance",
+        "firstFinalAttempt": "Post-glTF private-mesh cleanup/binding failure; cause not established. Output folder absent; source hash unchanged. No acceptance credit.",
+        "firstFinalSourceCommit": "a45853fd8dbc74da812bb9ab3d5ea97475c94478",
+        "firstFinalLogSha256": "67ebbf09f55016cbb6e96e097033f874a57f4870b188a1e8ab7d0d35472b223b",
+        "firstFinalExitCode": 1,
+        "firstFinalOutputPresent": false,
+        "firstFinalSourceUnchanged": true,
+        "inspectedLibrariesAndExternalImagesMissing": 0,
+        "globalBlenderFileReferencesMissing": 2,
+        "closureScope": "Original inventory inspects typed libraries/external Images, not every global blend_paths reference. Separate native weak-reference audit accounts for both missing provenance paths; no general dependency waiver.",
+        "currentArtifactBaseline": {
+          "evidence": "docs/release-scene-browser-baseline.json",
+          "sha256": "7ad4e1ba5e3f0b2c4cbcd6224660fe5bedf12a77be2fffcf10c66cb3847709ac",
+          "finalExport": "passed-local-artifact-smoke",
+          "installedWebgpu": "ready",
+          "installedNodeWebgl2": "ready",
+          "sceneAcceptance": false,
+          "remaining": "Native camera DOF, frozen whole-scene fidelity, startup performance and platform/public-install acceptance"
+        }
+      },
+      "weakReferenceAudit": {
+        "report": "docs/release-scene-closure-audit.json",
+        "sha256": "12bf56f709ca17551491a50ee6ab5297f5c60d47f526d2104e67eb826acbd9df",
+        "missingUniquePaths": 2,
+        "weakReferenceOwners": 16,
+        "allOwnersLocal": true,
+        "allOwnersOutsideCurrentSceneIDClosure": true,
+        "allGlobalPathsAccounted": true,
+        "warningPolicyChanged": false,
+        "scope": "Current loaded scene ID dependency closure, no UI/workspace roots. Weak local-ID provenance is not a linked library. This does not prove arbitrary edits, other scenes or visual equivalence."
+      },
+      "finalArtifactSmoke": {
+        "stage": "passed-artifact-smoke-only",
+        "sourceCommit": "6d7c1cf52d554e1c5501cd172301df47da32db46",
+        "sourceSha256": "6785c3b4c5b50e2eab7b088914f6558b90aa3dad9cd105ef57d2973495c7b69c",
+        "receiptSha256": "678a2f41d5fccbf62fe4b7959871a35966a891000b12760773a08138748f3876",
+        "filesSha256": "b866009a9468676eedeac4d53d66bd930d30a9ed364ededbf5c187988b422fae",
+        "totalWebsiteBytes": 12852922,
+        "sizeMeaning": "Complete website directory, not initial network transfer.",
+        "fileCount": 21,
+        "logSha256": "6385d8163b0c0e9af4ed5e11d606fd1fadd7d3558ce08231b27067ece119505c",
+        "independentlyRecheckedAllFiles": true,
+        "sourceUnchanged": true,
+        "visualAcceptance": false,
+        "nodeQualification": false
+      },
+      "installedBrowserBaseline": {
+        "status": "refused-authored-area-lights-with-node-renderer",
+        "reportSha256": "9a9ade41abedd845f56dab429d5515997afe4c3cf82719da196e43eba2047f69",
+        "meaning": "Runtime refused authored Rect Area lights with the node renderer; no visible-scene success. HTTP/page-error absence is not rendering acceptance."
+      }
     }
   ],
   "retainedStressControls": {

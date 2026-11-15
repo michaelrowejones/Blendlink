@@ -111,7 +111,7 @@ gates and retain failed namespaces. The fresh qualification below passes this
 complete control matrix; metadata credits only its bounded partial scope.
 
 
-## Frozen full qualification
+## Initial frozen qualification
 
 On frozen source `b3b8495c7397a95b46adf6ba3cc5d0b8b56f739c`, the shared
 `mac-53` transaction in
@@ -119,7 +119,7 @@ On frozen source `b3b8495c7397a95b46adf6ba3cc5d0b8b56f739c`, the shared
 qualified with stable inputs and production evidence. Both automatic closes,
 a third replay and the independent root replay are byte-identical: receipt SHA256
 `8b1e29336d6bbc311aebe15d0f983dcdbe42396958c7d7f484871a9e83ef6953`.
-The [qualified evidence record](qualified-evidence.json) pins source, runtime,
+The [initial qualified evidence record](qualified-evidence-initial-b3.json) pins source, runtime,
 input digest, commands and archived paths. Manifest/reader status does not
 automatically promote a node. The reviewed capability map credits only Blender
 5.3 as **partial**; 4.2/5.2 remain unsupported.
@@ -169,4 +169,50 @@ PATH=/tmp/scenetoweb-apply-tooling:$PATH \
   node experiments/compositor-lens-horizontal/verify.mjs \
   artifacts/verification-lens-horizontal-formal-joint-r2/proof \
   /tmp/scenetoweb-lens-horizontal-root-close.json
+```
+
+
+## Frozen full qualification
+
+The final combined executable checkpoint
+`7ab9995096c7dd33735dc5e2de44370ed56b30f5` has a fresh complete qualification in
+`/tmp/scenetoweb-v1-qualified-lens-final/artifacts/verification-lens-horizontal-final-checkpoint-r1`.
+The initial b3 evidence and failed namespaces above remain intact; the initial
+record is retained byte-for-byte as `qualified-evidence-initial-b3.json`.
+Requalification was required because exporter/worker Python and the Three runtime
+SDK input changed. No Lens kernel, numerical gate, domain, profile or category
+was broadened. The [current evidence record](qualified-evidence.json) pins this
+complete new transaction.
+
+Both automatic readers, a third replay and the independent root replay match
+byte-for-byte: receipt SHA256
+`7db33d9893975d6f4c7d9102a81ce8f7658870e7a7e2df364c898c930e24ba46`.
+Runtime fingerprint is
+`f32c9f08d47c38559565f1e26a05386f4e617616a85c37006f3707f1f987f711`;
+input digest is
+`95c1691b332683b0bdcdbfb1542318afa03acf00fdf81d69e297531e9fe4a584`.
+The frozen worktree is clean and automatic inputs remain stable.
+
+The unchanged contract passes four saved-original Final scenes, 40 native
+renders / 20 same-pixel cases, 48 installed cycles / 41,760 exact linear words
+and the separate 48 sampling frames / 41,760 exact words across actual
+Metal/SwiftShader × WebGPU/WebGL2. All 48 physical resize/DPR frames, 20 guard
+refusals and recovery, four saved-original renderer disposals, four detached
+disposals and four cancellations pass. Eight actual Python prefixes close.
+The separate Raw display audit retains 1,134 word differences under the unchanged
+3e-5 projection gate; exact alpha/nonfinite classes and maximum clamped RGB error
+7.450580596923828e-9 are unchanged. It is not bit-exact display.
+
+All terminal/direct Render Layers, original .2f/+0/false Jitter/Fit, pinned 5.3
+CPU and 4,194,304-pixel limits above still apply. Image producer/beauty/whole-scene
+credit remains zero. Original Classroom remains blocked and not accepted, and
+4.2/5.2 remain unsupported. Other ports retain their own snapshots.
+
+Replay sequentially from `/tmp/scenetoweb-v1-qualified-lens-final`:
+
+```sh
+PATH=/tmp/scenetoweb-apply-tooling:$PATH \
+  node experiments/compositor-lens-horizontal/verify.mjs \
+  artifacts/verification-lens-horizontal-final-checkpoint-r1/proof \
+  /tmp/scenetoweb-lens-horizontal-final-checkpoint-root-close.json
 ```

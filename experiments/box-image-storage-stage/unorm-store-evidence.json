@@ -1,0 +1,240 @@
+{
+  "status": "CPU_UNORM_STORE_CORRECTION_RESEARCH_ZERO_SUPPORT_CREDIT",
+  "supportCredit": 0,
+  "installedSceneCredit": 0,
+  "fullArchvizCredit": 0,
+  "nativeArchiveUnchanged": true,
+  "nativeDirectory": "/tmp/scenetoweb-box-storage-native-r3",
+  "nativeSha256": "6e130f37b63586d8922548e88806502cb5faec29f4f35b0acd36e38f733629d1",
+  "nativeSourcePins": {
+    "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/intern/gpu_texture_mipmap.cc": "d8e1d4b7b174afc91650e1fc5fcac3e0ff49b9055e78cd7964813d9be988a998",
+    "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shaders/gpu_shader_update_mipmaps.bsl.hh": "4da23ea5a1043654f889316f0435e0153819b926e0fcea7cb9278c4ab05f8796",
+    "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/imbuf/intern/util_gpu.cc": "03696c7bd574b3c9ae297e871cf0e41b1acb0a728f96bc24a909167140f5c813",
+    "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/blenkernel/intern/image_gpu.cc": "ac70c9579558e633f48e1321ddd7ef956fee57d7f5b72b583da377ead5cae7ff",
+    "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/metal/mtl_texture.mm": "9fa5e635828eae791b09f49317381b5b80dfa8b632850e6af2db44ce34244ab2",
+    "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/python/gpu/gpu_py_texture.cc": "30179325f8aebb8155f932010bf32475af12e8e53f47dfcf54d0ad4e3e22165e",
+    "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/nodes/shader/nodes/node_shader_tex_image.cc": "92e98aa4093786d68b1e6083c342daa0810270babeea7a25766c390e8036e714",
+    "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/draw/intern/draw_pass.hh": "eb55b8827d57f63f53c4f9e853c7e7d6d4bf16948db89edd8eac20af7d652ff8",
+    "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/draw/engines/eevee/eevee_instance.cc": "5d4174fc4b2e3267e2e5caf8cb6b6a8a3f4c45d1f459f504c17492e54b76b7df"
+  },
+  "typedWriteSourcePin": {
+    "path": "/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shaders/compat/gpu_shader_msl_sampler.msl",
+    "sha256": "34e777ad4ad66c787bb8bb706ef2508e0af304fab6b6f7a1285a04e588bf4738"
+  },
+  "oldCpuReport": "/tmp/scenetoweb-box-storage-model-r3.json",
+  "oldCpuReportSha256": "fd297f82366066c70d479d452805de33e2cb796d2be37b6ae28d41d25fb57418",
+  "newCpuReport": "/tmp/scenetoweb-box-unorm-store-model-r2.json",
+  "newCpuReportSha256": "86811f5f6758b52611bb98fb83b40cbf9f78565bf18bb823908455e153a173ba",
+  "newModelPins": {
+    "model-check-unorm-store.mjs": "d25f4a43fd78e2f727e3fa08f4d8cbeab3dab9fc468adefd6c5957cafb2c98c1",
+    "mip-model-unorm-store.mjs": "d346b92e9694d19f68da0d65a8c5720a46e8c8a54ae9f509fe2b92fe9b998ed3"
+  },
+  "scope": "One CPU conversion correction; no native or browser job, upload, admission or tolerance change.",
+  "correction": "Do not invent an extra Float32 rounding of normalized Float32 input times255 before typed-byte quantization.",
+  "qualificationLimit": "Observed filtered LOD references,64 coordinates/level; not exhaustive typed-store qualification or browser custom-mip proof.",
+  "rows": [
+    {
+      "image": "Plaster-Overlay.png",
+      "level": 0,
+      "words": 256,
+      "oldViolations": 0,
+      "newViolations": 0,
+      "oldMaxAbs": 0.0001766979694366455,
+      "newMaxAbs": 0.0001766979694366455
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "level": 1,
+      "words": 256,
+      "oldViolations": 20,
+      "newViolations": 20,
+      "oldMaxAbs": 0.0022055059671401978,
+      "newMaxAbs": 0.0022055059671401978
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "level": 2,
+      "words": 256,
+      "oldViolations": 51,
+      "newViolations": 51,
+      "oldMaxAbs": 0.0037428438663482666,
+      "newMaxAbs": 0.0037428438663482666
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "level": 3,
+      "words": 256,
+      "oldViolations": 54,
+      "newViolations": 54,
+      "oldMaxAbs": 0.0040506720542907715,
+      "newMaxAbs": 0.0040506720542907715
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "level": 4,
+      "words": 256,
+      "oldViolations": 88,
+      "newViolations": 88,
+      "oldMaxAbs": 0.00396353006362915,
+      "newMaxAbs": 0.00396353006362915
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "level": 5,
+      "words": 256,
+      "oldViolations": 130,
+      "newViolations": 130,
+      "oldMaxAbs": 0.003935828804969788,
+      "newMaxAbs": 0.003935828804969788
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "level": 6,
+      "words": 256,
+      "oldViolations": 147,
+      "newViolations": 147,
+      "oldMaxAbs": 0.0038829445838928223,
+      "newMaxAbs": 0.0038829445838928223
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "level": 7,
+      "words": 256,
+      "oldViolations": 161,
+      "newViolations": 161,
+      "oldMaxAbs": 0.0038779526948928833,
+      "newMaxAbs": 0.0038779526948928833
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "level": 8,
+      "words": 256,
+      "oldViolations": 118,
+      "newViolations": 118,
+      "oldMaxAbs": 0.003850415349006653,
+      "newMaxAbs": 0.003850415349006653
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "level": 9,
+      "words": 256,
+      "oldViolations": 191,
+      "newViolations": 191,
+      "oldMaxAbs": 0.0037900209426879883,
+      "newMaxAbs": 0.0037900209426879883
+    },
+    {
+      "image": "Plaster-Overlay.png",
+      "level": 10,
+      "words": 256,
+      "oldViolations": 192,
+      "newViolations": 192,
+      "oldMaxAbs": 0.003691956400871277,
+      "newMaxAbs": 0.003691956400871277
+    },
+    {
+      "image": "Plaster-normal.png",
+      "level": 0,
+      "words": 256,
+      "oldViolations": 0,
+      "newViolations": 0,
+      "oldMaxAbs": 0.00020873546600341797,
+      "newMaxAbs": 0.00020873546600341797
+    },
+    {
+      "image": "Plaster-normal.png",
+      "level": 1,
+      "words": 256,
+      "oldViolations": 34,
+      "newViolations": 0,
+      "oldMaxAbs": 0.0020450353622436523,
+      "newMaxAbs": 0.00028628110885620117
+    },
+    {
+      "image": "Plaster-normal.png",
+      "level": 2,
+      "words": 256,
+      "oldViolations": 0,
+      "newViolations": 0,
+      "oldMaxAbs": 0.00021183490753173828,
+      "newMaxAbs": 0.00021183490753173828
+    },
+    {
+      "image": "Plaster-normal.png",
+      "level": 3,
+      "words": 256,
+      "oldViolations": 39,
+      "newViolations": 0,
+      "oldMaxAbs": 0.003921568393707275,
+      "newMaxAbs": 0.00024890899658203125
+    },
+    {
+      "image": "Plaster-normal.png",
+      "level": 4,
+      "words": 256,
+      "oldViolations": 0,
+      "newViolations": 0,
+      "oldMaxAbs": 0.00013148784637451172,
+      "newMaxAbs": 0.00013148784637451172
+    },
+    {
+      "image": "Plaster-normal.png",
+      "level": 5,
+      "words": 256,
+      "oldViolations": 19,
+      "newViolations": 0,
+      "oldMaxAbs": 0.0023412108421325684,
+      "newMaxAbs": 0.00012743473052978516
+    },
+    {
+      "image": "Plaster-normal.png",
+      "level": 6,
+      "words": 256,
+      "oldViolations": 0,
+      "newViolations": 0,
+      "oldMaxAbs": 0.00012362003326416016,
+      "newMaxAbs": 0.00012362003326416016
+    },
+    {
+      "image": "Plaster-normal.png",
+      "level": 7,
+      "words": 256,
+      "oldViolations": 26,
+      "newViolations": 0,
+      "oldMaxAbs": 0.0021744966506958008,
+      "newMaxAbs": 0.00012946128845214844
+    },
+    {
+      "image": "Plaster-normal.png",
+      "level": 8,
+      "words": 256,
+      "oldViolations": 0,
+      "newViolations": 0,
+      "oldMaxAbs": 0.00011974573135375977,
+      "newMaxAbs": 0.00011974573135375977
+    },
+    {
+      "image": "Plaster-normal.png",
+      "level": 9,
+      "words": 256,
+      "oldViolations": 0,
+      "newViolations": 0,
+      "oldMaxAbs": 0.00012236833572387695,
+      "newMaxAbs": 0.00012236833572387695
+    },
+    {
+      "image": "Plaster-normal.png",
+      "level": 10,
+      "words": 256,
+      "oldViolations": 0,
+      "newViolations": 0,
+      "oldMaxAbs": 0,
+      "newMaxAbs": 0
+    }
+  ],
+  "remaining": [
+    "sRGB image filtered LODs1..10 still fail and are unchanged.",
+    "Independent typed normalized-store/transfer primitives need qualification if broader equivalence is claimed.",
+    "Custom source-specialized mip upload and derivative/anisotropic BOX material sampling have not been tested."
+  ]
+}

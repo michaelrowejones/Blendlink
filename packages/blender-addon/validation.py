@@ -14,6 +14,7 @@ from mathutils import Matrix
 
 from . import (
     component_validation,
+    camera_fidelity,
     consequence_gizmos,
     material_compiler,
     procedural,
@@ -820,6 +821,15 @@ def recompute(scene) -> bool:
                 ))
             frame_names.add(name)
     camera = project.main_camera if project is not None else None
+    dof_warning = camera_fidelity.depth_of_field_warning(scene, explicit_website_effect=any(
+        component.component_type == 'blendlink.depth-of-field' and component.enabled
+        and component.target_kind == 'SCENE'
+        for component in getattr(project, 'components', ())))
+    if dof_warning is not None:
+        issues.append(vocab.LintIssue(
+            severity='WARNING', message=dof_warning['message'],
+            object_name=dof_warning['camera'],
+        ))
     if camera is not None:
         camera_issue = None
         if scene.objects.get(camera.name) is not camera:

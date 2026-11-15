@@ -1,33 +1,33 @@
 {
   "schemaVersion": 1,
   "status": "QUALIFIED_PARTIAL_HORIZONTAL_LENS_CPU_FINAL",
-  "sourceCommit": "b3b8495c7397a95b46adf6ba3cc5d0b8b56f739c",
-  "qualificationDirectory": "/tmp/scenetoweb-v1-qualified-lens/artifacts/verification-lens-horizontal-formal-joint-r2",
-  "command": "PATH=/tmp/scenetoweb-apply-tooling:$PATH BLENDLINK_TEST_PYTHON=/Users/michaeljones/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 node scripts/test-node-port.mjs compositor-lens-horizontal --profile mac-53 --blender /Applications/Blender.app/Contents/MacOS/Blender --evidence artifacts/verification-lens-horizontal-formal-joint-r2",
+  "sourceCommit": "7ab9995096c7dd33735dc5e2de44370ed56b30f5",
+  "qualificationDirectory": "/tmp/scenetoweb-v1-qualified-lens-final/artifacts/verification-lens-horizontal-final-checkpoint-r1",
+  "command": "PATH=/tmp/scenetoweb-apply-tooling:$PATH BLENDLINK_TEST_PYTHON=/Users/michaeljones/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 node scripts/test-node-port.mjs compositor-lens-horizontal --profile mac-53 --blender /Applications/Blender.app/Contents/MacOS/Blender --evidence artifacts/verification-lens-horizontal-final-checkpoint-r1",
   "replay": {
-    "workingDirectory": "/tmp/scenetoweb-v1-qualified-lens",
-    "command": "PATH=/tmp/scenetoweb-apply-tooling:$PATH node experiments/compositor-lens-horizontal/verify.mjs artifacts/verification-lens-horizontal-formal-joint-r2/proof /tmp/scenetoweb-lens-horizontal-root-close.json",
+    "workingDirectory": "/tmp/scenetoweb-v1-qualified-lens-final",
+    "command": "PATH=/tmp/scenetoweb-apply-tooling:$PATH node experiments/compositor-lens-horizontal/verify.mjs artifacts/verification-lens-horizontal-final-checkpoint-r1/proof /tmp/scenetoweb-lens-horizontal-final-checkpoint-root-close.json",
     "note": "Run readers sequentially: they write auxiliary reader logs/receipts inside the evidence directory."
   },
-  "automaticReportSha256": "57669e23b76f499d6cb32ce5f263e15484aa1e5da8b6897c3ece6012ced74bee",
-  "receiptSha256": "8b1e29336d6bbc311aebe15d0f983dcdbe42396958c7d7f484871a9e83ef6953",
-  "adapterReceiptSha256": "8b1e29336d6bbc311aebe15d0f983dcdbe42396958c7d7f484871a9e83ef6953",
+  "automaticReportSha256": "584f0e9cbd0d12ae27160f4fc743467f49d3e9ba7fa700a8acc38ec872fe3496",
+  "receiptSha256": "7db33d9893975d6f4c7d9102a81ce8f7658870e7a7e2df364c898c930e24ba46",
+  "adapterReceiptSha256": "7db33d9893975d6f4c7d9102a81ce8f7658870e7a7e2df364c898c930e24ba46",
   "thirdReceipt": {
-    "path": "/tmp/scenetoweb-lens-horizontal-formal-joint-r2-third-close.json",
-    "sha256": "8b1e29336d6bbc311aebe15d0f983dcdbe42396958c7d7f484871a9e83ef6953"
+    "path": "/tmp/scenetoweb-lens-horizontal-final-checkpoint-third-close.json",
+    "sha256": "7db33d9893975d6f4c7d9102a81ce8f7658870e7a7e2df364c898c930e24ba46"
   },
   "independentRootReceipt": {
-    "path": "/tmp/scenetoweb-lens-horizontal-root-close.json",
-    "sha256": "8b1e29336d6bbc311aebe15d0f983dcdbe42396958c7d7f484871a9e83ef6953"
+    "path": "/tmp/scenetoweb-lens-horizontal-final-checkpoint-root-close.json",
+    "sha256": "7db33d9893975d6f4c7d9102a81ce8f7658870e7a7e2df364c898c930e24ba46"
   },
   "allFourClosesByteIdentical": true,
   "workspaceStable": true,
   "productionCredit": true,
   "automaticSupportPromotion": false,
-  "requestKey": "5eebb97d6e3f95db36a3d733072e07ca69b4ef3588ca2b265cb257acbed67b7c",
-  "evidenceKey": "f7e6f8d28fd2c6366d7c593d43383b745369f905877bfddd4df66f9fae09ce93",
-  "runtimeFingerprint": "942c50762a4f6fff15df52dc6bb8a1c3fbd3081a0076762f6ea7dae373439987",
-  "inputDigest": "bad9a2e69a797060a6e400c826c2034b05f25d53ce264bc3338ee4a091bcb28a",
+  "requestKey": "22f58bb7832397461508d4f343476b9e850e22ebef82e9896cfcc076d80f50cc",
+  "evidenceKey": "989f45caf67b13150e975e5eef75e04a26219b13b535c41ccb4d9ba1761cbcea",
+  "runtimeFingerprint": "f32c9f08d47c38559565f1e26a05386f4e617616a85c37006f3707f1f987f711",
+  "inputDigest": "95c1691b332683b0bdcdbfb1542318afa03acf00fdf81d69e297531e9fe4a584",
   "scope": "Pinned Blender 5.3.0 build 02f0899d78e3 macOS arm64 CPU compositor AUTO/FULL only; numeric captures use FULL. One terminal Horizontal Lens Distortion with a direct current-scene Render Layers Image, original raw Float32 Dispersion 0x3e4ccccd (0.20000000298023224), positive-zero Distortion and false Jitter/Fit. Square-pixel zero-origin full frame; source/output physical dimensions 4..8192 and at most 4,194,304 pixels. Linked controls, animation/drivers/NLA, other dispersion values/modes, arbitrary finite/computed/transformed producers, upstream Mix/Ghosts, downstream Blur/consumers, chained Lens nodes, borders/crop, unequal source/output domains, GPU compositor and other native versions/builds/hosts remain unqualified. Actual saved Final uses public preparation/commit/render/resize/cancel/dispose on WebGPURenderer actual WebGPU/WebGL2, observed Apple Metal and SwiftShader. Direct and installed pre-display RGBA require exact Float32 words against unchanged independent native same-pixel CPU references. The private native Image oracle is source-unadmitted and grants zero Image producer, Render Layers beauty, EEVEE material, Cycles-versus-Three or whole-scene appearance credit. Original Classroom remains blocked and not accepted: its Mix.004 input and Blur.001 consumer are outside this slice. Raw display is separate clamp01 RGB absolute 3e-5 with exact alpha/nonfinite classes, not bit-exact display.",
   "resourceContract": "One RGBA32F input RTT (64 MiB logical color bytes at the 4,194,304-pixel cap), three RGBA32F mapping tables (384 KiB persistent logical CPU and nominal GPU bytes), and two private zero uniforms. Mapping updates are bounded O(width+height); warm maps do not upload. Driver/storage overhead, source rendering, transient arrays and wider installation/output resources are separate. Staged Float32 bilinear and exact divide-three operations add ALU/bitcasts; no standalone throughput/FPS claim.",
   "sourceIntent": {
@@ -103,7 +103,7 @@
       "maxClampedAbsoluteError": 7.450580596923828e-09,
       "bitExactClaim": false
     },
-    "runtimeFingerprint": "942c50762a4f6fff15df52dc6bb8a1c3fbd3081a0076762f6ea7dae373439987",
+    "runtimeFingerprint": "f32c9f08d47c38559565f1e26a05386f4e617616a85c37006f3707f1f987f711",
     "sourcePolicy": {
       "positive": 2,
       "refusals": 14,
@@ -160,10 +160,10 @@
       }
     ],
     "closedReaders": {
-      "sampling": "3753054bf13c24d8e3fdaf496331eff6c039e3a9f09be7a0852866f0a8438739",
-      "public": "339b53c2b868e698838d50fe4760d34cdba88f777bbff03b4594e974f0f28a20"
+      "sampling": "aa31697007b648dd0243eca626f18669d547c000ae23f72494cd6b5d2e8be257",
+      "public": "790a3a6bd80b9f8158e5d63748c3c5a95639e6ff4ca3ca7a02936b8ee66b6f16"
     },
-    "inputDigest": "bad9a2e69a797060a6e400c826c2034b05f25d53ce264bc3338ee4a091bcb28a"
+    "inputDigest": "95c1691b332683b0bdcdbfb1542318afa03acf00fdf81d69e297531e9fe4a584"
   },
   "displayWordDifferences": 1134,
   "sourceImageProducerCredit": 0,
@@ -180,5 +180,14 @@
     "Original Classroom upstream Mix/Ghosts and downstream Blur graph",
     "Broader Lens modes/controls/producers and native profiles",
     "Whole-scene appearance and original demo acceptance"
-  ]
+  ],
+  "initialQualification": {
+    "path": "experiments/compositor-lens-horizontal/qualified-evidence-initial-b3.json",
+    "sha256": "fc2fea261a03fc39375caa8f2716f4cccc4975acc3fb0ce0b548a85a561eb99e",
+    "sourceCommit": "b3b8495c7397a95b46adf6ba3cc5d0b8b56f739c",
+    "receiptSha256": "8b1e29336d6bbc311aebe15d0f983dcdbe42396958c7d7f484871a9e83ef6953",
+    "runtimeFingerprint": "942c50762a4f6fff15df52dc6bb8a1c3fbd3081a0076762f6ea7dae373439987",
+    "inputDigest": "bad9a2e69a797060a6e400c826c2034b05f25d53ce264bc3338ee4a091bcb28a"
+  },
+  "requalificationReason": "The combined 1.0 checkpoint changes the exporter/worker Python source and threeRuntime SDK input after initial b3 qualification. A fresh full automatic native/Final/four-tuple/lifecycle matrix passes without kernel, domain, gate, profile or category changes; initial evidence/failures remain retained."
 }

@@ -250,6 +250,7 @@ const world = new THREE.Scene()
 const installed = await install${integrationName}({
   renderer,
   scene: world,
+  nodeRectAreaLights: 'renderer-local',
 })
 
 // Optional viewer navigation: set to true to orbit and zoom around the
@@ -371,6 +372,7 @@ export function ${installName}(
   options: ${integrationName}Options,
 ): Promise<InstalledThreeCompiledScene> {
   return installThreeCompiledScene({
+    nodeRectAreaLights: 'renderer-local',
     ...options,
     descriptor: compiledScene,
     createBakedScene,
@@ -412,6 +414,7 @@ export type ${componentName}Props = R3FCompiledSceneProps
 /** Application-owned association; SceneToWeb's adapter owns loader, camera,
  * resize, frame, composer, error, and disposal lifecycle behind this seam. */
 export const ${componentName} = createR3FCompiledScene({
+  nodeRectAreaLights: 'renderer-local',
   descriptor: compiledScene,
   createBakedScene,
   displayName: '${componentName}',

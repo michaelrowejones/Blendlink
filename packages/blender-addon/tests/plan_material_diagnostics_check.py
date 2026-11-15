@@ -277,6 +277,72 @@ def main():
         expect(not (root / "lighting-blocked.result.json").exists(), "blocked Lighting plan emitted success")
         expect(scene_snapshot() == before, "blocked baked plan mutated source scene state")
 
+    # A non-Mesh Geometry Nodes result is not safe to silently omit merely
+    # because Blender cannot return an evaluated Mesh. Keep this object-level
+    # inspection failure distinct from per-material lowering decisions.
+    inspection_collection = bpy.data.collections.new("Inspection Blocked")
+    bpy.context.scene.collection.children.link(inspection_collection)
+    text = bpy.data.curves.new("Authored Text", "FONT")
+    text.body = "Artist text"
+    uninspectable = bpy.data.objects.new("Uninspectable Text", text)
+    inspection_collection.objects.link(uninspectable)
+    tree = bpy.data.node_groups.new("Empty Evaluated Output", "GeometryNodeTree")
+    tree.interface.new_socket(name="Geometry", in_out="OUTPUT", socket_type="NodeSocketGeometry")
+    tree.nodes.new("NodeGroupOutput")
+    uninspectable.modifiers.new("Authored Geometry Nodes", "NODES").node_group = tree
+    bpy.context.view_layer.update()
+    before = scene_snapshot()
+    with tempfile.TemporaryDirectory(prefix="blendlink-binding-inspection-") as directory:
+        root = Path(directory)
+        output, report_path = invoke_plan(exporter, root, "Inspection Blocked", "binding-blocked")
+        report = json.loads(report_path.read_text())
+        issues = report["sidecar"]["diagnostics"]["materialBindingIssues"]
+        expect(len(issues) == 1 and issues[0]["code"] == "material.binding-inspection-failed"
+               and issues[0]["object"] == uninspectable.name
+               and "inspect" in issues[0]["problem"] and "repair" in issues[0]["fix"],
+               f"binding inspection lost object/cause/remedy: {issues}")
+        expect(report["plan"] is None and any("incomplete" in warning for warning in report["warnings"]),
+               "failed inspection claimed a complete bake estimate")
+        expect(not output.exists() and scene_snapshot() == before,
+               "inspection failure emitted geometry or changed source")
+        original_compute = exporter.compute_bake_plan
+        exporter.compute_bake_plan = lambda *_args, **_kwargs: (_ for _ in ()).throw(
+            AssertionError("incomplete inspection reached bake planning"))
+        try:
+            _, baked_report = invoke_plan(exporter, root, "Inspection Blocked", "binding-baked",
+                                          mode="baked", bake_output="appearance")
+            expect(json.loads(baked_report.read_text())["plan"] is None,
+                   "incomplete material scope produced a bake estimate")
+        finally:
+            exporter.compute_bake_plan = original_compute
+        original_plan = exporter.plan_export_materials
+        exporter.plan_export_materials = lambda *_args, **_kwargs: (_ for _ in ()).throw(
+            TypeError("unexpected programmer failure"))
+        try:
+            try:
+                invoke_plan(exporter, root, "Inspection Blocked", "unexpected-failure")
+            except TypeError as error:
+                expect("unexpected programmer" in str(error), "unexpected failure changed")
+            else:
+                raise AssertionError("plan serialized an unexpected programmer failure")
+            expect(not (root / "unexpected-failure.result.json").exists(),
+                   "unexpected failure emitted a successful protocol result")
+        finally:
+            exporter.plan_export_materials = original_plan
+        output.write_bytes(b"last-known-good")
+        for draft in (False, True):
+            settings = {"mode": "standard", "collection": "Inspection Blocked", "draft": draft}
+            kwargs, _ = exporter.gltf_export_contract(str(output), settings)
+            sidecar = exporter.collect_sidecar(settings, None, export_kwargs=kwargs)
+            try:
+                exporter.plan_export_materials(settings, sidecar, kwargs)
+            except compiler.MaterialBindingInspectionError as error:
+                expect(error.object_name == uninspectable.name, "real refusal lost the owner")
+            else:
+                raise AssertionError("real export accepted unknown evaluated bindings")
+            expect(output.read_bytes() == b"last-known-good" and scene_snapshot() == before,
+                   "real refusal changed source or last-good output")
+
     print("BLENDLINK_PLAN_MATERIAL_DIAGNOSTICS_CHECK_PASSED")
 
 

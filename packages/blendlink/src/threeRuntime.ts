@@ -344,6 +344,9 @@ export interface InstallThreeCompiledSceneOptions extends MeshoptWorkerOptions {
   /** Preview Studio opt-in. Uses Blender authoring evidence only where the
    * published recipe deliberately leaves presentation application-owned. */
   useAuthoringPreview?: boolean
+  /** Explicit private renderer-local Area light/LTC ownership on node renderers.
+   * Shared application LTC globals and light registrations remain untouched. */
+  nodeRectAreaLights?: 'renderer-local'
   /** Default true: use exported Blender camera, World and shadows where the
    * application/website recipe has no owner, plus display/compositor on node
    * renderers unless an explicit website tone-mapping policy overrides it. */
@@ -2584,6 +2587,7 @@ async function installLoadedThreeCompiledSceneNow(
     // still outside the application scene, so neither reflection capture nor
     // first paint can observe a missing light set.
     rectAreaLights = await installThreeRectAreaLights(root, renderer, {
+      ...(options.nodeRectAreaLights ? { nodeRectAreaLights: options.nodeRectAreaLights } : {}),
       ...(options.signal ? { signal: options.signal } : {}),
       ...(options.prewarm === false ? { prewarm: false } : {}),
       ...(options.onWarning ? { onWarning: options.onWarning } : {}),

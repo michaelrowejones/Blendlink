@@ -10,15 +10,17 @@ node-support promotions. No downloaded scene or texture is redistributed.
 | Original official scene | Authored source | Conservative reachable shader/compositor kinds | Current 5.3 catalog categories | Decision |
 | --- | --- | --- | --- | --- |
 | Archviz by Marek Moravec | EEVEE; 156 scene objects; CC0 | 15 | 2 supported, 9 partial, 2 unsupported, 2 structural | Selected first live porting target; prove the complete scene before accepting it |
+| Impact Fracture by Simon Thommes / Blender Studio | EEVEE; 285 objects; CC0 | 12 | 1 supported, 8 partial, 3 structural | Selected second target; artifact export passes, installed browser initially refuses area lighting |
 | Classroom by Christophe Seux | Cycles; 304 scene objects; CC0 | 58 | 13 supported, 30 partial, 7 unsupported, 8 structural | Provisional bake candidate; complexity review required |
 | Lone Monk by Carlo Bergonzini / Monorender | Cycles; 1,368 scene objects; CC-BY version unresolved | 50 | 11 supported, 28 partial, 5 unsupported, 6 structural | Provisional; complexity and exact redistribution license unresolved |
 
 These counts describe existing catalog classifications, not scene qualification.
-All used modes and graph combinations remain pending. The complete shortlist is
-not frozen; it must not turn three large conventional scenes into a hidden unlimited
-1.0 commitment. There are 73 distinct reachable shader/compositor kinds across
-these three candidates. The complete 92-kind authored inventory also preserves
-unreachable nodes and separate geometry modifier nodes.
+All complete scene graphs remain pending. Archviz and Impact Fracture are fixed
+porting targets; the complete positive shortlist is not frozen. Classroom and
+Lone Monk remain provisional rather than a hidden unlimited 1.0 commitment.
+There are 75 distinct reachable shader/compositor kinds across the four sources.
+The full 165-kind authored inventory also preserves unreachable nodes, unused
+geometry tool groups and separate geometry modifier nodes.
 
 Classroom references three Render Layers scenes, includes an 8,000-particle HALO
 dust source and a substantial compositor. Lone Monk includes 6,000 HAIR collection
@@ -42,6 +44,63 @@ original Cube Diorama, Mandelbrot and Radial Tiling stress receipts remain in
 their existing corpus, with their original failure statuses intact.
 
 ## Reproduce source acquisition and inspection
+
+Impact Fracture has an authored camera, 282 meshes, two lights and 20,537
+render-visible evaluated triangles, with no actions, drivers, node animation,
+particles or undefined nodes. The typed libraries/external-Image inventory is
+empty; this is narrower than Blender's global file paths. On `5ef60b8`,
+source-original `plan --blend --json` exits 0 with eight automatic program
+channels for `Material` and an explicitly approximated stock `ground` material.
+Active compositor settings are Diamond Sharpen, factor 0.5, followed by Medium
+Bloom, threshold 2, smoothness 0.1, clamp maximum 10, strength 1.6 and size 0.5.
+Those actual modes still need native/browser qualification.
+
+The first standalone Final on `a45853f` fails after glTF writing with private-mesh
+cleanup/binding errors. That failed receipt remains recorded. After the ownership
+fix, Final on `6d7c1cf` produces a website with 21 independently hash-checked
+files, totaling 12,852,922 bytes across the complete directory, including duplicate
+stable/addressed assets. This is not initial network transfer. Original source
+bytes remain unchanged. The first installed-browser baseline refuses authored
+Rect Area lights with the node renderer despite successful HTTP loads. Artifact
+smoke is not visible-scene, fidelity, node-mode or release acceptance. After the
+renderer-local Area-light fix, the original website renders on WebGPU and node
+WebGL2 with 281 translated assignments and zero skips. The
+[new baseline receipt](../../docs/release-scene-browser-baseline.json) pins both
+browser captures, a retained website snapshot and the controlled native image.
+DOF fidelity and startup performance remain open, and acceptance stays false.
+
+Blender reports two missing global file paths. The
+[native closure audit](../../docs/release-scene-closure-audit.json) accounts for
+all 16 occurrences as weak append-provenance references on local Geometry Node
+groups: 15 reference the author's hair-asset file and one references an old
+Viewport Transform Test file. Every owner is outside the current scene's
+transitive ID dependency closure, and there are no active Geometry Nodes
+modifiers. The locally embedded groups remain; no linked library is loaded.
+This supports unused provenance for this exact saved scene, not a blanket
+claim that the source has no dangling references. Compiler warnings and
+external-dependency policy are unchanged. Edits using those groups need a new
+audit.
+
+Reproduce this read-only audit separately; the original inventory's
+`sourceClosure` field covers typed libraries and unpacked Images only:
+
+```sh
+blender --background --factory-startup --disable-autoexec impact-fracture.blend \
+  --python experiments/release-scene-corpus/weak_reference_audit.py -- report.json
+```
+
+[Additional auditions](../../docs/release-scene-auditions.json) retain original
+source, inventory and plan-log pins. Pebble Scattering returns plan exit 0 but
+has twelve linked `NodeUndefined` placeholders in the render-enabled
+`GEO-ground/Pebbles` modifier; intended legacy semantics require independent
+comparison, so it is not a positive scene. Sample UV Surface's public-checkpoint
+plan fails without JSON on evaluated Geometry Nodes material inspection; a
+separate structured-refusal fix is tracked by root. Gizmo Array is CC0 and plan
+passes, but its original render is only a twelve-triangle default cube without
+a camera, suitable as a basic fixture rather than an artist golden scene.
+Pizza Delivery is CC0 but needs Holdout/instancer, simulation and broad
+compositor support. Color Vortex has mismatched embedded attribution, and Curve
+Bevel Profile has no recovered explicit license. None was stripped to pass.
 
 Acquire only the hash-pinned HTTPS originals into this checkout's ignored cache:
 
@@ -89,6 +148,34 @@ byte-identical. Fourteen focused CPU tests cover unused versus reachable modes,
 group interfaces and distinct instances, branch retention, recursion refusal,
 pin/usage tampering, zero support credit, archive safety, immutable cached sources
 and sidecars, and interrupted extraction cleanup.
+
+## Original Final and browser baseline
+
+After building the package, export the untouched selected original with the
+actual CLI. Keep a separate new cache/evidence namespace for failed attempts:
+
+```sh
+node packages/blendlink/dist/cli.js export --blend /absolute/impact-fracture.blend --out /absolute/website
+node experiments/release-scene-corpus/website-smoke.mjs impact-fracture /absolute/impact-fracture.blend /absolute/website /absolute/new-webgpu-evidence webgpu
+node experiments/release-scene-corpus/website-smoke.mjs impact-fracture /absolute/impact-fracture.blend /absolute/website /absolute/new-webgl2-evidence webgl2
+/absolute/Blender --background --factory-startup --disable-autoexec /absolute/impact-fracture.blend --python-exit-code 1 --python experiments/release-scene-corpus/native-reference.py -- impact-fracture /absolute/new-native-evidence
+```
+
+The browser helper pins every website file, validates the original source and
+website ownership marker, serves under `/showcase/`, observes the actual context,
+and retains errors/screenshot/unchanged-source checks. The WebGL2 case explicitly
+makes WebGPU unavailable to exercise the generated app's real fallback. It does
+not alter the exported website. The native helper verifies the inventory's exact
+Blender build, saves its producer, and records every render-setting override:
+Object Mode and a 1280×720 PNG replace the saved editing/output settings; the
+authored frame, samples, camera, engine, shading and compositor stay in use.
+It never saves the `.blend`. Neither helper grants node support, numerical
+fidelity, physical-device compatibility or release-scene acceptance.
+
+Initial successful browser evidence is `/tmp/scenetoweb-impact-original-browser-r2/`
+and `-r3/`; the controlled native baseline is
+`/tmp/scenetoweb-impact-native-reference-r2/`. The first browser refusal and
+failed Final remain separate. Camera DOF and WebGL2 startup are still open gates.
 
 ## Discovery boundaries
 

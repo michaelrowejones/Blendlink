@@ -17,6 +17,18 @@ pre-1.0; breaking changes must still be called out with a migration note.
 
 ### Fixed
 
+- Website Readiness and export warn when the active Blender camera's depth of
+  field is not translated, retaining lens/aperture/focus evidence. An explicit
+  Preview DOF effect remains an independent approximation, not native parity.
+- Final export handles scenes saved in Edit Mode without ignored private Mesh
+  installation, restores the worker's source mode, and closes the pinned glTF
+  exporter's temporary reference to private Meshes before strict cleanup.
+- Planning returns structured object-level refusals when evaluated material
+  bindings cannot be inspected, instead of losing all `--json` output. Incomplete
+  inspection never approves missing geometry or produces a bake estimate.
+- Blender's website failure cards show the installation error instead of npm's
+  trailing debug-log path; uncached offline setup explains how to enable online
+  access and retry. Complete diagnostic logs remain available.
 - Final export accepts a live-only base color when its exact shipped program and
   mesh dependencies validate. Missing or invalid program evidence still blocks;
   legacy renderers explain the required renderer instead of showing white.

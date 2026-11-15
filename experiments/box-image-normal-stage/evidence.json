@@ -1,0 +1,183 @@
+{
+  "status": "BOX_GEOMETRY_STAGE_RESEARCH_ZERO_SUPPORT_CREDIT",
+  "supportCredit": 0,
+  "installedSceneCredit": 0,
+  "fullArchvizCredit": 0,
+  "sourceSha256": "9f636b2e1a59b3d181f90caf1b1703658eeadebad57f3c6207737d2fe3ffd85e",
+  "nativeDirectory": "/tmp/scenetoweb-box-normal-native-r1",
+  "browserDirectory": "/tmp/scenetoweb-box-normal-browser-r1",
+  "nativeSha256": "6cd8d0d9881b84db4eac8a84e3c5bb6da6048b2aaecb91a9654735d7f7d4b882",
+  "browserSha256": "82483b363b3c2e4777d369c41043d1ff003b2dbceaddbb417ddb89a900fadc1d",
+  "closedSha256": "f1ccda548ba66312ef32480d2dfe4a76f3b971e076fdcad80bdb21ebaf735aa7",
+  "nativeArchiveSha256": "26f2b1d629e2b107bbfd4f33ed926ebfae16941ef1aa1d26f36336e85c9ed51b",
+  "nativeVersion": [
+    5,
+    3,
+    0
+  ],
+  "nativeBuild": "02f0899d78e3",
+  "nativeGpu": {
+    "backend": "METAL",
+    "renderer": "Metal API",
+    "vendor": "Apple M5 Pro",
+    "version": "1.2"
+  },
+  "browserVersion": "158.0.8127.18",
+  "actualEeveeRenders": 78,
+  "browserReadbacks": 300,
+  "stageTotals": [
+    {
+      "kind": "mask",
+      "words": 24576,
+      "violations": 0,
+      "maxAbs": 0
+    },
+    {
+      "kind": "input",
+      "words": 12288,
+      "violations": 0,
+      "maxAbs": 0
+    },
+    {
+      "kind": "normal",
+      "words": 24576,
+      "violations": 53,
+      "maxAbs": 0.3536376953125
+    },
+    {
+      "kind": "weights",
+      "words": 24576,
+      "violations": 9980,
+      "maxAbs": 1
+    },
+    {
+      "kind": "sampler",
+      "words": 221184,
+      "violations": 40989,
+      "maxAbs": 0.27051930129528046
+    }
+  ],
+  "normalByApi": {
+    "webgpu": {
+      "words": 12288,
+      "violations": 53,
+      "maxAbs": 0.3536376953125
+    },
+    "webgl2": {
+      "words": 12288,
+      "violations": 0,
+      "maxAbs": 0.00048744678497314453
+    }
+  },
+  "samplerByApiPolicy": {
+    "webgpu": {
+      "nomip": {
+        "words": 36864,
+        "violations": 11894,
+        "maxAbs": 0.27051930129528046
+      },
+      "mip": {
+        "words": 36864,
+        "violations": 7006,
+        "maxAbs": 0.06680071353912354
+      },
+      "scene-aniso": {
+        "words": 36864,
+        "violations": 2477,
+        "maxAbs": 0.06680071353912354
+      }
+    },
+    "webgl2": {
+      "nomip": {
+        "words": 36864,
+        "violations": 11854,
+        "maxAbs": 0.25391773879528046
+      },
+      "mip": {
+        "words": 36864,
+        "violations": 6601,
+        "maxAbs": 0.022689759731292725
+      },
+      "scene-aniso": {
+        "words": 36864,
+        "violations": 1157,
+        "maxAbs": 0.0043332576751708984
+      }
+    }
+  },
+  "sourceSettings": {
+    "normalStorage": "SNORM10",
+    "renderAnisotropic": "FILTER_2",
+    "renderAnisotropicSamples": 2,
+    "viewportAnisotropic": "FILTER_2"
+  },
+  "gate": 0.0009765625,
+  "invalidWeightControl": {
+    "status": "FIXTURE_FAILURE_NOT_BOX_WEIGHT_EVIDENCE",
+    "reason": "Unlinked TexImage Vector defaults are ignored by Blender; implicit UV is used. A future fresh capture must link an explicit constant node. Captured producer remains unchanged.",
+    "reportedViolations": 9980
+  },
+  "nativeActualTextureFormatObserved": false,
+  "sourceStorageAnalysis": {
+    "evidenceClass": "POST_CAPTURE_CPU_SOURCE_ANALYSIS_NOT_RUNTIME_GPU_OBSERVATION",
+    "nativeByteNonColorFormat": "UNORM_8_8_8_8",
+    "nativeByteSrgbFormat": "SRGBA_8_8_8_8 (conditional on native color-management classification)",
+    "nativeFloatFormat": "SFLOAT_16_16_16_16 or SFLOAT_32_32_32_32 according to buffer/high-bitdepth flags",
+    "nativeMipGeneration": "Metal blit encoder generateMipmapsForTexture on native storage format",
+    "candidatePackedImages": "ImageBitmap-backed THREE.Texture, default UnsignedByteType; not decoded Float32 image buffers",
+    "candidateExpectedFormats": {
+      "Non-Color": {
+        "webgpu": "rgba8unorm",
+        "webgl2": "RGBA8"
+      },
+      "sRGB": {
+        "webgpu": "rgba8unorm-srgb",
+        "webgl2": "SRGB8_ALPHA8"
+      }
+    },
+    "candidateMipGeneration": {
+      "webgpu": "Three render-pass textureSample into successive native-format mip views",
+      "webgl2": "gl.generateMipmap"
+    },
+    "conclusion": "Source paths predict equivalent byte format families; actual native ImBuf and texture format plus per-level mip words were not observed. Quantization/gamma/mip differences remain hypotheses, not established causes.",
+    "nativeSourcePins": {
+      "/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/blenkernel/intern/image_gpu.cc": "ac70c9579558e633f48e1321ddd7ef956fee57d7f5b72b583da377ead5cae7ff",
+      "/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/imbuf/intern/util_gpu.cc": "03696c7bd574b3c9ae297e871cf0e41b1acb0a728f96bc24a909167140f5c813",
+      "/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/metal/mtl_texture.mm": "9fa5e635828eae791b09f49317381b5b80dfa8b632850e6af2db44ce34244ab2",
+      "/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/metal/mtl_texture_util.mm": "f68d86be309707a204e1afe04745d922a0c54b35bade6037b8d7799e167713cb",
+      "/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/metal/mtl_texture.hh": "358061ff914f1ba3beb3dec9b4d6978a7a617ae7179296771410c5dfee190c74"
+    },
+    "threeSourcePins": {
+      "node_modules/three/src/textures/Texture.js": "ab2b297f91c58c69a95849ef8d1d3a9b7c0e7d2c3a574964b0ffd90b107452c6",
+      "node_modules/three/src/renderers/webgpu/utils/WebGPUTextureUtils.js": "5f241b35187e26b1d1b56279330df466d55f62bdce4a53e0106835cacba06ce1",
+      "node_modules/three/src/renderers/webgpu/utils/WebGPUTexturePassUtils.js": "47fb0296dca19cf5ee73331b902ad8e232dc8612295c5e50f8fc1fb6388dbce4",
+      "node_modules/three/src/renderers/webgl-fallback/utils/WebGLTextureUtils.js": "6b08fc0d0af38b893bd243991ba09eef844c2af99cb07c59f53f7a1c7149acc0"
+    },
+    "pngIhdr": {
+      "Plaster-Overlay.png": {
+        "width": 1024,
+        "height": 1024,
+        "bitDepth": 8,
+        "colorType": 2,
+        "compression": 0,
+        "filter": 0,
+        "interlace": 0
+      },
+      "Plaster-normal.png": {
+        "width": 1024,
+        "height": 1024,
+        "bitDepth": 8,
+        "colorType": 2,
+        "compression": 0,
+        "filter": 0,
+        "interlace": 0
+      }
+    }
+  },
+  "remaining": [
+    "Fresh explicit-linked-constant weight control; current failed control remains immutable.",
+    "Attribute sparse WebGPU actual-source normal discrepancy using independent depth/face controls, without fitting normals to answers.",
+    "Observe native ImBuf storage classification, actual GPU texture format and individual mip levels, then compare against same-format candidate chain before selecting a change.",
+    "Close full Mapping/NormalMap material and installed Final/public workflow after source sampler controls qualify."
+  ]
+}

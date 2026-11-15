@@ -360,6 +360,7 @@ function previewStudioLiveMainSource(
   const authoringPreviewOption = useAuthoringPreview ? '  useAuthoringPreview: true,\n' : ''
   return `// SceneToWeb Preview Studio owns this disposable entry point.
 import * as THREE from 'three'
+import { WebGPURenderer } from 'three/webgpu'
 import { installThreeCompiledScene } from 'scenetoweb/three'
 import { ${plan.sceneName} as compiledScene } from '${generated}.gen'
 import { createBakedScene } from '${generated}.baked'
@@ -367,11 +368,13 @@ import './style.css'
 
 const canvas = document.querySelector<HTMLCanvasElement>('#scene')
 if (!canvas) throw new Error('SceneToWeb Preview Studio: #scene canvas is missing')
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true })
+const renderer = new WebGPURenderer({ canvas, antialias: true, alpha: true })
+await renderer.init()
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 const world = new THREE.Scene()
 const installed = await installThreeCompiledScene({
   renderer,
+  nodeRectAreaLights: 'renderer-local',
   scene: world,
   descriptor: compiledScene,
   createBakedScene,

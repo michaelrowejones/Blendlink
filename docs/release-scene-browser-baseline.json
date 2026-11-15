@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 1,
+  "kind": "release-scene-local-artifact-smoke-v1",
+  "scene": "impact-fracture",
+  "sourceSha256": "6785c3b4c5b50e2eab7b088914f6558b90aa3dad9cd105ef57d2973495c7b69c",
+  "artifactBuildSourceCommit": "099e993bc54697c45bfe3f18e3ee0f57fc9353cc",
+  "supportCredit": 0,
+  "sceneAcceptance": false,
+  "scope": "Original Final and installed local website smoke only; no numerical scene-fidelity or frozen performance pass",
+  "websiteSnapshot": "/tmp/scenetoweb-impact-original-website-099e993",
+  "websiteFileCount": 23,
+  "websiteFilesSha256": "a7b0ad507d3d7ad74c82da8ead2106bba6b6e9c108bbf7187257cf88be962835",
+  "browser": [
+    {
+      "report": "/tmp/scenetoweb-impact-original-browser-r2/website.json",
+      "reportSha256": "e0bde63b96b3b3a948d2909ee4bc99360ebe0bfa1870e6a3dc8ef2fd439cfc99",
+      "producerSha256": "53e9b4dc5b3be4e6d7cd363b806e7beb80614dca232f59b46fd19fd04c54ff19",
+      "backend": "webgpu",
+      "forcedWebGpuUnavailable": false,
+      "browserVersion": "158.0.8127.18",
+      "status": "READY_NOT_FIDELITY_QUALIFIED",
+      "firstReadyMs": 1168.0755,
+      "contexts": [
+        "webgpu"
+      ],
+      "materialAssignments": 281,
+      "skippedAssignments": 0,
+      "errors": [],
+      "sourceUnchanged": true,
+      "websiteUnchanged": true,
+      "websiteFilesSha256": "a7b0ad507d3d7ad74c82da8ead2106bba6b6e9c108bbf7187257cf88be962835",
+      "screenshot": "/tmp/scenetoweb-impact-original-browser-r2/website.png",
+      "screenshotSha256": "e43c74538653dfb1412ed38e2c7ea43c555c7ff45c98b83b2ca688ded1dc8bb9"
+    },
+    {
+      "report": "/tmp/scenetoweb-impact-original-browser-r3/website.json",
+      "reportSha256": "ba90d0aad54f6fe69d093652da2a434679a283452a58d0f11d2431cdd5debe81",
+      "producerSha256": "53e9b4dc5b3be4e6d7cd363b806e7beb80614dca232f59b46fd19fd04c54ff19",
+      "backend": "webgl2",
+      "forcedWebGpuUnavailable": true,
+      "browserVersion": "158.0.8127.18",
+      "status": "READY_NOT_FIDELITY_QUALIFIED",
+      "firstReadyMs": 17285.224833,
+      "contexts": [
+        "webgl2"
+      ],
+      "materialAssignments": 281,
+      "skippedAssignments": 0,
+      "errors": [
+        {
+          "kind": "warning",
+          "message": "THREE.WebGPURenderer: WebGPU is not available, running under WebGL2 backend."
+        }
+      ],
+      "sourceUnchanged": true,
+      "websiteUnchanged": true,
+      "websiteFilesSha256": "a7b0ad507d3d7ad74c82da8ead2106bba6b6e9c108bbf7187257cf88be962835",
+      "screenshot": "/tmp/scenetoweb-impact-original-browser-r3/website.png",
+      "screenshotSha256": "d7edcfc6fbaae2720c54668677b8e2773655f72f8a705cef124bf9fe9fc6aa88"
+    }
+  ],
+  "native": {
+    "report": "/tmp/scenetoweb-impact-native-reference-r2/report.json",
+    "reportSha256": "87dd4044f0d4bedb914b19fbce9dfca4ce2ee1b5e4f054837df03029ea488229",
+    "producerSha256": "4f8a24de5a8b5ce5519dba85282d3b37d262b45414dc65bf4eee05a8dbcef798",
+    "image": "/tmp/scenetoweb-impact-native-reference-r2/native.png",
+    "imageSha256": "78cf66a6e1eda456e8e350abedbded5ecbcfdcda0febe706a0b1f8b1f1e83f69",
+    "identity": {
+      "version": "5.3.0",
+      "buildHash": "02f0899d78e3"
+    },
+    "backend": "METAL",
+    "before": {
+      "engine": "BLENDER_EEVEE",
+      "frame": 0,
+      "resolution": [
+        1920,
+        1080,
+        100
+      ],
+      "pixelAspect": [
+        1.0,
+        1.0
+      ],
+      "camera": "Camera",
+      "mode": "EDIT_MESH",
+      "cameraDof": {
+        "enabled": true,
+        "fstop": 0.5,
+        "focusDistance": 6.928999900817871,
+        "focusObject": null
+      },
+      "eeveeSamples": 64
+    },
+    "referenceSettings": {
+      "engine": "BLENDER_EEVEE",
+      "frame": 0,
+      "resolution": [
+        1280,
+        720,
+        100
+      ],
+      "pixelAspect": [
+        1.0,
+        1.0
+      ],
+      "camera": "Camera",
+      "mode": "OBJECT",
+      "cameraDof": {
+        "enabled": true,
+        "fstop": 0.5,
+        "focusDistance": 6.928999900817871,
+        "focusObject": null
+      },
+      "eeveeSamples": 64
+    },
+    "sourceUnchanged": true,
+    "completedRenders": 1,
+    "saveCalls": 0
+  },
+  "remaining": [
+    "Native authored camera depth of field is not preserved; readiness/export now warn and retain native values.",
+    "No numerical whole-scene gate was frozen before these baseline captures; visual acceptance is pending.",
+    "WebGL2 first-ready startup needs controlled phase/shader measurement and optimization; driver caches and network were not controlled.",
+    "Declared lighting approximation and physical-device/clean-public-install acceptance remain separate."
+  ],
+  "reproduce": {
+    "browser": "experiments/release-scene-corpus/website-smoke.mjs",
+    "native": "experiments/release-scene-corpus/native-reference.py"
+  },
+  "historicalEvidence": "Earlier failed Final, first successful Final and area-light browser refusal remain recorded; the first successful full website directory was normally updated before a separate snapshot was retained. The current 099e993 website is retained and byte-checked."
+}

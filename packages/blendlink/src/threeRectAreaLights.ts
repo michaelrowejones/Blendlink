@@ -76,6 +76,8 @@ export interface InstalledThreeRectAreaLights {
 
 export interface InstallThreeRectAreaLightsOptions {
   signal?: AbortSignal
+  /** Explicit renderer-local ownership; never writes Three LTC globals. */
+  nodeRectAreaLights?: 'renderer-local'
   /** Default true. False retains lazy shared LTC initialization for runtime
    * correctness but leaves GPU upload to Three's first render. */
   prewarm?: boolean
@@ -302,7 +304,9 @@ function receiverCounts(root: THREE.Object3D): { supported: number; unsupported:
     for (const material of materials) {
       if (!material?.isMaterial || !material.visible) continue
       const pbr = material as THREE.MeshStandardMaterial & THREE.MeshPhysicalMaterial
-      if (pbr.isMeshStandardMaterial === true || pbr.isMeshPhysicalMaterial === true) {
+      if (pbr.isMeshStandardMaterial === true || pbr.isMeshPhysicalMaterial === true
+          || (material as THREE.Material & { isMeshStandardNodeMaterial?: boolean }).isMeshStandardNodeMaterial === true
+          || (material as THREE.Material & { isMeshPhysicalNodeMaterial?: boolean }).isMeshPhysicalNodeMaterial === true) {
         supported.add(material)
       } else {
         unsupported.add(material)
@@ -440,38 +444,36 @@ function createRuntime(
         )
       }
 
-      if ((renderer as { isWebGPURenderer?: boolean }).isWebGPURenderer) {
-        // The node system takes LTC data through the static, write-only
-        // RectAreaLightNode.setLTC(); three exposes no way to inspect or
-        // co-own that state, so SceneToWeb's LTC ownership machine cannot
-        // protect it yet. Named refusal instead of the misleading
-        // duplicate-peer diagnosis below.
-        throw new Error(
-          'SceneToWeb authored Rect Area lights do not support WebGPURenderer yet: three\'s node ' +
-            'renderer initializes LTC through the write-only RectAreaLightNode.setLTC(), which ' +
-            'SceneToWeb cannot own without clobbering application state. Initialize ' +
-            'RectAreaLightTexturesLib and RectAreaLightNode.setLTC() in the application, keep these ' +
-            'lights bake-only, or stay on WebGLRenderer for this scene.',
-        )
-      }
-      if (!(renderer instanceof peer.WebGLRenderer)) {
-        throw new Error(
-          'SceneToWeb Rect Area lights require the renderer and SceneToWeb runtime to share one evaluated Three peer. ' +
-            'The supplied WebGLRenderer comes from another copy. Dedupe/alias `three` in the site bundler and align ' +
-            'the application version with SceneToWeb before publishing.',
-        )
-      }
-
-      throwIfAborted(options.signal)
-      const ltc = await ensureLtcTextures()
-      throwIfAborted(options.signal)
-      if (options.prewarm !== false) {
-        const selected = renderer.extensions.has('OES_texture_float_linear')
-          ? [ltc.LTC_FLOAT_1, ltc.LTC_FLOAT_2]
-          : [ltc.LTC_HALF_1, ltc.LTC_HALF_2]
-        for (const texture of selected) {
-          renderer.initTexture(texture)
-          throwIfAborted(options.signal)
+      const nodeRenderer = (renderer as { isWebGPURenderer?: boolean }).isWebGPURenderer === true
+      let nodeLease: import('./threeNodeRectAreaLights.js').RendererLocalRectAreaLease | null = null
+      if (nodeRenderer) {
+        if (options.nodeRectAreaLights !== 'renderer-local') {
+          throw new Error(
+            'SceneToWeb authored Rect Area lights on WebGPURenderer require explicit nodeRectAreaLights: "renderer-local" ownership. ' +
+            'This path uses private renderer-scoped LTC textures and never calls the application-global RectAreaLightNode.setLTC().',
+          )
+        }
+        const module = await import('./threeNodeRectAreaLights.js')
+        nodeLease = await module.acquireRendererLocalRectAreaLights(renderer, options)
+      } else {
+        if (!(renderer instanceof peer.WebGLRenderer)) {
+          throw new Error(
+            'SceneToWeb Rect Area lights require the renderer and SceneToWeb runtime to share one evaluated Three peer. ' +
+              'The supplied WebGLRenderer comes from another copy. Dedupe/alias `three` in the site bundler and align ' +
+              'the application version with SceneToWeb before publishing.',
+          )
+        }
+        throwIfAborted(options.signal)
+        const ltc = await ensureLtcTextures()
+        throwIfAborted(options.signal)
+        if (options.prewarm !== false) {
+          const selected = renderer.extensions.has('OES_texture_float_linear')
+            ? [ltc.LTC_FLOAT_1, ltc.LTC_FLOAT_2]
+            : [ltc.LTC_HALF_1, ltc.LTC_HALF_2]
+          for (const texture of selected) {
+            renderer.initTexture(texture)
+            throwIfAborted(options.signal)
+          }
         }
       }
 
@@ -525,7 +527,8 @@ function createRuntime(
                 'Dispose that scene handle before retrying.',
             )
           }
-          const light = new peer.RectAreaLight()
+          const Light = nodeLease?.Light ?? peer.RectAreaLight
+          const light = new Light()
           let reserved = false
           try {
             reserved = Reflect.set(plan.marker, INSTALLATION_SLOT, token)
@@ -557,6 +560,7 @@ function createRuntime(
         }
       } catch (error) {
         const cleanupErrors = cleanup()
+        try { nodeLease?.release() } catch (error) { cleanupErrors.push(error) }
         if (cleanupErrors.length > 0) {
           throw new Error(
             `Could not install SceneToWeb Rect Area lights: ${error instanceof Error ? error.message : String(error)}. ` +
@@ -570,6 +574,7 @@ function createRuntime(
         report,
         sync() {
           if (disposed) throw new Error('This SceneToWeb Rect Area light installation has been disposed.')
+          nodeLease?.assertActive()
           syncLights(installed)
         },
         auditReceivers() {
@@ -591,6 +596,7 @@ function createRuntime(
           if (disposed) return
           disposed = true
           const errors = cleanup()
+          try { nodeLease?.release() } catch (error) { errors.push(error) }
           if (errors.length > 0) {
             throw new Error(
               `Could not fully dispose SceneToWeb Rect Area lights: ${errors.map(String).join('; ')}`,

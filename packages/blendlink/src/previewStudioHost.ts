@@ -843,6 +843,7 @@ async function createPresentation(generation: string, status: StudioStatus): Pro
       descriptor,
       createBakedScene,
       useAuthoringPreview: true,
+      nodeRectAreaLights: 'renderer-local',
       onWarning(message) {
         // Compiler diagnostics may add a category prefix to the same runtime
         // warning. Show the artist one actionable check, not two spellings of

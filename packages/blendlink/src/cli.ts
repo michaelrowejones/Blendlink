@@ -652,13 +652,13 @@ async function main(): Promise<number> {
           } else {
             console.error(
               `\nmaterial plan blocked - ${scene.name}: ` +
-                `${inspection.errors.length} used material${inspection.errors.length === 1 ? '' : 's'} ` +
-                'would lose authored surface behavior',
+                `${inspection.errors.length} material or binding issue${inspection.errors.length === 1 ? '' : 's'} ` +
+                'prevent safe surface inspection or export',
             )
             const records = result.sidecar.diagnostics?.materials ?? []
             for (const issue of inspection.errors) {
               console.error(
-                `  x ${issue.material}: ${issue.summary} ` +
+                `  x ${issue.material ?? issue.object}: ${issue.summary} ` +
                 `(used by ${issue.usedBy.join(', ')})`,
               )
               for (const reason of issue.reasons) console.error(`      ${reason}`)

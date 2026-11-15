@@ -35,6 +35,19 @@ function blockedMaterial(
 }
 
 describe('hard material compilation inspection', () => {
+  it('reports unknown evaluated bindings as hard object errors with their remedy', () => {
+    const issue = { code: 'material.binding-inspection-failed' as const,
+      object: 'GEO-stitching_name', problem: 'Object does not have geometry data',
+      fix: 'Repair the evaluated Geometry Nodes result before export.' }
+    const result = inspectRealtimePlanMaterialDiagnostics({ materialBindingIssues: [issue] }, {
+      bakePlan: { objects: [{ name: issue.object, bakeOutput: 'appearance' }] },
+      applicationMaterialAdapter: { acknowledgePayloadCollapse: true, description: 'Custom adapter' },
+    })
+    expect(result.errors).toEqual([{ code: issue.code, object: issue.object,
+      usedBy: [issue.object], summary: issue.problem, reasons: [issue.problem, issue.fix] }])
+    expect(result.warnings).toEqual([])
+    expect(result.incomplete).toBe(true)
+  })
   it.each(['exact', 'approximated', 'needsBake'] as const)(
     'keeps native compiler refusals blocking despite %s stock classification',
     (status) => {

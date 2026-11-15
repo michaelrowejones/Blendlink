@@ -3,11 +3,13 @@ import type { ApplicationMaterialAdapterConfig } from './config.js'
 import { parseManifest } from './typegen.js'
 import type {
   MaterialChannelPlanDiagnostic, MaterialPortabilityDiagnostic,
+  BlenderSceneDiagnostics,
 } from './sceneDiagnostics.js'
 
 export interface RealtimePlanMaterialIssue {
-  code: 'material.used-needs-bake' | 'material.compilation-blocked'
-  material: string
+  code: 'material.used-needs-bake' | 'material.compilation-blocked' | 'material.binding-inspection-failed'
+  material?: string
+  object?: string
   usedBy: string[]
   summary: string
   reasons: string[]
@@ -19,6 +21,8 @@ export interface RealtimePlanMaterialIssue {
 export interface RealtimePlanMaterialInspection {
   errors: RealtimePlanMaterialIssue[]
   warnings: RealtimePlanMaterialIssue[]
+  /** A binding failure prevents a complete material-scope inspection. */
+  incomplete?: true
 }
 
 export interface RealtimePlanMaterialOptions {
@@ -93,10 +97,15 @@ function unambiguousAppearanceOwnedObjectNames(
  * fidelity evidence.
  */
 export function inspectRealtimePlanMaterialDiagnostics(
-  diagnostics: { materials?: readonly MaterialPortabilityDiagnostic[] } | undefined,
+  diagnostics: { materials?: readonly MaterialPortabilityDiagnostic[];
+    materialBindingIssues?: BlenderSceneDiagnostics['materialBindingIssues'] } | undefined,
   options: RealtimePlanMaterialOptions,
 ): RealtimePlanMaterialInspection {
   const appearanceOwned = unambiguousAppearanceOwnedObjectNames(options.bakePlan)
+  const bindingErrors = (diagnostics?.materialBindingIssues ?? []).map((issue): RealtimePlanMaterialIssue => ({
+    code: issue.code, object: issue.object, usedBy: [issue.object],
+    summary: issue.problem, reasons: [issue.problem, issue.fix],
+  }))
   // These are compiler-scoped refusals, independent of stock glTF portability.
   // An application adapter may acknowledge payload collapse, but cannot make a
   // blocked normal/geometry/program route safe or remove its native contract.
@@ -125,7 +134,7 @@ export function inspectRealtimePlanMaterialDiagnostics(
         ...(channels ? { channels } : {}),
       }
     })
-    .sort((a, b) => a.material.localeCompare(b.material))
+    .sort((a, b) => a.material!.localeCompare(b.material!))
   const unresolved = (diagnostics?.materials ?? [])
     .filter((material) =>
       material.status === 'needsBake'
@@ -144,11 +153,12 @@ export function inspectRealtimePlanMaterialDiagnostics(
         ? { channels: material.materialCompilation.channels } : {}),
     }))
     .filter((material) => material.usedBy.length > 0)
-    .sort((a, b) => a.material.localeCompare(b.material))
+    .sort((a, b) => a.material!.localeCompare(b.material!))
   const adapter = options.applicationMaterialAdapter
   if (adapter?.acknowledgePayloadCollapse === true) {
     return {
-      errors: blocked,
+      ...(bindingErrors.length ? { incomplete: true as const } : {}),
+      errors: [...bindingErrors, ...blocked],
       warnings: unresolved.map((issue) => ({
         ...issue,
         acknowledgedBy: adapter.description,
@@ -156,7 +166,9 @@ export function inspectRealtimePlanMaterialDiagnostics(
     }
   }
   return {
-    errors: [...blocked, ...unresolved].sort((a, b) => a.material.localeCompare(b.material)),
+    ...(bindingErrors.length ? { incomplete: true as const } : {}),
+    errors: [...bindingErrors, ...blocked, ...unresolved].sort((a, b) =>
+      (a.material ?? a.object ?? '').localeCompare(b.material ?? b.object ?? '')),
     warnings: [],
   }
 }

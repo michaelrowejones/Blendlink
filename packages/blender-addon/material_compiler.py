@@ -39,13 +39,14 @@ def _normal_bake_modules():
 
 if __package__:
     from .bakelib_loader import bakelib
-    from . import glblib, procedural, tsl_ir, vertex_color_alpha
+    from . import glblib, procedural, tsl_ir, vertex_color_alpha, mesh_export_ownership
 else:
     import bakelib
     import glblib
     import procedural
     import tsl_ir
     import vertex_color_alpha
+    import mesh_export_ownership
 
 
 PLAN_VERSION = 1
@@ -80,6 +81,22 @@ TSL_PROGRAM_PLAN_MODEL = "tsl-program-plan-v1"
 
 class MaterialCompileError(RuntimeError):
     """A selected material field could not be compiled truthfully."""
+
+
+class MaterialBindingInspectionError(MaterialCompileError):
+    """An object's evaluated material uses could not be established safely."""
+
+    def __init__(self, obj, cause):
+        self.object_name = obj.name
+        self.problem = f'Cannot inspect evaluated materials for "{obj.name}": {str(cause).strip()}'
+        self.fix = ("Inspect this object's Geometry Nodes/modifiers and repair the evaluated "
+                    "geometry, or convert/apply the intended renderable result to a Mesh. "
+                    "Do not exclude it unless it is intentionally absent from the website.")
+        super().__init__(self.problem + ". " + self.fix)
+
+    def as_dict(self):
+        return {"code": "material.binding-inspection-failed", "object": self.object_name,
+                "problem": self.problem, "fix": self.fix}
 
 
 @dataclass(frozen=True)
@@ -1451,9 +1468,13 @@ def _binding_map(objects) -> dict:
             )
             if has_geometry_nodes:
                 evaluated = obj.evaluated_get(bpy.context.evaluated_depsgraph_get())
-                mesh = None
                 try:
                     mesh = evaluated.to_mesh()
+                except RuntimeError as error:
+                    raise MaterialBindingInspectionError(obj, error) from error
+                if mesh is None:
+                    raise MaterialBindingInspectionError(obj, "Blender returned no inspectable evaluated Mesh")
+                try:
                     for evaluated_index, evaluated_material in enumerate(mesh.materials):
                         source_material = (
                             getattr(evaluated_material, "original", None)
@@ -1493,7 +1514,7 @@ def _binding_map(objects) -> dict:
         try:
             material_uses = procedural.evaluated_material_uses(obj)
         except procedural.EvaluatedMaterialUseError as error:
-            raise MaterialCompileError(str(error)) from error
+            raise MaterialBindingInspectionError(obj, error) from error
         for use in material_uses:
             material = use.material
             if material is None:
@@ -8256,6 +8277,8 @@ def with_compiled_materials(
                     )
                 try:
                     obj.data = private_data
+                    if obj.data != private_data:
+                        raise RuntimeError('Blender did not install the private Mesh; leave Edit Mode before compiling materials')
                 except (AttributeError, ReferenceError, RuntimeError, TypeError) as error:
                     raise MaterialCompileError(
                         f'Cannot install a private export mesh for "{object_name}": {error}'
@@ -9114,7 +9137,7 @@ def with_compiled_materials(
             normal_bindings[obj.data.name] = uv_name
             previous_uv=normal_owner_bindings.setdefault(owner,uv_name)
             if previous_uv!=uv_name:raise MaterialCompileError('One normal-bake owner has conflicting Mikk tangent basis ownership')
-        with tangent_export.exact_tangents(normal_bindings,object_bindings=normal_owner_bindings), geometry_export.exact_normals(plan, additional_targets=normal_bindings,additional_objects=normal_owner_bindings):
+        with tangent_export.exact_tangents(normal_bindings,object_bindings=normal_owner_bindings), geometry_export.exact_normals(plan, additional_targets=normal_bindings,additional_objects=normal_owner_bindings), mesh_export_ownership.temporary_mesh_backlinks(swap['private'] for swap in data_swaps):
             value = emit(staged_glb)
         _rewrite_private_color_carriers(
             staged_glb, generated_facts, preserve_custom_attributes,
