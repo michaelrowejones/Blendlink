@@ -9,9 +9,10 @@ import { installHeroScene } from './scenetoweb/HeroScene'
 
 // WebGPURenderer renders on native WebGPU where available and falls back
 // to WebGL2 on its own. On the WebGPU family, SceneToWeb's installer also
-// applies any published TSL material programs automatically; a classic
-// THREE.WebGLRenderer remains fully supported and renders the shipped
-// baked carriers.
+// applies published TSL material programs automatically. A classic
+// THREE.WebGLRenderer renders only portable glTF/baked carriers; verify
+// their appearance before choosing it. Live programs that require a node
+// renderer are refused on that legacy path.
 const renderer = new WebGPURenderer({ antialias: true })
 renderer.setSize(window.innerWidth, window.innerHeight)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))

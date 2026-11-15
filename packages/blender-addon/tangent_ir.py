@@ -92,15 +92,23 @@ def bind_owners(value,owners,uv_choices):
         entry['uvMap']=names.pop()
 
 
-def export_bindings(plan):
+def export_object_bindings(plan):
     result={}
     for decision in plan.decisions:
         entries=[];requirements(decision.channel_plan,entries)
         for entry in entries:
             for binding in decision.bindings:
-                mesh=bpy.data.objects[binding.object_name].data
-                old=result.setdefault(mesh.name,entry['uvMap'])
+                old=result.setdefault(binding.object_name,entry['uvMap'])
                 if old!=entry['uvMap']:raise ValueError('One private mesh has conflicting Mikk tangent basis ownership')
+    return result
+
+
+def export_bindings(plan):
+    result={}
+    for name,uv_name in export_object_bindings(plan).items():
+        mesh=bpy.data.objects[name].data
+        old=result.setdefault(mesh.name,uv_name)
+        if old!=uv_name:raise ValueError('One private mesh has conflicting Mikk tangent basis ownership')
     return result
 
 

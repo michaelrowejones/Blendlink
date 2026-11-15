@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "blender-5.3-macos-arm64",
+  "platform": "darwin",
+  "architecture": "arm64",
+  "blenderVersion": "5.3.0",
+  "blenderBuildHash": "02f0899d78e3",
+  "gltfExporterVersion": [5, 3, 43],
+  "cyclesDevice": "CPU",
+  "scope": "Complete local repository contract on the pinned Blender 5.3 host with four explicitly excluded unqualified stock-material diagnostic relaxations and verified conservative native-version policy; CPU bake evidence only. Native material parity, GPU node qualification, physical browser devices and public distribution remain separate gates.",
+  "materialPolicy": {
+    "kind": "conservative-unqualified-stock-relaxations-v1",
+    "controlledExporterVersion": [5, 2, 39],
+    "nativePositiveQualification": false,
+    "excludedFeatures": [
+      { "feature": "alphaClipMath", "status": "needsBake" },
+      { "feature": "constantIridescence", "status": "approximated" },
+      { "feature": "contextualSheenWeight", "status": "approximated" },
+      { "feature": "fixedCameraUnlit", "status": "needsBake" }
+    ],
+    "requiredFeatures": []
+  }
+}

@@ -3,6 +3,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import type { CompiledSceneAudit } from './compiledSceneAudit.js'
+import type { MaterialPortabilityDiagnostic } from './sceneDiagnostics.js'
 import {
   isBlockingVerifyIssue,
   materialCollapseVerificationIssue,
@@ -12,6 +13,69 @@ import {
   inspectRealtimePlanMaterialDiagnostics,
   readPlanSyncDuration,
 } from './planManifest.js'
+
+function blockedMaterial(
+  name: string,
+  status: MaterialPortabilityDiagnostic['status'] = 'exact',
+): MaterialPortabilityDiagnostic {
+  return {
+    material: name, status, label: 'Stock material',
+    summary: 'Base portability can be independent of native normal support.',
+    reasons: [], usedBy: ['Receiver'],
+    materialCompilation: {
+      intent: 'tslProgram', outcome: 'blocked', fidelity: 'per-channel',
+      transport: 'program', limitations: [],
+      issues: [{ code: 'material.normal-map-program-unproven', material: name,
+        problem: 'Normal BOX blending has no proven program.',
+        fix: 'Use a qualified normal domain.', objects: ['Receiver'] }],
+      channels: { model: 'test-channel-plan', channels: [{ channel: 'Normal',
+        route: 'refused', tslIrRefusal: 'Image BOX projection blend is not qualified.' }] },
+    },
+  }
+}
+
+describe('hard material compilation inspection', () => {
+  it.each(['exact', 'approximated', 'needsBake'] as const)(
+    'keeps native compiler refusals blocking despite %s stock classification',
+    (status) => {
+      const material = blockedMaterial('Plaster', status)
+      const before = JSON.stringify(material)
+      const result = inspectRealtimePlanMaterialDiagnostics({ materials: [material] }, {})
+      expect(result.warnings).toEqual([])
+      expect(result.errors).toHaveLength(1)
+      expect(result.errors[0]).toMatchObject({
+        code: 'material.compilation-blocked', material: 'Plaster', usedBy: ['Receiver'],
+        compilationIssues: material.materialCompilation!.issues,
+        channels: material.materialCompilation!.channels,
+      })
+      expect(result.errors[0]!.reasons.join(' ')).toContain('Image BOX projection blend')
+      expect(JSON.stringify(material)).toBe(before)
+    },
+  )
+
+  it('aggregates independent blocked materials and does not let an adapter waive hard issues', () => {
+    const hard = [blockedMaterial('Second'), blockedMaterial('First')]
+    const result = inspectRealtimePlanMaterialDiagnostics({ materials: [
+      ...hard,
+      { material: 'Soft stock payload', status: 'needsBake', label: 'Needs Bake',
+        summary: 'Application material required.', reasons: ['Nonportable field.'], usedBy: ['Other'] },
+    ] }, { applicationMaterialAdapter: {
+      acknowledgePayloadCollapse: true, description: 'src/materials/install.ts',
+    } })
+    expect(result.errors.map((issue) => issue.material)).toEqual(['First', 'Second'])
+    expect(result.errors.every((issue) => !issue.acknowledgedBy)).toBe(true)
+    expect(result.warnings).toMatchObject([{ material: 'Soft stock payload',
+      acknowledgedBy: 'src/materials/install.ts' }])
+  })
+
+  it('does not waive a compiler-scoped block through an appearance ownership exemption', () => {
+    const result = inspectRealtimePlanMaterialDiagnostics({
+      materials: [blockedMaterial('Shared blocked route')],
+    }, { bakePlan: { objects: [{ name: 'Receiver', bakeOutput: 'appearance' }] } })
+    expect(result.errors).toHaveLength(1)
+    expect(result.errors[0]!.compilationIssues![0]!.code).toBe('material.normal-map-program-unproven')
+  })
+})
 
 describe('plan manifest metadata', () => {
   it('refuses an obsolete published manifest instead of hiding its schema drift', () => {

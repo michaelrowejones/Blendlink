@@ -3,6 +3,7 @@ import {buildCompositorIntegerVector,buildCompositorInt3Presentation,validateInt
 import { compositorProducerLookup, updateCompositorPassProducers } from './tslCompositorProducers.js'
 import {buildCompositorNoise,validateNoiseFieldGraph,noiseFieldKind} from './tslCompositorNoise.js'
 import {validateDisplaceProgram,guardDisplaceOutput} from './tslCompositorDisplace.js'
+import {validateLensHorizontalProgram,buildLensHorizontal} from './tslCompositorLensHorizontal.js'
 import {validateBlankImageProgram,buildBlankImageColor,createBlankImageFrameGuard} from './tslCompositorBlankImage.js'
 import {buildCompositorWaveAxis,CompositorWaveAxisTable} from './tslCompositorWaveAxis.js'
 import {validateWaveAxisGraph,waveAxisFieldKind} from './tslCompositorWaveField.js'
@@ -55,7 +56,7 @@ import { buildCompositorMathPrecision } from './tslCompositorMath.js'
 import { buildCompositorHueCorrect } from './tslCompositorHueCorrect.js'
 import { buildCompositorWhitePoint } from './tslCompositorWhitePoint.js'
 import { buildNativeCompositorBlur, ownBlurRtt } from './tslCompositorBlur.js'
-import { mergeImageOrigins, translatedImageOrigin, affineImageOrigin, translatedCompositorField, realizeCompositorOrigin, type CompositorImageOrigin } from './tslCompositorImageDomain.js'
+import { mergeImageOrigins, translatedImageOrigin, affineImageOrigin, translatedCompositorField, realizeCompositorOrigin, validateCompositorExtent, type CompositorImageOrigin } from './tslCompositorImageDomain.js'
 import { buildCompositorIntegerBits } from './tslCompositorIntegerBits.js'
 import { buildSharedBoolean, buildSharedInteger, buildSharedCompare, sharedTypedConstant, sharedTypedConversion } from './tslSharedUtilities.js'
 
@@ -529,6 +530,7 @@ export function buildSourceCompositor(
     const vectorRotate=rotateContract?new CompositorVectorRotate(rotateContract):undefined
     if(vectorRotate)resources.push(vectorRotate)
     const displace=validateDisplaceProgram(program,message=>{throw new SourceCompositorUnsupported(message)})
+    const lensHorizontal=validateLensHorizontalProgram(program,message=>{throw new SourceCompositorUnsupported(message)})
     const blankImage=validateBlankImageProgram(program,message=>{throw new SourceCompositorUnsupported(message)})
     validateWaveAxisGraph(program,message=>{throw new SourceCompositorUnsupported(message)})
     validateWhiteNoiseFieldGraph(program,message=>{throw new SourceCompositorUnsupported(message)})
@@ -549,7 +551,7 @@ export function buildSourceCompositor(
     const cacheImages = staticImageCacheEligible(program)
     let imagePixels = 0
     const origins = new Map<string, CompositorImageOrigin | null>()
-    const usesImageDomains = program.ops.some(op => op.kind === 'translate' || op.kind === 'image-affine' || op.kind === 'image-input' || op.kind === 'blank-image' || op.kind === 'alpha-crop' || op.kind === 'image-crop' || op.kind === 'image-split' || op.kind === 'pixelate' && op.properties.pixelate_size !== 1)
+    const usesImageDomains = program.ops.some(op => op.kind === 'lens-horizontal' || op.kind === 'translate' || op.kind === 'image-affine' || op.kind === 'image-input' || op.kind === 'blank-image' || op.kind === 'alpha-crop' || op.kind === 'image-crop' || op.kind === 'image-split' || op.kind === 'pixelate' && op.properties.pixelate_size !== 1)
     if (program.ops.some(op => op.kind === 'image-input') && program.ops.some(op => op.kind === 'render-pass'))
       throw new SourceCompositorUnsupported('Static Image and Render Layers currently need separate canvas-domain realization')
     if (program.ops.some(op => op.kind === 'image-affine') && program.ops.some(op => op.kind === 'translate'
@@ -656,6 +658,17 @@ export function buildSourceCompositor(
       let node: TslEffectNode
       try {
         switch (op.kind) {
+          case 'lens-horizontal': {
+            if (!lensHorizontal || lensHorizontal !== op || !domain)
+              return domainFail('Horizontal Lens Distortion needs its validated original full-frame Image domain')
+            const nativeDomain = domain
+            node = buildLensHorizontal(input('Image'), resources,
+              (renderer, width, height) => validateCompositorExtent(nativeDomain, renderer, width, height, domainFail))
+            // Terminal realization is already complete; do not add a second
+            // identity RTT at the final image-origin boundary.
+            domain = null
+            break
+          }
           case 'blank-image': {
             if (!blankImage || blankImage.op !== op) return domainFail('Blank Image requires its validated finite producer')
             node = buildBlankImageColor(blankImage)
@@ -894,7 +907,7 @@ export function buildSourceCompositor(
             // linear copy can mix a neighboring alpha at software pixel centers.
             // TextureNode.load clones the pass texture and retains passNode,
             // so explicit producer scheduling still precedes the owned RTT.
-            if (displace) {
+            if (displace || lensHorizontal) {
               if (node.isPassNode) node = node.getTextureNode()
               if (node.isTextureNode) node = textureLoad(node, ivec2(uv().mul(textureSize(node))))
             }

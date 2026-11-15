@@ -91,7 +91,8 @@ describe('artist-first website setup', () => {
     expect(component).not.toContain('installThreeCompiledScene')
     expect(component).not.toContain('value.dispose()')
     expect(result.nextActions.join('\n')).toContain('inside your existing R3F Canvas with <HeroScene />')
-    expect(result.nextActions.join('\n')).toContain('initialized WebGPURenderer')
+    expect(result.nextActions.join('\n')).toContain('async gl factory with an initialized WebGPURenderer for translated materials')
+    expect(result.nextActions.join('\n')).toContain('classic WebGLRenderer is a portable glTF/baked-carrier choice only')
     expect(result.nextActions.join('\n')).toContain('scenetoweb:publish')
     expect(result.nextActions.findIndex((action) => action.includes('<HeroScene />')))
       .toBeLessThan(result.nextActions.findIndex((action) => action.includes('scenetoweb:preview')))
@@ -154,7 +155,8 @@ describe('artist-first website setup', () => {
     expect(result.nextActions.join('\n')).toContain(
       'await installHeroScene({ renderer, scene }) from src/scenetoweb/HeroScene.ts',
     )
-    expect(result.nextActions.join('\n')).toContain('existing WebGLRenderer or an initialized WebGPURenderer')
+    expect(result.nextActions.join('\n')).toContain('use an initialized WebGPURenderer for translated materials')
+    expect(result.nextActions.join('\n')).toContain('classic WebGLRenderer is a portable glTF/baked-carrier choice only')
     expect(result.nextActions.join('\n')).toContain('installed.update(delta) and installed.render(delta)')
   })
 

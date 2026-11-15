@@ -1,7 +1,8 @@
 import { spawnSync } from 'node:child_process'
-import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
+import { discoverHeadlessSuites, HEADLESS_CONTEXT_PROBE, parseHeadlessContext, planHeadlessSuites } from './lib/addon-headless-suites.mjs'
 
 const root = resolve(import.meta.dirname, '..')
 const packageVersion = JSON.parse(readFileSync(
@@ -75,56 +76,6 @@ const SUITE_LABELS = new Map([
   ['run_headless.py', 'registered addon suite'],
 ])
 
-function derivedLabel(file) {
-  return file.replace(/\.py$/, '').replace(/_/g, ' ')
-}
-
-/** A module declares itself a suite by printing a BLENDLINK_* sentinel, or
- * opts out with `# blendlink-headless-suite: manual <reason>`. Anything
- * else is reported: silent unreachability is what let seven conforming
- * modules rot into documentation. */
-function discoverSuites() {
-  const suites = []
-  const unregistered = []
-  for (const file of readdirSync(testsDir).filter((name) => name.endsWith('.py')).sort()) {
-    const source = readFileSync(join(testsDir, file), 'utf8')
-    const manual = source.match(/^#\s*blendlink-headless-suite:\s*manual\s*(.*)$/m)
-    if (manual) continue
-    // The sentinel need not be the whole literal: several modules append
-    // measured counts after it (`print("BLENDLINK_X_PASSED " f"n={n}")`).
-    // Shared native compositor fixtures publish through oracle.finish().
-    const printedSentinels = [...source.matchAll(/(?:print|oracle\.finish)\(\s*f?["'](BLENDLINK_[A-Z0-9_]+)/g)]
-      .map((match) => match[1])
-    const declaredSentinel = source.match(/^#\s*blendlink-headless-sentinel:\s*(BLENDLINK_[A-Z0-9_]+)\s*$/m)?.[1]
-    if (declaredSentinel && !printedSentinels.includes(declaredSentinel)) {
-      throw new Error(`${file} declares a default success sentinel that it never prints`)
-    }
-    const sentinel = declaredSentinel ?? printedSentinels.at(-1)
-    if (!sentinel) {
-      unregistered.push(file)
-      continue
-    }
-    suites.push({
-      file,
-      path: join(testsDir, file),
-      sentinel,
-      label: SUITE_LABELS.get(file) ?? derivedLabel(file),
-    })
-  }
-  if (unregistered.length) {
-    throw new Error(
-      `These headless test modules print no BLENDLINK_* success sentinel, so ` +
-        `nothing can prove they ran: ${unregistered.join(', ')}. Print a ` +
-        'sentinel on success, or declare the module manual with a ' +
-        '`# blendlink-headless-suite: manual <reason>` comment.',
-    )
-  }
-  // run_headless.py last: it is by far the longest, so every focused
-  // contract reports before the omnibus one starts.
-  return suites.sort((left, right) =>
-    Number(left.file === 'run_headless.py') - Number(right.file === 'run_headless.py'))
-}
-
 console.log('BLENDLINK_FULL_TEST addon: discovering the supported local Blender installation')
 const discovery = spawnSync(process.execPath, [cli, 'discover'], {
   cwd: root,
@@ -193,7 +144,7 @@ function runHeadlessSuite(label, testPath, sentinel) {
 }
 
 if (!desktopSmoke) {
-  const suites = discoverSuites()
+  const suites = discoverHeadlessSuites(testsDir, SUITE_LABELS)
   const only = process.env.BLENDLINK_HEADLESS_ONLY
   const selected = only
     ? suites.filter((suite) =>
@@ -214,14 +165,30 @@ if (!desktopSmoke) {
   } else {
     console.log(`BLENDLINK_FULL_TEST addon: ${suites.length} discovered suites`)
   }
+  const probe = spawnSync(blender, ['--background', '--factory-startup', '--disable-autoexec',
+    '--python-exit-code', '1', '--python-expr', HEADLESS_CONTEXT_PROBE], {
+    cwd: root, encoding: 'utf8', windowsHide: true, maxBuffer: 4 * 1024 * 1024,
+  })
+  if (probe.error || probe.status !== 0) {
+    throw new Error(`Cannot identify native Blender source-policy applicability: ${probe.error?.message ?? probe.stderr}`)
+  }
+  const plan = planHeadlessSuites(selected, parseHeadlessContext(probe.stdout))
+  console.log(`SCENETOWEB_HEADLESS_SUITE_PLAN ${JSON.stringify({ context: plan.context,
+    applicable: plan.applicable.map(suite => suite.file),
+    notApplicable: plan.notApplicable.map(({ file, status, coverageCredit, reasons }) => ({ file, status, coverageCredit, reasons })),
+  })}`)
+  for (const suite of plan.notApplicable) {
+    console.log(`SCENETOWEB_HEADLESS_NOT_APPLICABLE ${suite.file}: ${suite.reasons.join('; ')}; zero coverage credit`)
+  }
   runHeadlessSuite(
     'linked legacy Curve sidecar diagnostic differential', legacyCurveSidecarTest,
     'BLENDLINK_LEGACY_CURVE_SIDECAR_DIFFERENTIAL_PASSED',
   )
-  for (const suite of selected) {
+  for (const suite of plan.applicable) {
     runHeadlessSuite(suite.label, suite.path, suite.sentinel)
   }
-  console.log('BLENDLINK_FULL_TEST addon: passed')
+  console.log(`BLENDLINK_FULL_TEST addon: ${plan.applicable.length} applicable suites passed; ` +
+    `${plan.notApplicable.length} not applicable (zero coverage credit)`)
 } else {
   console.log('BLENDLINK_DESKTOP_SMOKE: installation and managed tools only; not the full material gate')
 }
@@ -636,4 +603,10 @@ print("##scenetoweb-addon-install " + json.dumps({
     throw new Error(`Refusing to remove unexpected addon-test directory: ${owned}`)
   }
   rmSync(owned, { recursive: true, force: true })
+}
+
+// Keep the complete-contract receipt stable after discovery/profile changes.
+// Focused reruns and installation-only smoke must never emit this receipt.
+if (!desktopSmoke && !process.env.BLENDLINK_HEADLESS_ONLY) {
+  console.log('BLENDLINK_FULL_TEST addon: passed')
 }

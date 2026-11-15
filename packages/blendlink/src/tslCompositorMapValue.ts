@@ -41,6 +41,7 @@ const divideThree = Fn(([value]: TslEffectNode[]) => {
   })
   return bitcast(result, 'float')
 }).setLayout({ name: 'blendlinkLegacyMeanDivideThreeV1', type: 'float', inputs: [{ name: 'value', type: 'float' }] })
+export { divideThree as compositorCpuDivideThree }
 const meanCpu = Fn(([vector, mask]: TslEffectNode[]) => divideThree(round(round(vector.x.add(vector.y), mask).add(vector.z), mask)))
   .setLayout({ name: 'blendlinkLegacyMapValueMeanCpuV1', type: 'float', inputs: [{ name: 'vector', type: 'vec3' }, { name: 'mask', type: 'uint' }] })
 const meanGpu = Fn(([vector, mask]: TslEffectNode[]) => round(round(round(vector.x.add(vector.y), mask).add(vector.z), mask).mul(scalar(1/3)), mask))

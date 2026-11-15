@@ -130,6 +130,9 @@ def main():
     invalid_obj = triangle_object("Rejected Triangle", rejected)
     invalid_material = selected_invalid_alpha_material(compiler, "Rejected Web Color")
     invalid_obj.data.materials.append(invalid_material)
+    second_invalid_obj = triangle_object("Second Rejected Triangle", rejected)
+    second_invalid_material = selected_invalid_alpha_material(compiler, "Second Rejected Web Color")
+    second_invalid_obj.data.materials.append(second_invalid_material)
     bpy.context.view_layer.update()
 
     with tempfile.TemporaryDirectory(prefix="blendlink-plan-material-") as directory:
@@ -169,21 +172,42 @@ def main():
 
         rejected_out = root / "rejected.glb"
         rejected_result = root / "rejected.result.json"
-        try:
-            invoke_plan(exporter, root, "Rejected", "rejected")
-        except SystemExit as error:
-            message = str(error)
-            expect(
-                "Website material compilation blocked" in message
-                and "Rejected Web Color" in message
-                and "alpha" in message.lower(),
-                f"invalid explicit intent failed vaguely: {message}",
-            )
-        else:
-            raise AssertionError("plan-only approved invalid explicit Web Color intent")
+        invoke_plan(exporter, root, "Rejected", "rejected")
+        rejected_report = json.loads(rejected_result.read_text(encoding="utf8"))
+        rejected_records = rejected_report["sidecar"]["diagnostics"]["materials"]
+        blocked = {
+            record["material"]: record["materialCompilation"]
+            for record in rejected_records
+            if record.get("materialCompilation", {}).get("outcome") == "blocked"
+        }
+        expect(set(blocked) == {"Rejected Web Color", "Second Rejected Web Color"},
+               f"inspection omitted independent blocked materials: {blocked}")
+        expect(all(item.get("issues") and all(
+            all(key in issue for key in ("code", "problem", "fix", "objects"))
+            for issue in item["issues"]) for item in blocked.values()),
+            f"inspection discarded structured compiler issues: {blocked}")
         expect(not rejected_out.exists(), "blocked plan-only emitted a GLB")
-        expect(not rejected_result.exists(), "blocked plan-only emitted a success result")
         expect(scene_snapshot() == before, "blocked plan-only mutated source scene state")
+
+        # The same material decisions remain fatal to real Preview/Final export.
+        # Inspection returning a report must not authorize an installation or
+        # replace any last-known-good output.
+        prior_output = b"last-known-good-artifact"
+        rejected_out.write_bytes(prior_output)
+        for draft in (False, True):
+            strict_settings = {"mode": "standard", "collection": "Rejected", "draft": draft}
+            kwargs, _dropped = exporter.gltf_export_contract(str(rejected_out), strict_settings)
+            sidecar = exporter.collect_sidecar(strict_settings, None, export_kwargs=kwargs)
+            try:
+                exporter.plan_export_materials(strict_settings, sidecar, kwargs)
+            except SystemExit as error:
+                expect(all(name in str(error) for name in blocked),
+                       f"real export refusal did not preserve all material failures: {error}")
+            else:
+                raise AssertionError("real export approved a blocked material inspection")
+            expect(rejected_out.read_bytes() == prior_output,
+                   "blocked export preflight replaced the prior artifact")
+        expect(scene_snapshot() == before, "strict export preflight mutated source scene state")
 
         # Appearance owns a static material's complete active Surface, so its
         # selected-field marker is intentionally outside the executable plan.

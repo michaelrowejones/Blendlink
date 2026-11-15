@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "id": "compositor-lens-horizontal",
+  "nativeNode": "CompositorNodeLensdist",
+  "domain": "compositor",
+  "lifecycle": "production",
+  "scope": "Bounded pinned Blender 5.3 macOS arm64 CPU horizontal Lens Distortion: original .2 Float32 Dispersion, +0 Distortion, false Jitter/Fit; one terminal direct Render Layers Image, full frame4..8192 and at most4194304pixels. Source/kernel/Final/installed proof stays distinct; original Classroom upstream/downstream graph is not admitted. Manifest lifecycle defines a closed transaction, never node-level support by itself.",
+  "upstream": {
+    "direct": [
+      "source/blender/nodes/composite/nodes/node_composite_lens_distortion.cc",
+      "source/blender/compositor/shaders/compositor_horizontal_lens_distortion.glsl"
+    ],
+    "shared": [
+      "source/blender/compositor/COM_result.hh",
+      "source/blender/compositor/intern/result.cc",
+      "source/blender/blenlib/BLI_math_interp.hh"
+    ]
+  },
+  "inputs": {
+    "native": [
+      "packages/blendlink/blender/*.py",
+      "packages/blender-addon/tests/compositor_lens_horizontal_check.py",
+      "packages/blender-addon/tests/compositor_reference.py",
+      "experiments/compositor-lens-horizontal/reference.py",
+      "experiments/compositor-lens-horizontal/reference-public.py",
+      "experiments/compositor-lens-horizontal/capture-native.mjs",
+      "experiments/compositor-lens-horizontal/capture-public.mjs",
+      "experiments/compositor-lens-horizontal/export.mjs",
+      "experiments/compositor-lens-horizontal/policy.mjs"
+    ],
+    "runtime": [
+      "packages/blendlink/src/tslCompositorLensHorizontal.ts",
+      "packages/blendlink/src/tslSourceCompositor.ts",
+      "packages/blendlink/src/tslCompositorDisplacePrecision.ts",
+      "packages/blendlink/src/tslCompositorMapValue.ts",
+      "packages/blendlink/src/tslCompositorDataTextureOwner.ts",
+      "packages/blendlink/src/tslCompositorRttOwner.ts",
+      "packages/blendlink/src/tslCompositorProducers.ts",
+      "experiments/compositor-lens-horizontal/browser.js",
+      "experiments/compositor-lens-horizontal/public-browser.js"
+    ],
+    "sdk": [
+      "packages/blendlink/src/threeRuntime.ts",
+      "packages/blendlink/src/threeWebgpuPostPipeline.ts"
+    ],
+    "tests": [
+      "packages/blendlink/src/tslCompositorLensHorizontal.test.ts",
+      "experiments/compositor-lens-horizontal/compare-cpu.mjs",
+      "experiments/compositor-lens-horizontal/run-browser.mjs",
+      "experiments/compositor-lens-horizontal/verify-pilot.mjs",
+      "experiments/compositor-lens-horizontal/verify-public.mjs",
+      "experiments/compositor-lens-horizontal/matrix.mjs",
+      "experiments/compositor-lens-horizontal/verify.mjs",
+      "scripts/lib/node-port-lens-horizontal-evidence.mjs",
+      "scripts/lib/node-port-contract.mjs",
+      "scripts/lib/node-port-evidence.mjs",
+      "scripts/run-node-port-family.mjs"
+    ]
+  },
+  "commands": {
+    "build": [
+      {
+        "id": "clean",
+        "argv": [
+          "{node}",
+          "packages/blendlink/scripts/clean-dist.mjs"
+        ],
+        "timeoutMs": 60000
+      },
+      {
+        "id": "typescript",
+        "argv": [
+          "{node}",
+          "node_modules/typescript/bin/tsc",
+          "-p",
+          "packages/blendlink/tsconfig.json"
+        ],
+        "timeoutMs": 180000
+      },
+      {
+        "id": "assets",
+        "argv": [
+          "{node}",
+          "packages/blendlink/scripts/copy-assets.mjs"
+        ],
+        "timeoutMs": 60000
+      }
+    ],
+    "verify": {
+      "id": "suite",
+      "argv": [
+        "{node}",
+        "scripts/run-node-port-family.mjs",
+        "compositor-lens-horizontal",
+        "--evidence",
+        "{evidence}",
+        "--blender",
+        "{blender}"
+      ],
+      "timeoutMs": 1500000
+    }
+  },
+  "profiles": [
+    {
+      "id": "mac-53",
+      "hostPlatforms": [
+        "darwin"
+      ],
+      "blenderVersion": "5.3.0",
+      "blenderBuildHash": "02f0899d78e3",
+      "nativeSource": {
+        "profile": "darwin-arm64-53-lens-horizontal-cpu-v1",
+        "backend": null,
+        "evaluator": "CPU-compositor"
+      },
+      "runs": [
+        {
+          "id": "matrix",
+          "adapter": "matrix",
+          "env": {}
+        }
+      ]
+    }
+  ],
+  "evidence": {
+    "adapter": "compositor-lens-horizontal-v1",
+    "productionCases": 4,
+    "calibrationCases": 0,
+    "refusedNativeCases": 0
+  }
+}

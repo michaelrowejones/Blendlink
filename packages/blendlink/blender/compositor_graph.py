@@ -88,6 +88,7 @@ noise_fixed_inputs = _sibling("compositor_white_noise").fixed_inputs
 validate_noise_presentation = noise_texture.validate_noise_presentation
 wave_axis = _sibling("compositor_wave_axis")
 displace_single = _sibling("compositor_displace")
+lens_horizontal = _sibling("compositor_lens_horizontal")
 vector_rotate_cpu = _sibling("compositor_vector_rotate")
 validate_vector_rotate_presentation = vector_rotate_cpu.validate_presentation
 resolve_vector_math_literal = _sibling("compositor_procedural_texture").literal
@@ -198,6 +199,7 @@ TYPES = {
     "CompositorNodeHueCorrect": "hue-correct",
     "CompositorNodeBlur": "blur",
     "CompositorNodeDisplace": "translate",
+    "CompositorNodeLensdist": "lens-horizontal",
     "CompositorNodeTranslate": "translate",
     "CompositorNodeTransform": "translate",
     "CompositorNodeRotate": "image-affine",
@@ -341,6 +343,7 @@ def extract(scene):
     field_topology = {}
     field_active = [None]
     displace_reads = []
+    lens_horizontal_reads = []
     vector_rotate_reads = []
     vector_rotate_cache = {}
     source_nodes = {}
@@ -881,6 +884,14 @@ def extract(scene):
                     observation=displace_single.normalize(node,socket,op,scene,lambda incoming: input_value(incoming,ctx),result['ops'],source_nodes,
                         lambda incoming,message: fail('unsupported-displace-single',path,node,incoming,message))
                     displace_reads.append((node,socket,observation,path))
+                elif node.bl_idname == 'CompositorNodeLensdist':
+                    activate_field_topology('lens-horizontal', 'Horizontal Lens Distortion')
+                    if lens_horizontal_reads:
+                        fail('unsupported-lens-horizontal', path, node, socket, 'Horizontal Lens Distortion currently allows one terminal node')
+                    observation = lens_horizontal.normalize(node, socket, op, scene,
+                        lambda incoming: input_value(incoming, ctx), result['ops'],
+                        lambda incoming, message: fail('unsupported-lens-horizontal', path, node, incoming, message))
+                    lens_horizontal_reads.append((node, socket, observation, path))
                 elif node.bl_idname in ("CompositorNodeTranslate", "CompositorNodeTransform", "CompositorNodeRotate", "CompositorNodeScale"):
                     bounds = _sibling("compositor_math").numeric_socket_bounds
                     if node.bl_idname == "CompositorNodeTranslate" or translation_only_transform(node, bounds):
@@ -1326,6 +1337,10 @@ def extract(scene):
             op,message=displace_conflict
             result['diagnostics'].append({'code':'unsupported-displace-single','path':op['source']['path'],'node':op['source']['node'],'socket':op['source']['output'],'message':message})
             raise Unsupported()
+        lens_conflict = lens_horizontal.validate_graph(result)
+        if lens_conflict:
+            op, message = lens_conflict
+            fail('unsupported-lens-horizontal', op['source']['path'], source_nodes[op['id']], None, message)
         if any(op["kind"] in ("translate", "image-affine") for op in result["ops"]):
             conflict = transform_origin_conflict(result, single_values, multiply_image_affine)
             if conflict:
@@ -1416,6 +1431,11 @@ def extract(scene):
             try:displace_single.check(node,scene,observation)
             except (displace_single.DisplaceUnsupported,ReferenceError,RuntimeError) as error:
                 fail('displace-source-changed',path,node,socket,str(error))
+        for node, socket, observation, path in lens_horizontal_reads:
+            try:
+                lens_horizontal.check(node, scene, observation)
+            except (lens_horizontal.LensHorizontalUnsupported, ReferenceError, RuntimeError) as error:
+                fail('lens-horizontal-source-changed', path, node, socket, str(error))
         for node,signature,path,node_label in field_topology.values():
             code,label=field_active[0]
             try:

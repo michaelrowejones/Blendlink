@@ -6455,7 +6455,11 @@ def plan_export_materials(
     material_compiler.merge_diagnostics(
         sidecar["diagnostics"].setdefault("materials", []), material_plan,
     )
-    if material_plan.errors:
+    # Inspection has already collected every material decision and merged its
+    # exact issues/channel refusals above. Return that report to the CLI even
+    # when compilation is blocked; only a real export may enforce by raising.
+    # planOnly never enters material installation, rendering or publication.
+    if material_plan.errors and not settings.get("planOnly"):
         raise SystemExit(
             "Website material compilation blocked:\n"
             + material_compiler.format_plan_errors(material_plan)
@@ -6801,7 +6805,7 @@ def main() -> None:
                     if (settings.get('exporterOverrides') or {}).get('export_tangents') is False:
                         raise ValueError('Native UV Tangent programs require export_tangents; exporterOverrides cannot disable their exact frame')
                     export_kwargs['export_tangents']=True
-                with geometry_export.exact_normals(material_plan),tangent_export.exact_tangents(tangent_bindings):
+                with geometry_export.exact_normals(material_plan),tangent_export.exact_tangents(tangent_bindings,object_bindings=tangent_ir.export_object_bindings(material_plan)):
                     result = bpy.ops.export_scene.gltf(**export_kwargs)
                 if "FINISHED" in result:
                     camera_axes.canonicalize_camera_axes(

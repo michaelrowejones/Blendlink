@@ -125,7 +125,7 @@ def scene_snapshot():
     }
 
 
-def emit_selected(objects):
+def emit_selected(objects, material_plan):
     def emit(output_path):
         selected_before = list(bpy.context.selected_objects)
         active_before = bpy.context.view_layer.objects.active
@@ -141,6 +141,7 @@ def emit_selected(objects):
                 export_image_format="AUTO",
                 export_texcoords=True,
                 use_selection=True,
+                **compiler.exporter_overrides(material_plan),
             )
         finally:
             bpy.ops.object.select_all(action="DESELECT")
@@ -411,6 +412,8 @@ def main():
         purpose="final",
     )
     expect(not good_plan.errors, f"good plan blocked: {good_plan.errors}")
+    expect(compiler.exporter_overrides(good_plan).get("export_tangents") is True,
+           "normal-channel bake must request its exact native tangent frame")
 
     before = scene_snapshot()
     with tempfile.TemporaryDirectory(prefix="blendlink-material-bake-") as directory:
@@ -420,6 +423,7 @@ def main():
             str(out_path),
             emit_selected(
                 [tile_obj, shared_obj, unique_obj, page_obj, twin_obj],
+                good_plan,
             ),
         )
         expect(out_path.is_file(), "material bake emitted no GLB")
@@ -595,7 +599,7 @@ def main():
         _value, distinct_compilation = compiler.with_compiled_materials(
             distinct_plan,
             str(out_path),
-            emit_selected([tile_obj, shared_obj]),
+            emit_selected([tile_obj, shared_obj], distinct_plan),
         )
         expect(
             len(distinct_compilation.generated_materials) == 2,
@@ -649,7 +653,7 @@ def main():
             compiler.with_compiled_materials(
                 broken_plan,
                 str(Path(directory) / "broken.glb"),
-                emit_selected([broken_obj]),
+                emit_selected([broken_obj], broken_plan),
             )
         except compiler.MaterialCompileError as error:
             expect(

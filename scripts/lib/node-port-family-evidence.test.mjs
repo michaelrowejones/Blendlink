@@ -311,3 +311,33 @@ test('finite metadata bridge separates calibrated CPU facts from actual zero GPU
  const mutations=[r=>r.pop(),r=>delete r[0].report.rows[0].gpu,r=>r[0].report.rows[0].payloadCostCanary.samplerBindings=0,r=>r[0].report.rows[0].finiteFrameGuard.recovered=false,r=>r[0].report.rows[0].rows[1].readbacks.pop(),r=>r[0].report.rows[0].rows.find(row=>row.case==='png-dimensions').payloadCost.gpuUploads=1,r=>r[0].report.rows[0].rows.find(row=>row.case==='png-dimensions').payloadCost.rows[0].rawSha256='f'.repeat(64),r=>r[0].report.rows[0].rows.find(row=>row.case==='png-dimensions').payloadCost.cpuObjects=0]
  for(const change of mutations){const rows=structuredClone(runs);change(rows);assert.throws(()=>assertFinitePayloadCostReports(rows,cases,payloads))}
 })
+
+// Lens uses the same-pixel owned-family route, separately from the shared typed
+// selection families above. These schema controls grant no numerical credit.
+test('horizontal Lens adapter is scoped to the exact class/profile and one fresh matrix', async () => {
+ const {assertLensHorizontalScope,lensHorizontalSuitePlan,lensHorizontalReaderCommand}=await import('./node-port-lens-horizontal-evidence.mjs')
+ const manifest=await readNodePortManifest(join(root,'node-ports/compositor-lens-horizontal.json')),profile=manifest.profiles[0]
+ assertLensHorizontalScope({manifest,profile})
+ for(const mutate of [m=>m.nativeNode='CompositorNodeTranslate',m=>m.domain='shader',m=>m.evidence.productionCases=0,m=>m.profiles[0].nativeSource.backend='METAL',m=>m.profiles[0].runs.push({...m.profiles[0].runs[0],id:'reused'})]){
+  const m=structuredClone(manifest);mutate(m);assert.throws(()=>assertLensHorizontalScope({manifest:m,profile:m.profiles[0]}))
+ }
+ const plan=lensHorizontalSuitePlan({root,evidence:'/tmp/lens-evidence',blender:'/tmp/lens-blender'})
+ assert.ok(plan.argv.includes(join(root,'experiments/compositor-lens-horizontal/matrix.mjs')));assert.equal(plan.env.BLENDLINK_BLENDER,'/tmp/lens-blender');assert.equal(plan.env.SCENETOWEB_RUNTIME_TRANSACTION,null)
+ const close=lensHorizontalReaderCommand({root,evidence:'/tmp/lens-evidence',output:'/tmp/lens-close.json'})
+ assert.ok(close.argv.includes(join(root,'experiments/compositor-lens-horizontal/verify.mjs')))
+ const result=await runNodePort({root,id:'compositor-lens-horizontal',profile:'mac-53',blender:'/tmp/not-executable-lens',evidence:'/tmp/not-created-lens-dry',dryRun:true})
+ assert.equal(result.status,'planned');assert.equal(result.runnable,true);assert.equal(result.productionCredit,false);assert.equal(result.nativeIdentity,null)
+})
+
+test('horizontal Lens controls cannot replace guards with unchecked flags', async () => {
+ const {assertLensHorizontalControls}=await import('./node-port-lens-horizontal-evidence.mjs')
+ const sampling={rows:Array.from({length:12},(_,i)=>({pixelRatio:[1,1.25,1,2][i%4]})),controls:[
+  ...['pixel-budget-before-rtt','mismatched-target','offset-target','scissor-target','source-extent'].map(id=>({case:id,recovered:true,allocationPastPixelBudget:false,numericalCredit:0,error:id==='pixel-budget-before-rtt'?'Horizontal Lens Distortion pixel budget':id==='source-extent'?'Lens Distortion matching source/render image extents':'Horizontal Lens Distortion full-frame'})),
+  {case:'saved-original-dispose',ownedTextures:4,physicalDestroys:[1,1,1,1],numericalCredit:0,error:'Horizontal Lens Distortion allocation epoch changed'}]}
+ const installed={controls:[{case:'detached-dispose',callerRestored:true,numericalCredit:0},{case:'cancel-before-ready',callerRestored:true,errorName:'AbortError',numericalCredit:0}]}
+ assertLensHorizontalControls(sampling,installed)
+ for(const mutate of [s=>s.controls.pop(),s=>s.controls[0].allocationPastPixelBudget=true,s=>s.controls[1].recovered=false,s=>s.controls[2].error='unrelated failure',s=>s.controls[5].physicalDestroys[0]=0,s=>s.rows[1].pixelRatio=1]){
+  const s=structuredClone(sampling);mutate(s);assert.throws(()=>assertLensHorizontalControls(s,installed))
+ }
+ const bad=structuredClone(installed);bad.controls[1].errorName='Error';assert.throws(()=>assertLensHorizontalControls(sampling,bad))
+})

@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 1,
+  "status": "CANDIDATE_HORIZONTAL_LENS_WITH_CLOSED_RESEARCH_PILOTS_NOT_QUALIFIED",
+  "sourceBase": "ec207e3091d398b87e4a21201fa6c8f86444b798",
+  "runtimeFingerprint": "7c2d745bd53395dde7d9f75cdd10b15591ae825244f6404edfcdd90d80cb84ad",
+  "sourceIntent": {
+    "scene": "original Classroom",
+    "tree": "compositor:Compositing Nodetree",
+    "node": "Lens Distortion",
+    "type": "Horizontal",
+    "dispersionWord": 1045220557,
+    "input": "Mix.004.Result_Color",
+    "output": "Blur.001.Image",
+    "wholeSceneAcceptance": false
+  },
+  "scope": "One terminal direct Render Layers Image; pinned Blender5.3/macOSarm64 CPU, original .2 dispersion/+0 distortion/false jitter-fit; not original upstream/downstream graph.",
+  "sourcePolicy": {
+    "path": "/private/tmp/scenetoweb-v1-lensdist-horizontal/artifacts/verification-lens-horizontal-policy-r2/policy.json",
+    "sha256": "5fd4a6c6476847f27eed93770d169dd630488afc493be299384917aea3fd7224"
+  },
+  "samplingNative": {
+    "path": "/private/tmp/scenetoweb-v1-lensdist-horizontal/artifacts/verification-lens-horizontal-native-r1/native.json",
+    "sha256": "d888bcc8eff673efbe0f33b4317a5fb56d956272fd8d69cdeaceb8d4c581e4c7"
+  },
+  "samplingClose": {
+    "path": "/tmp/scenetoweb-lens-horizontal-pilot-closed-r1.json",
+    "sha256": "8e8035207bbe25b1feb38654e4bb15f201942238ad84cccc9424027a71f8248f",
+    "result": {
+      "status": "LENS_HORIZONTAL_SAMPLING_PILOT_CLOSED_ZERO_SUPPORT_CREDIT",
+      "nativeGraphs": 4,
+      "nativeRenders": 8,
+      "sourcePolicy": {
+        "positive": 2,
+        "refusals": 14
+      },
+      "browserCaseRuns": 48,
+      "comparedFloat32Words": 41760,
+      "wordDifferences": 0,
+      "ownedTexturesPerInstance": 4,
+      "remainingOwnedTextures": 0,
+      "runtimeFingerprint": "7c2d745bd53395dde7d9f75cdd10b15591ae825244f6404edfcdd90d80cb84ad",
+      "browserReports": [
+        {
+          "profile": "metal",
+          "sha256": "d91fbaa13b049d25308b92135ca0d549e5af14aed3d6763069dbd40fc5acfd19"
+        },
+        {
+          "profile": "software",
+          "sha256": "acefe5a8deb45c0ff605fcddef376582a69dad6fdad728f23cba7403d0827457"
+        }
+      ],
+      "sourcePolicySha256": "5fd4a6c6476847f27eed93770d169dd630488afc493be299384917aea3fd7224",
+      "nativeReportSha256": "d888bcc8eff673efbe0f33b4317a5fb56d956272fd8d69cdeaceb8d4c581e4c7",
+      "supportCredit": 0,
+      "savedFinalCredit": 0,
+      "productionCredit": false,
+      "supportPromotion": false
+    }
+  },
+  "savedFinalExport": {
+    "path": "/private/tmp/scenetoweb-v1-lensdist-horizontal/artifacts/verification-lens-horizontal-final-r2/final.json",
+    "sha256": "3298d1ef10eb4cff6d1532719fac2a0945b983f12e77c6f9106b49a3a8554162"
+  },
+  "actualInputNative": {
+    "path": "/private/tmp/scenetoweb-v1-lensdist-horizontal/artifacts/verification-lens-horizontal-public-native-r1/native-public.json",
+    "sha256": "efb6db69e3acd25747382f7a808fe269bf74852b786323a5f5154d1c168e7aae"
+  },
+  "publicInstalledClose": {
+    "path": "/tmp/scenetoweb-lens-horizontal-public-closed-r1.json",
+    "sha256": "1630134144322869be761a443fb3dbc5c6743d688ae44aacb2e16e3959d33055",
+    "result": {
+      "status": "LENS_HORIZONTAL_PUBLIC_INSTALLED_PILOT_CLOSED_ZERO_SUPPORT_CREDIT",
+      "savedFinalScenes": 4,
+      "actualInputFrames": 16,
+      "nativeReferenceRenders": 32,
+      "installedCases": 48,
+      "exactLinearWords": 41760,
+      "linearWordDifferences": 0,
+      "displayWords": 41760,
+      "displayWordDifferences": 1134,
+      "maxDisplayClampedAbsoluteError": 7.450580596923828e-09,
+      "displayContract": "existing-ocio-png-clamp01-3e-5",
+      "runtimeFingerprint": "7c2d745bd53395dde7d9f75cdd10b15591ae825244f6404edfcdd90d80cb84ad",
+      "checkedReports": [
+        {
+          "profile": "metal",
+          "sha256": "1365174e84c2dec584b372132bebf9b9264ed4f009314dc3eec2fc8e56d57527"
+        },
+        {
+          "profile": "software",
+          "sha256": "b27d320db48b2bf097e6d496c529503a3e0830acf99430daf7d5151d6fdd240e"
+        }
+      ],
+      "finalReportSha256": "3298d1ef10eb4cff6d1532719fac2a0945b983f12e77c6f9106b49a3a8554162",
+      "nativeReferenceSha256": "efb6db69e3acd25747382f7a808fe269bf74852b786323a5f5154d1c168e7aae",
+      "supportCredit": 0,
+      "productionCredit": false,
+      "supportPromotion": false,
+      "trustedAutomaticQualification": false
+    }
+  },
+  "upstreamSha256": {
+    "source/blender/nodes/composite/nodes/node_composite_lens_distortion.cc": "e5bbe4ca820a80c47ff12fa38ebb60d6a820e823cbdc5e778538a6c210477692",
+    "source/blender/compositor/shaders/compositor_horizontal_lens_distortion.glsl": "c85bd87bc54af14f21bac9c9d9024d51355c09bef2ae89b76a5a5832a130b9ca",
+    "source/blender/compositor/COM_result.hh": "2957a64667cd76dac9747f0397933efd02a6cbaa7321a1ea7c1453e682b5ffa7",
+    "source/blender/compositor/intern/result.cc": "27de905cc233c273fad0bac8bf94252b59bb96e621ead0590297ff0ed556eed3",
+    "source/blender/blenlib/BLI_math_interp.hh": "a3ffc7eab6b51210b6654f0678b70cf896f52fcd14ebdbe4e89bd5256cfa23ed"
+  },
+  "retainedFailures": [
+    {
+      "path": "/private/tmp/scenetoweb-v1-lensdist-horizontal/artifacts/verification-lens-horizontal-policy-r1",
+      "reason": "Source-only fixture used legacy CompositorNodeValue; corrected to real modern ShaderNodeValue."
+    },
+    {
+      "path": "/tmp/scenetoweb-lens-horizontal-browser-metal-r1",
+      "reason": "Sixteen alpha +1ULP differences from constant division-by-three; exact existing integer-significand helper reused, unchanged gate."
+    },
+    {
+      "path": "/private/tmp/scenetoweb-v1-lensdist-horizontal/artifacts/verification-lens-horizontal-final-r1",
+      "reason": "Four exports passed, then shared archive close rejected empty script census; fresh R2 includes real source-policy preflight."
+    },
+    {
+      "path": "/tmp/scenetoweb-lens-horizontal-public-baseline-metal-r1",
+      "reason": "External runtime snapshot could not resolve postprocessing/meshoptimizer; task-local dependency link added."
+    },
+    {
+      "path": "/tmp/scenetoweb-lens-horizontal-public-compare-metal-r1",
+      "reason": "Pinned external baseline files outside Vite allowlist; fresh R2 uses canonical exact-file allowlist."
+    }
+  ],
+  "remaining": [
+    "Trusted automatic node-port family adapter and full closed transaction",
+    "Full installed cancellation/detached/saved-dispose epoch/refusal matrix",
+    "Original Classroom upstream Mix/Ghosts and downstream Blur/radial/multipass domains",
+    "Broader Lens modes, arbitrary controls and other source profiles"
+  ],
+  "supportCredit": 0,
+  "productionCredit": false,
+  "supportPromotion": false,
+  "candidateOnly": true,
+  "coverageChanged": false,
+  "upstreamCommit": "02f0899d78e374b63e7181d9061e1f7ab03419cc"
+}

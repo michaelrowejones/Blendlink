@@ -340,6 +340,7 @@ jobs:
             exit 1
           fi
           version="$(node -p "require('./packages/blendlink/package.json').version")"
+          node scripts/release-channel.mjs "$version" npm-dist-tag > /dev/null
           if [ "$GITHUB_REF_NAME" != "v$version" ]; then
             echo "::error::Tag $GITHUB_REF_NAME does not match package version $version."
             exit 1
@@ -511,11 +512,7 @@ jobs:
           registry_archive="$RUNNER_TEMP/scenetoweb-$RELEASE_VERSION.registry.tgz"
           version_url="https://registry.npmjs.org/scenetoweb/$RELEASE_VERSION"
           tarball_url="https://registry.npmjs.org/scenetoweb/-/scenetoweb-$RELEASE_VERSION.tgz"
-          if [[ "$RELEASE_VERSION" == *-* ]]; then
-            dist_tag="beta"
-          else
-            dist_tag="latest"
-          fi
+          dist_tag="$(node scripts/release-channel.mjs "$RELEASE_VERSION" npm-dist-tag)"
 
           status="$(curl --silent --show-error --location \
             --output "$metadata" --write-out '%{http_code}' "$version_url")"
@@ -604,7 +601,7 @@ jobs:
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
 
   publish-github-release:
-    name: Publish the exact retained GitHub prerelease
+    name: Publish the exact retained GitHub release
     if: ${{ startsWith(github.ref, 'refs/tags/v') }}
     needs:
       - release-candidate
@@ -703,7 +700,7 @@ jobs:
             --metadata "$metadata" \
             --archive "$registry_archive"
 
-      - name: Create, verify, and publish the immutable GitHub prerelease
+      - name: Create, verify, and publish the immutable GitHub release
         env:
           IMMUTABLE_RELEASES_CONFIRMED: ${{ vars.SCENETOWEB_IMMUTABLE_RELEASES }}
           RELEASE_VERSION: ${{ needs.release-candidate.outputs.version }}
@@ -716,6 +713,9 @@ jobs:
           release_directory="artifacts/release/$RELEASE_VERSION"
           release_metadata="$RUNNER_TEMP/github-release.json"
           release_error="$RUNNER_TEMP/github-release.error"
+          release_prerelease="$(node scripts/release-channel.mjs "$RELEASE_VERSION" github-prerelease)"
+          release_latest="$(node scripts/release-channel.mjs "$RELEASE_VERSION" github-latest)"
+          release_title="$(node scripts/release-channel.mjs "$RELEASE_VERSION" github-title)"
           set +e
           gh api "repos/$GITHUB_REPOSITORY/releases/tags/$GITHUB_REF_NAME" \
             > "$release_metadata" 2> "$release_error"
@@ -733,11 +733,11 @@ jobs:
               "$release_directory/SHA256SUMS" \
               --verify-tag \
               --target "$GITHUB_SHA" \
-              --title "SceneToWeb $RELEASE_VERSION public beta" \
+              --title "$release_title" \
               --generate-notes \
               --draft \
-              --prerelease \
-              --latest=false
+              --prerelease="$release_prerelease" \
+              --latest="$release_latest"
             gh api "repos/$GITHUB_REPOSITORY/releases/tags/$GITHUB_REF_NAME" > "$release_metadata"
           fi
 
@@ -757,8 +757,8 @@ jobs:
           if [ "$current_state" = "draft" ]; then
             gh release edit "$GITHUB_REF_NAME" \
               --draft=false \
-              --prerelease \
-              --latest=false
+              --prerelease="$release_prerelease" \
+              --latest="$release_latest"
           fi
 
           immutable=false
@@ -787,3 +787,6 @@ jobs:
             --downloads "$published_downloads" \
             --state published
           test "$(gh api "repos/$GITHUB_REPOSITORY/commits/$GITHUB_REF_NAME" --jq .sha)" = "$GITHUB_SHA"
+          if [ "$release_latest" = "true" ]; then
+            test "$(gh api "repos/$GITHUB_REPOSITORY/releases/latest" --jq .tag_name)" = "$GITHUB_REF_NAME"
+          fi

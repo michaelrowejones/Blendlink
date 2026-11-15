@@ -11,6 +11,10 @@ This plan uses source checkpoint `dfb1ef2a53757b547455142fdddedae77d831dc3`,
 reviewed November 15, 2026. It defines release work and acceptance targets;
 existing tests do not establish that these targets have already passed.
 
+[Release scene progress](RELEASE_SCENE_PROGRESS.md) records the selected first
+scene, actual compiler blockers and current implementation work. Its source-owned
+corpus and node backlog drive port priority; the remaining catalog follows later.
+
 ## The 1.0 promise
 
 The primary audience is Blender artists working with Three.js developers,

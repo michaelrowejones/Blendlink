@@ -12,6 +12,7 @@ import {
   existsSync,
   mkdirSync,
   mkdtempSync,
+  readFileSync,
   rmSync,
   writeFileSync,
 } from 'node:fs'
@@ -28,6 +29,16 @@ const cli = join(packageUnderTest, 'dist', 'cli.js')
 const { setupWebsiteProject } = await import(pathToFileURL(
   join(packageUnderTest, 'dist', 'projectSetup.js'),
 ).href)
+
+// Compile the first-scene guide's actual snippets alongside the complete
+// consumers so their public installer and renderer types cannot drift apart.
+function firstSceneSnippet(heading, language) {
+  const guide = readFileSync(join(root, 'docs', 'FIRST_SCENE.md'), 'utf8').replace(/\r\n/g, '\n')
+  const section = guide.split(`### ${heading}\n`)[1]?.split('\n### ')[0]
+  const code = section?.split(`\n\`\`\`${language}\n`)[1]?.split('\n```')[0]
+  if (!code) throw new Error(`FIRST_SCENE.md is missing the ${heading} ${language} example`)
+  return code + '\n'
+}
 
 function run(label, command, args, cwd) {
   const result = spawnSync(command, args, {
@@ -81,12 +92,19 @@ async function prepare(exampleName) {
 try {
   for (const exampleName of ['vanilla-three', 'react-three-fiber']) {
     const directory = await prepare(exampleName)
+    const r3f = exampleName === 'react-three-fiber'
+    const snippet = firstSceneSnippet(r3f ? 'React Three Fiber' : 'Plain Three.js', r3f ? 'tsx' : 'ts')
+    // The Three guide documents callbacks owned by the host. Supply only
+    // their scalar inputs; the published installer and renderer stay real.
+    writeFileSync(join(directory, 'src', `first-scene.${r3f ? 'tsx' : 'ts'}`),
+      (r3f ? '' : 'declare const deltaSeconds: number, width: number, height: number\n') + snippet)
     run(
       `${exampleName} TypeScript`,
       process.execPath, [tsc, '--project', 'tsconfig.json'], directory,
     )
     run(`${exampleName} Vite`, process.execPath, [vite, 'build'], directory)
     console.log(`BLENDLINK_EXAMPLE_BUILT ${exampleName}`)
+    console.log(`BLENDLINK_FIRST_SCENE_SNIPPET_BUILT ${exampleName}`)
   }
   console.log('BLENDLINK_EXAMPLES_PASSED')
 } finally {

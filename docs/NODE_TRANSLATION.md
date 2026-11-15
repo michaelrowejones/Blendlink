@@ -194,3 +194,26 @@ This extends the existing partial Image Info port; transformed and arbitrary
 image domains remain unqualified. Legacy Render Layers metadata keeps its own
 profile and live texture-size behavior.
 
+
+
+## Bounded horizontal Lens Distortion
+
+Blender 5.3.0 has a partial CPU compositor route for one terminal direct
+Render Layers Image → Horizontal Lens Distortion, preserving Classroom's native
+`.2f` dispersion, positive-zero Distortion and false Jitter/Fit. The pinned
+macOS arm64 build, AUTO/FULL request policy, 4..8192 square-pixel full-frame
+extents and 4,194,304-pixel cap are explicit source/runtime guards.
+The [closed Lens record](../experiments/compositor-lens-horizontal/README.md#frozen-full-qualification)
+qualifies four saved Final scenes, all Metal/SwiftShader × WebGPU/WebGL2 tuples,
+48 installed cycles and 41,760 exact pre-display RGBA words, plus independent
+sampling, physical resize/DPR, refusal/recovery and disposal/cancel controls.
+Raw display retains a separate bounded projection; it is not bit-exact.
+
+The port reuses Displace bilinear staging, the exact Map Value divide-three
+helper and the shared FRAME/owned-resource/qualification pipeline. One RGBA32F
+input RTT is capped at 64 MiB logical color bytes; three mapping tables use
+384 KiB CPU/nominal GPU bytes, with O(width+height) updates. These are resource
+bounds, not measured throughput. Other modes/controls, computed producers,
+upstream Mix/Ghosts and downstream Blur remain unqualified. Native same-pixel
+Image references grant no Image producer or scene-beauty credit. Original
+Classroom remains blocked and not accepted; 4.2/5.2 remain unsupported.

@@ -7542,6 +7542,8 @@ def main():
            f"direct Principled material was not reported as exact glTF: {portable_result}")
     native_material_version_probe = procedural_module._gltf_exporter_version
     actual_exporter_version = native_material_version_probe()
+    actual_material_capabilities = procedural_module._material_exporter_capabilities()
+    native_material_policy_observations = {}
     unverified_exporter_versions = ((4, 2, 0), (5, 2, 40), None)
     if actual_exporter_version != (5, 2, 39):
         unverified_exporter_versions += (actual_exporter_version,)
@@ -7671,6 +7673,11 @@ def main():
                                for reason in unverified_sheen["reasons"]),
                        f"unverified exporter {unverified_version} silently inherited "
                        f"the Sheen Weight relaxation: {unverified_sheen}")
+                if unverified_version == actual_exporter_version:
+                    native_material_policy_observations["contextualSheenWeight"] = {
+                        "status": unverified_sheen["status"],
+                        "reasons": list(unverified_sheen["reasons"]),
+                    }
         finally:
             procedural_module._gltf_exporter_version = original_exporter_version_probe
         sheen_weight.default_value = 0.5
@@ -7735,6 +7742,11 @@ def main():
                                for reason in unverified_thin_film["reasons"]),
                        f"unverified exporter {unverified_version} silently inherited "
                        f"the thin-film relaxation: {unverified_thin_film}")
+                if unverified_version == actual_exporter_version:
+                    native_material_policy_observations["constantIridescence"] = {
+                        "status": unverified_thin_film["status"],
+                        "reasons": list(unverified_thin_film["reasons"]),
+                    }
         finally:
             procedural_module._gltf_exporter_version = original_exporter_version_probe
         iridescence_tree.name = "Artist Iridescence Controls"
@@ -7824,6 +7836,11 @@ def main():
                            for reason in unverified_fixed_card["reasons"]),
                    f"unverified exporter {unverified_version} silently inherited "
                    f"the fixed-camera unlit relaxation: {unverified_fixed_card}")
+            if unverified_version == actual_exporter_version:
+                native_material_policy_observations["fixedCameraUnlit"] = {
+                    "status": unverified_fixed_card["status"],
+                    "reasons": list(unverified_fixed_card["reasons"]),
+                }
     finally:
         procedural_module._gltf_exporter_version = original_exporter_version_probe
 
@@ -8021,6 +8038,11 @@ def main():
                            for reason in unverified_alpha_clip["reasons"]),
                    f"unverified exporter {unverified_version} silently inherited "
                    f"the alpha-clip relaxation: {unverified_alpha_clip}")
+            if unverified_version == actual_exporter_version:
+                native_material_policy_observations["alphaClipMath"] = {
+                    "status": unverified_alpha_clip["status"],
+                    "reasons": list(unverified_alpha_clip["reasons"]),
+                }
     finally:
         procedural_module._gltf_exporter_version = original_exporter_version_probe
 
@@ -8387,6 +8409,50 @@ def main():
         safety_fixture.hide_render = True
 
     procedural_module._gltf_exporter_version = native_material_version_probe
+
+    # A controlled historical rule test is not native 5.3 material parity.
+    # Record the actual-version conservative outcomes only after their real
+    # assertions and restoration of the original production probe. Other
+    # versions retain the original not-applicable marker without this scope.
+    if actual_exporter_version == (5, 3, 43):
+        expect(procedural_module._gltf_exporter_version is native_material_version_probe,
+               "native material version probe was not restored exactly")
+        expect(native_material_version_probe() == actual_exporter_version,
+               "restored material probe changed native exporter identity")
+        restored_capabilities = procedural_module._material_exporter_capabilities()
+        expect(restored_capabilities == actual_material_capabilities,
+               "production material policy changed during controlled rule tests")
+        expected_policy_outcomes = {
+            "alphaClipMath": "needsBake",
+            "constantIridescence": "approximated",
+            "contextualSheenWeight": "approximated",
+            "fixedCameraUnlit": "needsBake",
+        }
+        production_flags = {key: value for key, value in restored_capabilities.items()
+                            if key != "version"}
+        expect(production_flags == {key: False for key in expected_policy_outcomes},
+               "unqualified native 5.3 stock-material relaxation became enabled")
+        expect(set(native_material_policy_observations) == set(expected_policy_outcomes),
+               "actual native-version material policy observations are incomplete")
+        for feature, status in expected_policy_outcomes.items():
+            expect(native_material_policy_observations[feature]["status"] == status,
+                   "native material policy outcome changed: " + feature)
+        print("BLENDLINK_MATERIAL_RELAXATIONS_POLICY_WITNESS " + json.dumps({
+            "schemaVersion": 1,
+            "blenderVersion": bpy.app.version_string,
+            "blenderBuildHash": bpy.app.build_hash.decode(),
+            "exporterVersion": list(actual_exporter_version),
+            "controlledExporterVersion": [5, 2, 39],
+            "productionFlags": production_flags,
+            "observations": native_material_policy_observations,
+            "probeRestored": True,
+            "restoredExporterVersion": list(native_material_version_probe()),
+            "nativePositiveQualification": False,
+            "sourceSha256": {
+                "run_headless.py": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+                "procedural.py": hashlib.sha256(Path(procedural_module.__file__).read_bytes()).hexdigest(),
+            },
+        }, sort_keys=True))
 
     # --- baked material ownership: mixed scenes never share mutations ---
     shared_source = bpy.data.materials.new("Shared Baked Realtime Source")

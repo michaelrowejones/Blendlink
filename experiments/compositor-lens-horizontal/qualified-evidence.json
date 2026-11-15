@@ -1,0 +1,184 @@
+{
+  "schemaVersion": 1,
+  "status": "QUALIFIED_PARTIAL_HORIZONTAL_LENS_CPU_FINAL",
+  "sourceCommit": "b3b8495c7397a95b46adf6ba3cc5d0b8b56f739c",
+  "qualificationDirectory": "/tmp/scenetoweb-v1-qualified-lens/artifacts/verification-lens-horizontal-formal-joint-r2",
+  "command": "PATH=/tmp/scenetoweb-apply-tooling:$PATH BLENDLINK_TEST_PYTHON=/Users/michaeljones/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 node scripts/test-node-port.mjs compositor-lens-horizontal --profile mac-53 --blender /Applications/Blender.app/Contents/MacOS/Blender --evidence artifacts/verification-lens-horizontal-formal-joint-r2",
+  "replay": {
+    "workingDirectory": "/tmp/scenetoweb-v1-qualified-lens",
+    "command": "PATH=/tmp/scenetoweb-apply-tooling:$PATH node experiments/compositor-lens-horizontal/verify.mjs artifacts/verification-lens-horizontal-formal-joint-r2/proof /tmp/scenetoweb-lens-horizontal-root-close.json",
+    "note": "Run readers sequentially: they write auxiliary reader logs/receipts inside the evidence directory."
+  },
+  "automaticReportSha256": "57669e23b76f499d6cb32ce5f263e15484aa1e5da8b6897c3ece6012ced74bee",
+  "receiptSha256": "8b1e29336d6bbc311aebe15d0f983dcdbe42396958c7d7f484871a9e83ef6953",
+  "adapterReceiptSha256": "8b1e29336d6bbc311aebe15d0f983dcdbe42396958c7d7f484871a9e83ef6953",
+  "thirdReceipt": {
+    "path": "/tmp/scenetoweb-lens-horizontal-formal-joint-r2-third-close.json",
+    "sha256": "8b1e29336d6bbc311aebe15d0f983dcdbe42396958c7d7f484871a9e83ef6953"
+  },
+  "independentRootReceipt": {
+    "path": "/tmp/scenetoweb-lens-horizontal-root-close.json",
+    "sha256": "8b1e29336d6bbc311aebe15d0f983dcdbe42396958c7d7f484871a9e83ef6953"
+  },
+  "allFourClosesByteIdentical": true,
+  "workspaceStable": true,
+  "productionCredit": true,
+  "automaticSupportPromotion": false,
+  "requestKey": "5eebb97d6e3f95db36a3d733072e07ca69b4ef3588ca2b265cb257acbed67b7c",
+  "evidenceKey": "f7e6f8d28fd2c6366d7c593d43383b745369f905877bfddd4df66f9fae09ce93",
+  "runtimeFingerprint": "942c50762a4f6fff15df52dc6bb8a1c3fbd3081a0076762f6ea7dae373439987",
+  "inputDigest": "bad9a2e69a797060a6e400c826c2034b05f25d53ce264bc3338ee4a091bcb28a",
+  "scope": "Pinned Blender 5.3.0 build 02f0899d78e3 macOS arm64 CPU compositor AUTO/FULL only; numeric captures use FULL. One terminal Horizontal Lens Distortion with a direct current-scene Render Layers Image, original raw Float32 Dispersion 0x3e4ccccd (0.20000000298023224), positive-zero Distortion and false Jitter/Fit. Square-pixel zero-origin full frame; source/output physical dimensions 4..8192 and at most 4,194,304 pixels. Linked controls, animation/drivers/NLA, other dispersion values/modes, arbitrary finite/computed/transformed producers, upstream Mix/Ghosts, downstream Blur/consumers, chained Lens nodes, borders/crop, unequal source/output domains, GPU compositor and other native versions/builds/hosts remain unqualified. Actual saved Final uses public preparation/commit/render/resize/cancel/dispose on WebGPURenderer actual WebGPU/WebGL2, observed Apple Metal and SwiftShader. Direct and installed pre-display RGBA require exact Float32 words against unchanged independent native same-pixel CPU references. The private native Image oracle is source-unadmitted and grants zero Image producer, Render Layers beauty, EEVEE material, Cycles-versus-Three or whole-scene appearance credit. Original Classroom remains blocked and not accepted: its Mix.004 input and Blur.001 consumer are outside this slice. Raw display is separate clamp01 RGB absolute 3e-5 with exact alpha/nonfinite classes, not bit-exact display.",
+  "resourceContract": "One RGBA32F input RTT (64 MiB logical color bytes at the 4,194,304-pixel cap), three RGBA32F mapping tables (384 KiB persistent logical CPU and nominal GPU bytes), and two private zero uniforms. Mapping updates are bounded O(width+height); warm maps do not upload. Driver/storage overhead, source rendering, transient arrays and wider installation/output resources are separate. Staged Float32 bilinear and exact divide-three operations add ALU/bitcasts; no standalone throughput/FPS claim.",
+  "sourceIntent": {
+    "scene": "original Classroom",
+    "tree": "compositor:Compositing Nodetree",
+    "node": "Lens Distortion",
+    "type": "Horizontal",
+    "dispersionWord": 1045220557,
+    "input": "Mix.004.Result_Color",
+    "output": "Blur.001.Image",
+    "wholeSceneAcceptance": false
+  },
+  "nativeSource": {
+    "version": "5.3.0",
+    "build": "02f0899d78e3",
+    "upstreamCommit": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+    "host": "darwin-arm64",
+    "device": "CPU",
+    "precisionRequests": [
+      "AUTO",
+      "FULL"
+    ],
+    "numericCapturedPrecision": "FULL",
+    "model": "native-lens-horizontal-cpu-53-v1",
+    "profile": "darwin-arm64-53-lens-horizontal-cpu-v1"
+  },
+  "closedResult": {
+    "status": "QUALIFIED_PARTIAL_HORIZONTAL_LENS_CPU_FINAL",
+    "supportCredit": 0,
+    "nativeGraphs": 4,
+    "savedFinalScenes": 4,
+    "nativeSamePixelCases": 20,
+    "nativeRenders": 40,
+    "browserCaseRuns": 48,
+    "primaryFloat32Words": 41760,
+    "supportingSamplingCases": 48,
+    "supportingSamplingWords": 41760,
+    "exactLinearWordDifferences": 0,
+    "resizeFrames": 48,
+    "installedCycles": 48,
+    "guardRefusals": 20,
+    "savedDisposeCases": 4,
+    "detachedDisposals": 4,
+    "cancellations": 4,
+    "uniqueActualPythonPrefixes": 8,
+    "archives": {
+      "policy": {
+        "pythonInvocations": 1,
+        "finalInvocations": 0,
+        "uniqueCachePrefixes": 1
+      },
+      "native": {
+        "pythonInvocations": 1,
+        "finalInvocations": 0,
+        "uniqueCachePrefixes": 1
+      },
+      "final": {
+        "pythonInvocations": 5,
+        "finalInvocations": 4,
+        "uniqueCachePrefixes": 5
+      },
+      "publicNative": {
+        "pythonInvocations": 1,
+        "finalInvocations": 0,
+        "uniqueCachePrefixes": 1
+      }
+    },
+    "displayAudit": {
+      "words": 41760,
+      "alphaWordDifferences": 0,
+      "nonfiniteClassDifferences": 0,
+      "limit": 3e-05,
+      "maxClampedAbsoluteError": 7.450580596923828e-09,
+      "bitExactClaim": false
+    },
+    "runtimeFingerprint": "942c50762a4f6fff15df52dc6bb8a1c3fbd3081a0076762f6ea7dae373439987",
+    "sourcePolicy": {
+      "positive": 2,
+      "refusals": 14,
+      "numericalCredit": 0
+    },
+    "runs": [
+      {
+        "profile": "metal",
+        "apis": [
+          {
+            "backend": "webgpu",
+            "gpu": {
+              "api": "WebGPU",
+              "vendor": "apple",
+              "architecture": "metal-3",
+              "description": "",
+              "device": ""
+            },
+            "cases": 12
+          },
+          {
+            "backend": "webgl2",
+            "gpu": {
+              "api": "WebGL2",
+              "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+            },
+            "cases": 12
+          }
+        ]
+      },
+      {
+        "profile": "software",
+        "apis": [
+          {
+            "backend": "webgpu",
+            "gpu": {
+              "api": "WebGPU",
+              "vendor": "google",
+              "architecture": "swiftshader",
+              "description": "",
+              "device": ""
+            },
+            "cases": 12
+          },
+          {
+            "backend": "webgl2",
+            "gpu": {
+              "api": "WebGL2",
+              "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (LLVM 10.0.0) (0x0000C0DE)), SwiftShader driver)"
+            },
+            "cases": 12
+          }
+        ]
+      }
+    ],
+    "closedReaders": {
+      "sampling": "3753054bf13c24d8e3fdaf496331eff6c039e3a9f09be7a0852866f0a8438739",
+      "public": "339b53c2b868e698838d50fe4760d34cdba88f777bbff03b4594e974f0f28a20"
+    },
+    "inputDigest": "bad9a2e69a797060a6e400c826c2034b05f25d53ce264bc3338ee4a091bcb28a"
+  },
+  "displayWordDifferences": 1134,
+  "sourceImageProducerCredit": 0,
+  "sceneBeautyCredit": 0,
+  "originalClassroomAccepted": false,
+  "retainedFailures": [
+    {
+      "path": "/tmp/scenetoweb-v1-qualified-lens/artifacts/verification-lens-horizontal-formal-joint-r1",
+      "reason": "All twelve Metal WebGPU numeric/DPR frames and guard recoveries passed; coarse saved-original-dispose live-set observation failed after renderer manager reset. Observer fix b3 separately tracks actual physical handle destruction and retains ordinary-dispose live-set assertions. Fresh R2 reruns the entire unchanged numerical/control matrix; R1 remains failed and earns zero credit."
+    }
+  ],
+  "historicalPrototypeRecord": "experiments/compositor-lens-horizontal/evidence.json",
+  "remaining": [
+    "Original Classroom upstream Mix/Ghosts and downstream Blur graph",
+    "Broader Lens modes/controls/producers and native profiles",
+    "Whole-scene appearance and original demo acceptance"
+  ]
+}

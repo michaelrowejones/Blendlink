@@ -1,15 +1,19 @@
 import { readFileSync } from 'node:fs'
 import type { ApplicationMaterialAdapterConfig } from './config.js'
 import { parseManifest } from './typegen.js'
-import type { MaterialPortabilityDiagnostic } from './sceneDiagnostics.js'
+import type {
+  MaterialChannelPlanDiagnostic, MaterialPortabilityDiagnostic,
+} from './sceneDiagnostics.js'
 
 export interface RealtimePlanMaterialIssue {
-  code: 'material.used-needs-bake'
+  code: 'material.used-needs-bake' | 'material.compilation-blocked'
   material: string
   usedBy: string[]
   summary: string
   reasons: string[]
   acknowledgedBy?: string
+  compilationIssues?: NonNullable<MaterialPortabilityDiagnostic['materialCompilation']>['issues']
+  channels?: MaterialChannelPlanDiagnostic
 }
 
 export interface RealtimePlanMaterialInspection {
@@ -93,10 +97,40 @@ export function inspectRealtimePlanMaterialDiagnostics(
   options: RealtimePlanMaterialOptions,
 ): RealtimePlanMaterialInspection {
   const appearanceOwned = unambiguousAppearanceOwnedObjectNames(options.bakePlan)
+  // These are compiler-scoped refusals, independent of stock glTF portability.
+  // An application adapter may acknowledge payload collapse, but cannot make a
+  // blocked normal/geometry/program route safe or remove its native contract.
+  const blocked = (diagnostics?.materials ?? [])
+    .filter((material) => material.materialCompilation?.outcome === 'blocked')
+    .map((material): RealtimePlanMaterialIssue => {
+      const compilation = material.materialCompilation!
+      const issues = compilation.issues ?? []
+      const channels = compilation.channels
+      return {
+        code: 'material.compilation-blocked',
+        material: material.material,
+        usedBy: [...new Set([
+          ...material.usedBy,
+          ...issues.flatMap((issue) => issue.objects),
+        ])].sort(),
+        summary: issues.map((issue) => issue.problem).join('; ')
+          || 'The requested website material route cannot be compiled faithfully.',
+        reasons: [
+          ...issues.map((issue) => `${issue.problem} ${issue.fix}`.trim()),
+          ...(channels?.channels ?? [])
+            .filter((channel) => channel.route === 'refused')
+            .map((channel) => `${channel.channel}: ${channel.tslIrRefusal ?? channel.reasons?.join(' ') ?? 'No qualified channel route.'}`),
+        ],
+        compilationIssues: issues.map((issue) => ({ ...issue, objects: [...issue.objects] })),
+        ...(channels ? { channels } : {}),
+      }
+    })
+    .sort((a, b) => a.material.localeCompare(b.material))
   const unresolved = (diagnostics?.materials ?? [])
     .filter((material) =>
       material.status === 'needsBake'
       && material.usedBy.length > 0
+      && material.materialCompilation?.outcome !== 'blocked'
       && material.materialCompilation?.outcome !== 'lowered')
     .map((material): RealtimePlanMaterialIssue => ({
       code: 'material.used-needs-bake',
@@ -106,20 +140,25 @@ export function inspectRealtimePlanMaterialDiagnostics(
         .sort(),
       summary: material.summary,
       reasons: [...material.reasons],
+      ...(material.materialCompilation?.channels
+        ? { channels: material.materialCompilation.channels } : {}),
     }))
     .filter((material) => material.usedBy.length > 0)
     .sort((a, b) => a.material.localeCompare(b.material))
   const adapter = options.applicationMaterialAdapter
   if (adapter?.acknowledgePayloadCollapse === true) {
     return {
-      errors: [],
+      errors: blocked,
       warnings: unresolved.map((issue) => ({
         ...issue,
         acknowledgedBy: adapter.description,
       })),
     }
   }
-  return { errors: unresolved, warnings: [] }
+  return {
+    errors: [...blocked, ...unresolved].sort((a, b) => a.material.localeCompare(b.material)),
+    warnings: [],
+  }
 }
 
 /** Read the optional prior-build timing shown by `scenetoweb plan` through the

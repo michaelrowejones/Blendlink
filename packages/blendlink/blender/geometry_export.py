@@ -10,18 +10,23 @@ import contextlib
 import importlib
 import bpy
 import numpy as np
-import geometry_ir
+if __package__:
+    from . import geometry_ir, export_precision
+else:
+    import geometry_ir
+    import export_precision
 
 
 @contextlib.contextmanager
-def exact_normals(plan, *, additional_targets=()):
+def exact_normals(plan, *, additional_targets=(), additional_objects=None):
     objects=set()
     for decision in plan.decisions:
         outputs=set();geometry_ir.collect_outputs(decision.channel_plan,outputs)
         if outputs & geometry_ir.NORMAL_OUTPUTS:
             objects.update(binding.object_name for binding in decision.bindings)
-    targets={bpy.data.objects[name].data.name for name in objects}|set(additional_targets)
-    if not targets:
+    object_targets={name:None for name in objects}
+    object_targets.update(additional_objects or {})
+    if not object_targets and not additional_targets:
         yield
         return
     version=bpy.app.version[:2]
@@ -34,23 +39,28 @@ def exact_normals(plan, *, additional_targets=()):
     original=getattr(creator,method,None)
     if not callable(original) or not callable(getattr(creator,'zup2yup',None)):
         raise ValueError('The native exporter has no verified exact-normal interface')
-    seen=set()
+    targets=export_precision.ExportTargets({name:None for name in additional_targets},object_targets)
+    nested=bool(getattr(original,'_scenetoweb_exact_normals',False))
     def read_native(instance):
         mesh=instance.blender_mesh
-        if mesh.name not in targets:
+        entries=targets.matching(mesh)
+        if not entries:
             return original(instance)
         if instance.key_blocks or instance.armature:
             raise ValueError('Exact geometry normals have no verified skin/morph export binding')
+        # Earlier precision owners must observe this same export, including
+        # when both scopes resolve to a later private copy of the owner.
+        if nested:original(instance)
         values=np.empty(len(mesh.loops)*3,dtype=np.float32)
         mesh.corner_normals.foreach_get('vector',values)
         instance.normals=values.reshape(-1,3)
         instance.morph_normals=[]
         if instance.export_settings['gltf_yup']:
             creator.zup2yup(instance.normals)
-        seen.add(mesh.name)
+        targets.mark(entries)
+    read_native._scenetoweb_exact_normals=True
     setattr(creator,method,read_native)
     try:
         yield
-        if targets-seen:
-            raise ValueError('The native exporter did not bind exact normals for mesh '+', '.join(sorted(targets-seen)))
+        targets.require_seen('normals')
     finally:setattr(creator,method,original)

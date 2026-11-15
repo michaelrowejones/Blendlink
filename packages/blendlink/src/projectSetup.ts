@@ -238,10 +238,10 @@ if (!canvasElement) throw new Error('SceneToWeb starter: #scene canvas is missin
 const canvas: HTMLCanvasElement = canvasElement
 
 // WebGPURenderer renders on native WebGPU where available and falls back
-// to WebGL2 on its own; on the WebGPU family SceneToWeb also applies any
-// published TSL material programs automatically. Prefer a classic
-// \`new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true })\`
-// (and drop the init() await) to stay on the classic renderer.
+// to WebGL2 on its own. SceneToWeb applies published TSL material programs
+// automatically on both backends. A classic
+// WebGLRenderer renders only portable glTF/baked carriers; verify their look
+// before choosing it. Live programs that require a node renderer are refused.
 const renderer = new WebGPURenderer({ canvas, antialias: true })
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 await renderer.init()
@@ -624,10 +624,10 @@ export async function setupWebsiteProject(
       ...(dependencyInstallRequired ? ['install the declared website dependencies with your package manager'] : []),
       `open ${sceneFile} and click SceneToWeb > Set Up SceneToWeb Scene`,
       ...r3fIntegrations.map((integration) =>
-        `render the exported scene inside your existing R3F Canvas with <${basename(integration, '.ts')} /> from ${integration}; keep its renderer (WebGLRenderer or an initialized WebGPURenderer)`),
+        `render the exported scene inside your existing R3F Canvas with <${basename(integration, '.ts')} /> from ${integration}; configure its async gl factory with an initialized WebGPURenderer for translated materials (native WebGPU or its WebGL2 backend); classic WebGLRenderer is a portable glTF/baked-carrier choice only`),
       ...threeIntegrations.slice(stack === 'new-three-vite' || existingStarter ? 1 : 0).map((integration) => {
         const integrationName = basename(integration, '.ts')
-        return `load the exported scene with await install${integrationName}({ renderer, scene }) from ${integration}; pass your existing WebGLRenderer or an initialized WebGPURenderer, then call installed.update(delta) and installed.render(delta) in your frame loop`
+        return `load the exported scene with await install${integrationName}({ renderer, scene }) from ${integration}; use an initialized WebGPURenderer for translated materials (native WebGPU or its WebGL2 backend), then call installed.update(delta) and installed.render(delta) in your frame loop; classic WebGLRenderer is a portable glTF/baked-carrier choice only`
       }),
       `run ${run('scenetoweb:preview')} to compile Preview quality and open the real site`,
       `run ${run('scenetoweb:publish')} when the scene is approved; it compiles Final, verifies it, and runs the website build`,

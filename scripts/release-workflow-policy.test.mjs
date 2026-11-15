@@ -1,6 +1,9 @@
 import { strict as assert } from 'node:assert'
 import { readFileSync } from 'node:fs'
+import { spawnSync } from 'node:child_process'
 import test from 'node:test'
+import { fileURLToPath } from 'node:url'
+import { releaseChannelPolicy } from './release-channel.mjs'
 
 const workflow = readFileSync(new URL('../.github/workflows/blender-contract.yml', import.meta.url), 'utf8')
 
@@ -96,4 +99,62 @@ test('all external actions are full-SHA pinned', () => {
     .filter((value) => !value.startsWith('./'))
   assert.ok(externalUses.length > 0)
   for (const value of externalUses) assert.match(value, /@[0-9a-f]{40}$/)
+})
+
+test('release channels use strict core and prerelease SemVer identifiers', () => {
+  for (const version of ['0.9.0', '1.0.0', '2.10.123']) {
+    const policy = releaseChannelPolicy(version)
+    assert.equal(policy.channel, 'stable')
+    assert.equal(policy.npmDistTag, 'latest')
+    assert.equal(policy.githubPrerelease, false)
+    assert.equal(policy.githubLatest, true)
+    assert.equal(policy.githubTitle, `SceneToWeb ${version}`)
+  }
+  for (const version of ['1.0.0-alpha', '1.0.0-beta.0', '1.0.0-rc.1', '1.0.0-0', '1.0.0-01a']) {
+    const policy = releaseChannelPolicy(version)
+    assert.equal(policy.channel, 'prerelease')
+    assert.equal(policy.npmDistTag, 'beta')
+    assert.equal(policy.githubPrerelease, true)
+    assert.equal(policy.githubLatest, false)
+    assert.equal(policy.githubTitle, `SceneToWeb ${version} prerelease`)
+  }
+  for (const version of [undefined, null, 1, '', 'v1.0.0', '1.0', '01.0.0', '1.00.0', '1.0.01',
+    '1.0.0-', '1.0.0-01', '1.0.0-rc.01', '1.0.0-rc..1', '1.0.0-rc_1',
+    '1.0.0+build.1', '1.0.0-beta.1+build.1', ' 1.0.0', '1.0.0\n']) {
+    assert.throws(() => releaseChannelPolicy(version), /strict SemVer/, String(version))
+  }
+})
+
+test('workflow channel CLI returns literal flags and refuses invalid input before publication', () => {
+  const cli = fileURLToPath(new URL('./release-channel.mjs', import.meta.url))
+  const run = (...args) => spawnSync(process.execPath, [cli, ...args], { encoding: 'utf8' })
+  for (const version of ['1.0.0', '1.0.0-rc.1']) {
+    const policy = releaseChannelPolicy(version)
+    for (const [field, key] of [['npm-dist-tag', 'npmDistTag'], ['github-prerelease', 'githubPrerelease'],
+      ['github-latest', 'githubLatest'], ['github-title', 'githubTitle']]) {
+      const result = run(version, field)
+      assert.equal(result.status, 0, result.stderr)
+      assert.equal(result.stdout, `${policy[key]}\n`)
+    }
+  }
+  for (const args of [[], ['01.0.0', 'npm-dist-tag'], ['1.0.0', 'unknown'],
+    ['1.0.0', 'npm-dist-tag', 'extra']]) {
+    const result = run(...args)
+    assert.equal(result.status, 1)
+    assert.equal(result.stdout, '')
+  }
+})
+
+test('npm and GitHub consume the same channel policy for create and publish', () => {
+  const candidate = job('release-candidate', 'publish-npm')
+  assert.match(candidate, /release-channel\.mjs "\$version" npm-dist-tag/)
+  assert.match(job('publish-npm', 'publish-github-release'), /release-channel\.mjs "\$RELEASE_VERSION" npm-dist-tag/)
+  const publisher = job('publish-github-release')
+  for (const field of ['github-prerelease', 'github-latest', 'github-title']) {
+    assert.ok(publisher.includes(`release-channel.mjs "$RELEASE_VERSION" ${field}`))
+  }
+  assert.equal([...publisher.matchAll(/--prerelease="\$release_prerelease"/g)].length, 2)
+  assert.equal([...publisher.matchAll(/--latest="\$release_latest"/g)].length, 2)
+  assert.match(publisher, /releases\/latest.*--jq \.tag_name/)
+  assert.doesNotMatch(publisher, /public beta|--latest=false|--prerelease\s*\\/)
 })

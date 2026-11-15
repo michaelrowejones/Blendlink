@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "kind": "release-scene-corpus-shortlist-v1",
+  "sourceCommit": "b38aa79ca424c92cb4c9b9bcb4f7f626fc75fef4",
+  "reviewedDate": "2026-11-15",
+  "targetBlender": "5.3.0",
+  "assetsRedistributed": false,
+  "positiveSelectionFrozen": false,
+  "decision": "Select Archviz as the first fixed live-scene porting target. Classroom and Lone Monk remain provisional until scene complexity is bounded. The complete positive corpus is not frozen. No source inventory is export acceptance or live-node support.",
+  "officialDemoPage": "https://www.blender.org/download/demo-files/",
+  "scenes": [
+    {
+      "id": "archiviz",
+      "title": "Architectural Visualization",
+      "role": "live EEVEE interior",
+      "selectionStatus": "selected-for-porting",
+      "positiveAcceptance": false,
+      "url": "https://download.blender.org/demo/eevee/archiviz/archiviz.blend",
+      "downloadFile": "archiviz.blend",
+      "sourcePath": "archiviz.blend",
+      "source": {
+        "bytes": 204256291,
+        "fileName": "archiviz.blend",
+        "sha256": "9f636b2e1a59b3d181f90caf1b1703658eeadebad57f3c6207737d2fe3ffd85e"
+      },
+      "license": "CC0-1.0",
+      "licenseEvidence": "Embedded README and https://download.blender.org/demo/eevee/archiviz/README.txt explicitly state CC0 1.0 Universal.",
+      "author": "Marek Moravec; bed model Lech Sokolowski",
+      "inventoryFile": "archiviz-final.json",
+      "inventorySha256": "18dd87fa577eb66aefb4d32062632e669691289f4f5710f76fcb0d6441b6d87b",
+      "inventoryBlender": {
+        "buildHash": "02f0899d78e3",
+        "version": "5.3.0"
+      },
+      "downloadBytes": 204256291,
+      "downloadSha256": "9f636b2e1a59b3d181f90caf1b1703658eeadebad57f3c6207737d2fe3ffd85e"
+    },
+    {
+      "id": "classroom",
+      "title": "Classroom",
+      "role": "Cycles lighting/material bake",
+      "selectionStatus": "provisional-complexity-review",
+      "positiveAcceptance": false,
+      "url": "https://download.blender.org/demo/test/classroom.zip",
+      "downloadFile": "classroom.zip",
+      "sourcePath": "extracted/classroom.zip/classroom/classroom.blend",
+      "source": {
+        "bytes": 32045332,
+        "fileName": "classroom.blend",
+        "sha256": "5c526ea3f280566e80253673c9955640527cd0f247ea41b1742620b5bc39f7a4"
+      },
+      "license": "CC0-1.0",
+      "licenseEvidence": "Official Blender demo page labels Classroom by Christophe Seux CC0. Archive ReadMe gives author and scene dependencies.",
+      "author": "Christophe Seux",
+      "inventoryFile": "classroom-final.json",
+      "inventorySha256": "981fb26d11970ba6bb17a22cbb986c7ff7919528bb747b87c6ce80fda8f3e551",
+      "inventoryBlender": {
+        "buildHash": "02f0899d78e3",
+        "version": "5.3.0"
+      },
+      "downloadBytes": 70279690,
+      "downloadSha256": "0f0ecc58d45f12b2f4272a53e2d8e69135518e16e956b118f10c20d8dcfdf5e6",
+      "archiveEntry": "classroom/classroom.blend",
+      "extractDirectory": "extracted/classroom.zip"
+    },
+    {
+      "id": "lone-monk",
+      "title": "Lone Monk",
+      "role": "Cycles presentation plus compositor",
+      "selectionStatus": "provisional-complexity-and-license-review",
+      "positiveAcceptance": false,
+      "url": "https://download.blender.org/demo/cycles/lone-monk_cycles_and_exposure-node_demo.blend",
+      "downloadFile": "lone-monk.blend",
+      "sourcePath": "lone-monk.blend",
+      "source": {
+        "bytes": 33452252,
+        "fileName": "lone-monk.blend",
+        "sha256": "eea2bbfb3f9271050f523c8351fca40f2f559ce84b42b0143e949ecdb4594c3b"
+      },
+      "license": "CC-BY-version-unresolved",
+      "licenseEvidence": "Embedded README: CC-BY, Creator Carlo Bergonzini / Monorender; no exact version. Resolve before redistributing source/derivatives.",
+      "author": "Carlo Bergonzini / Monorender",
+      "inventoryFile": "lone-monk-final.json",
+      "inventorySha256": "15e0889beb84c467c3261b420a5fb6385746853b930729f4f6d98408a2792c0d",
+      "inventoryBlender": {
+        "buildHash": "02f0899d78e3",
+        "version": "5.3.0"
+      },
+      "downloadBytes": 33452252,
+      "downloadSha256": "eea2bbfb3f9271050f523c8351fca40f2f559ce84b42b0143e949ecdb4594c3b"
+    }
+  ],
+  "retainedStressControls": {
+    "manifest": "experiments/official-demo-node-performance/corpus.json",
+    "ids": [
+      "cube-diorama",
+      "mandelbrot-grow",
+      "radial-tiling"
+    ],
+    "status": "Original failed/partial scene evidence remains unchanged; not positive acceptance."
+  },
+  "recoveryCases": [
+    {
+      "id": "unsupported-content",
+      "source": "experiments/realtime-plan-material-diagnostics"
+    },
+    {
+      "id": "resource-budget",
+      "source": "experiments/official-demo-node-performance"
+    },
+    {
+      "id": "missing-companions",
+      "source": "experiments/r3f-missing-companion-browser"
+    },
+    {
+      "id": "incompatible-runtime",
+      "source": "scripts/runtime-provenance.test.mjs"
+    }
+  ]
+}

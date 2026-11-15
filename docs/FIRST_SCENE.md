@@ -83,6 +83,14 @@ it. From the checkout, use
 `node packages/blendlink/dist/cli.js plan --blend "/path/to/scene.blend"`;
 add `--preview` to measure the Preview profile. Planning does not publish a site.
 
+Add `--json` for a structured report. Material inspection collects independent
+material problems, including native compiler issue codes, remedies, object users
+and channel refusals, before returning exit code 1 for a blocked plan. It does
+not install those materials or approve an export. An application material adapter
+can acknowledge stock-payload limitations; it cannot waive a blocked native
+compiler route. Preview and Final export remain blocked until those errors are
+resolved.
+
 For an HDR environment, load a real Radiance `.hdr` or OpenEXR `.exr` file.
 If you create one from a generated Blender image, save it, reload that saved
 file, select the loaded image in **HDR Environment**, and then pack it. A
@@ -187,16 +195,26 @@ not a registry release.
 ### React Three Fiber
 
 For a scene named `hero`, mount the generated component inside your existing
-Canvas. Give the Canvas container a nonzero height:
+Canvas. Use a node-capable renderer so translated Blender materials are applied,
+and give the Canvas container a nonzero height:
 
 ```tsx
 import { Canvas } from '@react-three/fiber'
+import { WebGPURenderer } from 'three/webgpu'
 import { HeroScene } from './scenetoweb/HeroScene'
 
 export function Hero() {
   return (
     <div style={{ height: '60vh' }}>
-      <Canvas>
+      <Canvas
+        gl={async (props) => {
+          const renderer = new WebGPURenderer(
+            props as ConstructorParameters<typeof WebGPURenderer>[0],
+          )
+          await renderer.init()
+          return renderer
+        }}
+      >
         <HeroScene />
       </Canvas>
     </div>
@@ -204,20 +222,30 @@ export function Hero() {
 }
 ```
 
-Keep an existing Canvas if the page already has one. The component owns loading,
-frame updates and cleanup. Add your site's Error Boundary for load failures.
-The default Canvas uses WebGL; an initialized WebGPURenderer also works. The
-[R3F example](../examples/react-three-fiber/src/main.tsx) shows its async factory.
+Keep an existing Canvas if the page already has one, and configure its `gl`
+factory as above after checking the site's rendering integration. The component
+owns loading, frame updates and cleanup. Add your site's Error Boundary for load
+failures. `WebGPURenderer` uses WebGPU where available and can use its WebGL2
+backend; both apply SceneToWeb's translated material programs. The
+[R3F example](../examples/react-three-fiber/src/main.tsx) is a complete consumer.
 Start by letting authored playback and lighting states run as configured.
 Hard-coded state or light-group names from another scene are not portable.
 
 ### Plain Three.js
 
-Use your existing renderer and scene with the generated installer:
+Use an initialized `WebGPURenderer` with the generated installer so translated
+materials are applied. A new integration can initialize it as follows; an
+existing site should reuse its scene and adapt its renderer deliberately:
 
 ```ts
+import { Scene } from 'three'
+import { WebGPURenderer } from 'three/webgpu'
 import { installHeroScene } from './scenetoweb/HeroScene'
 
+const renderer = new WebGPURenderer({ antialias: true })
+await renderer.init()
+const scene = new Scene()
+// Attach renderer.domElement and size it for your container.
 const installed = await installHeroScene({ renderer, scene })
 // Inside your existing animation loop, with elapsed time in seconds:
 installed.update(deltaSeconds)
@@ -230,9 +258,18 @@ installed.dispose()
 
 These are lifecycle excerpts, not calls to run once in sequence. The
 [complete Three example](../examples/vanilla-three/src/main.ts) shows the loop.
-An initialized WebGPURenderer or a WebGLRenderer is supported. If your site owns
-a composer, coordinate render ownership before combining it with authored
-post-processing. Avoid rendering the same Canvas twice each frame.
+If your site owns a composer, coordinate render ownership before combining it
+with authored post-processing. Avoid rendering the same Canvas twice each frame.
+
+### Portable materials on an existing WebGLRenderer
+
+A classic `WebGLRenderer` (including the default R3F Canvas without a `gl`
+factory) renders the portable glTF/baked carriers. It does not apply translated
+TSL material programs. Choose this route only when those carriers preserve the
+look you intend, then verify the exported scene in that renderer. Fresh programs
+that explicitly require a node renderer are refused with a remedy instead of
+being silently dropped. For live translated materials, use the node-capable
+renderer shown above; its WebGL2 backend does not require native WebGPU.
 
 ## Compile, inspect, and build
 

@@ -14,8 +14,9 @@ if (!element) throw new Error('missing #root element')
 createRoot(element).render(
   // The async gl factory hands R3F a WebGPURenderer: native WebGPU where
   // available with automatic WebGL2 fallback, and SceneToWeb's installer
-  // applies published TSL material programs on the WebGPU family. A
-  // classic WebGLRenderer Canvas (no gl prop) remains fully supported.
+  // applies published TSL material programs on both backends. Removing gl
+  // selects classic WebGLRenderer: portable glTF/baked carriers only, with
+  // live programs that require a node renderer refused.
   <Canvas
     gl={async (props) => {
       const renderer = new WebGPURenderer(

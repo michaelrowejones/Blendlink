@@ -51,3 +51,11 @@ CONTEXT.md
 
 # Regenerable Float to Integer native/browser captures and runtime snapshots.
 /artifacts/float-to-int/
+
+# Hash-pinned official release-scene downloads and regenerable source inventories.
+/artifacts/v1-corpus/
+
+# Local current-version contract evidence and isolated native profiles.
+/artifacts/v1-53-*/
+/artifacts/v1-material-*/
+/artifacts/release-profile-*/

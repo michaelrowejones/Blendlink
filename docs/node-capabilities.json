@@ -18832,6 +18832,170 @@
         },
         "sourceSnapshotLimits": "Own fresh next57 source/native/Final/runtime/fixture snapshot after annotation correction; two authoritative byte-identical closes. Default Euler and Quaternion evidence remains historical and unchanged. Earlier raw API and signed native-twin research grants zero Final/browser support credit; no all-ports freshness claim."
       }
+    },
+    "compositor:CompositorNodeLensdist": {
+      "category": "unsupported",
+      "limits": "No admitted live route outside the explicitly qualified Blender 5.3.0 CPU compositor version/build/host slice. Legacy 4.2/5.2 versions and native node creation alone remain unsupported.",
+      "runtimePath": "packages/blendlink/src/tslSourceCompositor.ts",
+      "runtimeOps": [
+        "lens-horizontal"
+      ],
+      "modes": {},
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader observed. Legacy WebGLRenderer and other renderer/native source profiles remain unqualified.",
+      "evidence": [
+        {
+          "path": "packages/blendlink/blender/compositor_lens_horizontal.py"
+        },
+        {
+          "path": "packages/blendlink/blender/compositor_graph.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorLensHorizontal.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorDisplacePrecision.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorMapValue.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorProducers.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslSourceCompositor.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslCompositorLensHorizontal.test.ts"
+        },
+        {
+          "path": "packages/blender-addon/tests/compositor_lens_horizontal_check.py"
+        },
+        {
+          "path": "experiments/compositor-lens-horizontal/matrix.mjs"
+        },
+        {
+          "path": "experiments/compositor-lens-horizontal/verify.mjs"
+        },
+        {
+          "path": "experiments/compositor-lens-horizontal/verify-pilot.mjs"
+        },
+        {
+          "path": "experiments/compositor-lens-horizontal/verify-public.mjs"
+        },
+        {
+          "path": "experiments/compositor-lens-horizontal/README.md"
+        },
+        {
+          "path": "experiments/compositor-lens-horizontal/qualified-evidence.json"
+        },
+        {
+          "path": "node-ports/compositor-lens-horizontal.json"
+        }
+      ],
+      "verification": {
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "nativeCompositorDevices": [
+          "CPU"
+        ],
+        "nativePrecisionRequests": [
+          "AUTO",
+          "FULL"
+        ],
+        "numericCapturedPrecision": "FULL",
+        "sourceModel": "native-lens-horizontal-cpu-53-v1",
+        "sourceProfile": "darwin-arm64-53-lens-horizontal-cpu-v1",
+        "sourceGraphs": 4,
+        "nativeSamePixelCases": 20,
+        "nativeRenders": 40,
+        "savedFinalScenes": 4,
+        "installedFrameCycles": 48,
+        "supportingSamplingCases": 48,
+        "primaryFloat32Words": 41760,
+        "supportingFloat32Words": 41760,
+        "exactLinearWordMismatches": 0,
+        "uniqueActualPythonPrefixes": 8,
+        "sourceImageProducerCredit": 0,
+        "sceneBeautyCredit": 0,
+        "numericContract": "Exact direct and actual public-installed pre-display RGBA Float32 words, including alpha, against unchanged native same-pixel CPU inputs. Source-admitted saved graphs/Finals and source-unadmitted Image oracles are separately closed. Raw display has its own bounded projection and is not bit-exact.",
+        "displayAudit": {
+          "words": 41760,
+          "alphaWordDifferences": 0,
+          "nonfiniteClassDifferences": 0,
+          "limit": 3e-05,
+          "maxClampedAbsoluteError": 7.450580596923828e-09,
+          "bitExactClaim": false,
+          "model": "existing-ocio-png-clamp01-3e-5",
+          "wordDifferences": 1134
+        },
+        "resourceContract": "One RGBA32F input RTT (64 MiB logical color bytes at the 4,194,304-pixel cap), three RGBA32F mapping tables (384 KiB persistent logical CPU and nominal GPU bytes), and two private zero uniforms. Mapping updates are bounded O(width+height); warm maps do not upload. Driver/storage overhead, source rendering, transient arrays and wider installation/output resources are separate. Staged Float32 bilinear and exact divide-three operations add ALU/bitcasts; no standalone throughput/FPS claim.",
+        "sourcePolicy": {
+          "positiveControls": 2,
+          "refusalControls": 14,
+          "nativeRenders": 0,
+          "gpuInitializations": 0
+        },
+        "lifecycleControls": {
+          "actualTuples": 4,
+          "resizeFrames": 48,
+          "devicePixelRatios": [
+            1,
+            1.25,
+            1,
+            2
+          ],
+          "cyclesPerTuple": 3,
+          "installedCycles": 48,
+          "guardRefusals": 20,
+          "refusalKinds": [
+            "pixel-budget-before-rtt",
+            "mismatched-target",
+            "offset-target",
+            "scissor-target",
+            "source-extent"
+          ],
+          "recoveryAfterEachRefusal": true,
+          "oversizedOwnedAllocations": 0,
+          "savedOriginalDisposeCases": 4,
+          "physicalHandlesDestroyedExactlyOncePerSavedDispose": 4,
+          "detachedDisposals": 4,
+          "cancellations": 4,
+          "hostRestored": true
+        },
+        "sourceSnapshot": {
+          "sourceCommit": "b3b8495c7397a95b46adf6ba3cc5d0b8b56f739c",
+          "evidence": "experiments/compositor-lens-horizontal/qualified-evidence.json",
+          "evidenceSha256": "fc2fea261a03fc39375caa8f2716f4cccc4975acc3fb0ce0b548a85a561eb99e",
+          "automaticReportSha256": "57669e23b76f499d6cb32ce5f263e15484aa1e5da8b6897c3ece6012ced74bee",
+          "receiptSha256": "8b1e29336d6bbc311aebe15d0f983dcdbe42396958c7d7f484871a9e83ef6953",
+          "allFourClosesByteIdentical": true,
+          "workspaceStable": true,
+          "productionCredit": true,
+          "automaticSupportPromotion": false,
+          "runtimeFingerprint": "942c50762a4f6fff15df52dc6bb8a1c3fbd3081a0076762f6ea7dae373439987",
+          "inputDigest": "bad9a2e69a797060a6e400c826c2034b05f25d53ce264bc3338ee4a091bcb28a",
+          "limits": "Fresh frozen b3 Lens slice only; other ports retain their own source snapshots. No all-port freshness, Image producer, beauty or original Classroom acceptance claim."
+        }
+      },
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Pinned Blender 5.3.0 build 02f0899d78e3 macOS arm64 CPU compositor AUTO/FULL only; numeric captures use FULL. One terminal Horizontal Lens Distortion with a direct current-scene Render Layers Image, original raw Float32 Dispersion 0x3e4ccccd (0.20000000298023224), positive-zero Distortion and false Jitter/Fit. Square-pixel zero-origin full frame; source/output physical dimensions 4..8192 and at most 4,194,304 pixels. Linked controls, animation/drivers/NLA, other dispersion values/modes, arbitrary finite/computed/transformed producers, upstream Mix/Ghosts, downstream Blur/consumers, chained Lens nodes, borders/crop, unequal source/output domains, GPU compositor and other native versions/builds/hosts remain unqualified. Actual saved Final uses public preparation/commit/render/resize/cancel/dispose on WebGPURenderer actual WebGPU/WebGL2, observed Apple Metal and SwiftShader. Direct and installed pre-display RGBA require exact Float32 words against unchanged independent native same-pixel CPU references. The private native Image oracle is source-unadmitted and grants zero Image producer, Render Layers beauty, EEVEE material, Cycles-versus-Three or whole-scene appearance credit. Original Classroom remains blocked and not accepted: its Mix.004 input and Blur.001 consumer are outside this slice. Raw display is separate clamp01 RGB absolute 3e-5 with exact alpha/nonfinite classes, not bit-exact display.",
+          "modes": {
+            "inputs:Type": {
+              "partial": [
+                "Horizontal"
+              ],
+              "unsupported": [
+                "Radial"
+              ]
+            }
+          }
+        }
+      }
     }
   },
   "knownUnsupported": [
@@ -18860,7 +19024,6 @@
     "compositor:CompositorNodeKeying",
     "compositor:CompositorNodeKeyingScreen",
     "compositor:CompositorNodeKuwahara",
-    "compositor:CompositorNodeLensdist",
     "compositor:CompositorNodeLevels",
     "compositor:CompositorNodeMapUV",
     "compositor:CompositorNodeMask",

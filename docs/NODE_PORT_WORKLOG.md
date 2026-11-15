@@ -1813,3 +1813,42 @@ pipeline skips remain explicit. Only Image Info and Vector Rotate compositor
 132 unsupported and 14 structural. Native inventory date remains November 13.
 Spreadsheet maintenance stays on its reduced weekly cadence. Source checkpoint
 only: no PR, hosted workflow, package release or site publication.
+
+
+## Applied pipeline: terminal horizontal Lens Distortion
+
+A fresh shared `mac-53` transaction on frozen `b3b8495` qualifies the bounded
+Blender 5.3.0 CPU Horizontal Lens slice. Four original saved graphs/Finals,
+20 same-pixel cases / 40 native renders, all four actual Metal/SwiftShader ×
+WebGPU/WebGL2 tuples and 48 installed cycles pass. All 41,760 primary and
+41,760 supporting sampling RGBA Float32 words match exactly. Raw display
+retains 1,134 differences (maximum clamped RGB error 7.450580596923828e-9)
+under the unchanged 3e-5 gate, with exact alpha/nonfinite classes. Both automatic
+closes, third replay and independent root replay match byte-for-byte (receipt
+`8b1e29336d6bbc311aebe15d0f983dcdbe42396958c7d7f484871a9e83ef6953`).
+
+The full physical control matrix covers 48 resize/DPR frames, 20 refused domains
+and recovery, four saved-original renderer disposals (four physical handles
+destroyed exactly once each), four detached disposals and four cancellations.
+Source-policy two positive / fourteen refusal controls and eight actual Python
+prefixes stay separately accounted. Formal R1 remains failed for a coarse
+saved-dispose observer bookkeeping assertion; b3 isolates the physical handle
+observer while preserving ordinary-disposal assertions. Fresh R2 reruns the
+complete unchanged numerical/lifecycle gates. See
+[the qualification record](../experiments/compositor-lens-horizontal/qualified-evidence.json)
+for commands, fingerprints, archived failures and bounds.
+
+Only `compositor:CompositorNodeLensdist` gains a 5.3 partial record; its default
+and 4.2/5.2 classifications remain unsupported, and every other capability is
+unchanged. This is terminal direct Render Layers Image, original .2f dispersion,
++0 Distortion, false Jitter/Fit, pinned macOS arm64 CPU, full frame 4..8192 and
+at most 4,194,304 pixels. No arbitrary producers, upstream Mix/Ghosts or downstream
+Blur credit is implied. Original Classroom remains blocked and not accepted;
+same-pixel Image oracles grant zero Image producer/beauty/whole-scene credit.
+The retained native catalogs remain November 13; this is classification-only
+refresh. No spreadsheet edit, release or publication follows.
+
+Metadata validation passes 92 focused schema/family/tracker checks and eleven
+Python audit tests. Existing capability values, all native catalog bytes and
+legacy classifications/mode coverage were compared against the frozen base.
+The 5.3 totals are 46 supported, 141 partial, 131 unsupported and 14 structural.

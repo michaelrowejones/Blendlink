@@ -16,7 +16,8 @@ ADDON=ROOT/'packages/blender-addon'
 BACKEND=ROOT/'packages/blendlink/blender'
 PACKAGE='blendlink_addon'
 paths_before=tuple(sys.path)
-bare_names={'bakelib','uvgeometry','compositor_graph','compositor_map_value','compositor_map_value_domain'}
+bare_names={'bakelib','uvgeometry','compositor_graph','compositor_map_value','compositor_map_value_domain',
+            'normal_bake_transport','tangent_export','geometry_export','geometry_ir'}
 bare_before={name:sys.modules.get(name)for name in bare_names}
 rows=[]
 for cycle in range(2):
@@ -54,6 +55,11 @@ for cycle in range(2):
         bpy.context.scene.collection.objects.link(obj)
         mesh.materials.append(material)
         compiler=sys.modules[PACKAGE+'.material_compiler']
+        normal_modules=compiler._normal_bake_modules()
+        for helper in normal_modules:
+            assert helper.__name__.startswith(PACKAGE+'.'),helper.__name__
+            assert Path(helper.__file__).resolve().parent==BACKEND.resolve(),helper.__file__
+        assert normal_modules[2].geometry_ir is sys.modules[PACKAGE+'.geometry_ir']
         plan=compiler.plan_materials([obj],purpose='preview',automatic_programs=True)
         assert len(plan.decisions)==1
         decision=plan.decisions[0]

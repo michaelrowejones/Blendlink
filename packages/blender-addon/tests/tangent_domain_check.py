@@ -45,7 +45,11 @@ for flags in [(False,False),(True,False),(True,True)]:
     result=plan();assert not result.errors,result.errors
 
 bpy.context.scene.render.engine='CYCLES'
-assert any('Cycles UV Tangent' in issue.problem for issue in plan().errors)
+cycles_errors=plan().errors
+assert any(issue.code=='material.automatic-fallback-context-unproven'
+           and 'owner-dependent UV Tangent' in issue.problem
+           and 'UV-bake ray context' in issue.problem
+           for issue in cycles_errors),cycles_errors
 bpy.context.scene.render.engine=eevee
 normal_tangent=tree.nodes.new('ShaderNodeTangent');normal_tangent.direction_type='UV_MAP';normal_tangent.uv_map='EditUV'
 tree.links.new(normal_tangent.outputs[0],bsdf.inputs['Normal'])

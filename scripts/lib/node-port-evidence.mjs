@@ -6,6 +6,7 @@ import { pathToFileURL } from 'node:url'
 import { nodePortHash, readSqueezeNodePortEvidence } from './node-port-contract.mjs'
 import {closedFamilyAdapter} from './node-port-family-evidence.mjs'
 import {displaceEvidenceAdapter} from './node-port-displace-evidence.mjs'
+import {lensHorizontalEvidenceAdapter} from './node-port-lens-horizontal-evidence.mjs'
 
 const json = async path => JSON.parse(await readFile(path, 'utf8'))
 const literalPaths = ['literal53-cpu/qualification.json', 'literal53-cpu/final-proof.json',
@@ -55,6 +56,7 @@ async function readFloatToIntEvidence({ root, evidence, manifest, profile, compl
 }
 
 export const NODE_PORT_EVIDENCE_ADAPTERS = Object.freeze({
+  'compositor-lens-horizontal-v1': lensHorizontalEvidenceAdapter,
   'compositor-input-rotation-v1': closedFamilyAdapter('compositor-input-rotation'),
   'compositor-vector-rotate-unit-axis-v1': closedFamilyAdapter('compositor-vector-rotate-unit-axis'),
   'compositor-vector-rotate-v1': closedFamilyAdapter('compositor-vector-rotate'),

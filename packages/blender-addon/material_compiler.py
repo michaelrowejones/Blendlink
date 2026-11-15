@@ -27,6 +27,16 @@ from typing import Callable
 
 import bpy
 
+
+def _normal_bake_modules():
+    """Keep the helper closure in the owning addon/CLI module namespace."""
+    if __package__:
+        from . import normal_bake_transport, tangent_export, geometry_export
+    else:
+        import normal_bake_transport, tangent_export, geometry_export
+    return normal_bake_transport, tangent_export, geometry_export
+
+
 if __package__:
     from .bakelib_loader import bakelib
     from . import glblib, procedural, tsl_ir, vertex_color_alpha
@@ -5562,7 +5572,7 @@ def _attest_material_bake_channels(
             channel_evidence[kind].update(rect_evidence)
     normal_basis = None
     if fact.get('normalBasis') is not None:
-        import normal_bake_transport
+        normal_bake_transport, _, _ = _normal_bake_modules()
         for kind in ('normal','coatNormal'):
             if planned.get(kind) is None:continue
             texture_info = slots[kind]
@@ -9091,8 +9101,9 @@ def with_compiled_materials(
         )
         os.close(descriptor)
         os.unlink(staged_glb)
-        import normal_bake_transport, tangent_export, geometry_export
+        normal_bake_transport, tangent_export, geometry_export = _normal_bake_modules()
         normal_bindings = {}
+        normal_owner_bindings = {}
         for fact in generated_facts.values():
             if not {'normal','coatNormal'} & set((fact.get('materialBake') or {}).get('images') or {}):continue
             if len(fact['bindings']) != 1:raise MaterialCompileError('Normal bake dedupe needs one proved actual owner binding')
@@ -9101,7 +9112,9 @@ def with_compiled_materials(
             uv_name = fact['materialBake']['uvEvidence']['uvName']
             fact['normalBasis'] = normal_bake_transport.capture(obj, uv_name, _hash_sorted_triangle_digests)
             normal_bindings[obj.data.name] = uv_name
-        with tangent_export.exact_tangents(normal_bindings), geometry_export.exact_normals(plan, additional_targets=normal_bindings):
+            previous_uv=normal_owner_bindings.setdefault(owner,uv_name)
+            if previous_uv!=uv_name:raise MaterialCompileError('One normal-bake owner has conflicting Mikk tangent basis ownership')
+        with tangent_export.exact_tangents(normal_bindings,object_bindings=normal_owner_bindings), geometry_export.exact_normals(plan, additional_targets=normal_bindings,additional_objects=normal_owner_bindings):
             value = emit(staged_glb)
         _rewrite_private_color_carriers(
             staged_glb, generated_facts, preserve_custom_attributes,

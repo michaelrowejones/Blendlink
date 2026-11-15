@@ -20,10 +20,14 @@ archive. Do this before running `npm install` in the copied example; the
 declared registry version is a release placeholder while the project is private.
 Then run `npx scenetoweb compile --preview` and `npm run dev` from your copy.
 
-Both examples use WebGPURenderer. An existing WebGL site can keep its renderer;
-the R3F example's `gl` prop is optional for that case. The R3F component uses
-the scene's authored playback and lighting instead of assuming particular clip,
-state, or light-group names.
+Both examples use WebGPURenderer, which applies translated TSL materials on
+native WebGPU or its WebGL2 backend. Keep the R3F example's `gl` factory for
+that path. A classic WebGLRenderer (or R3F Canvas without the factory) renders
+only portable glTF/baked carriers; choose it explicitly after verifying those
+carriers preserve your scene's look. Fresh programs that require a node renderer
+are refused on that legacy path. The R3F component uses the scene's authored
+playback and lighting instead of assuming particular clip, state, or light-group
+names.
 
 ## How the CI gate works
 
@@ -34,9 +38,10 @@ npm run test:examples
 copies each example into a temp directory, installs the workspace-built
 `scenetoweb` package, runs `setupWebsiteProject` + `scenetoweb typegen` against
 a deterministic GLB to produce the generated modules the example imports,
-then runs `tsc` and `vite build`. The committed source therefore always
-compiles against the bindings the *current* compiler generates — drift fails
-CI, not a user.
+then runs `tsc` and `vite build`. The exact Three/R3F snippets from the
+first-scene guide are also type-checked against those generated bindings.
+The committed examples and guide therefore compile against the bindings the
+*current* compiler generates — drift fails CI, not a user.
 
 The generated `src/scenetoweb/` and `src/generated/` directories are not
 committed; run the gate (or `scenetoweb connect` with your own `.blend`) to

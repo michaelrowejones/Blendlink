@@ -180,7 +180,7 @@ try {
       tag_name: `v${version}`,
       target_commitish: commit,
       draft: true,
-      prerelease: true,
+      prerelease: false,
       assets: names.map((name) => {
         const path = join(work, name)
         const bytes = name === `scenetoweb-${version}.tgz` ? npmBytes
@@ -211,6 +211,40 @@ try {
       }), /exactly the four/)
     } finally {
       rmSync(downloads, { recursive: true, force: true })
+    }
+  })
+  test('stable and prerelease GitHub metadata must match their candidate channel', () => {
+    for (const candidate of ['1.0.0', '1.0.1-rc.1']) {
+      const prerelease = candidate.includes('-')
+      const files = [
+        [`scenetoweb-${candidate}.tgz`, npmBytes],
+        [`scenetoweb-addon-${candidate}.zip`, addonBytes],
+        ['release-manifest.json', Buffer.from('{}')],
+        ['SHA256SUMS', Buffer.from('checksums')],
+      ]
+      const root = mkdtempSync(join(tmpdir(), 'scenetoweb-release-channel-'))
+      try {
+        for (const [name, bytes] of files) writeFileSync(join(root, name), bytes)
+        const release = {
+          tag_name: `v${candidate}`, target_commitish: commit, draft: false, immutable: true,
+          prerelease,
+          assets: files.map(([name, bytes]) => ({ name, state: 'uploaded', size: bytes.length, digest: `sha256:${sha(bytes)}` })),
+        }
+        const verify = (metadata) => verifyGithubReleaseContract({
+          release: metadata, directory: root, version: candidate, commit, state: 'published',
+        })
+        assert.equal(verify(release), 'published')
+        for (const wrong of [!prerelease, undefined, 'false', 0]) {
+          assert.throws(() => verify({ ...release, prerelease: wrong }), /prerelease flag must be/)
+        }
+        assert.throws(() => verify({ ...release, immutable: false }), /immutable releases/)
+        assert.throws(() => verify({ ...release, target_commitish: 'b'.repeat(40) }), /tag or target commit/)
+        assert.throws(() => verifyGithubReleaseContract({
+          release, directory: root, version: '1.0.0-01', commit, state: 'published',
+        }), /strict SemVer/)
+      } finally {
+        rmSync(root, { recursive: true, force: true })
+      }
     }
   })
 } finally {

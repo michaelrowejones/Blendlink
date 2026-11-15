@@ -14,13 +14,13 @@ import { basename, join, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { verifyPackedBlendlinkLicenseContract } from './package-license-contract.mjs'
+import { releaseChannelPolicy } from './release-channel.mjs'
 
 const PACKAGE_LICENSE = 'SEE LICENSE IN LICENSES.md'
 const ADDON_LICENSE = 'GPL-3.0-or-later'
 const FILE_LICENSES = Object.freeze(['MIT', 'GPL-3.0-or-later', 'Apache-2.0', 'BSD-3-Clause', 'CC0-1.0'])
 const FULL_SHA256 = /^[0-9a-f]{64}$/
 const FULL_COMMIT = /^[0-9a-f]{40}$/
-const VERSION = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/
 
 function fail(message) {
   throw new Error(`Retained release verification failed: ${message}`)
@@ -225,7 +225,7 @@ function assertDirectoryFiles(directory, expectedNames) {
 }
 
 export function verifyRetainedReleaseDirectory({ directory, version, commit, repository }) {
-  if (!VERSION.test(version)) fail(`version is not release SemVer: ${version}`)
+  releaseChannelPolicy(version)
   if (!FULL_COMMIT.test(commit)) fail(`commit must be a full lowercase Git SHA-1`)
   expectedRepositoryUrl(repository)
   const root = resolve(directory)
@@ -337,11 +337,14 @@ export function verifyGithubReleaseContract({
   commit,
   state,
 }) {
+  const channel = releaseChannelPolicy(version)
   const value = object(release, 'GitHub release metadata')
   if (value.tag_name !== `v${version}` || value.target_commitish !== commit) {
     fail(`GitHub release tag or target commit differs from the candidate`)
   }
-  if (value.prerelease !== true) fail(`GitHub public-beta release must remain a prerelease`)
+  if (value.prerelease !== channel.githubPrerelease) {
+    fail(`GitHub prerelease flag must be ${channel.githubPrerelease} for ${channel.channel} version ${version}`)
+  }
   if (state === 'draft' && value.draft !== true) fail(`GitHub release must be a draft before npm publication`)
   if (state === 'published' && value.draft !== false) fail(`GitHub release was not published`)
   if (value.draft === false && value.immutable !== true) {

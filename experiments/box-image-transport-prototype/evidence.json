@@ -1,0 +1,238 @@
+{
+  "schemaVersion": 1,
+  "status": "EXPERIMENTAL_BOX_WEIGHTS_MATCHED_SAMPLER_AND_CLOSURE_FAILED_ZERO_CREDIT",
+  "sourceCommit": "9373df70ddb7d04b8aa2522575b8c291a8a76e24",
+  "productionChanges": false,
+  "qualificationCredit": {
+    "node": 0,
+    "actualInstalledScene": 0,
+    "fullArchviz": 0,
+    "normalMapComposition": 0,
+    "arbitraryExportedGeometryBasis": 0
+  },
+  "sourceScene": {
+    "sha256": "9f636b2e1a59b3d181f90caf1b1703658eeadebad57f3c6207737d2fe3ffd85e",
+    "bytes": 204256291,
+    "preserved": true
+  },
+  "nativeProfile": {
+    "version": [
+      5,
+      3,
+      0
+    ],
+    "build": "02f0899d78e3",
+    "backend": {
+      "backend": "METAL",
+      "renderer": "Metal API",
+      "vendor": "Apple M5 Pro",
+      "version": "1.2"
+    }
+  },
+  "results": {
+    "pureWeightCases": 26,
+    "pureWeightsBitExactWords": 13312,
+    "actualEeveeRenders": 28,
+    "nativeImageReferences": 24,
+    "nativeInputControlFrames": 4,
+    "nativeInputControlsBitExact": true,
+    "browserBackends": [
+      "webgpu",
+      "webgl2"
+    ],
+    "samplerDiagnosticWords": 98304,
+    "samplerViolationsAtPredeclaredBound": 35660,
+    "browserErrors": [
+      {
+        "api": "webgpu",
+        "pageErrors": [
+          "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        ],
+        "shaderErrors": []
+      },
+      {
+        "api": "webgl2",
+        "pageErrors": [],
+        "shaderErrors": []
+      }
+    ],
+    "groups": [
+      {
+        "api": "webgpu",
+        "kind": "weights",
+        "mode": null,
+        "image": null,
+        "cases": 26,
+        "words": 6656,
+        "differences": 0,
+        "violations": 0,
+        "maxAbs": 0,
+        "maxUlp": 0
+      },
+      {
+        "api": "webgpu",
+        "kind": "sampler-diagnostic",
+        "mode": "nomip",
+        "image": "Plaster-Overlay.png",
+        "cases": 12,
+        "words": 12288,
+        "differences": 10752,
+        "violations": 5224,
+        "maxAbs": 0.04474201798439026,
+        "maxUlp": 2558061
+      },
+      {
+        "api": "webgpu",
+        "kind": "sampler-diagnostic",
+        "mode": "nomip",
+        "image": "Plaster-normal.png",
+        "cases": 12,
+        "words": 12288,
+        "differences": 10752,
+        "violations": 6088,
+        "maxAbs": 0.25369274616241455,
+        "maxUlp": 8775688
+      },
+      {
+        "api": "webgpu",
+        "kind": "sampler-diagnostic",
+        "mode": "mip",
+        "image": "Plaster-Overlay.png",
+        "cases": 12,
+        "words": 12288,
+        "differences": 10752,
+        "violations": 2612,
+        "maxAbs": 0.012394770979881287,
+        "maxUlp": 831799
+      },
+      {
+        "api": "webgpu",
+        "kind": "sampler-diagnostic",
+        "mode": "mip",
+        "image": "Plaster-normal.png",
+        "cases": 12,
+        "words": 12288,
+        "differences": 10752,
+        "violations": 4048,
+        "maxAbs": 0.024650543928146362,
+        "maxUlp": 827135
+      },
+      {
+        "api": "webgl2",
+        "kind": "weights",
+        "mode": null,
+        "image": null,
+        "cases": 26,
+        "words": 6656,
+        "differences": 0,
+        "violations": 0,
+        "maxAbs": 0,
+        "maxUlp": 0
+      },
+      {
+        "api": "webgl2",
+        "kind": "sampler-diagnostic",
+        "mode": "nomip",
+        "image": "Plaster-Overlay.png",
+        "cases": 12,
+        "words": 12288,
+        "differences": 10752,
+        "violations": 5224,
+        "maxAbs": 0.04474201798439026,
+        "maxUlp": 2558061
+      },
+      {
+        "api": "webgl2",
+        "kind": "sampler-diagnostic",
+        "mode": "nomip",
+        "image": "Plaster-normal.png",
+        "cases": 12,
+        "words": 12288,
+        "differences": 10752,
+        "violations": 6088,
+        "maxAbs": 0.25369274616241455,
+        "maxUlp": 8775688
+      },
+      {
+        "api": "webgl2",
+        "kind": "sampler-diagnostic",
+        "mode": "mip",
+        "image": "Plaster-Overlay.png",
+        "cases": 12,
+        "words": 12288,
+        "differences": 10752,
+        "violations": 2648,
+        "maxAbs": 0.012394770979881287,
+        "maxUlp": 831799
+      },
+      {
+        "api": "webgl2",
+        "kind": "sampler-diagnostic",
+        "mode": "mip",
+        "image": "Plaster-normal.png",
+        "cases": 12,
+        "words": 12288,
+        "differences": 10748,
+        "violations": 3728,
+        "maxAbs": 0.022689759731292725,
+        "maxUlp": 761342
+      }
+    ]
+  },
+  "failedEarlierNamespaces": [
+    {
+      "directory": "/tmp/scenetoweb-box-archviz-native-r1",
+      "reason": "Blender GPUTexture.mipmap_mode binding SystemError before sampling"
+    },
+    {
+      "directory": "/tmp/scenetoweb-box-archviz-native-r2",
+      "reason": "Blender minimum render height4, incorrect requested1-row readback extent"
+    },
+    {
+      "directory": "/tmp/scenetoweb-box-archviz-native-r3",
+      "reason": "Rejected invalid constant-Y Window arithmetic/half-film row equality assumption"
+    }
+  ],
+  "artifacts": {
+    "/tmp/scenetoweb-box-archviz-native-r4/native.json": "ccfd6eed2af5218cb8a2a183a94343d2412b854b8c0341b57436bb8b98aaf242",
+    "/tmp/scenetoweb-box-archviz-native-r4/native-archive.json": "cc6c291dcd8a8fc7e49465c69147cabeeb3d14191da7f2c932248c205d1806af",
+    "/tmp/scenetoweb-box-archviz-native-r4/contract.json": "b6b7b89e088e1d01b6b95d0c608ac135776f8532421416bb3e89d5b529eff16f",
+    "/tmp/scenetoweb-box-archviz-browser-r4/browser.json": "bdf33d531cb1e9a1990c4464007f70250df6904820aaa7de7edb69161853ecc0",
+    "/tmp/scenetoweb-box-archviz-browser-r4/diagnostic-closed.json": "d8eddde305b7a2b4ac021368f4d75f15a2ff3ce9fc4c8ac13e3f62d8f215e87a",
+    "/tmp/scenetoweb-box-archviz-browser-r4/raw-diagnostic.json": "25c7a6103c64d52ad95acfe11dfafbb027c4246e89e3cac040150ff1dd20f730",
+    "/tmp/scenetoweb-box-archviz-browser-r4/compare-at-capture.mjs": "dc06617f5b9c270069b2d8e1fa88ffe0276ec1dc95f55f558514f6a65e78f281"
+  },
+  "captureTimeBrowserSourcePins": {
+    "browser.js": "b620caf9fc1594f7b5604853ab9a4a4842056238f115baa9fba613257f540078",
+    "candidate.mjs": "3071f3faca72b2037726e239415b7387659d04d482e11186a43fcc083332d3a9",
+    "browser.mjs": "bd41cf53e4eeb9a3219c290facc55d24027044d4733ada79721a0d42a525cd77",
+    "compare.mjs": "dc06617f5b9c270069b2d8e1fa88ffe0276ec1dc95f55f558514f6a65e78f281",
+    "cases.mjs": "8da9b81df39ad12b95286219b5e9892accb8751f9d72ab57ae5da66bfc13efa6"
+  },
+  "sourcePins": {
+    "experiments/box-image-transport-prototype/browser.js": "b620caf9fc1594f7b5604853ab9a4a4842056238f115baa9fba613257f540078",
+    "experiments/box-image-transport-prototype/browser.mjs": "bd41cf53e4eeb9a3219c290facc55d24027044d4733ada79721a0d42a525cd77",
+    "experiments/box-image-transport-prototype/candidate.mjs": "3071f3faca72b2037726e239415b7387659d04d482e11186a43fcc083332d3a9",
+    "experiments/box-image-transport-prototype/capture.py": "a6f5fc57aff9b81610bbcbc5aff24fbec6014ab7de54e6bdd4e72c01d3ffc545",
+    "experiments/box-image-transport-prototype/cases.mjs": "8da9b81df39ad12b95286219b5e9892accb8751f9d72ab57ae5da66bfc13efa6",
+    "experiments/box-image-transport-prototype/cases.test.mjs": "ada7d45d03871a091f5178edf5fd05af566499eb8a3de6da373f56add939ad1e",
+    "experiments/box-image-transport-prototype/compare.mjs": "554861810318ca9df21f967436ac4414de6ead3882fa4334556084c161110878",
+    "experiments/box-image-transport-prototype/compare.test.mjs": "d71bb9d718667883392abd1b36797cc7680d06f10746bc51b22849ac0374d75c",
+    "experiments/box-image-transport-prototype/index.html": "572d1a9841460b33ed54cccb8d56be833b5a932639657dce5ec12185c97a9ff3",
+    "experiments/box-image-transport-prototype/native.mjs": "7e38f3e4c8ad72b1488a70b0d9b6641ce73c6f76bd61f347ed77300c137a645d"
+  },
+  "postCaptureReaderExtension": {
+    "explicitDiagnosticOnly": true,
+    "numericCompareFunctionUnchanged": true,
+    "consoleErrorsRetained": true,
+    "defaultCloseStillRejects": true,
+    "reason": "Expose numeric metrics from a failed capture without granting qualification or clearing the browser error"
+  },
+  "nextDependencies": [
+    "Use existing source-profile SNORM10/SNORM16 object-normal stage and exported-basis guards",
+    "Qualify actual native Linear mip/anisotropy without globally mutating other image samplers",
+    "Compose verified nonzero image ranges with existing Mikk Normal Map and exact tangent export",
+    "Actual saved Final/public installed scene evidence before production admission",
+    "Record HTTP failure URLs; current404 attribution remains unknown"
+  ]
+}

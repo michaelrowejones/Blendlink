@@ -2,7 +2,8 @@
 
 The [1.0 release plan](V1_RELEASE_PLAN.md) defines product scope and acceptance
 milestones. This file defines artifact and distribution gates; its current
-public-beta policy must gain a tested stable-release mode before 1.0.
+version-derived channel policy supports both prerelease and stable artifacts.
+Stable publication still requires the complete candidate and distribution gates.
 
 This is the release interface for SceneToWeb. It produces two separately
 installable artifacts from one tagged source revision:
@@ -157,6 +158,35 @@ the retained release manifest.
 
 ## Required hosted compatibility evidence
 
+### Scoped Blender 5.3 local contract
+
+`npm run test:release-profile -- --blender <executable> --evidence <new-directory>`
+runs the complete local suite on the exact macOS arm64 Blender 5.3 profile.
+This preserves the separate pinned 5.2 material suite and the hosted matrix.
+The profile explicitly excludes four unqualified stock-material diagnostic
+relaxations: alpha-clip Math and canonical fixed-camera unlit stay `needsBake`;
+full constant sheen and paired constant iridescence stay `approximated`.
+Production capability flags remain disabled on exporter 5.3.43.
+
+The historical `BLENDLINK_MATERIAL_RELAXATIONS_NATIVE_NOT_APPLICABLE` marker
+remains in the report. It is accounted for only by the explicit profile, an
+exact matching native identity, and one structured witness emitted after actual
+native-version policy checks and restoration of the original version probe.
+The witness pins its producer and production-policy sources, all four outcomes
+and disabled flags. Missing, duplicate, changed or unknown evidence still blocks;
+the unscoped classifier continues to block native gaps.
+
+A zero-exit complete run with that witness may satisfy `completeLocalContract`
+within these exclusions. It retains the raw native gaps and exclusions, with
+`nativePositiveQualification`, support promotion and `publicReleaseReady` false.
+If a selected scene requires an excluded feature, that scene remains blocked
+until its actual route qualifies; adding it to the profile's required features
+cannot waive qualification. Controlled 5.2 rule tests and native serialization
+checks do not establish general 5.3 visual parity. Focused runs, missing stages,
+accepted shutdown failures and source drift cannot pass this contract.
+
+### Hosted matrix
+
 Before the first public release, required checks must include:
 
 - Node exact `22.15.0`, latest Node 22, and latest Node 24;
@@ -233,6 +263,17 @@ repository identity, SLSA provenance, GitHub trusted-publisher metadata, the
 dist-tag, and `npm audit signatures`. An existing different or token-published
 version fails permanently rather than being overwritten.
 
+`scripts/release-channel.mjs` supplies the same channel policy to tag validation,
+npm publication, GitHub creation/publication and retained-release verification.
+Strict `MAJOR.MINOR.PATCH` versions publish to npm `latest` and a GitHub release
+with `prerelease=false` and `latest=true`. Versions with a valid SemVer
+prerelease suffix, including alpha, beta and rc, publish to npm `beta` and a
+GitHub prerelease with `latest=false`. Numeric identifiers cannot have leading
+zeroes. A `v` prefix belongs only to the Git tag; whitespace, coerced versions
+and build metadata are refused so npm, archive and Blender identities remain
+exact. A stable-channel 0.x release still has an initial-development API under
+[SemVer](https://semver.org/); channel selection does not establish 1.0 maturity.
+
 Before enabling the job, bind npm's trusted publisher to the exact public
 repository, `.github/workflows/blender-contract.yml`, environment
 `npm-production`, and allowed action `npm publish`. Protect `v*` tags and the
@@ -254,20 +295,22 @@ token branch in the production job.
 Do not publish manually from a maintainer workstation. A mistaken version is
 deprecated and replaced; it is never overwritten or blindly retried.
 
-## Publish the GitHub prerelease
+## Publish the GitHub release
 
 Only after public npm bytes verify, `publish-github-release` downloads the same
 numeric candidate artifact in the separate `github-release-production`
 environment. It verifies the candidate, tag commit, attestations, and npm bytes;
-creates or resumes one draft prerelease with exactly the npm tarball, Blender
+creates or resumes one draft release with exactly the npm tarball, Blender
 ZIP, `release-manifest.json`, and `SHA256SUMS`; downloads and byte-compares the
 assets; then performs one publish transition. It never uses asset clobbering.
 
 Enable GitHub immutable releases first, protect the environment, and set
 `SCENETOWEB_IMMUTABLE_RELEASES=true` there only after confirming the repository
 setting. The final verifier requires the REST release record to be non-draft,
-prerelease, immutable, targeted at the exact commit, and to expose the exact
-four server-side SHA-256 digests. Workflow definition and local policy tests
+immutable, targeted at the exact commit, to have the exact version-derived
+prerelease flag, and to expose the exact four server-side SHA-256 digests.
+Stable publication additionally verifies that GitHub's latest release resolves
+to the exact tag. Workflow definition and local policy tests
 are implemented; a real tagged hosted run remains required evidence.
 
 ## Publish the Blender Extension
@@ -279,8 +322,14 @@ operators before upload.
 
 Attach the ZIP and checksum to the same GitHub release as the npm tarball.
 Submission to extensions.blender.org is external and remains pending until
-moderation approves it. The add-on must not install the Node CLI or other
-packages; missing external prerequisites must fail loudly with a remedy.
+moderation approves it. The current artist workflow prepares a checksum-verified
+private Node runtime and matching compiler package, respects Blender's online
+access setting, and reuses cached tools offline; it does not require or modify a
+global Node/npm installation. A local matching compiler archive is an explicit
+development option. Failures must report a remedy and never execute incomplete
+tools. See [Support policy](../SUPPORT.md#desktop-preview-tools). Review the
+bootstrap against marketplace requirements before submitting; local behavior
+and downloadable ZIP availability do not establish marketplace approval.
 
 ## Deployment and caching claims
 
