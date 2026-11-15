@@ -2,10 +2,11 @@
 // never a fresh native or browser run and never production qualification credit.
 import assert from 'node:assert/strict'
 import test from 'node:test'
+import{readFileSync as readFileSyncLocal}from'node:fs'
 import {chmod,mkdtemp,mkdir,readFile,readdir,realpath,rm,writeFile} from 'node:fs/promises'
 import {join,resolve} from 'node:path'
 import {tmpdir} from 'node:os'
-import {assertClosedFamilyReceipt,assertClosedFamilyScope,assertClosedFamilyNativeIdentity,closedFamilyReaderCommand,CLOSED_NODE_PORT_FAMILIES} from './node-port-family-evidence.mjs'
+import {assertClosedFamilyReceipt,assertClosedFamilyScope,assertClosedFamilyNativeIdentity,closedFamilyReaderCommand,CLOSED_NODE_PORT_FAMILIES,assertFinitePayloadCostReports} from './node-port-family-evidence.mjs'
 import {nodePortEvidenceAdapter,nativeFinalEvidenceHash} from './node-port-evidence.mjs'
 import {readNodePortManifest,validateNodePortManifest,nodePortHash,fingerprintNodePortInputs} from './node-port-contract.mjs'
 import {closedFamilySuitePlan} from '../run-node-port-family.mjs'
@@ -16,6 +17,7 @@ import {planUnqualifiedPorts} from '../watch-blender-nodes.mjs'
 const root=resolve(import.meta.dirname,'../..'),ids=Object.keys(CLOSED_NODE_PORT_FAMILIES)
 const manifests=Object.fromEntries(await Promise.all(ids.map(async id=>[id,await readNodePortManifest(join(root,'node-ports',id+'.json'))])))
 const receipt=async id=>{
+ if(id==='compositor-finite-image-info'){const fixture=await receipt('compositor-integer-vector3');return{...fixture,status:'qualified-finite-image-info-slice',variant:'finite-image-info',nativeGraphs:21,productionNativeGraphs:20,browserCaseRuns:116,productionBrowserCaseRuns:108,comparedFloat32Words:29696,productionComparedWords:27648,archivedGpuPrimaryWords:29696,archivedGpuReadbackWords:67584,receipts:fixture.receipts.map(r=>({...r,nativeGraphs:21,productionNativeGraphs:20,browsers:r.browsers.map(b=>({...b,caseRuns:b.phase==='raw'?42:16}))}))}}
  if(id==='compositor-integer-vector3'){
   const fixture=await receipt('mono-switch-view');return{...fixture,status:'qualified-integer-vector3-slice',variant:'integer-vector3',nativeGraphs:16,productionNativeGraphs:15,browserCaseRuns:96,productionBrowserCaseRuns:88,comparedFloat32Words:24576,productionComparedWords:22528,archivedGpuPrimaryWords:24576,archivedGpuReadbackWords:57344,independentlyRecomputedGpuWordDifferences:0,receipts:fixture.receipts.map(r=>({...r,nativeGraphs:16,productionNativeGraphs:15,browsers:r.browsers.map(b=>({...b,caseRuns:b.phase==='raw'?32:16}))}))}
  }
@@ -24,6 +26,7 @@ const receipt=async id=>{
   return {...fixed,status:'QUALIFIED_PARTIAL_COMPOSITOR_INPUT_ROTATION',variant:'input-rotation',nativeGraphs:48,nativeOracleControls:104,nativeRenders:152,savedFinalScenes:8,browserCaseRuns:224,primaryFloat32Words:14336,uniqueActualPythonPrefixes:10,lifecycleCycles:96,resizeFrames:48,sourceInputAdmissionControls:34,sourceRegressionControls:2,sourceOutputGuardRefusals:8,policy:{refusals:Array(44).fill('synthetic')},archivedGpuPrimaryWords:14336,archivedGpuWords:37824,archivedGpuFrames:560,independentlyRecomputedGpuWordDifferences:0,
    sources:[{nativeArchive:{pythonInvocations:10,finalInvocations:8,uniqueCachePrefixes:10}}],runs:fixed.runs.map(run=>({...run,actualApis:run.actualApis.map(api=>({...api,cases:run.phase==='raw'?48:8}))}))}
  }
+ if(id==='compositor-vector-rotate-unit-axis'){const q=await receipt('compositor-vector-rotate');return{...q,status:'QUALIFIED_PARTIAL_COMPOSITOR_VECTOR_ROTATE_UNIT_AXIS',variant:'unit-axis',nativeGraphs:35,nativeRenders:110,browserCaseRuns:180,primaryFloat32Words:1134688,runs:q.runs.map(run=>({...run,actualApis:run.actualApis.map(api=>({...api,cases:run.phase==='raw'?35:10}))}))}}
  if(id==='compositor-vector-rotate'){
   const fixed=JSON.parse(await readFile(join(root,'experiments/compositor-white-noise/evidence.json'),'utf8'))
   const fixture={...fixed,status:'QUALIFIED_PARTIAL_COMPOSITOR_VECTOR_ROTATE',nativeGraphs:25,nativeOracleControls:5,nativeRenders:80,savedFinalScenes:10,browserCaseRuns:140,primaryFloat32Words:2166416,uniqueActualPythonPrefixes:13,lifecycleCycles:120,resizeFrames:16,
@@ -58,7 +61,7 @@ const receipt=async id=>{
  return JSON.parse(await readFile(join(root,id==='mono-switch-view'?'experiments/compositor-switch-view/evidence.json':'experiments/compositor-white-noise/evidence.json'),'utf8'))
 }
 const scope=id=>{const manifest=structuredClone(manifests[id]);return{manifest,profile:manifest.profiles[0],completedRuns:structuredClone(manifest.profiles[0].runs)}}
-const selection=id=>['mono-switch-view','compositor-integer-vector3'].includes(id)
+const selection=id=>CLOSED_NODE_PORT_FAMILIES[id].folder==='experiments/static-switch-family'
 const browsers=(id,q)=>selection(id)?q.receipts[0].browsers:q.runs
 const apis=(id,run)=>selection(id)?run.APIs:run.actualApis
 
@@ -90,9 +93,10 @@ for(const id of ids){
   ]
   if(selection(id))mutations.push(q=>q.variant='static',q=>q.productionNativeGraphs++,q=>q.productionBrowserCaseRuns++,q=>q.receipts[0].nativeBackend.gpuInitialized=true,q=>q.nativePythonProof.finalInvocations=0)
   else mutations.push(...(id==='compositor-noise-default-field'?[q=>q.exactWordMismatches=0,q=>q.wordDifferences=-1,q=>q.wordDifferences=12919457,q=>q.maxUlps=9,q=>q.maxAbsoluteError=2**-19,q=>q.precision.ulpsMax=9,q=>q.nativeOracleControls=14,q=>q.resizeFrames=0]:[q=>q.exactWordMismatches=1]),q=>q.contractViolations=1,q=>apis(id,browsers(id,q)[0])[0].cases=0,q=>q.sources[0].nativeArchive.finalInvocations=0)
-  if(id==='compositor-integer-vector3')mutations.push(q=>q.variant='mono-view',q=>q.productionComparedWords=24576,q=>q.archivedGpuPrimaryWords=0,q=>q.archivedGpuReadbackWords=24576,q=>q.independentlyRecomputedGpuWordDifferences=1,q=>q.receipts[0].browsers[0].caseRuns=16)
+  if(['compositor-integer-vector3','compositor-finite-image-info'].includes(id))mutations.push(q=>q.variant='mono-view',q=>q.productionComparedWords=CLOSED_NODE_PORT_FAMILIES[id].words,q=>q.archivedGpuPrimaryWords=0,q=>q.archivedGpuReadbackWords=24576,q=>q.independentlyRecomputedGpuWordDifferences=1,q=>q.receipts[0].browsers[0].caseRuns=16)
   if(id==='compositor-wave-axis')mutations.push(q=>q.nativeOracleControls=0,q=>q.nativeRenders=140,q=>q.lifecycleCycles=96,q=>q.uniqueActualPythonPrefixes=10,q=>q.resizeFrames=0,q=>q.nativeZeroRgbWords=0,q=>q.nativeOneRgbWords=0)
   if(id==='compositor-white-noise-default-field')mutations.push(q=>q.nativeOracleControls=0,q=>q.nativeRenders=54,q=>q.lifecycleCycles=0,q=>q.uniqueActualPythonPrefixes=14)
+  if(id==='compositor-vector-rotate-unit-axis')mutations.push(q=>q.variant='fixed-axis',q=>q.nativeRenders=80,q=>q.primaryFloat32Words=2166416,q=>q.status='QUALIFIED_PARTIAL_COMPOSITOR_VECTOR_ROTATE')
   if(id==='compositor-input-rotation')mutations.push(q=>q.variant='euler',q=>q.nativeOracleControls=0,q=>q.nativeRenders=48,q=>q.archivedGpuWords=0,q=>q.archivedGpuFrames=0,q=>q.independentlyRecomputedGpuWordDifferences=1,q=>q.sourceInputAdmissionControls=36,q=>q.sourceRegressionControls=0,q=>q.sourceOutputGuardRefusals=0)
   if(id==='compositor-blank-image')mutations.push(q=>q.nativeRenders=0,q=>q.lifecycleCycles=0,q=>q.resizeFrames=0,q=>q.uniqueActualPythonPrefixes=0)
   for(const mutate of mutations){const copy=structuredClone(q);mutate(copy);assert.throws(()=>assertClosedFamilyReceipt(id,copy))}
@@ -105,9 +109,9 @@ for(const id of ids){
   const suites=plan.commands.filter(c=>c.id.startsWith('suite-'));assert.equal(suites.length,1);assert.equal(suites[0].id,'suite-matrix')
   assert.ok(suites[0].argv.includes('scripts/run-node-port-family.mjs'));assert.equal(suites[0].argv.includes('--reuse-native'),false)
   const owned=closedFamilySuitePlan(id,{root,evidence,blender});assert.equal(owned.env.BLENDLINK_BLENDER,blender);assert.equal(owned.env.SCENETOWEB_RUNTIME_TRANSACTION,null)
-  if(selection(id)){const variant=id==='mono-switch-view'?'mono-view':'integer-vector3';assert.ok(owned.argv.includes('--'+variant));assert.equal(owned.env.SCENETOWEB_SWITCH_VARIANT,variant)}
+  if(selection(id)){const variant=CLOSED_NODE_PORT_FAMILIES[id].variant;assert.ok(owned.argv.includes('--'+variant));assert.equal(owned.env.SCENETOWEB_SWITCH_VARIANT,variant)}
   else assert.ok(owned.argv.includes(join(root,CLOSED_NODE_PORT_FAMILIES[id].folder,'matrix.mjs')))
-  const closing=closedFamilyReaderCommand(id,{root,evidence,output:join(evidence,'closed.json'),transaction:(await receipt(id)).runtimeTransaction});if(id==='compositor-input-rotation'){assert.equal(owned.env.SCENETOWEB_STATIC_EULER_VARIANT,'input-rotation');assert.equal(closing.env.SCENETOWEB_STATIC_EULER_VARIANT,'input-rotation')}assert.ok(closing.argv.includes(join(root,CLOSED_NODE_PORT_FAMILIES[id].folder,'verify.mjs')))
+  const closing=closedFamilyReaderCommand(id,{root,evidence,output:join(evidence,'closed.json'),transaction:(await receipt(id)).runtimeTransaction});if(id==='compositor-input-rotation'){assert.equal(owned.env.SCENETOWEB_STATIC_EULER_VARIANT,'input-rotation');assert.equal(closing.env.SCENETOWEB_STATIC_EULER_VARIANT,'input-rotation')}if(id==='compositor-vector-rotate-unit-axis'){assert.equal(owned.env.SCENETOWEB_VECTOR_ROTATE_VARIANT,'unit-axis');assert.equal(closing.env.SCENETOWEB_VECTOR_ROTATE_VARIANT,'unit-axis');assert.equal(owned.env.SCENETOWEB_SWITCH_VARIANT,'static');assert.equal(owned.argv.includes('--unit-axis'),false)}else{assert.equal(owned.env.SCENETOWEB_VECTOR_ROTATE_VARIANT,null);assert.equal(closing.env.SCENETOWEB_VECTOR_ROTATE_VARIANT,null)}assert.ok(closing.argv.includes(join(root,CLOSED_NODE_PORT_FAMILIES[id].folder,'verify.mjs')))
   await assert.rejects(readFile(join(evidence,'report.json')),{code:'ENOENT'})
  })
  test(id+' pins all declared native/Final receipts, not only the browser matrix summary',async t=>{
@@ -289,4 +293,21 @@ test('Integer Vector3 retained evidence is excluded from executable inputs while
  assert.equal((await fingerprintNodePortInputs(tmp,manifest)).inputDigest,before.inputDigest)
  const path=join(tmp,'experiments/static-switch-family/int-vector3-cases.json');await writeFile(path,(await readFile(path,'utf8'))+'\n')
  assert.notEqual((await fingerprintNodePortInputs(tmp,manifest)).inputDigest,before.inputDigest)
+})
+
+function finiteCostFixtures(){
+ const cases=JSON.parse(readFileSyncLocal(new URL('../../experiments/compositor-finite-image-info/cases.json',import.meta.url))).map(row=>({...row,programFile:row.case+'.program.json',...(row.saveFinal?{sourceFile:row.case+'.blend'}:{})}))
+ const payloads=new Map(cases.filter(row=>['png','float'].includes(row.producer)).map(row=>[row.case,{bytes:row.size[0]*row.size[1]*16,sha256:'e'.repeat(64)}]))
+ const runs=['metal','software'].flatMap(profile=>['raw','final'].map(phase=>({profile,phase,report:{status:'PASSED_STATIC_SELECTION_BUILT_PROOF',built:true,profile,final:phase==='final',sourceContext:'CPU',rows:['webgpu','webgl2'].map(backend=>({backend,gpu:{api:backend==='webgpu'?'WebGPU':'WebGL2',vendor:profile==='metal'?'Apple Metal':'SwiftShader'},errors:[],pageErrors:[],payloadCostCanary:{creations:1,uploads:1,physicalHandles:1,sampledTextureBindings:1,samplerBindings:1},finiteFrameGuard:{case:'blank-group',refused:true,recovered:true,error:'Blank Image requires full-frame'},rows:(phase==='final'?cases.filter(row=>row.saveFinal):cases).map(entry=>{
+  const payload=payloads.get(entry.case),count=payload?(phase==='final'?2:1):0
+  return{case:entry.case,wordMismatches:0,remainingTextures:0,finalBindings:phase==='final',ownershipPreserved:true,readbacks:(phase==='final'?['primary','repeat','reinstalled']:['primary','repeat']).map(name=>({phase:name,comparedWords:256,rowFlip:false,wordFile:'readbacks/'+backend+'-'+entry.case+'-'+name+'.u32',wordSha256:'d'.repeat(64)})),payloadCost:{scope:'matched-actual-source-payload-objects-and-backend-bindings',cpuObjects:count,distinctCpuBuffers:count,observedCpuBytes:count*(payload?.bytes??0),gpuCreations:0,gpuUploads:0,physicalGpuHandles:0,sampledTextureBindings:0,samplerBindings:0,rows:Array.from({length:count},(_,i)=>({uuid:entry.case+'-'+i,width:entry.size[0],height:entry.size[1],observedCpuBytes:payload.bytes,rawSha256:payload.sha256,creations:0,uploads:0,physicalHandles:0,sampledTextureBindings:0,samplerBindings:0}))}}
+ })}))}})))
+ return{cases,payloads,runs}
+}
+
+test('finite metadata bridge separates calibrated CPU facts from actual zero GPU payload work',()=>{
+ const{cases,payloads,runs}=finiteCostFixtures(),result=assertFinitePayloadCostReports(runs,cases,payloads)
+ assert.equal(result.archivedCaptures,264);assert.equal(result.archivedWords,67584);assert.equal(result.cpuObjects,76);assert.equal(result.observedCpuBytes,321984);assert.equal(result.physicalGpuHandles,0);assert.equal(result.sampledTextureBindings,0)
+ const mutations=[r=>r.pop(),r=>delete r[0].report.rows[0].gpu,r=>r[0].report.rows[0].payloadCostCanary.samplerBindings=0,r=>r[0].report.rows[0].finiteFrameGuard.recovered=false,r=>r[0].report.rows[0].rows[1].readbacks.pop(),r=>r[0].report.rows[0].rows.find(row=>row.case==='png-dimensions').payloadCost.gpuUploads=1,r=>r[0].report.rows[0].rows.find(row=>row.case==='png-dimensions').payloadCost.rows[0].rawSha256='f'.repeat(64),r=>r[0].report.rows[0].rows.find(row=>row.case==='png-dimensions').payloadCost.cpuObjects=0]
+ for(const change of mutations){const rows=structuredClone(runs);change(rows);assert.throws(()=>assertFinitePayloadCostReports(rows,cases,payloads))}
 })

@@ -122,6 +122,10 @@ test('matrix and Switch entrypoints refuse contract drift before creating any na
     const dependency=join(directory,'experiments/compositor-white-noise');await mkdir(dependency,{recursive:true})
     for(const name of['protocol.mjs','cases.json'])await writeFile(join(dependency,name),await readFile(join(root,'experiments/compositor-white-noise',name)))
    }
+   if(family==='compositor-vector-rotate'){
+    const dependency=join(directory,'experiments/compositor-vector-rotate-unit-axis');await mkdir(dependency,{recursive:true})
+    for(const name of['cases.json','native-program-fixture.json'])await writeFile(join(dependency,name),await readFile(join(root,'experiments/compositor-vector-rotate-unit-axis',name)))
+   }
    const entry=family==='static-switch-family'?'suite.mjs':'matrix.mjs'
    await writeFile(join(folder,entry),await readFile(join(root,'experiments',family,entry)))
    await writeFile(join(folder,'capture.mjs'),'import {writeFile} from "node:fs/promises";await writeFile('+JSON.stringify(marker)+',"capture started");process.exit(91)')

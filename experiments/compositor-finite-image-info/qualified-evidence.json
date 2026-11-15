@@ -1,0 +1,266 @@
+{
+  "schemaVersion": 1,
+  "status": "QUALIFIED_PARTIAL_FINITE_IMAGE_INFO_53",
+  "supportPromotion": false,
+  "qualificationSourceCommit": "6efb060ae5ad72f095745ddd9864cea8b7c09741",
+  "scope": "Blender 5.3.0 build 02f0899d78e3; macOS arm64; CPU direct admitted finite Image/Blank Image identity-domain metadata, closed typed single-value consumers; no transformed/single/image-pixel credit",
+  "report": {
+    "path": "artifacts/verification-finite-image-info-apply1/report.json",
+    "sha256": "4e196b1547b6ebf0ba98b9be4db837dfc03d02c7fb06670cbb351bb04a7a10d9"
+  },
+  "closedReceipt": {
+    "path": "artifacts/verification-finite-image-info-apply1/adapter-closed.json",
+    "sha256": "134f5f8d42bb5387debbd2f46233d5e2303568eb3aee17989b5ccf4d331629c8",
+    "independentRootReplay": "/tmp/scenetoweb-finite-info-apply1-root-close.json",
+    "threeByteIdenticalCloses": true
+  },
+  "runtimeFingerprint": "b602c81fa0e51f54e86e37b0cd56d278d56a3c665a5441c5a092ed29ca2972da",
+  "runtimeTransaction": {
+    "sha256": "392981270432e2c0b90e5cc876de9c9dec9913355c5ac9802e99130906f4fbe1",
+    "id": "beff1c1a-b01b-4465-bfd3-252f3e6d9404",
+    "independentlyReemittedAtClose": true
+  },
+  "counts": {
+    "productionCases": 20,
+    "calibrationCases": 1,
+    "nativeGraphs": 21,
+    "savedFinalScenes": 8,
+    "caseRuns": 116,
+    "productionCaseRuns": 108,
+    "primaryFloat32Words": 29696,
+    "productionFloat32Words": 27648,
+    "archivedGpuReadbackWords": 67584,
+    "archivedGpuReadbackCaptures": 264,
+    "wordMismatches": 0
+  },
+  "finitePayloadCosts": {
+    "scope": "source-payload CPU objects/bytes and observed backend work only; not total install/frame cost or image-pixel credit",
+    "observedRuns": [
+      {
+        "profile": "metal",
+        "phase": "raw",
+        "backend": "webgpu",
+        "cpuObjects": 11,
+        "observedCpuBytes": 71504,
+        "gpuCreations": 0,
+        "gpuUploads": 0,
+        "physicalGpuHandles": 0,
+        "sampledTextureBindings": 0,
+        "samplerBindings": 0,
+        "canary": {
+          "creations": 1,
+          "uploads": 1,
+          "physicalHandles": 1,
+          "sampledTextureBindings": 1,
+          "samplerBindings": 1
+        },
+        "frameGuard": {
+          "case": "blank-group",
+          "refused": true,
+          "error": "Error: Blank Image requires a matching zero-origin full-frame 2D mip0 target without scissor",
+          "recovered": true
+        }
+      },
+      {
+        "profile": "metal",
+        "phase": "raw",
+        "backend": "webgl2",
+        "cpuObjects": 11,
+        "observedCpuBytes": 71504,
+        "gpuCreations": 0,
+        "gpuUploads": 0,
+        "physicalGpuHandles": 0,
+        "sampledTextureBindings": 0,
+        "samplerBindings": 0,
+        "canary": {
+          "creations": 1,
+          "uploads": 1,
+          "physicalHandles": 1,
+          "sampledTextureBindings": 1,
+          "samplerBindings": 1
+        },
+        "frameGuard": {
+          "case": "blank-group",
+          "refused": true,
+          "error": "Error: Blank Image requires a matching zero-origin full-frame 2D mip0 target without scissor",
+          "recovered": true
+        }
+      },
+      {
+        "profile": "metal",
+        "phase": "final",
+        "backend": "webgpu",
+        "cpuObjects": 8,
+        "observedCpuBytes": 8992,
+        "gpuCreations": 0,
+        "gpuUploads": 0,
+        "physicalGpuHandles": 0,
+        "sampledTextureBindings": 0,
+        "samplerBindings": 0,
+        "canary": {
+          "creations": 1,
+          "uploads": 1,
+          "physicalHandles": 1,
+          "sampledTextureBindings": 1,
+          "samplerBindings": 1
+        },
+        "frameGuard": {
+          "case": "blank-group",
+          "refused": true,
+          "error": "Error: Blank Image requires a matching zero-origin full-frame 2D mip0 target without scissor",
+          "recovered": true
+        }
+      },
+      {
+        "profile": "metal",
+        "phase": "final",
+        "backend": "webgl2",
+        "cpuObjects": 8,
+        "observedCpuBytes": 8992,
+        "gpuCreations": 0,
+        "gpuUploads": 0,
+        "physicalGpuHandles": 0,
+        "sampledTextureBindings": 0,
+        "samplerBindings": 0,
+        "canary": {
+          "creations": 1,
+          "uploads": 1,
+          "physicalHandles": 1,
+          "sampledTextureBindings": 1,
+          "samplerBindings": 1
+        },
+        "frameGuard": {
+          "case": "blank-group",
+          "refused": true,
+          "error": "Error: Blank Image requires a matching zero-origin full-frame 2D mip0 target without scissor",
+          "recovered": true
+        }
+      },
+      {
+        "profile": "software",
+        "phase": "raw",
+        "backend": "webgpu",
+        "cpuObjects": 11,
+        "observedCpuBytes": 71504,
+        "gpuCreations": 0,
+        "gpuUploads": 0,
+        "physicalGpuHandles": 0,
+        "sampledTextureBindings": 0,
+        "samplerBindings": 0,
+        "canary": {
+          "creations": 1,
+          "uploads": 1,
+          "physicalHandles": 1,
+          "sampledTextureBindings": 1,
+          "samplerBindings": 1
+        },
+        "frameGuard": {
+          "case": "blank-group",
+          "refused": true,
+          "error": "Error: Blank Image requires a matching zero-origin full-frame 2D mip0 target without scissor",
+          "recovered": true
+        }
+      },
+      {
+        "profile": "software",
+        "phase": "raw",
+        "backend": "webgl2",
+        "cpuObjects": 11,
+        "observedCpuBytes": 71504,
+        "gpuCreations": 0,
+        "gpuUploads": 0,
+        "physicalGpuHandles": 0,
+        "sampledTextureBindings": 0,
+        "samplerBindings": 0,
+        "canary": {
+          "creations": 1,
+          "uploads": 1,
+          "physicalHandles": 1,
+          "sampledTextureBindings": 1,
+          "samplerBindings": 1
+        },
+        "frameGuard": {
+          "case": "blank-group",
+          "refused": true,
+          "error": "Error: Blank Image requires a matching zero-origin full-frame 2D mip0 target without scissor",
+          "recovered": true
+        }
+      },
+      {
+        "profile": "software",
+        "phase": "final",
+        "backend": "webgpu",
+        "cpuObjects": 8,
+        "observedCpuBytes": 8992,
+        "gpuCreations": 0,
+        "gpuUploads": 0,
+        "physicalGpuHandles": 0,
+        "sampledTextureBindings": 0,
+        "samplerBindings": 0,
+        "canary": {
+          "creations": 1,
+          "uploads": 1,
+          "physicalHandles": 1,
+          "sampledTextureBindings": 1,
+          "samplerBindings": 1
+        },
+        "frameGuard": {
+          "case": "blank-group",
+          "refused": true,
+          "error": "Error: Blank Image requires a matching zero-origin full-frame 2D mip0 target without scissor",
+          "recovered": true
+        }
+      },
+      {
+        "profile": "software",
+        "phase": "final",
+        "backend": "webgl2",
+        "cpuObjects": 8,
+        "observedCpuBytes": 8992,
+        "gpuCreations": 0,
+        "gpuUploads": 0,
+        "physicalGpuHandles": 0,
+        "sampledTextureBindings": 0,
+        "samplerBindings": 0,
+        "canary": {
+          "creations": 1,
+          "uploads": 1,
+          "physicalHandles": 1,
+          "sampledTextureBindings": 1,
+          "samplerBindings": 1
+        },
+        "frameGuard": {
+          "case": "blank-group",
+          "refused": true,
+          "error": "Error: Blank Image requires a matching zero-origin full-frame 2D mip0 target without scissor",
+          "recovered": true
+        }
+      }
+    ],
+    "cpuObjects": 76,
+    "observedCpuBytes": 321984,
+    "gpuCreations": 0,
+    "gpuUploads": 0,
+    "physicalGpuHandles": 0,
+    "sampledTextureBindings": 0,
+    "samplerBindings": 0,
+    "archivedCaptures": 264,
+    "archivedWords": 67584
+  },
+  "sourcePolicy": {
+    "positiveControls": 19,
+    "refusalControls": 18,
+    "nativeRenderCredit": 0,
+    "gpuCredit": 0
+  },
+  "timings": {
+    "recordedCommandMilliseconds": 38450,
+    "notAuthoringTime": true
+  },
+  "limits": [
+    "Finite identity Image/Blank metadata only; not transformed or arbitrary image domains.",
+    "No source image-pixel equivalence or native GPU arithmetic credit.",
+    "CPU image decoding remains; zero GPU payload work is scoped, not total renderer cost.",
+    "Historical Render Layers scopes and 4.2/5.2 classifications remain separate."
+  ]
+}

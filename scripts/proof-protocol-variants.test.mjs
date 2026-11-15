@@ -7,6 +7,7 @@ import test from 'node:test'
 
 const self=fileURLToPath(import.meta.url)
 const families={
+ 'vector-rotate':{directory:'compositor-vector-rotate',environment:'SCENETOWEB_VECTOR_ROTATE_VARIANT',default:'fixed-axis',variants:{'fixed-axis':[25,10],'unit-axis':[35,10]}},
  'static-switch':{directory:'static-switch-family',environment:'SCENETOWEB_SWITCH_VARIANT',default:'static',variants:{static:[71,30],'mono-view':[8,8],'integer-vector3':[16,8],'finite-image-info':[21,8]}},
  'static-euler':{directory:'compositor-static-euler',environment:'SCENETOWEB_STATIC_EULER_VARIANT',default:'euler',variants:{euler:[62,12],'input-rotation':[48,8]}},
 }
@@ -58,14 +59,14 @@ if(process.argv.length>2){
  test('every explicit protocol variant runs its real schema tests in a fresh isolated Node process',()=>{
   const pids=[]
   for(const[family,config]of Object.entries(families))for(const[variant,census]of Object.entries(config.variants)){
-   const result=parse(call(['--family',family,'--variant',variant],{SCENETOWEB_SWITCH_VARIANT:'wrong-ambient-mode',SCENETOWEB_STATIC_EULER_VARIANT:'wrong-ambient-mode'}))
+   const result=parse(call(['--family',family,'--variant',variant],{SCENETOWEB_VECTOR_ROTATE_VARIANT:'wrong-ambient-mode',SCENETOWEB_SWITCH_VARIANT:'wrong-ambient-mode',SCENETOWEB_STATIC_EULER_VARIANT:'wrong-ambient-mode'}))
    assert.deepEqual([result.family,result.variant,result.cases,result.finals,result.numericalCredit],[family,variant,...census,0]);assert.notEqual(result.pid,process.pid);pids.push(result.pid)
   }
-  assert.equal(new Set(pids).size,6)
+  assert.equal(new Set(pids).size,Object.values(families).reduce((n,f)=>n+Object.keys(f.variants).length,0))
  })
- test('default protocols stay static/euler despite caller variant contamination',()=>{
+ test('default protocols retain their family defaults despite caller variant contamination',()=>{
   for(const[family,config]of Object.entries(families)){
-   const result=parse(call(['--family',family],{SCENETOWEB_SWITCH_VARIANT:'finite-image-info',SCENETOWEB_STATIC_EULER_VARIANT:'input-rotation'}))
+   const result=parse(call(['--family',family],{SCENETOWEB_VECTOR_ROTATE_VARIANT:'unit-axis',SCENETOWEB_SWITCH_VARIANT:'finite-image-info',SCENETOWEB_STATIC_EULER_VARIANT:'input-rotation'}))
    assert.equal(result.variant,config.default);assert.deepEqual([result.cases,result.finals],config.variants[config.default])
   }
  })

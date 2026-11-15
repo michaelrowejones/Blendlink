@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "role": "actual-EEVEE-Noise-Color-material-crosscheck-research",
+  "supportCredit": 0,
+  "nativeBlenderParityCredit": 0,
+  "finalExports": 0,
+  "extent": [
+    8,
+    8
+  ],
+  "input": {
+    "order": "bottom-row-first,x-fastest,RGBA32F-LE",
+    "rgb": [
+      "(x+.5)/8*4-2",
+      "(y+.5)/8*4-2",
+      "(x+y+1)/8-1"
+    ],
+    "alpha": 1,
+    "sampling": "Non-Color float image, Window coordinates, Closest, EXTEND"
+  },
+  "caseIds": [
+    "noise-fbm3-default"
+  ],
+  "output": "RGBA32F-LE assembled from native Color.r/g/b and Fac or Distance; material/film alpha is separately one",
+  "capture": {
+    "engine": "BLENDER_EEVEE",
+    "backend": "METAL",
+    "samples": 1,
+    "view": "Raw",
+    "look": "None",
+    "exposure": 0,
+    "gamma": 1,
+    "format": "OPEN_EXR-32-RGBA",
+    "maximumRenders": 12,
+    "scope": "Actual EEVEE normalized3D default Noise fullColorRGB+Fac, same existing calibrated12-frame fixture"
+  },
+  "carrier": {
+    "planesPerScalar": 2,
+    "base": 2048,
+    "firstFractionBits": 32,
+    "secondFractionBits": 33,
+    "minimumPositive": 2.2737367544323206e-13,
+    "maximumExclusive": 2,
+    "zeroSignObservable": false,
+    "calibrationMustPassBeforeCases": true,
+    "rangeGuardPerCase": true
+  },
+  "comparisonGate": {
+    "maximumAbsoluteError": 9.5367431640625e-07,
+    "maximumUlps": 8,
+    "bothRequired": true,
+    "allFourOutputLanes": true,
+    "fixedBeforeCapture": true
+  },
+  "limits": [
+    "The emission EXR itself is not asserted raw kernel F32; independently calibrated exact-half digit planes carry each scalar.",
+    "Arithmetic carrier does not witness the sign of native zero; zero-sign parity is excluded.",
+    "No native CPU-MF alias, Cycles kernel, production port, Final/public installer or whole-scene credit."
+  ],
+  "eeveeCrosscheckCases": [
+    "noise-fbm3-default"
+  ],
+  "reference": {
+    "folder": "/tmp/scenetoweb-native-kernel-direct-r4",
+    "closedReceipt": "/tmp/scenetoweb-native-kernel-closed-r1.json",
+    "closedSha256": "8bb0232c72227f94679f1e4e81e198dfd1177937122ae8250070423bbc5b215d",
+    "case": "noise-fbm3-default",
+    "rawSha256": "24bb31fcc1d5a68a199dfa369542ab37fe5c2174b207066f4069a484a6f33de0",
+    "reportSha256": "ab4ab1e46f98893589020d91696ff097a8f2043c2e869740b69dc151c8f7c7c2"
+  }
+}

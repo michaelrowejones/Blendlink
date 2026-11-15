@@ -1,0 +1,291 @@
+{
+  "schemaVersion": 1,
+  "status": "CLOSED_OWNED_NOISE_COLOR_EXPORT_PREVIEW_RESEARCH",
+  "sourceBase": "c185db3",
+  "SDKFilesChanged": 0,
+  "supportPromotion": false,
+  "supportCredit": 0,
+  "offsetFinding": {
+    "productionAlreadyCorrect": true,
+    "profile": "EEVEE/darwin/arm64/Metal shader evaluation, dimensions3, FBM normalized, distortion0",
+    "rows": [
+      {
+        "seed": 3,
+        "lane": 0,
+        "productionDouble": 165.44527757573996,
+        "productionLiteralWord": 1126527486,
+        "nativeWord": 1126527486,
+        "stagedExperimentalWord": 1126527486,
+        "fusedModelWord": 1126527486
+      },
+      {
+        "seed": 3,
+        "lane": 1,
+        "productionDouble": 162.76821379148592,
+        "productionLiteralWord": 1126352042,
+        "nativeWord": 1126352042,
+        "stagedExperimentalWord": 1126352042,
+        "fusedModelWord": 1126352042
+      },
+      {
+        "seed": 3,
+        "lane": 2,
+        "productionDouble": 193.4084041028769,
+        "productionLiteralWord": 1128360077,
+        "nativeWord": 1128360077,
+        "stagedExperimentalWord": 1128360078,
+        "fusedModelWord": 1128360077
+      },
+      {
+        "seed": 4,
+        "lane": 0,
+        "productionDouble": 155.58091529076475,
+        "productionLiteralWord": 1125881015,
+        "nativeWord": 1125881015,
+        "stagedExperimentalWord": 1125881015,
+        "fusedModelWord": 1125881015
+      },
+      {
+        "seed": 4,
+        "lane": 1,
+        "productionDouble": 177.15463090621742,
+        "productionLiteralWord": 1127294870,
+        "nativeWord": 1127294870,
+        "stagedExperimentalWord": 1127294870,
+        "fusedModelWord": 1127294870
+      },
+      {
+        "seed": 4,
+        "lane": 2,
+        "productionDouble": 138.140034568063,
+        "productionLiteralWord": 1124738009,
+        "nativeWord": 1124738009,
+        "stagedExperimentalWord": 1124738009,
+        "fusedModelWord": 1124738009
+      }
+    ],
+    "SDKFixNeeded": false
+  },
+  "artifacts": {
+    "source": {
+      "path": "/private/tmp/scenetoweb-noise-color-preview-source-r1/noise-color.blend",
+      "sha256": "760caf5c3fb80f419b57516f2d93c41ebd692399fe647cc58d53792b3a95aee8"
+    },
+    "fixture": {
+      "path": "/tmp/scenetoweb-noise-color-preview-source-r1/fixture.json",
+      "sha256": "c0ae7194597c66e75f1238d79e376c40e4cbedf08b0608dae2003335f50620bb"
+    },
+    "final": {
+      "path": "/tmp/scenetoweb-noise-color-preview-source-r1/final.json",
+      "sha256": "783ff05dc6e811fb521990545daf31ae10180c618bb11d39bb2d9f18abfe84fe"
+    },
+    "sourceArchive": {
+      "path": "/tmp/scenetoweb-noise-color-preview-source-r1/source-native-proof.json",
+      "sha256": "58872e3c68ba0c8fa4385f997dff41490249f139d7fb574e4bf029a6f5be47ff"
+    },
+    "exportArchive": {
+      "path": "/tmp/scenetoweb-noise-color-preview-source-r1/export-native-proof.json",
+      "sha256": "094feebc1426ab421eb69f7690d5f534c553ef1cdd1853a340a99f6b0b1c9603"
+    },
+    "native": {
+      "path": "/tmp/scenetoweb-noise-color-preview-native-r1/reference.json",
+      "sha256": "cfba3a1dfa6710c9e4d43301ddb8336eb0f492ed38a76c744c96a1582d2e8d25"
+    },
+    "nativeArchive": {
+      "path": "/tmp/scenetoweb-noise-color-preview-native-r1/native-proof.json",
+      "sha256": "2eb611ec55c7b306f24c90092da41322a1c1d5552716018275a749d4c62ad85f"
+    },
+    "browser": {
+      "path": "/tmp/scenetoweb-noise-color-preview-browser-r6/report.json",
+      "sha256": "9f3d988a406c43f9c4ea485ddb7168421044557a68c072f05ad9073781c7d981"
+    },
+    "closed": {
+      "path": "/tmp/scenetoweb-noise-color-preview-browser-r6/closed.json",
+      "sha256": "e96c76b5976c0102ec5724ed180d53085163a1253fd58e9e12750d43f4eb6a61"
+    }
+  },
+  "closed": {
+    "status": "CLOSED_OWNED_NOISE_COLOR_EXPORT_PREVIEW_RESEARCH",
+    "sourcePreserved": true,
+    "savedScenes": 1,
+    "nativeSceneRenders": 4,
+    "actualApis": 2,
+    "installedMaterialsPerApi": 1,
+    "comparedFloat32Words": 327680,
+    "colorFloat32Words": 163840,
+    "wordDifferences": 8,
+    "maxAbsoluteError": 0.00048828125,
+    "contractViolations": 0,
+    "visibleCanvasChannels": 131072,
+    "visibleCanvasViolations": 0,
+    "measurements": [
+      {
+        "api": "webgpu",
+        "kind": "uv",
+        "extent": [
+          64,
+          64
+        ],
+        "maxAbs": 0,
+        "wordDifferences": 0,
+        "violations": 0
+      },
+      {
+        "api": "webgpu",
+        "kind": "color",
+        "extent": [
+          64,
+          64
+        ],
+        "maxAbs": 0,
+        "wordDifferences": 0,
+        "violations": 0
+      },
+      {
+        "api": "webgpu",
+        "kind": "uv",
+        "extent": [
+          128,
+          128
+        ],
+        "maxAbs": 0,
+        "wordDifferences": 0,
+        "violations": 0
+      },
+      {
+        "api": "webgpu",
+        "kind": "color",
+        "extent": [
+          128,
+          128
+        ],
+        "maxAbs": 0.00048828125,
+        "wordDifferences": 4,
+        "violations": 0
+      },
+      {
+        "api": "webgl2",
+        "kind": "uv",
+        "extent": [
+          64,
+          64
+        ],
+        "maxAbs": 0,
+        "wordDifferences": 0,
+        "violations": 0
+      },
+      {
+        "api": "webgl2",
+        "kind": "color",
+        "extent": [
+          64,
+          64
+        ],
+        "maxAbs": 0,
+        "wordDifferences": 0,
+        "violations": 0
+      },
+      {
+        "api": "webgl2",
+        "kind": "uv",
+        "extent": [
+          128,
+          128
+        ],
+        "maxAbs": 0,
+        "wordDifferences": 0,
+        "violations": 0
+      },
+      {
+        "api": "webgl2",
+        "kind": "color",
+        "extent": [
+          128,
+          128
+        ],
+        "maxAbs": 0.00048828125,
+        "wordDifferences": 4,
+        "violations": 0
+      }
+    ],
+    "sourceFixtureSha256": "c0ae7194597c66e75f1238d79e376c40e4cbedf08b0608dae2003335f50620bb",
+    "finalSha256": "783ff05dc6e811fb521990545daf31ae10180c618bb11d39bb2d9f18abfe84fe",
+    "nativeReferenceSha256": "cfba3a1dfa6710c9e4d43301ddb8336eb0f492ed38a76c744c96a1582d2e8d25",
+    "browserReportSha256": "9f3d988a406c43f9c4ea485ddb7168421044557a68c072f05ad9073781c7d981",
+    "SDKFilesChanged": 0,
+    "supportCredit": 0,
+    "limits": "One opaque emissive UV graph; existing production offsets, Raw display,64/128 square. No new node, lighting, platform or general scene equivalence."
+  },
+  "visibleCanvas": [
+    {
+      "api": "webgpu",
+      "comparison": {
+        "source": "actual-default-canvas-toDataURL",
+        "width": 128,
+        "height": 128,
+        "comparedChannels": 65536,
+        "maxAbsoluteError": 0.0023265165441176405,
+        "limit": 0.00489813112745098,
+        "violations": 0,
+        "alphaDifferences": 0,
+        "gate": "one RGBA8 quantization byte plus unchanged2^-10 float gate; Raw identity, no fitted gamma/orientation"
+      },
+      "actualCanvas": {
+        "path": "/tmp/scenetoweb-noise-color-preview-browser-r6/webgpu-actual-canvas.png",
+        "sha256": "6da6a31991d5387983012a0c4f0bea47cc613ab42286affdda1eeda0c6938556"
+      },
+      "screenshot": {
+        "path": "/tmp/scenetoweb-noise-color-preview-browser-r6/webgpu-preview.png",
+        "sha256": "6740766c74703783f52b4c0e8625ec70999996cc7c75096cfe84a638169dc08b"
+      },
+      "sceneRestored": true
+    },
+    {
+      "api": "webgl2",
+      "comparison": {
+        "source": "actual-default-canvas-toDataURL",
+        "width": 128,
+        "height": 128,
+        "comparedChannels": 65536,
+        "maxAbsoluteError": 0.0023265165441176405,
+        "limit": 0.00489813112745098,
+        "violations": 0,
+        "alphaDifferences": 0,
+        "gate": "one RGBA8 quantization byte plus unchanged2^-10 float gate; Raw identity, no fitted gamma/orientation"
+      },
+      "actualCanvas": {
+        "path": "/tmp/scenetoweb-noise-color-preview-browser-r6/webgl2-actual-canvas.png",
+        "sha256": "6da6a31991d5387983012a0c4f0bea47cc613ab42286affdda1eeda0c6938556"
+      },
+      "screenshot": {
+        "path": "/tmp/scenetoweb-noise-color-preview-browser-r6/webgl2-preview.png",
+        "sha256": "731d652d6d7779641bcc18567269c1aeda577623a732ed9d9882fd908dd7ebc1"
+      },
+      "sceneRestored": true
+    }
+  ],
+  "executedScripts": {
+    "fixture.py": "2e67ad1de48ab793e3b082d359f8dafecbaf7ddd06e8676a160790c9c86a50a0",
+    "run.mjs": "4f94994c8cf49dbe7ef428e2bd203a459e570b400043bd199e4beea12e21f8c3",
+    "index.html": "04378e49d9926bebfa1c8e9aa7025481fe53ecb4cd2182d1e6ec7fa243052a58",
+    "audit.test.mjs": "6ae9a08966ac6a937442e022a7e12e0dca6f97edf0785cff2216cc55e8cca84e",
+    "audit.py": "8ac80753423479bec1ab7dd42e67460f0b4b5a69c335ca659678ebd4acc73fbe",
+    "source.mjs": "731de5ddd610a614bcdc246ab1f49c4b32cf90c988030aeb8211905bfd59853d",
+    "verify.mjs": "93251c1f6ac461e26b1a66129efeee8121fdbd11b0996bfb2357c6a1e40f39f5",
+    "paths.mjs": "52a4578d9d645a6c99aaa41b0454e672978d27f95773d6f35868f17c7dfd181c",
+    "reference.py": "475943781361d437556f28923c17dae3e0b5d87ba4fa39d14eb3f970196341b0",
+    "export.mjs": "52e0cd8c978d1b0486c52e7bd5fd2a28bd8db4c35086f39f5d74ff1a24722c81",
+    "browser.js": "e940842902eadbd0717c01fb5edb7cda68051213634bc4194fabc4f59990bb9e",
+    "visible.mjs": "ee54181a4d07fcbca729b6c5181f9d1858f6dc5b36e7cc81ce3c30e90ba9017d",
+    "reference.mjs": "5e3ec592107248b9b0d91ac2a4f254efc5177e49ed95d072d830511dc6a38812"
+  },
+  "scope": "One actual owned varying-UV3Dnormalized-FBM Color\u2192opaque emission graph, default Final/public install, Raw64\u00b2/128\u00b2, local M5 Pro source +Metal WebGPU/WebGL2. No wider node/PBR/platform/parameter qualification.",
+  "failuresPreserved": [
+    "/tmp/scenetoweb-noise-color-preview-browser-r1",
+    "/tmp/scenetoweb-noise-color-preview-browser-r2",
+    "/tmp/scenetoweb-noise-color-preview-browser-r3",
+    "/tmp/scenetoweb-noise-color-preview-browser-r4"
+  ],
+  "R5Preserved": "/tmp/scenetoweb-noise-color-preview-browser-r5",
+  "resizeFinding": "Detached preparation intentionally defaults resizeRenderer:false. This owned plain host explicitly opts true; renderer extent assertions and next actual animation frames are required. Frame-cache hypothesis refuted by advancing frame IDs."
+}

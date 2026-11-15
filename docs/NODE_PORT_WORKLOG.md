@@ -1751,3 +1751,65 @@ No coverage, support promotion, release or spreadsheet refresh follows from
 these experiments. Unreleased finite ImageInfo/unit-axis work remains separate
 from qualified scope even where its source is present in this worktree.
 
+## Applied pipeline: finite identity image metadata
+
+The shared family runner now qualifies the separate Blender 5.3 CPU
+`finite-identity-image-info-v1` route: Image/Blank Image → all five Image Info
+outputs → closed typed metadata consumers. Fresh transaction
+`artifacts/verification-finite-image-info-apply1` passed 21 native graphs,
+8 saved Finals, 116 primary browser cases and 67,584 archived readback words exactly
+on Metal/SwiftShader × WebGPU/WebGL2. The two automatic readers and an
+independent root replay are byte-identical (receipt SHA
+`134f5f8d42bb5387debbd2f46233d5e2303568eb3aee17989b5ccf4d331629c8`).
+Runtime fingerprint is
+`b602c81fa0e51f54e86e37b0cd56d278d56a3c665a5441c5a092ed29ca2972da`.
+
+Source-policy 19 positive / 18 refusal controls remain separate from numerical
+graphs. Positive backend canaries verify observation; metadata payload GPU
+creates/uploads/handles/bindings remain 0. CPU image decoding remains. Blank
+metadata retains viewport/frame/epoch guards and has no realization texture.
+Recorded automatic commands took 38.45 seconds; 230 Node pipeline checks and 11 Python
+audits passed afterward. The temporary npm launcher was broken externally, so
+declared commands were run directly; no global tooling or project scripts were
+changed to hide it.
+
+Only this existing partial node's qualified 5.3 limits/evidence changed; all
+other capability records and 4.2/5.2 classifications remain unchanged. The native
+inventory date stays 2026-11-13; coverage is a retained-catalog reclassification.
+No spreadsheet write, node-level supported promotion or release follows.
+
+## Applied pipeline: signed unit axes and artist preview
+
+The separate signed unit-axis Vector Rotate transaction qualifies Blender 5.3
+AXIS_ANGLE only for exact positive/negative unit X/Y/Z axes, including the native
+untouched default. Fresh automatic qualification passed 35 native graphs, ten
+saved Final scenes, 180 browser cases and 3,478,944 archived linear words across
+Metal/SwiftShader and WebGPU/WebGL2. The automatic readers and independent root
+reader agree byte-for-byte. Recorded commands took 132.136 seconds. Arbitrary
+axes, linked controls and Euler remain outside this scope; the node stays partial.
+
+A saved UV → full Noise Color → Principled emission scene now passes the actual
+source audit, automatic Final export, installed public preview and visible-canvas
+comparison at 64 and 128 pixels on Metal WebGPU/WebGL2. All 327,680 linear words
+meet the existing declared image contract; only eight color words differ, with
+maximum absolute error 2^-11. The 131,072 visible RGBA8 channels also meet their
+predeclared display bound. Installation cleanup restores the host scene. An
+initial resize failure was traced to the test host omitting renderer ownership;
+the public one-call installer already resizes correctly. No SDK fix or numerical
+gate change was needed. Earlier failed namespaces remain disclosed.
+
+The separate actual EEVEE material crosscheck matches all 256 Noise RGB/Fac
+words to the captured native kernel exactly. Static imported full-color Noise
+specialization passes standalone Noise and Noise → Noise on both Metal APIs.
+Noise → Voronoi still fails one WebGPU Distance word at 13 ULP against the
+unchanged 8 ULP gate. This aggregate experiment remains zero support credit;
+it does not justify changing the already-correct production offset emitter.
+
+Integration validation: build, 1,848 unit tests, 101 release-policy checks,
+234 pipeline checks, eleven Python audits, focused variant/preview guards and
+production dependency audit pass. Seven optional unit skips and three platform
+pipeline skips remain explicit. Only Image Info and Vector Rotate compositor
+5.3 capability scopes broaden; counts remain 46 supported, 140 partial,
+132 unsupported and 14 structural. Native inventory date remains November 13.
+Spreadsheet maintenance stays on its reduced weekly cadence. Source checkpoint
+only: no PR, hosted workflow, package release or site publication.

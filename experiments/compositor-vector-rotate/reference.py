@@ -3,11 +3,17 @@
 """Owned CPU compositor full proof; native rotation and Render Layers remain unchanged."""
 from array import array
 from pathlib import Path
-import hashlib,json,struct,sys
+import hashlib,json,struct,sys,os
 import bpy,gpu
 ROOT=Path(__file__).resolve().parents[2];OUT=Path(sys.argv[sys.argv.index('--')+1]).resolve()
 paths=[Path(__file__).resolve(),Path(__file__).with_name('policy.py'),Path(__file__).with_name('full-cases.json'),Path(__file__).with_name('protocol.mjs'),Path(__file__).with_name('sources.json'),ROOT/'packages/blender-addon/tests/compositor_vector_rotate_check.py',ROOT/'packages/blender-addon/tests/compositor_reference.py',*(ROOT/'packages/blendlink/blender').glob('*.py'),*(ROOT/'packages/blender-addon').glob('*.py'),*(ROOT/'packages/blender-addon').glob('*.json')]
 source_hashes={str(path.relative_to(ROOT)):hashlib.sha256(path.read_bytes()).hexdigest()for path in paths}
+UNIT_AXIS=os.environ.get('SCENETOWEB_VECTOR_ROTATE_VARIANT')=='unit-axis'
+CASE_PATH=ROOT/'experiments/compositor-vector-rotate-unit-axis/cases.json'if UNIT_AXIS else Path(__file__).with_name('full-cases.json')
+POLICY_PATH=ROOT/'packages/blender-addon/tests/compositor_vector_rotate_unit_axis_check.py'if UNIT_AXIS else ROOT/'packages/blender-addon/tests/compositor_vector_rotate_check.py'
+if UNIT_AXIS:
+ paths.remove(Path(__file__).with_name('full-cases.json'));paths.remove(ROOT/'packages/blender-addon/tests/compositor_vector_rotate_check.py');paths.extend([CASE_PATH,POLICY_PATH])
+ source_hashes={str(path.relative_to(ROOT)):hashlib.sha256(path.read_bytes()).hexdigest()for path in paths}
 calls=[0]
 def deny(*args,**kwargs):calls[0]+=1;raise RuntimeError('Vector Rotate pilot denies GPU initialization')
 gpu.init=deny
@@ -21,7 +27,7 @@ from compositor_static_euler import _hash_word
 import compositor_graph
 import numpy as np
 source_only='--source-only'in sys.argv
-plan={'cases':json.loads(Path(__file__).with_name('full-cases.json').read_text())};oracle=NativeCompositorReference(OUT,device='CPU',name='Owned Vector Rotate pilot',node_previews=False)
+plan={'cases':json.loads(CASE_PATH.read_text())};oracle=NativeCompositorReference(OUT,device='CPU',name='Owned Vector Rotate pilot',node_previews=False)
 scene=oracle.scene;tree=oracle.tree;rows=[];controls=[];groups=[]
 sha=lambda data:hashlib.sha256(data).hexdigest()
 def save_bytes(name,data):
@@ -40,12 +46,21 @@ def render(label,signal,sink,width,height):
  finally:bpy.data.images.remove(image)
 def create(spec):
  scene.render.resolution_x=spec['width'];scene.render.resolution_y=spec['height'];sink,source=oracle.reset()
- node=tree.nodes.new('ShaderNodeVectorRotate');node.rotation_type=spec['mode'];node.invert=spec['invert'];node.inputs['Angle'].default_value=spec['angle'];node.inputs['Center'].default_value=spec['center'];node.inputs['Vector'].default_value=spec.get('vector',[0,0,0])
+ node=tree.nodes.new('ShaderNodeVectorRotate')
+ if not spec.get('nativeDefaults'):
+  node.rotation_type=spec['mode'];node.invert=spec['invert'];node.inputs['Angle'].default_value=spec['angle'];node.inputs['Center'].default_value=spec['center'];node.inputs['Vector'].default_value=spec.get('vector',[0,0,0])
  if spec['kind']=='normalized':
   coordinates=tree.nodes.new('CompositorNodeImageCoordinates');tree.links.new(source.outputs['Image'],coordinates.inputs['Image']);tree.links.new(coordinates.outputs['Normalized'],node.inputs['Vector'])
+ if UNIT_AXIS:
+  raw_axis=array('f');raw_axis.frombytes(struct.pack('=3I',*(struct.unpack('=I',struct.pack('=f',n))[0]for n in spec['axis'])))
+  if not spec.get('nativeDefaults'):node.inputs['Axis'].default_value.foreach_set(raw_axis)
+  if spec.get('nativeDefaults'):
+   assert node.rotation_type=='AXIS_ANGLE'and not node.invert and tuple(node.inputs['Axis'].default_value)==(0,0,1)and node.inputs['Angle'].default_value==0 and tuple(node.inputs['Center'].default_value)==(0,0,0)
  signal=node.outputs['Vector']
  if spec.get('group'):
-  group=bpy.data.node_groups.new('Owned grouped Vector Rotate','CompositorNodeTree');groups.append(group);group.interface.new_socket(name='Vector',in_out='INPUT',socket_type='NodeSocketVector');group.interface.new_socket(name='Vector',in_out='OUTPUT',socket_type='NodeSocketVector');entry=group.nodes.new('NodeGroupInput');out=group.nodes.new('NodeGroupOutput');inner=group.nodes.new('ShaderNodeVectorRotate');inner.rotation_type=spec['mode'];inner.invert=spec['invert'];inner.inputs['Angle'].default_value=spec['angle'];inner.inputs['Center'].default_value=spec['center'];group.links.new(entry.outputs[0],inner.inputs['Vector']);group.links.new(inner.outputs[0],out.inputs[0]);instance=tree.nodes.new('CompositorNodeGroup');instance.node_tree=group;tree.links.new(coordinates.outputs['Normalized'],instance.inputs[0]);route=tree.nodes.new('NodeReroute');tree.links.new(instance.outputs[0],route.inputs[0]);signal=route.outputs[0]
+  group=bpy.data.node_groups.new('Owned grouped Vector Rotate','CompositorNodeTree');groups.append(group);group.interface.new_socket(name='Vector',in_out='INPUT',socket_type='NodeSocketVector');group.interface.new_socket(name='Vector',in_out='OUTPUT',socket_type='NodeSocketVector');entry=group.nodes.new('NodeGroupInput');out=group.nodes.new('NodeGroupOutput');inner=group.nodes.new('ShaderNodeVectorRotate');inner.rotation_type=spec['mode'];inner.invert=spec['invert'];inner.inputs['Angle'].default_value=spec['angle'];inner.inputs['Center'].default_value=spec['center'];
+  if UNIT_AXIS:inner.inputs['Axis'].default_value=spec['axis']
+  group.links.new(entry.outputs[0],inner.inputs['Vector']);group.links.new(inner.outputs[0],out.inputs[0]);instance=tree.nodes.new('CompositorNodeGroup');instance.node_tree=group;tree.links.new(coordinates.outputs['Normalized'],instance.inputs[0]);route=tree.nodes.new('NodeReroute');tree.links.new(instance.outputs[0],route.inputs[0]);signal=route.outputs[0]
  if spec.get('terminal')=='z':
   separate=tree.nodes.new('ShaderNodeSeparateXYZ');tree.links.new(signal,separate.inputs[0]);combine=tree.nodes.new('CompositorNodeCombineColor');combine.mode='RGB';tree.links.new(separate.outputs['Z'],combine.inputs['Red']);combine.inputs['Green'].default_value=0;combine.inputs['Blue'].default_value=0;combine.inputs['Alpha'].default_value=1;signal=combine.outputs[0]
  tree.links.new(signal,sink.inputs[0]);return sink,signal
@@ -96,5 +111,5 @@ for row in rows:
   control=next(c for c in controls if(c['width'],c['height'])==(row['width'],row['height']));row.update(pixelFile=row['pixels']['file'],pixelSha256=row['pixels']['sha256'],inputFile=control['file'],inputSha256=control['sha256'])
   if row.get('source'):row.update(sourceFile=row['source']['file'],sourceSha256=row['source']['sha256'])
 assert source_hashes=={str(path.relative_to(ROOT)):hashlib.sha256(path.read_bytes()).hexdigest()for path in paths}
-report={'status':'CHECKED_VECTOR_ROTATE_SOURCE_SETUP'if source_only else'CAPTURED_COMPOSITOR_VECTOR_ROTATE','supportCredit':0,'FinalCredit':0,'browserCredit':0,'schemaVersion':1,'sourceHashes':source_hashes,'gpuInitGuardProved':True,'resultPrecision':'CPU_FLOAT32','version':list(bpy.app.version),'build':bpy.app.build_hash.decode(),'sceneEngine':scene.render.engine,'device':'CPU','precision':'FULL','gpuInitializations':calls[0],'cases':rows,'pixelControls':controls,'nativeRenders':0 if source_only else len(rows)*3+len(controls),'preStoreComponentWords':0 if source_only else sum(case['width']*case['height']*3 for case in rows),'hashCarrier':'unchanged native Float Hash Value before output materialization; exact unsigned low16/signed high16 CPU RGBA32F carriers','renderLayersInput':'original direct Render Layers retained; no input replacement or math mutation'}
+report={'status':'CHECKED_VECTOR_ROTATE_SOURCE_SETUP'if source_only else'CAPTURED_COMPOSITOR_VECTOR_ROTATE','supportCredit':0,'FinalCredit':0,'browserCredit':0,'schemaVersion':1,**({'variant':'unit-axis'}if UNIT_AXIS else{}),'sourceHashes':source_hashes,'gpuInitGuardProved':True,'resultPrecision':'CPU_FLOAT32','version':list(bpy.app.version),'build':bpy.app.build_hash.decode(),'sceneEngine':scene.render.engine,'device':'CPU','precision':'FULL','gpuInitializations':calls[0],'cases':rows,'pixelControls':controls,'nativeRenders':0 if source_only else len(rows)*3+len(controls),'preStoreComponentWords':0 if source_only else sum(case['width']*case['height']*3 for case in rows),'hashCarrier':'unchanged native Float Hash Value before output materialization; exact unsigned low16/signed high16 CPU RGBA32F carriers','renderLayersInput':'original direct Render Layers retained; no input replacement or math mutation'}
 (OUT/('source-check.json'if source_only else'qualification.json')).write_text(json.dumps(report,indent=2)+'\n');print(report['status'],len(rows),report['nativeRenders'])

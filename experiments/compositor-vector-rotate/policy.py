@@ -3,5 +3,6 @@
 from pathlib import Path
 import os,runpy,sys
 root=Path(__file__).resolve().parents[2]
-sys.argv=[str(root/'packages/blender-addon/tests/compositor_vector_rotate_check.py'),'--',str(Path(os.environ['SCENETOWEB_VECTOR_ROTATE_REFERENCES'])/'policy.json')]
+script='compositor_vector_rotate_unit_axis_check.py'if os.environ.get('SCENETOWEB_VECTOR_ROTATE_VARIANT')=='unit-axis'else'compositor_vector_rotate_check.py'
+sys.argv=[str(root/'packages/blender-addon/tests'/script),'--',str(Path(os.environ['SCENETOWEB_VECTOR_ROTATE_REFERENCES'])/'policy.json')]
 runpy.run_path(sys.argv[0],run_name='__main__')

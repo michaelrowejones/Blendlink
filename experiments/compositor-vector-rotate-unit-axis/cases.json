@@ -1,0 +1,845 @@
+[
+  {
+    "case": "unit-positive-x-forward-normalized",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      1,
+      0,
+      0
+    ],
+    "invert": false,
+    "angle": 0.9,
+    "center": [
+      0.5,
+      -0.5,
+      0.25
+    ],
+    "kind": "normalized",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "saved": true,
+    "resizeCases": [
+      "resize-26x18",
+      "resize-9x13"
+    ]
+  },
+  {
+    "case": "unit-positive-x-forward-literal",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      1,
+      0,
+      0
+    ],
+    "invert": false,
+    "angle": 1,
+    "center": [
+      16,
+      -16,
+      -1.52587890625e-05
+    ],
+    "kind": "literal",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "saved": false,
+    "resizeCases": [],
+    "vector": [
+      -16,
+      16,
+      1.52587890625e-05
+    ]
+  },
+  {
+    "case": "unit-positive-x-inverse-normalized",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      1,
+      0,
+      0
+    ],
+    "invert": true,
+    "angle": 0.9,
+    "center": [
+      0.5,
+      -0.5,
+      0.25
+    ],
+    "kind": "normalized",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "unit-positive-x-inverse-literal",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      1,
+      0,
+      0
+    ],
+    "invert": true,
+    "angle": -1,
+    "center": [
+      16,
+      -16,
+      -1.52587890625e-05
+    ],
+    "kind": "literal",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "saved": false,
+    "resizeCases": [],
+    "vector": [
+      -16,
+      16,
+      1.52587890625e-05
+    ]
+  },
+  {
+    "case": "unit-negative-x-forward-normalized",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      -1,
+      0,
+      0
+    ],
+    "invert": false,
+    "angle": 0.9,
+    "center": [
+      0.5,
+      -0.5,
+      0.25
+    ],
+    "kind": "normalized",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "unit-negative-x-forward-literal",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      -1,
+      0,
+      0
+    ],
+    "invert": false,
+    "angle": 1,
+    "center": [
+      16,
+      -16,
+      -1.52587890625e-05
+    ],
+    "kind": "literal",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "saved": false,
+    "resizeCases": [],
+    "vector": [
+      -16,
+      16,
+      1.52587890625e-05
+    ]
+  },
+  {
+    "case": "unit-negative-x-inverse-normalized",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      -1,
+      0,
+      0
+    ],
+    "invert": true,
+    "angle": 0.9,
+    "center": [
+      0.5,
+      -0.5,
+      0.25
+    ],
+    "kind": "normalized",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "saved": true,
+    "resizeCases": []
+  },
+  {
+    "case": "unit-negative-x-inverse-literal",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      -1,
+      0,
+      0
+    ],
+    "invert": true,
+    "angle": -1,
+    "center": [
+      16,
+      -16,
+      -1.52587890625e-05
+    ],
+    "kind": "literal",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "saved": false,
+    "resizeCases": [],
+    "vector": [
+      -16,
+      16,
+      1.52587890625e-05
+    ]
+  },
+  {
+    "case": "unit-positive-y-forward-normalized",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      0,
+      1,
+      0
+    ],
+    "invert": false,
+    "angle": 0.9,
+    "center": [
+      0.5,
+      -0.5,
+      0.25
+    ],
+    "kind": "normalized",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "saved": true,
+    "resizeCases": []
+  },
+  {
+    "case": "unit-positive-y-forward-literal",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      0,
+      1,
+      0
+    ],
+    "invert": false,
+    "angle": 1,
+    "center": [
+      16,
+      -16,
+      -1.52587890625e-05
+    ],
+    "kind": "literal",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "saved": false,
+    "resizeCases": [],
+    "vector": [
+      -16,
+      16,
+      1.52587890625e-05
+    ]
+  },
+  {
+    "case": "unit-positive-y-inverse-normalized",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      0,
+      1,
+      0
+    ],
+    "invert": true,
+    "angle": 0.9,
+    "center": [
+      0.5,
+      -0.5,
+      0.25
+    ],
+    "kind": "normalized",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "unit-positive-y-inverse-literal",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      0,
+      1,
+      0
+    ],
+    "invert": true,
+    "angle": -1,
+    "center": [
+      16,
+      -16,
+      -1.52587890625e-05
+    ],
+    "kind": "literal",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "saved": false,
+    "resizeCases": [],
+    "vector": [
+      -16,
+      16,
+      1.52587890625e-05
+    ]
+  },
+  {
+    "case": "unit-negative-y-forward-normalized",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      0,
+      -1,
+      0
+    ],
+    "invert": false,
+    "angle": 0.9,
+    "center": [
+      0.5,
+      -0.5,
+      0.25
+    ],
+    "kind": "normalized",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "unit-negative-y-forward-literal",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      0,
+      -1,
+      0
+    ],
+    "invert": false,
+    "angle": 1,
+    "center": [
+      16,
+      -16,
+      -1.52587890625e-05
+    ],
+    "kind": "literal",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "saved": false,
+    "resizeCases": [],
+    "vector": [
+      -16,
+      16,
+      1.52587890625e-05
+    ]
+  },
+  {
+    "case": "unit-negative-y-inverse-normalized",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      0,
+      -1,
+      0
+    ],
+    "invert": true,
+    "angle": 0.9,
+    "center": [
+      0.5,
+      -0.5,
+      0.25
+    ],
+    "kind": "normalized",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "saved": true,
+    "resizeCases": []
+  },
+  {
+    "case": "unit-negative-y-inverse-literal",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      0,
+      -1,
+      0
+    ],
+    "invert": true,
+    "angle": -1,
+    "center": [
+      16,
+      -16,
+      -1.52587890625e-05
+    ],
+    "kind": "literal",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "saved": false,
+    "resizeCases": [],
+    "vector": [
+      -16,
+      16,
+      1.52587890625e-05
+    ]
+  },
+  {
+    "case": "unit-positive-z-forward-normalized",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      0,
+      0,
+      1
+    ],
+    "invert": false,
+    "angle": 0.9,
+    "center": [
+      0.5,
+      -0.5,
+      0.25
+    ],
+    "kind": "normalized",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "saved": true,
+    "resizeCases": []
+  },
+  {
+    "case": "unit-positive-z-forward-literal",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      0,
+      0,
+      1
+    ],
+    "invert": false,
+    "angle": 1,
+    "center": [
+      16,
+      -16,
+      -1.52587890625e-05
+    ],
+    "kind": "literal",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "saved": false,
+    "resizeCases": [],
+    "vector": [
+      -16,
+      16,
+      1.52587890625e-05
+    ]
+  },
+  {
+    "case": "unit-positive-z-inverse-normalized",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      0,
+      0,
+      1
+    ],
+    "invert": true,
+    "angle": 0.9,
+    "center": [
+      0.5,
+      -0.5,
+      0.25
+    ],
+    "kind": "normalized",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "unit-positive-z-inverse-literal",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      0,
+      0,
+      1
+    ],
+    "invert": true,
+    "angle": -1,
+    "center": [
+      16,
+      -16,
+      -1.52587890625e-05
+    ],
+    "kind": "literal",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "saved": false,
+    "resizeCases": [],
+    "vector": [
+      -16,
+      16,
+      1.52587890625e-05
+    ]
+  },
+  {
+    "case": "unit-negative-z-forward-normalized",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      0,
+      0,
+      -1
+    ],
+    "invert": false,
+    "angle": 0.9,
+    "center": [
+      0.5,
+      -0.5,
+      0.25
+    ],
+    "kind": "normalized",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "unit-negative-z-forward-literal",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      0,
+      0,
+      -1
+    ],
+    "invert": false,
+    "angle": 1,
+    "center": [
+      16,
+      -16,
+      -1.52587890625e-05
+    ],
+    "kind": "literal",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "saved": false,
+    "resizeCases": [],
+    "vector": [
+      -16,
+      16,
+      1.52587890625e-05
+    ]
+  },
+  {
+    "case": "unit-negative-z-inverse-normalized",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      0,
+      0,
+      -1
+    ],
+    "invert": true,
+    "angle": 0.9,
+    "center": [
+      0.5,
+      -0.5,
+      0.25
+    ],
+    "kind": "normalized",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "saved": true,
+    "resizeCases": []
+  },
+  {
+    "case": "unit-negative-z-inverse-literal",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      0,
+      0,
+      -1
+    ],
+    "invert": true,
+    "angle": -1,
+    "center": [
+      16,
+      -16,
+      -1.52587890625e-05
+    ],
+    "kind": "literal",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "saved": true,
+    "resizeCases": [],
+    "vector": [
+      -16,
+      16,
+      1.52587890625e-05
+    ]
+  },
+  {
+    "case": "native-default-literal",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      0,
+      0,
+      1
+    ],
+    "invert": false,
+    "angle": 0,
+    "center": [
+      0,
+      0,
+      0
+    ],
+    "kind": "literal",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "nativeDefaults": true,
+    "saved": true,
+    "resizeCases": [],
+    "vector": [
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "case": "native-default-normalized",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      0,
+      0,
+      1
+    ],
+    "invert": false,
+    "angle": 0,
+    "center": [
+      0,
+      0,
+      0
+    ],
+    "kind": "normalized",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "nativeDefaults": true,
+    "saved": true,
+    "resizeCases": [],
+    "axesControl": true
+  },
+  {
+    "case": "minimum-negative-x",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      -1,
+      0,
+      0
+    ],
+    "invert": false,
+    "angle": 1.52587890625e-05,
+    "center": [
+      16,
+      -16,
+      1.52587890625e-05
+    ],
+    "kind": "normalized",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "minimum-negative-y",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      0,
+      -1,
+      0
+    ],
+    "invert": false,
+    "angle": 1.52587890625e-05,
+    "center": [
+      16,
+      -16,
+      1.52587890625e-05
+    ],
+    "kind": "normalized",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "minimum-negative-z",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      0,
+      0,
+      -1
+    ],
+    "invert": false,
+    "angle": 1.52587890625e-05,
+    "center": [
+      16,
+      -16,
+      1.52587890625e-05
+    ],
+    "kind": "normalized",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "thin-8192x4",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      0,
+      -1,
+      0
+    ],
+    "invert": true,
+    "angle": 1,
+    "center": [
+      0.5,
+      0.5,
+      0.5
+    ],
+    "kind": "normalized",
+    "width": 8192,
+    "height": 4,
+    "pixelRatio": 1,
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "thin-4x8192",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      0,
+      -1,
+      0
+    ],
+    "invert": true,
+    "angle": 1,
+    "center": [
+      0.5,
+      0.5,
+      0.5
+    ],
+    "kind": "normalized",
+    "width": 4,
+    "height": 8192,
+    "pixelRatio": 1,
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "group-reroute",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      0,
+      0,
+      -1
+    ],
+    "invert": true,
+    "angle": 0.9,
+    "center": [
+      0.5,
+      -0.5,
+      0.25
+    ],
+    "kind": "normalized",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "group": true,
+    "saved": true,
+    "resizeCases": []
+  },
+  {
+    "case": "resize-26x18",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      1,
+      0,
+      0
+    ],
+    "invert": false,
+    "angle": 0.9,
+    "center": [
+      0.5,
+      -0.5,
+      0.25
+    ],
+    "kind": "normalized",
+    "width": 26,
+    "height": 18,
+    "pixelRatio": 2,
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "resize-9x13",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      1,
+      0,
+      0
+    ],
+    "invert": false,
+    "angle": 0.9,
+    "center": [
+      0.5,
+      -0.5,
+      0.25
+    ],
+    "kind": "normalized",
+    "width": 9,
+    "height": 13,
+    "pixelRatio": 1,
+    "saved": false,
+    "resizeCases": []
+  },
+  {
+    "case": "constant-z-terminal",
+    "mode": "AXIS_ANGLE",
+    "axis": [
+      0,
+      0,
+      1
+    ],
+    "invert": false,
+    "angle": 0,
+    "center": [
+      0,
+      0,
+      0
+    ],
+    "kind": "normalized",
+    "width": 13,
+    "height": 9,
+    "pixelRatio": 1,
+    "terminal": "z",
+    "saved": false,
+    "resizeCases": []
+  }
+]

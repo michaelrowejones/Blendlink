@@ -2,20 +2,20 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import {readFile} from 'node:fs/promises'
-import {expectedCalibrationCases,assertCasePlan,assertProgram,assertPolicy,assertQualification,assertFinal,assertBrowserRows,cases,expectedFinalCases,browserProofContract,policyPositive,policyRefusals} from './protocol.mjs'
+import {isUnitAxis,nativeRenders,expectedCalibrationCases,assertCasePlan,assertProgram,assertPolicy,assertQualification,assertFinal,assertBrowserRows,cases,expectedFinalCases,browserProofContract,policyPositive,policyRefusals} from './protocol.mjs'
 import {assertBrowserProofAssembly} from '../../scripts/lib/browser-proof-contract.mjs'
 const read=name=>readFile(new URL(name,import.meta.url),'utf8')
 test('closed plan retains every mode/invert, ten Finals, real resize and constant guard',()=>{
  assertCasePlan(cases);assert.equal(expectedFinalCases().length,10)
- for(const mode of['X_AXIS','Y_AXIS','Z_AXIS'])for(const invert of[false,true])assert.ok(cases.some(row=>row.mode===mode&&row.invert===invert&&row.saved))
- for(const mutate of[p=>p.pop(),p=>p[1].case=p[0].case,p=>p[0].resizeCases=['absent'],p=>p.find(r=>r.resizeCases.length).resizeCases.push('literal-X_AXIS')]){const copy=structuredClone(cases);mutate(copy);assert.throws(()=>assertCasePlan(copy))}
+ for(const mode of(isUnitAxis?['AXIS_ANGLE']:['X_AXIS','Y_AXIS','Z_AXIS']))for(const invert of[false,true])assert.ok(cases.some(row=>row.mode===mode&&row.invert===invert&&row.saved))
+ for(const mutate of[p=>p.pop(),p=>p[1].case=p[0].case,p=>p[0].resizeCases=['absent'],p=>p.find(r=>r.resizeCases.length).resizeCases.push(isUnitAxis?'native-default-literal':'literal-X_AXIS')]){const copy=structuredClone(cases);mutate(copy);assert.throws(()=>assertCasePlan(copy))}
 })
 test('actual lexicographically serialized native pilot IR is accepted with strict malformed rejection',async()=>{
- const fixture=JSON.parse(await read('./native-program-fixture.json')),spec=cases.find(row=>row.case==='X_AXIS-forward-ordinary');assertProgram(fixture,spec)
+ const fixture=JSON.parse(await read(isUnitAxis?'../compositor-vector-rotate-unit-axis/native-program-fixture.json':'./native-program-fixture.json')),spec=cases.find(row=>row.case===(isUnitAxis?'unit-positive-x-forward-normalized':'X_AXIS-forward-ordinary'));assertProgram(fixture,spec)
  for(const mutate of[p=>p.ops.find(o=>o.kind==='vector-rotate-cpu').properties.vector_rotate_angle_word++,p=>p.ops.find(o=>o.kind==='vector-rotate-cpu').inputs.Fake={},p=>p.ops[0].source.nodeType='Other',p=>p.ops.reverse(),p=>p.output.type='VALUE']){const copy=structuredClone(fixture);mutate(copy);assert.throws(()=>assertProgram(copy,spec))}
 })
 test('exact source policy IDs reject missing, duplicate and reordered controls',()=>{
- const policy={status:'SCENETOWEB_COMPOSITOR_VECTOR_ROTATE_POLICY_PASSED',positives:policyPositive,refusals:policyRefusals,programs:policyPositive.map(label=>({case:label})),gpuInitializations:0,nativeRenders:0,supportCredit:0};assertPolicy(policy)
+ const policy={status:isUnitAxis?'SCENETOWEB_VECTOR_ROTATE_UNIT_AXIS_POLICY_PASSED':'SCENETOWEB_COMPOSITOR_VECTOR_ROTATE_POLICY_PASSED',positives:policyPositive,refusals:policyRefusals,programs:policyPositive.map(label=>({case:label})),gpuInitializations:0,nativeRenders:0,supportCredit:0,...(isUnitAxis?{initialControlRefusalsBeforeEvaluation:2}:{})};assertPolicy(policy)
  for(const field of['positives','refusals'])for(const mutate of[a=>a.pop(),a=>a[1]=a[0],a=>a.reverse()]){const copy=structuredClone(policy);mutate(copy[field]);assert.throws(()=>assertPolicy(copy))}
 })
 test('browser contract assembly and early native schemas precede expensive renders/exports',async()=>{

@@ -1,0 +1,175 @@
+{
+  "schemaVersion": 1,
+  "id": "compositor-finite-image-info",
+  "nativeNode": "CompositorNodeImageInfo",
+  "domain": "compositor",
+  "lifecycle": "production",
+  "scope": "Pinned Blender5.3 macOS arm64 CPU finite identity Image/Blank Image metadata. Dimensions/Resolution preserve admitted source data size independently of render size; Location/Rotation/Scale follow identity domain. Closed contributing metadata consumers only; transforms, single-value and Alpha producers remain unqualified. Twenty production graphs plus one calibration; exact archived GPU words and observed CPU payload versus GPU allocation/binding facts. No Image/Blank pixel-equivalence or broader Render Layers credit.",
+  "upstream": {
+    "direct": [
+      "source/blender/nodes/composite/nodes/node_composite_image_info.cc"
+    ],
+    "shared": [
+      "source/blender/compositor/intern/node_tree_evaluator.cc",
+      "source/blender/compositor/intern/operation.cc",
+      "source/blender/compositor/intern/multi_function_procedure_operation.cc",
+      "source/blender/nodes/intern/node_multi_function.cc",
+      "source/blender/nodes/NOD_multi_function.hh",
+      "source/blender/makesrna/intern/rna_nodetree.cc",
+      "source/blender/compositor/COM_context.hh",
+      "source/blender/compositor/intern/context.cc",
+      "source/blender/makesdna/DNA_scene_types.h",
+      "source/blender/blenkernel/intern/type_conversions.cc",
+      "source/blender/makesdna/DNA_node_types.h",
+      "source/blender/compositor/intern/conversion_operation.cc",
+      "source/blender/nodes/intern/node_common.cc",
+      "source/blender/blenlib/BLI_math_vector_types.hh",
+      "source/blender/blenkernel/BKE_type_conversions.hh",
+      "source/blender/nodes/intern/node_socket_declarations.cc",
+      "source/blender/nodes/NOD_socket_declarations.hh",
+      "source/blender/nodes/intern/node_socket.cc",
+      "source/blender/nodes/composite/nodes/node_composite_blank_image.cc",
+      "source/blender/nodes/composite/nodes/node_composite_image.cc",
+      "source/blender/compositor/cached_resources/intern/cached_image.cc",
+      "source/blender/compositor/COM_domain.hh",
+      "source/blender/compositor/intern/domain.cc",
+      "source/blender/compositor/COM_result.hh",
+      "source/blender/compositor/intern/result.cc",
+      "source/blender/compositor/COM_node_operation.hh",
+      "source/blender/compositor/COM_input_descriptor.hh",
+      "source/blender/compositor/COM_realize_on_domain_operation.hh",
+      "source/blender/compositor/intern/realize_on_domain_operation.cc",
+      "source/blender/makesrna/intern/rna_image.cc",
+      "source/blender/blenkernel/intern/image.cc",
+      "source/blender/imbuf/IMB_imbuf_types.hh"
+    ]
+  },
+  "inputs": {
+    "native": [
+      "packages/blender-addon/*.py",
+      "packages/blender-addon/*.json",
+      "packages/blendlink/blender/**/*.py",
+      "experiments/static-switch-family/*.py",
+      "packages/blender-addon/tests/compositor_reference.py",
+      "experiments/compositor-finite-image-info/cases.py",
+      "experiments/compositor-finite-image-info/policy.py"
+    ],
+    "runtime": [
+      "packages/blendlink/src/**/*.ts"
+    ],
+    "sdk": [
+      "package.json",
+      "package-lock.json",
+      "packages/blendlink/package.json",
+      "packages/blendlink/tsconfig.json",
+      "packages/blendlink/scripts/*.mjs",
+      "scripts/test-node-port.mjs",
+      "scripts/run-node-port-family.mjs",
+      "scripts/lib/node-port-contract.mjs",
+      "scripts/lib/node-port-evidence.mjs",
+      "scripts/lib/node-port-family-evidence.mjs",
+      "scripts/lib/node-port-python.mjs",
+      "scripts/node-port-blender.mjs",
+      "scripts/lib/native-proof-archive.mjs",
+      "scripts/lib/runtime-provenance.mjs",
+      "scripts/lib/runtime-proof-archive.mjs",
+      "scripts/lib/runtime-compiler-trace.mjs",
+      "scripts/lib/runtime-transaction-snapshot.mjs",
+      "scripts/lib/browser-proof-contract.mjs",
+      "scripts/lib/node-port-displace-evidence.mjs"
+    ],
+    "tests": [
+      "experiments/static-switch-family/*.mjs",
+      "experiments/static-switch-family/*.ts",
+      "experiments/static-switch-family/*.js",
+      "experiments/static-switch-family/*.html",
+      "scripts/lib/node-port-family-evidence.test.mjs",
+      "scripts/lib/node-port-contract.test.mjs",
+      "scripts/lib/node-port-python.*",
+      "scripts/lib/node-port-evidence*",
+      "scripts/lib/browser-proof-contract.test.mjs",
+      "experiments/static-switch-family/view-cases.json",
+      "experiments/static-switch-family/int-vector3-cases.json",
+      "experiments/compositor-finite-image-info/cases.json",
+      "experiments/compositor-finite-image-info/sources.json",
+      "experiments/compositor-finite-image-info/cases.test.mjs",
+      "node-ports/compositor-finite-image-info.json",
+      "node_modules/three/src/renderers/webgpu/WebGPUBackend.js",
+      "node_modules/three/src/renderers/webgl-fallback/WebGLBackend.js",
+      "node_modules/three/src/textures/DataTexture.js",
+      "node_modules/three/src/textures/Texture.js",
+      "experiments/compositor-finite-image-info/source-programs.json"
+    ]
+  },
+  "commands": {
+    "build": [
+      {
+        "id": "clean",
+        "argv": [
+          "{node}",
+          "packages/blendlink/scripts/clean-dist.mjs"
+        ],
+        "timeoutMs": 60000
+      },
+      {
+        "id": "typescript",
+        "argv": [
+          "{node}",
+          "node_modules/typescript/bin/tsc",
+          "-p",
+          "packages/blendlink/tsconfig.json"
+        ],
+        "timeoutMs": 180000
+      },
+      {
+        "id": "assets",
+        "argv": [
+          "{node}",
+          "packages/blendlink/scripts/copy-assets.mjs"
+        ],
+        "timeoutMs": 60000
+      }
+    ],
+    "verify": {
+      "id": "suite",
+      "argv": [
+        "{node}",
+        "scripts/run-node-port-family.mjs",
+        "compositor-finite-image-info",
+        "--evidence",
+        "{evidence}",
+        "--blender",
+        "{blender}"
+      ],
+      "timeoutMs": 1500000
+    }
+  },
+  "profiles": [
+    {
+      "id": "mac-53",
+      "hostPlatforms": [
+        "darwin"
+      ],
+      "blenderVersion": "5.3.0",
+      "blenderBuildHash": "02f0899d78e3",
+      "nativeSource": {
+        "profile": "darwin-arm64-53-finite-image-info-v1",
+        "backend": null,
+        "evaluator": "CPU-compositor"
+      },
+      "runs": [
+        {
+          "id": "matrix",
+          "adapter": "matrix",
+          "env": {}
+        }
+      ]
+    }
+  ],
+  "evidence": {
+    "adapter": "compositor-finite-image-info-v1",
+    "productionCases": 20,
+    "calibrationCases": 1,
+    "refusedNativeCases": 0
+  }
+}

@@ -1,0 +1,250 @@
+{
+  "schemaVersion": 1,
+  "status": "RESEARCH_ACTUAL_EEVEE_NOISE_COLOR_CLOSED",
+  "supportCredit": 0,
+  "FinalCredit": 0,
+  "sourceFiles": {
+    "README.md": "e8827530812a6b74d1e3167c9f35925547fa7cface31e9aeec8089a63b95b092",
+    "capture.py": "eff183734b8402164189193d5fba4f0b9e8db6b506a6b0d82d0697a78ed9eab1",
+    "contract.json": "1c39ee94c4fbece926204e6f2148ddcc4c9a745118c3e91a849fd65b68d35087",
+    "run.mjs": "aa3d429c05dfd30096b408e9ab919bc50fd51f04d267ba4dd456de64d063b84a",
+    "verify.mjs": "13eaec10a7be3831790196f2a722fe71e8f50b6e2e143aacf95141a65cfaaf8d",
+    "verify.test.mjs": "a711954c56b96e2d2a3e46882f42da06e49d1f3f9a994de245df5f75c6eafeb5"
+  },
+  "reusedFactory": {
+    "path": "experiments/native-kernel-reference-pilot/capture.py",
+    "sha256": "c4c0c57b5635935c6520be485d3ad0e749c10ae76e382fa0b11e2d11ffa93a58"
+  },
+  "report": {
+    "path": "/tmp/scenetoweb-noise-color-material-eevee-r1/report.json",
+    "sha256": "0a48e98f33a4587527426371c08446e71eb45dfecde12ed43cd4c1716f642873"
+  },
+  "closed": {
+    "path": "/tmp/scenetoweb-noise-color-material-closed-r1.json",
+    "sha256": "b4e626a681d74ba98c35d7fdc9c5f3d8abd4edc4e177f14fe6fb333789c9ffd1"
+  },
+  "nativeArchive": {
+    "path": "/tmp/scenetoweb-noise-color-material-eevee-r1/native-archive.json",
+    "sha256": "7458f43b8d1466f38990596b3c6daaa9196f942032a445fbe7947ab0245c94c5"
+  },
+  "artifacts": [
+    {
+      "path": "/tmp/scenetoweb-noise-color-material-eevee-r1/input-affine.rgba32f",
+      "sha256": "3d229cf875d8c63c04b7ae4c9ab1d8e256382e3cdac691faf73abf2c0b2b9370"
+    },
+    {
+      "path": "/tmp/scenetoweb-noise-color-material-eevee-r1/input-affine.exr",
+      "sha256": "804cb796a0932467c0a60ca24524344ee919afd1c0560aed9d84b11e811b6f42"
+    },
+    {
+      "path": "/tmp/scenetoweb-noise-color-material-eevee-r1/carrier-known-plane0.rgba32f",
+      "sha256": "df2d6a025415d7c95a16992b695b95305d72fdd5a19b10e30489effeb8d10f54"
+    },
+    {
+      "path": "/tmp/scenetoweb-noise-color-material-eevee-r1/carrier-known-plane0.exr",
+      "sha256": "d3e5136d26836cafc57cba6372f430d8f47257f8a382ed3033e6add802ca5cf3"
+    },
+    {
+      "path": "/tmp/scenetoweb-noise-color-material-eevee-r1/carrier-known-plane1.rgba32f",
+      "sha256": "0d03b3bf52092a08ff294bd4d8366e92cfdd9649d0c325ae268ae815cb31e1eb"
+    },
+    {
+      "path": "/tmp/scenetoweb-noise-color-material-eevee-r1/carrier-known-plane1.exr",
+      "sha256": "91243a2ae66c27469e2b5956ade48be807017c259b32b6a03159a9ba8cedfcc2"
+    },
+    {
+      "path": "/tmp/scenetoweb-noise-color-material-eevee-r1/noise-fbm3-default-range.rgba32f",
+      "sha256": "718ac3b3452de19698e211c7b4fcbe82b9bc8ddf1425396536fb096b95bb3d00"
+    },
+    {
+      "path": "/tmp/scenetoweb-noise-color-material-eevee-r1/noise-fbm3-default-range.exr",
+      "sha256": "952ae410fde4335a91c7d0963836bfc22e1d7e743734805811d50ff30c0b5e68"
+    },
+    {
+      "path": "/tmp/scenetoweb-noise-color-material-eevee-r1/noise-fbm3-default-0-plane0.rgba32f",
+      "sha256": "9c564303ef412dd5857700a44f80d99c78504602033eba7a8a8c2df8a3619a82"
+    },
+    {
+      "path": "/tmp/scenetoweb-noise-color-material-eevee-r1/noise-fbm3-default-0-plane0.exr",
+      "sha256": "6877fa8f13654459056535ab8c41c906a8bcc588446ae3aed8dde2615cb08142"
+    },
+    {
+      "path": "/tmp/scenetoweb-noise-color-material-eevee-r1/noise-fbm3-default-0-plane1.rgba32f",
+      "sha256": "718ac3b3452de19698e211c7b4fcbe82b9bc8ddf1425396536fb096b95bb3d00"
+    },
+    {
+      "path": "/tmp/scenetoweb-noise-color-material-eevee-r1/noise-fbm3-default-0-plane1.exr",
+      "sha256": "2118c604bbfb57994e409cf302ca030c6c8573bf55de986c8a2f34e4eaf46958"
+    },
+    {
+      "path": "/tmp/scenetoweb-noise-color-material-eevee-r1/noise-fbm3-default-1-plane0.rgba32f",
+      "sha256": "eb92680c54a1f4bc12a799696dc369be0842dab85537dbcc48595123dd69bb83"
+    },
+    {
+      "path": "/tmp/scenetoweb-noise-color-material-eevee-r1/noise-fbm3-default-1-plane0.exr",
+      "sha256": "defd36bbc3987776eab2f864dca7316aa7331ba4dae86f7c9760e56c7b639a32"
+    },
+    {
+      "path": "/tmp/scenetoweb-noise-color-material-eevee-r1/noise-fbm3-default-1-plane1.rgba32f",
+      "sha256": "718ac3b3452de19698e211c7b4fcbe82b9bc8ddf1425396536fb096b95bb3d00"
+    },
+    {
+      "path": "/tmp/scenetoweb-noise-color-material-eevee-r1/noise-fbm3-default-1-plane1.exr",
+      "sha256": "eeddd185b1c64964ee140ea1665275b28383ebfd8bc976e9062bb762fd4e80cc"
+    },
+    {
+      "path": "/tmp/scenetoweb-noise-color-material-eevee-r1/noise-fbm3-default-2-plane0.rgba32f",
+      "sha256": "19ea87c8b264e3573b66dc7a25e21b33e961e37403da0d651c630b1b16f990ce"
+    },
+    {
+      "path": "/tmp/scenetoweb-noise-color-material-eevee-r1/noise-fbm3-default-2-plane0.exr",
+      "sha256": "b244b36b5765ae11297c4af125a2cefe96961390b6e7cbc2055cb9ae68f70b1a"
+    },
+    {
+      "path": "/tmp/scenetoweb-noise-color-material-eevee-r1/noise-fbm3-default-2-plane1.rgba32f",
+      "sha256": "718ac3b3452de19698e211c7b4fcbe82b9bc8ddf1425396536fb096b95bb3d00"
+    },
+    {
+      "path": "/tmp/scenetoweb-noise-color-material-eevee-r1/noise-fbm3-default-2-plane1.exr",
+      "sha256": "02dc725a3f11402e8bd10f2e9dfbcb79e72c9e6ae7c7d7ccab7410b201a747f5"
+    },
+    {
+      "path": "/tmp/scenetoweb-noise-color-material-eevee-r1/noise-fbm3-default-3-plane0.rgba32f",
+      "sha256": "9c564303ef412dd5857700a44f80d99c78504602033eba7a8a8c2df8a3619a82"
+    },
+    {
+      "path": "/tmp/scenetoweb-noise-color-material-eevee-r1/noise-fbm3-default-3-plane0.exr",
+      "sha256": "824d83210780e13feec1f4abe3621eec8670ad02c197d81fb5d3c2f8bca5457d"
+    },
+    {
+      "path": "/tmp/scenetoweb-noise-color-material-eevee-r1/noise-fbm3-default-3-plane1.rgba32f",
+      "sha256": "718ac3b3452de19698e211c7b4fcbe82b9bc8ddf1425396536fb096b95bb3d00"
+    },
+    {
+      "path": "/tmp/scenetoweb-noise-color-material-eevee-r1/noise-fbm3-default-3-plane1.exr",
+      "sha256": "0bec94b7cc470bd60dca364f004d094f736feea87c8868f8eb87a3168b52b0b4"
+    },
+    {
+      "path": "/tmp/scenetoweb-noise-color-material-eevee-r1/noise-fbm3-default.blend",
+      "sha256": "14377d3c36320deed8483040aafe403c24d6a91b9ebf8585def204d2c285f19d"
+    },
+    {
+      "path": "/tmp/scenetoweb-noise-color-material-eevee-r1/noise-warm-cool-ramp-emission.blend",
+      "sha256": "885f3d7793ed357374a4c671ceaeea9df9627b6b03a82cca616757983cf66fed"
+    },
+    {
+      "path": "/tmp/scenetoweb-noise-color-material-eevee-r1/noise-fbm3-default.kernel-rgba32f",
+      "sha256": "24bb31fcc1d5a68a199dfa369542ab37fe5c2174b207066f4069a484a6f33de0"
+    }
+  ],
+  "summary": {
+    "schemaVersion": 1,
+    "status": "CLOSED_EEVEE_NOISE_COLOR_MATERIAL_CROSSCHECK",
+    "supportCredit": 0,
+    "FinalCredit": 0,
+    "actualEeveeCases": 1,
+    "renders": 12,
+    "comparedWords": 256,
+    "comparisons": [
+      {
+        "lane": "R",
+        "words": 64,
+        "wordDifferences": 0,
+        "maxAbsoluteError": 0,
+        "maxUlps": 0,
+        "violations": 0
+      },
+      {
+        "lane": "G",
+        "words": 64,
+        "wordDifferences": 0,
+        "maxAbsoluteError": 0,
+        "maxUlps": 0,
+        "violations": 0
+      },
+      {
+        "lane": "B",
+        "words": 64,
+        "wordDifferences": 0,
+        "maxAbsoluteError": 0,
+        "maxUlps": 0,
+        "violations": 0
+      },
+      {
+        "lane": "Fac",
+        "words": 64,
+        "wordDifferences": 0,
+        "maxAbsoluteError": 0,
+        "maxUlps": 0,
+        "violations": 0
+      }
+    ],
+    "gate": {
+      "maximumAbsoluteError": 9.5367431640625e-7,
+      "maximumUlps": 8,
+      "bothRequired": true,
+      "allFourOutputLanes": true,
+      "fixedBeforeCapture": true
+    },
+    "coordinateWords": 192,
+    "carrierKnownWords": 64,
+    "wordMismatchesCalibration": 0,
+    "nativeReference": {
+      "reportSha256": "ab4ab1e46f98893589020d91696ff097a8f2043c2e869740b69dc151c8f7c7c2",
+      "rawSha256": "24bb31fcc1d5a68a199dfa369542ab37fe5c2174b207066f4069a484a6f33de0",
+      "closedSha256": "8bb0232c72227f94679f1e4e81e198dfd1177937122ae8250070423bbc5b215d",
+      "librarySha256": "7a678514777219397fef15232066d8a52bc0a8aa5bfe4d39d33969cc3031f883"
+    },
+    "freshEevee": {
+      "reportPath": "/private/tmp/scenetoweb-noise-color-material-eevee-r1/report.json",
+      "reportSha256": "0a48e98f33a4587527426371c08446e71eb45dfecde12ed43cd4c1716f642873",
+      "sourceSha256": "14377d3c36320deed8483040aafe403c24d6a91b9ebf8585def204d2c285f19d",
+      "rawSha256": "24bb31fcc1d5a68a199dfa369542ab37fe5c2174b207066f4069a484a6f33de0"
+    },
+    "artistDerivative": {
+      "sourceFile": "/private/tmp/scenetoweb-noise-color-material-eevee-r1/noise-warm-cool-ramp-emission.blend",
+      "sourceSha256": "885f3d7793ed357374a4c671ceaeea9df9627b6b03a82cca616757983cf66fed",
+      "nodes": [
+        "ShaderNodeTexNoise",
+        "ShaderNodeValToRGB",
+        "ShaderNodeEmission"
+      ],
+      "noiseOutput": "Fac",
+      "interpolation": "LINEAR",
+      "stops": [
+        [
+          0,
+          [
+            0.125,
+            0.25,
+            0.5,
+            1
+          ]
+        ],
+        [
+          1,
+          [
+            0.875,
+            0.625,
+            0.375,
+            1
+          ]
+        ]
+      ],
+      "renders": 0,
+      "numericalCredit": 0,
+      "scope": "Owned authored artist-style source derivative only; no ColorRamp/runtime/appearance equivalence claimed."
+    },
+    "timing": {
+      "guardedMilliseconds": 4143.159875,
+      "sumRenderMilliseconds": 2601.588542049285
+    },
+    "limits": [
+      "Only this64-point explicit-input default3D Noise Color/Fac material relation is measured.",
+      "Direct source-kernel output is related to actual EEVEE through an independently calibrated HALF-safe arithmetic carrier; EXR emission pixels alone are not asserted raw pre-store kernel words.",
+      "Arithmetic carrier excludes negative values and cannot observe zero sign.",
+      "Artist ColorRamp material is a source-only authored derivative, not a rendered or runtime-qualified composition.",
+      "No Final, public installer, browser/backend, whole-scene, support or coverage promotion."
+    ]
+  }
+}

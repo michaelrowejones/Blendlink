@@ -182,3 +182,15 @@ stale or nonfinite attributes refuse with the carrier retained. Hybrid channel
 baking preserves the source selection while adding its private atlas layer.
 Older serialized unnamed `uv` expressions retain their TEXCOORD_0 behavior;
 fresh owner-bound expressions use `uv_active`, which requires an explicit binding.
+## Finite image metadata qualification
+
+Blender 5.3 CPU `Image/Blank Image → Image Info` now has a separately measured
+finite-identity route for all five outputs and closed typed metadata consumers.
+Dimensions/Resolution preserve finite source size independently of viewport
+size; single-value metadata drops the image canvas. The qualified scope and
+source/built-Final/four-tuple evidence are in
+[the finite metadata record](../experiments/compositor-finite-image-info/README.md).
+This extends the existing partial Image Info port; transformed and arbitrary
+image domains remain unqualified. Legacy Render Layers metadata keeps its own
+profile and live texture-size behavior.
+

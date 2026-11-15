@@ -1,0 +1,83 @@
+{
+  "status": "CLOSED_NATIVE_NOISE_OFFSET_DIAGNOSTIC",
+  "sourceClosedReceipt": {
+    "path": "/tmp/scenetoweb-noise-offset-native-closed-r1.json",
+    "sha256": "69278565ef2726c77ecc98d7fb496496922cca91e067d19202b44b456fbfb0f0"
+  },
+  "profile": "Blender5.3.0 02f0899d78e3 Apple M5 Pro Metal; six fixed seed/lane operands",
+  "comparisons": [
+    {
+      "seed": 3,
+      "lane": 0,
+      "hash": 2810853268,
+      "normalizedWord": 1059555896,
+      "nativeUintFloatWord": 1327991352,
+      "separateWord": 1126527486,
+      "fusedWord": 1126527486,
+      "nativeOffsetWord": 1126527486,
+      "nativeFmaWord": 1126527486,
+      "separateDiffers": false
+    },
+    {
+      "seed": 3,
+      "lane": 1,
+      "hash": 2695874254,
+      "normalizedWord": 1059106759,
+      "nativeUintFloatWord": 1327542215,
+      "separateWord": 1126352042,
+      "fusedWord": 1126352042,
+      "nativeOffsetWord": 1126352042,
+      "nativeFmaWord": 1126352042,
+      "separateDiffers": false
+    },
+    {
+      "seed": 3,
+      "lane": 2,
+      "hash": 4011860407,
+      "normalizedWord": 1064247330,
+      "nativeUintFloatWord": 1332682786,
+      "separateWord": 1128360078,
+      "fusedWord": 1128360077,
+      "nativeOffsetWord": 1128360077,
+      "nativeFmaWord": 1128360077,
+      "separateDiffers": true
+    },
+    {
+      "seed": 4,
+      "lane": 0,
+      "hash": 2387182134,
+      "normalizedWord": 1057900930,
+      "nativeUintFloatWord": 1326336386,
+      "separateWord": 1125881015,
+      "fusedWord": 1125881015,
+      "nativeOffsetWord": 1125881015,
+      "nativeFmaWord": 1125881015,
+      "separateDiffers": false
+    },
+    {
+      "seed": 4,
+      "lane": 1,
+      "hash": 3313766164,
+      "normalizedWord": 1061520399,
+      "nativeUintFloatWord": 1329955855,
+      "separateWord": 1127294870,
+      "fusedWord": 1127294870,
+      "nativeOffsetWord": 1127294870,
+      "nativeFmaWord": 1127294870,
+      "separateDiffers": false
+    },
+    {
+      "seed": 4,
+      "lane": 2,
+      "hash": 1638102011,
+      "normalizedWord": 1052985064,
+      "nativeUintFloatWord": 1321420520,
+      "separateWord": 1124738009,
+      "fusedWord": 1124738009,
+      "nativeOffsetWord": 1124738009,
+      "nativeFmaWord": 1124738009,
+      "separateDiffers": false
+    }
+  ],
+  "supportCredit": 0
+}

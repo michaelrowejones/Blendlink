@@ -1,6 +1,34 @@
 # Finite Image Info semantics
 
-Research only; no new runtime/support qualification. A fresh guarded native
+## Current qualification
+
+The bounded Blender 5.3 CPU finite-identity route is now independently qualified.
+`qualified-evidence.json` records the fresh automatic transaction: 21 native
+graphs (20 production), eight saved Final scenes, 116 browser primary cases on
+Metal/SwiftShader × WebGPU/WebGL2, and 67,584 archived Float32 words with zero
+differences. Two automatic closes and a separate root replay are byte-identical.
+Runtime fingerprint: `b602c81fa0e51f54e86e37b0cd56d278d56a3c665a5441c5a092ed29ca2972da`.
+
+Only the declared identity Image/Blank producers, five outputs and closed
+metadata consumers are covered. Transforms, arbitrary image graphs and image
+pixel appearance are not qualified by this metadata proof. Blank metadata has
+no CPU realization texture; Image metadata retains CPU decoding. Backend
+canaries independently prove the observer works, while the admitted metadata
+payloads create/upload/bind zero physical GPU textures/samplers. This is payload
+work, not total renderer cost. Image Info remains **partial**, and historical
+Render Layers/legacy version classifications retain their original scopes.
+
+The full automatic run's recorded commands took 38.45 seconds. Reproduce with
+`node scripts/test-node-port.mjs compositor-finite-image-info --profile mac-53
+--blender /absolute/Blender --evidence artifacts/NEW_NAMESPACE` on the declared
+host. Use a fresh owned namespace and coordinate GPU work.
+
+The sections below are retained historical source and diagnostic checkpoints;
+their zero-credit statements describe those earlier stages, not the new proof.
+
+## Earlier native semantics research
+
+Research only at this earlier stage. A fresh guarded native
 Blender5.3 CPU transaction rendered25 tiny source-owned graphs with gpu.init
 explicitly denied (canary proved, measured calls reset to zero). Its source and
 native archive pins are retained by evidence.json; native-semantics.json records

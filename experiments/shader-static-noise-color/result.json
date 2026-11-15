@@ -1,0 +1,135 @@
+{
+  "schemaVersion": 1,
+  "status": "STATIC_COLOR_NATIVE_COMPARISON_FAILED_ZERO_CREDIT",
+  "supportCredit": 0,
+  "FinalCredit": 0,
+  "productionAdmission": false,
+  "profileScope": "Metal WebGPU and WebGL2;64 fixed inputs",
+  "gate": {
+    "maximumAbsoluteError": 9.5367431640625e-7,
+    "maximumUlps": 8,
+    "bothRequired": true
+  },
+  "generationSha256": "ae6a0ec063b18e40ed6b31d50a3b35089fb87ef3496ff2b0c899c3a9096cfb3c",
+  "browserReportSha256": "db6df03f57ebab7804205e0240eef9fb62d27b490a46bed29dbdeb8844053d5b",
+  "nativeReportSha256": "ab4ab1e46f98893589020d91696ff097a8f2043c2e869740b69dc151c8f7c7c2",
+  "tableAuthoritySha256": "69278565ef2726c77ecc98d7fb496496922cca91e067d19202b44b456fbfb0f0",
+  "helperCallSubstitutions": 2,
+  "genericPrefixByteIdentical": true,
+  "draws": 8,
+  "inputWords": 512,
+  "primaryWords": 1536,
+  "wordDifferences": 83,
+  "contractViolations": 1,
+  "maximumAbs": 3.8743019104003906e-7,
+  "maximumUlps": 13,
+  "apis": [
+    {
+      "backend": "webgpu",
+      "gpu": {
+        "vendor": "apple",
+        "architecture": "metal-3",
+        "description": ""
+      },
+      "flip": false,
+      "rows": [
+        {
+          "case": "noise-fbm3-default",
+          "words": 256,
+          "wordDifferences": 18,
+          "contractViolations": 0,
+          "maxAbs": 5.960464477539063e-8,
+          "maxUlps": 1,
+          "laneDifferences": [
+            0,
+            14,
+            4,
+            0
+          ]
+        },
+        {
+          "case": "noise-twice",
+          "words": 256,
+          "wordDifferences": 53,
+          "contractViolations": 0,
+          "maxAbs": 1.1920928955078125e-7,
+          "maxUlps": 4,
+          "laneDifferences": [
+            18,
+            8,
+            9,
+            18
+          ]
+        },
+        {
+          "case": "noise-to-voronoi-first",
+          "words": 256,
+          "wordDifferences": 12,
+          "contractViolations": 1,
+          "maxAbs": 3.8743019104003906e-7,
+          "maxUlps": 13,
+          "laneDifferences": [
+            0,
+            0,
+            0,
+            12
+          ]
+        }
+      ],
+      "maximumShaderBytes": 51507
+    },
+    {
+      "backend": "webgl2",
+      "gpu": {
+        "vendor": "Google Inc. (Apple)",
+        "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+      },
+      "flip": true,
+      "rows": [
+        {
+          "case": "noise-fbm3-default",
+          "words": 256,
+          "wordDifferences": 0,
+          "contractViolations": 0,
+          "maxAbs": 0,
+          "maxUlps": 0,
+          "laneDifferences": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "case": "noise-twice",
+          "words": 256,
+          "wordDifferences": 0,
+          "contractViolations": 0,
+          "maxAbs": 0,
+          "maxUlps": 0,
+          "laneDifferences": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "case": "noise-to-voronoi-first",
+          "words": 256,
+          "wordDifferences": 0,
+          "contractViolations": 0,
+          "maxAbs": 0,
+          "maxUlps": 0,
+          "laneDifferences": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "maximumShaderBytes": 58580
+    }
+  ]
+}
