@@ -1,0 +1,111 @@
+{
+  "status": "PAIRED_SAMPLING_STAGE_PASSED_NOT_MATERIAL_OR_SCENE_ACCEPTANCE",
+  "supportCredit": 0,
+  "installedSceneCredit": 0,
+  "fullArchvizCredit": 0,
+  "exactLodWords": 11264,
+  "sceneAnisotropicWords": 73728,
+  "bound": 0.0009765625,
+  "sourceBase": "c138f181b15ccb3e6042a91adc4b22dd5941457c",
+  "nativeDirectory": "/tmp/scenetoweb-box-storage-native-r3",
+  "nativeProducer": {
+    "root": "/tmp/scenetoweb-v1-box-storage-stage",
+    "sourceCommit": "09b5310d8202fb191d1caeb335d169110b35c2f0"
+  },
+  "nativeSha256": "6e130f37b63586d8922548e88806502cb5faec29f4f35b0acd36e38f733629d1",
+  "browserDirectory": "/tmp/scenetoweb-box-paired-browser-r6",
+  "browserSha256": "65c4c0bd17834e39f3373f3805e6ecb1d330f4301e33eb17583749fdf0083775",
+  "closedSha256": "e00df02e1ba5dc742152f04dde419187eaa9dbdd523853562a174ffb40d6d30e",
+  "independentClose": "/tmp/scenetoweb-box-paired-browser-r6-independent-closed.json",
+  "independentCloseSha256": "e00df02e1ba5dc742152f04dde419187eaa9dbdd523853562a174ffb40d6d30e",
+  "byteIdenticalCloses": true,
+  "lodSummary": [
+    {
+      "image": "Plaster-Overlay.png",
+      "rows": 22,
+      "words": 5632,
+      "violations": 0,
+      "maxAbs": 0
+    },
+    {
+      "image": "Plaster-normal.png",
+      "rows": 22,
+      "words": 5632,
+      "violations": 0,
+      "maxAbs": 0
+    }
+  ],
+  "sourcePins": {
+    "experiments/box-image-storage-stage/gl-paired-mips.js": "e9a1bdc581a07cccf892734769c6dfd75f6f32fbd68b053e7eeaf1345a15d5d0",
+    "experiments/box-image-storage-stage/browser-paired.js": "62a195d0405c63823f645966efc3b3abbce70f7265935c9ba4491cafb0e2ad0c",
+    "experiments/box-image-storage-stage/browser-paired.mjs": "af79a9ac3687948a1de5fee83279f910cf36e652bde339187922e3c8d7caea70",
+    "experiments/box-image-storage-stage/paired-check.mjs": "0f9fb9bda3fc4093d61601a9ef6dfae89823bdec37a0040280913208569f3290"
+  },
+  "strictGate": {
+    "path": "/tmp/scenetoweb-v1-materials-checkpoint/experiments/box-image-storage-stage/paired-stage-gate.mjs",
+    "sha256": "5bf07242a02db3ffb516d41fd4f07e9a8a59aea866fbf487849f4daa35f6c763"
+  },
+  "apiEvidence": [
+    {
+      "api": "webgpu",
+      "webgpuAvailableAtStart": true,
+      "deviceLosses": [],
+      "generation": {
+        "api": "WebGPU-sRGB/CPU-UNORM",
+        "gpu": {
+          "vendor": "apple",
+          "architecture": "metal-3",
+          "description": ""
+        },
+        "images": [
+          {
+            "image": "Plaster-Overlay.png",
+            "model": "paired-pow2-bsl-shared-srgb-typed-attachment-v1",
+            "ownedTextures": 11,
+            "readbackBuffers": 10
+          },
+          {
+            "image": "Plaster-normal.png",
+            "model": "cpu-paired-unorm-store-no-extra-f32-v1",
+            "ownedTextures": 0,
+            "readbackBuffers": 0
+          }
+        ]
+      }
+    },
+    {
+      "api": "webgl2",
+      "webgpuAvailableAtStart": false,
+      "deviceLosses": [],
+      "generation": {
+        "api": "WebGL2-sRGB/CPU-UNORM",
+        "gpu": {
+          "vendor": "Google Inc. (Apple)",
+          "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M5 Pro, Unspecified Version)"
+        },
+        "images": [
+          {
+            "image": "Plaster-Overlay.png",
+            "model": "paired-pow2-bsl-shared-srgb-gl2-typed-v1",
+            "generationMs": 137.69999992847443,
+            "ownedTextures": 11,
+            "readbackBuffers": 0
+          },
+          {
+            "image": "Plaster-normal.png",
+            "model": "cpu-paired-unorm-store-no-extra-f32-v1",
+            "ownedTextures": 0,
+            "readbackBuffers": 0
+          }
+        ]
+      }
+    }
+  ],
+  "previousEvidence": "experiments/box-image-storage-stage/paired-evidence-r5.json",
+  "remaining": [
+    "Independently implemented mathematical BOX blend in MIT runtime; research candidate is GPL and is not production code",
+    "Actual original Mapping/NormalMap material comparison",
+    "Saved original-graph Final/public installed proof with ownership/update/disposal and startup/memory controls",
+    "Original Archviz scene acceptance; no production admission"
+  ]
+}

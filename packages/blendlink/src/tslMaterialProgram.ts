@@ -1,4 +1,6 @@
 import { irInspectionChildren } from './tslIrInspection.js'
+import { shadowMaterialState, validateShadowMaterialNodes, type ShadowMaterialState } from './tslShadowExclusion.js'
+import { bool } from 'three/tsl'
 /**
  * The IR-to-node-graph half of the TSL material runtime (plan-doc gap
  * 8b.3): everything needed to turn a shipped program's channels plus
@@ -50,7 +52,7 @@ export interface TslRuntimeMeshExtras {
 }
 
 export type MaterialNodeSlot =
-  | 'colorNode'
+  | 'colorNode' | 'maskShadowNode'
   | 'emissiveNode'
   | 'roughnessNode'
   | 'metalnessNode'
@@ -98,6 +100,8 @@ export interface BuiltMaterialProgram {
   /** Slot-keyed TSL nodes; empty when nothing built. */
   nodes: Partial<Record<MaterialNodeSlot, unknown>>
   skipped: readonly MaterialProgramSkip[]
+  /** Explicit owned render state for the complete static shadow program. */
+  materialState?: ShadowMaterialState
 }
 
 /** Walk raw IR for attribute_object ops: the per-object properties a
@@ -218,6 +222,8 @@ export function buildMaterialProgram(
 ): BuiltMaterialProgram {
   const nodes: Partial<Record<MaterialNodeSlot, unknown>> = {}
   const skipped: MaterialProgramSkip[] = []
+  const fail = (message: string): never => { throw new TslIrError(message) }
+  const materialState = shadowMaterialState(channels, fail)
   for (const [channel, entry] of Object.entries(channels)) {
     const mapping = channelNodes[channel]
     if (!mapping) {
@@ -239,5 +245,10 @@ export function buildMaterialProgram(
       })
     }
   }
-  return { nodes, skipped }
+  if (materialState) {
+    if (skipped.length) fail('Shadow material state requires every supplied surface channel to build without skips')
+    nodes.maskShadowNode = bool(false)
+    validateShadowMaterialNodes(nodes, materialState, fail)
+  }
+  return { nodes, skipped, ...(materialState ? { materialState } : {}) }
 }

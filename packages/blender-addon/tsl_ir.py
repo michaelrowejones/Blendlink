@@ -1004,7 +1004,14 @@ def _emit_surface(tree, target="CYCLES"):
     is nonlinear under lighting), Transparent branches contribute only
     coverage, Diffuse/Glossy canonicalize onto the Principled channel
     vector, and emission always ships as radiance with strength 1."""
-    channels = _fold_surface(resolve_surface(tree, target))
+    expression = resolve_surface(tree, target)
+    import sys
+    if __package__:
+        from .shadow_branch_ir import primary_surface, wrap_alpha
+    else:
+        from shadow_branch_ir import primary_surface, wrap_alpha
+    primary = primary_surface(expression, sys.modules[__name__])
+    channels = _fold_surface(primary if primary is not None else expression)
     if channels is None:
         channels = {
             "Base Color": _const_color(0.0, 0.0, 0.0),
@@ -1013,6 +1020,8 @@ def _emit_surface(tree, target="CYCLES"):
             "Alpha": _const_scalar(0.0),
             "radiance": _const_color(0.0, 0.0, 0.0),
         }
+    if primary is not None:
+        channels['Alpha'] = wrap_alpha(channels['Alpha'], sys.modules[__name__])
     documents = {
         "Base Color": _channel_document(channels["Base Color"]),
         "Metallic": _channel_document(channels["Metallic"]),

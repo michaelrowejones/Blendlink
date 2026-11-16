@@ -1,0 +1,483 @@
+{
+  "status": "STARTUP_AND_SOURCE_ORCO_RESEARCH_FAILED_GATES_NO_ADMISSION",
+  "supportCredit": 0,
+  "performanceBudgetAcceptance": false,
+  "productionSdkChanged": false,
+  "originalSourceSha256": "6785c3b4c5b50e2eab7b088914f6558b90aa3dad9cd105ef57d2973495c7b69c",
+  "originalGlbSha256": "c1aef0622db7408a7eda5f3785096e49dd93c3a0eb6558a26d427aa7d48a4987",
+  "uniform": {
+    "status": "EXACT_UNIFORM_CANDIDATE_FAILED",
+    "supportCredit": 0,
+    "performanceBudgetAcceptance": false,
+    "gate": "Exact RGB8 final screenshots and exact Float32 source-control words; no tolerance",
+    "passed": false,
+    "image": {
+      "bytes": 2764800,
+      "differences": 572,
+      "maxAbs": 25
+    },
+    "literalSelfRepeat": {
+      "bytes": 2764800,
+      "differences": 0,
+      "maxAbs": 0
+    },
+    "controls": [
+      {
+        "api": "webgl2",
+        "id": "source-large",
+        "basis": "blender-z-up",
+        "mode": "uniform",
+        "words": 1024,
+        "differences": 0,
+        "maxAbs": 0
+      },
+      {
+        "api": "webgl2",
+        "id": "source-large",
+        "basis": "blender-z-up",
+        "mode": "wrong-bbox",
+        "words": 1024,
+        "differences": 768,
+        "maxAbs": 0.05741417407989502
+      },
+      {
+        "api": "webgl2",
+        "id": "source-small",
+        "basis": "blender-z-up",
+        "mode": "uniform",
+        "words": 1024,
+        "differences": 0,
+        "maxAbs": 0
+      },
+      {
+        "api": "webgl2",
+        "id": "source-small",
+        "basis": "blender-z-up",
+        "mode": "wrong-bbox",
+        "words": 1024,
+        "differences": 768,
+        "maxAbs": 0.9535994529724121
+      },
+      {
+        "api": "webgl2",
+        "id": "dyadic-degenerate",
+        "basis": "blender-z-up",
+        "mode": "uniform",
+        "words": 1024,
+        "differences": 0,
+        "maxAbs": 0
+      },
+      {
+        "api": "webgl2",
+        "id": "dyadic-degenerate",
+        "basis": "blender-z-up",
+        "mode": "wrong-bbox",
+        "words": 1024,
+        "differences": 768,
+        "maxAbs": 0.125
+      },
+      {
+        "api": "webgl2",
+        "id": "signed-nonuniform",
+        "basis": "blender-z-up",
+        "mode": "uniform",
+        "words": 1024,
+        "differences": 0,
+        "maxAbs": 0
+      },
+      {
+        "api": "webgl2",
+        "id": "signed-nonuniform",
+        "basis": "blender-z-up",
+        "mode": "wrong-bbox",
+        "words": 1024,
+        "differences": 768,
+        "maxAbs": 0.6944446563720703
+      },
+      {
+        "api": "webgl2",
+        "id": "source-large",
+        "basis": "gltf-y-up",
+        "mode": "uniform",
+        "words": 1024,
+        "differences": 0,
+        "maxAbs": 0
+      },
+      {
+        "api": "webgl2",
+        "id": "source-large",
+        "basis": "gltf-y-up",
+        "mode": "wrong-bbox",
+        "words": 1024,
+        "differences": 768,
+        "maxAbs": 0.05741417407989502
+      },
+      {
+        "api": "webgl2",
+        "id": "source-small",
+        "basis": "gltf-y-up",
+        "mode": "uniform",
+        "words": 1024,
+        "differences": 192,
+        "maxAbs": 4.76837158203125e-07
+      },
+      {
+        "api": "webgl2",
+        "id": "source-small",
+        "basis": "gltf-y-up",
+        "mode": "wrong-bbox",
+        "words": 1024,
+        "differences": 768,
+        "maxAbs": 0.9535994529724121
+      },
+      {
+        "api": "webgl2",
+        "id": "dyadic-degenerate",
+        "basis": "gltf-y-up",
+        "mode": "uniform",
+        "words": 1024,
+        "differences": 0,
+        "maxAbs": 0
+      },
+      {
+        "api": "webgl2",
+        "id": "dyadic-degenerate",
+        "basis": "gltf-y-up",
+        "mode": "wrong-bbox",
+        "words": 1024,
+        "differences": 768,
+        "maxAbs": 0.125
+      },
+      {
+        "api": "webgl2",
+        "id": "signed-nonuniform",
+        "basis": "gltf-y-up",
+        "mode": "uniform",
+        "words": 1024,
+        "differences": 0,
+        "maxAbs": 0
+      },
+      {
+        "api": "webgl2",
+        "id": "signed-nonuniform",
+        "basis": "gltf-y-up",
+        "mode": "wrong-bbox",
+        "words": 1024,
+        "differences": 768,
+        "maxAbs": 0.6944446563720703
+      },
+      {
+        "api": "webgpu",
+        "id": "source-large",
+        "basis": "blender-z-up",
+        "mode": "uniform",
+        "words": 1024,
+        "differences": 0,
+        "maxAbs": 0
+      },
+      {
+        "api": "webgpu",
+        "id": "source-large",
+        "basis": "blender-z-up",
+        "mode": "wrong-bbox",
+        "words": 1024,
+        "differences": 768,
+        "maxAbs": 0.05741417407989502
+      },
+      {
+        "api": "webgpu",
+        "id": "source-small",
+        "basis": "blender-z-up",
+        "mode": "uniform",
+        "words": 1024,
+        "differences": 0,
+        "maxAbs": 0
+      },
+      {
+        "api": "webgpu",
+        "id": "source-small",
+        "basis": "blender-z-up",
+        "mode": "wrong-bbox",
+        "words": 1024,
+        "differences": 768,
+        "maxAbs": 0.9535994529724121
+      },
+      {
+        "api": "webgpu",
+        "id": "dyadic-degenerate",
+        "basis": "blender-z-up",
+        "mode": "uniform",
+        "words": 1024,
+        "differences": 0,
+        "maxAbs": 0
+      },
+      {
+        "api": "webgpu",
+        "id": "dyadic-degenerate",
+        "basis": "blender-z-up",
+        "mode": "wrong-bbox",
+        "words": 1024,
+        "differences": 768,
+        "maxAbs": 0.125
+      },
+      {
+        "api": "webgpu",
+        "id": "signed-nonuniform",
+        "basis": "blender-z-up",
+        "mode": "uniform",
+        "words": 1024,
+        "differences": 0,
+        "maxAbs": 0
+      },
+      {
+        "api": "webgpu",
+        "id": "signed-nonuniform",
+        "basis": "blender-z-up",
+        "mode": "wrong-bbox",
+        "words": 1024,
+        "differences": 768,
+        "maxAbs": 0.6944446563720703
+      },
+      {
+        "api": "webgpu",
+        "id": "source-large",
+        "basis": "gltf-y-up",
+        "mode": "uniform",
+        "words": 1024,
+        "differences": 0,
+        "maxAbs": 0
+      },
+      {
+        "api": "webgpu",
+        "id": "source-large",
+        "basis": "gltf-y-up",
+        "mode": "wrong-bbox",
+        "words": 1024,
+        "differences": 768,
+        "maxAbs": 0.05741417407989502
+      },
+      {
+        "api": "webgpu",
+        "id": "source-small",
+        "basis": "gltf-y-up",
+        "mode": "uniform",
+        "words": 1024,
+        "differences": 192,
+        "maxAbs": 4.76837158203125e-07
+      },
+      {
+        "api": "webgpu",
+        "id": "source-small",
+        "basis": "gltf-y-up",
+        "mode": "wrong-bbox",
+        "words": 1024,
+        "differences": 768,
+        "maxAbs": 0.9535994529724121
+      },
+      {
+        "api": "webgpu",
+        "id": "dyadic-degenerate",
+        "basis": "gltf-y-up",
+        "mode": "uniform",
+        "words": 1024,
+        "differences": 0,
+        "maxAbs": 0
+      },
+      {
+        "api": "webgpu",
+        "id": "dyadic-degenerate",
+        "basis": "gltf-y-up",
+        "mode": "wrong-bbox",
+        "words": 1024,
+        "differences": 768,
+        "maxAbs": 0.125
+      },
+      {
+        "api": "webgpu",
+        "id": "signed-nonuniform",
+        "basis": "gltf-y-up",
+        "mode": "uniform",
+        "words": 1024,
+        "differences": 0,
+        "maxAbs": 0
+      },
+      {
+        "api": "webgpu",
+        "id": "signed-nonuniform",
+        "basis": "gltf-y-up",
+        "mode": "wrong-bbox",
+        "words": 1024,
+        "differences": 768,
+        "maxAbs": 0.6944446563720703
+      }
+    ],
+    "baseline": {
+      "firstReadyMs": 1834.3669169999998,
+      "initMs": 25.700000047683716,
+      "installMs": 309,
+      "compileMs": 95.60000002384186,
+      "firstRenderMs": 1424.2999999523163,
+      "uniqueFragmentSources": 53,
+      "uniqueVertexSources": 10
+    },
+    "candidate": {
+      "firstReadyMs": 1208.085458,
+      "initMs": 14.299999952316284,
+      "installMs": 447.10000002384186,
+      "compileMs": 254.60000002384186,
+      "firstRenderMs": 690.1000000238419,
+      "uniqueFragmentSources": 11,
+      "uniqueVertexSources": 10
+    },
+    "repeat": {
+      "firstReadyMs": 5638.782708,
+      "initMs": 17.59999990463257,
+      "installMs": 1007,
+      "compileMs": 418.5,
+      "firstRenderMs": 4495.5,
+      "uniqueFragmentSources": 53,
+      "uniqueVertexSources": 10
+    },
+    "inputHashes": {
+      "baselineReport": "6a6533b95ddbe9752ef9c05afc4e1634fe71d40ec089fe0100e8a400bf766cb9",
+      "candidateReport": "18c635105da5777aa5dd8f05ab286463e3e61d8dc156bb323e230e3169511b97",
+      "repeatReport": "a7e9ce88cc5388da4993db82a0ed80254160f668418e583d9f766472d49e1f4e",
+      "controls": "fc3b863039ab5b16b62da9a9d25f6d7dce9ed973c16d97c049d7df29f06aee5d"
+    }
+  },
+  "orcoField": {
+    "status": "ORCO_EMISSION_FIELD_CONTROLS_FAILED",
+    "supportCredit": 0,
+    "sceneAcceptance": false,
+    "passed": false,
+    "nativeSha256": "126ff2506bcd6e466b72fe55e7a13a00e56d3cd4c3cb6c55456b36331c462ae7",
+    "browserSha256": "77a2aea816e7dc893c273f1948ddcb5a19b4b4d725fad67416d3bea19cf8a1e9",
+    "totals": [
+      {
+        "kind": "mask",
+        "words": 196608,
+        "violations": 0,
+        "maxAbs": 0
+      },
+      {
+        "kind": "position",
+        "words": 196608,
+        "violations": 0,
+        "maxAbs": 0.0005767941474914551
+      },
+      {
+        "kind": "generated",
+        "words": 196608,
+        "violations": 1,
+        "maxAbs": 0.0013217329978942871
+      }
+    ]
+  },
+  "orcoFieldFailingRows": [
+    {
+      "api": "webgl2",
+      "case": "Cube",
+      "basis": "gltf-y-up",
+      "kind": "generated",
+      "words": 16384,
+      "differences": 2925,
+      "violations": 1,
+      "maxAbs": 0.0013217329978942871,
+      "maxUlp": 44350
+    }
+  ],
+  "nativeAssociation": {
+    "owners": 281,
+    "meshes": 281,
+    "allPositionAndTexspaceMatch": true,
+    "allOrientedTriangleAndTexspaceMatch": true,
+    "unique": 275,
+    "equivalentPairMeshes": 6,
+    "shapeKeys": 0,
+    "textureMeshes": 0,
+    "renderViewportFlagMismatches": 0,
+    "depsgraphMode": "VIEWPORT"
+  },
+  "nativeCpuField": {
+    "cases": 3,
+    "exactWords": 36,
+    "sourcePins": {
+      "source/blender/blenkernel/intern/mesh.cc": "7bdccbc858e4b356ce0821509587d379a1c0c6bfd0127c49bfce81d2ec6c251b",
+      "source/blender/blenkernel/intern/mesh_data_update.cc": "00dfb14d192a5397b9b016e15e067f2923dc119ebe794efbd75e2fec19372f25",
+      "source/blender/makesrna/intern/rna_mesh.cc": "456bdc1604f257b3409db3419a497ae574fda90e67f250b783350477c0979bd3",
+      "source/blender/draw/intern/shaders/draw_resource_finalize.bsl.hh": "9a0db95aec11f8c1a5570d484d479125cdb45c6fb0701ff54fbf4f10e6420d55",
+      "source/blender/draw/engines/eevee/shaders/eevee_geom_mesh.bsl.hh": "880e75767ef2699015af8ac381248e1c2a13619895f5f62ad8e4893a4f0f4e8e",
+      "source/blender/draw/engines/eevee/shaders/eevee_attributes_mesh_lib.bsl.hh": "32f926c272da61ac845414f6809acf85f2f64079e8687dcb380fe5f5f5ad9307",
+      "source/blender/draw/intern/mesh_extractors/extract_mesh_vbo_orco.cc": "9a4dac76986c91fc0fd5fe0b4b44ca37535741efb6d41a8f6e2d9bff2a26343b"
+    }
+  },
+  "nativeRenderField": {
+    "cases": 3,
+    "renders": 9,
+    "renderModes": [
+      "RENDER",
+      "RENDER",
+      "RENDER"
+    ],
+    "renderViewPositionsNormalsTopologyExact": true,
+    "sourcePins": {
+      "source/blender/blenkernel/intern/object_update.cc": "88b103d8e0151557b6facabafa464ab5f67c74ec836f01a2e7ac68ec3bcd85c9",
+      "source/blender/blenkernel/intern/mesh.cc": "7bdccbc858e4b356ce0821509587d379a1c0c6bfd0127c49bfce81d2ec6c251b",
+      "source/blender/blenkernel/intern/mesh_data_update.cc": "00dfb14d192a5397b9b016e15e067f2923dc119ebe794efbd75e2fec19372f25",
+      "source/blender/modifiers/intern/MOD_bevel.cc": "b242a587135ea361eb67f67e71ba437d588944c802d6bb4f98202e1422bf159d",
+      "source/blender/draw/engines/eevee/shaders/eevee_attributes_mesh_lib.bsl.hh": "32f926c272da61ac845414f6809acf85f2f64079e8687dcb380fe5f5f5ad9307",
+      "source/blender/draw/engines/eevee/shaders/eevee_geom_mesh.bsl.hh": "880e75767ef2699015af8ac381248e1c2a13619895f5f62ad8e4893a4f0f4e8e"
+    }
+  },
+  "soleOrcoFailure": {
+    "api": "webgl2",
+    "basis": "gltf-y-up",
+    "case": "Cube",
+    "pixel": [
+      28,
+      42
+    ],
+    "channel": 0,
+    "native": 0.364013671875,
+    "candidate": 0.3626919388771057,
+    "maxAbs": 0.0013217329978942871,
+    "gate": 0.0009765625,
+    "otherThreeTuplesApprox": 0.3642097,
+    "positionGl2BothBasesExactAtPixel": [
+      0.45973116159439087,
+      0.47744977474212646,
+      0.6283547282218933
+    ]
+  },
+  "excludedAttempts": [
+    {
+      "path": "/tmp/scenetoweb-impact-uniform-controls-r1",
+      "reason": "Accidental overlap with first site repeat; excluded from proof/timing."
+    },
+    {
+      "path": "/tmp/scenetoweb-impact-startup-baseline-repeat-r1",
+      "reason": "Accidental GPU overlap;67.757s excluded timing."
+    },
+    {
+      "path": "/tmp/scenetoweb-impact-orco-field-native-r1",
+      "reason": "Rendered3partial outputs, then missing Render-mode metadata guard failed; exact producer snapshot retained."
+    },
+    {
+      "path": "/tmp/scenetoweb-impact-orco-field-browser-r2",
+      "reason": "Stopped before draws because experimental helper used node:assert; failed helper snapshot retained."
+    }
+  ],
+  "artifactPins": {
+    "/tmp/scenetoweb-impact-startup-retained-baseline-r1/website.json": "a93370df7d2290b272eae99ce30f4b37c6de6574ebe46e66363654be7f9f3fb7",
+    "/tmp/scenetoweb-impact-startup-baseline-r2/website.json": "6a6533b95ddbe9752ef9c05afc4e1634fe71d40ec089fe0100e8a400bf766cb9",
+    "/tmp/scenetoweb-impact-startup-candidate-r1/website.json": "18c635105da5777aa5dd8f05ab286463e3e61d8dc156bb323e230e3169511b97",
+    "/tmp/scenetoweb-impact-startup-baseline-repeat-r2/website.json": "a7e9ce88cc5388da4993db82a0ed80254160f668418e583d9f766472d49e1f4e",
+    "/tmp/scenetoweb-impact-uniform-controls-r2/controls.json": "fc3b863039ab5b16b62da9a9d25f6d7dce9ed973c16d97c049d7df29f06aee5d",
+    "/tmp/scenetoweb-impact-orco-cpu-r1/native.json": "69b9b89e7f04bedcd3f5384baa7bbd6b057dae2f31b330977bc8cfaee7721ee4",
+    "/tmp/scenetoweb-impact-orco-association-r2/native.json": "b09ee54a1b9d4e7e29cf28ca76bbf311a8a2c0bcd83142186577d01899e79fb1",
+    "/tmp/scenetoweb-impact-orco-field-native-r2/native.json": "126ff2506bcd6e466b72fe55e7a13a00e56d3cd4c3cb6c55456b36331c462ae7",
+    "/tmp/scenetoweb-impact-orco-field-native-r2/native-archive.json": "676fbdf0999081e579804186776b4aafe09aa45dcfaf365bd32bac584d427281",
+    "/tmp/scenetoweb-impact-orco-field-browser-r3/browser.json": "77a2aea816e7dc893c273f1948ddcb5a19b4b4d725fad67416d3bea19cf8a1e9",
+    "/tmp/scenetoweb-impact-orco-field-closed-r3.json": "105ae4626ac4c094329d9a911a0cb273906b9daafc70099a2c1de8bd5eb17687"
+  }
+}

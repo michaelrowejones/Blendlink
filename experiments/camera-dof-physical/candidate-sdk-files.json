@@ -1,0 +1,87 @@
+{
+  "baseSourceCommit": "751dcffec11256f0b6347d833eef4bb9f8525f47",
+  "capturedPrivateSourceCommit": "67d9cb3bddab7c16642fe12aa538c0e32d5f8c35",
+  "patchSha256": "7ad971040d6d89a3df345b2f7b335d501dea9ccc49d69c65e36b8860c7f3ca9f",
+  "files": [
+    {
+      "path": "packages/blender-addon/camera_fidelity.py",
+      "bytes": 7442,
+      "sha256": "42d2bfe1659da90445fd01b2a92df6fd604a3ee088f342c53cf824cd295bdc58"
+    },
+    {
+      "path": "packages/blender-addon/tests/camera_dof_optics_check.py",
+      "bytes": 3951,
+      "sha256": "7ebf219bc9b57cf2ac88f74cdfe0fd58dc99c5ad583f43d96346086fdfbb14e7"
+    },
+    {
+      "path": "packages/blendlink/blender/source_presentation.py",
+      "bytes": 11555,
+      "sha256": "42a70a405ba523f820d1819433d94c84bc606f669661a845044f61a9a6d709cf"
+    },
+    {
+      "path": "packages/blendlink/src/sourceCameraDof.test.ts",
+      "bytes": 4710,
+      "sha256": "b03e1f4ed48e4be63be7f3c877d91398d21d64012f5bcbcbdb2e796613aac516"
+    },
+    {
+      "path": "packages/blendlink/src/sourceCameraDof.ts",
+      "bytes": 5229,
+      "sha256": "b232287dd2ee3e7baa1920e14ac2463a9b122483cd9ba535f4066035947c5427"
+    },
+    {
+      "path": "packages/blendlink/src/sourceCameraDofCoverage.test.ts",
+      "bytes": 1166,
+      "sha256": "934beffb764da2d7c17d74b4cd79a7f56ebac7ab6f7f7105f772835dcfc87c60"
+    },
+    {
+      "path": "packages/blendlink/src/sourceCameraDofCoverage.ts",
+      "bytes": 1470,
+      "sha256": "70348c2c3be71a173d80bb2dd6553b8947afbbc4456d6a7362726e2263215309"
+    },
+    {
+      "path": "packages/blendlink/src/sourceCameraDofLayers.test.ts",
+      "bytes": 2527,
+      "sha256": "de0214e5d37d451eb3fe4a4e8b80a7bf6a6d626a57b8c7e9a7352ed13741d1b3"
+    },
+    {
+      "path": "packages/blendlink/src/sourceCameraDofLayers.ts",
+      "bytes": 2205,
+      "sha256": "17a1fd3f088631e09235aa86753b99c4897d94e3ea37fee3b1267b3fd680cb2d"
+    },
+    {
+      "path": "packages/blendlink/src/sourceDisplay.ts",
+      "bytes": 3599,
+      "sha256": "a4802b4e248c075a4dac3c98ff2fe7ec05a0066d1822bf8fa9e36002f500956f"
+    },
+    {
+      "path": "packages/blendlink/src/threeComponents.ts",
+      "bytes": 114244,
+      "sha256": "d632dbeb7dfbb39b4cfe67938cdc61b2b2c6f64ce1b39df2ba839ac09b85dc43"
+    },
+    {
+      "path": "packages/blendlink/src/threeRuntime.ts",
+      "bytes": 146056,
+      "sha256": "4ffa4e4f0552efd4d34021784b0e7d0531bf4413e00ec1fc22dacc3b9a4a0dfc"
+    },
+    {
+      "path": "packages/blendlink/src/threeWebgpuPostPipeline.test.ts",
+      "bytes": 9051,
+      "sha256": "cc149fd3921739ab5109a477b5787580f5e341b9145767a7b0b6a7cd8ac4e0a9"
+    },
+    {
+      "path": "packages/blendlink/src/threeWebgpuPostPipeline.ts",
+      "bytes": 39283,
+      "sha256": "26cb8c9d38f41990344fa31a4b3b2722206cedb0c509ff0fc10c2cb0c3103417"
+    },
+    {
+      "path": "packages/blendlink/src/tslSourceCameraDof.ts",
+      "bytes": 11643,
+      "sha256": "55fa1a102d2d741bd7507ac637dab04cc8b03027c0554763d099b063bb248188"
+    },
+    {
+      "path": "packages/blendlink/src/tslSourceCameraDofLayers.ts",
+      "bytes": 840,
+      "sha256": "6a046cf85e92718a33436298815ed528ca6619f89f45b277a7750fe88e18b7c2"
+    }
+  ]
+}

@@ -20,6 +20,9 @@ export const HEADLESS_SUITE_PROFILES = Object.freeze({
   'vertex_color_alpha_check.py': Object.freeze({
     sentinel: 'VERTEX_ALPHA_NO_RENDER_POLICY_PASSED', profile: pinnedMetal53,
   }),
+  'shadow_branch_check.py': Object.freeze({
+    sentinel: 'SCENETOWEB_SHADOW_BRANCH_SOURCE_CHECK_PASSED', profile: pinnedMetal53,
+  }),
 })
 
 const derivedLabel = file => file.replace(/\.py$/, '').replace(/_/g, ' ')

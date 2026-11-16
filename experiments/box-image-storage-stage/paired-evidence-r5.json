@@ -1,0 +1,136 @@
+{
+  "status": "COMBINED_PAIRED_SAMPLER_STAGE_PASSED_RESEARCH_ZERO_SUPPORT_CREDIT",
+  "supportCredit": 0,
+  "installedSceneCredit": 0,
+  "fullArchvizCredit": 0,
+  "sourceBase": "ea458605f1422fbcc38e73216299795665694aad",
+  "nativeProducer": {
+    "root": "/tmp/scenetoweb-v1-box-storage-stage",
+    "sourceCommit": "09b5310d8202fb191d1caeb335d169110b35c2f0"
+  },
+  "nativeDirectory": "/tmp/scenetoweb-box-storage-native-r3",
+  "nativeSha256": "6e130f37b63586d8922548e88806502cb5faec29f4f35b0acd36e38f733629d1",
+  "browserDirectory": "/tmp/scenetoweb-box-paired-browser-r5",
+  "browserSha256": "8de336252363ba2d0804b61d05a5cd02f264e1f6b4badd27fbd0ed029b78019d",
+  "closedSha256": "1d0f5f295a5085016e53fac5868bb4b0e53d9375ea1577c6ea12a4a1e481a788",
+  "independentClose": "/tmp/scenetoweb-box-paired-browser-r5-independent-closed.json",
+  "independentCloseSha256": "1d0f5f295a5085016e53fac5868bb4b0e53d9375ea1577c6ea12a4a1e481a788",
+  "byteIdenticalCloses": true,
+  "modelSplit": {
+    "sRGB": "Base level is independently decoded original PNG; ten additional levels use actual Metal WebGPU typed-sRGB attachment IO and source Float32 SharedSRGB pair intermediates.",
+    "Non-Color": "Source Float32 paired reductions and SharedSRGB intermediates on CPU; normalized store does not invent extra Float32 multiply-by255 rounding. Explicit byte mip chain is independently recomputed and uploaded on both APIs."
+  },
+  "sourceJustification": "R4 GPU attachment and passing CPU normal-model bytes agree at base/even levels; odd stored levels alone differ by at most one byte. Retain the already independently measured CPU imageStore model for Non-Color; do not fit shader constants or sample answers.",
+  "bound": 0.0009765625,
+  "lodSummary": [
+    {
+      "image": "Plaster-Overlay.png",
+      "rows": 22,
+      "words": 5632,
+      "violations": 0,
+      "maxAbs": 0
+    },
+    {
+      "image": "Plaster-normal.png",
+      "rows": 22,
+      "words": 5632,
+      "violations": 0,
+      "maxAbs": 0
+    }
+  ],
+  "sceneAnisotropicSampler": {
+    "nativeSamples": 2,
+    "rows": 72,
+    "words": 73728,
+    "violations": 0,
+    "byImage": [
+      {
+        "image": "Plaster-Overlay.png",
+        "words": 36864,
+        "maxAbs": 0.00012198090553283691
+      },
+      {
+        "image": "Plaster-normal.png",
+        "words": 36864,
+        "maxAbs": 0.00048786401748657227
+      }
+    ]
+  },
+  "stageTotals": [
+    {
+      "kind": "mask",
+      "words": 24576,
+      "violations": 0,
+      "maxAbs": 0
+    },
+    {
+      "kind": "input",
+      "words": 12288,
+      "violations": 0,
+      "maxAbs": 0
+    },
+    {
+      "kind": "normal",
+      "words": 24576,
+      "violations": 0,
+      "maxAbs": 0.00048744678497314453
+    },
+    {
+      "kind": "weights",
+      "words": 24576,
+      "violations": 0,
+      "maxAbs": 0.0004163980484008789
+    },
+    {
+      "kind": "face",
+      "words": 24576,
+      "violations": 0,
+      "maxAbs": 0
+    },
+    {
+      "kind": "position",
+      "words": 24576,
+      "violations": 0,
+      "maxAbs": 0.00048798322677612305
+    },
+    {
+      "kind": "sampler",
+      "words": 221184,
+      "violations": 35546,
+      "maxAbs": 0.25391773879528046
+    }
+  ],
+  "captureRows": 348,
+  "explicitLodRows": 88,
+  "pageShaderHttpErrors": 0,
+  "deviceLosses": [
+    {
+      "api": "webgpu",
+      "events": []
+    },
+    {
+      "api": "webgl2",
+      "events": [
+        {
+          "owner": "generator",
+          "reason": "destroyed",
+          "message": "Device was destroyed."
+        }
+      ]
+    }
+  ],
+  "retainedNegativeControls": "NoMip and ordinaryMip policies remain mismatched; every row retained, no masks or threshold changes. Positive-LOD native fetch rows remain invalid and uncredited.",
+  "previousEvidence": "experiments/box-image-storage-stage/paired-evidence-r4.json",
+  "sourcePins": {
+    "experiments/box-image-storage-stage/gpu-paired-mips.js": "970dc659798d0c1e786d33d01351e521af0d0bd03f6186de66e02cca6958e88f",
+    "experiments/box-image-storage-stage/paired-check.mjs": "2acad881f8092b3dc0e78ab7781939e9d67cf38bda938711fe0c91264096b30b",
+    "experiments/box-image-storage-stage/browser-paired.mjs": "fd7ed65f58f4d4d416c4b9c466e8176e1243dd08936b03861b31ec0a1163ff46",
+    "experiments/box-image-storage-stage/browser-paired.js": "1bc42cb8b1e93052451f17f7d3259f1ddf81a1fc23fe3530ef8706abcb3909c8",
+    "experiments/box-image-storage-stage/mip-model-bsl-f32.mjs": "64c6a6a3137bfa62dc1aabb2fba921cdc3274c9665b15cbbd4d6f47c5d93d5d1"
+  },
+  "remaining": [
+    "Actual source Mapping/NormalMap material comparison",
+    "Saved original-graph Final/public-installed comparison and resource/failure controls",
+    "Original Archviz scene acceptance; no production SDK admission yet"
+  ]
+}

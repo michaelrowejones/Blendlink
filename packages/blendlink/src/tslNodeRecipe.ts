@@ -1,4 +1,5 @@
 import {buildTslRadialCoordinates} from './tslRadialCoordinates.js'
+import { shadowExclusionInput } from './tslShadowExclusion.js'
 import { buildNativeVector2 } from './tslShaderVector2.js'
 import {buildTslRadialWidth} from './tslRadialWidth.js'
 import {buildStaticRepeat,buildRepeatReference,staticRepeatCost} from './tslRepeat.js'
@@ -863,6 +864,8 @@ function build(expression: TslIrExpression): TslExpression {
       }
       return value
     }
+    case 'shadow_exclusion_native':
+      return build(shadowExclusionInput(expression, fail) as TslIrExpression)
     case 'vertex_color_alpha': {
       if (expression.model !== 'eevee53-float-color-alpha-scalar-v1' || expression.sourceProfile !== 'blender53-eevee-metal-float-color-alpha-v1' || typeof expression.layer !== 'string'
         || !activeOptions.vertexColorAlpha) return fail('Vertex Color Alpha requires an actual qualified scalar primitive binding')

@@ -1,0 +1,61 @@
+{
+  "blenderSourceCommit": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "files": [
+    {
+      "path": "source/blender/blenkernel/intern/mesh_tangent.cc",
+      "sha256": "5f903346e4eecd6b9213ee95a9ce45aaea1edc5ef08a3d3aed14ad948dbf576b",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/draw/intern/mesh_extractors/extract_mesh_vbo_tan.cc",
+      "sha256": "ef630e3aba5b4873be9b2e22305ff4fff4dce3aa97dedaf25b9b40609bcf8c31",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/gpu/shaders/material/gpu_shader_material_normal_map.bsl.hh",
+      "sha256": "ead6fbd21fb6999bddaba80ecaaead734652e955a25ac39d7572f74fc8ac8ccf",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/nodes/shader/nodes/node_shader_normal_map.cc",
+      "sha256": "ee7a8d605a5ed83a2ec4a6d2c2f2a934d791dc429bebdc9713318b391c5e26a3",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/nodes/shader/nodes/node_shader_output_material.cc",
+      "sha256": "5fbf290cf9b2d6aa52678beece27a8acd05c5efbdfd4924dc0e12b2cdf1c1223",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/draw/engines/eevee/eevee_shader.cc",
+      "sha256": "e5d500cbaa7d8892cf8f141d7ff0b38083dc67c0c40d07ad816e4bda2649d4b6",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "intern/mikktspace/mikktspace.hh",
+      "sha256": "6f38dd762a3c19d4eab7ac3ad3862a365c2f0b0e23352511ba9e36cf750fb77a",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "intern/mikktspace/mikk_float3.hh",
+      "sha256": "2b314080f18abed0ab714b1b868793cfd4b055fb2e970cee8d71289ba76a692a",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "intern/mikktspace/mikk_atomic_hash_set.hh",
+      "sha256": "8cccce0fcef04bf3ee99ac4be467e8a6133a06ca4c35748898e0bb2d82faf247",
+      "license": "Apache-2.0"
+    },
+    {
+      "path": "intern/mikktspace/mikk_util.hh",
+      "sha256": "49c6c1a3ea1ab5f1b2ded452dea180a4dbdc030d2210e804106bf1c779a51585",
+      "license": "Apache-2.0"
+    }
+  ],
+  "stockGltfExporter": {
+    "nativePath": "scripts/addons_core/io_scene_gltf2/blender/exp/primitive_extract.py",
+    "sha256": "60f243d20c07c5b1efeffa7b7fd7e1eba06d243c3ce2ce3acf872aa9e7665a02"
+  },
+  "threeVersion": "0.184.0",
+  "threeMikkModuleSha256": "a27a8e3c71d2d47eab93c57e84d9190925df42cdbd820e07be15c8edc789c7ca"
+}

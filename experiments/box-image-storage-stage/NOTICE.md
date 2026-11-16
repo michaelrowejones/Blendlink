@@ -14,3 +14,11 @@ The applicable license is the [Apache License, Version 2.0](https://www.apache.o
 The SceneToWeb versions translate the relevant power-of-two arithmetic into JavaScript for an isolated CPU experiment, add PNG decoding and comparisons, and separate a normalized-store rounding hypothesis. They do not implement the shader's complete dimensional, format, layer, tile, or GPU behavior. Their file-level license is Apache-2.0. Native Blender capture helpers and the imported experimental BOX/comparison code retain their own file-level licenses; none of this research is added to the MIT SceneToWeb runtime.
 
 This notice is additive. The frozen `09b5310` model, producer scripts, proofs and evidence hashes remain unchanged.
+
+The additive `mip-model-bsl-f32.mjs` separates the source's Float32 SharedSRGB
+operations from typed Metal texture conversion hypotheses.
+`gpu-paired-mips.js` transcribes the same bounded power-of-two paired reduction
+and shared conversion into WGSL for an isolated hardware-typed attachment
+experiment. Both retain the NVIDIA/Blender Apache-2.0 notices. The browser
+capture/comparison harnesses retain GPL-3.0-or-later licensing and do not add
+this code to the production runtime.

@@ -1,0 +1,96 @@
+diff --git a/packages/blendlink/src/threeRuntime.ts b/packages/blendlink/src/threeRuntime.ts
+index 0b59967..d9e144c 100644
+--- a/packages/blendlink/src/threeRuntime.ts
++++ b/packages/blendlink/src/threeRuntime.ts
+@@ -344,6 +344,9 @@ export interface InstallThreeCompiledSceneOptions extends MeshoptWorkerOptions {
+   /** Preview Studio opt-in. Uses Blender authoring evidence only where the
+    * published recipe deliberately leaves presentation application-owned. */
+   useAuthoringPreview?: boolean
++  /** Explicit per-material Generated-coordinate uniform candidate; preserves
++   * private variants. Defaults to literal coordinates for existing proofs. */
++  generatedTexspaceBinding?: 'uniform'
+   /** Explicit private renderer-local Area light/LTC ownership on node renderers.
+    * Shared application LTC globals and light registrations remain untouched. */
+   nodeRectAreaLights?: 'renderer-local'
+@@ -2527,6 +2530,7 @@ async function installLoadedThreeCompiledSceneNow(
+       const { installTslMaterials } = await import('./tslMaterialRuntime.js')
+       tslMaterials = await installTslMaterials({
+         root,
++        ...(options.generatedTexspaceBinding ? { generatedTexspaceBinding: options.generatedTexspaceBinding } : {}),
+         ...(options.signal ? {signal:options.signal} : {}),
+         descriptor: {
+           ...descriptor,
+diff --git a/packages/blendlink/src/tslMaterialRuntime.ts b/packages/blendlink/src/tslMaterialRuntime.ts
+index fe037dd..4b220a1 100644
+--- a/packages/blendlink/src/tslMaterialRuntime.ts
++++ b/packages/blendlink/src/tslMaterialRuntime.ts
+@@ -69,6 +69,9 @@ import { collectObjectInfoOutputs, createObjectInfoResolver, validateObjectInfoB
+ import type { MaterialProgramImage, MaterialProgramsDocument } from './materialProgramDocument.js'
+
+ export interface InstallTslMaterialsOptions {
++  /** Opt-in immutable Generated-coordinate uniforms. Literal mode remains
++   * default until the application's renderer/profile has equivalence proof. */
++  generatedTexspaceBinding?: 'uniform'
+   /** Cancel asynchronous field preparation before any material or draw callback changes. */
+   signal?: AbortSignal
+   root: THREE.Object3D
+@@ -374,6 +377,17 @@ function meshRuntimeExtras(object: THREE.Object3D): TslRuntimeMeshExtras | null
+  * material they cover. Reversible: dispose() restores the loaded materials
+  * and releases every node material and build-allocated texture.
+  */
++/** Copy a variant's values once; never share mutable vectors across variants
++ * or read editable object metadata during a draw. No reciprocal rewrite. */
++export function withGeneratedTexspaceUniforms(options: BuildTslOptions): BuildTslOptions {
++  const texspace = options.generatedTexspace
++  if (!texspace) return options
++  return { ...options, generatedTexspaceNodes: {
++    location: uniform(new THREE.Vector3(...texspace.location)) as unknown as NonNullable<BuildTslOptions['generatedTexspaceNodes']>['location'],
++    denominator: uniform(new THREE.Vector3(...texspace.size.map(value => (value === 0 ? 1 : value) * 2) as [number, number, number])) as unknown as NonNullable<BuildTslOptions['generatedTexspaceNodes']>['denominator'],
++  } }
++}
++
+ export async function installTslMaterials(
+   options: InstallTslMaterialsOptions,
+ ): Promise<InstalledTslMaterials> {
+@@ -656,12 +670,12 @@ export async function installTslMaterials(
+             // returns slot nodes and named skips; the installer constructs
+             // the clone only when something built, so the no-channel path
+             // never allocates a material at all.
++            const variantOptions = buildOptionsFor(extras, resources, source, programTextures?.resolver, objectAttribute)
++            const boundOptions = options.generatedTexspaceBinding === 'uniform'
++              ? withGeneratedTexspaceUniforms(variantOptions) : variantOptions
+             const program = buildMaterialProgram(
+               Object.fromEntries(channels),
+-              { ...buildOptionsFor(
+-                extras, resources, source, programTextures?.resolver,
+-                objectAttribute,
+-              ), ...vertexAlpha.options, ...(options.signal?{signal:options.signal}:{}), preparedNoiseFields: preparation, validateMagicCoordinates:expression=>validateMagicCoordinates(expression,mesh,magicOptions??{}), normalMapBasis, ...(info ? { objectInfo: createObjectInfoResolver(
++              { ...boundOptions, ...vertexAlpha.options, ...(options.signal?{signal:options.signal}:{}), preparedNoiseFields: preparation, validateMagicCoordinates:expression=>validateMagicCoordinates(expression,mesh,magicOptions??{}), normalMapBasis, ...(info ? { objectInfo: createObjectInfoResolver(
+                 owner.userData?.blendlink_tsl_object, material.userData?.blendlink_tsl_material,
+               ) } : {}) },
+             )
+diff --git a/packages/blendlink/src/tslNodeRecipe.ts b/packages/blendlink/src/tslNodeRecipe.ts
+index c1bc11f..cff843d 100644
+--- a/packages/blendlink/src/tslNodeRecipe.ts
++++ b/packages/blendlink/src/tslNodeRecipe.ts
+@@ -303,6 +303,9 @@ export interface BuildTslOptions {
+     location: [number, number, number]
+     size: [number, number, number]
+   }
++  /** Explicit immutable per-material binding candidate. Numeric texspace is
++   * retained for bounds/source validation; operation order is unchanged. */
++  generatedTexspaceNodes?: { location: TslExpression; denominator: TslExpression }
+   /** Light-contract override for shader_to_rgb_diffuse: the effective
+    * diffuse irradiance (light color x strength x cos(theta) / pi under
+    * the fixed-sun contract the EEVEE reference renders with). The
+@@ -918,8 +921,8 @@ function build(expression: TslIrExpression): TslExpression {
+         (component) => (component === 0 ? 1 : component),
+       )
+       return blenderObjectPosition()
+-        .sub(tslVec3(...texspace.location))
+-        .div(tslVec3(safe[0] * 2, safe[1] * 2, safe[2] * 2))
++        .sub(activeOptions.generatedTexspaceNodes?.location ?? tslVec3(...texspace.location))
++        .div(activeOptions.generatedTexspaceNodes?.denominator ?? tslVec3(safe[0] * 2, safe[1] * 2, safe[2] * 2))
+         .add(0.5)
+     }
+     case 'view_cos': {

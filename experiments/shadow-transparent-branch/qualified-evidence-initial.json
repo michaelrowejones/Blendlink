@@ -1,0 +1,222 @@
+{
+  "schemaVersion": 1,
+  "status": "QUALIFIED_BOUNDED_TERMINAL_SHADOW_BRANCH",
+  "generatedAt": "2026-11-16T01:01:17.242349+00:00",
+  "node": "shader:ShaderNodeLightPath",
+  "support": "partial",
+  "sceneAcceptance": false,
+  "generalLightPathFields": false,
+  "performanceAcceptance": false,
+  "sourceProfile": {
+    "version": [
+      5,
+      3,
+      0
+    ],
+    "build": "02f0899d78e3",
+    "engine": "EEVEE",
+    "platform": "darwin",
+    "machine": "arm64",
+    "backend": "METAL",
+    "observedDevice": "Apple M5 Pro"
+  },
+  "scope": "Static terminal direct Is Shadow Ray Mix; shadow branch exact white Transparent; separate Cycles output equals non-shadow closure. Non-shadow closure is an ungrouped Principled with unlinked literal Alpha, or exactly one direct unlinked-factor white-Transparent/Principled Mix with Principled Alpha one. Visible Alpha must be positive canonical Float32 <=1. Original artist graph stays unchanged. Complete five-channel node program owns visible render state and independent shadow discard; no stock carrier Alpha assumption.",
+  "operator": {
+    "op": "shadow_exclusion_native",
+    "model": "eevee53-white-shadow-branch-v1"
+  },
+  "materialStateModel": "eevee53-static-shadow-alpha-v1",
+  "proofRoles": {
+    "native": "Actual EEVEE 128x128/64-sample shadow predicate against transparent and opaque controls; words decode saved PNGs through native color handling, not raw linear film.",
+    "installed": "Actual Final GLBs and pinned sidecars; four actual Metal/SwiftShader x WebGPU/WebGL2 tuples per case. Mixed casters, visible-mask identity, stock restoration, remount and Alpha controls. Main visual fields use blendable RGBA16Float losslessly decoded to Float32; supporting Alpha field is unblended RGBA32Float.",
+    "comparison": "Predicate controls compare within each engine, not Blender-versus-Three BRDF or whole-scene pixels."
+  },
+  "counts": {
+    "nativeCases": 2,
+    "nativeRenders": 6,
+    "nativeFields": 6,
+    "nativeWords": 393216,
+    "installedTuples": 8,
+    "installedFields": 80,
+    "installedWords": 5242880,
+    "coveredHalfAlphaWords": 8192,
+    "coveredFloat32AlphaWords": 8192
+  },
+  "limits": [
+    "No general Light Path field values or other outputs.",
+    "No Cycles/live ray tracing, XR, linked factors, groups, graph animation/drivers/NLA, reversed shadow branch, colored shadow transparency, multiple visible BSDFs or nested transparent mixes.",
+    "Other native versions/builds/backends/hosts remain unqualified; 4.2/5.2 retain unsupported status.",
+    "Whole Archviz scene remains blocked by Plaster NormalMap/frame and image transport; isolated original Glass is not original-scene acceptance.",
+    "Stock Blender 5.3 carrier Alpha and same-object Three shadow-cache changes require explicit runtime ownership; generic legacy WebGLRenderer is refused."
+  ],
+  "closedReader": {
+    "path": "experiments/shadow-transparent-branch/read.mjs",
+    "sha256": "16a261b4f8c00282d28c4e643caccc02a99fa23268191dc7c8e73abd93b21e33"
+  },
+  "cases": [
+    {
+      "nativeDirectory": "/tmp/scenetoweb-shadow-native-r9-original",
+      "browserDirectory": "/tmp/scenetoweb-shadow-browser-r11-original",
+      "closedReport": "/tmp/scenetoweb-shadow-original-closed-r2.json",
+      "closedSha256": "dcaa088f303942868b1c5cce8c057fb88216ee263b81f8b77a61b86a91eb7528",
+      "closed": {
+        "status": "BOUNDED_SHADOW_AND_OWNED_ALPHA_CLOSED_NOT_SCENE_ACCEPTANCE",
+        "fixture": "original-archviz-glass",
+        "sourceCommit": "d196e170a92a9dd892261f2cddeb9e82a8354658",
+        "browserSourceCommit": "03bde1bb94254a9a14f1a4193d1c594f4216d68b",
+        "nativeReportSha256": "f911823abcd8bfc995574902f10f0cca65d29d5ada3f6ad96ad6207f67a80d97",
+        "browserReportSha256": "9fd1459f1531a4831c0cc69b193feaded33b652858cb82fb5a683f155c11a314",
+        "nativeProducerSha256": "6534df7ba3e382486f8554dc4483323dad77e3b7ca374b00f36e53a52fe426a0",
+        "browserProducerSha256": "9d8f002fd8c34d1e77aadb4183c93054c3b8c8f9bd0bae4ab31aaabce131bf56",
+        "finalGlbSha256": "ee32f0d0503a5e64c610247add0a46355407ac54000e0d02fd2db25464ffab81",
+        "nativeWordsPerField": 65536,
+        "nativeNegativeWords": 3471,
+        "visibleAlpha": 0.050000011920928955,
+        "rows": [
+          {
+            "profile": "metal",
+            "backend": "webgpu",
+            "wordsPerField": 65536,
+            "fields": 10,
+            "negativeWords": 3465,
+            "otherCasterWords": 3171,
+            "visibleCasterWords": 3072,
+            "alphaWords": {
+              "alphaProbe": 1024,
+              "f32AlphaProbe": 1024
+            }
+          },
+          {
+            "profile": "metal",
+            "backend": "webgl2",
+            "wordsPerField": 65536,
+            "fields": 10,
+            "negativeWords": 3465,
+            "otherCasterWords": 3171,
+            "visibleCasterWords": 3072,
+            "alphaWords": {
+              "alphaProbe": 1024,
+              "f32AlphaProbe": 1024
+            }
+          },
+          {
+            "profile": "swiftshader",
+            "backend": "webgpu",
+            "wordsPerField": 65536,
+            "fields": 10,
+            "negativeWords": 3465,
+            "otherCasterWords": 3171,
+            "visibleCasterWords": 3072,
+            "alphaWords": {
+              "alphaProbe": 1024,
+              "f32AlphaProbe": 1024
+            }
+          },
+          {
+            "profile": "swiftshader",
+            "backend": "webgl2",
+            "wordsPerField": 65536,
+            "fields": 10,
+            "negativeWords": 3465,
+            "otherCasterWords": 3171,
+            "visibleCasterWords": 3072,
+            "alphaWords": {
+              "alphaProbe": 1024,
+              "f32AlphaProbe": 1024
+            }
+          }
+        ],
+        "sceneAcceptance": false,
+        "generalLightPathFields": false
+      }
+    },
+    {
+      "nativeDirectory": "/tmp/scenetoweb-shadow-native-r10-opaque",
+      "browserDirectory": "/tmp/scenetoweb-shadow-browser-r12-opaque",
+      "closedReport": "/tmp/scenetoweb-shadow-opaque-closed-r2.json",
+      "closedSha256": "0ac113c4dfdf61fa9909df28c8c6586185bf4f2cbe7f783e6b50b0748ccaebb2",
+      "closed": {
+        "status": "BOUNDED_SHADOW_AND_OWNED_ALPHA_CLOSED_NOT_SCENE_ACCEPTANCE",
+        "fixture": "opaque-primary",
+        "sourceCommit": "d196e170a92a9dd892261f2cddeb9e82a8354658",
+        "browserSourceCommit": "03bde1bb94254a9a14f1a4193d1c594f4216d68b",
+        "nativeReportSha256": "356f74a0b845849f8e599da9ca1892500c13356f4eea0a20c27ab5ec86bfe8b9",
+        "browserReportSha256": "0c771b9fccd81c5badbc6563a4d795d5b79cda12edadd320a949a4b3b4c6c5ae",
+        "nativeProducerSha256": "6534df7ba3e382486f8554dc4483323dad77e3b7ca374b00f36e53a52fe426a0",
+        "browserProducerSha256": "9d8f002fd8c34d1e77aadb4183c93054c3b8c8f9bd0bae4ab31aaabce131bf56",
+        "finalGlbSha256": "0fde2f8b94e71f0af67e14deeb6c085ed7e76a7415711bf50129a317ea5464cf",
+        "nativeWordsPerField": 65536,
+        "nativeNegativeWords": 3471,
+        "visibleAlpha": 1,
+        "rows": [
+          {
+            "profile": "metal",
+            "backend": "webgpu",
+            "wordsPerField": 65536,
+            "fields": 10,
+            "negativeWords": 3465,
+            "otherCasterWords": 3171,
+            "visibleCasterWords": 3072,
+            "alphaWords": {
+              "alphaProbe": 1024,
+              "f32AlphaProbe": 1024
+            }
+          },
+          {
+            "profile": "metal",
+            "backend": "webgl2",
+            "wordsPerField": 65536,
+            "fields": 10,
+            "negativeWords": 3465,
+            "otherCasterWords": 3171,
+            "visibleCasterWords": 3072,
+            "alphaWords": {
+              "alphaProbe": 1024,
+              "f32AlphaProbe": 1024
+            }
+          },
+          {
+            "profile": "swiftshader",
+            "backend": "webgpu",
+            "wordsPerField": 65536,
+            "fields": 10,
+            "negativeWords": 3465,
+            "otherCasterWords": 3171,
+            "visibleCasterWords": 3072,
+            "alphaWords": {
+              "alphaProbe": 1024,
+              "f32AlphaProbe": 1024
+            }
+          },
+          {
+            "profile": "swiftshader",
+            "backend": "webgl2",
+            "wordsPerField": 65536,
+            "fields": 10,
+            "negativeWords": 3465,
+            "otherCasterWords": 3171,
+            "visibleCasterWords": 3072,
+            "alphaWords": {
+              "alphaProbe": 1024,
+              "f32AlphaProbe": 1024
+            }
+          }
+        ],
+        "sceneAcceptance": false,
+        "generalLightPathFields": false
+      }
+    }
+  ],
+  "failedDiagnosticsRetained": [
+    "/tmp/scenetoweb-shadow-browser-r1",
+    "/tmp/scenetoweb-shadow-browser-r2",
+    "/tmp/scenetoweb-shadow-browser-r3",
+    "/tmp/scenetoweb-shadow-browser-r4",
+    "/tmp/scenetoweb-shadow-browser-r5",
+    "/tmp/scenetoweb-shadow-browser-r7-original",
+    "/tmp/scenetoweb-shadow-browser-r8-original",
+    "/tmp/scenetoweb-shadow-browser-r9-original",
+    "/tmp/scenetoweb-shadow-native-r6-original",
+    "/tmp/scenetoweb-shadow-native-r7-original"
+  ]
+}

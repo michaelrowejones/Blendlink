@@ -1,0 +1,865 @@
+diff --git a/packages/blender-addon/camera_fidelity.py b/packages/blender-addon/camera_fidelity.py
+index 6b0c061..4df3bdd 100644
+--- a/packages/blender-addon/camera_fidelity.py
++++ b/packages/blender-addon/camera_fidelity.py
+@@ -2 +2,81 @@
+-"""Read-only warnings for authored camera optics without a web translation."""
++"""Read-only camera optics evidence; extraction does not qualify a web renderer."""
++
++import math
++
++
++def extract_depth_of_field(scene, depsgraph=None):
++    """EEVEE 02f0899d78e3 perspective CoC inputs, with a frozen camera contract.
++
++    The native aperture is lens * .001 / (2*fstop), in Blender scene units:
++    EEVEE does not multiply it by unit_settings.scale_length. Its projected
++    radius at the focus plane gives CoC bias; CoC(z) = bias*(1-focus/z).
++    This transports evaluated data, not an EEVEE gather/scatter port.
++    """
++    camera = scene.camera
++    if camera is None or camera.type != 'CAMERA' or not camera.data.dof.use_dof:
++        return None
++    import bpy
++    from mathutils import Matrix
++    depsgraph = depsgraph or bpy.context.evaluated_depsgraph_get()
++    evaluated = camera.evaluated_get(depsgraph)
++    data = evaluated.data
++    dof = data.dof
++    render = scene.render
++    width = max(1, int(render.resolution_x * render.resolution_percentage / 100))
++    height = max(1, int(render.resolution_y * render.resolution_percentage / 100))
++    projection = evaluated.calc_matrix_camera(depsgraph, x=width, y=height,
++        scale_x=render.pixel_aspect_x, scale_y=render.pixel_aspect_y)
++    target = dof.focus_object
++    focus = max(float(dof.focus_distance), 1e-5)
++    if target is not None:
++        target = target.evaluated_get(depsgraph)
++        position = target.matrix_world.translation
++        bone = target.pose.bones.get(dof.focus_subtarget) if target.pose else None
++        if bone is not None:
++            position = (target.matrix_world @ bone.matrix).translation
++        axis = evaluated.matrix_world.col[2].to_3d().normalized()
++        focus = max(abs(axis.dot(evaluated.matrix_world.translation-position)), 1e-5)
++    aperture = float(data.lens) * 1e-3 / (2 * max(float(dof.aperture_fstop), 1e-5))
++    reasons = []
++    if data.type != 'PERSP': reasons.append('Only perspective camera optics are modeled')
++    if scene.render.engine != 'BLENDER_EEVEE': reasons.append('Only the pinned EEVEE optics are modeled')
++    if target is not None: reasons.append('Object/bone focus tracking is not qualified')
++    if dof.aperture_blades != 0: reasons.append('Polygonal aperture is not qualified')
++    if abs(dof.aperture_ratio-1) > 1e-6: reasons.append('Anamorphic aperture is not qualified')
++    if render.pixel_aspect_x != render.pixel_aspect_y: reasons.append('Nonsquare pixels are not qualified')
++    if render.use_border: reasons.append('Render borders are not qualified')
++    if scene.eevee.use_bokeh_jittered: reasons.append('Native jittered aperture is not qualified')
++    if scene.unit_settings.scale_length != 1: reasons.append('Nonunit glTF scene scale is not qualified')
++    if len(camera.constraints): reasons.append('Camera constraints are not qualified')
++    for owner in (scene, camera, camera.data):
++        animation = owner.animation_data
++        if animation and (animation.action or len(animation.drivers) or len(animation.nla_tracks)):
++            reasons.append('Animated camera/scene optics are not qualified')
++            break
++    if not all(math.isfinite(v) and v > 0 for v in (aperture, focus, data.clip_start, data.clip_end)):
++        reasons.append('Nonfinite or nonpositive camera optics')
++    # glTF's exporter changes global Z-up into Y-up, retaining camera-local axes.
++    world = Matrix.Rotation(-math.pi/2, 4, 'X') @ evaluated.matrix_world
++    return {
++        'version': 1, 'model': 'eevee-perspective-coc-v1',
++        'qualification': 'experimental-unqualified', 'automaticEnabled': False,
++        'camera': camera.name, 'frame': scene.frame_current,
++        'nativeVersion': list(bpy.app.version), 'nativeBuild': bpy.app.build_hash.decode(),
++        'cameraType': data.type, 'lensMillimeters': float(data.lens),
++        'sensorFit': data.sensor_fit, 'sensorWidthMillimeters': float(data.sensor_width),
++        'sensorHeightMillimeters': float(data.sensor_height),
++        'apertureFStop': float(dof.aperture_fstop), 'apertureRadiusBlenderUnits': aperture,
++        'apertureBlades': int(dof.aperture_blades),
++        'apertureRotationRadians': float(dof.aperture_rotation),
++        'apertureRatio': float(dof.aperture_ratio),
++        'focusDistanceBlenderUnits': focus, 'focusObject': target.name if target else None,
++        'focusBone': dof.focus_subtarget,
++        'clipNear': float(data.clip_start), 'clipFar': float(data.clip_end),
++        'projection': [float(v) for row in projection for v in row],
++        'cameraWorldGltf': [float(v) for row in world for v in row],
++        'renderExtent': [width, height],
++        'pixelAspect': [float(render.pixel_aspect_x), float(render.pixel_aspect_y)],
++        'maxCircleOfConfusionRadiusPixels': float(scene.eevee.bokeh_max_size),
++        'nativeJitterEnabled': bool(scene.eevee.use_bokeh_jittered),
++        'candidateRejectionReasons': reasons,
++    }
+diff --git a/packages/blender-addon/tests/camera_dof_optics_check.py b/packages/blender-addon/tests/camera_dof_optics_check.py
+new file mode 100644
+index 0000000..cd90b48
+--- /dev/null
++++ b/packages/blender-addon/tests/camera_dof_optics_check.py
+@@ -0,0 +1,80 @@
++# SPDX-License-Identifier: GPL-3.0-or-later
++"""CPU-only extraction and projected-aperture oracle; never renders or saves."""
++import hashlib
++import json
++from pathlib import Path
++import sys
++
++import bpy
++from mathutils import Vector
++
++root = Path(__file__).resolve().parents[1]
++sys.path.insert(0, str(root))
++from camera_fidelity import extract_depth_of_field
++
++original = Path(bpy.data.filepath) if bpy.data.filepath else None
++original_hash = hashlib.sha256(original.read_bytes()).hexdigest() if original else None
++original_inputs = extract_depth_of_field(bpy.context.scene) if original else None
++bpy.ops.wm.read_factory_settings(use_empty=False)
++scene = bpy.context.scene
++camera = scene.camera
++assert extract_depth_of_field(scene) is None
++camera.data.dof.use_dof = True
++camera.data.lens = 50
++camera.data.dof.aperture_fstop = 0.5
++camera.data.dof.focus_distance = 7
++camera.data.dof.aperture_blades = 0
++camera.data.dof.aperture_ratio = 1
++scene.eevee.use_bokeh_jittered = False
++scene.render.engine = 'BLENDER_EEVEE'
++scene.render.resolution_x = 1920
++scene.render.resolution_y = 1080
++scene.render.resolution_percentage = 100
++before = (camera.matrix_world.copy(), camera.data.lens, camera.data.dof.aperture_fstop,
++          camera.data.dof.focus_distance, scene.render.resolution_x, scene.render.resolution_y)
++data = extract_depth_of_field(scene)
++assert not data['candidateRejectionReasons']
++assert data['automaticEnabled'] is False and data['qualification'] == 'experimental-unqualified'
++assert abs(data['apertureRadiusBlenderUnits']-0.05) < 1e-9
++matrix = camera.calc_matrix_camera(bpy.context.evaluated_depsgraph_get(), x=1920, y=1080,
++                                  scale_x=1, scale_y=1)
++project = lambda v: matrix @ Vector((*v, 1))
++near_radii = []
++for depth in (0.1, 1, 2, 4, 7, 10, 100, 1e10):
++    focus = data['focusDistanceBlenderUnits']
++    center = project((0, 0, -focus))
++    jitter = project((0.05, 0, -focus))
++    bias = (jitter.x/jitter.w-center.x/center.w)*1280/2
++    native_madd = focus*bias/(-depth)+bias
++    analytic = data['apertureRadiusBlenderUnits']*data['projection'][0]*1280/(2*focus)*(1-focus/depth)
++    assert abs(native_madd-analytic) < 1e-4
++    near_radii.append({'depth': depth, 'projectedRadiusPixels': native_madd})
++assert before == (camera.matrix_world, camera.data.lens, camera.data.dof.aperture_fstop,
++                  camera.data.dof.focus_distance, scene.render.resolution_x, scene.render.resolution_y)
++# BKE_camera_object_dof_distance uses axial distance, not Euclidean distance.
++camera.matrix_world.identity()
++target = bpy.data.objects['Cube']
++target.location = (3, 4, -10)
++camera.data.dof.focus_object = target
++bpy.context.view_layer.update()
++focused = extract_depth_of_field(scene)
++assert abs(focused['focusDistanceBlenderUnits']-10) < 1e-5
++assert focused['focusObject'] == target.name and focused['candidateRejectionReasons']
++camera.data.dof.focus_object = None
++for property_name, value, expected in (
++    ('aperture_blades', 6, 'Polygonal'), ('aperture_ratio', 2, 'Anamorphic'),
++):
++    setattr(camera.data.dof, property_name, value)
++    assert any(expected in reason for reason in extract_depth_of_field(scene)['candidateRejectionReasons'])
++    setattr(camera.data.dof, property_name, 0 if property_name == 'aperture_blades' else 1)
++if original:
++    assert original_hash == hashlib.sha256(original.read_bytes()).hexdigest()
++report = {'nativeBuild': bpy.app.build_hash.decode(), 'nativeVersion': bpy.app.version_string,
++          'sourceSha256': original_hash, 'sourceUnchanged': True, 'renderAttempts': 0,
++          'saveCalls': 0, 'supportCredit': 0, 'sceneAcceptance': False,
++          'originalOptics': original_inputs, 'projectedApertureControls': near_radii}
++args = sys.argv[sys.argv.index('--')+1:] if '--' in sys.argv else []
++if args:
++    path = Path(args[0])
++    with path.open('x') as handle: handle.write(json.dumps(report, indent=2)+'\n')
++print('BLENDLINK_CAMERA_DOF_OPTICS_CPU_PASSED '+json.dumps(report))
+diff --git a/packages/blendlink/blender/source_presentation.py b/packages/blendlink/blender/source_presentation.py
+index 8c2140c..e740c66 100644
+--- a/packages/blendlink/blender/source_presentation.py
++++ b/packages/blendlink/blender/source_presentation.py
+@@ -212,0 +213,4 @@ def export_source_presentation(scene, glb_path):
++    import camera_fidelity
++    camera_dof = camera_fidelity.extract_depth_of_field(scene)
++    if camera_dof is not None:
++        result['cameraDepthOfField'] = camera_dof
+diff --git a/packages/blendlink/src/sourceCameraDof.test.ts b/packages/blendlink/src/sourceCameraDof.test.ts
+new file mode 100644
+index 0000000..f096ea9
+--- /dev/null
++++ b/packages/blendlink/src/sourceCameraDof.test.ts
+@@ -0,0 +1,77 @@
++import { describe, expect, it } from 'vitest'
++import * as THREE from 'three'
++import optics from '../../../experiments/camera-dof-physical/impact-optics.json'
++import { sourceCircleOfConfusionRadius, validateSourceCameraDof,
++  type SourceCameraDepthOfField } from './sourceCameraDof.js'
++import { validateSourceCameraDofScene } from './tslSourceCameraDof.js'
++
++const source = (): SourceCameraDepthOfField => structuredClone(optics.cameraDepthOfField) as SourceCameraDepthOfField
++function fixture() {
++  const data = source(), scene = new THREE.Scene()
++  const camera = new THREE.PerspectiveCamera(2*Math.atan(1/data.projection[5])*180/Math.PI,
++    data.renderExtent[0]/data.renderExtent[1], data.clipNear, data.clipFar)
++  camera.name = data.camera
++  camera.matrixAutoUpdate = false
++  camera.matrix.fromArray([...new THREE.Matrix4().set(...data.cameraWorldGltf as Parameters<THREE.Matrix4['set']>).elements])
++  const material = new THREE.MeshStandardMaterial()
++  scene.add(new THREE.Mesh(new THREE.BoxGeometry(),material))
++  return {data,scene,camera,material}
++}
++
++describe('source physical camera CoC candidate',()=>{
++  it('matches an independent projected-aperture oracle on native Impact inputs, near/focus/far/infinity and output scales',()=>{
++    const data=source()
++    validateSourceCameraDof(data)
++    // Independent homogeneous matrix projection of aperture and center at
++    // the focus plane, then native inverse-depth MADD, not the SDK equation.
++    const p=data.projection, focus=data.focusDistanceBlenderUnits
++    const project=(x:number,z:number)=>(p[0]*x+p[2]*z+p[3])/(p[12]*x+p[14]*z+p[15])
++    for(const width of [640,1280,1920]) for(const depth of [data.clipNear,1,2,4,focus,10,100,Infinity]) {
++      const bias=(project(data.lensMillimeters/2000/data.apertureFStop,-focus)-project(0,-focus))*width/2
++      const expected=Math.max(-100,Math.min(100,focus*bias*(-1/depth)+bias))
++      expect(sourceCircleOfConfusionRadius(data,depth,width)).toBeCloseTo(expected,10)
++    }
++    expect(sourceCircleOfConfusionRadius(data,focus,1280)).toBe(0)
++    expect(sourceCircleOfConfusionRadius(data,1,1280)).toBeLessThan(-70)
++    expect(sourceCircleOfConfusionRadius(data,Infinity,1280)).toBeGreaterThan(12)
++  })
++  it('obeys f-stop inverse scaling and focal plane location rather than an artistic smoothstep range',()=>{
++    const data=source(), stopped=source()
++    stopped.apertureFStop*=2;stopped.apertureRadiusBlenderUnits/=2
++    for(const depth of [2,4,10,100]) expect(sourceCircleOfConfusionRadius(stopped,depth,1280))
++      .toBeCloseTo(sourceCircleOfConfusionRadius(data,depth,1280)/2,10)
++    expect(()=>sourceCircleOfConfusionRadius(data,0,1280)).toThrow(/positive/)
++    expect(()=>sourceCircleOfConfusionRadius(data,NaN,1280)).toThrow(/positive/)
++  })
++  it.each([
++    ['build',(s:SourceCameraDepthOfField)=>s.nativeBuild='new-build'],
++    ['aperture',(s:SourceCameraDepthOfField)=>s.apertureFStop=4],
++    ['blades',(s:SourceCameraDepthOfField)=>s.apertureBlades=6],
++    ['ratio',(s:SourceCameraDepthOfField)=>s.apertureRatio=2],
++    ['focus object',(s:SourceCameraDepthOfField)=>s.focusObject='Target'],
++    ['jitter',(s:SourceCameraDepthOfField)=>s.nativeJitterEnabled=true],
++    ['exclusion',(s:SourceCameraDepthOfField)=>s.candidateRejectionReasons=['animated']],
++    ['NaN',(s:SourceCameraDepthOfField)=>s.focusDistanceBlenderUnits=NaN],
++    ['radius',(s:SourceCameraDepthOfField)=>s.maxCircleOfConfusionRadiusPixels=101],
++  ])('refuses tampered or out-of-contract %s',(_label,change)=>{
++    const data=source();change(data);expect(()=>validateSourceCameraDof(data)).toThrow(/Experimental Blender camera DOF/)
++  })
++  it('accepts matching camera and full physical extent at authored aspect',()=>{
++    const f=fixture()
++    expect(()=>validateSourceCameraDofScene(f.data,f.scene,f.camera,1280,720)).not.toThrow()
++    expect(()=>validateSourceCameraDofScene(f.data,f.scene,f.camera,1920,1080)).not.toThrow()
++  })
++  it.each(['identity','pose','projection','clip','aspect','transparent','transmission','depthWrite'])(
++    'refuses changed runtime %s',kind=>{
++      const f=fixture();let width=1280,height=720
++      if(kind==='identity')f.camera.name='foreign'
++      if(kind==='pose')f.camera.matrix.elements[12]+=1
++      if(kind==='projection')f.camera.projectionMatrix.elements[0]+=1
++      if(kind==='clip')f.camera.far=100
++      if(kind==='aspect')width=1000
++      if(kind==='transparent')f.material.transparent=true
++      if(kind==='transmission')(f.material as THREE.MeshPhysicalMaterial).transmission=1
++      if(kind==='depthWrite')f.material.depthWrite=false
++      expect(()=>validateSourceCameraDofScene(f.data,f.scene,f.camera,width,height)).toThrow(/Experimental Blender camera DOF/)
++    })
++})
+diff --git a/packages/blendlink/src/sourceCameraDof.ts b/packages/blendlink/src/sourceCameraDof.ts
+new file mode 100644
+index 0000000..fe52ef9
+--- /dev/null
++++ b/packages/blendlink/src/sourceCameraDof.ts
+@@ -0,0 +1,97 @@
++/** Source-derived EEVEE perspective optics. This is not an EEVEE bokeh renderer. */
++export interface SourceCameraDepthOfField {
++  version: 1
++  model: 'eevee-perspective-coc-v1'
++  qualification: 'experimental-unqualified'
++  automaticEnabled: false
++  camera: string
++  frame: number
++  nativeVersion: readonly number[]
++  nativeBuild: string
++  cameraType: string
++  lensMillimeters: number
++  sensorFit: string
++  sensorWidthMillimeters: number
++  sensorHeightMillimeters: number
++  apertureFStop: number
++  apertureRadiusBlenderUnits: number
++  apertureBlades: number
++  apertureRotationRadians: number
++  apertureRatio: number
++  focusDistanceBlenderUnits: number
++  focusObject: string | null
++  focusBone: string
++  clipNear: number
++  clipFar: number
++  /** Native row-major projection and Y-up camera world transform. */
++  projection: readonly number[]
++  cameraWorldGltf: readonly number[]
++  renderExtent: readonly [number, number]
++  pixelAspect: readonly [number, number]
++  maxCircleOfConfusionRadiusPixels: number
++  nativeJitterEnabled: boolean
++  candidateRejectionReasons: readonly string[]
++}
++
++export const SOURCE_CAMERA_DOF_SAMPLING = Object.freeze({
++  model: 'experimental-physical-coc-layer-resolve-v3',
++  backgroundDiskSamples: 64,
++  foregroundDiskSamples: 128,
++  centerSamples: 1,
++  slightFocusDiskPairs: 16,
++  slightFocusMaximumSearchRadiusPixels: 5,
++  nativeRingOcclusion: false,
++  colorTextureReads: 225,
++  depthTextureReads: 225,
++  resolutionScale: 1,
++  foregroundBoundsTilePhysicalPixels: 16,
++  foregroundBoundsDepthReadsPerTile: 256,
++  foregroundBoundsDilationReadsPerTileAt100PixelCap: 289,
++  eeveeGatherScatterParity: false,
++})
++
++export function validateSourceCameraDof(source: SourceCameraDepthOfField): void {
++  const fail = (reason: string): never => { throw new Error(`Experimental Blender camera DOF: ${reason}.`) }
++  if (source.version !== 1 || source.model !== 'eevee-perspective-coc-v1'
++    || source.qualification !== 'experimental-unqualified' || source.automaticEnabled !== false)
++    fail('unsupported optics contract')
++  if (source.nativeVersion?.join('.') !== '5.3.0' || source.nativeBuild !== '02f0899d78e3')
++    fail('native source model is pinned to Blender 5.3.0 build 02f0899d78e3')
++  if (source.cameraType !== 'PERSP' || source.apertureBlades !== 0 || source.apertureRatio !== 1
++    || source.focusObject !== null || source.focusBone !== '' || source.nativeJitterEnabled !== false) fail('only static perspective distance focus and a circular aperture are in scope')
++  if (!Array.isArray(source.candidateRejectionReasons) || source.candidateRejectionReasons.length)
++    fail(`source optics are outside the bounded candidate (${source.candidateRejectionReasons?.join('; ')})`)
++  for (const value of [source.lensMillimeters, source.apertureFStop, source.apertureRadiusBlenderUnits,
++    source.focusDistanceBlenderUnits, source.clipNear, source.clipFar, source.maxCircleOfConfusionRadiusPixels])
++    if (!Number.isFinite(value) || value <= 0) fail('nonpositive or nonfinite optical parameter')
++  if (source.clipFar <= source.clipNear || source.maxCircleOfConfusionRadiusPixels > 100)
++    fail('clip range or native maximum radius exceeds the bounded 100 pixel candidate')
++  const aperture = source.lensMillimeters * 0.001 / (2 * Math.max(source.apertureFStop, 1e-5))
++  if (Math.abs(aperture-source.apertureRadiusBlenderUnits) > aperture*1e-6)
++    fail('lens/f-stop and transported aperture disagree')
++  for (const matrix of [source.projection, source.cameraWorldGltf])
++    if (!Array.isArray(matrix) || matrix.length !== 16 || !matrix.every(Number.isFinite)) fail('invalid camera matrix')
++  if (source.projection[0] <= 0 || source.projection[5] <= 0
++    || source.projection[14] !== -1 || source.projection[15] !== 0) fail('invalid perspective projection')
++  if (source.renderExtent?.length !== 2 || !source.renderExtent.every(v=>Number.isInteger(v)&&v>0)
++    || source.pixelAspect?.length !== 2 || source.pixelAspect[0] !== source.pixelAspect[1]
++    || !source.pixelAspect.every(v=>Number.isFinite(v)&&v>0)) fail('invalid output extent or nonsquare pixels')
++  if (!Number.isFinite(source.apertureRotationRadians) || !Number.isFinite(source.frame)
++    || typeof source.camera !== 'string' || !source.camera) fail('invalid camera identity')
++}
++
++/** EEVEE full-aperture signed radius in physical output pixels; near is negative.
++ * This is the total optical footprint, not EEVEE's jitter/post split radius.
++ * Native EEVEE projects an aperture offset at the focus plane and reduces it to
++ * coc_mul/viewZ + coc_bias (eevee_depth_of_field.cc render(), shared.hh).
++ */
++export function sourceCircleOfConfusionRadius(
++  source: SourceCameraDepthOfField, positiveViewDepth: number, outputWidth: number,
++): number {
++  if (!(positiveViewDepth > 0) || !Number.isFinite(outputWidth) || outputWidth <= 0)
++    throw new Error('Camera CoC requires positive camera-axis depth and output width.')
++  const bias = source.apertureRadiusBlenderUnits * source.projection[0] * outputWidth
++    / (2 * source.focusDistanceBlenderUnits)
++  const radius = bias * (1-source.focusDistanceBlenderUnits/positiveViewDepth)
++  return Math.max(-source.maxCircleOfConfusionRadiusPixels, Math.min(source.maxCircleOfConfusionRadiusPixels, radius))
++}
+diff --git a/packages/blendlink/src/sourceCameraDofCoverage.test.ts b/packages/blendlink/src/sourceCameraDofCoverage.test.ts
+new file mode 100644
+index 0000000..2687bcf
+--- /dev/null
++++ b/packages/blendlink/src/sourceCameraDofCoverage.test.ts
+@@ -0,0 +1,22 @@
++import {expect,it} from 'vitest'
++import {cameraDofTileExtent,cameraDofDilatedNearBound} from './sourceCameraDofCoverage.js'
++
++it('retains every edge tile without reducing the physical color extent',()=>{
++  expect(cameraDofTileExtent(1280,720)).toEqual([80,45])
++  expect(cameraDofTileExtent(1281,721)).toEqual([81,46])
++  expect(()=>cameraDofTileExtent(0,720)).toThrow(/physical/)
++})
++it('propagates nearby negative-CoC coverage to an in-focus background tile',()=>{
++  const radii=[0,20,0,0,0]
++  expect(cameraDofDilatedNearBound(radii,5,1,0,0,100)).toBe(20)
++  expect(cameraDofDilatedNearBound(radii,5,1,2,0,100)).toBe(20)
++  // Two-tile separation is conservatively 16 pixels; four is 48.
++  expect(cameraDofDilatedNearBound(radii,5,1,3,0,100)).toBe(20)
++  expect(cameraDofDilatedNearBound(radii,5,1,4,0,100)).toBe(0)
++})
++it('keeps the largest intersecting disk rather than distant unrelated foreground',()=>{
++  const radii=Array(15).fill(0);radii[1]=5;radii[14]=100
++  expect(cameraDofDilatedNearBound(radii,15,1,0,0,100)).toBe(5)
++  expect(cameraDofDilatedNearBound(radii,15,1,8,0,100)).toBe(100)
++  expect(cameraDofDilatedNearBound(Array(9).fill(0),3,3,1,1,100)).toBe(0)
++})
+diff --git a/packages/blendlink/src/sourceCameraDofCoverage.ts b/packages/blendlink/src/sourceCameraDofCoverage.ts
+new file mode 100644
+index 0000000..b729e83
+--- /dev/null
++++ b/packages/blendlink/src/sourceCameraDofCoverage.ts
+@@ -0,0 +1,24 @@
++/** Conservative full-resolution foreground bounds, inspired by pinned EEVEE
++ * 8-half-resolution-pixel tiles (16 physical pixels) and radius-aware dilation.
++ * This is independent bounding metadata, not reduced-resolution color. */
++export const CAMERA_DOF_TILE_PIXELS = 16
++export const CAMERA_DOF_GATHER_RADIUS_ERROR = 1+1/5.5
++export function cameraDofTileExtent(width:number,height:number):readonly[number,number] {
++  if(!Number.isInteger(width)||!Number.isInteger(height)||width<=0||height<=0)
++    throw Error('Camera DOF bounds require a positive physical pixel extent')
++  return[Math.ceil(width/CAMERA_DOF_TILE_PIXELS),Math.ceil(height/CAMERA_DOF_TILE_PIXELS)]
++}
++/** CPU oracle for conservative native-style radius-aware bounds propagation. */
++export function cameraDofDilatedNearBound(radii:readonly number[],width:number,height:number,x:number,y:number,maximum:number):number {
++  if(radii.length!==width*height)throw Error('Camera DOF tile radius shape mismatch')
++  const reach=Math.ceil(maximum*CAMERA_DOF_GATHER_RADIUS_ERROR/CAMERA_DOF_TILE_PIXELS)
++  let result=0
++  for(let dy=-reach;dy<=reach;dy++)for(let dx=-reach;dx<=reach;dx++){
++    const sx=x+dx,sy=y+dy
++    if(sx<0||sy<0||sx>=width||sy>=height)continue
++    const radius=radii[sy*width+sx]
++    const distance=Math.hypot(Math.max(Math.abs(dx)-1,0),Math.max(Math.abs(dy)-1,0))*CAMERA_DOF_TILE_PIXELS
++    if(radius*CAMERA_DOF_GATHER_RADIUS_ERROR>distance)result=Math.max(result,radius)
++  }
++  return result
++}
+diff --git a/packages/blendlink/src/sourceCameraDofLayers.test.ts b/packages/blendlink/src/sourceCameraDofLayers.test.ts
+new file mode 100644
+index 0000000..2bd349c
+--- /dev/null
++++ b/packages/blendlink/src/sourceCameraDofLayers.test.ts
+@@ -0,0 +1,39 @@
++import{expect,it}from'vitest'
++import{cameraDofLayerWeights,cameraDofDiskIntersection,resolveCameraDofLayerPixel}from'./sourceCameraDofLayers.js'
++
++it.each([
++ // radius, near, far, slight-near, slight-far, exact-focus
++ [-6,1,0,0,0,false],[-5,1,0,0,0,false],[-4.5,1,0,.5,0,false],[-4,1,0,1,0,false],
++ [-3.5,1,0,1,0,false],[-3,.5,0,1,0,false],[-2.5,0,0,1,0,false],
++ [-.500001,0,0,1,0,false],[-.5,0,0,1,0,true],[0,0,0,1,1,true],[.5,0,0,1,1,true],
++ [.500001,0,0,0,1,false],[2.5,0,0,0,1,false],[3,0,0,0,1,false],[3.5,0,.5,0,1,false],
++ [4,0,1,0,1,false],[4.5,0,1,0,.5,false],[5,0,1,0,0,false],[6,0,1,0,0,false],
++])('source full-pixel layer boundary %s',(radius,near,far,slightNear,slightFar,focused)=>{
++ const actual=cameraDofLayerWeights(radius as number)
++ expect([actual.foreground,actual.background,actual.slightForeground,actual.slightBackground,actual.focus])
++  .toEqual([near,far,slightNear,slightFar,focused])
++})
++it('uses a linear one-pixel disk-edge transition rather than a smoothstep curve',()=>{
++ expect(cameraDofDiskIntersection(-3,3.5)).toBe(0)
++ expect(cameraDofDiskIntersection(-3,3)).toBe(.5)
++ expect(cameraDofDiskIntersection(-3,2.75)).toBe(.75)
++ expect(cameraDofDiskIntersection(-3,2.5)).toBe(1)
++ expect(()=>cameraDofDiskIntersection(3,-1)).toThrow()
++ expect(()=>cameraDofLayerWeights(NaN)).toThrow()
++})
++it('preserves constant HDR radiance across independently covered overlapping layers',()=>{
++ const color=[4,.5,.02],field=(coverage:number)=>({premultiplied:color.map(v=>v*coverage),coverage})
++ for(const radius of[-6,-4.5,-3,-.5,0,.5,3,4.5,6])for(const slight of[0,.25,.5,1])for(const near of[0,.25,.5,1]){
++  const actual=resolveCameraDofLayerPixel(color,color,field(slight),field(near),field(.3),radius)
++  actual.forEach((v,i)=>expect(v).toBeCloseTo(color[i],12))
++ }
++})
++it('restores a focused background before slight and large foreground layers',()=>{
++ const none={premultiplied:[0,0,0],coverage:0},slightBg={premultiplied:[0,1,0],coverage:1}
++ expect(resolveCameraDofLayerPixel([1,0,0],[0,0,1],slightBg,none,none,.5)).toEqual([1,0,0])
++ const slightNear={premultiplied:[0,.25,0],coverage:.25}
++ expect(resolveCameraDofLayerPixel([1,0,0],[0,0,1],slightBg,slightNear,none,.5)).toEqual([.75,.25,0])
++ const largeNear={premultiplied:[.25,0,0],coverage:.25},halfBg={premultiplied:[0,.5,0],coverage:.5}
++ expect(resolveCameraDofLayerPixel([1,0,0],[0,0,1],halfBg,none,largeNear,3)).toEqual([.25,.375,.375])
++ expect(()=>resolveCameraDofLayerPixel([1,0,0],[0,0,1],{premultiplied:[0,1,0],coverage:2},none,none,3)).toThrow()
++})
+diff --git a/packages/blendlink/src/sourceCameraDofLayers.ts b/packages/blendlink/src/sourceCameraDofLayers.ts
+new file mode 100644
+index 0000000..021edbd
+--- /dev/null
++++ b/packages/blendlink/src/sourceCameraDofLayers.ts
+@@ -0,0 +1,34 @@
++/** Independently expressed scalar layer equations from the pinned EEVEE
++ * contract. This is not a translation of its ring accumulator or resolve. */
++const saturate=(value:number)=>Math.max(0,Math.min(1,value))
++export function cameraDofLayerWeights(fullPixelRadius:number){
++  if(!Number.isFinite(fullPixelRadius))throw Error('Camera DOF layers require a finite full-pixel radius')
++  const absolute=Math.abs(fullPixelRadius),slight=saturate(5-absolute)
++  return{
++    foreground:saturate(-fullPixelRadius-2.5),
++    background:saturate(fullPixelRadius-3),
++    slightForeground:fullPixelRadius<=0.5?slight:0,
++    slightBackground:fullPixelRadius> -0.5?slight:0,
++    focus:absolute<=0.5,
++  }
++}
++export function cameraDofDiskIntersection(fullPixelRadius:number,distancePixels:number){
++  if(!Number.isFinite(fullPixelRadius)||!Number.isFinite(distancePixels)||distancePixels<0)
++    throw Error('Camera DOF disk intersection requires finite radius and nonnegative distance')
++  return saturate(Math.abs(fullPixelRadius)-distancePixels+0.5)
++}
++export interface CameraDofResolvedField {premultiplied:readonly number[];coverage:number}
++/** Independent premultiplied layer algebra, not native accumulation. A
++ * focused center is restored before slight/large foreground fields overlay. */
++export function resolveCameraDofLayerPixel(original:readonly number[],background:readonly number[],
++  slightBackground:CameraDofResolvedField,slightForeground:CameraDofResolvedField,
++  foreground:CameraDofResolvedField,fullPixelRadius:number):number[]{
++  const focused=cameraDofLayerWeights(fullPixelRadius).focus
++  const fields=[slightBackground,slightForeground,foreground]
++  if(!fields.every(field=>Number.isFinite(field.coverage)&&field.coverage>=0&&field.coverage<=1)
++    || [original,background,...fields.map(f=>f.premultiplied)].some(v=>v.length!==3||!v.every(Number.isFinite)))
++    throw Error('Camera DOF resolve requires finite RGB and normalized layer coverage')
++  const over=(field:CameraDofResolvedField,under:readonly number[])=>under.map((v,i)=>field.premultiplied[i]+v*(1-field.coverage))
++  const base=focused?[...original]:over(slightBackground,background)
++  return over(foreground,over(slightForeground,base))
++}
+diff --git a/packages/blendlink/src/sourceDisplay.ts b/packages/blendlink/src/sourceDisplay.ts
+index ba23841..aba3c18 100644
+--- a/packages/blendlink/src/sourceDisplay.ts
++++ b/packages/blendlink/src/sourceDisplay.ts
+@@ -21,0 +22 @@ export interface SourcePresentation {
++  cameraDepthOfField?: import('./sourceCameraDof.js').SourceCameraDepthOfField
+diff --git a/packages/blendlink/src/threeComponents.ts b/packages/blendlink/src/threeComponents.ts
+index 12b3f0c..e531fb3 100644
+--- a/packages/blendlink/src/threeComponents.ts
++++ b/packages/blendlink/src/threeComponents.ts
+@@ -117,0 +118,3 @@ export interface InstallThreeComponentsOptions {
++  /** Explicit research opt-in; fixed-camera physical CoC with bounded sampling,
++   * not qualified EEVEE bokeh parity. Defaults to disabled. */
++  sourceCameraDepthOfField?: 'experimental-physical-coc-v1'
+@@ -260 +263,3 @@ export async function installThreeComponents(
+-  if (enabled.length === 0 && !options.sourcePresentation?.display && !options.sourcePresentation?.compositor) return inertComponents(
++  if (options.sourceCameraDepthOfField && !(options.renderer as THREE.WebGLRenderer & {isWebGPURenderer?:boolean}).isWebGPURenderer)
++    throw new Error('Experimental Blender camera DOF requires WebGPURenderer (WebGPU or its WebGL2 backend).')
++  if (enabled.length === 0 && !options.sourcePresentation?.display && !options.sourcePresentation?.compositor && !options.sourceCameraDepthOfField) return inertComponents(
+@@ -264 +269 @@ export async function installThreeComponents(
+-  const needsPost = !!options.sourcePresentation?.display || !!options.sourcePresentation?.compositor || enabled.some((component) =>
++  const needsPost = !!options.sourceCameraDepthOfField || !!options.sourcePresentation?.display || !!options.sourcePresentation?.compositor || enabled.some((component) =>
+diff --git a/packages/blendlink/src/threeRuntime.ts b/packages/blendlink/src/threeRuntime.ts
+index 0b59967..c130f19 100644
+--- a/packages/blendlink/src/threeRuntime.ts
++++ b/packages/blendlink/src/threeRuntime.ts
+@@ -353,0 +354,2 @@ export interface InstallThreeCompiledSceneOptions extends MeshoptWorkerOptions {
++  /** Research opt-in only: bounded fixed-camera physical CoC; no EEVEE image-parity claim. */
++  sourceCameraDepthOfField?: 'experimental-physical-coc-v1'
+@@ -3021,0 +3024 @@ async function installLoadedThreeCompiledSceneNow(
++      ...(options.sourceCameraDepthOfField ? {sourceCameraDepthOfField:options.sourceCameraDepthOfField} : {}),
+diff --git a/packages/blendlink/src/threeWebgpuPostPipeline.test.ts b/packages/blendlink/src/threeWebgpuPostPipeline.test.ts
+index 7149053..6dec11e 100644
+--- a/packages/blendlink/src/threeWebgpuPostPipeline.test.ts
++++ b/packages/blendlink/src/threeWebgpuPostPipeline.test.ts
+@@ -5,0 +6,16 @@ import type { PostEffectDescriptor } from './componentRuntime.js'
++import optics from '../../../experiments/camera-dof-physical/impact-optics.json'
++import type { SourceCameraDepthOfField } from './sourceCameraDof.js'
++
++function physicalCameraOptions(): InstallThreeComponentsOptions {
++  const input=options(), source=structuredClone(optics.cameraDepthOfField) as SourceCameraDepthOfField
++  const camera=new THREE.PerspectiveCamera(2*Math.atan(1/source.projection[5])*180/Math.PI,
++    source.renderExtent[0]/source.renderExtent[1],source.clipNear,source.clipFar)
++  camera.name=source.camera
++  camera.matrixAutoUpdate=false
++  camera.matrix.set(...source.cameraWorldGltf as Parameters<THREE.Matrix4['set']>)
++  input.camera=camera
++  input.renderer.getDrawingBufferSize=target=>target.set(1280,720)
++  input.sourcePresentation={schemaVersion:1,model:'blendlink-source-presentation-v1',warnings:[],cameraDepthOfField:source}
++  input.onWarning=()=>{}
++  return input
++}
+@@ -45,0 +62,41 @@ describe('ThreeWebgpuPostPipelineService', () => {
++  it('does not enable native camera DOF from transported metadata alone',async()=>{
++    const service=await ThreeWebgpuPostPipelineService.create(physicalCameraOptions())
++    service.finalize()
++    expect(service.resolvedOrder).toEqual(['scene-color'])
++    service.dispose()
++  })
++  it('installs explicit physical camera candidate before source compositor/display and disposes idempotently',async()=>{
++    const input=physicalCameraOptions();input.sourceCameraDepthOfField='experimental-physical-coc-v1'
++    const service=await ThreeWebgpuPostPipelineService.create(input)
++    service.finalize()
++    expect(service.resolvedOrder).toEqual(['scene-color','blender-camera-dof-experimental'])
++    service.dispose();service.dispose()
++  })
++  it('refuses missing metadata and artistic DOF conflict instead of bypassing the physical request',async()=>{
++    const missing=options();missing.sourceCameraDepthOfField='experimental-physical-coc-v1'
++    const service=await ThreeWebgpuPostPipelineService.create(missing)
++    expect(()=>service.finalize()).toThrow(/source optics metadata/)
++    service.dispose()
++    const conflict=physicalCameraOptions();conflict.sourceCameraDepthOfField='experimental-physical-coc-v1'
++    conflict.components=[{id:'artistic',type:'blendlink.depth-of-field',enabled:true,values:{}}] as InstallThreeComponentsOptions['components']
++    const second=await ThreeWebgpuPostPipelineService.create(conflict)
++    expect(()=>second.finalize()).toThrow(/separate artistic/)
++    second.dispose()
++  })
++  it('refuses a replacement camera before activation and changed authored pose before rendering',async()=>{
++    const input=physicalCameraOptions();input.sourceCameraDepthOfField='experimental-physical-coc-v1'
++    const service=await ThreeWebgpuPostPipelineService.create(input)
++    service.finalize()
++    expect(()=>service.activate(input.scene,new THREE.PerspectiveCamera())).toThrow(/active camera/)
++    input.camera.matrix.elements[12]+=1
++    expect(()=>service.render()).toThrow(/transform/)
++    service.dispose()
++  })
++  it('refuses even internally consistent lens/aperture metadata changes after installation',async()=>{
++    const input=physicalCameraOptions();input.sourceCameraDepthOfField='experimental-physical-coc-v1'
++    const service=await ThreeWebgpuPostPipelineService.create(input);service.finalize()
++    const metadata=input.sourcePresentation!.cameraDepthOfField!
++    metadata.apertureFStop*=2;metadata.apertureRadiusBlenderUnits/=2
++    expect(()=>service.render()).toThrow(/optical parameters changed/)
++    service.dispose()
++  })
+diff --git a/packages/blendlink/src/threeWebgpuPostPipeline.ts b/packages/blendlink/src/threeWebgpuPostPipeline.ts
+index aab351e..0c1dc13 100644
+--- a/packages/blendlink/src/threeWebgpuPostPipeline.ts
++++ b/packages/blendlink/src/threeWebgpuPostPipeline.ts
+@@ -29,0 +30 @@ import { buildSourceDepth } from './tslSourcePasses.js'
++import { buildSourceCameraDof, validateSourceCameraDofScene } from './tslSourceCameraDof.js'
+@@ -146,0 +148,2 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
++  private sourceCameraDof: ReturnType<typeof buildSourceCameraDof> | null = null
++  private sourceCameraDofContract: string | undefined
+@@ -226,0 +230,8 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
++    if (this.options.sourceCameraDepthOfField) {
++      if (this.options.sourceCameraDepthOfField !== 'experimental-physical-coc-v1'
++        || !this.options.sourcePresentation?.cameraDepthOfField)
++        throw new Error('Experimental Blender camera DOF requires its supported source optics metadata.')
++      if ((this.options.components ?? []).some(item=>item.enabled && item.type==='blendlink.depth-of-field'))
++        throw new Error('Experimental Blender camera DOF cannot combine with the separate artistic Depth of Field effect.')
++      this.validateCameraDof()
++    }
+@@ -274,0 +286,8 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
++    if (this.options.sourceCameraDepthOfField) {
++      this.sourceCameraDof = buildSourceCameraDof(this.options.sourcePresentation!.cameraDepthOfField!,
++        context.color, buildSourceDepth(scenePass.getTextureNode('depth'), () => this.options.camera))
++      this.validateCameraDof()
++      context.color = this.sourceCameraDof.node
++      this.resolvedOrder.push('blender-camera-dof-experimental')
++      ;(this.options.onWarning ?? console.warn)('Experimental Blender camera DOF uses source physical CoC with 225 full-resolution disk samples, source layer ranges and 16-pixel foreground bounds; EEVEE gather/scatter, occlusion, transparency and bokeh image parity remain unqualified.')
++    }
+@@ -348,0 +368 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
++    if (this.options.sourceCameraDepthOfField) this.validateCameraDof(scene, camera)
+@@ -389,0 +410 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
++    if (this.options.sourceCameraDepthOfField) this.validateCameraDof()
+@@ -392,0 +414,15 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
++  private validateCameraDof(scene=this.options.scene, camera=this.options.camera): void {
++    const source = this.options.sourcePresentation?.cameraDepthOfField
++    if (!source) throw new Error('Experimental Blender camera DOF is missing source optics metadata.')
++    const extent = this.options.renderer.getDrawingBufferSize(new THREE.Vector2())
++    const renderer = this.options.renderer as unknown as { logarithmicDepthBuffer?: boolean; reversedDepthBuffer?: boolean }
++    if (renderer.logarithmicDepthBuffer || renderer.reversedDepthBuffer)
++      throw new Error('Experimental Blender camera DOF does not support logarithmic or reversed depth.')
++    validateSourceCameraDofScene(source, scene, camera, extent.x, extent.y)
++    const contract=JSON.stringify(source)
++    if (this.sourceCameraDofContract !== undefined && contract !== this.sourceCameraDofContract)
++      throw new Error('Experimental Blender camera DOF source optical parameters changed after installation.')
++    this.sourceCameraDofContract=contract
++    this.sourceCameraDof?.setExtent(extent.x, extent.y)
++  }
++
+@@ -405,0 +442 @@ export class ThreeWebgpuPostPipelineService implements PostPipelineService {
++    try { this.sourceCameraDof?.dispose() } catch (error) { errors.push(error) }
+diff --git a/packages/blendlink/src/tslSourceCameraDof.ts b/packages/blendlink/src/tslSourceCameraDof.ts
+new file mode 100644
+index 0000000..d9ff049
+--- /dev/null
++++ b/packages/blendlink/src/tslSourceCameraDof.ts
+@@ -0,0 +1,181 @@
++import * as THREE from 'three'
++import { Fn, Loop, clamp, convertToTexture, float, max, mix, smoothstep, step, floor, ivec2, rtt, select,
++  uniform, uniformArray, uv, vec2, vec3, vec4 } from 'three/tsl'
++import { SOURCE_CAMERA_DOF_SAMPLING, validateSourceCameraDof,
++  type SourceCameraDepthOfField } from './sourceCameraDof.js'
++import type { TslEffectNode } from './tslPostEffects.js'
++import { buildSourceCameraDofLayerWeights as layerWeights, buildSourceCameraDofDiskIntersection as diskIntersection } from './tslSourceCameraDofLayers.js'
++import { OwnedCompositorRtt } from './tslCompositorRttOwner.js'
++import { CAMERA_DOF_TILE_PIXELS as TILE, CAMERA_DOF_GATHER_RADIUS_ERROR as RADIUS_ERROR, cameraDofTileExtent } from './sourceCameraDofCoverage.js'
++
++export function buildSourceCameraCoC(source: SourceCameraDepthOfField, positiveDepth: TslEffectNode,
++  outputWidth: TslEffectNode): TslEffectNode {
++  const focus=source.focusDistanceBlenderUnits
++  const biasPerPixel=source.apertureRadiusBlenderUnits*source.projection[0]/(2*focus)
++  return clamp(float(1).sub(float(focus).div(max(positiveDepth,1e-5))).mul(outputWidth).mul(biasPerPixel),
++    -source.maxCircleOfConfusionRadiusPixels,source.maxCircleOfConfusionRadiusPixels)
++}
++
++/** Native-derived tile bounds + separate near/far full-resolution gathers.
++ * The CoC and tile radius propagation are source-derived; this color/coverage
++ * sampler remains an unqualified approximation, not EEVEE scatter/resolve. */
++export function buildSourceCameraDof(source: SourceCameraDepthOfField,
++  color: TslEffectNode, positiveDepth: TslEffectNode) {
++  validateSourceCameraDof(source)
++  const beauty = convertToTexture(color)
++  const targetOptions={type:THREE.FloatType,depthBuffer:false} as Parameters<typeof rtt>[3]
++  const depth = convertToTexture(positiveDepth, null, null, targetOptions)
++  const resources: OwnedCompositorRtt[] = []
++  if(beauty !== color && (beauty as TslEffectNode).isRTTNode)resources.push(new OwnedCompositorRtt(beauty))
++  if(depth !== positiveDepth && (depth as TslEffectNode).isRTTNode)resources.push(new OwnedCompositorRtt(depth))
++  const extent = uniform(new THREE.Vector2(...source.renderExtent))
++  const tileExtent=uniform(new THREE.Vector2(...cameraDofTileExtent(...source.renderExtent)))
++  const points = (count:number) => uniformArray(Array.from({ length:count }, (_,i)=> {
++    const angle=i*Math.PI*(3-Math.sqrt(5)),radius=Math.sqrt((i+0.5)/count)
++    return new THREE.Vector2(Math.cos(angle)*radius,Math.sin(angle)*radius)
++  }))
++  const farPoints=points(64),nearPoints=points(128),slightPoints=points(16)
++  const coc = (z:TslEffectNode):TslEffectNode => buildSourceCameraCoC(source,z,extent.x)
++  // Every physical depth pixel contributes to its bound: 256 reads per tile,
++  // not one decimated depth sample that could omit a thin foreground object.
++  const reduced=rtt(Fn(()=>{
++    const origin=floor(uv().mul(tileExtent)).mul(TILE)
++    const bound=float(0).toVar()
++    Loop(TILE*TILE,({i})=>{
++      const index:TslEffectNode=float(i)
++      const position=origin.add(vec2(index.mod(TILE),floor(index.div(TILE))))
++      const z=depth.load(ivec2(clamp(position,vec2(0),extent.sub(1)))).r
++      bound.assign(max(bound,coc(z).negate()))
++    })
++    return vec4(bound,0,0,1)
++  })(),tileExtent.value.x,tileExtent.value.y,targetOptions)
++  resources.push(new OwnedCompositorRtt(reduced))
++  const reach=Math.ceil(source.maxCircleOfConfusionRadiusPixels*RADIUS_ERROR/TILE),span=reach*2+1
++  const dilated=rtt(Fn(()=>{
++    const center=floor(uv().mul(tileExtent)),bound=float(0).toVar()
++    Loop(span*span,({i})=>{
++      const index:TslEffectNode=float(i)
++      const offset=vec2(index.mod(span),floor(index.div(span))).sub(reach)
++      const position=clamp(center.add(offset),vec2(0),tileExtent.sub(1))
++      const radius=reduced.load(ivec2(position)).r
++      const closestDistance=max(offset.abs().sub(1),vec2(0)).length().mul(TILE)
++      bound.assign(max(bound,select(radius.mul(RADIUS_ERROR).greaterThan(closestDistance),radius,0)))
++    })
++    return vec4(bound,0,0,1)
++  })(),tileExtent.value.x,tileExtent.value.y,targetOptions)
++  resources.push(new OwnedCompositorRtt(dilated))
++  const node=Fn(()=>{
++    const coordinate=uv(),center=beauty.sample(coordinate).toVar()
++    const centerRadius=coc(depth.sample(coordinate).r).toVar()
++    const nearRadius=dilated.load(ivec2(floor(coordinate.mul(tileExtent)))).r.toVar()
++    const centerLayers=layerWeights(centerRadius)
++    const farRadius=select(centerLayers.foreground.greaterThan(0),nearRadius,max(centerRadius,0)).toVar()
++    const farWeight=centerLayers.background.toVar(),farColor=center.rgb.mul(farWeight).toVar()
++    const holeWeight=centerLayers.foreground.oneMinus().toVar(),holeColor=center.rgb.mul(holeWeight).toVar()
++    // Hole reconstruction stays approximate. Far eligibility now uses the
++    // native source range; it no longer captures the slight-focus field.
++    Loop(64,({i})=>{
++      const disk:TslEffectNode=farPoints.element(i)
++      const position=clamp(coordinate.add(disk.mul(farRadius).div(extent)),vec2(0),vec2(1))
++      const weights=layerWeights(coc(depth.sample(position).r)),sample=beauty.sample(position).rgb
++      farColor.addAssign(sample.mul(weights.background));farWeight.addAssign(weights.background)
++      const hole=weights.foreground.oneMinus()
++      holeColor.addAssign(sample.mul(hole));holeWeight.addAssign(hole)
++    })
++    const foreground=vec3(0).toVar(),foregroundWeight=float(0).toVar()
++    Loop(128,({i})=>{
++      const disk:TslEffectNode=nearPoints.element(i)
++      const position=clamp(coordinate.add(disk.mul(nearRadius).div(extent)),vec2(0),vec2(1))
++      const sampleRadius=coc(depth.sample(position).r),distance=disk.length().mul(nearRadius)
++      const coverage=diskIntersection(sampleRadius,distance).mul(layerWeights(sampleRadius).foreground)
++      const weight=coverage.div(max(sampleRadius.mul(sampleRadius),1))
++      foreground.addAssign(beauty.sample(position).rgb.mul(weight));foregroundWeight.addAssign(weight)
++    })
++    // Independent fixed worst-case 16 symmetric disk pairs + center at the
++    // source's maximum slight-focus search radius 5. No ring occlusion is
++    // claimed. Scalars/layer ordering match the source; coverage is estimated.
++    const inverseArea=float(1).div(max(centerRadius.mul(centerRadius),1))
++    const slightNearWeight=centerLayers.slightForeground.mul(inverseArea).toVar()
++    const slightNearColor=center.rgb.mul(slightNearWeight).toVar()
++    const slightFarWeight=centerLayers.slightBackground.mul(inverseArea).toVar()
++    const slightFarColor=center.rgb.mul(slightFarWeight).toVar()
++    const slightFarOpacity=centerLayers.slightBackground.toVar()
++    Loop(16,({i})=>{
++      const disk:TslEffectNode=slightPoints.element(i)
++      Loop(2,({i:pair})=>{
++        const offset=disk.mul(5).mul(float(pair).mul(2).sub(1))
++        const position=clamp(coordinate.add(offset.div(extent)),vec2(0),vec2(1))
++        const sampleRadius=coc(depth.sample(position).r),weights=layerWeights(sampleRadius)
++        const intersection=diskIntersection(sampleRadius,offset.length())
++        const sampleWeight=intersection.div(max(sampleRadius.mul(sampleRadius),1))
++        const sample=beauty.sample(position).rgb,nearWeight=sampleWeight.mul(weights.slightForeground)
++        const farWeight=sampleWeight.mul(weights.slightBackground)
++        slightNearColor.addAssign(sample.mul(nearWeight));slightNearWeight.addAssign(nearWeight)
++        slightFarColor.addAssign(sample.mul(farWeight));slightFarWeight.addAssign(farWeight)
++        slightFarOpacity.addAssign(weights.slightBackground)
++      })
++    })
++    const hole=select(holeWeight.greaterThan(0),holeColor.div(max(holeWeight,1e-8)),center.rgb)
++    const far=select(farWeight.greaterThan(0),farColor.div(max(farWeight,1e-8)),hole)
++    const slightBGCoverage=clamp(slightFarOpacity.div(33),0,1)
++    const slightBG=slightFarColor.div(max(slightFarWeight,1e-8)).mul(slightBGCoverage)
++    const slightNearCoverage=clamp(slightNearWeight.mul(25/33),0,1)
++    const slightFG=slightNearColor.div(max(slightNearWeight,1e-8)).mul(slightNearCoverage)
++    // Exact focus restores the unfiltered center before neighboring foreground
++    // coverage is overlaid. All layer colors below are premultiplied once.
++    const underneath=select(centerLayers.focus,center.rgb,far.mul(slightBGCoverage.oneMinus()).add(slightBG))
++    const slight=underneath.mul(slightNearCoverage.oneMinus()).add(slightFG)
++    const near=foreground.div(max(foregroundWeight,1e-8))
++    const coverage=clamp(foregroundWeight.mul(nearRadius.mul(nearRadius)).div(128),0,1)
++    return vec4(slight.mul(coverage.oneMinus()).add(near.mul(coverage)),center.a)
++  })()
++  let disposed=false
++  return{node,sampling:SOURCE_CAMERA_DOF_SAMPLING,
++    setExtent(width:number,height:number){
++      extent.value.set(width,height)
++      const dimensions=cameraDofTileExtent(width,height)
++      if(tileExtent.value.x!==dimensions[0]||tileExtent.value.y!==dimensions[1]){
++        tileExtent.value.set(...dimensions);reduced.setSize(...dimensions);dilated.setSize(...dimensions)
++      }
++    },
++    dispose(){if(disposed)return;disposed=true;for(const owner of resources.reverse())owner.dispose()},
++  }
++}
++
++/** Refuse camera replacement, resizing to another aspect, and transparent
++ * routes. Called before installation and each frame; there is no fallback
++ * from an explicit experimental request to a silently sharp image. */
++export function validateSourceCameraDofScene(source: SourceCameraDepthOfField,
++  scene: THREE.Scene, camera: THREE.Camera, width: number, height: number): void {
++  validateSourceCameraDof(source)
++  const fail = (reason: string): never => { throw new Error(`Experimental Blender camera DOF: ${reason}.`) }
++  if (!(camera as THREE.PerspectiveCamera).isPerspectiveCamera || camera.name !== source.camera)
++    fail('active camera differs from the authored perspective camera')
++  if (!Number.isInteger(width) || !Number.isInteger(height) || width <= 0 || height <= 0
++    || Math.abs(width/height-source.renderExtent[0]/source.renderExtent[1]) > 1e-5)
++    fail('physical output extent must retain the authored aspect ratio')
++  const close = (a: number,b: number) => Math.abs(a-b) <= 5e-5*Math.max(1,Math.abs(b))
++  const perspective = camera as THREE.PerspectiveCamera
++  if (!close(perspective.near, source.clipNear) || !close(perspective.far, source.clipFar))
++    fail('active camera clip planes differ from the source')
++  camera.updateWorldMatrix(true, false)
++  for(let row=0;row<4;row++) for(let column=0;column<4;column++) {
++    // WebGPU renderer changes projection Z for its backend. Optical x/y/w
++    // rows must still match; near/far have their own explicit check above.
++    if (row !== 2 && !close(camera.projectionMatrix.elements[column*4+row],source.projection[row*4+column]))
++      fail('active camera projection differs from the source')
++    if (!close(camera.matrixWorld.elements[column*4+row],source.cameraWorldGltf[row*4+column]))
++      fail('active camera transform differs from the fixed authored camera')
++  }
++  if (scene.overrideMaterial) fail('an application material override is outside the opaque candidate')
++  scene.traverseVisible(object=>{
++    const material = (object as THREE.Mesh).material
++    if (!material) return
++    for(const entry of Array.isArray(material)?material:[material]) {
++      const physical = entry as THREE.MeshPhysicalMaterial
++      if (entry.transparent || entry.opacity !== 1 || entry.alphaTest > 0 || entry.alphaHash
++        || (physical.transmission ?? 0)>0 || entry.depthWrite === false)
++        fail(`material ${entry.name || entry.uuid} is outside the opaque depth contract`)
++    }
++  })
++}
+diff --git a/packages/blendlink/src/tslSourceCameraDofLayers.ts b/packages/blendlink/src/tslSourceCameraDofLayers.ts
+new file mode 100644
+index 0000000..ef69b99
+--- /dev/null
++++ b/packages/blendlink/src/tslSourceCameraDofLayers.ts
+@@ -0,0 +1,18 @@
++import {abs,clamp,float,select} from 'three/tsl'
++import type {TslEffectNode} from './tslPostEffects.js'
++
++/** Full physical pixel units, including endpoint asymmetry of the overlapping
++ * slight-focus near/far fields. Scalar equations only; no native ring code. */
++export function buildSourceCameraDofLayerWeights(radius:TslEffectNode){
++  const slight=clamp(float(5).sub(abs(radius)),0,1)
++  return{
++    foreground:clamp(radius.negate().sub(2.5),0,1),
++    background:clamp(radius.sub(3),0,1),
++    slightForeground:select(radius.lessThanEqual(0.5),slight,0),
++    slightBackground:select(radius.greaterThan(-0.5),slight,0),
++    focus:radius.abs().lessThanEqual(0.5),
++  }
++}
++export function buildSourceCameraDofDiskIntersection(radius:TslEffectNode,distance:TslEffectNode):TslEffectNode{
++  return clamp(radius.abs().sub(distance).add(0.5),0,1)
++}

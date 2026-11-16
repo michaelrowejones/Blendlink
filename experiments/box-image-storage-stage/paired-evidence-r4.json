@@ -1,0 +1,111 @@
+{
+  "status": "PAIRED_SRGB_PASS_UNORM_ATTACHMENT_FAIL_RESEARCH_ZERO_CREDIT",
+  "supportCredit": 0,
+  "installedSceneCredit": 0,
+  "fullArchvizCredit": 0,
+  "sourceBase": "751dcffe",
+  "nativeProducerCommit": "09b5310d8202fb191d1caeb335d169110b35c2f0",
+  "nativeDirectory": "/tmp/scenetoweb-box-storage-native-r3",
+  "nativeSha256": "6e130f37b63586d8922548e88806502cb5faec29f4f35b0acd36e38f733629d1",
+  "browserDirectory": "/tmp/scenetoweb-box-paired-browser-r4",
+  "browserSha256": "e23956aaf525d9ce3443d37a8440da01f1a740fc7f0294f58f97ef44af6175ed",
+  "closedReport": "/tmp/scenetoweb-box-paired-browser-r4-closed.json",
+  "closedSha256": "48a402260292d4c51b900f6dbe3b0dd91d949ddf940843e5eee01e9d3b9b908c",
+  "cpuReport": "/tmp/scenetoweb-box-bsl-f32-model-r1.json",
+  "cpuSha256": "40cd66f7fe9ca5355c28f942411fb22c7ca28a979c2ed2a7fdd595a8d9365758",
+  "normalByteDiagnostic": "/tmp/scenetoweb-box-paired-r4-normal-byte-differences.json",
+  "normalByteDiagnosticSha256": "e243877dd22ca715d34e63f4fe23cf30d37dbc2f74d9bc979db3996706ebac73",
+  "bound": 0.0009765625,
+  "lodSummary": [
+    {
+      "image": "Plaster-Overlay.png",
+      "rows": 22,
+      "words": 5632,
+      "violations": 0,
+      "maxAbs": 0
+    },
+    {
+      "image": "Plaster-normal.png",
+      "rows": 22,
+      "words": 5632,
+      "violations": 252,
+      "maxAbs": 0.003676474094390869
+    }
+  ],
+  "stageTotals": [
+    {
+      "kind": "mask",
+      "words": 24576,
+      "violations": 0,
+      "maxAbs": 0
+    },
+    {
+      "kind": "input",
+      "words": 12288,
+      "violations": 0,
+      "maxAbs": 0
+    },
+    {
+      "kind": "normal",
+      "words": 24576,
+      "violations": 0,
+      "maxAbs": 0.00048744678497314453
+    },
+    {
+      "kind": "weights",
+      "words": 24576,
+      "violations": 0,
+      "maxAbs": 0.0004163980484008789
+    },
+    {
+      "kind": "face",
+      "words": 24576,
+      "violations": 0,
+      "maxAbs": 0
+    },
+    {
+      "kind": "position",
+      "words": 24576,
+      "violations": 0,
+      "maxAbs": 0.00048798322677612305
+    },
+    {
+      "kind": "sampler",
+      "words": 221184,
+      "violations": 35834,
+      "maxAbs": 0.25391773879528046
+    }
+  ],
+  "nativeSourcePins": {
+    "/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/metal/mtl_backend.mm": "12c5b1f6f36b74d7c8cab4a2b095bf1152cfb2670c7eec6d5641999c9477eb43",
+    "/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/intern/gpu_texture_mipmap.cc": "d8e1d4b7b174afc91650e1fc5fcac3e0ff49b9055e78cd7964813d9be988a998",
+    "/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender/source/blender/gpu/shaders/gpu_shader_update_mipmaps.bsl.hh": "4da23ea5a1043654f889316f0435e0153819b926e0fcea7cb9278c4ab05f8796"
+  },
+  "sourcePins": {
+    "experiments/box-image-storage-stage/gpu-paired-mips.js": "970dc659798d0c1e786d33d01351e521af0d0bd03f6186de66e02cca6958e88f",
+    "experiments/box-image-storage-stage/paired-check.mjs": "eefe8f2b00c332c0ea7b731b932097405a65b2bf777446648171230301b57e9b",
+    "experiments/box-image-storage-stage/browser-paired.mjs": "bf89588e737dc4647ef270e61e0b9edd0eb9ad9a11edae8a49eb0b905bab8621",
+    "experiments/box-image-storage-stage/model-check-bsl-f32.mjs": "916f75d3363d6eb95d105e6fa705cb7d565c1b8639abfc10c01655ab14a9fe43",
+    "experiments/box-image-storage-stage/browser-paired.js": "dadc7e0df11fb6eb3560bd3ba2931a8c1204ef0c3b9e1674459ec11759dc0ba1",
+    "experiments/box-image-storage-stage/mip-model-bsl-f32.mjs": "64c6a6a3137bfa62dc1aabb2fba921cdc3274c9665b15cbbd4d6f47c5d93d5d1"
+  },
+  "retainedFailures": [
+    {
+      "directory": "/tmp/scenetoweb-box-paired-browser-r1",
+      "reason": "WGSL compilation stopped; native diagnostic objects serialized as {}."
+    },
+    {
+      "directory": "/tmp/scenetoweb-box-paired-browser-r2",
+      "reason": "Explicit compiler diagnostic: shared is a reserved WGSL identifier."
+    },
+    {
+      "directory": "/tmp/scenetoweb-box-paired-browser-r3",
+      "reason": "Browser execution context destroyed during bulk numeric-array transport; primary context failure retained."
+    },
+    {
+      "directory": "/tmp/scenetoweb-box-paired-browser-r4",
+      "reason": "Numeric capture complete, automatic archive close refused relocated producer path; separate CPU close uses exact frozen 09b source, retaining original guard."
+    }
+  ],
+  "nextScope": "One source-specialized combination: retain passing hardware sRGB chain; upload the independently measured source Float32/normalized-store CPU Non-Color chain. Require fresh full explicit-LOD and actual scene-anisotropic BOX comparison before material/SDK admission."
+}

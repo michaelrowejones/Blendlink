@@ -15,7 +15,8 @@ const RADIAL_WIDTH = {op:'radial_segment_width',model:'regular-full-roundness-se
 const RADIAL_COORDINATES = {op:'radial_segment_coordinates',model:'regular-full-roundness-segment-coordinates-webgl2-m5pro-v1'}
 const REPEAT = {op:'repeat_static',model:'eevee-static-repeat-53-v1'}
 const VERTEX_ALPHA = {op:'vertex_color_alpha',model:'eevee53-float-color-alpha-scalar-v1'}
-const freshPrograms = [SQUEEZE, MAGIC, RADIAL_WIDTH, RADIAL_COORDINATES, REPEAT, VERTEX_ALPHA]
+const SHADOW_EXCLUSION = {op:'shadow_exclusion_native',model:'eevee53-white-shadow-branch-v1'}
+const freshPrograms = [SQUEEZE, MAGIC, RADIAL_WIDTH, RADIAL_COORDINATES, REPEAT, VERTEX_ALPHA, SHADOW_EXCLUSION]
 const record = (value: unknown): value is Record<string, unknown> => !!value && typeof value === 'object' && !Array.isArray(value)
 const key = (value: NodeRendererProgramSelector): string => JSON.stringify([value.op, value.model])
 
@@ -35,7 +36,7 @@ export function matchingNodeRendererPrograms(value: unknown, selectors: readonly
 
 export function nodeRendererProgramLabel(programs: readonly NodeRendererProgramSelector[]): string {
   return [...new Set(programs.map(program => program.op === SQUEEZE.op ? 'Squeeze Value'
-    : program.op === MAGIC.op ? 'Magic Texture' : program.op === RADIAL_WIDTH.op ? 'Radial Tiling Segment Width' : program.op === RADIAL_COORDINATES.op ? 'Radial Tiling Segment Coordinates' : program.op === REPEAT.op ? 'Repeat Zone' : program.op === VERTEX_ALPHA.op ? 'Vertex Color Alpha' : 'live material program'))].join(' and ') || 'Live material program'
+    : program.op === MAGIC.op ? 'Magic Texture' : program.op === RADIAL_WIDTH.op ? 'Radial Tiling Segment Width' : program.op === RADIAL_COORDINATES.op ? 'Radial Tiling Segment Coordinates' : program.op === REPEAT.op ? 'Repeat Zone' : program.op === VERTEX_ALPHA.op ? 'Vertex Color Alpha' : program.op === SHADOW_EXCLUSION.op ? 'Light Path shadow exclusion' : 'live material program'))].join(' and ') || 'Live material program'
 }
 
 /** No Three import: ordinary unmarked portable scenes retain their no-fetch

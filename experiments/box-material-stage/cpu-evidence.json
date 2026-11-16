@@ -1,0 +1,14 @@
+{
+  "status": "COLOR_STAGE_PENDING_NORMAL_FRAME_REFUSED",
+  "supportCredit": 0,
+  "materialCredit": 0,
+  "sceneCredit": 0,
+  "sourceBase": "071010766f459502e03eaf38246677dfe5520b6b",
+  "artifacts": {
+    "/tmp/scenetoweb-box-material-schema-r3.json": "93424ec83b82d8671667bb9d587eb176e5260cbfd15b2c30da122bb62eef2573",
+    "/tmp/scenetoweb-box-material-schema-r3.extract.py": "e8a5c52c0bdb418e8d878c9cfe7a300c6f791500bb8c39643e193a788d0c618c",
+    "/tmp/scenetoweb-box-simplex-weights-cpu-r1.json": "95d3a1c7772258d006d5248586f8b58173705bf4a8accd583539a258b8bc0dad"
+  },
+  "rawWeightGate": "FAILED_8_ULP_UNCHANGED",
+  "productionGuardsChanged": false
+}

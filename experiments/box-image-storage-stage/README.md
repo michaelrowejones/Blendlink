@@ -1,6 +1,6 @@
 # BOX storage, mip and readback-origin research
 
-This follows frozen `5ce68d9` in a new isolated worktree. Production SDK files, admission rules and the fixed `2^-10` image bound are unchanged. **Support, installed-scene and full Archviz credit remain zero.** No custom mip candidate has been uploaded to a browser or qualified as a node port.
+This follows frozen `5ce68d9` in a new isolated worktree. Production SDK files, admission rules and the fixed `2^-10` image bound are unchanged. **Support, installed-scene and full Archviz credit remain zero.** Custom mip research has reached the bounded sampler-stage pass described below; no node port is qualified.
 
 ## Actual observations
 
@@ -71,3 +71,30 @@ Tests validate actual texture format observations, byte-identical original repla
 ## Next smallest step
 
 Keep the fixed row-origin adapter in any future capture. Replace invalid positive-LOD fetch probes with normalized texel-center `textureLod` or a demonstrated actual-mip image/read view. Close odd-level typed normalized-store/filter rounding and the sRGB transfer/storage stage independently. Then upload a custom paired mip chain in a fresh isolated browser comparison with explicit LOD controls before testing derivative-selected anisotropic BOX sampling. Only after those close should full Mapping/NormalMap material and saved-original Final/public installed proofs proceed. No further GPU job was run after this matrix, and the GPU slot is released.
+
+
+The additive [source-specialized paired candidate](BSL_F32.md) now closes the
+sRGB filtered LODs exactly and actual scene-anisotropic BOX color sampling at
+the fixed bound. GPU-render-attachment Non-Color mip storage still fails; the
+aggregate remains research with zero support/scene credit.
+
+Fresh R5 combines the unchanged sRGB hardware chain with the independently
+measured CPU Non-Color store model: all 11,264 filtered LOD words are exact and
+all 73,728 scene-anisotropic BOX sampler words pass. See the bounded stage and
+remaining material/Final requirements in [BSL_F32.md](BSL_F32.md). Research
+status and zero production/node/scene credit remain explicit.
+
+`verify-paired-stage.mjs NATIVE_DIRECTORY BROWSER_DIRECTORY EXACT_PRODUCER_CHECKOUT NEW_REPORT`
+adds a strict stage gate after rerunning those unchanged diagnostic readers.
+It requires the complete 44-row exact filtered-LOD matrix, all geometry controls,
+all 72 scene-anisotropic sampler rows within the original bound, and both
+ineffective-mip-policy negatives on each API. Diagnostic totals intentionally
+include failed negative policies; they are not the positive acceptance total.
+The output refuses overwriting an existing report. This gate grants no material,
+node or full-scene credit and does not establish a WebGL2-only mip generator.
+
+Fresh R6 additionally closes standalone WebGL2 typed-sRGB generation while
+`navigator.gpu` is unavailable. Its independent strict stage acceptance and
+byte-identical replay retain the R5 exact LOD and fixed BOX sampler results;
+see `paired-evidence-r6.json` and [BSL_F32.md](BSL_F32.md). The actual source
+Mapping/NormalMap material and Final/public installation remain unqualified.

@@ -1,0 +1,245 @@
+{
+  "schemaVersion": 1,
+  "role": "Failed experimental camera DOF pilot delta observations; not support or fidelity qualification",
+  "producerSourceCommit": "3290d5ab078971c432fb2eb8d782dc1c1fe65163",
+  "originalSourceSha256": "6785c3b4c5b50e2eab7b088914f6558b90aa3dad9cd105ef57d2973495c7b69c",
+  "nativeBuild": "02f0899d78e3",
+  "nativeOn": {
+    "report": {
+      "path": "/tmp/scenetoweb-impact-native-reference-r2/report.json",
+      "bytes": 1634,
+      "sha256": "87dd4044f0d4bedb914b19fbce9dfca4ce2ee1b5e4f054837df03029ea488229"
+    },
+    "image": {
+      "path": "/tmp/scenetoweb-impact-native-reference-r2/native.png",
+      "bytes": 1032669,
+      "sha256": "78cf66a6e1eda456e8e350abedbded5ecbcfdcda0febe706a0b1f8b1f1e83f69"
+    },
+    "producer": {
+      "path": "/tmp/scenetoweb-impact-native-reference-r2/producer.py",
+      "bytes": 4047,
+      "sha256": "4f8a24de5a8b5ce5519dba85282d3b37d262b45414dc65bf4eee05a8dbcef798"
+    }
+  },
+  "nativeOff": {
+    "report": {
+      "path": "/tmp/scenetoweb-impact-native-dof-off-r1/report.json",
+      "bytes": 1514,
+      "sha256": "9bc35283b8598afb4f4b9ebeaa756ce57ddcaa09eb6e691f9bc7b99e482c734b"
+    },
+    "image": {
+      "path": "/tmp/scenetoweb-impact-native-dof-off-r1/native-dof-off.png",
+      "bytes": 1078159,
+      "sha256": "5cd5c2f519b5703abbc82508d00da83f0078fc40576112bb10076b9fc2d5e606"
+    },
+    "producer": {
+      "path": "/tmp/scenetoweb-impact-native-dof-off-r1/producer.py",
+      "bytes": 4494,
+      "sha256": "b8505320d986247814e427be22a26b2a612020ad6da343dc0de0dc6f6dc9c08c"
+    },
+    "log": {
+      "path": "/tmp/scenetoweb-impact-native-dof-off-r1.log",
+      "bytes": 311,
+      "sha256": "a574ea9c21a00a3af5a1193d52b1afc850575acaa2d5af4e805b7d517e5ed53f"
+    }
+  },
+  "deltaReader": {
+    "report": {
+      "path": "/tmp/scenetoweb-impact-native-dof-off-r1/dof-delta-observations.json",
+      "bytes": 6650,
+      "sha256": "d6f46caa6cdd08fe44f3f1f23c0f980b38ace608977cd3598e96af174a6f239e"
+    },
+    "producer": {
+      "path": "/tmp/scenetoweb-impact-native-dof-off-r1/delta-producer.mjs",
+      "bytes": 2450,
+      "sha256": "592cc220927a4ad7cf6a734c2564fd04183eceb70fb978eca62253154688ddb2"
+    }
+  },
+  "webCaptures": [
+    {
+      "capture": "r1",
+      "report": {
+        "path": "/tmp/scenetoweb-camera-dof-browser-r1/report.json",
+        "bytes": 12305,
+        "sha256": "78de2f7d76fe726a0da2dd1c2ce9c7d1c71693dcafc7fae25db501ebb232b863"
+      },
+      "producer": {
+        "path": "/tmp/scenetoweb-camera-dof-browser-r1/producer.mjs",
+        "bytes": 3187,
+        "sha256": "bfda5c3253c4b8fb8b9495c90106f15e293e9defa75ba833709e76c1bb50e323"
+      },
+      "browser": {
+        "path": "/tmp/scenetoweb-camera-dof-browser-r1/browser.js",
+        "bytes": 3866,
+        "sha256": "89d4bbdaaff90bf0a730f1cd871c69659634ca80875f4fab576713d849db292c"
+      },
+      "displayDifferences": {
+        "path": "/tmp/scenetoweb-camera-dof-browser-r1/display-differences.json",
+        "bytes": 2681,
+        "sha256": "2f6fc8fd5f053cedb9d534f702fd51c919ed2aa92cb5455560acf0dc3ecc05cd"
+      },
+      "runtimeSourceObservationTiming": "immediately after browser capture, no intervening implementation edits; not an immutable pre-capture closure"
+    },
+    {
+      "capture": "r2",
+      "report": {
+        "path": "/tmp/scenetoweb-camera-dof-browser-r2/report.json",
+        "bytes": 12969,
+        "sha256": "4fd1b7e26244da313e32b12670fc68f41657f591715063026327e281fee8352b"
+      },
+      "producer": {
+        "path": "/tmp/scenetoweb-camera-dof-browser-r2/producer.mjs",
+        "bytes": 5724,
+        "sha256": "ef0776a3ace3dccdb30ab22bc59ae5497e7d460d94fc6dbbf2c609b3b190303b"
+      },
+      "browser": {
+        "path": "/tmp/scenetoweb-camera-dof-browser-r2/browser.js",
+        "bytes": 3866,
+        "sha256": "89d4bbdaaff90bf0a730f1cd871c69659634ca80875f4fab576713d849db292c"
+      },
+      "displayDifferences": {
+        "path": "/tmp/scenetoweb-camera-dof-browser-r2/display-differences.json",
+        "bytes": 2679,
+        "sha256": "a2768ccf12fc0a488470c18c919e735cad07faa06c4e5d3418b09b4a993fc22e"
+      },
+      "runtimeSourceSnapshot": {
+        "path": "/tmp/scenetoweb-camera-dof-browser-r2/runtime-source.json",
+        "bytes": 38303,
+        "sha256": "d4baeef834f541283d27d5c454d053f98548b2554f3330b7474d8f12dbb1badc"
+      },
+      "runtimeSourceObservationTiming": "before browser capture"
+    }
+  ],
+  "observations": [
+    {
+      "capture": "/tmp/scenetoweb-camera-dof-browser-r1",
+      "backend": "webgpu",
+      "metrics": {
+        "fullFrame": {
+          "deltaMae": 0.01221640256229338,
+          "deltaRmse": 0.04315322619185043,
+          "nativeEffectMae": 0.006885209581564969,
+          "webEffectMae": 0.013254327512323564,
+          "normalizedMaeVsNoDof": 1.7742963983264342,
+          "cosineSimilarity": 0.5154386468568096
+        },
+        "foreground": {
+          "deltaMae": 0.025226482259715466,
+          "deltaRmse": 0.05896093215557346,
+          "nativeEffectMae": 0.01872074871621722,
+          "webEffectMae": 0.02487704248380801,
+          "normalizedMaeVsNoDof": 1.3475146022264872,
+          "cosineSimilarity": 0.5141133270687456
+        },
+        "focusObject": {
+          "deltaMae": 0.01826470217737309,
+          "deltaRmse": 0.05528899203379459,
+          "nativeEffectMae": 0.007258247743537826,
+          "webEffectMae": 0.020476746254198833,
+          "normalizedMaeVsNoDof": 2.5164065519304635,
+          "cosineSimilarity": 0.5103872995629101
+        }
+      }
+    },
+    {
+      "capture": "/tmp/scenetoweb-camera-dof-browser-r1",
+      "backend": "webgl2",
+      "metrics": {
+        "fullFrame": {
+          "deltaMae": 0.011572786174783758,
+          "deltaRmse": 0.04051480843876019,
+          "nativeEffectMae": 0.006885209581564969,
+          "webEffectMae": 0.012769931236459042,
+          "normalizedMaeVsNoDof": 1.6808182870380148,
+          "cosineSimilarity": 0.5723739634741404
+        },
+        "foreground": {
+          "deltaMae": 0.02451482259584185,
+          "deltaRmse": 0.05828595200841863,
+          "nativeEffectMae": 0.01872074871621722,
+          "webEffectMae": 0.023906687675206078,
+          "normalizedMaeVsNoDof": 1.3095001149502852,
+          "cosineSimilarity": 0.5195350595722216
+        },
+        "focusObject": {
+          "deltaMae": 0.01703493249175254,
+          "deltaRmse": 0.05029428210492749,
+          "nativeEffectMae": 0.007258247743537826,
+          "webEffectMae": 0.01978537711395504,
+          "normalizedMaeVsNoDof": 2.346975894687407,
+          "cosineSimilarity": 0.6027772067261726
+        }
+      }
+    },
+    {
+      "capture": "/tmp/scenetoweb-camera-dof-browser-r2",
+      "backend": "webgpu",
+      "metrics": {
+        "fullFrame": {
+          "deltaMae": 0.012923348708804057,
+          "deltaRmse": 0.04381136427093512,
+          "nativeEffectMae": 0.006885209581564969,
+          "webEffectMae": 0.01502816783548074,
+          "normalizedMaeVsNoDof": 1.8769724517037363,
+          "cosineSimilarity": 0.5486342451233404
+        },
+        "foreground": {
+          "deltaMae": 0.027758673261159373,
+          "deltaRmse": 0.05935316269809743,
+          "nativeEffectMae": 0.01872074871621722,
+          "webEffectMae": 0.03249144345257081,
+          "normalizedMaeVsNoDof": 1.4827758057087148,
+          "cosineSimilarity": 0.5600414761944411
+        },
+        "focusObject": {
+          "deltaMae": 0.018436700606392603,
+          "deltaRmse": 0.05621709402837148,
+          "nativeEffectMae": 0.007258247743537826,
+          "webEffectMae": 0.02079810813226839,
+          "normalizedMaeVsNoDof": 2.540103515040141,
+          "cosineSimilarity": 0.5379730004882046
+        }
+      }
+    },
+    {
+      "capture": "/tmp/scenetoweb-camera-dof-browser-r2",
+      "backend": "webgl2",
+      "metrics": {
+        "fullFrame": {
+          "deltaMae": 0.012803843557224649,
+          "deltaRmse": 0.04166290118444559,
+          "nativeEffectMae": 0.006885209581564969,
+          "webEffectMae": 0.015093430861991948,
+          "normalizedMaeVsNoDof": 1.859615659559111,
+          "cosineSimilarity": 0.5919629622086372
+        },
+        "foreground": {
+          "deltaMae": 0.028974731559483734,
+          "deltaRmse": 0.06261831818893251,
+          "nativeEffectMae": 0.01872074871621722,
+          "webEffectMae": 0.03375856384239481,
+          "normalizedMaeVsNoDof": 1.5477335868721853,
+          "cosineSimilarity": 0.5430048628986955
+        },
+        "focusObject": {
+          "deltaMae": 0.017550798097267575,
+          "deltaRmse": 0.049830950128895365,
+          "nativeEffectMae": 0.007258247743537826,
+          "webEffectMae": 0.02035456775316506,
+          "normalizedMaeVsNoDof": 2.4180489172325963,
+          "cosineSimilarity": 0.6237703817636236
+        }
+      }
+    }
+  ],
+  "fidelityQualified": false,
+  "automaticEnablement": false,
+  "supportCredit": 0,
+  "sceneAcceptance": false,
+  "limitations": [
+    "Signed display deltas remove fixed baseline differences; nonlinear light/material/display coupling and native sampling noise remain",
+    "Browser CoC numerical readback is not a readback of the private native CoC GPU attachment",
+    "Web captures use a research derivative descriptor, not fresh Final/package qualification",
+    "Native DOF-off report does not independently record its hardware backend identity"
+  ]
+}

@@ -1,3 +1,5 @@
+import { validateShadowMaterialNodes, type ShadowMaterialState } from './tslShadowExclusion.js'
+export type { ShadowMaterialState } from './tslShadowExclusion.js'
 import { createOwnedVertexAlphaMaterial } from './tslOwnedVertexAlphaMaterial.js'
 import { vertexAlphaBinding, assertVertexAlphaOpacity, certifyVertexAlphaOpacity, type VertexAlphaOpacityOwnership } from './tslVertexColorAlpha.js'
 import { prepareTslNoiseFields, type NoiseFieldPreparationStatistics } from './tslNoiseFields.js'
@@ -21,6 +23,7 @@ import { collectBumpHeights, validateBumpHeightBinding } from './tslBumpHeight.j
 import * as THREE from 'three'
 import { collectMagicTextures, createMagicCoordinateProof, validateMagicCoordinates, type MagicCoordinateProof } from './tslMagicBounds.js'
 import { trackMaterialDrawCallback, trackMaterialDrawOrientation } from './tslMaterialDrawOrientation.js'
+import { trackMaterialShadowCache } from './tslMaterialShadowCache.js'
 import { MeshStandardNodeMaterial, MeshPhysicalNodeMaterial } from 'three/webgpu'
 import { uniform } from 'three/tsl'
 import { collectVectorTransformRequirements, validateVectorTransformBinding, type VectorTransformRequirement } from './tslVectorTransform.js'
@@ -139,22 +142,26 @@ const CLONE_IDENTITY_KEYS = new Set([
 export function installProgramIntoMaterial(
   source: THREE.Material,
   nodes: Partial<Record<MaterialNodeSlot, unknown>>,
+  materialState: ShadowMaterialState | undefined = undefined,
 ): MeshStandardNodeMaterial {
-  return installCompiledProgramMaterial(source,nodes,false)
+  return installCompiledProgramMaterial(source,nodes,false,materialState)
 }
 
-/** The new explicit VertexAlpha Alpha channel is the sole opt-in caller.
- * The exported generic installation API and all older programs stay unchanged. */
+/** Clone ownership is explicit: Vertex Alpha controls its scalar binding;
+ * static shadow programs reuse that complete RGB/explicit Alpha setup so
+ * implicit carrier or vertex RGBA cannot multiply their owned channels. */
 function installCompiledProgramMaterial(
   source: THREE.Material,
   nodes: Partial<Record<MaterialNodeSlot, unknown>>,
   ownsVertexAlphaOpacity:boolean,
+  materialState?: ShadowMaterialState,
 ): MeshStandardNodeMaterial {
+  const shadowState = validateShadowMaterialNodes(nodes, materialState, message => { throw new TslIrError(message) })
   const physical = (source as THREE.MeshPhysicalMaterial).isMeshPhysicalMaterial
     || Object.keys(nodes).some(key => ['clearcoatNode', 'clearcoatRoughnessNode',
       'clearcoatNormalNode', 'transmissionNode', 'iorNode', 'sheenNode', 'sheenRoughnessNode'].includes(key))
-  const clone = ownsVertexAlphaOpacity
-    ? createOwnedVertexAlphaMaterial(Boolean(physical),nodes.colorNode!=null)
+  const clone = ownsVertexAlphaOpacity || shadowState
+    ? createOwnedVertexAlphaMaterial(Boolean(physical),shadowState ? true : nodes.colorNode!=null)
     : physical ? new MeshPhysicalNodeMaterial() : new MeshStandardNodeMaterial()
   // NodeMaterial.copy reads node slots off the source; copying from
   // a plain shipped MeshStandardMaterial turns every null default
@@ -200,6 +207,13 @@ function installCompiledProgramMaterial(
   clone.userData = { ...source.userData }
   for (const [slot, node] of Object.entries(nodes)) {
     ;(clone as unknown as Record<string, unknown>)[slot] = node
+  }
+  if (shadowState) {
+    clone.transparent = shadowState.visibleAlpha < 1
+    clone.depthWrite = shadowState.visibleAlpha === 1
+    clone.alphaTest = 0
+    clone.alphaHash = false
+    clone.alphaToCoverage = false
   }
   return clone
 }
@@ -665,6 +679,8 @@ export async function installTslMaterials(
                 owner.userData?.blendlink_tsl_object, material.userData?.blendlink_tsl_material,
               ) } : {}) },
             )
+            if (program.materialState && programs.materials[source]?.skipped?.length)
+              throw new TslIrError('Shadow material state requires a complete source surface program without skips')
             for (const item of program.skipped) {
               skipped.push({ material: source, ...item })
             }
@@ -680,7 +696,7 @@ export async function installTslMaterials(
             if(ownership&&(program.nodes.opacityNode==null||ownership.completeColor!==(program.nodes.colorNode!=null)))
               throw new TslIrError('Certified Vertex Alpha opacity requires its complete owned channels to build')
             variant = {
-              clone: installCompiledProgramMaterial(material,program.nodes,!!ownership),
+              clone: installCompiledProgramMaterial(material,program.nodes,!!ownership,program.materialState),
               resources,
             }
             variants.set(variantKey, variant)
@@ -716,6 +732,9 @@ export async function installTslMaterials(
     }
     for (const [mesh, materials] of drawMaterials) {
       releaseDrawCallbacks.push(trackMaterialDrawOrientation(mesh, materials))
+      const shadowMaterials = new Set([...materials].filter(material =>
+        (material as MeshStandardNodeMaterial).maskShadowNode != null))
+      if (shadowMaterials.size) releaseDrawCallbacks.push(trackMaterialShadowCache(mesh, shadowMaterials))
       const alphaBindings = new Map(installed.filter(item => item.mesh === mesh && item.vertexAlpha)
         .map(item => [item.clone, item.vertexAlpha!]))
       if (alphaBindings.size) releaseDrawCallbacks.push(trackMaterialDrawCallback(mesh, new Set(alphaBindings.keys()), function (...args) {

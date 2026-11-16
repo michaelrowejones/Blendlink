@@ -38,7 +38,7 @@ original source SHA-256 was independently checked unchanged after planning.
 The local evidence is `/tmp/scenetoweb-v1-archviz-baseline/`; it contains the
 project config and failure log, not redistributable release artifacts.
 
-The improved plan-only inspection now returns valid JSON with exit code 1 and
+The earlier plan-only inspection returned valid JSON with exit code 1 and
 both Glass and Plaster errors, retaining native issue codes, affected objects,
 remedies and per-channel refusals. Hard compiler errors remain errors even with
 an application material adapter; real Preview/Final export still refuses them.
@@ -48,8 +48,8 @@ Glass selects a separate EEVEE Material Output, whose outer Mix Shader is driven
 by Light Path **Is Shadow Ray**. Its shadow branch is white Transparent BSDF;
 its other branch mixes a metallic Principled surface with white transparency.
 Replacing Is Shadow Ray with a universal constant would lose the different
-shadow behavior. A future route needs both the visible-surface and shadow-pass
-contracts; ordinary parameter interpolation alone is insufficient. The
+shadow behavior. The qualified bounded route below preserves the visible-surface
+and shadow-pass contracts separately. The
 engine-specific output is selected by Blender's read-only `get_output_node`,
 not by treating the global active flag as an EEVEE-only flag.
 
@@ -75,6 +75,109 @@ Metal-blit-only inference was incomplete. Actual image sampling still fails.
 The source-derived CPU model and raw failures remain experimental, with no
 support or original-scene credit.
 
+The [paired mip follow-up](../experiments/box-image-storage-stage/BSL_F32.md)
+now closes the bounded sampling stage. All 44 filtered mip-level comparisons
+(11,264 words) are bit-exact for the two original Plaster images on Metal
+WebGPU and node WebGL2. The source scene's two-sample anisotropic BOX domain
+passes all 73,728 words at the unchanged `2^-10` bound; maximum errors are
+`0.0001219809` for color and `0.0004878640` for the normal image. Geometry,
+normal, projection, position and weight controls pass. Ordinary mip and no-mip
+policies remain discriminating negatives. An additive acceptance command
+(`verify-paired-stage.mjs`) reruns the immutable readers and checks every
+positive tuple and negative policy; the original diagnostic readers and their
+hashes remain unchanged.
+
+This is not a port admission: the experiment uses a hardware-typed sRGB mip
+chain generated through WebGPU, plus the independently checked CPU Non-Color
+chain. A WebGL2-only generation/transport route and the complete authored
+Mapping → BOX → Normal Map → installed Final still need qualification. Plaster
+remains a compiler blocker. No node inventory row is promoted by this sampling
+result; the separate Glass qualification below covers Light Path's bounded route.
+
+## Qualified Glass shadow branch
+
+The actual original Glass material, loaded with the original file's native
+legacy EEVEE conversion, now passes a scoped live route. Six native predicate
+renders and eight installed Final/browser tuples cover both an opaque control
+and the original `0.05000001192092896` visible Alpha. Metal/SwiftShader ×
+WebGPU/WebGL2 pass shadow exclusion, a separate opaque caster, visible primary
+identity, exact stored Alpha and unblended Float32 Alpha, source-material
+restoration and reinstall. The independent reader closes 5,767,168 browser
+words plus 393,216 native decoded PNG words; these are within-engine predicate
+controls, not Blender/Three BRDF or whole-scene pixel parity.
+
+The five-channel program explicitly owns transparent/depth-write/coverage state
+because Blender 5.3 stock glTF loses this graph's visible Alpha. Scoped owned
+callbacks invalidate Three r184's shadow override cache across same-object
+material replacement, preserve app callbacks and restore normal stock shadows
+after disposal. Original artist materials remain unchanged. Incomplete channels,
+missing state, mismatched Alpha and missing node-renderer declarations refuse.
+
+[The closed receipt](../experiments/shadow-transparent-branch/qualified-evidence.json)
+limits this to the pinned 5.3 build/macOS arm64 Metal, direct terminal Is Shadow
+Ray and exact white Transparent shadow closure. The non-shadow closure is one
+literal-Alpha Principled, or one literal-factor white-Transparent/Principled
+mix with Principled Alpha one. No standalone Light Path values, other outputs,
+Cycles route, groups, animation, nested visible mixes or other source profiles
+are admitted. Blender 4.2/5.2 remain unsupported. Archviz remains selected and
+unaccepted while Plaster's complete material is blocked.
+
+## Plaster color and normal-frame split
+
+The original color Mapping → independent BOX blend → OVERLAY signal passes
+36,864 positive words at the unchanged `2^-10` bound, with 12,288 exact mask
+words and strong omitted-Mapping/OVERLAY negatives. The original-source color
+capture is experimental until its own saved Final and installed proof close.
+Cold headless Blender 5.3 `gpu.init()` also extracts every native sRGB mip byte
+without a beauty render or visible UI: all 5,592,404 bytes match both passing
+browser chains. Export-owned compressed companions can remove runtime mip
+generation and keep Node audit and browser inputs identical.
+
+The [normal-frame audit](../experiments/archviz-tangent-frame/README.md) found
+actual degenerate UV triangles and authored n-gons. Stock glTF omits tangents
+after its Python API refuses n-gons; blanket or selective private triangulation
+changes native frames. Finite vectors do not certify zero-UV fallback. Preserve
+the NormalMap refusal while developing original-corner normal/Mikk provenance;
+artists must not need a C++ compiler.
+
+## Original-scene startup experiments
+
+The [Impact profiling checkpoint](../experiments/impact-program-startup-profile/README.md)
+retains the original website and exact shader/geometry associations. It finds
+53 fragment shader sources, largely split by Generated-coordinate bounding-box
+literals. A uniform candidate reduces that to 11, but changes 572 RGB bytes
+with a maximum difference of 25. It is retained as a patch, not installed in
+the runtime. Historical and newly warmed startup timings are not comparable;
+no performance acceptance or 17-second improvement is claimed.
+
+The native per-vertex Generated follow-up verifies all 281 original evaluated
+mesh-owner associations, including oriented triangles and texture space. Its
+three actual BEVEL cases close render-mode metadata and independent position
+and mask controls. One of 196,608 Generated field words exceeds the fixed
+`2^-10` gate on the WebGL2 glTF-coordinate case (`0.001321733` maximum).
+The wrong-bounds negatives all discriminate. This second candidate also stays
+experimental. The next useful control isolates that one varying/vertex result;
+it does not widen the image gate or rewrite the original scene.
+
+## Camera DOF remains private research
+
+The [camera DOF experiment](../experiments/camera-dof-physical/README.md)
+preserves three failed candidates and a reproducible SDK patch. It does not
+add an option or optics implementation to the published SDK/addon. Its entry
+point checks all 16 implementation-file hashes before opening a GPU and
+refuses an unapplied patch. The original missing-DOF warning remains active.
+
+Actual native DOF-on/off renders isolate the authored optical effect from the
+fixed Blender/Three material and lighting differences. Candidate 3 passes 19
+GPU layer-boundary checks and three declared constant-HDR controls on both
+backends, but its signed full-frame effect error is 2.20 times the no-DOF
+baseline on WebGPU and 2.08 times on WebGL2. The foreground/focus resolve is
+not artist-ready. Layer eligibility alone does not fix accumulator/coverage
+semantics; further approximate gather rewrites are paused for this batch.
+Native kernels retain their upstream licenses; the SDK candidate is an
+independent functional implementation. No DOF, node or Impact acceptance is
+credited. All 281 original materials still install in these research captures.
+
 ## Work order
 
 | Work | State | Acceptance |
@@ -84,7 +187,7 @@ support or original-scene credit.
 | Pinned 5.3 complete local lane | Passed from clean source on the pinned macOS arm64 host | Four unqualified stock-material relaxations remain explicitly excluded; wider host/device and public release gates remain |
 | Headless policy discovery | Support both product prefixes and exact historical sentinels with source-profile applicability | Current source-policy checks earn no native numerical credit |
 | Archviz blended BOX image/Normal graph | Measured compiler blocker; general transport and fidelity path under investigation | Actual source → Final → installed browser, including normal response |
-| Archviz Light Path shadow branch | Source graph identified; no live or baked route credited | Visible and shadow behavior, engine-specific output selection and installed lifecycle |
+| Archviz Light Path shadow branch | Qualified bounded 5.3 partial live route, including original Glass material | Complete Archviz scene remains unaccepted; broader Light Path outputs/source profiles remain unsupported |
 | Impact Fracture | Original Final and installed website smoke pass on WebGPU and node WebGL2 after worker/Area-light fixes | Native camera DOF remains untransported; fidelity and startup performance remain open |
 | Classroom horizontal Lens Distortion | Qualified bounded partial 5.3 CPU route | Four saved Finals and all four browser tuples pass; original Classroom graph and broader Lens modes remain blocked |
 | Additional positive originals | Auditioning; no successful originals accepted yet | Licensed originals, manageable scope, all used modes and complete scene acceptance |
@@ -118,7 +221,7 @@ same SHA-256 `8b1e29336d6bbc311aebe15d0f983dcdbe42396958c7d7f484871a9e83ef6953`.
 Its 41,760 primary and 41,760 supporting sampling Float32 words are exact. The
 scope and lifecycle evidence are in
 [the qualified record](../experiments/compositor-lens-horizontal/qualified-evidence.json).
-Coverage is now 46 supported, 141 partial, 131 unsupported and 14 structural;
+That checkpoint's coverage was 46 supported, 141 partial, 131 unsupported and 14 structural;
 native catalog audit history remains unchanged.
 
 After the worker and Area-light changes, the complete Lens transaction passed

@@ -1,0 +1,194 @@
+{
+  "schemaVersion": 1,
+  "role": "Failed private camera DOF candidate3 with closed scalar/boundary/HDR controls; no published SDK opt-in",
+  "privateSourceCommit": "67d9cb3bddab7c16642fe12aa538c0e32d5f8c35",
+  "publicPatchBase": "751dcffec11256f0b6347d833eef4bb9f8525f47",
+  "sdkCandidatePatchSha256": "7ad971040d6d89a3df345b2f7b335d501dea9ccc49d69c65e36b8860c7f3ca9f",
+  "originalSourceSha256": "6785c3b4c5b50e2eab7b088914f6558b90aa3dad9cd105ef57d2973495c7b69c",
+  "browser": {
+    "report": {
+      "path": "/tmp/scenetoweb-camera-dof-browser-r3/report.json",
+      "bytes": 40175,
+      "sha256": "947eee170919110bcf6343c0f17ca303cb0ee7a327bd0db13680fd7b200f24ac"
+    },
+    "producer": {
+      "path": "/tmp/scenetoweb-camera-dof-browser-r3/producer.mjs",
+      "bytes": 5817,
+      "sha256": "373a2ef27398aa5953d4afe3f0e508215fb48d2ad408f6a6c3f4fbf3279046f5"
+    },
+    "browserFixture": {
+      "path": "/tmp/scenetoweb-camera-dof-browser-r3/browser.js",
+      "bytes": 6044,
+      "sha256": "b74ac306d02a05976e35c2edd9fb016720fc3cb39d1c2b5218b5e38e93d88603"
+    },
+    "runtimeSource": {
+      "path": "/tmp/scenetoweb-camera-dof-browser-r3/runtime-source.json",
+      "bytes": 38670,
+      "sha256": "58463a52bbb8fe15d503a75c2e4df4ca7d1ad91af62227de18a159a04be91614"
+    },
+    "absoluteDifferences": {
+      "path": "/tmp/scenetoweb-camera-dof-browser-r3/display-differences.json",
+      "bytes": 2682,
+      "sha256": "077a72cdf7e55c5628f2ef4a89d8f5277b08d4b379128af73c4913835c4d4ea0"
+    }
+  },
+  "signedDeltas": {
+    "report": {
+      "path": "/tmp/scenetoweb-impact-native-dof-deltas-r3/dof-delta-observations.json",
+      "bytes": 9512,
+      "sha256": "d3bb412cb962872577d1afaae11d54c68108e4326ab1afe3e2d45d7bc019891a"
+    },
+    "producer": {
+      "path": "/tmp/scenetoweb-impact-native-dof-deltas-r3/delta-producer.mjs",
+      "bytes": 2916,
+      "sha256": "df5e051b6e5f96822e454361602ca21cc6f0052ac21981f94adb147aa4b000d2"
+    },
+    "reusedNativeOnOffFrom": "delta-r1-receipt.json; no second native render",
+    "candidate3Observations": [
+      {
+        "capture": "/tmp/scenetoweb-camera-dof-browser-r3",
+        "backend": "webgpu",
+        "metrics": {
+          "fullFrame": {
+            "deltaMae": 0.015174114640120959,
+            "deltaRmse": 0.05040647765597383,
+            "nativeEffectMae": 0.006885209581564969,
+            "webEffectMae": 0.016335919060958045,
+            "normalizedMaeVsNoDof": 2.2038711328046414,
+            "cosineSimilarity": 0.4237649198178387
+          },
+          "foreground": {
+            "deltaMae": 0.029053702731293648,
+            "deltaRmse": 0.06154532636898801,
+            "nativeEffectMae": 0.01872074871621722,
+            "webEffectMae": 0.03398314950999716,
+            "normalizedMaeVsNoDof": 1.5519519636586598,
+            "cosineSimilarity": 0.5609133767654612
+          },
+          "focusObject": {
+            "deltaMae": 0.023816248721850408,
+            "deltaRmse": 0.06810802847233428,
+            "nativeEffectMae": 0.007258247743537826,
+            "webEffectMae": 0.023644287344684833,
+            "normalizedMaeVsNoDof": 3.281266989412772,
+            "cosineSimilarity": 0.3195460033610885
+          }
+        }
+      },
+      {
+        "capture": "/tmp/scenetoweb-camera-dof-browser-r3",
+        "backend": "webgl2",
+        "metrics": {
+          "fullFrame": {
+            "deltaMae": 0.014305581086661745,
+            "deltaRmse": 0.04828795791772901,
+            "nativeEffectMae": 0.006885209581564969,
+            "webEffectMae": 0.015386925835198776,
+            "normalizedMaeVsNoDof": 2.0777263084285327,
+            "cosineSimilarity": 0.43470909432327454
+          },
+          "foreground": {
+            "deltaMae": 0.027943890056220198,
+            "deltaRmse": 0.06055956527906718,
+            "nativeEffectMae": 0.01872074871621722,
+            "webEffectMae": 0.03297069035967483,
+            "normalizedMaeVsNoDof": 1.492669469571655,
+            "cosineSimilarity": 0.5797321497440396
+          },
+          "focusObject": {
+            "deltaMae": 0.022193699702246193,
+            "deltaRmse": 0.06451307679001161,
+            "nativeEffectMae": 0.007258247743537826,
+            "webEffectMae": 0.021776299408774437,
+            "normalizedMaeVsNoDof": 3.0577214344888852,
+            "cosineSimilarity": 0.31587757546593415
+          }
+        }
+      }
+    ]
+  },
+  "controls": [
+    {
+      "backend": "webgpu",
+      "enabled": false,
+      "circleOfConfusionMaxError": 9.88519026634549e-07,
+      "layerBoundaryCount": 19,
+      "layerBoundaryMaxError": 0,
+      "constantHdrFixtureExtent": [
+        16,
+        9
+      ],
+      "constantHdrMaxError": 1.0986328125000416e-05,
+      "originalImageExtent": [
+        1280,
+        720
+      ],
+      "originalImageAppliedMaterials": 281
+    },
+    {
+      "backend": "webgpu",
+      "enabled": true,
+      "circleOfConfusionMaxError": 9.88519026634549e-07,
+      "layerBoundaryCount": 19,
+      "layerBoundaryMaxError": 0,
+      "constantHdrFixtureExtent": [
+        16,
+        9
+      ],
+      "constantHdrMaxError": 1.0986328125000416e-05,
+      "originalImageExtent": [
+        1280,
+        720
+      ],
+      "originalImageAppliedMaterials": 281
+    },
+    {
+      "backend": "webgl2",
+      "enabled": false,
+      "circleOfConfusionMaxError": 9.88519026634549e-07,
+      "layerBoundaryCount": 19,
+      "layerBoundaryMaxError": 0,
+      "constantHdrFixtureExtent": [
+        16,
+        9
+      ],
+      "constantHdrMaxError": 1.0986328125000416e-05,
+      "originalImageExtent": [
+        1280,
+        720
+      ],
+      "originalImageAppliedMaterials": 281
+    },
+    {
+      "backend": "webgl2",
+      "enabled": true,
+      "circleOfConfusionMaxError": 9.88519026634549e-07,
+      "layerBoundaryCount": 19,
+      "layerBoundaryMaxError": 0,
+      "constantHdrFixtureExtent": [
+        16,
+        9
+      ],
+      "constantHdrMaxError": 1.0986328125000416e-05,
+      "originalImageExtent": [
+        1280,
+        720
+      ],
+      "originalImageAppliedMaterials": 281
+    }
+  ],
+  "timingQualification": false,
+  "timingNote": "Each renderer was warmed by candidate boundary/HDR controls before scene installation; ready values are not startup benchmarks or comparable to prior rounds",
+  "scalarLayerControlsPassed": true,
+  "imageAndDeltaFidelityGate": "failed",
+  "automaticEnablement": false,
+  "publishedSdkFeature": false,
+  "supportCredit": 0,
+  "sceneAcceptance": false,
+  "remainingGaps": [
+    "Native ring-ordered opacity/occlusion and source-derived layer coverage are not implemented",
+    "Native scatter, spatial filtering and temporal resolve are not implemented",
+    "Browser CoC readback does not read the private native CoC GPU attachment",
+    "Original-scene captures use a research derivative descriptor, not a newly qualified Final artifact"
+  ]
+}

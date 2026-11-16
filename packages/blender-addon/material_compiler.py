@@ -5880,6 +5880,7 @@ def _ir_runtime_needs(value, needs) -> None:
             ("radial_segment_coordinates", "regular-full-roundness-segment-coordinates-webgl2-m5pro-v1"),
             ("repeat_static", "eevee-static-repeat-53-v1"),
             ("vertex_color_alpha", "eevee53-float-color-alpha-scalar-v1"),
+            ("shadow_exclusion_native", "eevee53-white-shadow-branch-v1"),
         ):
             needs["requiresNodeRendererPrograms"].add((op, value["model"]))
         if op == "uv_active":

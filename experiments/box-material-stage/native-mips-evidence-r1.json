@@ -1,0 +1,114 @@
+{
+  "status": "COLD_BACKGROUND_NATIVE_MIPS_BIT_EXACT_TO_QUALIFIED_CHAIN",
+  "supportCredit": 0,
+  "materialCredit": 0,
+  "sceneCredit": 0,
+  "background": true,
+  "renderCalls": 0,
+  "nativeMilliseconds": 210.56283300276846,
+  "nativeSha256": "49a928fa13ae93fb2a2fa25b4047bc5e97af6a62b166eeaf56f5b5b7fded1d7f",
+  "rows": [
+    {
+      "level": 0,
+      "bytes": 4194304,
+      "differences": 0,
+      "maxByte": 0,
+      "nativeSha256": "aa48124e78c531725c864c3012677ae3ad80bd1c97f321a36d1d695c0d87fd78",
+      "r6Sha256": "aa48124e78c531725c864c3012677ae3ad80bd1c97f321a36d1d695c0d87fd78"
+    },
+    {
+      "level": 1,
+      "bytes": 1048576,
+      "differences": 0,
+      "maxByte": 0,
+      "nativeSha256": "eb277c7119093606bcf32b32f3eada5e5a3e0ed96826bfeb1c2e629df5851cdc",
+      "r6Sha256": "eb277c7119093606bcf32b32f3eada5e5a3e0ed96826bfeb1c2e629df5851cdc"
+    },
+    {
+      "level": 2,
+      "bytes": 262144,
+      "differences": 0,
+      "maxByte": 0,
+      "nativeSha256": "a64a3c98ce0358772c9d174888e69efb8cb72924409adedf0252233d26509644",
+      "r6Sha256": "a64a3c98ce0358772c9d174888e69efb8cb72924409adedf0252233d26509644"
+    },
+    {
+      "level": 3,
+      "bytes": 65536,
+      "differences": 0,
+      "maxByte": 0,
+      "nativeSha256": "8b9ba1f14052d0db14d19a8120ca3ac8d8a7c610fc6090bbd85cf1de5c70c5ed",
+      "r6Sha256": "8b9ba1f14052d0db14d19a8120ca3ac8d8a7c610fc6090bbd85cf1de5c70c5ed"
+    },
+    {
+      "level": 4,
+      "bytes": 16384,
+      "differences": 0,
+      "maxByte": 0,
+      "nativeSha256": "3d5e47b67021a208aa079dc70c57fa5a378516c448ef048320a066685a302a92",
+      "r6Sha256": "3d5e47b67021a208aa079dc70c57fa5a378516c448ef048320a066685a302a92"
+    },
+    {
+      "level": 5,
+      "bytes": 4096,
+      "differences": 0,
+      "maxByte": 0,
+      "nativeSha256": "a255a29ec0ff85df65f3438842e456c57cb3b9d5c7b15a80ee3a973cb478216f",
+      "r6Sha256": "a255a29ec0ff85df65f3438842e456c57cb3b9d5c7b15a80ee3a973cb478216f"
+    },
+    {
+      "level": 6,
+      "bytes": 1024,
+      "differences": 0,
+      "maxByte": 0,
+      "nativeSha256": "3d2f1565fc801c9689424072b409d2944071cbe769a0eccbb63f458869ecd004",
+      "r6Sha256": "3d2f1565fc801c9689424072b409d2944071cbe769a0eccbb63f458869ecd004"
+    },
+    {
+      "level": 7,
+      "bytes": 256,
+      "differences": 0,
+      "maxByte": 0,
+      "nativeSha256": "84fec4a49242c56bf6aac8f4ca99ddb71c760a5a74c9fefcd2ff95708d5e4278",
+      "r6Sha256": "84fec4a49242c56bf6aac8f4ca99ddb71c760a5a74c9fefcd2ff95708d5e4278"
+    },
+    {
+      "level": 8,
+      "bytes": 64,
+      "differences": 0,
+      "maxByte": 0,
+      "nativeSha256": "e54f5abb7498d37c0f258dcb6d03c7aac58921a1dc4457051a1c46cec1ed2562",
+      "r6Sha256": "e54f5abb7498d37c0f258dcb6d03c7aac58921a1dc4457051a1c46cec1ed2562"
+    },
+    {
+      "level": 9,
+      "bytes": 16,
+      "differences": 0,
+      "maxByte": 0,
+      "nativeSha256": "07b7f0c981f6445aa23dd16bb0bc997ffd7dd6984e73bed58ee3e5abdd87c12b",
+      "r6Sha256": "07b7f0c981f6445aa23dd16bb0bc997ffd7dd6984e73bed58ee3e5abdd87c12b"
+    },
+    {
+      "level": 10,
+      "bytes": 4,
+      "differences": 0,
+      "maxByte": 0,
+      "nativeSha256": "87e844e32ba174d7c4ffbaf76292a763e787424e50a5548729fe9289b7202f6c",
+      "r6Sha256": "87e844e32ba174d7c4ffbaf76292a763e787424e50a5548729fe9289b7202f6c"
+    }
+  ],
+  "sourceCommit": "c4afa15320989cfa64e6d88ff860198842de8f01",
+  "nativeDirectory": "/tmp/scenetoweb-box-native-mips-r1",
+  "comparisonFile": "/tmp/scenetoweb-box-native-mips-r1-compared.json",
+  "comparisonSha256": "3b2cdf19766e7c98ca44e2c53a249375ee8c9f36eedfb26a639652a07449348a",
+  "nativeArchiveSha256": "7f9315b1eb6e017787beea6b513aac96b12399fb6df6a542746336f5c6a57da6",
+  "additionalMipBytes": 1398100,
+  "deflateBytes": 550045,
+  "deflateSha256": "88641363a08b029d841388851a2d5b03bb4cbd6940dac64254ea8c5a2580b219",
+  "distributableRuntime": "No native source kernel or GPL research sampler is copied to MIT SDK; immutable native mip bytes are data companions",
+  "remaining": [
+    "Atomic publish and SHA-bound immutable mip cache",
+    "Decode/upload-only runtime plus ownership/update/disposal/failure controls",
+    "Saved owned original-color Final and installed proof; original full material/scene still refused"
+  ]
+}

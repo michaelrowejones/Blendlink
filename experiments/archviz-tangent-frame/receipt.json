@@ -1,0 +1,533 @@
+{
+  "schemaVersion": 1,
+  "role": "Read-only source/native Mikk callback CPU investigation; no shader/GPU or scene support qualification",
+  "baseSourceCommit": "751dcffec11256f0b6347d833eef4bb9f8525f47",
+  "originalSourceSha256": "9f636b2e1a59b3d181f90caf1b1703658eeadebad57f3c6207737d2fe3ffd85e",
+  "nativeBuild": "02f0899d78e3",
+  "report": {
+    "path": "/private/tmp/scenetoweb-archviz-tangent-cpu-r2/report.json",
+    "bytes": 14895,
+    "sha256": "365f059d9c6cd8c85703f83b382f265f6f33eb570087e3ea7d6505b34f989521"
+  },
+  "producer": {
+    "path": "/private/tmp/scenetoweb-archviz-tangent-cpu-r2/producer.py",
+    "bytes": 10769,
+    "sha256": "cec4cacf81b1e857f9e97cc760869e42e6074e494ed1ba837b6d9a6131727095"
+  },
+  "cppProbe": {
+    "path": "/private/tmp/scenetoweb-archviz-tangent-cpu-r2/mikk-probe.cc",
+    "bytes": 1658,
+    "sha256": "060f735487f6ffc20deb19502a4e6f347c634368bed917b9e4555573373a2782"
+  },
+  "binary": {
+    "path": "/private/tmp/scenetoweb-archviz-tangent-cpu-r2/mikk-probe",
+    "bytes": 60024,
+    "sha256": "4e372628dc78bf7adf556b82a2a2408a0ff86262a23e127e6a243de78a961e49"
+  },
+  "log": {
+    "path": "/private/tmp/scenetoweb-archviz-tangent-cpu-r2.log",
+    "bytes": 12495,
+    "sha256": "99a22e4c786fa4041b200761dfb3836e4fc71ff0c86b662281d26c1015a61554"
+  },
+  "nativeCompilerVersion": "Apple clang version 21.0.0 (clang-2100.1.1.101)",
+  "compilerArguments": [
+    "-std=c++17",
+    "-O2",
+    "-ffp-contract=off",
+    "-I",
+    "PINNED_BLENDER_SOURCE/intern/mikktspace"
+  ],
+  "observations": {
+    "role": "Source-derived Mikk callback CPU model and API/export barrier controls, not native draw/GPU frame qualification",
+    "nativeBuild": "02f0899d78e3",
+    "sourceSha256": "9f636b2e1a59b3d181f90caf1b1703658eeadebad57f3c6207737d2fe3ffd85e",
+    "producerSha256": "cec4cacf81b1e857f9e97cc760869e42e6074e494ed1ba837b6d9a6131727095",
+    "mikkBinarySha256": "4e372628dc78bf7adf556b82a2a2408a0ff86262a23e127e6a243de78a961e49",
+    "renderAttempts": 0,
+    "saveCalls": 0,
+    "supportCredit": 0,
+    "sceneAcceptance": false,
+    "fixtures": [
+      {
+        "id": "ngon",
+        "vertices": 5,
+        "loops": 5,
+        "faces": 1,
+        "ngons": 1,
+        "quads": 0,
+        "triangles": 3,
+        "uvName": "UVMap",
+        "datasetSha256": "0af1bfddaaec4323a0350e30633363391923cf08a2063a17225e96f0a7efaf6f",
+        "uvAreaBelow1eMinus8": 0,
+        "zeroUvArea": 0,
+        "publicApi": "refused",
+        "publicError": "Error: Tangent space can only be computed for tris/quads, aborting\n",
+        "sourceCallbackModel": {
+          "inputSha256": "4db82f1c596c621487ae389574a3149dc76a35b38424d171328aa3d5b46c8bde",
+          "outputSha256": "7543bd444861037c8d5b0c00b943de3a2d04bf5af41feefa5ccc24893318a017",
+          "callbackFaces": 3,
+          "callbackCorners": 9,
+          "repeatedOriginalLoopDifferentOutputs": 0
+        },
+        "allTrianglesModel": {
+          "inputSha256": "4db82f1c596c621487ae389574a3149dc76a35b38424d171328aa3d5b46c8bde",
+          "outputSha256": "7543bd444861037c8d5b0c00b943de3a2d04bf5af41feefa5ccc24893318a017",
+          "callbackFaces": 3,
+          "callbackCorners": 9,
+          "repeatedOriginalLoopDifferentOutputs": 0
+        },
+        "quadPreservationMaximumDifference": 0.0,
+        "tangentLengthRange": [
+          1.0,
+          1.0
+        ],
+        "nonfiniteTangents": 0,
+        "defaultPositiveXNegativeSignCorners": 0,
+        "zeroPositiveSignSentinelCorners": 0,
+        "nearlyParallelCornerReferences": 0,
+        "parallelExamples": [],
+        "stockGltf": {
+          "glbSha256": "e960823f852058b124c37a79f54672140388c3c958c6e9fb7d02239bc701d9cf",
+          "tangentAttributePresent": false
+        },
+        "privateProxy": {
+          "corners": 9,
+          "uvFloat32BytesPreserved": true,
+          "normalMaximumDifference": 0,
+          "normalSnorm10ChangedCorners": 0,
+          "tangentMaximumDifference": 0,
+          "tangentSnorm10ChangedCorners": 0,
+          "handednessChangedCorners": 0,
+          "nativeNgonApiBarrierRemoved": true,
+          "drawGpuFrameQualification": false
+        }
+      },
+      {
+        "id": "zero-uv-normal-parallel",
+        "vertices": 3,
+        "loops": 3,
+        "faces": 1,
+        "ngons": 0,
+        "quads": 0,
+        "triangles": 1,
+        "uvName": "UVMap",
+        "datasetSha256": "86ce9bbba12f2241fcf7036bcc484af190dfbae5f09ea3a2ed1ea9ff678b2eae",
+        "uvAreaBelow1eMinus8": 1,
+        "zeroUvArea": 1,
+        "publicApi": "computed",
+        "sourceCallbackModel": {
+          "inputSha256": "d94966f5f8eea2ecd731a46f27481066940076737b0aa38e406c6b619fc39293",
+          "outputSha256": "0f4e008f54ac8643a88079cbc6f1a1614f10ba3e04a6bbb517d608f19a4a517c",
+          "callbackFaces": 1,
+          "callbackCorners": 3,
+          "repeatedOriginalLoopDifferentOutputs": 0
+        },
+        "allTrianglesModel": {
+          "inputSha256": "d94966f5f8eea2ecd731a46f27481066940076737b0aa38e406c6b619fc39293",
+          "outputSha256": "0f4e008f54ac8643a88079cbc6f1a1614f10ba3e04a6bbb517d608f19a4a517c",
+          "callbackFaces": 1,
+          "callbackCorners": 3,
+          "repeatedOriginalLoopDifferentOutputs": 0
+        },
+        "quadPreservationMaximumDifference": 0.0,
+        "publicVsSourceCallbackMaximumDifference": 0.0,
+        "tangentLengthRange": [
+          1.0,
+          1.0
+        ],
+        "nonfiniteTangents": 0,
+        "defaultPositiveXNegativeSignCorners": 3,
+        "zeroPositiveSignSentinelCorners": 0,
+        "nearlyParallelCornerReferences": 3,
+        "parallelExamples": [
+          {
+            "triangle": 0,
+            "loop": 0,
+            "sine": 0.0,
+            "tangent": [
+              1.0,
+              0.0,
+              0.0,
+              -1.0
+            ],
+            "normal": [
+              1.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "triangle": 0,
+            "loop": 1,
+            "sine": 0.0,
+            "tangent": [
+              1.0,
+              0.0,
+              0.0,
+              -1.0
+            ],
+            "normal": [
+              1.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "triangle": 0,
+            "loop": 2,
+            "sine": 0.0,
+            "tangent": [
+              1.0,
+              0.0,
+              0.0,
+              -1.0
+            ],
+            "normal": [
+              1.0,
+              0.0,
+              0.0
+            ]
+          }
+        ],
+        "stockGltf": {
+          "glbSha256": "39f1feeefda0842dade540f4abdc73f0cd2a38f0fc92cd3a113275aaf2596e21",
+          "tangentAttributePresent": true,
+          "stockAccessorVsNativeMaximumDifference": 0.0
+        },
+        "privateProxy": {
+          "corners": 3,
+          "uvFloat32BytesPreserved": true,
+          "normalMaximumDifference": 0,
+          "normalSnorm10ChangedCorners": 0,
+          "tangentMaximumDifference": 0,
+          "tangentSnorm10ChangedCorners": 0,
+          "handednessChangedCorners": 0,
+          "nativeNgonApiBarrierRemoved": true,
+          "drawGpuFrameQualification": false
+        }
+      },
+      {
+        "id": "tiny-uv",
+        "vertices": 3,
+        "loops": 3,
+        "faces": 1,
+        "ngons": 0,
+        "quads": 0,
+        "triangles": 1,
+        "uvName": "UVMap",
+        "datasetSha256": "aa86b1c1bd72dea795b39b77aeea452db3dae91240cfb4bec75afe182e4d93f1",
+        "uvAreaBelow1eMinus8": 1,
+        "zeroUvArea": 0,
+        "publicApi": "computed",
+        "sourceCallbackModel": {
+          "inputSha256": "ac517d229171e39acaae621b4984f954d0227a3bc66f7ede821b4ea2efbbf671",
+          "outputSha256": "fe3009ea843a7d261b021580f43ec3edf80bdfeb5ef3b9a9cef35e6e55ed8838",
+          "callbackFaces": 1,
+          "callbackCorners": 3,
+          "repeatedOriginalLoopDifferentOutputs": 0
+        },
+        "allTrianglesModel": {
+          "inputSha256": "ac517d229171e39acaae621b4984f954d0227a3bc66f7ede821b4ea2efbbf671",
+          "outputSha256": "fe3009ea843a7d261b021580f43ec3edf80bdfeb5ef3b9a9cef35e6e55ed8838",
+          "callbackFaces": 1,
+          "callbackCorners": 3,
+          "repeatedOriginalLoopDifferentOutputs": 0
+        },
+        "quadPreservationMaximumDifference": 0.0,
+        "publicVsSourceCallbackMaximumDifference": 0.0,
+        "tangentLengthRange": [
+          1.0,
+          1.0
+        ],
+        "nonfiniteTangents": 0,
+        "defaultPositiveXNegativeSignCorners": 0,
+        "zeroPositiveSignSentinelCorners": 0,
+        "nearlyParallelCornerReferences": 0,
+        "parallelExamples": [],
+        "stockGltf": {
+          "glbSha256": "7a532f4571bb75dcc0b17b763e6163973ff0564477941c932ce8e7e2191911f9",
+          "tangentAttributePresent": true,
+          "stockAccessorVsNativeMaximumDifference": 0.0
+        },
+        "privateProxy": {
+          "corners": 3,
+          "uvFloat32BytesPreserved": true,
+          "normalMaximumDifference": 0,
+          "normalSnorm10ChangedCorners": 0,
+          "tangentMaximumDifference": 0,
+          "tangentSnorm10ChangedCorners": 0,
+          "handednessChangedCorners": 0,
+          "nativeNgonApiBarrierRemoved": true,
+          "drawGpuFrameQualification": false
+        }
+      },
+      {
+        "id": "warped-quad",
+        "vertices": 4,
+        "loops": 4,
+        "faces": 1,
+        "ngons": 0,
+        "quads": 1,
+        "triangles": 2,
+        "uvName": "UVMap",
+        "datasetSha256": "80689237cfa5a0df01acad95ce29687d493aa16715597c5a750b4fd10712bec1",
+        "uvAreaBelow1eMinus8": 0,
+        "zeroUvArea": 0,
+        "publicApi": "computed",
+        "sourceCallbackModel": {
+          "inputSha256": "decb9707fc523421c7d4e35b89cefd762c2a944047a209eca37c7171a473579b",
+          "outputSha256": "cbb4b486f42ff686d4b4316d9f7358f99251e60cddaf538552fc496a714ddb52",
+          "callbackFaces": 1,
+          "callbackCorners": 4,
+          "repeatedOriginalLoopDifferentOutputs": 0
+        },
+        "allTrianglesModel": {
+          "inputSha256": "0b46f23dac8d650056af4e4ab3570401f5c355c317cf758dbba8b6e670c8479f",
+          "outputSha256": "8a74165d54531de808c778d18803ed74f0567972ee6d300bc0ea4773a1d3fb9c",
+          "callbackFaces": 2,
+          "callbackCorners": 6,
+          "repeatedOriginalLoopDifferentOutputs": 0
+        },
+        "quadPreservationMaximumDifference": 0.0,
+        "publicVsSourceCallbackMaximumDifference": 0.0,
+        "tangentLengthRange": [
+          0.9999999507563176,
+          1.0000000484287728
+        ],
+        "nonfiniteTangents": 0,
+        "defaultPositiveXNegativeSignCorners": 0,
+        "zeroPositiveSignSentinelCorners": 0,
+        "nearlyParallelCornerReferences": 0,
+        "parallelExamples": [],
+        "stockGltf": {
+          "glbSha256": "06a349abc992e5d77417c107399d51bfbc6967aa4641a8762a0e9b9828b4f4f6",
+          "tangentAttributePresent": true,
+          "stockAccessorVsNativeMaximumDifference": 3.725290298461914e-05
+        },
+        "privateProxy": {
+          "corners": 4,
+          "uvFloat32BytesPreserved": true,
+          "normalMaximumDifference": 0,
+          "normalSnorm10ChangedCorners": 0,
+          "tangentMaximumDifference": 0,
+          "tangentSnorm10ChangedCorners": 0,
+          "handednessChangedCorners": 0,
+          "nativeNgonApiBarrierRemoved": true,
+          "drawGpuFrameQualification": false
+        }
+      }
+    ],
+    "owners": [
+      {
+        "id": "Walls",
+        "vertices": 1500,
+        "loops": 5489,
+        "faces": 1379,
+        "ngons": 5,
+        "quads": 1316,
+        "triangles": 2731,
+        "uvName": "UVMap",
+        "datasetSha256": "98c0119876f34ff8aa993130786a3cfa42c7d54407a644fcc0f6f9c414fb48bb",
+        "uvAreaBelow1eMinus8": 193,
+        "zeroUvArea": 12,
+        "publicApi": "refused",
+        "publicError": "Error: Tangent space can only be computed for tris/quads, aborting\n",
+        "sourceCallbackModel": {
+          "inputSha256": "31e74bb81a64b5de17db37e6f871b6e573df7a21e7354399ca3a9a76dfe0b1ab",
+          "outputSha256": "13dade5a0afe5d8f37bb009c0b92ad08d2e1f39afc370f3ed8998ee8091e2309",
+          "callbackFaces": 1415,
+          "callbackCorners": 5561,
+          "repeatedOriginalLoopDifferentOutputs": 0
+        },
+        "allTrianglesModel": {
+          "inputSha256": "f987ab25d8f0ca4778273218ca09b2b67157752d87ef1117e7bfe54118028bf5",
+          "outputSha256": "f84ded8d966c2b428ec0a50c278f4e3fcc70beb4ae37967b695322e1f77ed76e",
+          "callbackFaces": 2731,
+          "callbackCorners": 8193,
+          "repeatedOriginalLoopDifferentOutputs": 44
+        },
+        "quadPreservationMaximumDifference": 2.0,
+        "tangentLengthRange": [
+          0.9999998553394003,
+          1.000000138083114
+        ],
+        "nonfiniteTangents": 0,
+        "defaultPositiveXNegativeSignCorners": 11,
+        "zeroPositiveSignSentinelCorners": 0,
+        "nearlyParallelCornerReferences": 2,
+        "parallelExamples": [
+          {
+            "triangle": 485,
+            "loop": 941,
+            "sine": 0.0,
+            "tangent": [
+              1.0,
+              0.0,
+              0.0,
+              -1.0
+            ],
+            "normal": [
+              -1.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "triangle": 486,
+            "loop": 941,
+            "sine": 0.0,
+            "tangent": [
+              1.0,
+              0.0,
+              0.0,
+              -1.0
+            ],
+            "normal": [
+              -1.0,
+              0.0,
+              0.0
+            ]
+          }
+        ],
+        "privateProxy": {
+          "corners": 5561,
+          "uvFloat32BytesPreserved": true,
+          "normalMaximumDifference": 0.0044207037426531315,
+          "normalSnorm10ChangedCorners": 97,
+          "tangentMaximumDifference": 0.999776200595079,
+          "tangentSnorm10ChangedCorners": 845,
+          "handednessChangedCorners": 1,
+          "nativeNgonApiBarrierRemoved": true,
+          "drawGpuFrameQualification": false
+        }
+      },
+      {
+        "id": "Plane.021",
+        "vertices": 1270,
+        "loops": 4444,
+        "faces": 1123,
+        "ngons": 0,
+        "quads": 1075,
+        "triangles": 2198,
+        "uvName": "UVMap",
+        "datasetSha256": "1dcae4d453f2b2d3a9b96fca3a007d2bdf3ff4bcf3c995744ed3695a6cddf3f0",
+        "uvAreaBelow1eMinus8": 243,
+        "zeroUvArea": 173,
+        "publicApi": "computed",
+        "sourceCallbackModel": {
+          "inputSha256": "e459d8cbd8d7851ecd5c4bcdb91b0c4fa9dde24ee8a378991f419ea3215c2234",
+          "outputSha256": "3bb2c68f414b6bf7390c58c4f7a7c3d91f35ebc351341a249c309dab208adb62",
+          "callbackFaces": 1123,
+          "callbackCorners": 4444,
+          "repeatedOriginalLoopDifferentOutputs": 0
+        },
+        "allTrianglesModel": {
+          "inputSha256": "28cacb85b2f26b6fd5e118d6790635c2d5906e7fac58f5ac27e45e56e0ce6528",
+          "outputSha256": "8e318b0855dc9cc8a18e2261c0ee8d59f710ffcf7c158a8f172746d3c0bb46a2",
+          "callbackFaces": 2198,
+          "callbackCorners": 6594,
+          "repeatedOriginalLoopDifferentOutputs": 44
+        },
+        "quadPreservationMaximumDifference": 2.0,
+        "publicVsSourceCallbackMaximumDifference": 0.0,
+        "tangentLengthRange": [
+          0.99999985890462,
+          1.0000001396983764
+        ],
+        "nonfiniteTangents": 0,
+        "defaultPositiveXNegativeSignCorners": 309,
+        "zeroPositiveSignSentinelCorners": 0,
+        "nearlyParallelCornerReferences": 182,
+        "parallelExamples": [
+          {
+            "triangle": 40,
+            "loop": 80,
+            "sine": 2.1747527232484586e-07,
+            "tangent": [
+              1.0,
+              0.0,
+              0.0,
+              -1.0
+            ],
+            "normal": [
+              1.0,
+              -2.1747527512161469e-07,
+              0.0
+            ]
+          },
+          {
+            "triangle": 40,
+            "loop": 81,
+            "sine": 8.314639649304711e-08,
+            "tangent": [
+              1.0,
+              0.0,
+              0.0,
+              -1.0
+            ],
+            "normal": [
+              1.0,
+              -8.314639643458577e-08,
+              0.0
+            ]
+          },
+          {
+            "triangle": 40,
+            "loop": 82,
+            "sine": 0.0,
+            "tangent": [
+              1.0,
+              0.0,
+              0.0,
+              -1.0
+            ],
+            "normal": [
+              1.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "triangle": 41,
+            "loop": 80,
+            "sine": 2.1747527232484586e-07,
+            "tangent": [
+              1.0,
+              0.0,
+              0.0,
+              -1.0
+            ],
+            "normal": [
+              1.0,
+              -2.1747527512161469e-07,
+              0.0
+            ]
+          }
+        ],
+        "privateProxy": {
+          "corners": 4444,
+          "uvFloat32BytesPreserved": true,
+          "normalMaximumDifference": 0,
+          "normalSnorm10ChangedCorners": 0,
+          "tangentMaximumDifference": 0,
+          "tangentSnorm10ChangedCorners": 0,
+          "handednessChangedCorners": 0,
+          "nativeNgonApiBarrierRemoved": true,
+          "drawGpuFrameQualification": false
+        }
+      }
+    ],
+    "sourceUnchanged": true
+  },
+  "productionGuardsChanged": false,
+  "renderAttempts": 0,
+  "supportCredit": 0,
+  "sceneAcceptance": false,
+  "limits": [
+    "Standalone pinned Apache Mikk header with source-derived native callback input topology; not direct draw-cache/GPU tangent readback",
+    "Degenerate and parallel native frames remain outside the production certificate",
+    "Private n-gon-only mesh normal setter did not preserve original normals/tangents",
+    "No glTF accessor/native frame equivalence or node support is promoted",
+    "Component equality and UV preservation statistics are float32 numeric comparisons; signed-zero bit identity was not separately checked"
+  ]
+}

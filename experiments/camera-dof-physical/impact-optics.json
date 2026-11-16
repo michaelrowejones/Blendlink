@@ -1,0 +1,80 @@
+{
+  "sourceSha256": "6785c3b4c5b50e2eab7b088914f6558b90aa3dad9cd105ef57d2973495c7b69c",
+  "sourceUnchanged": true,
+  "cameraDepthOfField": {
+    "version": 1,
+    "model": "eevee-perspective-coc-v1",
+    "qualification": "experimental-unqualified",
+    "automaticEnabled": false,
+    "camera": "Camera",
+    "frame": 0,
+    "nativeVersion": [
+      5,
+      3,
+      0
+    ],
+    "nativeBuild": "02f0899d78e3",
+    "cameraType": "PERSP",
+    "lensMillimeters": 50.0,
+    "sensorFit": "AUTO",
+    "sensorWidthMillimeters": 36.0,
+    "sensorHeightMillimeters": 24.0,
+    "apertureFStop": 0.5,
+    "apertureRadiusBlenderUnits": 0.05,
+    "apertureBlades": 0,
+    "apertureRotationRadians": 0.0,
+    "apertureRatio": 1.0,
+    "focusDistanceBlenderUnits": 6.928999900817871,
+    "focusObject": null,
+    "focusBone": "",
+    "clipNear": 0.10000000149011612,
+    "clipFar": 1000.0,
+    "projection": [
+      2.777777671813965,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      4.938271522521973,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      -1.0001999139785767,
+      -0.20002000033855438,
+      0.0,
+      0.0,
+      -1.0,
+      0.0
+    ],
+    "cameraWorldGltf": [
+      0.7801221013069153,
+      -0.06786548346281052,
+      -0.6219354867935181,
+      -4.683692455291748,
+      -0.006308540236204863,
+      0.9931952357292175,
+      -0.1162903681397438,
+      -0.6495135426521301,
+      0.6255954504013062,
+      0.09464419633150101,
+      0.774385392665863,
+      5.806590557098389,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "renderExtent": [
+      1920,
+      1080
+    ],
+    "pixelAspect": [
+      1.0,
+      1.0
+    ],
+    "maxCircleOfConfusionRadiusPixels": 100.0,
+    "nativeJitterEnabled": false,
+    "candidateRejectionReasons": []
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "blenderCommit": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "role": "Audited optics and tile-size/radius-aware-dilation principles; full native gather/scatter/resolve not ported",
+  "files": [
+    {
+      "path": "source/blender/draw/engines/eevee/eevee_depth_of_field.cc",
+      "sha256": "9b7944c4d984b68c81edf7f656e72ef282a05fbc4251109448ca338503b300b0"
+    },
+    {
+      "path": "source/blender/draw/engines/eevee/eevee_depth_of_field_shared.hh",
+      "sha256": "87b7476d1ffdaacc635b4bee34ecce639bf65081456a0e0f454ed07d5f05c874"
+    },
+    {
+      "path": "source/blender/blenkernel/intern/camera.cc",
+      "sha256": "0d61e299ce12cedc2397121be6f8235e0d3031ad4b52afc19cd150a3a8cf4427"
+    },
+    {
+      "path": "source/blender/draw/engines/eevee/eevee_defines.hh",
+      "sha256": "5d7234dc7eb03204dacb7ce2302205b342166b9558fb5d96d81f2fbd3ff15613"
+    },
+    {
+      "path": "source/blender/draw/engines/eevee/shaders/eevee_depth_of_field_tiles.bsl.hh",
+      "sha256": "2163e35f48c7043bf47b9be95a11435b9e4193886026e467aa273c0aab9d1e25"
+    },
+    {
+      "path": "source/blender/draw/engines/eevee/shaders/eevee_depth_of_field_lib.bsl.hh",
+      "sha256": "f18588f131383c5dbd4cc85703a4274a0f10598ea1215d29291f4e52f5fbc47a"
+    },
+    {
+      "path": "source/blender/draw/engines/eevee/shaders/eevee_depth_of_field_accumulator.bsl.hh",
+      "sha256": "e220d9999b87c48d47a2acd9572e67620b40cef54ba6c37ea96ff0a70d567e03"
+    },
+    {
+      "path": "source/blender/draw/engines/eevee/shaders/eevee_depth_of_field_resolve.bsl.hh",
+      "sha256": "90b6e636c212c85aac923d143dd7a1ba21b7b292b1fae369711f7984af280cb6"
+    }
+  ],
+  "threeVersion": "0.184.0",
+  "threeDepthOfFieldNodeSha256": "e031582eda45a5bda6b564e841f29472acf06f924dd55efcd0d98d29922b1f32"
+}

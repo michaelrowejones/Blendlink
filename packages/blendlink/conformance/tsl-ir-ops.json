@@ -53,6 +53,7 @@
     "rgb_to_bw",
     "separate",
     "shader_to_rgb_diffuse",
+    "shadow_exclusion_native",
     "spectral",
     "squeeze_native",
     "tangent_native",

@@ -58,7 +58,7 @@ acceptance criteria in [Component acceptance](COMPONENT_ACCEPTANCE.md).
 | --- | --- | --- |
 | Install and preview | Private verified tools, save refresh, last-good recovery, orbit/portrait/capture/compare | Recheck exact candidate from clean profiles; remove confusing states and stale instructions |
 | Scene compilation | Live node programs, Hybrid/bake routes, guarded assets and runtime ownership | Prove whole scenes across the selected versions/devices; prioritize failures that prevent promised workflows |
-| Coverage | 5.3 has 46 supported, 141 partial, 131 unsupported and 14 structural entries | Track modes and scene success; never present partial scope or research as complete support |
+| Coverage | 5.3 has 46 supported, 142 partial, 130 unsupported and 14 structural entries | Track modes and scene success; never present partial scope or research as complete support |
 | Developer integration | Packed Three/R3F consumers and public installers | Make node-capable examples copy-paste defaults; test real existing-site update/unmount/retry paths |
 | Release assembly | Exact npm tarball/extension ZIP, fingerprints, licenses and checksums | Complete stable release mode, current compatibility matrix and external distribution setup |
 | Evidence | Numerous bounded native/browser proofs and historical hosted passes | Bind the complete candidate to current receipts; historical/software browser passes do not certify every physical device |
@@ -79,8 +79,9 @@ the remaining original-scene and distribution gates stay in force:
   Marketplace review, clean installation on the other desktop platforms and
   exact public-download verification remain pending.
 
-The selected original Archviz scene still refuses Glass and Plaster. Structured
-plan diagnostics now retain both errors. Horizontal Lens Distortion earned only
+The selected original Archviz scene still refuses Plaster. Glass has a qualified
+bounded terminal white-shadow/owned-Alpha route; full-scene acceptance is pending.
+Structured plan diagnostics retain the remaining compiler errors. Horizontal Lens Distortion earned only
 its independently qualified bounded partial scope; the original Classroom graph
 is not accepted. Current evidence and next dependencies are recorded in
 [release scene progress](RELEASE_SCENE_PROGRESS.md).

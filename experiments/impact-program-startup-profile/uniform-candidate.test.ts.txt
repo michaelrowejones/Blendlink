@@ -1,0 +1,60 @@
+import { expect, it } from 'vitest'
+import * as THREE from 'three'
+import { installTslMaterials, withGeneratedTexspaceUniforms } from './tslMaterialRuntime.js'
+import type { BuildTslOptions } from './tslNodeRecipe.js'
+
+function vectors(root: any): THREE.Vector3[] {
+  const seen = new Set(), values: THREE.Vector3[] = []
+  const visit = (node: any) => {
+    if (!node || seen.has(node)) return
+    seen.add(node)
+    if (node.isUniformNode && node.value?.isVector3) values.push(node.value)
+    for (const child of node.getChildren?.() ?? []) visit(child)
+  }
+  visit(root)
+  return values
+}
+
+it('copies immutable variant-local vectors and preserves doubled safe-size values', () => {
+  const source: BuildTslOptions = { generatedTexspace: { location: [.1, -.2, .3], size: [.4, 0, 2] } }
+  const a = withGeneratedTexspaceUniforms(source), b = withGeneratedTexspaceUniforms(source)
+  const location = (a.generatedTexspaceNodes!.location as any).value as THREE.Vector3
+  const denominator = (a.generatedTexspaceNodes!.denominator as any).value as THREE.Vector3
+  expect(location.toArray()).toEqual([.1, -.2, .3])
+  expect(denominator.toArray()).toEqual([.8, 2, 4])
+  expect((b.generatedTexspaceNodes!.location as any).value).not.toBe(location)
+  source.generatedTexspace!.location[0] = 999
+  source.generatedTexspace!.size[0] = 999
+  expect(location.x).toBe(.1); expect(denominator.x).toBe(.8)
+  expect(withGeneratedTexspaceUniforms({})).toEqual({})
+})
+
+it.each([false, true])('keeps distinct bbox material variants and reversibility (uniform opt-in %s)', async uniform => {
+  const root = new THREE.Group(), original = new THREE.MeshStandardMaterial()
+  original.userData.blendlink_source_material = 'Bounds'
+  const meshes = [1, 3].map(value => {
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(), original)
+    mesh.userData.blendlink_tsl_runtime = { schemaVersion: 1, objectSpace: 'gltf-y-up', texspace: { location: [value, -value, 0], size: [value, 0, .5] } }
+    root.add(mesh)
+    return mesh
+  })
+  const installed = await installTslMaterials({
+    root, ...(uniform ? { generatedTexspaceBinding: 'uniform' as const } : {}),
+    descriptor: { materialPrograms: { url: 'https://test.invalid/materials.json', bytes: 1, hash: 'test', materials: 1 } },
+    loadPrograms: async () => ({ schemaVersion: 1, model: 'blendlink-material-programs-v1', materials: { Bounds: { channels: { 'Base Color': { tslIr: { schemaVersion: 1, model: 'blendlink-tsl-ir-v1', output: { op: 'generated' } } } } } } }),
+  })
+  expect(installed.applied).toBe(2); expect(installed.skipped).toEqual([])
+  expect(meshes[0].material).not.toBe(meshes[1].material)
+  const a = vectors((meshes[0].material as any).colorNode), b = vectors((meshes[1].material as any).colorNode)
+  if (uniform) {
+    expect(a.map(v => v.toArray())).toEqual([[1, -1, 0], [2, 2, 1]])
+    expect(b.map(v => v.toArray())).toEqual([[3, -3, 0], [6, 2, 1]])
+    expect(a.every(v => !b.includes(v))).toBe(true)
+    meshes[0].userData.blendlink_tsl_runtime.texspace.location[0] = 999
+    meshes[1].userData.blendlink_tsl_runtime = { texspace: { location: [99, 99, 99], size: [99, 99, 99] } }
+    root.children.reverse()
+    expect(a[0].x).toBe(1); expect(b[0].x).toBe(3)
+  } else { expect(a).toEqual([]); expect(b).toEqual([]) }
+  installed.dispose()
+  expect(meshes.every(mesh => mesh.material === original)).toBe(true)
+})

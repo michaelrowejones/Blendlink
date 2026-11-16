@@ -19004,6 +19004,137 @@
           }
         }
       }
+    },
+    "shader:ShaderNodeLightPath": {
+      "category": "unsupported",
+      "limits": "No admitted general Light Path field or non-5.3 route. The conditional Blender 5.3 override specializes one terminal closure shape; native creation and an assumed primary-ray zero do not grant support.",
+      "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
+      "runtimeOps": [
+        "shadow_exclusion_native"
+      ],
+      "modes": {},
+      "versionOverrides": {
+        "5.3.0": {
+          "category": "partial",
+          "limits": "Pinned Blender 5.3.0 build 02f0899d78e3 macOS arm64 EEVEE Metal source profile only. One terminal Mix Shader uses direct, unmuted Is Shadow Ray as its factor, exactly white unlinked Transparent BSDF on the shadow branch, and an authored CYCLES output bound to precisely the same non-shadow primary closure. The primary is either direct Principled with unlinked static Alpha, or one direct unlinked-factor white Transparent/Principled Mix whose Principled Alpha is one. Source Alpha is folded once into a finite positive Float32 constant <=1, preserved as input plus matching visibleAlpha. Groups, linked primary Alpha/Mix factor or Transparent Color, multi-step closure mixtures, animation/actions/drivers/NLA, other Light Path fields and standalone Is Shadow Ray refuse. This is terminal shadow exclusion, never general Is Shadow Ray=0. All five Base Color/Metallic/Roughness/Emission/Alpha programs must build without source/runtime skips. The owned node-material clone explicitly controls visible transparency/depth writing and disables alpha test/hash/coverage; the shipped stock carrier is unchanged even when its exporter Alpha was lost. Actual primitive fresh node-renderer declarations are mandatory. Managed shadow callbacks invalidate only the passed renderer-owned shadow override around affected material groups and restore on rollback/disposal; no Three global patch. Measured actual saved Final static Glass and opaque-primary controls use WebGPURenderer WebGPU/WebGL2 on Apple Metal and SwiftShader, including other opaque casters, visible Alpha, material replacement, disposal and remount. No arbitrary ray-dependent closure/lighting/BSDF equality, colored shadow transmission, general Cycles live behavior, other source versions/builds/hosts/backends or whole original-demo acceptance."
+        }
+      },
+      "provenanceRoute": {
+        "nativeClass": "ShaderNodeLightPath",
+        "model": "eevee53-white-shadow-branch-v1",
+        "serialized": "The whole-surface _emit_surface helper validates the terminal source closure and emits shadow_exclusion_native only at the Alpha root, with equal const_float input and visibleAlpha. The ordinary standalone Light Path emitter remains unsupported.",
+        "numericalCredit": "Conditional shadow omission and explicit static visible Alpha only; existing primary surface channels retain their own scope and are not a general EEVEE-versus-Three lighting proof."
+      },
+      "renderer": "WebGPURenderer actual WebGPU and WebGL2; Apple Metal and SwiftShader. Legacy WebGLRenderer refuses the required fresh program.",
+      "evidence": [
+        {
+          "path": "packages/blender-addon/shadow_branch_ir.py",
+          "anchor": "def primary_surface(expression, ir):"
+        },
+        {
+          "path": "packages/blender-addon/shadow_branch_ir.py",
+          "anchor": "def wrap_alpha(value, ir):"
+        },
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "primary = primary_surface(expression, sys.modules[__name__])"
+        },
+        {
+          "path": "packages/blender-addon/tsl_ir.py",
+          "anchor": "channels['Alpha'] = wrap_alpha(channels['Alpha'], sys.modules[__name__])"
+        },
+        {
+          "path": "packages/blender-addon/material_compiler.py",
+          "anchor": "(\"shadow_exclusion_native\", \"eevee53-white-shadow-branch-v1\")"
+        },
+        {
+          "path": "packages/blendlink/src/tslNodeRecipe.ts",
+          "anchor": "case 'shadow_exclusion_native':"
+        },
+        {
+          "path": "packages/blendlink/src/tslShadowExclusion.ts",
+          "anchor": "export function validateShadowMaterialNodes("
+        },
+        {
+          "path": "packages/blendlink/src/tslMaterialProgram.ts",
+          "anchor": "const materialState = shadowMaterialState(channels, fail)"
+        },
+        {
+          "path": "packages/blendlink/src/tslMaterialRuntime.ts",
+          "anchor": "installCompiledProgramMaterial(material,program.nodes,!!ownership,program.materialState)"
+        },
+        {
+          "path": "packages/blendlink/src/tslMaterialShadowCache.ts",
+          "anchor": "export function trackMaterialShadowCache("
+        },
+        {
+          "path": "packages/blendlink/src/materialProgramRendererRequirements.ts",
+          "anchor": "const freshPrograms = [SQUEEZE, MAGIC, RADIAL_WIDTH, RADIAL_COORDINATES, REPEAT, VERTEX_ALPHA, SHADOW_EXCLUSION]"
+        },
+        {
+          "path": "packages/blender-addon/tests/shadow_branch_check.py"
+        },
+        {
+          "path": "packages/blendlink/src/tslShadowExclusion.test.ts"
+        },
+        {
+          "path": "packages/blendlink/src/tslMaterialShadowCache.test.ts"
+        },
+        {
+          "path": "experiments/shadow-transparent-branch/read.mjs"
+        },
+        {
+          "path": "experiments/shadow-transparent-branch/qualified-evidence.json"
+        }
+      ],
+      "verification": {
+        "status": "QUALIFIED_BOUNDED_TERMINAL_SHADOW_BRANCH",
+        "nativeNumericVersions": [
+          "5.3.0"
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "nativeHost": "darwin-arm64",
+        "sourceBackend": "METAL",
+        "actualRuntimeBackends": [
+          "WebGPU",
+          "WebGL2 via WebGPURenderer"
+        ],
+        "actualRuntimeProfiles": [
+          "Apple Metal",
+          "SwiftShader"
+        ],
+        "standaloneLightPathFields": "unsupported",
+        "scope": "terminal white-transparent shadow branch only",
+        "evidence": "experiments/shadow-transparent-branch/qualified-evidence.json",
+        "evidenceSha256": "3d766a64a7f2955be8a9790ce1bc1b56ddca752fb424c3897a1558d20f4231c6",
+        "closedReader": {
+          "path": "experiments/shadow-transparent-branch/read.mjs",
+          "sha256": "f42f85ee6abefde9a1d2eb123ee9adc4425bc6ff3c84d0813e81793af65ab63d"
+        },
+        "counts": {
+          "nativeCases": 2,
+          "nativeRenders": 6,
+          "nativeFields": 6,
+          "nativeWords": 393216,
+          "installedTuples": 8,
+          "installedFields": 88,
+          "installedWords": 5767168,
+          "coveredHalfAlphaWords": 8192,
+          "coveredFloat32AlphaWords": 8192,
+          "implicitColorControlWords": 524288
+        },
+        "sceneAcceptance": false,
+        "generalLightPathFields": false,
+        "performanceAcceptance": false,
+        "sourceSnapshot": {
+          "nativeSourceCommit": "d196e170a92a9dd892261f2cddeb9e82a8354658",
+          "browserSourceCommit": "03bde1bb94254a9a14f1a4193d1c594f4216d68b",
+          "closedReportSha256": [
+            "dcaa088f303942868b1c5cce8c057fb88216ee263b81f8b77a61b86a91eb7528",
+            "0ac113c4dfdf61fa9909df28c8c6586185bf4f2cbe7f783e6b50b0748ccaebb2"
+          ]
+        }
+      }
     }
   },
   "knownUnsupported": [
@@ -19167,7 +19298,6 @@
     "shader:ShaderNodeLightInfo",
     "shader:ShaderNodeLightIterInternalInput",
     "shader:ShaderNodeLightIterInternalOutput",
-    "shader:ShaderNodeLightPath",
     "shader:ShaderNodeOutputAOV",
     "shader:ShaderNodeOutputLight",
     "shader:ShaderNodeOutputLineStyle",
