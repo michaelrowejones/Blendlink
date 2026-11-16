@@ -1,0 +1,30 @@
+# CPU-only diagnostic, never qualification. Original candidate stays untouched.
+import sys,time,json,hashlib,runpy
+from pathlib import Path
+sys.dont_write_bytecode=True
+out=Path(sys.argv[sys.argv.index('--')+1]).resolve();root=Path('/tmp/scenetoweb-v1-box-integrated-private');original=root/'experiments/box-material-stage/audit-colors.py';began=time.monotonic();events=[];case=None
+sys.path[:0]=[str(root/'packages/blender-addon'),str(root/'packages/blendlink/blender')]
+import bpy,gpu
+def deny(*a,**k):raise RuntimeError('CPU diagnostic forbids GPU/render')
+gpu.init=deny;bpy.ops.render.render=deny
+def emit(event):
+ event['totalSeconds']=time.monotonic()-began;events.append(event);print('BOX_CPU_PHASE '+json.dumps(event,sort_keys=True),flush=True);(out/'phase-events.json').write_text(json.dumps(events,indent=2)+'\n')
+started=time.monotonic();import material_compiler as compiler
+emit({'phase':'compiler-import','seconds':time.monotonic()-started})
+def wrap(owner,name,phase):
+ actual=getattr(owner,name)
+ def observed(*args,**kwargs):
+  global case
+  if phase=='open-file':case=Path(kwargs['filepath']).stem
+  entry={'case':case,'phase':phase};emit({**entry,'event':'begin'});started=time.monotonic()
+  try:return actual(*args,**kwargs)
+  except BaseException as error:entry['raised']=type(error).__name__;raise
+  finally:emit({**entry,'event':'end','seconds':time.monotonic()-started})
+ setattr(owner,name,observed)
+wrap(bpy.ops.wm,'open_mainfile','open-file');wrap(compiler,'plan_materials','plan-materials');wrap(compiler,'with_compiled_materials','private-carrier-probe')
+try:
+ runpy.run_path(str(original),run_name='__main__')
+ result={'status':'ORIGINAL_CPU_POLICY_COMPLETED_DIAGNOSTIC_ONLY_ZERO_CREDIT','originalSha256':hashlib.sha256(original.read_bytes()).hexdigest(),'totalSeconds':time.monotonic()-began,'events':events,'gpuOpened':False,'supportCredit':0}
+ (out/'profile.json').write_text(json.dumps(result,indent=2)+'\n');print('BOX_CPU_PROFILE_COMPLETE',flush=True)
+except BaseException as error:
+ (out/'profile-failure.json').write_text(json.dumps({'error':repr(error),'events':events},indent=2)+'\n');raise

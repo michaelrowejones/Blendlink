@@ -1,0 +1,35 @@
+{
+  "status": "CPU_CANONICAL_FIELD_CORRECTION_DIAGNOSTIC_ONLY_NO_ACCEPTANCE",
+  "captureSourceCommit": "3f2b6a53e81f8a1c899c2ba10bbcc32feeac65c3",
+  "sdkSourceCommit": "43840cc6f59c44938b80c996d05f4b24b23ffc32",
+  "rawWords": 3391488,
+  "rawViolations": 152,
+  "rawEveryRowIdentical": true,
+  "cause": "Old new visual/Mapping branch bypassed the declaredWebGPU row adapter, although strict comparison already used it. Misoriented report retained, not accepted.",
+  "correction": "One private canonical numeric-field store, one backend-declared adaptation, shared strict/visual/Mapping paths. Raw supporting accessor rejects numeric fields. Actual observation-entry tests exercise asymmetric masks/nonconstant RGB+coordinates on bothAPIs and missing/extra/doubleflip negatives.",
+  "cpuTestsPassed": 19,
+  "noHardwareRerun": true,
+  "policyAndSdkUnchanged": true,
+  "fullCorrectedReaderReplayStillPendingRootCherry": true,
+  "supportCredit": 0,
+  "files": [
+    {
+      "originalPath": "/tmp/scenetoweb-box-integrated-visual-closed-r3.json",
+      "snapshot": "misoriented-diagnostic.json",
+      "bytes": 117241,
+      "sha256": "b0617cbdce3104d889283052f49538f9e6ad24ba77f6bcb6d7da918acc8fe924"
+    },
+    {
+      "originalPath": "/tmp/scenetoweb-box-integrated-visual-closed-r3.log",
+      "snapshot": "misoriented-reader.txt",
+      "bytes": 211,
+      "sha256": "ab1734a54daf802ae74b54bde286fff039445a9a5cc47422d8ac8e96dc60a9bd"
+    },
+    {
+      "originalPath": "/tmp/scenetoweb-box-canonical-field-diagnostic-r1.json",
+      "snapshot": "corrected-independent-diagnostic.json",
+      "bytes": 74512,
+      "sha256": "9e61a5fedaa63462b068d8dfeeb82af6945a47feb1c8a99f789cccf2e137a345"
+    }
+  ]
+}

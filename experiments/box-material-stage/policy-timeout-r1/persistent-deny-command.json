@@ -1,0 +1,25 @@
+{
+  "status": "CPU_PERSISTENT_OPERATOR_DENIAL_SELFTEST_ONLY",
+  "producerSha256": "0484cdd6c259b439558ddaf0adcb42a0b6a1983ba64fe245b4597edc4e9973d7",
+  "result": {
+    "argv": [
+      "/Applications/Blender.app/Contents/MacOS/Blender",
+      "--background",
+      "--factory-startup",
+      "--disable-autoexec",
+      "--python-exit-code",
+      "17",
+      "--python-expr",
+      "import sys;sys.pycache_prefix=\"/tmp/scenetoweb-box-policy-persistent-deny-r1/cache\";sys.dont_write_bytecode=True",
+      "--python",
+      "/private/tmp/scenetoweb-v1-box-visual-criteria/experiments/box-material-stage/audit-colors.py",
+      "--",
+      "--check-deny"
+    ],
+    "exitCode": 0,
+    "signal": null,
+    "timedOut": false,
+    "elapsedMs": 1531,
+    "logPath": "/tmp/scenetoweb-box-policy-persistent-deny-r1/native.log"
+  }
+}

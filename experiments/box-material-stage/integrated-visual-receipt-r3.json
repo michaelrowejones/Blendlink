@@ -1,0 +1,91 @@
+{
+  "status": "INDEPENDENTLY_REPLAYED_BOUNDED_VISUAL_SLICE_NOT_PRODUCTION_ADMISSION",
+  "supportCredit": 0,
+  "materialCredit": 0,
+  "sceneCredit": 0,
+  "sdkSourceCommit": "43840cc6f59c44938b80c996d05f4b24b23ffc32",
+  "captureSourceCommit": "3f2b6a53e81f8a1c899c2ba10bbcc32feeac65c3",
+  "correctedReaderSourceCommit": "648098ca2492f1f441159af99d50fbb6eb284524",
+  "readerCorrectionOriginalCommit": "c621ef6e61fa6028c9f6a0fb2a28215396693257",
+  "closedSha256": "043aac1f1315888a0a0970ec1b11fffb63e6890f1bf74d7f1e264eb8b6e83d30",
+  "runtimeFingerprint": "1142dda03d25167e400367ec94e30fbfbe2c1a26836efd215dc000a4c577ce22",
+  "readerSha256": "7793bbf34a7c278c9e7d9dd121a4b3ba25d808a37065e9922febf81f76f24b95",
+  "fieldReadbackSha256": "096f810d92dc89cd881eaea802050dec5c3dc47f04479fdc330eb457741e0d1e",
+  "packageSha256": "a0556c36289535f654bf019094ccc344f0bf5843f2addbecbcb02cf83b1ea3bb",
+  "replayByteIdentical": true,
+  "rootIndependentReplaySha256": "043aac1f1315888a0a0970ec1b11fffb63e6890f1bf74d7f1e264eb8b6e83d30",
+  "counts": {
+    "sourcePolicyCalls": 3,
+    "actualFinals": 3,
+    "freshNativePrefixes": 6,
+    "nativeObservations": 27,
+    "installedTuples": 4,
+    "rawRows": 252,
+    "numericWords": 3391488,
+    "visualFrames": 36,
+    "lifecycleRows": 12,
+    "rawStrictFailuresRetained": 152
+  },
+  "summary": [
+    {
+      "tuple": "metal/webgl2",
+      "frames": 9,
+      "everyVisualFrameSatisfied": true,
+      "maximumDisplayCodeDifference": 1,
+      "displayViolations": 0,
+      "coverageXorPixels": 0,
+      "sameCoverageMappingViolations": 0,
+      "rawStrictViolations": 0
+    },
+    {
+      "tuple": "metal/webgpu",
+      "frames": 9,
+      "everyVisualFrameSatisfied": true,
+      "maximumDisplayCodeDifference": 1,
+      "displayViolations": 0,
+      "coverageXorPixels": 0,
+      "sameCoverageMappingViolations": 0,
+      "rawStrictViolations": 0
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "frames": 9,
+      "everyVisualFrameSatisfied": true,
+      "maximumDisplayCodeDifference": 1,
+      "displayViolations": 0,
+      "coverageXorPixels": 4,
+      "sameCoverageMappingViolations": 0,
+      "rawStrictViolations": 76
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "frames": 9,
+      "everyVisualFrameSatisfied": true,
+      "maximumDisplayCodeDifference": 1,
+      "displayViolations": 0,
+      "coverageXorPixels": 4,
+      "sameCoverageMappingViolations": 0,
+      "rawStrictViolations": 76
+    }
+  ],
+  "evidence": {
+    "finalDirectory": "/tmp/scenetoweb-box-integrated-finals-r2",
+    "nativeDirectory": "/tmp/scenetoweb-box-integrated-native512-r2",
+    "browserDirectory": "/tmp/scenetoweb-box-integrated-installed512-r3",
+    "firstFullCorrectedClose": "/tmp/scenetoweb-box-integrated-visual-canonical-close-r3.json",
+    "independentReplay": "/tmp/scenetoweb-box-integrated-visual-canonical-replay-r3.json"
+  },
+  "testedSourceDomain": {
+    "imagePngSha256": "676813f1f20c19f390e2c772ca645ef045ad51236c36b001b3ffab4e73703452",
+    "decodedRgbaSha256": "aa48124e78c531725c864c3012677ae3ad80bd1c97f321a36d1d695c0d87fd78",
+    "baseColorIrHash": "642fb3c27825fb4d5337c232bcc332cc5e0144c568fc26972e96109bee3a6575",
+    "vector": "Object coordinates -> Mapping TEXTURE, location/rotation0, scale2.5",
+    "color": "Original Plaster opaque color -> OVERLAY factor0.5652173757553101 with RGB0.7656040191650391",
+    "normal": "Explicitly disconnected only in owned fixture; original normal remains refused",
+    "camera": "Explicit derived zero-shift16:1 observation,64x4/128x8/512x32",
+    "source": "ExactBlender5.3.0/02f0899d78e3 macOSarm64MetalEEVEE,SNORM10,aniso2,blend0.09966777265071869,LinearRepeat"
+  },
+  "admissionReview": "Current guard admits arbitrary format-matching images and supported vector/BaseColor graphs beyond this observed source domain. Recommend credit for this audited visual slice only; format-wide production qualification needs explicit narrowing or additional general-domain evidence. No automatic promotion.",
+  "precision": "The152 strict failures and separate8-ULP weight diagnostic remain failed; visual criteria do not relabel precision support.",
+  "excluded": "NormalMap/BRDF/HDR/arbitraryimage+vectorcompositions/artist-viewframing/originalmaterialandscene acceptance; genericThree lateattributecachefix andcold-startbenchmark."
+}

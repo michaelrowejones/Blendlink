@@ -258,3 +258,12 @@ pin those bytes. Reusing old reports as if produced by this bundle is refused.
 The strict reader, fixed gates, SwiftShader failures, prior8ULP failure and
 original NormalMap/scene refusals are preserved; no visual-vs-strict policy
 decision is implied by preserving this research.
+
+## Artist-visible field diagnostics (proposal only)
+
+See `VISUAL_POLICY_PLAN.md` for a separate fixed Standard-sRGB/one-display-code
+diagnostic with symmetric outline/area/topology checks. It retains the strictR3
+failure, exact source/mip/input requirements and both unqualified area budgets.
+It is not a public support gate. The existing64/128 observations are insufficient
+for release; a fresh512 target-width field capture and independent review are
+proposed before any acceptance or promotion.

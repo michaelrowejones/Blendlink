@@ -1,0 +1,90 @@
+{
+  "status": "TARGET512_HARNESS_CPU_PREPARED_NOT_CAPTURED_NOT_QUALIFIED",
+  "integratedSdkSourceCommit": "43840cc6f59c44938b80c996d05f4b24b23ffc32",
+  "integratedManifestSha256": "cc2be878793683b00096c65d51be7eb49b20e192aa8f236f2248f8ee74db013f",
+  "policy": "unlit-ldr-standard-srgb-target512-diagnostic-v2",
+  "profile": {
+    "sizes": [
+      [
+        64,
+        4
+      ],
+      [
+        128,
+        8
+      ],
+      [
+        512,
+        32
+      ]
+    ],
+    "aspect": 16,
+    "nativeObservations": 27,
+    "browserTuples": 4,
+    "rawRows": 252,
+    "numericRows": 144,
+    "numericWords": 3391488,
+    "lifecycleViewport": [
+      512,
+      32
+    ]
+  },
+  "cpuChecks": {
+    "policyAndGuardTestsPassed": 14,
+    "publicOldAndIntegratedProfilesRefusedBeforeInputsOutputGpu": true,
+    "integratedGuardExactFilesPassed": 2064,
+    "testLogSha256": "103f93800d37f87fa9feba4f22b2192fc9031a362f5c4fb1fe38483e7db1cd2d",
+    "positiveGuardLogSha256": "b56a069f1b3d5b39105037aa8f2b20128fbf2543a82019873c9a795f67c6f868",
+    "jsSyntaxChecksPassed": true,
+    "pythonAstParsePassed": true,
+    "gpuOpened": false,
+    "nativeLaunched": false
+  },
+  "files": [
+    {
+      "path": "field-profile.mjs",
+      "sha256": "607db81c7f2703859756425c8778670e1af3427b199eda19a48d141dbe077ecf"
+    },
+    {
+      "path": "integrated-sdk.mjs",
+      "sha256": "6901f29904c9463894cae78116632a6def365d14f52093de51d425c33dddc41e"
+    },
+    {
+      "path": "proof-sdk.mjs",
+      "sha256": "ee118f541a5e2f3e4aab94137b24c8fdffe6317cd7870afc9aea26956d9ded76"
+    },
+    {
+      "path": "export-colors.mjs",
+      "sha256": "36f05766a26ffe211b0435ffa47c16c343bd855b7fa7c8ba4c43ce253930300a"
+    },
+    {
+      "path": "installed.mjs",
+      "sha256": "72f4351f1be8433c552d2ee86a7861ce373d9ffeae3e48d5261ff74da90d7aca"
+    },
+    {
+      "path": "installed-browser.js",
+      "sha256": "39b84e620d531754cead0119877ddbb6ee3f191b17d7265ea430de4a7af17020"
+    },
+    {
+      "path": "native-color-references.mjs",
+      "sha256": "80b241adf07252ed41f7be864fd0ba36a5473b277681a25a9f0a9baf689bc65d"
+    },
+    {
+      "path": "reference-colors.py",
+      "sha256": "4778d55232896c684fb1a43811f21f19afd82353ada84902157f286c48ec5e5a"
+    },
+    {
+      "path": "read-installed.mjs",
+      "sha256": "ba8f0ff94a6fe2b7dfa3941b0c6377ffccd55e08a7cce75a71a19ffe668c20b5"
+    },
+    {
+      "path": "visual-color-policy.mjs",
+      "sha256": "ce48cc006c083ea6d2c9ce0d5e2c2e2953a0939c74f83b6c56255e1e49907140"
+    }
+  ],
+  "requiredNext": "Root cherry-pick into isolated43840 descendant; independent policy/harness review; explicit exclusive GPU lease; fresh full source/Final/native/public-installed receipts and independent readback.",
+  "historical": "Private71/72, original17-file guard/patch and R3 snapshots unchanged; all old strict failures retained.",
+  "supportCredit": 0,
+  "materialCredit": 0,
+  "sceneCredit": 0
+}

@@ -1,0 +1,212 @@
+{
+  "status": "ORIGINAL_CPU_POLICY_COMPLETED_DIAGNOSTIC_ONLY_ZERO_CREDIT",
+  "originalSha256": "a97a307b27410d77060c80e95744c80433f158439d92565702ab5662c4bd58af",
+  "totalSeconds": 35.88638279098086,
+  "events": [
+    {
+      "phase": "compiler-import",
+      "seconds": 0.37336087494622916,
+      "totalSeconds": 0.37382362491916865
+    },
+    {
+      "case": null,
+      "phase": "plan-materials",
+      "event": "begin",
+      "totalSeconds": 4.2846235409379005
+    },
+    {
+      "case": null,
+      "phase": "plan-materials",
+      "event": "end",
+      "seconds": 0.4566324589541182,
+      "totalSeconds": 4.741889290977269
+    },
+    {
+      "case": null,
+      "phase": "private-carrier-probe",
+      "event": "begin",
+      "totalSeconds": 4.7426182909403
+    },
+    {
+      "case": null,
+      "phase": "plan-materials",
+      "event": "begin",
+      "totalSeconds": 4.742803040891886
+    },
+    {
+      "case": null,
+      "phase": "plan-materials",
+      "event": "end",
+      "seconds": 0.0018735419725999236,
+      "totalSeconds": 4.744821915985085
+    },
+    {
+      "case": null,
+      "phase": "private-carrier-probe",
+      "raised": "ProbeFinished",
+      "event": "end",
+      "seconds": 0.21361529198475182,
+      "totalSeconds": 4.956415082910098
+    },
+    {
+      "case": null,
+      "phase": "plan-materials",
+      "event": "begin",
+      "totalSeconds": 4.957097915932536
+    },
+    {
+      "case": null,
+      "phase": "plan-materials",
+      "event": "end",
+      "seconds": 0.002583499997854233,
+      "totalSeconds": 4.959897707914934
+    },
+    {
+      "case": null,
+      "phase": "plan-materials",
+      "event": "begin",
+      "totalSeconds": 4.960407999926247
+    },
+    {
+      "case": null,
+      "phase": "plan-materials",
+      "event": "end",
+      "seconds": 0.004678332945331931,
+      "totalSeconds": 4.9652946658898145
+    },
+    {
+      "case": null,
+      "phase": "plan-materials",
+      "event": "begin",
+      "totalSeconds": 15.978354665916413
+    },
+    {
+      "case": null,
+      "phase": "plan-materials",
+      "event": "end",
+      "seconds": 0.047056542010977864,
+      "totalSeconds": 16.025966374902055
+    },
+    {
+      "case": null,
+      "phase": "private-carrier-probe",
+      "event": "begin",
+      "totalSeconds": 16.026959749986418
+    },
+    {
+      "case": null,
+      "phase": "plan-materials",
+      "event": "begin",
+      "totalSeconds": 16.029286665958352
+    },
+    {
+      "case": null,
+      "phase": "plan-materials",
+      "event": "end",
+      "seconds": 0.018253750051371753,
+      "totalSeconds": 16.04788704100065
+    },
+    {
+      "case": null,
+      "phase": "private-carrier-probe",
+      "raised": "ProbeFinished",
+      "event": "end",
+      "seconds": 0.02590016694739461,
+      "totalSeconds": 16.055173499975353
+    },
+    {
+      "case": null,
+      "phase": "plan-materials",
+      "event": "begin",
+      "totalSeconds": 16.05593112495262
+    },
+    {
+      "case": null,
+      "phase": "plan-materials",
+      "event": "end",
+      "seconds": 0.02019608300179243,
+      "totalSeconds": 16.076312290970236
+    },
+    {
+      "case": null,
+      "phase": "plan-materials",
+      "event": "begin",
+      "totalSeconds": 16.077106082928367
+    },
+    {
+      "case": null,
+      "phase": "plan-materials",
+      "event": "end",
+      "seconds": 0.004530458012595773,
+      "totalSeconds": 16.081960874958895
+    },
+    {
+      "case": null,
+      "phase": "plan-materials",
+      "event": "begin",
+      "totalSeconds": 28.269840665976517
+    },
+    {
+      "case": null,
+      "phase": "plan-materials",
+      "event": "end",
+      "seconds": 0.06398279196582735,
+      "totalSeconds": 28.334475457901135
+    },
+    {
+      "case": null,
+      "phase": "private-carrier-probe",
+      "event": "begin",
+      "totalSeconds": 28.335128915961832
+    },
+    {
+      "case": null,
+      "phase": "plan-materials",
+      "event": "begin",
+      "totalSeconds": 28.335339415934868
+    },
+    {
+      "case": null,
+      "phase": "plan-materials",
+      "event": "end",
+      "seconds": 0.01922429201658815,
+      "totalSeconds": 28.354721707990393
+    },
+    {
+      "case": null,
+      "phase": "private-carrier-probe",
+      "raised": "ProbeFinished",
+      "event": "end",
+      "seconds": 0.027694375021383166,
+      "totalSeconds": 28.363031915971078
+    },
+    {
+      "case": null,
+      "phase": "plan-materials",
+      "event": "begin",
+      "totalSeconds": 28.36386291589588
+    },
+    {
+      "case": null,
+      "phase": "plan-materials",
+      "event": "end",
+      "seconds": 0.021161124925129116,
+      "totalSeconds": 28.38537487492431
+    },
+    {
+      "case": null,
+      "phase": "plan-materials",
+      "event": "begin",
+      "totalSeconds": 28.38606941595208
+    },
+    {
+      "case": null,
+      "phase": "plan-materials",
+      "event": "end",
+      "seconds": 0.003635540953837335,
+      "totalSeconds": 28.390081540914252
+    }
+  ],
+  "gpuOpened": false,
+  "supportCredit": 0
+}

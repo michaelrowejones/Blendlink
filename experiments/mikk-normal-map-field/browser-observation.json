@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "status": "PURE_B_BOUNDARY_FAILURES_WITH_SEPARATE_FINITE_INPUT_MATCHES",
+  "supportCredit": 0,
+  "sourceCommits": {
+    "native": "53fe9122936071d757ebd1323a13039c953fed5d",
+    "browser": "6f04e27ded4b4d7cb5a03335fec101ece14716e8",
+    "frameGraph": "1c470ccc5ecf8fb8a420f5d213f5791178c54ad2"
+  },
+  "nativeDirectory": "/tmp/scenetoweb-real-mikk-normal-native-r1",
+  "browserDirectory": "/tmp/scenetoweb-real-mikk-normal-browser-r2",
+  "nativeReportSha256": "74bc076ee533d982287e5c4707014ece2686b955f5cdbe1b239d321c1c0e489e",
+  "browserReportSha256": "ce0807d108f68b6ab30cb4543d47109aa9831123aa1abf18b225e8d9e0f26f88",
+  "closed": {
+    "path": "/tmp/scenetoweb-real-mikk-normal-fields-r2-frozen.json",
+    "sha256": "55956fb97585c0b0efbae41d5112d74ba4db28ace5f211d719d172a1c78a241b",
+    "readerSha256": "31055704324872e9747ec159c33a2bc530b34cab5b5d214edfad3417a579f51f",
+    "fixedOriginSha256": "3422b40bf80a840c4a088dda066fd74286aae3c7abc894faaa9beff8e32121ad"
+  },
+  "counts": {
+    "nativeRenders": 32,
+    "browserReadbacks": 66,
+    "caseApiTuples": 8,
+    "comparedRgbaWords": 4194304,
+    "positiveNormalMapFields": 34,
+    "positiveNormalMapRgbaWords": 2228224,
+    "positiveCoveredRgbaWords": 474480,
+    "independentControlFields": 24,
+    "independentControlRgbaWords": 1572864,
+    "unqualifiedPureBBoundaryFields": 6,
+    "unqualifiedPureBRgbaWords": 393216,
+    "nonfiniteWords": 3528,
+    "nonfiniteClasses": {
+      "finite->NaN": 3528
+    },
+    "alphaWordDifferences": 0,
+    "exactMaskFailures": 0,
+    "originQuadrantFailures": 0,
+    "maximumPositiveAbsoluteError": 0.0004882216453552246,
+    "absoluteLimit": 0.0009765625,
+    "explicitNonfiniteBoundaryFailures": 4
+  },
+  "boundaryFields": [
+    {
+      "name": "Walls",
+      "backend": "webgpu",
+      "kind": "B",
+      "disposition": "UNQUALIFIED_PURE_B_BOUNDARY",
+      "nonfiniteWords": 0,
+      "nonfiniteClasses": {}
+    },
+    {
+      "name": "Plane.021",
+      "backend": "webgpu",
+      "kind": "B",
+      "disposition": "UNQUALIFIED_PURE_B_BOUNDARY",
+      "nonfiniteWords": 954,
+      "nonfiniteClasses": {
+        "finite->NaN": 954
+      }
+    },
+    {
+      "name": "zero-uv-normal-parallel",
+      "backend": "webgpu",
+      "kind": "B",
+      "disposition": "UNQUALIFIED_PURE_B_BOUNDARY",
+      "nonfiniteWords": 810,
+      "nonfiniteClasses": {
+        "finite->NaN": 810
+      }
+    },
+    {
+      "name": "Walls",
+      "backend": "webgl2",
+      "kind": "B",
+      "disposition": "UNQUALIFIED_PURE_B_BOUNDARY",
+      "nonfiniteWords": 0,
+      "nonfiniteClasses": {}
+    },
+    {
+      "name": "Plane.021",
+      "backend": "webgl2",
+      "kind": "B",
+      "disposition": "UNQUALIFIED_PURE_B_BOUNDARY",
+      "nonfiniteWords": 954,
+      "nonfiniteClasses": {
+        "finite->NaN": 954
+      }
+    },
+    {
+      "name": "zero-uv-normal-parallel",
+      "backend": "webgl2",
+      "kind": "B",
+      "disposition": "UNQUALIFIED_PURE_B_BOUNDARY",
+      "nonfiniteWords": 810,
+      "nonfiniteClasses": {
+        "finite->NaN": 810
+      }
+    }
+  ],
+  "limits": [
+    "Positive counts cover 34 finite diagnostic NormalMap fields, not all 40 NormalMap fields. Six pure-B boundary fields remain unqualified.",
+    "Native EXR carrier is observed finite black where browser Float32 is nonfinite; no inference about native kernel zero-normalization or fallback.",
+    "Pure-B boundaries do not imply invalidity of actual independently nonzero normal-image or mixed RGB inputs.",
+    "Ideal half-center Window exact words failed and are retained; fixed API-origin quadrant controls pass without fitting.",
+    "No source-guard relaxation, production frame/node admission, real BOX/image NormalMap composition, other source profile or original-scene acceptance."
+  ],
+  "failedBrowser": {
+    "directory": "/tmp/scenetoweb-real-mikk-normal-browser-r1",
+    "reason": "Pre-geometry raw accessor hash order mismatch; no normal-field draws; preserved"
+  },
+  "cpuReplay": {
+    "byteIdentical": true,
+    "path": "/tmp/scenetoweb-real-mikk-normal-fields-r2-replay.json",
+    "sha256": "55956fb97585c0b0efbae41d5112d74ba4db28ace5f211d719d172a1c78a241b"
+  }
+}

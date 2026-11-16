@@ -6,12 +6,14 @@ import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js'
 import { vec4, vec3 } from 'three/tsl'
 import { installTslMaterials, buildMaterialProgram, buildOptionsFor } from 'scenetoweb/three/tsl-materials'
 import { startThreeCompiledScenePreparation } from 'scenetoweb/three'
+import {poisonGeometryPair} from './poison-geometry.js'
 const assert=(ok,message)=>{if(!ok)throw Error(message)}
 const words=raw=>Array.from(new Uint32Array(raw.buffer,raw.byteOffset,raw.byteLength/4))
 const difference=(a,b)=>a.reduce((n,x,i)=>n+(x!==b[i]),0)
 const nodes=value=>!value||typeof value!=='object'?[]:[...('op'in value?[value]:[]),...Object.values(value).flatMap(nodes)]
 window.runBoxInstalled=async proof=>{
- const result={status:'RUNNING',backend:proof.backend,webgpuAvailableAtStart:typeof navigator.gpu!=='undefined',rows:[],controls:[],errors:[],deviceLosses:[],bitmap:{opened:0,closed:0},callerBitmaps:{opened:0,closed:0},resources:[]};window.boxInstalledFailure=result
+ assert(proof.targetWidth===128||proof.targetWidth===512,'Undeclared target resolution');const sizes=proof.targetWidth===512?[[64,4],[128,8],[512,32]]:[[64,4],[128,8]],[controlWidth,controlHeight]=proof.targetWidth===512?[512,32]:[128,8]
+ const result={status:'RUNNING',backend:proof.backend,webgpuAvailableAtStart:typeof navigator.gpu!=='undefined',rows:[],controls:[],errors:[],deviceLosses:[],bitmap:{opened:0,closed:0},callerBitmaps:{opened:0,closed:0},resources:[],geometryControls:[]};window.boxInstalledFailure=result
  const r=new WebGPURenderer({forceWebGL:proof.backend==='webgl2',antialias:false}),target=new T.RenderTarget(64,4,{type:T.FloatType});target.texture.colorSpace=T.NoColorSpace
  const scene=new T.Scene();scene.background=new T.Color(0);const ambient=new T.AmbientLight(0xffffff,Math.PI),light=new T.DirectionalLight(0xffffff,1);light.position.set(2,5,3);scene.add(ambient,light,light.target)
  const callerChildren=scene.children.slice(),realBitmap=window.createImageBitmap;let disposing=false
@@ -33,26 +35,23 @@ window.runBoxInstalled=async proof=>{
   for(const entry of proof.entries){
    const loaded=await new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).loadAsync(entry.glbUrl);root=loaded.scene;scene.add(root);scene.updateMatrixWorld(true);const meshes=[];root.traverse(o=>{if(o.isMesh)meshes.push(o)});assert(meshes.length===1&&loaded.cameras.length===1,'Expected one actual exported primitive/camera');const mesh=meshes[0],original=mesh.material,camera=loaded.cameras[0],extras=mesh.userData.blendlink_tsl_runtime
    assert(extras?.requiresNodeRenderer?.programs?.some(p=>p.op==='texture_box_ref'&&p.model==='eevee-metal-box-color-mips-v1'),'Actual primitive declaration missing')
-   const stock=await draw(camera,'stock',entry.id,128,8)
+   const stock=await draw(camera,'stock',entry.id,controlWidth,controlHeight)
    const descriptor={materialPrograms:{...entry.materialPointer,url:entry.materialUrl}},before=performance.now();handle=await installTslMaterials({root,descriptor});result.controls.push({id:entry.id,kind:'preparation',milliseconds:performance.now()-before,applied:handle.applied,skipped:handle.skipped.length});assert(handle.applied===1&&handle.skipped.length===0,'Actual color channels skipped')
    const actual=mesh.material;assert(actual.isNodeMaterial&&actual.colorNode&&actual.opacityNode&&actual.completeProgramColor===true,'Original Base Color/Alpha ownership incomplete')
    const source=actual.userData.blendlink_source_material,program=entry.programs.materials[source],box=nodes(program.channels['Base Color']).find(n=>n.op==='texture_box_ref');assert(box,'Actual published BOX expression absent')
    const mapped=buildMaterialProgram({'Base Color':{tslIr:{schemaVersion:1,model:'blendlink-tsl-ir-v1',output:box.vector}}},buildOptionsFor(extras)).nodes.colorNode
    assert(mapped,'Public Mapping builder failed')
-   for(const[width,height]of[[64,4],[128,8]]){
+   for(const[width,height]of sizes){
     for(const[kind,node]of[['mask',vec4(1)],['mapping',vec4(mapped.mul(.03125).add(.5),1)],['color',vec4(actual.colorNode,actual.opacityNode)],['alpha',vec4(vec3(actual.opacityNode),1)]]){
      const observer=new NodeMaterial();observer.fragmentNode=node;observer.side=actual.side;observer.blending=T.NoBlending;observer.toneMapped=false;mesh.material=observer;try{await draw(camera,kind,entry.id,width,height)}finally{mesh.material=actual;observer.dispose()}
     }
    }
-   const first=await draw(camera,'actual',entry.id,128,8);assert(difference(stock,first)>0,'Stock carrier negative control insensitive');const repeat=await draw(camera,'repeat',entry.id,128,8);assert(difference(first,repeat)===0,'Actual material self-repeat differs')
-   // Keep the caller geometry untouched and dispose the poison attribute while
-   // it remains attached to its owned geometry, so renderer cache release sees
-   // it. Deleting an uploaded attribute before geometry.dispose leaks its cache.
-   const previousGeometry=mesh.geometry,poisonGeometry=previousGeometry.clone(),previousVertexColors=actual.vertexColors,poison=new Float32Array(previousGeometry.getAttribute('position').count*4);for(let i=0;i<poison.length;i+=4)poison.set([.125,.25,.5,.125],i)
-   poisonGeometry.setAttribute('color',new T.Float32BufferAttribute(poison,4));mesh.geometry=poisonGeometry;actual.vertexColors=true;actual.needsUpdate=true
-   const poisoned=await draw(camera,'poison',entry.id,128,8);assert(difference(first,poisoned)===0,'Implicit COLOR0 changed complete native RGB/Alpha')
-   const unowned=actual.isMeshPhysicalNodeMaterial?new MeshPhysicalNodeMaterial():new MeshStandardNodeMaterial();unowned.copy(actual);unowned.vertexColors=false;unowned.colorNode=actual.colorNode;unowned.opacityNode=actual.opacityNode;mesh.material=unowned
-   try{const plain=await draw(camera,'unowned-no-color',entry.id,128,8);assert(difference(first,plain)===0,'Unowned comparison differs before COLOR0');unowned.vertexColors=true;unowned.needsUpdate=true;const negative=await draw(camera,'unowned-color-negative',entry.id,128,8);assert(difference(first,negative)>0,'COLOR0 negative control insensitive')}finally{mesh.material=actual;unowned.dispose();mesh.geometry=previousGeometry;poisonGeometry.dispose();actual.vertexColors=previousVertexColors;actual.needsUpdate=true}
+   const first=await draw(camera,'actual',entry.id,controlWidth,controlHeight);assert(difference(stock,first)>0,'Stock carrier negative control insensitive');const repeat=await draw(camera,'repeat',entry.id,controlWidth,controlHeight);assert(difference(first,repeat)===0,'Actual material self-repeat differs')
+   const previousGeometry=mesh.geometry,pair=poisonGeometryPair(previousGeometry),previousVertexColors=actual.vertexColors;mesh.geometry=pair.positive;actual.vertexColors=true;actual.needsUpdate=true
+   const poisoned=await draw(camera,'poison',entry.id,controlWidth,controlHeight);assert(difference(first,poisoned)===0,'Implicit COLOR0 changed complete native RGB/Alpha')
+   const unowned=actual.isMeshPhysicalNodeMaterial?new MeshPhysicalNodeMaterial():new MeshStandardNodeMaterial(),negativeMaterial=actual.isMeshPhysicalNodeMaterial?new MeshPhysicalNodeMaterial():new MeshStandardNodeMaterial();unowned.copy(actual);unowned.vertexColors=false;unowned.colorNode=actual.colorNode;unowned.opacityNode=actual.opacityNode;negativeMaterial.copy(actual);negativeMaterial.vertexColors=true;negativeMaterial.colorNode=actual.colorNode;negativeMaterial.opacityNode=actual.opacityNode;mesh.material=unowned
+   try{const plain=await draw(camera,'unowned-no-color',entry.id,controlWidth,controlHeight);assert(difference(first,plain)===0,'Unowned comparison differs before COLOR0');mesh.geometry=pair.negative;mesh.material=negativeMaterial;const negative=await draw(camera,'unowned-color-negative',entry.id,controlWidth,controlHeight);assert(difference(first,negative)>0,'COLOR0 negative control insensitive')}finally{mesh.material=actual;mesh.geometry=previousGeometry;pair.positive.dispose();pair.negative.dispose();unowned.dispose();negativeMaterial.dispose();pair.assertSourceUnchanged();actual.vertexColors=previousVertexColors;actual.needsUpdate=true}
+   result.geometryControls.push({id:entry.id,sourceGeometryRestored:mesh.geometry===previousGeometry,sourceAttributesAndBytesPreserved:true,positiveAndNegativeGeometrySeparate:true,negativeFirstDrawConsumesColor:true,geometriesDisposedBeforeMaterials:true})
    for(const mode of entry===proof.entries[0]?['missing','corrupt','abort']:[]){
     const old=mesh.material,controller=new AbortController();await window.boxNetworkMode(mode)
     try{
@@ -60,9 +59,9 @@ window.runBoxInstalled=async proof=>{
      await pending;throw Error('Injected '+mode+' companion unexpectedly installed')
     }catch(error){assert(mode==='abort'?error.name==='AbortError':mode==='missing'?/fetch failed/.test(String(error)):/mip bytes changed/.test(String(error)),'Unexpected failure cause '+String(error));result.controls.push({id:entry.id,kind:mode,refusal:String(error),materialPreserved:mesh.material===old})}
     finally{await window.boxNetworkMode('normal')}
-    assert(mesh.material===old,'Failed preparation changed last-good material');const recovered=await draw(camera,'recovery-'+mode,entry.id,128,8);assert(difference(first,recovered)===0,'Failure changed last-good pixels')
+    assert(mesh.material===old,'Failed preparation changed last-good material');const recovered=await draw(camera,'recovery-'+mode,entry.id,controlWidth,controlHeight);assert(difference(first,recovered)===0,'Failure changed last-good pixels')
    }
-   handle.dispose();handle=null;assert(mesh.material===original,'Scoped material did not restore');const disposed=await draw(camera,'disposed-stock',entry.id,128,8);assert(difference(stock,disposed)===0,'Disposed stock carrier changed');handle=await installTslMaterials({root,descriptor});assert(handle.applied===1&&handle.skipped.length===0,'Remount skipped color/Alpha');result.controls.push({id:entry.id,kind:'remount-installation',applied:handle.applied,skipped:handle.skipped.length});const remount=await draw(camera,'remount',entry.id,128,8);assert(difference(first,remount)===0,'Remount changed actual pixels')
+   handle.dispose();handle=null;assert(mesh.material===original,'Scoped material did not restore');const disposed=await draw(camera,'disposed-stock',entry.id,controlWidth,controlHeight);assert(difference(stock,disposed)===0,'Disposed stock carrier changed');handle=await installTslMaterials({root,descriptor});assert(handle.applied===1&&handle.skipped.length===0,'Remount skipped color/Alpha');result.controls.push({id:entry.id,kind:'remount-installation',applied:handle.applied,skipped:handle.skipped.length});const remount=await draw(camera,'remount',entry.id,controlWidth,controlHeight);assert(difference(first,remount)===0,'Remount changed actual pixels')
    if(entry===proof.entries[0]){
     const legacy=new T.WebGLRenderer({antialias:false}),caller=new T.Scene();let pending,preparedLegacy
     try{const module=await import(/* @vite-ignore */entry.moduleUrl);pending=startThreeCompiledScenePreparation({renderer:legacy,scene:caller,descriptor:module[entry.moduleExport],assetBaseUrl:proof.assetBaseUrl,viewport:{width:64,height:4}});preparedLegacy=await pending.promise;throw Error('Legacy renderer accepted live BOX')}catch(error){assert(/Legacy WebGLRenderer.*BOX Image Texture/.test(String(error)),'Unexpected legacy refusal '+String(error));result.controls.push({id:entry.id,kind:'legacy-refusal',refusal:String(error)})}finally{preparedLegacy?.dispose();pending?.cancel();legacy.dispose();legacy.forceContextLoss()}

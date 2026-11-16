@@ -1,0 +1,10 @@
+{
+  "status": "EXPERIMENTAL_UNQUALIFIED_SOURCE_RECONSTRUCTION_NOT_PUBLIC_ADMISSION",
+  "base": "a1684d3adc18ad8afead3d7d23c2e33a39bf8abf",
+  "commit": "43840cc6f59c44938b80c996d05f4b24b23ffc32",
+  "tree": "45a9e62cef2a6cb94fa5c41ac0478d22f0b4ad82",
+  "patchSha256": "1945ceedef12d9c39fa514c83c7a2c984b2160eb72d4477ae4956444ca5d7e07",
+  "commitObjectSha256": "4973422aa388b3f9c2cc61a0c3b8566a1ef732a73c1b4803fcb6de5df387b811",
+  "patchBytes": 64870,
+  "commitObjectBytes": 372
+}

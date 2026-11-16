@@ -1,0 +1,4322 @@
+{
+  "status": "VISUAL_POLICY_V1_DIAGNOSTICS_ONLY_REQUIRES_REVIEW",
+  "supportCredit": 0,
+  "materialCredit": 0,
+  "sceneCredit": 0,
+  "policy": {
+    "id": "unlit-ldr-standard-srgb-diagnostic-v1",
+    "status": "PROPOSAL_NOT_ACCEPTANCE_POLICY",
+    "exposure": 1,
+    "linearRange": [
+      0,
+      1
+    ],
+    "display": "IEC sRGB OETF, nearest8-bit integer, no tone map/clipping",
+    "maximumDisplayCodeDifference": 1,
+    "outlineChebyshevPixels": 1,
+    "maximumViewportXorFraction": 0.005,
+    "maximumSourceCoverageXorFraction": 0.01,
+    "foregroundConnectivity": 8,
+    "holeConnectivity": 4,
+    "preserveOnePixelEndpoints": true,
+    "compareEveryCommonCoveredPixel": true
+  },
+  "policySourceSha256": "2f26d005ab66c1acbe31f439049ba962fd157a5e73e51dc4292dd4626cd6e4f8",
+  "readerSha256": "d9870767a829437a59e20bcb4dd1dfe9837d59b8e99290da591d0c47c9312011",
+  "inputReceiptSha256": "359f692f488fc797d509f3bd419a27770bcf380921ded9fba99ecdb5311b9b16",
+  "strictRetained": {
+    "words": 245760,
+    "violations": 50,
+    "unchanged": true,
+    "rawRows": 204
+  },
+  "summary": [
+    {
+      "tuple": "metal/webgpu",
+      "frames": 6,
+      "proposalSatisfied": true,
+      "displayViolations": 0,
+      "maximumDisplayCodeDifference": 1,
+      "xorPixels": 0,
+      "outlineOutsideOnePixel": 0,
+      "topologyOrEndpointFailures": 0,
+      "mappingSameCoverageViolations": 0
+    },
+    {
+      "tuple": "metal/webgl2",
+      "frames": 6,
+      "proposalSatisfied": true,
+      "displayViolations": 0,
+      "maximumDisplayCodeDifference": 1,
+      "xorPixels": 0,
+      "outlineOutsideOnePixel": 0,
+      "topologyOrEndpointFailures": 0,
+      "mappingSameCoverageViolations": 0
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "frames": 6,
+      "proposalSatisfied": true,
+      "displayViolations": 0,
+      "maximumDisplayCodeDifference": 1,
+      "xorPixels": 2,
+      "outlineOutsideOnePixel": 0,
+      "topologyOrEndpointFailures": 0,
+      "mappingSameCoverageViolations": 0
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "frames": 6,
+      "proposalSatisfied": true,
+      "displayViolations": 0,
+      "maximumDisplayCodeDifference": 1,
+      "xorPixels": 2,
+      "outlineOutsideOnePixel": 0,
+      "topologyOrEndpointFailures": 0,
+      "mappingSameCoverageViolations": 0
+    }
+  ],
+  "prerequisites": {
+    "allFiveSourceChannelsAndOpaqueAlphaPinned": true,
+    "strictInputMipMathRequirementsUnchanged": true,
+    "resourceRepairGpuValidationStillPending": true,
+    "existingPhysicalLifecycleAndLowLevelStateProofsRemainRequired": true,
+    "range": "Unlit opaque LDR color field only; no BRDF, HDR, NormalMap, original camera or whole-scene claim"
+  },
+  "negativeSummary": {
+    "dataset": "Earlier signal-only original-camera controls, not installed R3",
+    "rows": 24,
+    "discriminating": 14,
+    "wrongUvSyntheticOnly": true
+  },
+  "rows": [
+    {
+      "tuple": "metal/webgpu",
+      "id": "plane-1",
+      "width": 64,
+      "height": 4,
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 256,
+        "actualCovered": 256,
+        "commonCovered": 256,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 132,
+        "actualOutlinePixels": 132,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 1,
+          "actual": 1,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 3,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 2,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 768,
+        "commonBackgroundWords": 0,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 14,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.018229166666666668,
+        "rmsCodeDifference": 0.13501543121683043,
+        "rawMaxAbsSameCoverage": 0.00048798322677612305,
+        "proposalSatisfied": true
+      },
+      "mappingSameValidCoverage": {
+        "bound": 0.0009765625,
+        "words": 768,
+        "violations": 0,
+        "maxAbs": 0.00048410892486572266
+      }
+    },
+    {
+      "tuple": "metal/webgpu",
+      "id": "plane-1",
+      "width": 128,
+      "height": 8,
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 1024,
+        "actualCovered": 1024,
+        "commonCovered": 1024,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 268,
+        "actualOutlinePixels": 268,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 1,
+          "actual": 1,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 6,
+          "sourcePixels": 11,
+          "limit": 6,
+          "marginPixels": 6,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 2,
+          "sourcePixels": 6,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 3072,
+        "commonBackgroundWords": 0,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 3072,
+        "differences": 71,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.023111979166666668,
+        "rmsCodeDifference": 0.1520262449929836,
+        "rawMaxAbsSameCoverage": 0.0004881620407104492,
+        "proposalSatisfied": true
+      },
+      "mappingSameValidCoverage": {
+        "bound": 0.0009765625,
+        "words": 3072,
+        "violations": 0,
+        "maxAbs": 0.0004870295524597168
+      }
+    },
+    {
+      "tuple": "metal/webgpu",
+      "id": "source-Plane.021",
+      "width": 64,
+      "height": 4,
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 76,
+        "actualCovered": 76,
+        "commonCovered": 76,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 46,
+        "actualOutlinePixels": 46,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 2,
+          "actual": 2,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 1,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 1,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 228,
+        "commonBackgroundWords": 540,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 7,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.009114583333333334,
+        "rmsCodeDifference": 0.09547032697824667,
+        "rawMaxAbsSameCoverage": 0.0004951357841491699,
+        "proposalSatisfied": true
+      },
+      "mappingSameValidCoverage": {
+        "bound": 0.0009765625,
+        "words": 228,
+        "violations": 0,
+        "maxAbs": 0.0004826784133911133
+      }
+    },
+    {
+      "tuple": "metal/webgpu",
+      "id": "source-Plane.021",
+      "width": 128,
+      "height": 8,
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 308,
+        "actualCovered": 308,
+        "commonCovered": 308,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 102,
+        "actualOutlinePixels": 102,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 2,
+          "actual": 2,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 6,
+          "sourcePixels": 4,
+          "limit": 4,
+          "marginPixels": 4,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 2,
+          "sourcePixels": 2,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 924,
+        "commonBackgroundWords": 2148,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 3072,
+        "differences": 17,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.005533854166666667,
+        "rmsCodeDifference": 0.07438987946398802,
+        "rawMaxAbsSameCoverage": 0.0005310177803039551,
+        "proposalSatisfied": true
+      },
+      "mappingSameValidCoverage": {
+        "bound": 0.0009765625,
+        "words": 924,
+        "violations": 0,
+        "maxAbs": 0.0004868507385253906
+      }
+    },
+    {
+      "tuple": "metal/webgpu",
+      "id": "source-Walls",
+      "width": 64,
+      "height": 4,
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 111,
+        "actualCovered": 111,
+        "commonCovered": 111,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 64,
+        "actualOutlinePixels": 64,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 2,
+          "actual": 2,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 2,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 1,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 333,
+        "commonBackgroundWords": 435,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 7,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.009114583333333334,
+        "rmsCodeDifference": 0.09547032697824667,
+        "rawMaxAbsSameCoverage": 0.0005364418029785156,
+        "proposalSatisfied": true
+      },
+      "mappingSameValidCoverage": {
+        "bound": 0.0009765625,
+        "words": 333,
+        "violations": 0,
+        "maxAbs": 0.0004857778549194336
+      }
+    },
+    {
+      "tuple": "metal/webgpu",
+      "id": "source-Walls",
+      "width": 128,
+      "height": 8,
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 439,
+        "actualCovered": 439,
+        "commonCovered": 439,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 134,
+        "actualOutlinePixels": 134,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 2,
+          "actual": 2,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 6,
+          "sourcePixels": 5,
+          "limit": 5,
+          "marginPixels": 5,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 2,
+          "sourcePixels": 3,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 1317,
+        "commonBackgroundWords": 1755,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 3072,
+        "differences": 35,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.011393229166666666,
+        "rmsCodeDifference": 0.10673907047874581,
+        "rawMaxAbsSameCoverage": 0.0005364418029785156,
+        "proposalSatisfied": true
+      },
+      "mappingSameValidCoverage": {
+        "bound": 0.0009765625,
+        "words": 1317,
+        "violations": 0,
+        "maxAbs": 0.00048720836639404297
+      }
+    },
+    {
+      "tuple": "metal/webgl2",
+      "id": "plane-1",
+      "width": 64,
+      "height": 4,
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 256,
+        "actualCovered": 256,
+        "commonCovered": 256,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 132,
+        "actualOutlinePixels": 132,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 1,
+          "actual": 1,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 3,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 2,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 768,
+        "commonBackgroundWords": 0,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 14,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.018229166666666668,
+        "rmsCodeDifference": 0.13501543121683043,
+        "rawMaxAbsSameCoverage": 0.00048798322677612305,
+        "proposalSatisfied": true
+      },
+      "mappingSameValidCoverage": {
+        "bound": 0.0009765625,
+        "words": 768,
+        "violations": 0,
+        "maxAbs": 0.00048410892486572266
+      }
+    },
+    {
+      "tuple": "metal/webgl2",
+      "id": "plane-1",
+      "width": 128,
+      "height": 8,
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 1024,
+        "actualCovered": 1024,
+        "commonCovered": 1024,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 268,
+        "actualOutlinePixels": 268,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 1,
+          "actual": 1,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 6,
+          "sourcePixels": 11,
+          "limit": 6,
+          "marginPixels": 6,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 2,
+          "sourcePixels": 6,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 3072,
+        "commonBackgroundWords": 0,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 3072,
+        "differences": 71,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.023111979166666668,
+        "rmsCodeDifference": 0.1520262449929836,
+        "rawMaxAbsSameCoverage": 0.0004881620407104492,
+        "proposalSatisfied": true
+      },
+      "mappingSameValidCoverage": {
+        "bound": 0.0009765625,
+        "words": 3072,
+        "violations": 0,
+        "maxAbs": 0.0004870295524597168
+      }
+    },
+    {
+      "tuple": "metal/webgl2",
+      "id": "source-Plane.021",
+      "width": 64,
+      "height": 4,
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 76,
+        "actualCovered": 76,
+        "commonCovered": 76,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 46,
+        "actualOutlinePixels": 46,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 2,
+          "actual": 2,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 1,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 1,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 228,
+        "commonBackgroundWords": 540,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 7,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.009114583333333334,
+        "rmsCodeDifference": 0.09547032697824667,
+        "rawMaxAbsSameCoverage": 0.0005130767822265625,
+        "proposalSatisfied": true
+      },
+      "mappingSameValidCoverage": {
+        "bound": 0.0009765625,
+        "words": 228,
+        "violations": 0,
+        "maxAbs": 0.0004826784133911133
+      }
+    },
+    {
+      "tuple": "metal/webgl2",
+      "id": "source-Plane.021",
+      "width": 128,
+      "height": 8,
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 308,
+        "actualCovered": 308,
+        "commonCovered": 308,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 102,
+        "actualOutlinePixels": 102,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 2,
+          "actual": 2,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 6,
+          "sourcePixels": 4,
+          "limit": 4,
+          "marginPixels": 4,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 2,
+          "sourcePixels": 2,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 924,
+        "commonBackgroundWords": 2148,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 3072,
+        "differences": 17,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.005533854166666667,
+        "rmsCodeDifference": 0.07438987946398802,
+        "rawMaxAbsSameCoverage": 0.0004836916923522949,
+        "proposalSatisfied": true
+      },
+      "mappingSameValidCoverage": {
+        "bound": 0.0009765625,
+        "words": 924,
+        "violations": 0,
+        "maxAbs": 0.0004868507385253906
+      }
+    },
+    {
+      "tuple": "metal/webgl2",
+      "id": "source-Walls",
+      "width": 64,
+      "height": 4,
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 111,
+        "actualCovered": 111,
+        "commonCovered": 111,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 64,
+        "actualOutlinePixels": 64,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 2,
+          "actual": 2,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 2,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 1,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 333,
+        "commonBackgroundWords": 435,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 7,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.009114583333333334,
+        "rmsCodeDifference": 0.09547032697824667,
+        "rawMaxAbsSameCoverage": 0.0004836916923522949,
+        "proposalSatisfied": true
+      },
+      "mappingSameValidCoverage": {
+        "bound": 0.0009765625,
+        "words": 333,
+        "violations": 0,
+        "maxAbs": 0.0004857778549194336
+      }
+    },
+    {
+      "tuple": "metal/webgl2",
+      "id": "source-Walls",
+      "width": 128,
+      "height": 8,
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 439,
+        "actualCovered": 439,
+        "commonCovered": 439,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 134,
+        "actualOutlinePixels": 134,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 2,
+          "actual": 2,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 6,
+          "sourcePixels": 5,
+          "limit": 5,
+          "marginPixels": 5,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 2,
+          "sourcePixels": 3,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 1317,
+        "commonBackgroundWords": 1755,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 3072,
+        "differences": 35,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.011393229166666666,
+        "rmsCodeDifference": 0.10673907047874581,
+        "rawMaxAbsSameCoverage": 0.0004836916923522949,
+        "proposalSatisfied": true
+      },
+      "mappingSameValidCoverage": {
+        "bound": 0.0009765625,
+        "words": 1317,
+        "violations": 0,
+        "maxAbs": 0.00048720836639404297
+      }
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "plane-1",
+      "width": 64,
+      "height": 4,
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 256,
+        "actualCovered": 256,
+        "commonCovered": 256,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 132,
+        "actualOutlinePixels": 132,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 1,
+          "actual": 1,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 3,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 2,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 768,
+        "commonBackgroundWords": 0,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 14,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.018229166666666668,
+        "rmsCodeDifference": 0.13501543121683043,
+        "rawMaxAbsSameCoverage": 0.0006167292594909668,
+        "proposalSatisfied": true
+      },
+      "mappingSameValidCoverage": {
+        "bound": 0.0009765625,
+        "words": 768,
+        "violations": 0,
+        "maxAbs": 0.00048410892486572266
+      }
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "plane-1",
+      "width": 128,
+      "height": 8,
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 1024,
+        "actualCovered": 1024,
+        "commonCovered": 1024,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 268,
+        "actualOutlinePixels": 268,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 1,
+          "actual": 1,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 6,
+          "sourcePixels": 11,
+          "limit": 6,
+          "marginPixels": 6,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 2,
+          "sourcePixels": 6,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 3072,
+        "commonBackgroundWords": 0,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 3072,
+        "differences": 68,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.022135416666666668,
+        "rmsCodeDifference": 0.14877975892797604,
+        "rawMaxAbsSameCoverage": 0.0006816387176513672,
+        "proposalSatisfied": true
+      },
+      "mappingSameValidCoverage": {
+        "bound": 0.0009765625,
+        "words": 3072,
+        "violations": 0,
+        "maxAbs": 0.0004870295524597168
+      }
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "source-Plane.021",
+      "width": 64,
+      "height": 4,
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 76,
+        "actualCovered": 76,
+        "commonCovered": 76,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 46,
+        "actualOutlinePixels": 46,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 2,
+          "actual": 2,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 1,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 1,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 228,
+        "commonBackgroundWords": 540,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 9,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.01171875,
+        "rmsCodeDifference": 0.10825317547305482,
+        "rawMaxAbsSameCoverage": 0.0005776882171630859,
+        "proposalSatisfied": true
+      },
+      "mappingSameValidCoverage": {
+        "bound": 0.0009765625,
+        "words": 228,
+        "violations": 0,
+        "maxAbs": 0.00048238039016723633
+      }
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "source-Plane.021",
+      "width": 128,
+      "height": 8,
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 308,
+        "actualCovered": 309,
+        "commonCovered": 308,
+        "xorPixels": 1,
+        "xorViewportFraction": 0.0009765625,
+        "xorSourceFraction": 0.003246753246753247,
+        "sourceOutlinePixels": 102,
+        "actualOutlinePixels": 102,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 2,
+          "actual": 2,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 6,
+          "sourcePixels": 4,
+          "limit": 4,
+          "marginPixels": 3,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 2,
+          "sourcePixels": 2,
+          "limit": 2,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 924,
+        "commonBackgroundWords": 2145,
+        "coverageDisagreementWords": 3,
+        "comparedWords": 3069,
+        "differences": 20,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.006516780710329097,
+        "rmsCodeDifference": 0.08072657994941379,
+        "rawMaxAbsSameCoverage": 0.0008698701858520508,
+        "proposalSatisfied": true
+      },
+      "mappingSameValidCoverage": {
+        "bound": 0.0009765625,
+        "words": 924,
+        "violations": 0,
+        "maxAbs": 0.0004905462265014648
+      }
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "source-Walls",
+      "width": 64,
+      "height": 4,
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 111,
+        "actualCovered": 112,
+        "commonCovered": 111,
+        "xorPixels": 1,
+        "xorViewportFraction": 0.00390625,
+        "xorSourceFraction": 0.009009009009009009,
+        "sourceOutlinePixels": 64,
+        "actualOutlinePixels": 64,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 2,
+          "actual": 2,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 2,
+          "limit": 2,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 1,
+          "limit": 1,
+          "marginPixels": 0,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 333,
+        "commonBackgroundWords": 432,
+        "coverageDisagreementWords": 3,
+        "comparedWords": 765,
+        "differences": 7,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.009150326797385621,
+        "rmsCodeDifference": 0.09565734053059191,
+        "rawMaxAbsSameCoverage": 0.0008895397186279297,
+        "proposalSatisfied": true
+      },
+      "mappingSameValidCoverage": {
+        "bound": 0.0009765625,
+        "words": 333,
+        "violations": 0,
+        "maxAbs": 0.0004839301109313965
+      }
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "source-Walls",
+      "width": 128,
+      "height": 8,
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 439,
+        "actualCovered": 439,
+        "commonCovered": 439,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 134,
+        "actualOutlinePixels": 134,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 2,
+          "actual": 2,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 6,
+          "sourcePixels": 5,
+          "limit": 5,
+          "marginPixels": 5,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 2,
+          "sourcePixels": 3,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 1317,
+        "commonBackgroundWords": 1755,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 3072,
+        "differences": 36,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.01171875,
+        "rmsCodeDifference": 0.10825317547305482,
+        "rawMaxAbsSameCoverage": 0.0011001825332641602,
+        "proposalSatisfied": true
+      },
+      "mappingSameValidCoverage": {
+        "bound": 0.0009765625,
+        "words": 1317,
+        "violations": 0,
+        "maxAbs": 0.0004904270172119141
+      }
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "plane-1",
+      "width": 64,
+      "height": 4,
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 256,
+        "actualCovered": 256,
+        "commonCovered": 256,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 132,
+        "actualOutlinePixels": 132,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 1,
+          "actual": 1,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 3,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 2,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 768,
+        "commonBackgroundWords": 0,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 14,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.018229166666666668,
+        "rmsCodeDifference": 0.13501543121683043,
+        "rawMaxAbsSameCoverage": 0.0006167292594909668,
+        "proposalSatisfied": true
+      },
+      "mappingSameValidCoverage": {
+        "bound": 0.0009765625,
+        "words": 768,
+        "violations": 0,
+        "maxAbs": 0.00048410892486572266
+      }
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "plane-1",
+      "width": 128,
+      "height": 8,
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 1024,
+        "actualCovered": 1024,
+        "commonCovered": 1024,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 268,
+        "actualOutlinePixels": 268,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 1,
+          "actual": 1,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 6,
+          "sourcePixels": 11,
+          "limit": 6,
+          "marginPixels": 6,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 2,
+          "sourcePixels": 6,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 3072,
+        "commonBackgroundWords": 0,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 3072,
+        "differences": 68,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.022135416666666668,
+        "rmsCodeDifference": 0.14877975892797604,
+        "rawMaxAbsSameCoverage": 0.0006816387176513672,
+        "proposalSatisfied": true
+      },
+      "mappingSameValidCoverage": {
+        "bound": 0.0009765625,
+        "words": 3072,
+        "violations": 0,
+        "maxAbs": 0.0004870295524597168
+      }
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "source-Plane.021",
+      "width": 64,
+      "height": 4,
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 76,
+        "actualCovered": 76,
+        "commonCovered": 76,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 46,
+        "actualOutlinePixels": 46,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 2,
+          "actual": 2,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 1,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 1,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 228,
+        "commonBackgroundWords": 540,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 9,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.01171875,
+        "rmsCodeDifference": 0.10825317547305482,
+        "rawMaxAbsSameCoverage": 0.000584721565246582,
+        "proposalSatisfied": true
+      },
+      "mappingSameValidCoverage": {
+        "bound": 0.0009765625,
+        "words": 228,
+        "violations": 0,
+        "maxAbs": 0.00048238039016723633
+      }
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "source-Plane.021",
+      "width": 128,
+      "height": 8,
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 308,
+        "actualCovered": 309,
+        "commonCovered": 308,
+        "xorPixels": 1,
+        "xorViewportFraction": 0.0009765625,
+        "xorSourceFraction": 0.003246753246753247,
+        "sourceOutlinePixels": 102,
+        "actualOutlinePixels": 102,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 2,
+          "actual": 2,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 6,
+          "sourcePixels": 4,
+          "limit": 4,
+          "marginPixels": 3,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 2,
+          "sourcePixels": 2,
+          "limit": 2,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 924,
+        "commonBackgroundWords": 2145,
+        "coverageDisagreementWords": 3,
+        "comparedWords": 3069,
+        "differences": 21,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.006842619745845552,
+        "rmsCodeDifference": 0.08272012902459444,
+        "rawMaxAbsSameCoverage": 0.0008676648139953613,
+        "proposalSatisfied": true
+      },
+      "mappingSameValidCoverage": {
+        "bound": 0.0009765625,
+        "words": 924,
+        "violations": 0,
+        "maxAbs": 0.0004905462265014648
+      }
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "source-Walls",
+      "width": 64,
+      "height": 4,
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 111,
+        "actualCovered": 112,
+        "commonCovered": 111,
+        "xorPixels": 1,
+        "xorViewportFraction": 0.00390625,
+        "xorSourceFraction": 0.009009009009009009,
+        "sourceOutlinePixels": 64,
+        "actualOutlinePixels": 64,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 2,
+          "actual": 2,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 2,
+          "limit": 2,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 1,
+          "limit": 1,
+          "marginPixels": 0,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 333,
+        "commonBackgroundWords": 432,
+        "coverageDisagreementWords": 3,
+        "comparedWords": 765,
+        "differences": 7,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.009150326797385621,
+        "rmsCodeDifference": 0.09565734053059191,
+        "rawMaxAbsSameCoverage": 0.0008906126022338867,
+        "proposalSatisfied": true
+      },
+      "mappingSameValidCoverage": {
+        "bound": 0.0009765625,
+        "words": 333,
+        "violations": 0,
+        "maxAbs": 0.0004839301109313965
+      }
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "source-Walls",
+      "width": 128,
+      "height": 8,
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 439,
+        "actualCovered": 439,
+        "commonCovered": 439,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 134,
+        "actualOutlinePixels": 134,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 2,
+          "actual": 2,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 6,
+          "sourcePixels": 5,
+          "limit": 5,
+          "marginPixels": 5,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 2,
+          "sourcePixels": 3,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 1317,
+        "commonBackgroundWords": 1755,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 3072,
+        "differences": 36,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.01171875,
+        "rmsCodeDifference": 0.10825317547305482,
+        "rawMaxAbsSameCoverage": 0.0011002421379089355,
+        "proposalSatisfied": true
+      },
+      "mappingSameValidCoverage": {
+        "bound": 0.0009765625,
+        "words": 1317,
+        "violations": 0,
+        "maxAbs": 0.0004904270172119141
+      }
+    }
+  ],
+  "raw": [
+    {
+      "tuple": "metal/webgpu",
+      "id": "plane-1",
+      "width": 64,
+      "kind": "mask",
+      "words": 1024,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "metal/webgpu",
+      "id": "plane-1",
+      "width": 64,
+      "kind": "mapping",
+      "words": 1024,
+      "differences": 768,
+      "violations": 0,
+      "maxAbs": 0.00048410892486572266,
+      "maxUlp": 8184
+    },
+    {
+      "tuple": "metal/webgpu",
+      "id": "plane-1",
+      "width": 64,
+      "kind": "color",
+      "words": 1024,
+      "differences": 768,
+      "violations": 0,
+      "maxAbs": 0.00048798322677612305,
+      "maxUlp": 8187
+    },
+    {
+      "tuple": "metal/webgpu",
+      "id": "plane-1",
+      "width": 64,
+      "kind": "alpha",
+      "words": 1024,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "metal/webgpu",
+      "id": "plane-1",
+      "width": 128,
+      "kind": "mask",
+      "words": 4096,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "metal/webgpu",
+      "id": "plane-1",
+      "width": 128,
+      "kind": "mapping",
+      "words": 4096,
+      "differences": 3072,
+      "violations": 0,
+      "maxAbs": 0.0004870295524597168,
+      "maxUlp": 8171
+    },
+    {
+      "tuple": "metal/webgpu",
+      "id": "plane-1",
+      "width": 128,
+      "kind": "color",
+      "words": 4096,
+      "differences": 3069,
+      "violations": 0,
+      "maxAbs": 0.0004881620407104492,
+      "maxUlp": 8190
+    },
+    {
+      "tuple": "metal/webgpu",
+      "id": "plane-1",
+      "width": 128,
+      "kind": "alpha",
+      "words": 4096,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "metal/webgpu",
+      "id": "source-Plane.021",
+      "width": 64,
+      "kind": "mask",
+      "words": 1024,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "metal/webgpu",
+      "id": "source-Plane.021",
+      "width": 64,
+      "kind": "mapping",
+      "words": 1024,
+      "differences": 228,
+      "violations": 0,
+      "maxAbs": 0.0004826784133911133,
+      "maxUlp": 8098
+    },
+    {
+      "tuple": "metal/webgpu",
+      "id": "source-Plane.021",
+      "width": 64,
+      "kind": "color",
+      "words": 1024,
+      "differences": 228,
+      "violations": 0,
+      "maxAbs": 0.0004951357841491699,
+      "maxUlp": 8307
+    },
+    {
+      "tuple": "metal/webgpu",
+      "id": "source-Plane.021",
+      "width": 64,
+      "kind": "alpha",
+      "words": 1024,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "metal/webgpu",
+      "id": "source-Plane.021",
+      "width": 128,
+      "kind": "mask",
+      "words": 4096,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "metal/webgpu",
+      "id": "source-Plane.021",
+      "width": 128,
+      "kind": "mapping",
+      "words": 4096,
+      "differences": 924,
+      "violations": 0,
+      "maxAbs": 0.0004868507385253906,
+      "maxUlp": 8168
+    },
+    {
+      "tuple": "metal/webgpu",
+      "id": "source-Plane.021",
+      "width": 128,
+      "kind": "color",
+      "words": 4096,
+      "differences": 924,
+      "violations": 0,
+      "maxAbs": 0.0005310177803039551,
+      "maxUlp": 8909
+    },
+    {
+      "tuple": "metal/webgpu",
+      "id": "source-Plane.021",
+      "width": 128,
+      "kind": "alpha",
+      "words": 4096,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "metal/webgpu",
+      "id": "source-Walls",
+      "width": 64,
+      "kind": "mask",
+      "words": 1024,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "metal/webgpu",
+      "id": "source-Walls",
+      "width": 64,
+      "kind": "mapping",
+      "words": 1024,
+      "differences": 305,
+      "violations": 0,
+      "maxAbs": 0.0004857778549194336,
+      "maxUlp": 8150
+    },
+    {
+      "tuple": "metal/webgpu",
+      "id": "source-Walls",
+      "width": 64,
+      "kind": "color",
+      "words": 1024,
+      "differences": 333,
+      "violations": 0,
+      "maxAbs": 0.0005364418029785156,
+      "maxUlp": 9000
+    },
+    {
+      "tuple": "metal/webgpu",
+      "id": "source-Walls",
+      "width": 64,
+      "kind": "alpha",
+      "words": 1024,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "metal/webgpu",
+      "id": "source-Walls",
+      "width": 128,
+      "kind": "mask",
+      "words": 4096,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "metal/webgpu",
+      "id": "source-Walls",
+      "width": 128,
+      "kind": "mapping",
+      "words": 4096,
+      "differences": 1205,
+      "violations": 0,
+      "maxAbs": 0.00048720836639404297,
+      "maxUlp": 8179
+    },
+    {
+      "tuple": "metal/webgpu",
+      "id": "source-Walls",
+      "width": 128,
+      "kind": "color",
+      "words": 4096,
+      "differences": 1317,
+      "violations": 0,
+      "maxAbs": 0.0005364418029785156,
+      "maxUlp": 9000
+    },
+    {
+      "tuple": "metal/webgpu",
+      "id": "source-Walls",
+      "width": 128,
+      "kind": "alpha",
+      "words": 4096,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "metal/webgl2",
+      "id": "plane-1",
+      "width": 64,
+      "kind": "mask",
+      "words": 1024,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "metal/webgl2",
+      "id": "plane-1",
+      "width": 64,
+      "kind": "mapping",
+      "words": 1024,
+      "differences": 768,
+      "violations": 0,
+      "maxAbs": 0.00048410892486572266,
+      "maxUlp": 8184
+    },
+    {
+      "tuple": "metal/webgl2",
+      "id": "plane-1",
+      "width": 64,
+      "kind": "color",
+      "words": 1024,
+      "differences": 768,
+      "violations": 0,
+      "maxAbs": 0.00048798322677612305,
+      "maxUlp": 8187
+    },
+    {
+      "tuple": "metal/webgl2",
+      "id": "plane-1",
+      "width": 64,
+      "kind": "alpha",
+      "words": 1024,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "metal/webgl2",
+      "id": "plane-1",
+      "width": 128,
+      "kind": "mask",
+      "words": 4096,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "metal/webgl2",
+      "id": "plane-1",
+      "width": 128,
+      "kind": "mapping",
+      "words": 4096,
+      "differences": 3072,
+      "violations": 0,
+      "maxAbs": 0.0004870295524597168,
+      "maxUlp": 8171
+    },
+    {
+      "tuple": "metal/webgl2",
+      "id": "plane-1",
+      "width": 128,
+      "kind": "color",
+      "words": 4096,
+      "differences": 3069,
+      "violations": 0,
+      "maxAbs": 0.0004881620407104492,
+      "maxUlp": 8190
+    },
+    {
+      "tuple": "metal/webgl2",
+      "id": "plane-1",
+      "width": 128,
+      "kind": "alpha",
+      "words": 4096,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "metal/webgl2",
+      "id": "source-Plane.021",
+      "width": 64,
+      "kind": "mask",
+      "words": 1024,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "metal/webgl2",
+      "id": "source-Plane.021",
+      "width": 64,
+      "kind": "mapping",
+      "words": 1024,
+      "differences": 228,
+      "violations": 0,
+      "maxAbs": 0.0004826784133911133,
+      "maxUlp": 8098
+    },
+    {
+      "tuple": "metal/webgl2",
+      "id": "source-Plane.021",
+      "width": 64,
+      "kind": "color",
+      "words": 1024,
+      "differences": 228,
+      "violations": 0,
+      "maxAbs": 0.0005130767822265625,
+      "maxUlp": 8608
+    },
+    {
+      "tuple": "metal/webgl2",
+      "id": "source-Plane.021",
+      "width": 64,
+      "kind": "alpha",
+      "words": 1024,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "metal/webgl2",
+      "id": "source-Plane.021",
+      "width": 128,
+      "kind": "mask",
+      "words": 4096,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "metal/webgl2",
+      "id": "source-Plane.021",
+      "width": 128,
+      "kind": "mapping",
+      "words": 4096,
+      "differences": 924,
+      "violations": 0,
+      "maxAbs": 0.0004868507385253906,
+      "maxUlp": 8168
+    },
+    {
+      "tuple": "metal/webgl2",
+      "id": "source-Plane.021",
+      "width": 128,
+      "kind": "color",
+      "words": 4096,
+      "differences": 924,
+      "violations": 0,
+      "maxAbs": 0.0004836916923522949,
+      "maxUlp": 8115
+    },
+    {
+      "tuple": "metal/webgl2",
+      "id": "source-Plane.021",
+      "width": 128,
+      "kind": "alpha",
+      "words": 4096,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "metal/webgl2",
+      "id": "source-Walls",
+      "width": 64,
+      "kind": "mask",
+      "words": 1024,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "metal/webgl2",
+      "id": "source-Walls",
+      "width": 64,
+      "kind": "mapping",
+      "words": 1024,
+      "differences": 305,
+      "violations": 0,
+      "maxAbs": 0.0004857778549194336,
+      "maxUlp": 8150
+    },
+    {
+      "tuple": "metal/webgl2",
+      "id": "source-Walls",
+      "width": 64,
+      "kind": "color",
+      "words": 1024,
+      "differences": 333,
+      "violations": 0,
+      "maxAbs": 0.0004836916923522949,
+      "maxUlp": 8115
+    },
+    {
+      "tuple": "metal/webgl2",
+      "id": "source-Walls",
+      "width": 64,
+      "kind": "alpha",
+      "words": 1024,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "metal/webgl2",
+      "id": "source-Walls",
+      "width": 128,
+      "kind": "mask",
+      "words": 4096,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "metal/webgl2",
+      "id": "source-Walls",
+      "width": 128,
+      "kind": "mapping",
+      "words": 4096,
+      "differences": 1205,
+      "violations": 0,
+      "maxAbs": 0.00048720836639404297,
+      "maxUlp": 8179
+    },
+    {
+      "tuple": "metal/webgl2",
+      "id": "source-Walls",
+      "width": 128,
+      "kind": "color",
+      "words": 4096,
+      "differences": 1317,
+      "violations": 0,
+      "maxAbs": 0.0004836916923522949,
+      "maxUlp": 8115
+    },
+    {
+      "tuple": "metal/webgl2",
+      "id": "source-Walls",
+      "width": 128,
+      "kind": "alpha",
+      "words": 4096,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "plane-1",
+      "width": 64,
+      "kind": "mask",
+      "words": 1024,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "plane-1",
+      "width": 64,
+      "kind": "mapping",
+      "words": 1024,
+      "differences": 768,
+      "violations": 0,
+      "maxAbs": 0.00048410892486572266,
+      "maxUlp": 8184
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "plane-1",
+      "width": 64,
+      "kind": "color",
+      "words": 1024,
+      "differences": 768,
+      "violations": 0,
+      "maxAbs": 0.0006167292594909668,
+      "maxUlp": 10347
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "plane-1",
+      "width": 64,
+      "kind": "alpha",
+      "words": 1024,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "plane-1",
+      "width": 128,
+      "kind": "mask",
+      "words": 4096,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "plane-1",
+      "width": 128,
+      "kind": "mapping",
+      "words": 4096,
+      "differences": 3072,
+      "violations": 0,
+      "maxAbs": 0.0004870295524597168,
+      "maxUlp": 8171
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "plane-1",
+      "width": 128,
+      "kind": "color",
+      "words": 4096,
+      "differences": 3072,
+      "violations": 0,
+      "maxAbs": 0.0006816387176513672,
+      "maxUlp": 11436
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "plane-1",
+      "width": 128,
+      "kind": "alpha",
+      "words": 4096,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "source-Plane.021",
+      "width": 64,
+      "kind": "mask",
+      "words": 1024,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "source-Plane.021",
+      "width": 64,
+      "kind": "mapping",
+      "words": 1024,
+      "differences": 228,
+      "violations": 0,
+      "maxAbs": 0.00048238039016723633,
+      "maxUlp": 8837
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "source-Plane.021",
+      "width": 64,
+      "kind": "color",
+      "words": 1024,
+      "differences": 228,
+      "violations": 0,
+      "maxAbs": 0.0005776882171630859,
+      "maxUlp": 9692
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "source-Plane.021",
+      "width": 64,
+      "kind": "alpha",
+      "words": 1024,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "source-Plane.021",
+      "width": 128,
+      "kind": "mask",
+      "words": 4096,
+      "differences": 3,
+      "violations": 3,
+      "maxAbs": 1,
+      "maxUlp": 1065353216
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "source-Plane.021",
+      "width": 128,
+      "kind": "mapping",
+      "words": 4096,
+      "differences": 927,
+      "violations": 3,
+      "maxAbs": 0.5820291638374329,
+      "maxUlp": 1058340829
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "source-Plane.021",
+      "width": 128,
+      "kind": "color",
+      "words": 4096,
+      "differences": 927,
+      "violations": 3,
+      "maxAbs": 0.6875730156898499,
+      "maxUlp": 1060111561
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "source-Plane.021",
+      "width": 128,
+      "kind": "alpha",
+      "words": 4096,
+      "differences": 3,
+      "violations": 3,
+      "maxAbs": 1,
+      "maxUlp": 1065353216
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "source-Walls",
+      "width": 64,
+      "kind": "mask",
+      "words": 1024,
+      "differences": 3,
+      "violations": 3,
+      "maxAbs": 1,
+      "maxUlp": 1065353216
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "source-Walls",
+      "width": 64,
+      "kind": "mapping",
+      "words": 1024,
+      "differences": 308,
+      "violations": 3,
+      "maxAbs": 0.5820474028587341,
+      "maxUlp": 1058341135
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "source-Walls",
+      "width": 64,
+      "kind": "color",
+      "words": 1024,
+      "differences": 336,
+      "violations": 3,
+      "maxAbs": 0.6883835792541504,
+      "maxUlp": 1060125160
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "source-Walls",
+      "width": 64,
+      "kind": "alpha",
+      "words": 1024,
+      "differences": 3,
+      "violations": 3,
+      "maxAbs": 1,
+      "maxUlp": 1065353216
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "source-Walls",
+      "width": 128,
+      "kind": "mask",
+      "words": 4096,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "source-Walls",
+      "width": 128,
+      "kind": "mapping",
+      "words": 4096,
+      "differences": 1205,
+      "violations": 0,
+      "maxAbs": 0.0004904270172119141,
+      "maxUlp": 8231
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "source-Walls",
+      "width": 128,
+      "kind": "color",
+      "words": 4096,
+      "differences": 1317,
+      "violations": 1,
+      "maxAbs": 0.0011001825332641602,
+      "maxUlp": 18458
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "source-Walls",
+      "width": 128,
+      "kind": "alpha",
+      "words": 4096,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "plane-1",
+      "width": 64,
+      "kind": "mask",
+      "words": 1024,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "plane-1",
+      "width": 64,
+      "kind": "mapping",
+      "words": 1024,
+      "differences": 768,
+      "violations": 0,
+      "maxAbs": 0.00048410892486572266,
+      "maxUlp": 8184
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "plane-1",
+      "width": 64,
+      "kind": "color",
+      "words": 1024,
+      "differences": 768,
+      "violations": 0,
+      "maxAbs": 0.0006167292594909668,
+      "maxUlp": 10347
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "plane-1",
+      "width": 64,
+      "kind": "alpha",
+      "words": 1024,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "plane-1",
+      "width": 128,
+      "kind": "mask",
+      "words": 4096,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "plane-1",
+      "width": 128,
+      "kind": "mapping",
+      "words": 4096,
+      "differences": 3072,
+      "violations": 0,
+      "maxAbs": 0.0004870295524597168,
+      "maxUlp": 8171
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "plane-1",
+      "width": 128,
+      "kind": "color",
+      "words": 4096,
+      "differences": 3072,
+      "violations": 0,
+      "maxAbs": 0.0006816387176513672,
+      "maxUlp": 11436
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "plane-1",
+      "width": 128,
+      "kind": "alpha",
+      "words": 4096,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "source-Plane.021",
+      "width": 64,
+      "kind": "mask",
+      "words": 1024,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "source-Plane.021",
+      "width": 64,
+      "kind": "mapping",
+      "words": 1024,
+      "differences": 228,
+      "violations": 0,
+      "maxAbs": 0.00048238039016723633,
+      "maxUlp": 8837
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "source-Plane.021",
+      "width": 64,
+      "kind": "color",
+      "words": 1024,
+      "differences": 228,
+      "violations": 0,
+      "maxAbs": 0.000584721565246582,
+      "maxUlp": 9810
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "source-Plane.021",
+      "width": 64,
+      "kind": "alpha",
+      "words": 1024,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "source-Plane.021",
+      "width": 128,
+      "kind": "mask",
+      "words": 4096,
+      "differences": 3,
+      "violations": 3,
+      "maxAbs": 1,
+      "maxUlp": 1065353216
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "source-Plane.021",
+      "width": 128,
+      "kind": "mapping",
+      "words": 4096,
+      "differences": 927,
+      "violations": 3,
+      "maxAbs": 0.5820291638374329,
+      "maxUlp": 1058340829
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "source-Plane.021",
+      "width": 128,
+      "kind": "color",
+      "words": 4096,
+      "differences": 927,
+      "violations": 3,
+      "maxAbs": 0.6875854730606079,
+      "maxUlp": 1060111770
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "source-Plane.021",
+      "width": 128,
+      "kind": "alpha",
+      "words": 4096,
+      "differences": 3,
+      "violations": 3,
+      "maxAbs": 1,
+      "maxUlp": 1065353216
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "source-Walls",
+      "width": 64,
+      "kind": "mask",
+      "words": 1024,
+      "differences": 3,
+      "violations": 3,
+      "maxAbs": 1,
+      "maxUlp": 1065353216
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "source-Walls",
+      "width": 64,
+      "kind": "mapping",
+      "words": 1024,
+      "differences": 308,
+      "violations": 3,
+      "maxAbs": 0.5820474028587341,
+      "maxUlp": 1058341135
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "source-Walls",
+      "width": 64,
+      "kind": "color",
+      "words": 1024,
+      "differences": 336,
+      "violations": 3,
+      "maxAbs": 0.6883832216262817,
+      "maxUlp": 1060125154
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "source-Walls",
+      "width": 64,
+      "kind": "alpha",
+      "words": 1024,
+      "differences": 3,
+      "violations": 3,
+      "maxAbs": 1,
+      "maxUlp": 1065353216
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "source-Walls",
+      "width": 128,
+      "kind": "mask",
+      "words": 4096,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "source-Walls",
+      "width": 128,
+      "kind": "mapping",
+      "words": 4096,
+      "differences": 1205,
+      "violations": 0,
+      "maxAbs": 0.0004904270172119141,
+      "maxUlp": 8231
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "source-Walls",
+      "width": 128,
+      "kind": "color",
+      "words": 4096,
+      "differences": 1317,
+      "violations": 1,
+      "maxAbs": 0.0011002421379089355,
+      "maxUlp": 18459
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "source-Walls",
+      "width": 128,
+      "kind": "alpha",
+      "words": 4096,
+      "differences": 0,
+      "violations": 0,
+      "maxAbs": 0,
+      "maxUlp": 0
+    }
+  ],
+  "negatives": [
+    {
+      "dataset": "earlier-color-signal-only-not-installed-or-cross-gpu",
+      "backend": "webgpu",
+      "id": "plane-0",
+      "negative": "unmapped",
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": false,
+      "geometry": {
+        "sourceCovered": 256,
+        "actualCovered": 256,
+        "commonCovered": 256,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 132,
+        "actualOutlinePixels": 132,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 1,
+          "actual": 1,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 3,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 2,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 768,
+        "commonBackgroundWords": 0,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 304,
+        "violations": 1,
+        "maxCodeDifference": 2,
+        "meanCodeDifference": 0.3971354166666667,
+        "rmsCodeDifference": 0.6322496210622299,
+        "rawMaxAbsSameCoverage": 0.009870290756225586,
+        "proposalSatisfied": false
+      }
+    },
+    {
+      "dataset": "earlier-color-signal-only-not-installed-or-cross-gpu",
+      "backend": "webgpu",
+      "id": "plane-0",
+      "negative": "unmixed",
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": false,
+      "geometry": {
+        "sourceCovered": 256,
+        "actualCovered": 256,
+        "commonCovered": 256,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 132,
+        "actualOutlinePixels": 132,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 1,
+          "actual": 1,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 3,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 2,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 768,
+        "commonBackgroundWords": 0,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 768,
+        "violations": 768,
+        "maxCodeDifference": 92,
+        "meanCodeDifference": 87.99479166666667,
+        "rmsCodeDifference": 88.00353626890985,
+        "rawMaxAbsSameCoverage": 0.48383723199367523,
+        "proposalSatisfied": false
+      }
+    },
+    {
+      "dataset": "earlier-color-signal-only-not-installed-or-cross-gpu",
+      "backend": "webgpu",
+      "id": "plane-1",
+      "negative": "unmapped",
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 256,
+        "actualCovered": 256,
+        "commonCovered": 256,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 132,
+        "actualOutlinePixels": 132,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 1,
+          "actual": 1,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 3,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 2,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 768,
+        "commonBackgroundWords": 0,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 314,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.4088541666666667,
+        "rmsCodeDifference": 0.6394170522176169,
+        "rawMaxAbsSameCoverage": 0.009795069694519043,
+        "proposalSatisfied": true
+      }
+    },
+    {
+      "dataset": "earlier-color-signal-only-not-installed-or-cross-gpu",
+      "backend": "webgpu",
+      "id": "plane-1",
+      "negative": "unmixed",
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": false,
+      "geometry": {
+        "sourceCovered": 256,
+        "actualCovered": 256,
+        "commonCovered": 256,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 132,
+        "actualOutlinePixels": 132,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 1,
+          "actual": 1,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 3,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 2,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 768,
+        "commonBackgroundWords": 0,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 768,
+        "violations": 768,
+        "maxCodeDifference": 95,
+        "meanCodeDifference": 87.578125,
+        "rmsCodeDifference": 87.60411959967027,
+        "rawMaxAbsSameCoverage": 0.49520203471183777,
+        "proposalSatisfied": false
+      }
+    },
+    {
+      "dataset": "earlier-color-signal-only-not-installed-or-cross-gpu",
+      "backend": "webgpu",
+      "id": "plane-2",
+      "negative": "unmapped",
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 256,
+        "actualCovered": 256,
+        "commonCovered": 256,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 132,
+        "actualOutlinePixels": 132,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 1,
+          "actual": 1,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 3,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 2,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 768,
+        "commonBackgroundWords": 0,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 282,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.3671875,
+        "rmsCodeDifference": 0.6059599821770412,
+        "rawMaxAbsSameCoverage": 0.00919419527053833,
+        "proposalSatisfied": true
+      }
+    },
+    {
+      "dataset": "earlier-color-signal-only-not-installed-or-cross-gpu",
+      "backend": "webgpu",
+      "id": "plane-2",
+      "negative": "unmixed",
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": false,
+      "geometry": {
+        "sourceCovered": 256,
+        "actualCovered": 256,
+        "commonCovered": 256,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 132,
+        "actualOutlinePixels": 132,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 1,
+          "actual": 1,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 3,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 2,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 768,
+        "commonBackgroundWords": 0,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 768,
+        "violations": 768,
+        "maxCodeDifference": 92,
+        "meanCodeDifference": 87.59244791666667,
+        "rmsCodeDifference": 87.602715009772,
+        "rawMaxAbsSameCoverage": 0.4854891896247864,
+        "proposalSatisfied": false
+      }
+    },
+    {
+      "dataset": "earlier-color-signal-only-not-installed-or-cross-gpu",
+      "backend": "webgpu",
+      "id": "plane-3",
+      "negative": "unmapped",
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 256,
+        "actualCovered": 256,
+        "commonCovered": 256,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 132,
+        "actualOutlinePixels": 132,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 1,
+          "actual": 1,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 3,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 2,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 768,
+        "commonBackgroundWords": 0,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 279,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.36328125,
+        "rmsCodeDifference": 0.6027281725620597,
+        "rawMaxAbsSameCoverage": 0.0069356560707092285,
+        "proposalSatisfied": true
+      }
+    },
+    {
+      "dataset": "earlier-color-signal-only-not-installed-or-cross-gpu",
+      "backend": "webgpu",
+      "id": "plane-3",
+      "negative": "unmixed",
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": false,
+      "geometry": {
+        "sourceCovered": 256,
+        "actualCovered": 256,
+        "commonCovered": 256,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 132,
+        "actualOutlinePixels": 132,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 1,
+          "actual": 1,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 3,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 2,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 768,
+        "commonBackgroundWords": 0,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 768,
+        "violations": 768,
+        "maxCodeDifference": 94,
+        "meanCodeDifference": 87.68489583333333,
+        "rmsCodeDifference": 87.70011343113151,
+        "rawMaxAbsSameCoverage": 0.48898784816265106,
+        "proposalSatisfied": false
+      }
+    },
+    {
+      "dataset": "earlier-color-signal-only-not-installed-or-cross-gpu",
+      "backend": "webgpu",
+      "id": "source-Plane.021",
+      "negative": "unmapped",
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 76,
+        "actualCovered": 76,
+        "commonCovered": 76,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 46,
+        "actualOutlinePixels": 46,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 2,
+          "actual": 2,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 1,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 1,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 228,
+        "commonBackgroundWords": 540,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 86,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.11197916666666667,
+        "rmsCodeDifference": 0.33463288342102104,
+        "rawMaxAbsSameCoverage": 0.006742715835571289,
+        "proposalSatisfied": true
+      }
+    },
+    {
+      "dataset": "earlier-color-signal-only-not-installed-or-cross-gpu",
+      "backend": "webgpu",
+      "id": "source-Plane.021",
+      "negative": "unmixed",
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": false,
+      "geometry": {
+        "sourceCovered": 76,
+        "actualCovered": 76,
+        "commonCovered": 76,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 46,
+        "actualOutlinePixels": 46,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 2,
+          "actual": 2,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 1,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 1,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 228,
+        "commonBackgroundWords": 540,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 228,
+        "violations": 228,
+        "maxCodeDifference": 93,
+        "meanCodeDifference": 26.0078125,
+        "rmsCodeDifference": 47.742309590131896,
+        "rawMaxAbsSameCoverage": 0.48627935349941254,
+        "proposalSatisfied": false
+      }
+    },
+    {
+      "dataset": "earlier-color-signal-only-not-installed-or-cross-gpu",
+      "backend": "webgpu",
+      "id": "source-Walls",
+      "negative": "unmapped",
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 112,
+        "actualCovered": 112,
+        "commonCovered": 112,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 64,
+        "actualOutlinePixels": 64,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 2,
+          "actual": 2,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 2,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 1,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 336,
+        "commonBackgroundWords": 432,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 106,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.13802083333333334,
+        "rmsCodeDifference": 0.37151155208597936,
+        "rawMaxAbsSameCoverage": 0.009895920753479004,
+        "proposalSatisfied": true
+      }
+    },
+    {
+      "dataset": "earlier-color-signal-only-not-installed-or-cross-gpu",
+      "backend": "webgpu",
+      "id": "source-Walls",
+      "negative": "unmixed",
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": false,
+      "geometry": {
+        "sourceCovered": 112,
+        "actualCovered": 112,
+        "commonCovered": 112,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 64,
+        "actualOutlinePixels": 64,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 2,
+          "actual": 2,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 2,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 1,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 336,
+        "commonBackgroundWords": 432,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 336,
+        "violations": 336,
+        "maxCodeDifference": 95,
+        "meanCodeDifference": 38.395833333333336,
+        "rmsCodeDifference": 58.06616646120183,
+        "rawMaxAbsSameCoverage": 0.49165235459804535,
+        "proposalSatisfied": false
+      }
+    },
+    {
+      "dataset": "earlier-color-signal-only-not-installed-or-cross-gpu",
+      "backend": "webgl2",
+      "id": "plane-0",
+      "negative": "unmapped",
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": false,
+      "geometry": {
+        "sourceCovered": 256,
+        "actualCovered": 256,
+        "commonCovered": 256,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 132,
+        "actualOutlinePixels": 132,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 1,
+          "actual": 1,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 3,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 2,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 768,
+        "commonBackgroundWords": 0,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 304,
+        "violations": 1,
+        "maxCodeDifference": 2,
+        "meanCodeDifference": 0.3971354166666667,
+        "rmsCodeDifference": 0.6322496210622299,
+        "rawMaxAbsSameCoverage": 0.009870290756225586,
+        "proposalSatisfied": false
+      }
+    },
+    {
+      "dataset": "earlier-color-signal-only-not-installed-or-cross-gpu",
+      "backend": "webgl2",
+      "id": "plane-0",
+      "negative": "unmixed",
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": false,
+      "geometry": {
+        "sourceCovered": 256,
+        "actualCovered": 256,
+        "commonCovered": 256,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 132,
+        "actualOutlinePixels": 132,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 1,
+          "actual": 1,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 3,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 2,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 768,
+        "commonBackgroundWords": 0,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 768,
+        "violations": 768,
+        "maxCodeDifference": 92,
+        "meanCodeDifference": 87.99479166666667,
+        "rmsCodeDifference": 88.00353626890985,
+        "rawMaxAbsSameCoverage": 0.48383723199367523,
+        "proposalSatisfied": false
+      }
+    },
+    {
+      "dataset": "earlier-color-signal-only-not-installed-or-cross-gpu",
+      "backend": "webgl2",
+      "id": "plane-1",
+      "negative": "unmapped",
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 256,
+        "actualCovered": 256,
+        "commonCovered": 256,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 132,
+        "actualOutlinePixels": 132,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 1,
+          "actual": 1,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 3,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 2,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 768,
+        "commonBackgroundWords": 0,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 314,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.4088541666666667,
+        "rmsCodeDifference": 0.6394170522176169,
+        "rawMaxAbsSameCoverage": 0.009795069694519043,
+        "proposalSatisfied": true
+      }
+    },
+    {
+      "dataset": "earlier-color-signal-only-not-installed-or-cross-gpu",
+      "backend": "webgl2",
+      "id": "plane-1",
+      "negative": "unmixed",
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": false,
+      "geometry": {
+        "sourceCovered": 256,
+        "actualCovered": 256,
+        "commonCovered": 256,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 132,
+        "actualOutlinePixels": 132,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 1,
+          "actual": 1,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 3,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 2,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 768,
+        "commonBackgroundWords": 0,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 768,
+        "violations": 768,
+        "maxCodeDifference": 95,
+        "meanCodeDifference": 87.578125,
+        "rmsCodeDifference": 87.60411959967027,
+        "rawMaxAbsSameCoverage": 0.49520203471183777,
+        "proposalSatisfied": false
+      }
+    },
+    {
+      "dataset": "earlier-color-signal-only-not-installed-or-cross-gpu",
+      "backend": "webgl2",
+      "id": "plane-2",
+      "negative": "unmapped",
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 256,
+        "actualCovered": 256,
+        "commonCovered": 256,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 132,
+        "actualOutlinePixels": 132,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 1,
+          "actual": 1,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 3,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 2,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 768,
+        "commonBackgroundWords": 0,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 282,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.3671875,
+        "rmsCodeDifference": 0.6059599821770412,
+        "rawMaxAbsSameCoverage": 0.00919419527053833,
+        "proposalSatisfied": true
+      }
+    },
+    {
+      "dataset": "earlier-color-signal-only-not-installed-or-cross-gpu",
+      "backend": "webgl2",
+      "id": "plane-2",
+      "negative": "unmixed",
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": false,
+      "geometry": {
+        "sourceCovered": 256,
+        "actualCovered": 256,
+        "commonCovered": 256,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 132,
+        "actualOutlinePixels": 132,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 1,
+          "actual": 1,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 3,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 2,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 768,
+        "commonBackgroundWords": 0,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 768,
+        "violations": 768,
+        "maxCodeDifference": 92,
+        "meanCodeDifference": 87.59244791666667,
+        "rmsCodeDifference": 87.602715009772,
+        "rawMaxAbsSameCoverage": 0.4854891896247864,
+        "proposalSatisfied": false
+      }
+    },
+    {
+      "dataset": "earlier-color-signal-only-not-installed-or-cross-gpu",
+      "backend": "webgl2",
+      "id": "plane-3",
+      "negative": "unmapped",
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 256,
+        "actualCovered": 256,
+        "commonCovered": 256,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 132,
+        "actualOutlinePixels": 132,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 1,
+          "actual": 1,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 3,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 2,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 768,
+        "commonBackgroundWords": 0,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 279,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.36328125,
+        "rmsCodeDifference": 0.6027281725620597,
+        "rawMaxAbsSameCoverage": 0.0069356560707092285,
+        "proposalSatisfied": true
+      }
+    },
+    {
+      "dataset": "earlier-color-signal-only-not-installed-or-cross-gpu",
+      "backend": "webgl2",
+      "id": "plane-3",
+      "negative": "unmixed",
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": false,
+      "geometry": {
+        "sourceCovered": 256,
+        "actualCovered": 256,
+        "commonCovered": 256,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 132,
+        "actualOutlinePixels": 132,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 1,
+          "actual": 1,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 3,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 2,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 768,
+        "commonBackgroundWords": 0,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 768,
+        "violations": 768,
+        "maxCodeDifference": 94,
+        "meanCodeDifference": 87.68489583333333,
+        "rmsCodeDifference": 87.70011343113151,
+        "rawMaxAbsSameCoverage": 0.48898784816265106,
+        "proposalSatisfied": false
+      }
+    },
+    {
+      "dataset": "earlier-color-signal-only-not-installed-or-cross-gpu",
+      "backend": "webgl2",
+      "id": "source-Plane.021",
+      "negative": "unmapped",
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 76,
+        "actualCovered": 76,
+        "commonCovered": 76,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 46,
+        "actualOutlinePixels": 46,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 2,
+          "actual": 2,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 1,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 1,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 228,
+        "commonBackgroundWords": 540,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 85,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.11067708333333333,
+        "rmsCodeDifference": 0.33268165463898564,
+        "rawMaxAbsSameCoverage": 0.006742715835571289,
+        "proposalSatisfied": true
+      }
+    },
+    {
+      "dataset": "earlier-color-signal-only-not-installed-or-cross-gpu",
+      "backend": "webgl2",
+      "id": "source-Plane.021",
+      "negative": "unmixed",
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": false,
+      "geometry": {
+        "sourceCovered": 76,
+        "actualCovered": 76,
+        "commonCovered": 76,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 46,
+        "actualOutlinePixels": 46,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 2,
+          "actual": 2,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 1,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 1,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 228,
+        "commonBackgroundWords": 540,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 228,
+        "violations": 228,
+        "maxCodeDifference": 93,
+        "meanCodeDifference": 26.0078125,
+        "rmsCodeDifference": 47.742309590131896,
+        "rawMaxAbsSameCoverage": 0.48627935349941254,
+        "proposalSatisfied": false
+      }
+    },
+    {
+      "dataset": "earlier-color-signal-only-not-installed-or-cross-gpu",
+      "backend": "webgl2",
+      "id": "source-Walls",
+      "negative": "unmapped",
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 112,
+        "actualCovered": 112,
+        "commonCovered": 112,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 64,
+        "actualOutlinePixels": 64,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 2,
+          "actual": 2,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 2,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 1,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 336,
+        "commonBackgroundWords": 432,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 106,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.13802083333333334,
+        "rmsCodeDifference": 0.37151155208597936,
+        "rawMaxAbsSameCoverage": 0.009895920753479004,
+        "proposalSatisfied": true
+      }
+    },
+    {
+      "dataset": "earlier-color-signal-only-not-installed-or-cross-gpu",
+      "backend": "webgl2",
+      "id": "source-Walls",
+      "negative": "unmixed",
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-diagnostic-v1",
+      "proposalSatisfied": false,
+      "geometry": {
+        "sourceCovered": 112,
+        "actualCovered": 112,
+        "commonCovered": 112,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 64,
+        "actualOutlinePixels": 64,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 2,
+          "actual": 2,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 2,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 1,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 336,
+        "commonBackgroundWords": 432,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 336,
+        "violations": 336,
+        "maxCodeDifference": 95,
+        "meanCodeDifference": 38.39453125,
+        "rmsCodeDifference": 58.06418189167914,
+        "rawMaxAbsSameCoverage": 0.49165235459804535,
+        "proposalSatisfied": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,593 @@
+{
+  "status": "CPU_IMAGE_FRAME_CONE_STATISTICS_NOT_QUALIFICATION",
+  "supportCredit": 0,
+  "checks": 6,
+  "producerSha256": "54fff52379f3f1796d0212345648d4c836f480c7e2c374cf0c9c30399dc20383",
+  "imageStatisticsSha256": "c22caed04315a7f9be8fdd21f922ea0a191d75992030e2766a4c85cde543c8bf",
+  "referenceSha256": "922c709f9bef4045a3799cb54105673468a092c1bd7303022aff47c808c6d647",
+  "rows": [
+    {
+      "name": "Walls",
+      "metadataSha256": "94c6555e4778f131fdb74f717dd6ffc500112fa6e9daa4e6187c5a9e0cb5e5a5",
+      "attributeSha256": {
+        "_STW_FRAME_N": "048f49dd3b4d830d75000f0ef20b5c98e999ce99dff4ae7a85c8ceaa4bb0bc7f",
+        "_STW_FRAME_T": "60fa7ae8fb9015a8e5e4acc5b03c85d0ba527ce6b07ae69b7c227379b52bce5f"
+      },
+      "frame": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "triangles": 2731,
+      "minimumInterpolatedNLength": 0.9999999301530036,
+      "levels": [
+        {
+          "level": 0,
+          "minimumProjectionBound": 0.023529410362243652,
+          "nonPositiveTriangles": 0,
+          "below1eMinus4Triangles": 0
+        },
+        {
+          "level": 1,
+          "minimumProjectionBound": 0.09411764144897461,
+          "nonPositiveTriangles": 0,
+          "below1eMinus4Triangles": 0
+        },
+        {
+          "level": 2,
+          "minimumProjectionBound": 0.39215683937072754,
+          "nonPositiveTriangles": 0,
+          "below1eMinus4Triangles": 0
+        },
+        {
+          "level": 3,
+          "minimumProjectionBound": 0.7058823704719543,
+          "nonPositiveTriangles": 0,
+          "below1eMinus4Triangles": 0
+        },
+        {
+          "level": 4,
+          "minimumProjectionBound": 0.8627450466156006,
+          "nonPositiveTriangles": 0,
+          "below1eMinus4Triangles": 0
+        },
+        {
+          "level": 5,
+          "minimumProjectionBound": 0.9176470637321472,
+          "nonPositiveTriangles": 0,
+          "below1eMinus4Triangles": 0
+        },
+        {
+          "level": 6,
+          "minimumProjectionBound": 0.9411764144897461,
+          "nonPositiveTriangles": 0,
+          "below1eMinus4Triangles": 0
+        },
+        {
+          "level": 7,
+          "minimumProjectionBound": 0.9490195512771606,
+          "nonPositiveTriangles": 0,
+          "below1eMinus4Triangles": 0
+        },
+        {
+          "level": 8,
+          "minimumProjectionBound": 0.9490195512771606,
+          "nonPositiveTriangles": 0,
+          "below1eMinus4Triangles": 0
+        },
+        {
+          "level": 9,
+          "minimumProjectionBound": 0.9568626880645752,
+          "nonPositiveTriangles": 0,
+          "below1eMinus4Triangles": 0
+        },
+        {
+          "level": 10,
+          "minimumProjectionBound": 0.9568626880645752,
+          "nonPositiveTriangles": 0,
+          "below1eMinus4Triangles": 0
+        }
+      ],
+      "worstBaseTriangles": [
+        {
+          "triangle": 485,
+          "loops": [
+            939,
+            940,
+            941
+          ],
+          "minimumInterpolatedNLength": 1.0,
+          "maximumAbsTProjectionOnUnitN": 1.0,
+          "boundsByLevel": [
+            0.023529410362243652,
+            0.09411764144897461,
+            0.39215683937072754,
+            0.7058823704719543,
+            0.8627450466156006,
+            0.9176470637321472,
+            0.9411764144897461,
+            0.9490195512771606,
+            0.9490195512771606,
+            0.9568626880645752,
+            0.9568626880645752
+          ]
+        },
+        {
+          "triangle": 486,
+          "loops": [
+            939,
+            941,
+            942
+          ],
+          "minimumInterpolatedNLength": 1.0,
+          "maximumAbsTProjectionOnUnitN": 1.0,
+          "boundsByLevel": [
+            0.023529410362243652,
+            0.09411764144897461,
+            0.39215683937072754,
+            0.7058823704719543,
+            0.8627450466156006,
+            0.9176470637321472,
+            0.9411764144897461,
+            0.9490195512771606,
+            0.9490195512771606,
+            0.9568626880645752,
+            0.9568626880645752
+          ]
+        },
+        {
+          "triangle": 2656,
+          "loops": [
+            5337,
+            5339,
+            5340
+          ],
+          "minimumInterpolatedNLength": 1.0000000007513847,
+          "maximumAbsTProjectionOnUnitN": 0.9888644211014648,
+          "boundsByLevel": [
+            0.031258812928185886,
+            0.10141035469594839,
+            0.39735344385600807,
+            0.7075854595531723,
+            0.8634000819855974,
+            0.9177780712332554,
+            0.9412200847978648,
+            0.9490632215911725,
+            0.9490632215911725,
+            0.9569063583844802,
+            0.9569063583844802
+          ]
+        },
+        {
+          "triangle": 2691,
+          "loops": [
+            5409,
+            5410,
+            5411
+          ],
+          "minimumInterpolatedNLength": 1.0000000007513847,
+          "maximumAbsTProjectionOnUnitN": 0.9888644211014648,
+          "boundsByLevel": [
+            0.031258812928185886,
+            0.10141035469594839,
+            0.39735344385600807,
+            0.7075854595531723,
+            0.8634000819855974,
+            0.9177780712332554,
+            0.9412200847978648,
+            0.9490632215911725,
+            0.9490632215911725,
+            0.9569063583844802,
+            0.9569063583844802
+          ]
+        },
+        {
+          "triangle": 2692,
+          "loops": [
+            5409,
+            5411,
+            5412
+          ],
+          "minimumInterpolatedNLength": 1.0000000007513847,
+          "maximumAbsTProjectionOnUnitN": 0.9888644211014648,
+          "boundsByLevel": [
+            0.031258812928185886,
+            0.10141035469594839,
+            0.39735344385600807,
+            0.7075854595531723,
+            0.8634000819855974,
+            0.9177780712332554,
+            0.9412200847978648,
+            0.9490632215911725,
+            0.9490632215911725,
+            0.9569063583844802,
+            0.9569063583844802
+          ]
+        },
+        {
+          "triangle": 2709,
+          "loops": [
+            5445,
+            5446,
+            5447
+          ],
+          "minimumInterpolatedNLength": 1.0000000007513847,
+          "maximumAbsTProjectionOnUnitN": 0.9888644211014648,
+          "boundsByLevel": [
+            0.031258812928185886,
+            0.10141035469594839,
+            0.39735344385600807,
+            0.7075854595531723,
+            0.8634000819855974,
+            0.9177780712332554,
+            0.9412200847978648,
+            0.9490632215911725,
+            0.9490632215911725,
+            0.9569063583844802,
+            0.9569063583844802
+          ]
+        },
+        {
+          "triangle": 2710,
+          "loops": [
+            5445,
+            5447,
+            5448
+          ],
+          "minimumInterpolatedNLength": 1.0000000007513847,
+          "maximumAbsTProjectionOnUnitN": 0.9888644211014648,
+          "boundsByLevel": [
+            0.031258812928185886,
+            0.10141035469594839,
+            0.39735344385600807,
+            0.7075854595531723,
+            0.8634000819855974,
+            0.9177780712332554,
+            0.9412200847978648,
+            0.9490632215911725,
+            0.9490632215911725,
+            0.9569063583844802,
+            0.9569063583844802
+          ]
+        },
+        {
+          "triangle": 1171,
+          "loops": [
+            2363,
+            2364,
+            2365
+          ],
+          "minimumInterpolatedNLength": 1.00000005047531,
+          "maximumAbsTProjectionOnUnitN": 0.9744517311334607,
+          "boundsByLevel": [
+            0.04126295132356694,
+            0.1108492911568274,
+            0.404079409003321,
+            0.7097897958856758,
+            0.8642479339103728,
+            0.9179476784955972,
+            0.9412766530003592,
+            0.9491197901836584,
+            0.9491197901836584,
+            0.9569629273669578,
+            0.9569629273669578
+          ]
+        }
+      ],
+      "unresolvedBaseTriangleIds": [],
+      "allTriangleMetricsSha256": "febed3bc5984e1a0bb1e0a6edba68ea86786316b3135e31f97b703aa2ba753ed"
+    },
+    {
+      "name": "Plane.021",
+      "metadataSha256": "052b0a7e667f83b98e0ba72498d8bb2149472fca998047feff79d9c966b91129",
+      "attributeSha256": {
+        "_STW_FRAME_N": "f115044c97bc951167f9873c5c7d46759bd74070e29b33fa96b33a0071e837a6",
+        "_STW_FRAME_T": "5373434d21f8d0de97f30a7990e49929b1eb9e32f14d136a273af58a885faf7f"
+      },
+      "frame": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "triangles": 2198,
+      "minimumInterpolatedNLength": 0.8872425338917176,
+      "levels": [
+        {
+          "level": 0,
+          "minimumProjectionBound": -0.051103812774644486,
+          "nonPositiveTriangles": 14,
+          "below1eMinus4Triangles": 14
+        },
+        {
+          "level": 1,
+          "minimumProjectionBound": 0.016221764019707208,
+          "nonPositiveTriangles": 0,
+          "below1eMinus4Triangles": 0
+        },
+        {
+          "level": 2,
+          "minimumProjectionBound": 0.3028416719181325,
+          "nonPositiveTriangles": 0,
+          "below1eMinus4Triangles": 0
+        },
+        {
+          "level": 3,
+          "minimumProjectionBound": 0.6165672030193593,
+          "nonPositiveTriangles": 0,
+          "below1eMinus4Triangles": 0
+        },
+        {
+          "level": 4,
+          "minimumProjectionBound": 0.7669045705782469,
+          "nonPositiveTriangles": 0,
+          "below1eMinus4Triangles": 0
+        },
+        {
+          "level": 5,
+          "minimumProjectionBound": 0.8209909241216986,
+          "nonPositiveTriangles": 0,
+          "below1eMinus4Triangles": 0
+        },
+        {
+          "level": 6,
+          "minimumProjectionBound": 0.8381466985122832,
+          "nonPositiveTriangles": 0,
+          "below1eMinus4Triangles": 0
+        },
+        {
+          "level": 7,
+          "minimumProjectionBound": 0.8451054630692082,
+          "nonPositiveTriangles": 0,
+          "below1eMinus4Triangles": 0
+        },
+        {
+          "level": 8,
+          "minimumProjectionBound": 0.8451054630692082,
+          "nonPositiveTriangles": 0,
+          "below1eMinus4Triangles": 0
+        },
+        {
+          "level": 9,
+          "minimumProjectionBound": 0.8520642276261332,
+          "nonPositiveTriangles": 0,
+          "below1eMinus4Triangles": 0
+        },
+        {
+          "level": 10,
+          "minimumProjectionBound": 0.8520642276261332,
+          "nonPositiveTriangles": 0,
+          "below1eMinus4Triangles": 0
+        }
+      ],
+      "worstBaseTriangles": [
+        {
+          "triangle": 1676,
+          "loops": [
+            3400,
+            3401,
+            3402
+          ],
+          "minimumInterpolatedNLength": 0.8960028882316979,
+          "maximumAbsTProjectionOnUnitN": 1.0,
+          "boundsByLevel": [
+            -0.051103812774644486,
+            0.016221764019707208,
+            0.3028416719181325,
+            0.6165672030193593,
+            0.7669045705782469,
+            0.8209909241216986,
+            0.842073284160013,
+            0.8499164209474276,
+            0.8499164209474276,
+            0.8569438941617473,
+            0.8569438941617473
+          ]
+        },
+        {
+          "triangle": 2180,
+          "loops": [
+            4408,
+            4409,
+            4410
+          ],
+          "minimumInterpolatedNLength": 0.8960028882316979,
+          "maximumAbsTProjectionOnUnitN": 1.0,
+          "boundsByLevel": [
+            -0.051103812774644486,
+            0.016221764019707208,
+            0.3028416719181325,
+            0.6165672030193593,
+            0.7669045705782469,
+            0.8209909241216986,
+            0.842073284160013,
+            0.8499164209474276,
+            0.8499164209474276,
+            0.8569438941617473,
+            0.8569438941617473
+          ]
+        },
+        {
+          "triangle": 1677,
+          "loops": [
+            3400,
+            3402,
+            3403
+          ],
+          "minimumInterpolatedNLength": 0.896002888231698,
+          "maximumAbsTProjectionOnUnitN": 1.0,
+          "boundsByLevel": [
+            -0.051103812774644375,
+            0.01622176401970732,
+            0.3028416719181326,
+            0.6165672030193594,
+            0.7669045705782469,
+            0.8209909241216987,
+            0.8420732841600131,
+            0.8499164209474277,
+            0.8499164209474277,
+            0.8569438941617474,
+            0.8569438941617474
+          ]
+        },
+        {
+          "triangle": 2181,
+          "loops": [
+            4408,
+            4410,
+            4411
+          ],
+          "minimumInterpolatedNLength": 0.896002888231698,
+          "maximumAbsTProjectionOnUnitN": 1.0,
+          "boundsByLevel": [
+            -0.051103812774644375,
+            0.01622176401970732,
+            0.3028416719181326,
+            0.6165672030193594,
+            0.7669045705782469,
+            0.8209909241216987,
+            0.8420732841600131,
+            0.8499164209474277,
+            0.8499164209474277,
+            0.8569438941617474,
+            0.8569438941617474
+          ]
+        },
+        {
+          "triangle": 740,
+          "loops": [
+            1494,
+            1495,
+            1496
+          ],
+          "minimumInterpolatedNLength": 0.9303478144797589,
+          "maximumAbsTProjectionOnUnitN": 1.0,
+          "boundsByLevel": [
+            -0.026456276889202934,
+            0.04194678772321758,
+            0.33233790298488375,
+            0.6460634340861106,
+            0.7985557772811357,
+            0.8529115027791048,
+            0.8748019786809708,
+            0.8826451154683853,
+            0.8826451154683853,
+            0.8899419606372222,
+            0.8899419606372222
+          ]
+        },
+        {
+          "triangle": 1052,
+          "loops": [
+            2142,
+            2143,
+            2144
+          ],
+          "minimumInterpolatedNLength": 0.9303478144797589,
+          "maximumAbsTProjectionOnUnitN": 1.0,
+          "boundsByLevel": [
+            -0.026456276889202934,
+            0.04194678772321758,
+            0.33233790298488375,
+            0.6460634340861106,
+            0.7985557772811357,
+            0.8529115027791048,
+            0.8748019786809708,
+            0.8826451154683853,
+            0.8826451154683853,
+            0.8899419606372222,
+            0.8899419606372222
+          ]
+        },
+        {
+          "triangle": 1152,
+          "loops": [
+            2350,
+            2351,
+            2352
+          ],
+          "minimumInterpolatedNLength": 0.930907643969697,
+          "maximumAbsTProjectionOnUnitN": 1.000000083944133,
+          "boundsByLevel": [
+            -0.02605457515998999,
+            0.042366056021425846,
+            0.3328186585540806,
+            0.6465442159907251,
+            0.7990716936405069,
+            0.85343181390806,
+            0.8753354622677226,
+            0.8831785997135225,
+            0.8831785997135225,
+            0.8904798357016266,
+            0.8904798357016266
+          ]
+        },
+        {
+          "triangle": 840,
+          "loops": [
+            1702,
+            1703,
+            1704
+          ],
+          "minimumInterpolatedNLength": 0.9311969878289125,
+          "maximumAbsTProjectionOnUnitN": 1.0000000196925831,
+          "boundsByLevel": [
+            -0.025846883787430164,
+            0.042582822328183,
+            0.33306718385495904,
+            0.6467927211342519,
+            0.7993383476445646,
+            0.8537007342519781,
+            0.875611190702044,
+            0.8834543276439101,
+            0.8834543276439101,
+            0.8907578329954806,
+            0.8907578329954806
+          ]
+        }
+      ],
+      "unresolvedBaseTriangleIds": [
+        740,
+        741,
+        840,
+        844,
+        845,
+        1052,
+        1053,
+        1152,
+        1156,
+        1157,
+        1676,
+        1677,
+        2180,
+        2181
+      ],
+      "allTriangleMetricsSha256": "b55a4240e5a2724ed87e53d1cd345d92b31e1161cb99645683248cde8b5f8ba3"
+    }
+  ],
+  "precision": "F32 staged source vertex model, double convex hull/bound math. No driver interpolation, typed-store, sampler, cross-product rounding error certificate.",
+  "marginSensitivity": "below1eMinus4 is only sensitivity reporting, not a proved hardware error bound or admission threshold."
+}

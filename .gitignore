@@ -54,6 +54,7 @@ CONTEXT.md
 
 # Hash-pinned official release-scene downloads and regenerable source inventories.
 /artifacts/v1-corpus/
+/artifacts/v1-simple-original/
 
 # Local current-version contract evidence and isolated native profiles.
 /artifacts/v1-53-*/

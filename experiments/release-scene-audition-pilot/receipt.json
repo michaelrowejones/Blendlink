@@ -1,0 +1,240 @@
+{
+  "schemaVersion": 1,
+  "auditedAtUtc": "2026-11-16T04:01:30.766589Z",
+  "sourceCommit": "a1684d3adc18ad8afead3d7d23c2e33a39bf8abf",
+  "selectionChange": false,
+  "selectedOriginalsRetained": [
+    "archiviz",
+    "impact-fracture"
+  ],
+  "recommendation": "No additional positive selected; all three auditions retain material/camera/geometry blockers.",
+  "acceptedScenes": 0,
+  "renderCalls": 0,
+  "bakeCalls": 0,
+  "gpuCalls": 0,
+  "sourceSaves": 0,
+  "assetsRedistributed": false,
+  "helper": {
+    "path": "/private/tmp/scenetoweb-v1-next-simple-original/experiments/release-scene-audition-pilot/census.py",
+    "bytes": 3524,
+    "sha256": "1c1678994e9e53f753e4c0e8b060ce536b2f66858193ee841cace6239c8639a3"
+  },
+  "historicalCensusProducer": {
+    "path": "/private/tmp/scenetoweb-v1-next-simple-original/artifacts/v1-simple-original/census-r1.producer.py",
+    "bytes": 3280,
+    "sha256": "635d0d68e7752fa30ddeffb0cda02a5d9d9c90c42c5544bf7e5cef1ed1be767b"
+  },
+  "newAuditions": [
+    {
+      "id": "cube-diorama",
+      "sourceCommit": "a1684d3adc18ad8afead3d7d23c2e33a39bf8abf",
+      "url": "https://download.blender.org/demo/asset-bundles/cube-diorama/cube-diorama-v1.0.0.zip",
+      "bytes": 11674153,
+      "sha256": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e",
+      "inventorySha256": "07d0abc7155f3051e44b93826ef32db6df8dc6178191f3e1810ce85758894b0e",
+      "sourceUnchanged": true,
+      "reachableShaderCompositorKinds": 48,
+      "sceneObjects": 61,
+      "particleSystems": 0,
+      "license": "CC0-1.0",
+      "accepted": false,
+      "selectedForPorting": false,
+      "planExitCode": 1,
+      "planJson": true,
+      "planReportSha256": "1e6a30240503ec29cb3f0331a30b409ca28aef3f02e35facf88614d4138bc8e7",
+      "planStderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "planErrors": [
+        {
+          "code": "material.compilation-blocked",
+          "material": "Boards - Basketweave",
+          "summary": "Object \"Floor\" requires exactly 8,388,608 render SIMPLE-subdivision triangles, proved from its source quad mesh before evaluated-mesh allocation; the static normal receiver budget is 2,000,000.",
+          "reasons": [
+            "Object \"Floor\" requires exactly 8,388,608 render SIMPLE-subdivision triangles, proved from its source quad mesh before evaluated-mesh allocation; the static normal receiver budget is 2,000,000. Use an explicitly reviewed lower-resolution coincident receiver or reduce redundant static subdivision; SceneToWeb will not silently bake viewport geometry or omit the normal."
+          ]
+        }
+      ],
+      "note": "CC0 original, but source plan hard-refuses Floor 8,388,608 render SIMPLE-subdivision triangles against 2,000,000 normal receiver budget. Broader procedural library/material corpus; defer without changing source geometry.",
+      "acquisition": {
+        "id": "cube-diorama",
+        "url": "https://download.blender.org/demo/asset-bundles/cube-diorama/cube-diorama-v1.0.0.zip",
+        "downloadFile": "cube-diorama-v1.0.0.zip",
+        "downloadBytes": 11606058,
+        "downloadSha256": "b76732089f6e41d3543a986875963eb13742dde4f68021974f25564b727dde6a",
+        "archiveEntry": "cube_diorama/cube_diorama.blend",
+        "extractDirectory": "extracted/cube-diorama-v1.0.0",
+        "sourcePath": "extracted/cube-diorama-v1.0.0/cube_diorama/cube_diorama.blend",
+        "source": {
+          "bytes": 11674153,
+          "sha256": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e"
+        }
+      }
+    },
+    {
+      "id": "race-spaceship",
+      "sourceCommit": "a1684d3adc18ad8afead3d7d23c2e33a39bf8abf",
+      "url": "https://download.blender.org/demo/eevee/race_spaceship/race_spaceship.blend",
+      "bytes": 18406591,
+      "sha256": "282911120247f944de3a665b2d37f0fcc3254fc3f0c9da38623cdb94eacff71a",
+      "inventorySha256": "b307c38680e02a0e32a8b3c721d1592d1f2a3dca34f92383bb3dcc0513e4e17f",
+      "sourceUnchanged": true,
+      "reachableShaderCompositorKinds": 13,
+      "sceneObjects": 55,
+      "particleSystems": 0,
+      "license": "CC-BY (version unspecified)",
+      "accepted": false,
+      "selectedForPorting": false,
+      "planExitCode": 1,
+      "planJson": true,
+      "planReportSha256": "57375e09838d1530a1ab3714b546db6cc4aecc7cde8d12a43fae5ffbcc909cae",
+      "planStderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "planErrors": [
+        {
+          "code": "material.used-needs-bake",
+          "material": "black.004",
+          "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+          "reasons": [
+            "Texture Coordinate Object output is not serialized by stock glTF; author a UV map or bake the result.",
+            "Subsurface Radius is authored but is omitted by glTF.",
+            "Subsurface Scale is authored but is omitted by glTF."
+          ]
+        },
+        {
+          "code": "material.used-needs-bake",
+          "material": "Material.007",
+          "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+          "reasons": [
+            "Add Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+            "Emission Shader is reduced to glTF emissive/unlit behavior; scene-light interaction can differ.",
+            "Subsurface Radius is authored but is omitted by glTF.",
+            "Subsurface Scale is authored but is omitted by glTF."
+          ]
+        }
+      ],
+      "note": "13-kind product candidate has two structured needs-bake materials, authored animated DOF camera and nondefault gamma/exposure. Missing fx3 image is in an unused authored Cube.013 slot (all 2847 raw polygons slot0, missing image slot3; only Subsurf modifier), not broadly declared closed. No recommendation before source-camera DOF and material routes close; CC-BY version unspecified."
+    },
+    {
+      "id": "racing-car",
+      "sourceCommit": "a1684d3adc18ad8afead3d7d23c2e33a39bf8abf",
+      "url": "https://download.blender.org/demo/test/splash-pokedstudio.blend.zip",
+      "bytes": 58525268,
+      "sha256": "9dc8c2eaf1def129f37f11cdb4610c5c1a17d08d85d6d1cf0dcc335d392a2adc",
+      "inventorySha256": "dca1331c6d331bf49d6ef23e691a63c96988bf4dbc60dbfc742fe08624c57e64",
+      "sourceUnchanged": true,
+      "reachableShaderCompositorKinds": 46,
+      "sceneObjects": 306,
+      "particleSystems": 30,
+      "license": "CC-BY-SA (version unspecified)",
+      "accepted": false,
+      "selectedForPorting": false,
+      "planExitCode": null,
+      "planJson": false,
+      "planReportSha256": null,
+      "planStderrSha256": null,
+      "note": "Official product splash original is broader than its thumbnail: 306 objects,30 particle systems,46 reachable shader/compositor kinds,86 material outputs. Camera DOF is off, but particle/shader scope is unsuitable for this bounded positive. No plan attempted after read-only complexity census; source unchanged.",
+      "acquisition": {
+        "id": "racing-car",
+        "url": "https://download.blender.org/demo/test/splash-pokedstudio.blend.zip",
+        "downloadFile": "splash-pokedstudio.blend.zip",
+        "downloadBytes": 20348369,
+        "downloadSha256": "5e5c881ddecf8703ad43214f480f6a3be1b67b9b40143700180f106b46628363",
+        "archiveEntry": "splash-pokedstudio.blend",
+        "extractDirectory": "extracted/racing-car",
+        "sourcePath": "extracted/racing-car/splash-pokedstudio.blend",
+        "source": {
+          "bytes": 58525268,
+          "sha256": "9dc8c2eaf1def129f37f11cdb4610c5c1a17d08d85d6d1cf0dcc335d392a2adc"
+        }
+      }
+    }
+  ],
+  "files": [
+    {
+      "path": "/private/tmp/scenetoweb-v1-next-simple-original/artifacts/v1-simple-original/acquisition.json",
+      "bytes": 598,
+      "sha256": "274e04d005d227a54239a02ee6004554cdeae439ebc7c26a0e09b46559bf08da"
+    },
+    {
+      "path": "/private/tmp/scenetoweb-v1-next-simple-original/artifacts/v1-simple-original/racing-car-acquisition.json",
+      "bytes": 552,
+      "sha256": "a2c69ca7ebad060ce7312a50cc23898d4ad35e87e272ec6bb59e6992114b1d56"
+    },
+    {
+      "path": "/private/tmp/scenetoweb-v1-next-simple-original/artifacts/v1-simple-original/race-spaceship-README.txt",
+      "bytes": 95,
+      "sha256": "0f5403109fb29901feac427d22c57449438dd48a3e11d2289c2388a3d5d4d242"
+    },
+    {
+      "path": "/private/tmp/scenetoweb-v1-next-simple-original/artifacts/v1-simple-original/mr-elephant-README.txt",
+      "bytes": 102,
+      "sha256": "ed43a10ef93f84931584aedd1423575440a5be4faec54ae26ec36865b204aaab"
+    },
+    {
+      "path": "/private/tmp/scenetoweb-v1-next-simple-original/artifacts/v1-simple-original/official-directory.html",
+      "bytes": 327,
+      "sha256": "d630fcf875a9423f9588ee18053c86308a7e75747f7590b9e5ec849e8a9fc9c8"
+    },
+    {
+      "path": "/private/tmp/scenetoweb-v1-next-simple-original/artifacts/v1-simple-original/studio-asset-browser.html",
+      "bytes": 116945,
+      "sha256": "9d674706a0fe85a552f1634b4015bc5d240ec6693df85defc6b40af0b1e85c05"
+    },
+    {
+      "path": "/private/tmp/scenetoweb-v1-next-simple-original/artifacts/v1-simple-original/race-spaceship-census-r2.json",
+      "bytes": 99248,
+      "sha256": "d9fe64c2756778eb8f24826d7d64a002f60b0c1dde56279b016978eeeb5a11c7"
+    },
+    {
+      "path": "/private/tmp/scenetoweb-v1-next-simple-original/artifacts/v1-simple-original/race-spaceship-census-r2.producer.py",
+      "bytes": 3524,
+      "sha256": "1c1678994e9e53f753e4c0e8b060ce536b2f66858193ee841cace6239c8639a3"
+    },
+    {
+      "path": "/private/tmp/scenetoweb-v1-next-simple-original/artifacts/v1-simple-original/racing-car-census.json",
+      "bytes": 440920,
+      "sha256": "47c8b1954c521b58bc6e29000b278e9cc6e00f42f3a6daed26ecb7fb59eaee72"
+    },
+    {
+      "path": "/private/tmp/scenetoweb-v1-next-simple-original/artifacts/v1-simple-original/inventories/cube-diorama.json",
+      "bytes": 1706229,
+      "sha256": "07d0abc7155f3051e44b93826ef32db6df8dc6178191f3e1810ce85758894b0e"
+    },
+    {
+      "path": "/private/tmp/scenetoweb-v1-next-simple-original/artifacts/v1-simple-original/inventories/race-spaceship.json",
+      "bytes": 367729,
+      "sha256": "b307c38680e02a0e32a8b3c721d1592d1f2a3dca34f92383bb3dcc0513e4e17f"
+    },
+    {
+      "path": "/private/tmp/scenetoweb-v1-next-simple-original/artifacts/v1-simple-original/inventories/racing-car.json",
+      "bytes": 2795117,
+      "sha256": "dca1331c6d331bf49d6ef23e691a63c96988bf4dbc60dbfc742fe08624c57e64"
+    },
+    {
+      "path": "/private/tmp/scenetoweb-cube-diorama-plan-r1.json",
+      "bytes": 17565,
+      "sha256": "1e6a30240503ec29cb3f0331a30b409ca28aef3f02e35facf88614d4138bc8e7"
+    },
+    {
+      "path": "/private/tmp/scenetoweb-race-spaceship-plan-r1.json",
+      "bytes": 2937,
+      "sha256": "57375e09838d1530a1ab3714b546db6cc4aecc7cde8d12a43fae5ffbcc909cae"
+    }
+  ],
+  "withoutDownloadRejection": {
+    "id": "mr-elephant",
+    "reason": "Official README CC-BY-ND, only for sharing as a demo; unsuitable for derivative web export qualification.",
+    "readmeUrl": "https://download.blender.org/demo/eevee/mr_elephant/README.txt",
+    "readmeSha256": "ed43a10ef93f84931584aedd1423575440a5be4faec54ae26ec36865b204aaab"
+  },
+  "validation": {
+    "immutableFetcherTestsPassed": 5,
+    "inventoriesSourceHashClosed": 3,
+    "censusSourceHashClosed": 2,
+    "planOutputsStructured": 2
+  },
+  "readOnlyDependencyPins": {
+    "packages/blender-addon/weblights.py": "9addb7b2de3e2add3955df9cf344fcdf9d0fcf1d57a5a466057fdec9924dce93",
+    "experiments/release-scene-corpus/inventory.py": "7c0030a90edfc784596d9962e935c4d9bbc9cd1a6fc7744ca1240f7c6e69eba5",
+    "experiments/release-scene-corpus/graph.py": "3daa88381aba075ef84153be68e55988caad352da06c4155b061e6badfccc189",
+    "experiments/release-scene-corpus/fetch.py": "5ad3ea96ac7449448e056e39eeac6f7cec69b5718eb23e518c4e922efdb2e610"
+  }
+}

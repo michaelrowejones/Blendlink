@@ -1,0 +1,23 @@
+{
+  "status": "SOURCE_AUDIT_ONLY_NOT_RENDERER_OR_KERNEL_QUALIFICATION",
+  "revision": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "license": "GPL-2.0-or-later native sources; no kernel copied into SDK",
+  "files": [
+    {
+      "path": "source/blender/draw/engines/eevee/shaders/eevee_film.bsl.hh",
+      "sha256": "ea95bfaf7f51beeb447f8897879a0d46ae1c855ae9a6641472b15a230443ddd7"
+    },
+    {
+      "path": "source/blender/gpu/shaders/material/gpu_shader_material_emission.bsl.hh",
+      "sha256": "9c8ead165fca9bfb2d5d2eb814cf29a4c9bdf9485c5ebc88a6e738b9f9ce9f95"
+    },
+    {
+      "path": "source/blender/draw/engines/eevee/eevee_film.cc",
+      "sha256": "a6c5d9a70408e930c83ebc23c304c6d0c705b043e3b0a23ddb3a2cc1cd3f438f"
+    },
+    {
+      "path": "source/blender/draw/engines/eevee/shaders/eevee_deferred_combine.bsl.hh",
+      "sha256": "d93f197a2d6414f92aecfb2ab3a4f01e2bb6552795b91a1bdb2764720e907a5d"
+    }
+  ]
+}

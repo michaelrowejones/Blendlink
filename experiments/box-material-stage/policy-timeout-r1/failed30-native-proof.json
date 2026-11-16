@@ -1,0 +1,124 @@
+{
+  "passed": false,
+  "identity": {
+    "kind": "blendlink-proof-native-python-v1",
+    "platform": "darwin",
+    "native": {
+      "path": "/Applications/Blender.app/Contents/MacOS/Blender",
+      "bytes": 210043328,
+      "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da"
+    },
+    "node": {
+      "path": "/Users/michaeljones/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "bytes": 126827136,
+      "sha256": "eb96bdabfd1f6705345bbd459f9308d140c011fa55865efdb4fa8f61d048f55d"
+    },
+    "launcher": {
+      "path": "/private/tmp/scenetoweb-box-integrated-finals-r1/export-launchers/native-launcher-53mZvX/blender-proof",
+      "bytes": 692,
+      "sha256": "39792a1bd80a0d7984b30dd128ffdbddd86c4d490ed8895fdd61a16e0b442ad0"
+    },
+    "configuration": {
+      "path": "/private/tmp/scenetoweb-box-integrated-finals-r1/export-launchers/native-launcher-53mZvX/launcher.json",
+      "bytes": 1155,
+      "sha256": "2b43352b5acb6c492dcb91a401f52d9e0b11172cf06bfb0cb3ae7d517f6813e7"
+    },
+    "helper": {
+      "path": "/private/tmp/scenetoweb-box-integrated-finals-r1/export-launchers/native-launcher-53mZvX/lib/node-port-python.mjs",
+      "bytes": 18855,
+      "sha256": "33fc36d6c551583a119e558a60f77cd55ed25c92bcfd6d39e0171e7faaa33cde"
+    },
+    "bridge": {
+      "path": "/private/tmp/scenetoweb-box-integrated-finals-r1/export-launchers/native-launcher-53mZvX/node-port-blender.mjs",
+      "bytes": 321,
+      "sha256": "3390a410423e0cc921567a97473f6fd67f91cbe2987af7846346cb7cb51e9a8c"
+    },
+    "cachePolicy": "Fresh per-invocation prefix before Python actions; no project/user cache deletion or numerical proof reuse",
+    "limit": "Subsequent imports only. Call dispose after owned commands stop. Whole-job SIGKILL may leave empty owned directories; it cannot run JavaScript cleanup."
+  },
+  "proof": {
+    "directory": "/tmp/scenetoweb-box-integrated-finals-r1/export-archive/native-python-proof",
+    "files": [
+      {
+        "path": "blender-proof",
+        "bytes": 692,
+        "sha256": "39792a1bd80a0d7984b30dd128ffdbddd86c4d490ed8895fdd61a16e0b442ad0"
+      },
+      {
+        "path": "invocations/646c2b99-210d-4976-9369-2a2dd6134089.json",
+        "bytes": 1680,
+        "sha256": "86ec7ecd64a26945fb102c9a776711de0edd1754879cb6ac8cd658de68e877d7"
+      },
+      {
+        "path": "launcher.json",
+        "bytes": 1155,
+        "sha256": "2b43352b5acb6c492dcb91a401f52d9e0b11172cf06bfb0cb3ae7d517f6813e7"
+      },
+      {
+        "path": "lib/node-port-python.mjs",
+        "bytes": 18855,
+        "sha256": "33fc36d6c551583a119e558a60f77cd55ed25c92bcfd6d39e0171e7faaa33cde"
+      },
+      {
+        "path": "node-port-blender.mjs",
+        "bytes": 321,
+        "sha256": "3390a410423e0cc921567a97473f6fd67f91cbe2987af7846346cb7cb51e9a8c"
+      }
+    ],
+    "invocations": [
+      {
+        "schemaVersion": 1,
+        "kind": "blendlink-proof-native-python-v1",
+        "productionCases": 0,
+        "started": 1794801877429,
+        "owner": 45395,
+        "parentGone": false,
+        "native": {
+          "path": "/Applications/Blender.app/Contents/MacOS/Blender",
+          "bytes": 210043328,
+          "sha256": "53c8e8266f4e3f619a7c3e87c3a8d34a846339d50f55ebe193cf9ad3528153da"
+        },
+        "node": {
+          "path": "/Users/michaeljones/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+          "bytes": 126827136,
+          "sha256": "eb96bdabfd1f6705345bbd459f9308d140c011fa55865efdb4fa8f61d048f55d"
+        },
+        "configSha256": "2b43352b5acb6c492dcb91a401f52d9e0b11172cf06bfb0cb3ae7d517f6813e7",
+        "timings": {
+          "preIdentityMs": 334.486791,
+          "postIdentityMs": 0.0019160000010742806,
+          "bridgeBeforeReceiptMs": 29729.118292
+        },
+        "result": {
+          "args": [
+            "--background",
+            "--factory-startup",
+            "--disable-autoexec",
+            "--python-exit-code",
+            "17",
+            "--python-expr",
+            "import sys; sys.pycache_prefix=\"/private/tmp/scenetoweb-box-integrated-finals-r1/export-launchers/native-launcher-53mZvX/python-cache-qBZSJv\"; sys.dont_write_bytecode=True",
+            "--python",
+            "/private/tmp/scenetoweb-v1-box-integrated-private/experiments/box-material-stage/audit-colors.py",
+            "--",
+            "/tmp/scenetoweb-box-integrated-finals-r1"
+          ],
+          "pythonGuardApplied": true,
+          "cacheDirectory": "/private/tmp/scenetoweb-box-integrated-finals-r1/export-launchers/native-launcher-53mZvX/python-cache-qBZSJv",
+          "exitCode": null,
+          "signal": "SIGTERM",
+          "timedOut": false,
+          "aborted": true,
+          "error": null,
+          "elapsedMs": 29393,
+          "cacheDisposed": true
+        }
+      }
+    ],
+    "pythonInvocations": 1,
+    "finalInvocations": 0,
+    "finalSources": [],
+    "numericalCredit": false,
+    "complete": false
+  }
+}

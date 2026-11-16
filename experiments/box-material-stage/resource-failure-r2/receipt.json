@@ -1,0 +1,46 @@
+{
+  "status": "FIRST512_BROWSER_STOPPED_AT_TEST_OWNED_ATTRIBUTE_CACHE_ZERO_CREDIT",
+  "sourceCommit": "4b8ad5020390be4cb48f3833a005e7b931b74068",
+  "packageSha256": "a0556c36289535f654bf019094ccc344f0bf5843f2addbecbcb02cf83b1ea3bb",
+  "packageFile": "/tmp/scenetoweb-box-integrated-installed512-r2/packed/scenetoweb-0.9.0.tgz",
+  "finalSha256": "0b7a1b975607363721877e96b8c05243270b18bacf618bccbc53e88c5023ae6d",
+  "nativeReportSha256": "3e4f3dacbc54811390c08f2e03a1b586c240092b449d5c3ef3e6dc5e72a0dc4e",
+  "nativeReportPath": "/tmp/scenetoweb-box-integrated-native512-r2/reference.json",
+  "nativeObservations": 27,
+  "policyPerCaseElapsedMs": [
+    13701,
+    13424,
+    13195
+  ],
+  "policyPerCaseDeadlineMs": 30000,
+  "strictNativePrefixCensus": "3policy+3Final=6, verified",
+  "browserCapturedTuples": 1,
+  "browserCapturedRows": 23,
+  "failure": "One GPUattribute/64bytes after cleanup of firstplane case; all other resource counts balanced.",
+  "sourceCause": "Three0.184 common/Geometries.js initGeometry.onDispose captures firstRenderObject.getAttributes. Positive BOX ignoresCOLOR0; later negative activates it; disposal callback omits that late test-owned buffer.",
+  "repairScope": "Dedicated generic negative geometry first drawn withCOLOR0. Dispose geometry before its first material. No SDKmap/renderer prototype/private cache changes; no global application late-attribute-switch fix claimed.",
+  "repairGpuValidated": false,
+  "supportCredit": 0,
+  "materialCredit": 0,
+  "sceneCredit": 0,
+  "files": [
+    {
+      "originalPath": "/tmp/scenetoweb-box-integrated-installed512-r2/report.json",
+      "snapshot": "failed-browser-report.json",
+      "bytes": 1603764,
+      "sha256": "7097f12e59d48b4c49de6fd0e6034c3927e76081e3240067cbd759b0d9e6698e"
+    },
+    {
+      "originalPath": "/tmp/scenetoweb-box-integrated-installed512-r2-capture.log",
+      "snapshot": "failed-capture.txt",
+      "bytes": 14033,
+      "sha256": "2be2e4e13c52a1467255f6cc9efb1c6b24328c96df6be5235f9f4aec77aca200"
+    },
+    {
+      "originalPath": "/tmp/scenetoweb-box-integrated-r2-partial-numeric.json",
+      "snapshot": "partial-numeric.json",
+      "bytes": 6607,
+      "sha256": "2a06e326e8b71d4731249d03414bf490e57d687ffeec149d27ded87df4565b23"
+    }
+  ]
+}

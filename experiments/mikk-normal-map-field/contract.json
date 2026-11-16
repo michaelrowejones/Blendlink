@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "status": "DIAGNOSTIC_PLAN_NO_GPU_QUALIFICATION",
+  "sourceBuild": "02f0899d78e3",
+  "sourceBackend": "METAL",
+  "normalStorage": "SNORM10",
+  "dimensions": [128, 128],
+  "samples": 1,
+  "cases": ["Walls", "Plane.021", "seam", "zero-uv-normal-parallel"],
+  "probes": [
+    {"id": "T", "rgb": [1, 0.5, 0.5]},
+    {"id": "B", "rgb": [0.5, 1, 0.5]},
+    {"id": "N", "rgb": [0.5, 0.5, 1]},
+    {"id": "mixed-lengths", "rgb": [0.8, 0.7, 0.9]},
+    {"id": "mixed-signed", "rgb": [0.25, 0.875, 0.625]}
+  ],
+  "controls": ["mask", "geometry-normal", "window-xy"],
+  "gates": {
+    "transport": "Exact custom Float32 words and original oriented loop-triangle multiset, no normal reassignment or source/private triangulation",
+    "mask": "Exact covered/background mask words; any disagreement fails the frame gate",
+    "normalMap": {"absoluteMax": 0.0009765625, "alpha": "exact one on coverage", "nonfiniteClasses": "exact"},
+    "origin": "Fixed API-defined whole-row adapter plus independent Window XY control, never best-fit row/pixel selection",
+    "nativeStorageScope": "Raw EXR32 transport does not imply full-F32 EEVEE film. Existing EEVEE half-film witness motivates unchanged 2^-10 diagnostic absolute field gate; no bit-exact normalize/lighting claim.",
+    "undefinedBoundary": "Pure B ordinary-normalize-zero at parallel corners in zero-UV/Walls/Plane.021 is an explicit unqualified boundary. This does not invalidate independently nonzero mixed-RGB inputs. No invented fallback or support credit."
+  },
+  "scope": "Unlit EEVEE NormalMap TANGENT, OPENGL, ORIGINAL, Strength1, active named UV, no linked Displacement. Initial Metal source versus Metal WebGPU and node WebGL2 diagnostic only.",
+  "supportCredit": 0
+}

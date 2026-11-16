@@ -56,3 +56,31 @@ native RGB oracle may use a separate owned emission observation; public installe
 checks must also exercise actual material draws, repeated frames, COLOR0 poison,
 Alpha completeness, resize, failure recovery and resource cleanup. Production
 metadata/support credit must stay unchanged until those checks close.
+# Reconstructing the integrated private candidate
+
+The later integrated candidate `43840cc6` combines the experimental BOX source
+with the qualified Shadow path, ObjectNormal camera guard and private bitmap
+cleanup from public `a1684d3a`. It remains unqualified. The original 17-file
+patch and R3 failure records stay unchanged.
+
+`integrated-sdk-43840.patch`, the raw Git commit object and the reconstruction
+manifest preserve this exact candidate without depending on an unpublished
+branch. In a clone containing public `a1684d3a`, run:
+
+```sh
+node experiments/box-material-stage/reconstruct-integrated-sdk.mjs /ABS/NEW_WORKTREE
+```
+
+This creates a new detached worktree, checks the full source-tree and commit
+hashes, and aligns only that new worktree. It installs nothing and opens no
+scene or GPU. The source reconstruction was independently executed successfully
+at `/tmp/scenetoweb-box-reconstructed-43840-check`, yielding source tree
+`45a9e62cef2a6cb94fa5c41ac0478d22f0b4ad82` and exact commit `43840cc6`.
+
+For a new capture, copy the current `experiments/box-material-stage` directory
+into that isolated worktree, commit only those experiment files, install the
+lockfile dependencies and build the SDK there. Run the integrated SDK byte
+guard before using the documented hardware lease. A matching source checkout
+alone does not establish matching emitted/dependency bytes or accepted fidelity.
+The 2,064-file guard and fresh proof census remain mandatory. No production
+admission, package publication or whole-scene acceptance follows from this helper.

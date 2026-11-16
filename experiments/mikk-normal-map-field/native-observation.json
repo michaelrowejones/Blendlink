@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "status": "NATIVE_METAL_CHARACTERIZATION_NO_FRAME_QUALIFICATION",
+  "sourceCommit": "53fe9122936071d757ebd1323a13039c953fed5d",
+  "supportCredit": 0,
+  "path": "/tmp/scenetoweb-real-mikk-normal-native-r1-observed-frozen.json",
+  "sha256": "91cb0e0ae427f83a55eecf829c1b64ac38d58e1790464baa8fefa8641d2fe689",
+  "readerSha256": "cacae83e98292390501cf036c47571787ed93ca2579f95657463b764575618a9",
+  "renders": 32,
+  "coveredPixels": [
+    {
+      "name": "Walls",
+      "count": 7565
+    },
+    {
+      "name": "Plane.021",
+      "count": 6085
+    },
+    {
+      "name": "seam",
+      "count": 726
+    },
+    {
+      "name": "zero-uv-normal-parallel",
+      "count": 270
+    }
+  ],
+  "windowQuadrants": "all zero disagreements; exact ideal half-center word checks fail and remain retained",
+  "undefinedBoundary": "zero-UV pure B empirically encodes RGB(0,0,0); no fallback/admission follows from finite carrier values",
+  "observerBase": "ORIGINAL is a derived observer; authored Plaster DISPLACED is equivalent only through the separately proved unlinked-displacement Ni source branch",
+  "next": "Independent Metal browser 2API capture pending"
+}

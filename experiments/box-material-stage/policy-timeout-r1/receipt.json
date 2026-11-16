@@ -1,0 +1,66 @@
+{
+  "status": "CPU_HARNESS_FAILURE_DIAGNOSIS_AND_DENIAL_SELFTEST_NOT_QUALIFICATION",
+  "failedCaptureCommit": "90e4fbe1a39c79ea05c04ead44ffe412eff25656",
+  "failed30": "Outer policy timer cancelled launcher, child SIGTERM/aborted; no source-policy pass JSON. Failure retained.",
+  "diagnostic60": "Original policy completes37.601s; compiler import.373s, plans.664s, probes.267s (nested plan time overlaps). Most time outside measured compiler/probes; source reload/teardown/hash work on3x189MB saved files. Not a benchmark or approval to extend qualification timeout.",
+  "timingHookCaveat": "Original wm open hook was applied to temporary bpy.ops proxy and never persisted; case fieldsnull and no direct open durations. Native load logs retain source order; timings must not be labelled precise per-open measurements.",
+  "persistentDenySelftest": "New actual nativeBPyOpFunction lookup returns persistent denial and raises before native render/bake; gpu.init also denied;5 intentional refused calls,0 actual GPU/render/bake, exit0 in1.531s.",
+  "repair": "Each case receives its own original30s native-command deadline;3policy+3Final calls,6fresh prefixes, explicit aggregate3*30s policy bound. Persistent render/object modules and identity checks before inputs/afterfileload.",
+  "supportCredit": 0,
+  "files": [
+    {
+      "originalPath": "/tmp/scenetoweb-box-integrated-finals-r1-export.log",
+      "snapshot": "failed30-export.txt",
+      "bytes": 504,
+      "sha256": "d26d6446c34044f067fe3ef324c678404bba9ec339cf02ab3c3861c04581c9c9"
+    },
+    {
+      "originalPath": "/tmp/scenetoweb-box-integrated-finals-r1/source-policy.log",
+      "snapshot": "failed30-policy.txt",
+      "bytes": 320,
+      "sha256": "61d8778f816294540a1ecc30abe84f76c9fea93ac6961fda8b4785ff82d091c9"
+    },
+    {
+      "originalPath": "/tmp/scenetoweb-box-integrated-finals-r1/export-native-proof.json",
+      "snapshot": "failed30-native-proof.json",
+      "bytes": 4974,
+      "sha256": "8c3c400dfdbe58f1cd1b2c8dddc5f01905cb4ce100066144f518c99665f139f3"
+    },
+    {
+      "originalPath": "/tmp/scenetoweb-box-policy-cpu-profile-r1/profile.py",
+      "snapshot": "diagnostic60-producer.py.source",
+      "bytes": 2130,
+      "sha256": "0172068c22d73839d8c1886fce0d329a6b7a8d55907a82b8802cd7c99d9c8ad5"
+    },
+    {
+      "originalPath": "/tmp/scenetoweb-box-policy-cpu-profile-r1/command.json",
+      "snapshot": "diagnostic60-command.json",
+      "bytes": 1272,
+      "sha256": "6ba8c1c172a600df21011653667b1070cde0139e381b3ca5fa1c184be71f5859"
+    },
+    {
+      "originalPath": "/tmp/scenetoweb-box-policy-cpu-profile-r1/profile.json",
+      "snapshot": "diagnostic60-profile.json",
+      "bytes": 4995,
+      "sha256": "58bfc8ceef9572c3d9045430106f3c7da97a0dd7bf32f56fad153d2b15d07605"
+    },
+    {
+      "originalPath": "/tmp/scenetoweb-box-policy-cpu-profile-r1/native.log",
+      "snapshot": "diagnostic60-native.txt",
+      "bytes": 4398,
+      "sha256": "9394cacb2de288a5587c879eb5f1e3dfb0d848a1ace5c78bc012f1643f5d4800"
+    },
+    {
+      "originalPath": "/tmp/scenetoweb-box-policy-persistent-deny-r1/native.log",
+      "snapshot": "persistent-deny-selftest.txt",
+      "bytes": 656,
+      "sha256": "68783f050b26260e63f69b45df3cf0ca487bf5ef2834fd5e83b314ca4350153b"
+    },
+    {
+      "originalPath": "/tmp/scenetoweb-box-policy-persistent-deny-r1/command.json",
+      "snapshot": "persistent-deny-command.json",
+      "bytes": 826,
+      "sha256": "87da45a3be81d164bcdc8ef039c2237811782e7875cfb4763c255deadfb0b82c"
+    }
+  ]
+}

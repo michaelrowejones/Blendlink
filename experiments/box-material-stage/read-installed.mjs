@@ -10,8 +10,11 @@ import { validateNativeArchive } from '../../scripts/lib/native-proof-archive.mj
 import { captureRuntimeProvenance } from '../../scripts/lib/runtime-provenance.mjs'
 import { validateCompilerTrace } from '../../scripts/lib/runtime-compiler-trace.mjs'
 import { compare } from '../box-image-transport-prototype/compare.mjs'
-import { lowerLeftRows } from '../box-image-storage-stage/orientation-check.mjs'
-import { assertCandidateSdk } from './candidate-sdk.mjs'
+import {fieldReadback} from './field-readback.mjs'
+import { assertProofSdk } from './proof-sdk.mjs'
+import { assertIntegratedSdk } from './integrated-sdk.mjs'
+import { fieldProfile } from './field-profile.mjs'
+import {stricterPolicy} from './visual-color-policy.mjs'
 
 const root = resolve(import.meta.dirname, '../..'), sha = b => createHash('sha256').update(b).digest('hex')
 const json = async path => JSON.parse(await readFile(path, 'utf8'))
@@ -20,17 +23,26 @@ const helperInputs = { helper: join(root, 'scripts/lib/node-port-python.mjs'), b
 const flatten = v => !v || typeof v !== 'object' ? [] : [...('op' in v ? [v] : []), ...Object.values(v).flatMap(flatten)]
 const checked = async (path, expected) => { const b = await readFile(path); assert.equal(sha(b), expected, 'Changed evidence: ' + path); return b }
 
-export async function closeInstalled(finalDir, nativeDir, browserDir) {
+export async function closeInstalled(finalDir, nativeDir, browserDir, {diagnosticVisual=false}={}) {
  const finalBytes = await readFile(join(finalDir, 'final.json')), final = JSON.parse(finalBytes), fixtures = await json(join(finalDir, 'fixtures.json'))
  const nativeBytes = await readFile(join(nativeDir, 'reference.json')), native = JSON.parse(nativeBytes), reportBytes = await readFile(join(browserDir, 'report.json')), report = JSON.parse(reportBytes)
+ if(report.targetWidth===512){const sdk=await assertIntegratedSdk();assert.deepEqual(report.sdkProof,sdk);assert.deepEqual(final.sdkProof,sdk);assert.deepEqual(await json(join(nativeDir,'sdk-proof.json')),sdk)}
+ const profile=fieldProfile(report.targetWidth??128),sizes=profile.sizes,[controlWidth,controlHeight]=profile.control
+ assert.deepEqual(report.observationSizes??[[64,4],[128,8]],sizes);assert.deepEqual(report.lifecycleViewport??[128,8],profile.control)
+ const frozenMips=await json(join(import.meta.dirname,'native-mips-evidence-r1.json'));assert.equal(frozenMips.status,'COLD_BACKGROUND_NATIVE_MIPS_BIT_EXACT_TO_QUALIFIED_CHAIN');assert.equal(frozenMips.rows.length,11)
  assert.equal(final.status, 'EXPORTED_OWNED_ORIGINAL_BOX_COLOR_FINALS_NOT_SCENE_ACCEPTANCE')
  assert.equal(final.fixtureSha256, sha(await readFile(join(finalDir, 'fixtures.json'))))
  assert.deepEqual(fixtures.cases.map(c => c.id), ids); assert.deepEqual(final.rows.map(c => c.id), ids)
  await checked(fixtures.sourceOriginal, fixtures.sourceOriginalSha256); assert.equal(fixtures.sourceOriginalSha256, '9f636b2e1a59b3d181f90caf1b1703658eeadebad57f3c6207737d2fe3ffd85e')
  assert.deepEqual(fixtures.calls, { gpu: 0, render: 0 })
  for (const p of final.provenance) { await checked(p.source, p.sha256); await checked(p.artifact, p.sha256) }
- await validateNativeArchive(await json(join(finalDir, 'export-native-proof.json')), join(finalDir, 'export-archive'), { expectedScripts: [{ path: join(import.meta.dirname, 'audit-colors.py'), invocations: 1 }], expectedFinalSources: fixtures.cases.map(c => c.sourceFile), helperInputs })
- const policy = await json(join(finalDir, 'source-policy.json')); assert.equal(policy.status, 'PASSED_SAVED_COLOR_SOURCE_POLICY_NO_GPU'); assert.deepEqual(policy.calls, { gpu: 0, render: 0 }); assert.equal(policy.scriptSha256, sha(await readFile(join(import.meta.dirname, 'audit-colors.py')))); assert.deepEqual(policy.rows.map(c => c.id), ids)
+ await validateNativeArchive(await json(join(finalDir, 'export-native-proof.json')), join(finalDir, 'export-archive'), { expectedScripts: [{ path: join(import.meta.dirname, 'audit-colors.py'), invocations: fixtures.cases.length }], expectedFinalSources: fixtures.cases.map(c => c.sourceFile), helperInputs })
+ const policy = await json(join(finalDir, 'source-policy.json')); assert.equal(policy.status, 'PASSED_SAVED_COLOR_SOURCE_POLICY_NO_GPU'); assert.deepEqual(policy.calls, { gpu: 0, render: 0,bake:0 }); assert.equal(policy.scriptSha256, sha(await readFile(join(import.meta.dirname, 'audit-colors.py')))); assert.deepEqual(policy.rows.map(c => c.id), ids)
+ assert.equal(policy.policyCalls,3);assert.equal(policy.perCaseDeadlineMs,30000);assert.equal(policy.aggregatePolicyCallDeadlineMs,90000);assert.deepEqual(policy.caseReports.map(r=>r.id),ids)
+ for(const item of policy.caseReports){const r=JSON.parse(await checked(join(finalDir,item.file),item.sha256));assert.equal(r.selectedCase,item.id);assert.equal(r.status,'PASSED_SINGLE_SAVED_COLOR_SOURCE_POLICY_NO_GPU');assert.deepEqual(r.calls,{gpu:0,render:0,bake:0});assert.equal(r.guards.status,'PERSISTENT_NATIVE_LOOKUP_DENIAL_SELFTEST_PASSED');assert.equal(r.guards.nativeGpuRenderBakeCalls,0);for(const name of['gpu.init','render.render','object.bake'])assert.equal(r.guards.operators[name],'REFUSED_BEFORE_NATIVE_CALL');assert.deepEqual(r.rows.map(x=>x.id),[item.id]);assert.deepEqual(r.rows[0],policy.rows.find(x=>x.id===item.id));assert.equal(r.scriptSha256,policy.scriptSha256);assert.ok(item.elapsedMs<30000);assert.equal(item.deadlineMs,30000)}
+ const exportArchive=await json(join(finalDir,'export-native-proof.json')),policyInvocations=exportArchive.proof.invocations.filter(call=>call.result.args.includes(join(import.meta.dirname,'audit-colors.py')));assert.equal(policyInvocations.length,3)
+ for(const id of ids)assert.equal(policyInvocations.filter(call=>call.result.args.includes('--case='+id)).length,1)
+
  for (const p of policy.rows) for (const key of ['privateCarrierNeutralizedOnlyOwnedCopy', 'sourceBindingsRestoredAfterFailure', 'fractionalAlphaRefused', 'unsupportedBlendRefused']) assert.equal(p[key], true)
  let mipBytes = 0
  for (const row of final.rows) {
@@ -50,53 +62,53 @@ export async function closeInstalled(finalDir, nativeDir, browserDir) {
   const images = Object.values(programs.images); assert.equal(images.length, 1); const image = images[0], m = image.boxMipmaps
   assert.equal(m.model, 'eevee-metal-box-color-mips-v1'); assert.equal(m.nativeBuild, '02f0899d78e3'); assert.equal(m.nativeBackend, 'METAL'); assert.equal(m.nativeVersion, '5.3.0'); assert.equal(m.uncompressedBytes, 1398100); assert.equal(m.levels.length, 10)
   const png = await checked(join(dirname(row.materialPath), image.file), m.sourceSha256); assert.equal(png.length, image.bytes); assert.equal(sha(png).slice(0, 16), image.hash)
-  const decoded = await sharp(png).flip().ensureAlpha().raw().toBuffer(); assert.equal(decoded.length, 4194304); assert.equal(sha(decoded), m.decodedRgbaSha256)
+  const decoded = await sharp(png).flip().ensureAlpha().raw().toBuffer(); assert.equal(decoded.length, 4194304); assert.equal(sha(decoded), m.decodedRgbaSha256);assert.equal(m.decodedRgbaSha256,frozenMips.rows[0].nativeSha256)
   const compressed = await checked(row.mipPath, m.sha256); assert.equal(compressed.length, m.bytes); assert.equal(row.mipPath, join(dirname(row.materialPath), m.file))
   const raw = inflateSync(compressed, { maxOutputLength: 1398100 }); assert.equal(raw.length, 1398100); let offset = 0
-  for (let i = 0; i < 10; i++) { const level = m.levels[i], size = 512 >> i; assert.equal(level.level, i + 1); assert.equal(level.width, size); assert.equal(level.height, size); const bytes = raw.subarray(offset, offset + size * size * 4); assert.equal(sha(bytes), level.sha256); for (let j = 3; j < bytes.length; j += 4) assert.equal(bytes[j], 255); offset += bytes.length }
+  for (let i = 0; i < 10; i++) { const level = m.levels[i], size = 512 >> i; assert.equal(level.level, i + 1); assert.equal(level.width, size); assert.equal(level.height, size); const bytes = raw.subarray(offset, offset + size * size * 4); assert.equal(sha(bytes), level.sha256);assert.equal(level.sha256,frozenMips.rows[i+1].nativeSha256);assert.equal(frozenMips.rows[i+1].nativeSha256,frozenMips.rows[i+1].r6Sha256);assert.equal(frozenMips.rows[i+1].differences,0); for (let j = 3; j < bytes.length; j += 4) assert.equal(bytes[j], 255); offset += bytes.length }
   assert.equal(offset, raw.length); mipBytes += compressed.length
  }
- assert.equal(native.status, 'CAPTURED_SAVED_ORIGINAL_COLOR_OBSERVATIONS'); assert.equal(native.sourcePreserved, true); assert.equal(native.fixtureSha256, final.fixtureSha256); assert.equal(native.scriptSha256, sha(await readFile(join(import.meta.dirname, 'reference-colors.py')))); assert.equal(native.gate.rgbMaxAbs, 2 ** -10); assert.equal(native.gate.alphaExact, true); assert.equal(native.gpu.backend, 'METAL'); assert.equal(native.rows.length, 18)
+ assert.equal(native.status, 'CAPTURED_SAVED_ORIGINAL_COLOR_OBSERVATIONS'); assert.equal(native.sourcePreserved, true); assert.equal(native.fixtureSha256, final.fixtureSha256); assert.equal(native.scriptSha256, sha(await readFile(join(import.meta.dirname, 'reference-colors.py')))); assert.equal(native.gate.rgbMaxAbs, 2 ** -10); assert.equal(native.gate.alphaExact, true); assert.equal(native.gpu.backend, 'METAL'); assert.equal(native.rows.length, profile.nativeRows);assert.equal(native.targetWidth??128,profile.targetWidth);assert.deepEqual(native.observationSizes??[[64,4],[128,8]],sizes)
  await validateNativeArchive(await json(join(nativeDir, 'native-archive.json')), nativeDir, { expectedScripts: [{ path: join(import.meta.dirname, 'reference-colors.py'), invocations: 1 }], expectedFinalSources: [], helperInputs })
  const nativeRows = new Map()
- for (const id of ids) for (const [width, height] of [[64, 4], [128, 8]]) for (const kind of ['mask', 'mapping', 'color']) {
+ for (const id of ids) for (const [width, height] of sizes) for (const kind of ['mask', 'mapping', 'color']) {
   const matches = native.rows.filter(r => r.case === id && r.kind === kind && r.width === width && r.height === height); assert.equal(matches.length, 1); const row = matches[0], bytes = await checked(join(nativeDir, row.file), row.sha256); assert.equal(bytes.length, width * height * 16); assert.equal(row.words, width * height * 4); nativeRows.set(id + '/' + kind + '/' + width, bytes)
  }
  assert.equal(report.status, 'PUBLIC_INSTALLED_BOX_COLOR_MATRIX_CAPTURED_NOT_SCENE_ACCEPTANCE'); assert.equal(report.finalSha256, sha(finalBytes)); assert.equal(report.producerSha256, sha(await readFile(join(import.meta.dirname, 'installed.mjs')))); assert.equal(report.fixtureSha256, sha(await readFile(join(import.meta.dirname, 'installed-browser.js')))); assert.equal(report.fixtureSha256, sha(await readFile(join(browserDir, 'fixture.js'))))
- await checked(report.package.file, report.package.sha256); assert.equal(report.package.integrity, 'sha512-' + createHash('sha512').update(await readFile(report.package.file)).digest('base64'))
+ if(report.expectedPackedSha256)assert.equal(report.package.sha256,report.expectedPackedSha256);assert.equal(report.poisonGeometrySha256,sha(await readFile(join(import.meta.dirname,'poison-geometry.js'))));await checked(join(browserDir,'poison-geometry.js'),report.poisonGeometrySha256);await checked(report.package.file, report.package.sha256); assert.equal(report.package.integrity, 'sha512-' + createHash('sha512').update(await readFile(report.package.file)).digest('base64'))
  validateCompilerTrace(report.provenance.compilerAttestation)
  const { provenance } = await captureRuntimeProvenance({ root, built: true, compilerInputs: true })
  assert.equal(report.provenance.mode, 'built'); assert.equal(report.provenance.typescript, provenance.typescript); assert.equal(report.provenance.copyAssetsSha256, provenance.copyAssetsSha256); assert.equal(report.provenance.modules.length, provenance.modules.length)
  for (const module of provenance.modules) { const saved = report.provenance.modules.find(m => m.name === module.name); assert.ok(saved); for (const key of ['sourceSha256', 'emitterSha256', 'expectedEmitterSha256', 'emitterMatchesSource', 'postEmitTransform']) assert.deepEqual(saved[key], module[key]); const path = join(report.package.directory, 'dist', module.name + '.js'); assert.ok(report.pins[path]); assert.deepEqual(await checked(path, report.pins[path]), await readFile(join(root, 'packages/blendlink/dist', module.name + '.js'))) }
  for (const [path, hash] of Object.entries(report.pins)) await checked(path, hash)
- assert.equal(report.apis.length, 4); const tuples = new Set(), comparisons = [], lifecycle = []
+ assert.equal(report.apis.length, 4); const tuples = new Set(), comparisons = [], lifecycle = [],visualFrames=[]
  for (const api of report.apis) {
   const tuple = api.profile + '/' + api.backend; assert.ok(['metal/webgpu', 'metal/webgl2', 'swiftshader/webgpu', 'swiftshader/webgl2'].includes(tuple)); assert.ok(!tuples.has(tuple)); tuples.add(tuple)
   assert.equal(api.status, 'PASSED_PUBLIC_INSTALLED_BOX_COLOR_NOT_FULL_SCENE'); assert.equal(api.webgpuAvailableAtStart, api.backend === 'webgpu'); assert.ok(api.maximumAnisotropy >= 2)
   assert.match(JSON.stringify(api.gpu), api.profile === 'metal' ? /apple|metal/i : /swiftshader/i); if (api.profile === 'metal') assert.doesNotMatch(JSON.stringify(api.gpu), /swiftshader/i)
   for (const key of ['errors', 'pageErrors', 'unexpectedConsole', 'httpErrors']) assert.deepEqual(api[key], []); assert.deepEqual(api.deviceLosses, []); assert.equal(api.expectedResponses.length, 1); assert.equal(api.expectedResponses[0].status, 404); assert.equal(api.expectedFailures.length, 1); assert.match(api.expectedFailures[0].failure, /ERR_ABORTED/)
-  assert.equal(api.bitmap.opened, api.bitmap.closed); assert.ok(api.bitmap.opened > 0); assert.equal(api.callerBitmaps.opened, api.callerBitmaps.closed); assert.equal(api.resources.length, 3); assert.equal(api.rows.length, 51); assert.equal(api.controls.length, 10)
-  const cache = new Map(), keys = new Set()
-  for (const row of api.rows) { assert.ok(ids.includes(row.id)); assert.ok(row.width === 64 && row.height === 4 || row.width === 128 && row.height === 8); const key = row.id + '/' + row.kind + '/' + row.width; assert.ok(!keys.has(key)); keys.add(key); const bytes = await checked(join(browserDir, row.file), row.sha256); assert.equal(bytes.length, row.width * row.height * 16); assert.equal(row.words, row.width * row.height * 4); cache.set(key, bytes) }
+  assert.equal(api.bitmap.opened, api.bitmap.closed); assert.ok(api.bitmap.opened > 0); assert.equal(api.callerBitmaps.opened, api.callerBitmaps.closed); assert.equal(api.resources.length, 3);assert.equal(api.geometryControls.length,3); assert.equal(api.rows.length, profile.rowsPerApi); assert.equal(api.controls.length, 10)
+  const fields=await fieldReadback({backend:api.backend,rows:api.rows,readRow:async row=>{assert.ok(ids.includes(row.id));assert.ok(sizes.some(([w,h])=>row.width===w&&row.height===h));const bytes=await checked(join(browserDir,row.file),row.sha256);assert.equal(bytes.length,row.width*row.height*16);assert.equal(row.words,row.width*row.height*4);return bytes}})
   for (const id of ids) {
-   const take = (kind, width = 128) => { const value = cache.get(id + '/' + kind + '/' + width); assert.ok(value, 'Missing row ' + tuple + '/' + id + '/' + kind + '/' + width); return value }
-   for (const [width, height] of [[64, 4], [128, 8]]) for (const kind of ['mask', 'mapping', 'color', 'alpha']) {
+   const take=(kind,width=controlWidth)=>fields.supporting(id,kind,width)
+   for (const [width, height] of sizes) for (const kind of ['mask', 'mapping', 'color', 'alpha']) {
     const expected = nativeRows.get(id + '/' + (kind === 'alpha' ? 'mask' : kind) + '/' + width), bound = ['mask', 'alpha'].includes(kind) ? 0 : 2 ** -10
-    const result = compare(lowerLeftRows(take(kind, width), api.backend, width, height), expected, bound); assert.equal(result.violations, 0, 'Native field gate failed: ' + tuple + '/' + id + '/' + kind + '/' + width); if (bound === 0) assert.equal(result.differences, 0, 'Exact mask/Alpha words differ'); comparisons.push({ tuple, id, kind, width, height, bound, ...result })
+    const result = compare(fields.field(id,kind,width),expected,bound); if(!diagnosticVisual){assert.equal(result.violations, 0, 'Native field gate failed: ' + tuple + '/' + id + '/' + kind + '/' + width); if (bound === 0) assert.equal(result.differences, 0, 'Exact mask/Alpha words differ')}; comparisons.push({ tuple, id, kind, width, height, bound, ...result })
    }
+   if(diagnosticVisual)for(const[width,height]of sizes)visualFrames.push({tuple,id,width,height,...fields.observe(id,width,height,{mask:nativeRows.get(id+'/mask/'+width),color:nativeRows.get(id+'/color/'+width),mapping:nativeRows.get(id+'/mapping/'+width)})})
    const actual = take('actual'), stock = take('stock'); assert.notDeepEqual(actual, stock)
    for (const kind of ['repeat', 'poison', 'unowned-no-color', 'remount', ...(id === ids[0] ? ['recovery-missing', 'recovery-corrupt', 'recovery-abort'] : [])]) assert.deepEqual(take(kind), actual, 'Lifecycle changed pixels: ' + tuple + '/' + id + '/' + kind)
    assert.notDeepEqual(take('unowned-color-negative'), actual); assert.deepEqual(take('disposed-stock'), stock)
    const controls = api.controls.filter(c => c.id === id), kinds = ['preparation', 'remount-installation', ...(id === ids[0] ? ['missing', 'corrupt', 'abort', 'legacy-refusal'] : [])]; assert.equal(controls.length, kinds.length); assert.deepEqual(controls.map(c => c.kind).sort(), kinds.sort())
    for (const control of controls) { if (['preparation', 'remount-installation'].includes(control.kind)) { assert.equal(control.applied, 1); assert.equal(control.skipped, 0) } else if (control.kind === 'legacy-refusal') assert.match(control.refusal, /Legacy WebGLRenderer.*BOX Image Texture/); else { assert.equal(control.materialPreserved, true); assert.match(control.refusal, control.kind === 'missing' ? /fetch failed/ : control.kind === 'corrupt' ? /mip bytes changed/ : /AbortError/) } }
-   const resource = api.resources.find(r => r.id === id); assert.ok(resource); for (const key of ['textures', 'geometries','attributes','indexAttributes','storageAttributes','indirectStorageAttributes','readbackBuffers']) assert.equal(resource.memory[key], resource.baseline[key]); assert.equal(resource.bitmap.opened, resource.bitmap.closed)
+   const geometryControl=api.geometryControls.find(r=>r.id===id);assert.ok(geometryControl);for(const key of['sourceGeometryRestored','sourceAttributesAndBytesPreserved','positiveAndNegativeGeometrySeparate','negativeFirstDrawConsumesColor','geometriesDisposedBeforeMaterials'])assert.equal(geometryControl[key],true);const resource = api.resources.find(r => r.id === id); assert.ok(resource); for (const key of ['textures', 'geometries','attributes','indexAttributes','storageAttributes','indirectStorageAttributes','readbackBuffers']) assert.equal(resource.memory[key], resource.baseline[key]); assert.equal(resource.bitmap.opened, resource.bitmap.closed)
    lifecycle.push({ tuple, id, pixelControlsExact: true, noSkips: true, lastGoodPreserved: true, scopedResourcesBalanced: true })
   }
  }
- assert.equal(comparisons.length, 96); assert.equal(comparisons.reduce((n, r) => n + r.words, 0), 245760)
- return { status: 'SAVED_FINAL_INSTALLED_BOX_COLOR_GATES_PASSED_NOT_ORIGINAL_MATERIAL_OR_SCENE', supportCredit: 0, materialCredit: 0, sceneCredit: 0, sourceCommit: report.sourceCommit, finalSha256: sha(finalBytes), nativeSha256: sha(nativeBytes), browserSha256: sha(reportBytes), packageSha256: report.package.sha256, runtimeFingerprint: sha(JSON.stringify(provenance.modules.map(m => [m.name, m.sourceSha256, m.emitterSha256]))), tuples: [...tuples].sort(), rawRows: 204, numericRows: comparisons.length, numericWords: 245760, violations: 0, savedFinals: 3, nativeObservations: 18, mipBytesAcrossFinals: mipBytes, lifecycle, comparisons }
+ assert.equal(comparisons.length, profile.numericRows); assert.equal(comparisons.reduce((n, r) => n + r.words, 0), profile.numericWords)
+ return { status:diagnosticVisual?'SAVED_FINAL_INSTALLED_BOX_COLOR_VISUAL_DIAGNOSTICS_ONLY_NO_ACCEPTANCE':'SAVED_FINAL_INSTALLED_BOX_COLOR_GATES_PASSED_NOT_ORIGINAL_MATERIAL_OR_SCENE', supportCredit: 0, materialCredit: 0, sceneCredit: 0,readerSha256:sha(await readFile(import.meta.filename)),fieldReadbackSha256:sha(await readFile(join(import.meta.dirname,'field-readback.mjs'))),sourceCommit: report.sourceCommit, finalSha256: sha(finalBytes), nativeSha256: sha(nativeBytes), browserSha256: sha(reportBytes), packageSha256: report.package.sha256, runtimeFingerprint: sha(JSON.stringify(provenance.modules.map(m => [m.name, m.sourceSha256, m.emitterSha256]))), tuples: [...tuples].sort(), targetWidth:profile.targetWidth,observationSizes:sizes,rawRows:profile.rowsPerApi*4,numericRows:comparisons.length,numericWords:profile.numericWords,violations:comparisons.reduce((n,r)=>n+r.violations,0),savedFinals:3,nativeObservations:profile.nativeRows,...(diagnosticVisual?{visualPolicy:stricterPolicy,visualFrames,visualCombinedProposalSatisfied:visualFrames.every(r=>r.proposalSatisfied&&r.mappingSameValidCoverage.violations===0),independentPolicyReviewPending:true}:{} ), mipBytesAcrossFinals: mipBytes, lifecycle, comparisons }
 }
 if (process.argv[1] && resolve(process.argv[1]) === resolve(import.meta.filename)) {
- await assertCandidateSdk({checkOnly:process.argv[2]==='--check-sdk'}); if(process.argv[2]==='--check-sdk')process.exit(0)
- const [finalDir, nativeDir, browserDir, out] = process.argv.slice(2); const result = await closeInstalled(resolve(finalDir), resolve(nativeDir), resolve(browserDir)); await writeFile(out, JSON.stringify(result, null, 2) + '\n', { flag: 'wx' }); console.log(JSON.stringify({ status: result.status, numericWords: result.numericWords, violations: result.violations, runtimeFingerprint: result.runtimeFingerprint }))
+ await assertProofSdk({checkOnly:process.argv[2]==='--check-sdk'}); if(process.argv[2]==='--check-sdk')process.exit(0)
+ const [finalDir, nativeDir, browserDir, out,...flags] = process.argv.slice(2);assert.ok(flags.every(flag=>['--visual-diagnostic','--profile=integrated43840'].includes(flag)));assert.equal(new Set(flags).size,flags.length);const result = await closeInstalled(resolve(finalDir), resolve(nativeDir), resolve(browserDir),{diagnosticVisual:flags.includes('--visual-diagnostic')}); await writeFile(out, JSON.stringify(result, null, 2) + '\n', { flag: 'wx' }); console.log(JSON.stringify({ status: result.status, numericWords: result.numericWords, violations: result.violations, runtimeFingerprint: result.runtimeFingerprint }))
 }

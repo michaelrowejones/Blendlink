@@ -1,0 +1,3 @@
+00:04.665  blend            | Read blend: "/private/tmp/scenetoweb-box-color-finals-r4/plane-1.blend"
+00:16.494  blend            | Read blend: "/private/tmp/scenetoweb-box-color-finals-r4/source-Plane.021.blend"
+00:27.504  blend            | Read blend: "/private/tmp/scenetoweb-box-color-finals-r4/source-Walls.blend"

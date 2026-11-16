@@ -1,0 +1,706 @@
+diff --git a/docs/node-capabilities.json b/docs/node-capabilities.json
+index f610003de52d4a24a60ccdbd2b30b7891298193f..8cde03f85d07a5ed8b8c8a48aa50416c3ce5b477 100644
+--- a/docs/node-capabilities.json
++++ b/docs/node-capabilities.json
+@@ -19094 +19094 @@
+-          "anchor": "const freshPrograms = [SQUEEZE, MAGIC, RADIAL_WIDTH, RADIAL_COORDINATES, REPEAT, VERTEX_ALPHA, SHADOW_EXCLUSION]"
++          "anchor": "const SHADOW_EXCLUSION = {op:'shadow_exclusion_native',model:'eevee53-white-shadow-branch-v1'}"
+diff --git a/docs/node-coverage/coverage.json b/docs/node-coverage/coverage.json
+index 498f11ef5fc7e236db83958e655ab704c48dd464..1dc45ec35fbef5ba68800ccee6b98f3c6578a23b 100644
+--- a/docs/node-coverage/coverage.json
++++ b/docs/node-coverage/coverage.json
+@@ -2 +2 @@
+-  "capabilityMapSha256": "abcab1ae3689cd337912829f12e3d31ad56c30ac90b448a05f6b3fae2973cb4b",
++  "capabilityMapSha256": "68309d78daee872e76697f0239a9d3bc1102330888fcea2690722fa33a8fb85f",
+@@ -15 +15 @@
+-  "generatedAt": "2026-11-16T03:43:24.464759+00:00",
++  "generatedAt": "2026-11-16T03:54:46.466482+00:00",
+@@ -4405 +4405 @@
+-                  "anchor": "const freshPrograms = [SQUEEZE, MAGIC, RADIAL_WIDTH, RADIAL_COORDINATES, REPEAT, VERTEX_ALPHA, SHADOW_EXCLUSION]",
++                  "anchor": "const SHADOW_EXCLUSION = {op:'shadow_exclusion_native',model:'eevee53-white-shadow-branch-v1'}",
+@@ -14321 +14321 @@
+-                  "anchor": "const freshPrograms = [SQUEEZE, MAGIC, RADIAL_WIDTH, RADIAL_COORDINATES, REPEAT, VERTEX_ALPHA, SHADOW_EXCLUSION]",
++                  "anchor": "const SHADOW_EXCLUSION = {op:'shadow_exclusion_native',model:'eevee53-white-shadow-branch-v1'}",
+@@ -25832 +25832 @@
+-                  "anchor": "const freshPrograms = [SQUEEZE, MAGIC, RADIAL_WIDTH, RADIAL_COORDINATES, REPEAT, VERTEX_ALPHA, SHADOW_EXCLUSION]",
++                  "anchor": "const SHADOW_EXCLUSION = {op:'shadow_exclusion_native',model:'eevee53-white-shadow-branch-v1'}",
+@@ -28248 +28248 @@
+-    "packages/blender-addon/material_compiler.py": "0adf22ea2ff88fb06eb7557607debd6d8fa58c17a76c1afddc93b665de670918",
++    "packages/blender-addon/material_compiler.py": "bfe88fb0f4f2395bf37fb231590d1ce1f8b749addce394f6c11474c5639c3f13",
+@@ -28256 +28256 @@
+-    "packages/blender-addon/normal_input_bounds.py": "7967ed668d1a4e9de8d437717f22b736bf3956a1f6d3816da140e9725b13c3c7",
++    "packages/blender-addon/normal_input_bounds.py": "45ef2c156bf7b463783e9a0ccf9a768c718bb6297aea50551357f7da19c0a45e",
+@@ -28274 +28274 @@
+-    "packages/blender-addon/tsl_ir.py": "30f9fa0ce155de25bf8ce1b136ac6e59035679a34f69e55e97fe1f3c77b14b5d",
++    "packages/blender-addon/tsl_ir.py": "32cdaf3fa21e6f92437d06b00193f6d183489cfb0adcef07e51ec2ed728a99f7",
+@@ -28333 +28333 @@
+-    "packages/blendlink/blender/export_scene.py": "0f416e5f36a3a09f3a7a4be220016c7c388a6aec976caceaa3265aa043296a98",
++    "packages/blendlink/blender/export_scene.py": "53654207137d3ca429c020c7d85a4fcb7b05469f4a77c1df62b1a7a0f62394da",
+@@ -28339 +28339 @@
+-    "packages/blendlink/src/compiledMaterialPrograms.ts": "d6f2d9471ec145d7ed7b2abc395221eb316a7daa55a004ebf8b0c3d2fecc6cec",
++    "packages/blendlink/src/compiledMaterialPrograms.ts": "a8f826d2a041926afcdb855693b6deb01d8a9688d252c4ef414cf3cb45ba0c27",
+@@ -28341,2 +28341,2 @@
+-    "packages/blendlink/src/materialProgramDocument.ts": "19e7e121b51a94bd714c193a00a718bef31fcf648ab1df6474d6737fec525e8a",
+-    "packages/blendlink/src/materialProgramRendererRequirements.ts": "3990af753ac813d9bab845d4d864dd5cb0ea3feecc139d56440c6fd6b81df3f1",
++    "packages/blendlink/src/materialProgramDocument.ts": "7fb94737c59dd76841ebc787bfac5d87c1f5288311991ce8e05d4671589afce4",
++    "packages/blendlink/src/materialProgramRendererRequirements.ts": "bfe6fc702d223e364d2fa70f0cf8e8dc01edd341e7a58e9479af44abd8a45bef",
+@@ -28424,2 +28424,2 @@
+-    "packages/blendlink/src/tslMaterialProgram.ts": "5976d5ac9c39084f45c4bee93d0e95c6abbf11be57794f67a9bebfe42f466490",
+-    "packages/blendlink/src/tslMaterialRuntime.ts": "94f5ab035f73e29809f581dd1a861bfecb46fc9c9ec2c26ebba5ffa81790c16b",
++    "packages/blendlink/src/tslMaterialProgram.ts": "196de192a21288678b278f6707a6f3e506acd0de9801c8c64fdcc49ef0ec65ea",
++    "packages/blendlink/src/tslMaterialRuntime.ts": "41a6d449ce0bb6593307f99464c05be1de6f06570e2e08e62429982fce53732a",
+@@ -28433 +28433 @@
+-    "packages/blendlink/src/tslNodeRecipe.ts": "c6cb3aa80846f28d92b5f9eb05e8b552c5846a0f136d8745deca4d511702cf21",
++    "packages/blendlink/src/tslNodeRecipe.ts": "b0ee1a6800539b12edb4bef0c694b462ea6dc85da4749fd4aacffaf4409505bf",
+@@ -28438 +28438 @@
+-    "packages/blendlink/src/tslNormalInputBounds.ts": "238dd8753e6b2962a0977f7128e394b69ce771eda99a8a76450e34ea033813db",
++    "packages/blendlink/src/tslNormalInputBounds.ts": "5442e266b847e06c9be5128569f042c84854478d7082d17d2b15450159b7f550",
+diff --git a/packages/blender-addon/box_image_ir.py b/packages/blender-addon/box_image_ir.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..e95f7e461b6e444b0d8339e2b5384830c31050b1
+--- /dev/null
++++ b/packages/blender-addon/box_image_ir.py
+@@ -0,0 +1,81 @@
++# SPDX-License-Identifier: GPL-3.0-or-later
++"""Bounded original-color BOX transport; normal composition stays refused."""
++import platform,sys,struct
++import bpy
++MODEL='eevee-metal-box-color-mips-v1'
++BLEND=0.09966777265071869
++
++def emit(node,socket,stack,*,engine,allow_refs,emit_vector,refuse):
++    if not allow_refs:refuse('Image BOX blend currently needs the qualified external color transport')
++    if bpy.app.version!=(5,3,0) or bpy.app.build_hash!=b'02f0899d78e3' or engine!='EEVEE' or sys.platform!='darwin' or platform.machine()!='arm64' or bpy.context.preferences.system.gpu_backend!='METAL':
++        refuse('Image blended BOX color currently needs the qualified Blender5.3 Metal EEVEE source profile')
++    image=node.image
++    if socket.name!='Color':refuse('Image blended BOX Alpha has no qualified transport yet')
++    if node.projection_blend!=BLEND or node.interpolation!='Linear' or node.extension!='REPEAT':
++        refuse('Image blended BOX color currently needs blend0.09966777265071869, Linear and Repeat')
++    if bpy.context.scene.render.use_high_quality_normals or bpy.context.scene.render.anisotropic_filter!='FILTER_2':
++        refuse('Image blended BOX color currently needs native SNORM10 normals and anisotropy2')
++    if image is None or tuple(image.size)!=(1024,1024) or image.is_float or image.source!='FILE' or image.file_format!='PNG' or image.colorspace_settings.name!='sRGB' or image.alpha_mode!='STRAIGHT':
++        refuse('Image blended BOX color currently needs an opaque1024-square byte sRGB PNG with straight alpha')
++    if image.is_dirty:refuse('Image blended BOX needs saved source pixels; save the image changes before export')
++    try:
++        if image.packed_file:header=bytes(image.packed_file.data)[:33]
++        else:
++            with open(bpy.path.abspath(image.filepath),'rb') as handle:header=handle.read(33)
++    except OSError as error:refuse('Image blended BOX source PNG is unavailable: '+str(error))
++    if len(header)!=33 or header[:8]!=b'\x89PNG\r\n\x1a\n' or header[12:16]!=b'IHDR' or struct.unpack('>II',header[16:24])!=(1024,1024) or header[24:29]!=bytes((8,2,0,0,0)):
++        refuse('Image blended BOX currently needs actual opaque noninterlaced RGB8 PNG bytes')
++    if not node.inputs['Vector'].is_linked:refuse('Image blended BOX color currently needs an explicit supported vector input')
++    if __package__:
++        from .geometry_ir import primary_context
++    else:
++        from geometry_ir import primary_context
++    return {'op':'texture_box_ref','model':MODEL,'sourceEngine':'EEVEE','projection':'BOX','box':{'schemaVersion':1,'model':MODEL,'blend':BLEND,'normal':primary_context('object-normal','EEVEE')},
++            'ref':{'image':image.name,'interpolation':'Linear','extension':'REPEAT','samplingModel':MODEL},
++            'image':{'name':image.name,'width':1024,'height':1024,'colorSpace':'sRGB'},'interpolation':'Linear','extension':'REPEAT','output':'color',
++            'vector':emit_vector(node.inputs['Vector'],stack=stack,as_vector=True)}
++
++
++def requires(value):
++    if isinstance(value,dict):
++        return value.get('op')=='texture_box_ref' or any(requires(child) for child in value.values())
++    return isinstance(value,(tuple,list)) and any(requires(child) for child in value)
++
++
++def validate_channels(entries,tree=None):
++    if not requires(entries):return
++    if any(entry.get('channel')!='Base Color' and requires(entry.get('tslIr')) for entry in entries):
++        raise ValueError('Blended BOX currently qualifies the Base Color channel only; other material channels need their own composition proof')
++    if tree is not None:
++        if __package__:
++            from . import tsl_ir
++        else:
++            import tsl_ir
++        try:root,stack=tsl_ir.find_principled_root(tree,target='EEVEE')
++        except tsl_ir.TslIrRefusal as error:raise ValueError('Blended BOX color currently needs one direct Principled surface') from error
++        if stack or root.id_data!=tree:raise ValueError('Blended BOX color currently needs a direct ungrouped Principled surface')
++    channels={entry.get('channel'):entry.get('tslIr') for entry in entries}
++    if any(not channels.get(name) for name in ('Base Color','Metallic','Roughness','Emission','Alpha')) or any(entry.get('tslIrRefusal') or not entry.get('tslIr') for entry in entries):
++        raise ValueError('Blended BOX color needs complete Base Color, Metallic, Roughness, Emission and Alpha programs with no source refusals')
++    alpha=(channels.get('Alpha') or {}).get('output') or {}
++    if not channels.get('Base Color') or alpha.get('op')!='const_float' or type(alpha.get('value')) not in (int,float) or alpha['value']!=1:
++        raise ValueError('Blended BOX color currently needs its complete Base Color and direct opaque Alpha1; fractional or linked Alpha needs a separate port')
++
++
++def prepare_carrier(material,channel_plan):
++    entries=(channel_plan or {}).get('channels') or []
++    if not requires(entries):return
++    validate_channels(entries,material.node_tree)
++    if __package__:
++        from . import tsl_ir
++    else:
++        import tsl_ir
++    root,stack=tsl_ir.find_principled_root(material.node_tree,target='EEVEE')
++    if stack or root.id_data!=material.node_tree:raise ValueError('Cannot privately neutralize a shared/group BOX material surface')
++    # Only this transaction-created Material/node tree is changed. The live
++    # sidecar owns Base Color; Blender stock export must not emit texCoord=-1
++    # for unsupported BOX projection on a primitive without texture UVs.
++    for name,value in [('Base Color',(1.,1.,1.,1.)),('Alpha',1.)]:
++        socket=root.inputs[name]
++        for link in list(socket.links):material.node_tree.links.remove(link)
++        socket.default_value=value
+diff --git a/packages/blender-addon/box_image_mips.py b/packages/blender-addon/box_image_mips.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..fc46754b772ee1e5cf16446b8ccc0978899a21ef
+--- /dev/null
++++ b/packages/blender-addon/box_image_mips.py
+@@ -0,0 +1,70 @@
++# SPDX-License-Identifier: GPL-3.0-or-later
++"""Capture immutable native image storage with public background GPU APIs.
++
++This is asset preparation, with zero render calls or material/lighting bake.
++No native implementation kernel is transcribed into the browser runtime.
++"""
++import hashlib,struct,zlib
++import bpy
++MODEL='eevee-metal-box-color-mips-v1'
++
++def _sha(data):return hashlib.sha256(data).hexdigest()
++
++def requirements(value,result):
++    if isinstance(value,dict):
++        if value.get('op')=='texture_box_ref' and value.get('projection')=='BOX':
++            name=(value.get('ref')or{}).get('image');model=(value.get('box')or{}).get('model')
++            if not isinstance(name,str) or model!=MODEL:raise ValueError('BOX image transport has invalid model/image ownership')
++            result.add(name)
++        for child in value.values():requirements(child,result)
++    elif isinstance(value,(list,tuple)):
++        for child in value:requirements(child,result)
++
++def capture(image,payload,cache=None):
++    if bpy.app.version!=(5,3,0) or bpy.app.build_hash!=b'02f0899d78e3':raise ValueError('Native BOX mip source build changed; requalify the image route')
++    if bpy.context.preferences.system.gpu_backend!='METAL':raise ValueError('Native BOX mip preparation requires its qualified Metal source profile')
++    if not bpy.app.background:raise ValueError('Native BOX mip preparation belongs to the disposable export worker')
++    # Reject alpha/profile/source variants before GPU allocation. Byte PNG RGB
++    # is opaque; the independent compiler audit checks its decoded base SHA.
++    if payload[:8]!=b'\x89PNG\r\n\x1a\n' or payload[12:16]!=b'IHDR' or len(payload)<33:
++        raise ValueError('BOX image mip transport needs actual RGB8 PNG source bytes')
++    width,height=struct.unpack('>II',payload[16:24])
++    if (width,height)!=(1024,1024) or payload[24:29]!=bytes((8,2,0,0,0)):
++        raise ValueError('BOX image mip transport needs noninterlaced1024-square RGB8 PNG bytes')
++    if tuple(image.size)!=(width,height) or image.is_float or image.alpha_mode!='STRAIGHT' or image.colorspace_settings.name!='sRGB' or image.is_dirty or image.source!='FILE' or image.file_format!='PNG':
++        raise ValueError('BOX image mip transport source metadata changed before publication')
++    key=(_sha(payload),MODEL,'5.3.0/02f0899d78e3/METAL/SRGB8_A8/paired-native')
++    if cache is not None and key in cache:
++        compressed,metadata=cache[key]
++        return compressed,dict(metadata)
++    import gpu,numpy as np
++    from gpu_extras.batch import batch_for_shader
++    gpu.init()
++    if gpu.platform.backend_type_get()!='METAL':raise ValueError('BOX image mip transport requires the qualified native Metal backend')
++    native=gpu.texture.from_image(image)
++    if native.format!='SRGB8_A8':raise ValueError('BOX image mip transport native storage is not SRGB8_A8')
++    info=gpu.types.GPUShaderCreateInfo();info.vertex_in(0,'VEC2','pos');info.fragment_out(0,'VEC4','fragColor');info.sampler(0,'FLOAT_2D','sourceTex');info.push_constant('VEC4','levelInfo')
++    info.vertex_source('void main(){gl_Position=vec4(pos,0.0,1.0);}')
++    info.fragment_source('void main(){fragColor=textureLod(sourceTex,gl_FragCoord.xy/levelInfo.y,levelInfo.x);}')
++    shader=gpu.shader.create_from_info(info);batch=batch_for_shader(shader,'TRI_FAN',{'pos':[(-1,-1),(1,-1),(1,1),(-1,1)]})
++    previous=gpu.state.viewport_get();blend=gpu.state.blend_get();depth=gpu.state.depth_test_get();levels=[];data=[]
++    try:
++        for level in range(11):
++            extent=1024>>level;target=gpu.types.GPUTexture((extent,extent),format='SRGB8_A8');frame=gpu.types.GPUFrameBuffer(color_slots=[target])
++            try:
++                with frame.bind():
++                    gpu.state.viewport_set(0,0,extent,extent);gpu.state.blend_set('NONE');gpu.state.depth_test_set('NONE');shader.bind();shader.uniform_sampler('sourceTex',native);shader.uniform_float('levelInfo',[level,extent,0,0]);batch.draw(shader)
++                    values=np.asarray(frame.read_color(0,0,extent,extent,4,0,'UBYTE'),np.uint8).copy();raw=values.tobytes()
++                if len(raw)!=extent*extent*4 or not np.all(values[:,:,3]==255):raise ValueError('BOX image mip transport requires opaque complete RGBA8 storage')
++                levels.append({'level':level,'width':extent,'height':extent,'sha256':_sha(raw)})
++                if level:data.append(raw)
++            finally:frame=None;target=None
++    finally:
++        gpu.state.viewport_set(*previous);gpu.state.blend_set(blend);gpu.state.depth_test_set(depth)
++    raw=b''.join(data)
++    if len(raw)!=1398100:raise ValueError('BOX mip chain exceeds its fixed byte/layout budget')
++    compressed=zlib.compress(raw,9)
++    metadata={'schemaVersion':1,'model':MODEL,'nativeVersion':'5.3.0','nativeBuild':'02f0899d78e3','nativeBackend':'METAL','sourceSha256':_sha(payload),'decodedRgbaSha256':levels[0]['sha256'],'uncompressedBytes':len(raw),'sha256':_sha(compressed),'bytes':len(compressed),'levels':levels[1:]}
++
++    if cache is not None:cache[key]=(compressed,metadata)
++    return compressed,dict(metadata)
+diff --git a/packages/blender-addon/material_compiler.py b/packages/blender-addon/material_compiler.py
+index 0b6f4f190691d52359b680ab2b468d17aad068a9..c2d0dcdf1e6e0e0ea462b506270de7edac792a2f 100644
+--- a/packages/blender-addon/material_compiler.py
++++ b/packages/blender-addon/material_compiler.py
+@@ -28,0 +29,5 @@ import bpy
++if __package__:
++    from . import box_image_mips, box_image_ir
++else:
++    import box_image_mips
++    import box_image_ir
+@@ -3019 +3024 @@ def _collect_texture_ref_images(value, names) -> None:
+-        if value.get("op") == "texture_ref":
++        if value.get("op") in {"texture_ref", "texture_box_ref"}:
+@@ -3518,0 +3524,7 @@ def _plan_tsl_program(
++    try:box_image_ir.validate_channels(channels,tree)
++    except ValueError as error:
++        for entry in channels:
++            if box_image_ir.requires(entry.get('tslIr')):
++                for key in ('tslIr','tslIrHash','tslIrBytes','tslIrApproximations'):entry.pop(key,None)
++                entry['tslIrRefusal']=str(error)
++        object_info_issues.append(MaterialIssue('material.box-color-alpha-domain-unproven',material.name,str(error),'Keep direct opaque Alpha at 1 for this color-only slice; the authored graph stays in Blender.',object_names))
+@@ -5883,0 +5896 @@ def _ir_runtime_needs(value, needs) -> None:
++            ("texture_box_ref", "eevee-metal-box-color-mips-v1"),
+@@ -8341,0 +8355,4 @@ def with_compiled_materials(
++                    # Fresh BOX color has its own exact image companion; keep
++                    # only its owned stock slot neutral and standards-valid.
++                    try:box_image_ir.prepare_carrier(generated, decision.channel_plan)
++                    except ValueError as error:raise MaterialCompileError(f'Cannot prepare the private BOX color carrier for "{decision.material_name}": {error}') from error
+diff --git a/packages/blender-addon/normal_input_bounds.py b/packages/blender-addon/normal_input_bounds.py
+index 3f8f9d07ecd7fa49fe38cc20e2e84826d3cac305..2e022519ecbcc7676a885357d03d599a4c8ea429 100644
+--- a/packages/blender-addon/normal_input_bounds.py
++++ b/packages/blender-addon/normal_input_bounds.py
+@@ -36,0 +37,2 @@ def image_ranges(expression):
++    if expression.get('projection')=='BOX':
++        raise ValueError('Normal Map tangent blended BOX composition has no qualified frame/sampler port yet; color-only image support does not certify this normal')
+@@ -80,0 +83 @@ def bounds(expression):
++    elif op=='texture_box_ref':raise ValueError('Normal Map tangent blended BOX composition has no qualified frame/sampler port yet')
+diff --git a/packages/blender-addon/shader_domains.py b/packages/blender-addon/shader_domains.py
+index 4dcac2cdad92e0c20a2d56aff9f3e1a6adab20f6..177689131d4b18158d852f155c7ad5699156d728 100644
+--- a/packages/blender-addon/shader_domains.py
++++ b/packages/blender-addon/shader_domains.py
+@@ -14 +14 @@ _SHADER = {"squeeze_native", "noise_field_nearest", "uv", "uv_active", "generate
+-           "texture_ref", "tex_image", "vector_transform", "geometry_context", "camera_data_native", "normal_map_native", "normal_view_native", "tangent_native", "normal_map_tangent_native", "bump_passthrough_native", "bump_height_native"}
++           "texture_ref", "texture_box_ref", "tex_image", "vector_transform", "geometry_context", "camera_data_native", "normal_map_native", "normal_view_native", "tangent_native", "normal_map_tangent_native", "bump_passthrough_native", "bump_height_native"}
+diff --git a/packages/blender-addon/tsl_ir.py b/packages/blender-addon/tsl_ir.py
+index d98d302e07188c5228ce5c632b111d47cb5cf3ac..6eda57dcd9275f7357dce09d04d7a9385be007ef 100644
+--- a/packages/blender-addon/tsl_ir.py
++++ b/packages/blender-addon/tsl_ir.py
+@@ -2020,4 +2020,5 @@ def _emit_output(node, from_socket, stack=()):
+-            _refuse(
+-                "Image BOX projection with blend > 0 has no cell yet "
+-                "(sharp box only)"
+-            )
++            if __package__:
++                from . import box_image_ir
++            else:
++                import box_image_ir
++            return box_image_ir.emit(node,from_socket,stack,engine=get_evaluation_engine(),allow_refs=_allow_texture_refs,emit_vector=emit_input,refuse=_refuse)
+diff --git a/packages/blendlink/blender/export_scene.py b/packages/blendlink/blender/export_scene.py
+index 472c2a7f0da4be36ea2ddf29f75757ad6450b7cf..0b017cb32ab2d2889adef9e4cb666c7bd45a913a 100644
+--- a/packages/blendlink/blender/export_scene.py
++++ b/packages/blendlink/blender/export_scene.py
+@@ -832 +832 @@ def _collect_program_image_names(value, names) -> None:
+-        if value.get("op") == "texture_ref":
++        if value.get("op") in {"texture_ref", "texture_box_ref"}:
+@@ -849 +849 @@ _PROGRAM_IMAGE_MIME = {
+-def _publish_program_image(name: str, out_path: str) -> dict:
++def _publish_program_image(name: str, out_path: str, *, box_mips=False, box_cache=None) -> dict:
+@@ -886,0 +887,8 @@ def _publish_program_image(name: str, out_path: str) -> dict:
++    mip_data = None
++    mip_path = None
++    if box_mips:
++        with open(published_path, "rb") as handle:source_payload = handle.read()
++        compressed, mip_data = material_compiler.box_image_mips.capture(image, source_payload, box_cache)
++        mip_path = published_path + ".boxmips.deflate"
++        with open(mip_path, "wb") as handle:handle.write(compressed)
++        mip_data["file"] = os.path.basename(mip_path)
+@@ -887,0 +896 @@ def _publish_program_image(name: str, out_path: str) -> dict:
++        **({"boxMipmaps": mip_data, "mipPath": mip_path} if mip_data else {}),
+@@ -944,0 +954,4 @@ def publish_material_programs(material_plan, out_path: str) -> dict | None:
++    box_names = set()
++    material_compiler.box_image_mips.requirements(materials, box_names)
++    if len(box_names) > 8:raise ValueError("BOX image transport exceeds its eight-image transaction budget")
++    box_cache = {}
+@@ -946 +959 @@ def publish_material_programs(material_plan, out_path: str) -> dict | None:
+-        published = _publish_program_image(name, out_path)
++        published = _publish_program_image(name, out_path, box_mips=name in box_names, box_cache=box_cache)
+@@ -947,0 +961 @@ def publish_material_programs(material_plan, out_path: str) -> dict | None:
++        if "mipPath" in published:texture_paths.append(published.pop("mipPath"))
+diff --git a/packages/blendlink/conformance/tsl-ir-ops.json b/packages/blendlink/conformance/tsl-ir-ops.json
+index ad3ef36f5211e2166e899c20f748bd3125cffbab..4a6f424f1ae94aacafee4362d3c08d9aa70fd660 100644
+--- a/packages/blendlink/conformance/tsl-ir-ops.json
++++ b/packages/blendlink/conformance/tsl-ir-ops.json
+@@ -67,0 +68 @@
++    "texture_box_ref",
+diff --git a/packages/blendlink/src/compiledMaterialPrograms.ts b/packages/blendlink/src/compiledMaterialPrograms.ts
+index 16fb6db515141f26188f4af6e12b1638e5435ffe..cfce4b2cee403915f3ec4115a1e5fb262c55246c 100644
+--- a/packages/blendlink/src/compiledMaterialPrograms.ts
++++ b/packages/blendlink/src/compiledMaterialPrograms.ts
+@@ -0,0 +1 @@
++import { checkedBoxCompanion } from './tslBoxImage.js'
+@@ -72,0 +74 @@ export function readMaterialProgramImageBytes(bytes: Uint8Array, sidecarPath: st
++    if(image.boxMipmaps){const companion=checkedBoxCompanion(image.boxMipmaps),mipFile=imageFile(companion.file);result.set(mipFile,readFileSync(join(dirname(sidecarPath),mipFile)))}
+@@ -150,0 +153 @@ async function verifiedImages(document: Record<string, unknown>, bytes: Material
++    if(image.boxMipmaps&&checkedBoxCompanion(image.boxMipmaps).sourceSha256!==createHash('sha256').update(payload).digest('hex'))throw new Error('BOX native mip source hash disagrees with original PNG bytes')
+@@ -303,0 +307 @@ export async function validatedBaseColorProgramMaterials(
++    loadProgramMipBytes:async(_name,entry)=>{const companion=checkedBoxCompanion(entry.boxMipmaps),payload=imageBytes?.get(imageFile(companion.file));if(!payload)throw new Error('BOX native mip companion is missing from the compiled artifact');return payload},
+@@ -439 +443 @@ export async function validatedBaseColorProgramMaterials(
+-              if (value.op === 'texture_ref') {
++              if (value.op === 'texture_ref'||value.op==='texture_box_ref') {
+diff --git a/packages/blendlink/src/materialProgramDocument.ts b/packages/blendlink/src/materialProgramDocument.ts
+index 06c19eb6f4141d6fdc18831df0d460715b445817..6ce66b9759af1deaa6cb60301aae1f277e964de4 100644
+--- a/packages/blendlink/src/materialProgramDocument.ts
++++ b/packages/blendlink/src/materialProgramDocument.ts
+@@ -22,0 +23,2 @@ export interface MaterialProgramImage {
++  /** Immutable native mip storage for the bounded BOX color route. */
++  boxMipmaps?: import('./tslBoxImage.js').BoxImageMipCompanion
+diff --git a/packages/blendlink/src/materialProgramRendererRequirements.ts b/packages/blendlink/src/materialProgramRendererRequirements.ts
+index 01ad65206fde979b09c94f1e04c3768e72914e58..222d7272ff7199014725436415adb13e3c7a7c6c 100644
+--- a/packages/blendlink/src/materialProgramRendererRequirements.ts
++++ b/packages/blendlink/src/materialProgramRendererRequirements.ts
+@@ -19 +19,2 @@ const SHADOW_EXCLUSION = {op:'shadow_exclusion_native',model:'eevee53-white-shad
+-const freshPrograms = [SQUEEZE, MAGIC, RADIAL_WIDTH, RADIAL_COORDINATES, REPEAT, VERTEX_ALPHA, SHADOW_EXCLUSION]
++const BOX_IMAGE = {op:'texture_box_ref',model:'eevee-metal-box-color-mips-v1'}
++const freshPrograms = [SQUEEZE, MAGIC, RADIAL_WIDTH, RADIAL_COORDINATES, REPEAT, VERTEX_ALPHA, SHADOW_EXCLUSION, BOX_IMAGE]
+@@ -39 +40 @@ export function nodeRendererProgramLabel(programs: readonly NodeRendererProgramS
+-    : program.op === MAGIC.op ? 'Magic Texture' : program.op === RADIAL_WIDTH.op ? 'Radial Tiling Segment Width' : program.op === RADIAL_COORDINATES.op ? 'Radial Tiling Segment Coordinates' : program.op === REPEAT.op ? 'Repeat Zone' : program.op === VERTEX_ALPHA.op ? 'Vertex Color Alpha' : program.op === SHADOW_EXCLUSION.op ? 'Light Path shadow exclusion' : 'live material program'))].join(' and ') || 'Live material program'
++    : program.op === MAGIC.op ? 'Magic Texture' : program.op === RADIAL_WIDTH.op ? 'Radial Tiling Segment Width' : program.op === RADIAL_COORDINATES.op ? 'Radial Tiling Segment Coordinates' : program.op === REPEAT.op ? 'Repeat Zone' : program.op === VERTEX_ALPHA.op ? 'Vertex Color Alpha' : program.op === SHADOW_EXCLUSION.op ? 'Light Path shadow exclusion' : program.op === BOX_IMAGE.op ? 'BOX Image Texture' : 'live material program'))].join(' and ') || 'Live material program'
+diff --git a/packages/blendlink/src/tslBoxImage.test.ts b/packages/blendlink/src/tslBoxImage.test.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..4f7bcf22c6c4ac04dabfa8fda27995c435555d10
+--- /dev/null
++++ b/packages/blendlink/src/tslBoxImage.test.ts
+@@ -0,0 +1,90 @@
++import { createHash } from 'node:crypto'
++import { deflateSync } from 'node:zlib'
++import { DataTexture, SRGBColorSpace, Source, BufferGeometry, Float32BufferAttribute, Mesh, MeshStandardMaterial } from 'three'
++import { describe, expect, it } from 'vitest'
++import { BOX_IMAGE_BLEND, BOX_IMAGE_MODEL, assertBoxTexturePrepared, assertBoxRenderer, checkedBoxCompanion, configureBoxClone, cloneBoxImageSource, decodeBoxMipCompanion, readBoxMipResponse, prepareBoxTexture, type BoxImageMipCompanion } from './tslBoxImage.js'
++import { loadProgramTextures, installTslMaterials, buildMaterialProgram, installProgramIntoMaterial } from './tslMaterialRuntime.js'
++import { normalInputBounds } from './tslNormalInputBounds.js'
++import { assertLegacyMaterialCarriers } from './materialProgramDocument.js'
++import { validateNodeRendererRequirement } from './materialProgramRendererRequirements.js'
++import type { MaterialProgramsDocument } from './materialProgramDocument.js'
++const sha=(bytes:Uint8Array)=>createHash('sha256').update(bytes).digest('hex')
++const base=new Uint8Array(4194304);for(let i=0;i<base.length;i+=4)base.set([120,130,140,255],i)
++const levels=Array.from({length:10},(_,i)=>{const size=512>>i,data=new Uint8Array(size*size*4);for(let j=0;j<data.length;j+=4)data.set([120,130,140,255],j);return{data,width:size,height:size}})
++const payload=deflateSync(Buffer.concat(levels.map(l=>l.data)))
++const descriptor:BoxImageMipCompanion={schemaVersion:1,model:BOX_IMAGE_MODEL,nativeVersion:'5.3.0',nativeBuild:'02f0899d78e3',nativeBackend:'METAL',file:'original.boxmips.deflate',bytes:payload.length,sha256:sha(payload),sourceSha256:'f'.repeat(64),decodedRgbaSha256:sha(base),uncompressedBytes:1398100,levels:levels.map((l,i)=>({level:i+1,width:l.width,height:l.height,sha256:sha(l.data)}))}
++const expression:any={op:'texture_box_ref',model:BOX_IMAGE_MODEL,sourceEngine:'EEVEE',projection:'BOX',box:{schemaVersion:1,model:BOX_IMAGE_MODEL,blend:BOX_IMAGE_BLEND,normal:{op:'geometry_context',model:'primary-triangles-v1',sourceEngine:'EEVEE',output:'object-normal',normalStorage:'SNORM10'}},ref:{image:'Original',interpolation:'Linear',extension:'REPEAT',samplingModel:BOX_IMAGE_MODEL},image:{name:'Original',width:1024,height:1024,colorSpace:'sRGB'},interpolation:'Linear',extension:'REPEAT',output:'color',vector:{op:'object_coords'}}
++function texture(){const map=new DataTexture(base.slice(),1024,1024);map.colorSpace=SRGBColorSpace;map.flipY=false;return map}
++function document():MaterialProgramsDocument{return {schemaVersion:1,model:'blendlink-material-programs-v1',materials:{Material:{channels:{Metallic:{tslIr:{schemaVersion:1,model:'blendlink-tsl-ir-v1',output:{op:'const_float',value:0}}},Roughness:{tslIr:{schemaVersion:1,model:'blendlink-tsl-ir-v1',output:{op:'const_float',value:.5}}},Emission:{tslIr:{schemaVersion:1,model:'blendlink-tsl-ir-v1',output:{op:'const_vec3',value:[0,0,0]}}},Alpha:{tslIr:{schemaVersion:1,model:'blendlink-tsl-ir-v1',output:{op:'const_float',value:1}}},'Base Color':{tslIr:{schemaVersion:1,model:'blendlink-tsl-ir-v1',output:structuredClone(expression)}}}}},images:{Original:{file:'original.png',bytes:1,hash:'f'.repeat(16),mime:'image/png',width:1024,height:1024,colorSpace:'sRGB',boxMipmaps:structuredClone(descriptor)}}}}
++describe('immutable BOX color mip preparation',()=>{
++ it('reconstructs the full fixed chain from verified bytes without browser/GPU APIs',async()=>{const chain=await decodeBoxMipCompanion(descriptor,payload,base);expect(chain).toHaveLength(11);expect(chain[0]!.data).not.toBe(base);expect(chain[10]!.data).toEqual(new Uint8Array([120,130,140,255]))})
++ it('refuses corrupted source, changed compressed bytes, changed level hashes and malformed census',async()=>{
++  const changed=base.slice();changed[0]^=1;await expect(decodeBoxMipCompanion(descriptor,payload,changed)).rejects.toThrow(/base pixels/)
++  const bad=Uint8Array.from(payload);bad[0]^=1;await expect(decodeBoxMipCompanion(descriptor,bad,base)).rejects.toThrow(/mip bytes changed/)
++  const wrong=structuredClone(descriptor);wrong.levels[0]!.sha256='0'.repeat(64);await expect(decodeBoxMipCompanion(wrong,payload,base)).rejects.toThrow(/level hash/)
++  const missing=structuredClone(descriptor);missing.levels.pop();expect(()=>checkedBoxCompanion(missing)).toThrow(/companion/)
++  const extra=deflateSync(Buffer.concat([Buffer.alloc(1398100),Buffer.alloc(1)]));await expect(decodeBoxMipCompanion({...descriptor,bytes:extra.length,sha256:sha(extra)},extra,base)).rejects.toThrow(/budget/)
++ })
++ it('guards owned map revisions and isolates clone Source versions',async()=>{
++  const original=texture(),ready=await prepareBoxTexture(original,descriptor,payload),a=cloneBoxImageSource(ready);configureBoxClone(ready,a)
++  const b=cloneBoxImageSource(ready);configureBoxClone(ready,b);assertBoxTexturePrepared(a);assertBoxTexturePrepared(ready)
++  a.needsUpdate=true;expect(()=>assertBoxTexturePrepared(a)).toThrow(/ownership/);assertBoxTexturePrepared(b)
++  b.mipmaps=[];expect(()=>assertBoxTexturePrepared(b)).toThrow(/ownership/);ready.dispose();expect(()=>assertBoxTexturePrepared(ready)).toThrow(/ownership/);a.dispose();b.dispose();original.dispose()
++ })
++ it('caches one verified source per image and distinct flat/BOX sampler clones; disposes all ownership',async()=>{
++  let loads=0,mips=0,disposed=0;const original=texture();original.addEventListener('dispose',()=>disposed++)
++  const set=await loadProgramTextures(document(),'http://example.test/scene.materials.json',{loadProgramTexture:async()=>{loads++;return original},loadProgramMipBytes:async()=>{mips++;return payload}})
++  const first=set!.resolver(expression.ref) as DataTexture,again=set!.resolver(expression.ref),flat=set!.resolver({image:'Original',interpolation:'Linear',extension:'REPEAT'}) as DataTexture
++  expect(first).toBe(again);expect(flat).not.toBe(first);expect(flat.mipmaps).toHaveLength(0);assertBoxTexturePrepared(first);expect(loads).toBe(1);expect(mips).toBe(1);expect(disposed).toBe(1)
++  set!.dispose();expect(()=>assertBoxTexturePrepared(first)).toThrow(/ownership/);expect(base[0]).toBe(120)
++ })
++ it('cleans decoded ownership on companion failure and cancellation before any install',async()=>{
++  let disposed=0;const original=texture();original.addEventListener('dispose',()=>disposed++)
++  await expect(loadProgramTextures(document(),'http://example.test/x',{loadProgramTexture:async()=>original,loadProgramMipBytes:async()=>{throw new Error('offline companion')}})).rejects.toThrow(/offline/);expect(disposed).toBe(1)
++  const controller=new AbortController(),source=texture();let cleaned=0;source.addEventListener('dispose',()=>cleaned++)
++  await expect(loadProgramTextures(document(),'http://example.test/x',{signal:controller.signal,loadProgramTexture:async()=>source,loadProgramMipBytes:async()=>{controller.abort();return payload}})).rejects.toMatchObject({name:'AbortError'});expect(cleaned).toBe(1)
++ })
++ it('preserves the last material on companion failure and restores a successful scoped clone',async()=>{
++  const geometry=new BufferGeometry().setAttribute('position',new Float32BufferAttribute([0,0,0,1,0,0,0,1,0],3)).setAttribute('normal',new Float32BufferAttribute([0,0,1,0,0,1,0,0,1],3)),source=new MeshStandardMaterial(),root=new Mesh(geometry,source)
++  source.vertexColors=true;geometry.setAttribute('color',new Float32BufferAttribute([.25,.5,.75,.25,.5,.75,.25,.5,.75],3));source.userData.blendlink_source_material='Material';root.userData.blendlink_tsl_runtime={schemaVersion:1,objectSpace:'blender-z-up',geometryContext:['object-normal'],requiresNodeRenderer:{schemaVersion:1,model:'live-material-programs-v1',programs:[{op:'texture_box_ref',model:BOX_IMAGE_MODEL}]}}
++  const options={root,descriptor:{materialPrograms:{url:'http://example.test/x',bytes:1,hash:'x',materials:1}},loadPrograms:async()=>document(),loadProgramTexture:async()=>texture()}
++  await expect(installTslMaterials({...options,loadProgramMipBytes:async()=>{throw new Error('missing mip')}})).rejects.toThrow(/missing mip/);expect(root.material).toBe(source)
++  const installed=await installTslMaterials({...options,loadProgramMipBytes:async()=>payload});expect(installed.applied).toBe(1);expect(installed.skipped).toEqual([]);expect(root.material).not.toBe(source);expect((root.material as any).completeProgramColor).toBe(true);installed.dispose();expect(root.material).toBe(source);source.dispose();geometry.dispose()
++ })
++ it('carries opaque RGB ownership across the public builder/installer seam and rejects omitted state/skips',async()=>{
++  const doc=document(),set=await loadProgramTextures(doc,'http://example.test/x',{loadProgramTexture:async()=>texture(),loadProgramMipBytes:async()=>payload}),options={textures:set!.resolver,objectSpace:{basis:'blender-z-up' as const}},built=buildMaterialProgram(doc.materials.Material!.channels,options),source=new MeshStandardMaterial({vertexColors:true,transparent:true,opacity:.25,alphaToCoverage:true})
++  expect(built.materialState).toEqual({model:'eevee53-box-color-opaque-v1',visibleAlpha:1});expect(installProgramIntoMaterial.length).toBe(2)
++  expect(()=>installProgramIntoMaterial(source,built.nodes)).toThrow(/materialState/)
++  expect(()=>installProgramIntoMaterial(source,{...built.nodes})).toThrow(/materialState/)
++  expect(()=>installProgramIntoMaterial(source,built.nodes,{model:'eevee53-static-shadow-alpha-v1',visibleAlpha:1})).toThrow(/materialState/)
++  const shadowChannels=structuredClone(doc.materials.Material!.channels);shadowChannels.Alpha!.tslIr.output={op:'shadow_exclusion_native',model:'eevee53-white-shadow-branch-v1',sourceProfile:'blender53-macos-metal-shadow-transparent-v1',visibleAlpha:1,input:{op:'const_float',value:1}}
++  expect(()=>buildMaterialProgram(shadowChannels,options)).toThrow(/Alpha1|Combined/)
++  shadowChannels['Base Color']!.tslIr.output={op:'const_vec3',value:[.3,.4,.5]}
++  const shadow=buildMaterialProgram(shadowChannels,{})
++  expect(()=>installProgramIntoMaterial(source,shadow.nodes,built.materialState)).toThrow(/Shadow material state/)
++  const clone=installProgramIntoMaterial(source,built.nodes,built.materialState);expect((clone as any).completeProgramColor).toBe(true);expect(clone.transparent).toBe(false);expect(clone.opacity).toBe(1);expect(clone.alphaToCoverage).toBe(false);expect(source.alphaToCoverage).toBe(true);expect(source.opacity).toBe(.25)
++  expect(()=>installProgramIntoMaterial(source,{...built.nodes,roughnessNode:undefined},built.materialState)).toThrow(/five/)
++  const bad=structuredClone(doc.materials.Material!.channels);bad.Alpha!.tslIr.output={op:'const_float',value:.5};expect(()=>buildMaterialProgram(bad,options)).toThrow(/Alpha1/)
++  delete bad.Alpha;expect(()=>buildMaterialProgram(bad,options)).toThrow(/five/)
++  clone.dispose();source.dispose();set!.dispose()
++ })
++ it('requires a fresh exact primitive declaration without changing historical flat image rules',async()=>{
++  const declaration={schemaVersion:1,model:'live-material-programs-v1',programs:[{op:'texture_box_ref',model:BOX_IMAGE_MODEL}]}
++  expect(validateNodeRendererRequirement(expression,undefined).issue).toMatch(/BOX Image Texture/)
++  expect(validateNodeRendererRequirement([expression,{op:'texture_ref'}],declaration).issue).toBeUndefined()
++  expect(validateNodeRendererRequirement({op:'texture_ref'},undefined).required).toEqual([])
++  const owner=new Mesh(new BufferGeometry(),new MeshStandardMaterial());owner.material.userData.blendlink_source_material='Material';owner.userData.blendlink_tsl_runtime={requiresNodeRenderer:declaration}
++  await expect(assertLegacyMaterialCarriers({root:owner,descriptor:{materialPrograms:{url:'x',bytes:1,hash:'x'}},loadPrograms:async()=>document()})).rejects.toThrow(/BOX Image Texture/);owner.geometry.dispose();owner.material.dispose()
++ })
++ it('bounds network byte reads before decompression',async()=>{
++  await expect(readBoxMipResponse(new Response(new Uint8Array([1,2,3])),2)).rejects.toThrow(/exceeds/)
++  await expect(readBoxMipResponse(new Response(new Uint8Array([1])),2)).rejects.toThrow(/truncated/)
++  expect(await readBoxMipResponse(new Response(new Uint8Array([1,2])),2)).toEqual(new Uint8Array([1,2]))
++ })
++ it('refuses actual renderers that silently clamp native anisotropy2',()=>{
++  expect(()=>assertBoxRenderer({getMaxAnisotropy:()=>1})).toThrow(/anisotropy2/)
++  expect(()=>assertBoxRenderer({})).toThrow(/anisotropy2/)
++  expect(()=>assertBoxRenderer({getMaxAnisotropy:()=>16})).not.toThrow()
++ })
++ it('never treats color sampling as qualified tangent NormalMap composition',()=>{expect(()=>normalInputBounds(expression,{textures:()=>texture()})).toThrow(/BOX composition/)} )
++})
+diff --git a/packages/blendlink/src/tslBoxImage.ts b/packages/blendlink/src/tslBoxImage.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..b34be4199da38a9cbd3d4c5b99626cc9dee53778
+--- /dev/null
++++ b/packages/blendlink/src/tslBoxImage.ts
+@@ -0,0 +1,119 @@
++/* SPDX-License-Identifier: MIT
++ * Independently written geometric BOX sampling and immutable data transport.
++ * Native mip bytes are exporter-owned assets, not a copied native kernel. */
++import { DataTexture, LinearFilter, LinearMipmapLinearFilter, NoColorSpace, RepeatWrapping, RGBAFormat, SRGBColorSpace, UnsignedByteType, type Texture } from 'three'
++import { Fn, If, abs, clamp, float, min, texture, uniform, vec2, vec3 } from 'three/tsl'
++import { buildGeometryContext } from './tslGeometryContext.js'
++import { TslIrError, type BuildTslOptions, type TslIrExpression } from './tslNodeRecipe.js'
++export const BOX_IMAGE_MODEL='eevee-metal-box-color-mips-v1'
++export const BOX_IMAGE_BLEND=0.09966777265071869
++export interface BoxImageMipCompanion {
++ schemaVersion:1;model:typeof BOX_IMAGE_MODEL;nativeVersion:'5.3.0';nativeBuild:'02f0899d78e3';nativeBackend:'METAL'
++ file:string;bytes:number;sha256:string;sourceSha256:string;decodedRgbaSha256:string;uncompressedBytes:1398100
++ levels:{level:number;width:number;height:number;sha256:string}[]
++}
++const fail=(message:string):never=>{throw new TslIrError('BOX image: '+message)}
++const hashPattern=/^[a-f0-9]{64}$/
++export function checkedBoxCompanion(value:unknown):BoxImageMipCompanion {
++ const c=value as BoxImageMipCompanion|undefined
++ if(!c||c.schemaVersion!==1||c.model!==BOX_IMAGE_MODEL||c.nativeVersion!=='5.3.0'||c.nativeBuild!=='02f0899d78e3'||c.nativeBackend!=='METAL'||typeof c.file!=='string'||!c.file||c.file.includes('/')||c.file.includes('\\')||/[\u0000?#:%]/.test(c.file)||c.file==='.'||c.file==='..'||!Number.isInteger(c.bytes)||c.bytes<1||c.bytes>1500000||c.uncompressedBytes!==1398100||![c.sha256,c.sourceSha256,c.decodedRgbaSha256].every(h=>typeof h==='string'&&hashPattern.test(h))||!Array.isArray(c.levels)||c.levels.length!==10) return fail('missing or invalid immutable native mip companion; re-export the scene')
++ for(let i=0;i<10;i++){const l=c.levels[i]!,size=512>>i;if(l.level!==i+1||l.width!==size||l.height!==size||!hashPattern.test(l.sha256))return fail('invalid native mip level census')}
++ return c
++}
++function aborted(signal?:AbortSignal):void {if(signal?.aborted){const error=new Error('BOX image preparation aborted');error.name='AbortError';throw error}}
++export async function boxBytesSha256(bytes:Uint8Array|Uint8ClampedArray):Promise<string>{return [...new Uint8Array(await crypto.subtle.digest('SHA-256',new Uint8Array(bytes).buffer))].map(n=>n.toString(16).padStart(2,'0')).join('')}
++/** Bounded companion response; do not buffer an arbitrarily large error body. */
++export async function readBoxMipResponse(response:Response,expected:number,signal?:AbortSignal):Promise<Uint8Array>{
++ if(!response.body)return fail('native mip response has no bytes')
++ const reader=response.body.getReader(),chunks:Uint8Array[]=[];let total=0
++ try{while(true){aborted(signal);const part=await reader.read();if(part.done)break;total+=part.value.length;if(total>expected)return fail('native mip response exceeds its byte pin');chunks.push(part.value)}}finally{await reader.cancel().catch(()=>{});reader.releaseLock()}
++ aborted(signal);if(total!==expected)return fail('native mip response is truncated')
++ const bytes=new Uint8Array(total);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.length}return bytes
++}
++export async function decodeBoxMipCompanion(value:unknown,payload:Uint8Array,base:Uint8Array|Uint8ClampedArray,signal?:AbortSignal):Promise<{data:Uint8Array;width:number;height:number}[]> {
++ const c=checkedBoxCompanion(value);aborted(signal)
++ if(payload.byteLength!==c.bytes||await boxBytesSha256(payload)!==c.sha256)return fail('native mip bytes changed; re-export and republish together')
++ if(base.byteLength!==4194304||await boxBytesSha256(base)!==c.decodedRgbaSha256)return fail('decoded base pixels disagree with native storage; use the original PNG and re-export')
++ for(let i=3;i<base.length;i+=4)if(base[i]!==255)return fail('native color transport requires opaque base pixels')
++ const stream=new Blob([new Uint8Array(payload)]).stream().pipeThrough(new DecompressionStream('deflate')),reader=stream.getReader(),chunks:Uint8Array[]=[];let total=0
++ try {while(true){aborted(signal);const item=await reader.read();if(item.done)break;total+=item.value.length;if(total>c.uncompressedBytes)return fail('inflated native mips exceed the fixed byte budget');chunks.push(item.value)}}finally{await reader.cancel().catch(()=>{});reader.releaseLock()}
++ aborted(signal);if(total!==c.uncompressedBytes)return fail('truncated native mip chain')
++ const bytes=new Uint8Array(total);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.length}
++ const levels=[{data:new Uint8Array(base),width:1024,height:1024}];offset=0
++ for(const l of c.levels){const length=l.width*l.height*4,data=bytes.subarray(offset,offset+length);offset+=length;if(await boxBytesSha256(data)!==l.sha256)return fail('native mip level hash mismatch');for(let i=3;i<data.length;i+=4)if(data[i]!==255)return fail('native color mips must remain opaque');levels.push({data,width:l.width,height:l.height})}
++ aborted(signal);return levels
++}
++type Certificate={image:unknown;data:unknown;mipmaps:unknown;levels:unknown[];version:number;sourceVersion:number}
++const prepared=new WeakMap<Texture,Certificate>()
++function signature(map:Texture):Certificate {return{image:map.image,data:(map.image as any)?.data,mipmaps:map.mipmaps,levels:map.mipmaps.flatMap(l=>[l,(l as any).data]),version:map.version,sourceVersion:map.source.version}}
++function certify(map:Texture):void {prepared.set(map,signature(map));map.addEventListener('dispose',()=>prepared.delete(map))}
++export function assertBoxTexturePrepared(map:Texture):void {
++ const c=prepared.get(map)
++ if(!c||map.type!==UnsignedByteType||map.format!==RGBAFormat||map.colorSpace!==SRGBColorSpace||map.generateMipmaps||map.magFilter!==LinearFilter||map.minFilter!==LinearMipmapLinearFilter||map.wrapS!==RepeatWrapping||map.wrapT!==RepeatWrapping||map.anisotropy!==2||map.flipY||map.mipmaps.length!==11||c.image!==map.image||c.data!==(map.image as any)?.data||c.mipmaps!==map.mipmaps||c.version!==map.version||c.sourceVersion!==map.source.version)return fail('prepared image ownership/sampling changed; reinstall the material program')
++ for(let i=0;i<11;i++){const l=map.mipmaps[i] as any,size=1024>>i;if(c.levels[i*2]!==l||c.levels[i*2+1]!==l.data||l.width!==size||l.height!==size||!(l.data instanceof Uint8Array)||l.data.length!==size*size*4)return fail('prepared mip dimensions/data changed')}
++}
++/** Texture.copy increments the shared Source version. Construct a fresh owned
++ * Source instead, so configuring one sampler cannot invalidate its siblings. */
++export function cloneBoxImageSource(source:Texture):DataTexture {
++ assertBoxTexturePrepared(source)
++ const image=source.image as {data:Uint8Array;width:number;height:number},clone=new DataTexture(image.data,image.width,image.height,RGBAFormat,UnsignedByteType)
++ clone.colorSpace=SRGBColorSpace;clone.mipmaps=source.mipmaps.slice();clone.flipY=false;return clone
++}
++export function configureBoxClone(source:Texture,clone:Texture):void {assertBoxTexturePrepared(source);clone.magFilter=LinearFilter;clone.minFilter=LinearMipmapLinearFilter;clone.wrapS=clone.wrapT=RepeatWrapping;clone.anisotropy=2;clone.generateMipmaps=false;clone.flipY=false;clone.needsUpdate=true;certify(clone)}
++export async function prepareBoxTexture(source:Texture,companion:unknown,payload:Uint8Array,signal?:AbortSignal):Promise<DataTexture>{
++ let bytes:Uint8Array|Uint8ClampedArray
++ const image=source.image as {data?:unknown;width?:number;height?:number}
++ if(image.width!==1024||image.height!==1024||source.colorSpace!==SRGBColorSpace)return fail('decoded image metadata changed')
++ if(image.data instanceof Uint8Array||image.data instanceof Uint8ClampedArray)bytes=image.data
++ else {
++  const canvas=typeof OffscreenCanvas==='function'?new OffscreenCanvas(1024,1024):typeof document==='object'?Object.assign(document.createElement('canvas'),{width:1024,height:1024}):null
++  const context=canvas?.getContext('2d',{willReadFrequently:true,colorSpace:'srgb'}) as OffscreenCanvasRenderingContext2D|null
++  if(!canvas||!context)return fail('decoded PNG needs readable actual pixels')
++  try{context.drawImage(image as CanvasImageSource,0,0);bytes=context.getImageData(0,0,1024,1024).data}finally{canvas.width=canvas.height=0}
++ }
++ const levels=await decodeBoxMipCompanion(companion,payload,bytes,signal),map=new DataTexture(levels[0]!.data,1024,1024,RGBAFormat,UnsignedByteType)
++ map.mipmaps=levels;map.colorSpace=SRGBColorSpace;map.flipY=false;map.generateMipmaps=false;map.magFilter=LinearFilter;map.minFilter=LinearMipmapLinearFilter;map.wrapS=map.wrapT=RepeatWrapping;map.anisotropy=2;map.needsUpdate=true;certify(map);return map
++}
++// Unit-simplex inset construction: interior barycentric coordinates; outside,
++// project onto the remaining edge with a centered transition of width blend.
++// This independently written algebra does not promise native raw-weight ULPs.
++const boxWeights=Fn(([normal,blend]:any[])=>{
++ const magnitude:any=abs(normal),q:any=magnitude.div(magnitude.x.add(magnitude.y).add(magnitude.z)).toVar(),inset=float(1).sub(blend).div(float(3).sub(blend)),smallest=min(q.x,min(q.y,q.z)),weights:any=vec3(0).toVar()
++ const edge=(a:any,b:any)=>clamp(float(.5).add(a.div(a.add(b)).sub(.5).div(blend)),0,1)
++ If(smallest.greaterThanEqual(inset),()=>{weights.assign(q.sub(inset).div(float(1).sub(inset.mul(3))))}).ElseIf(q.x.equal(smallest),()=>{const w=edge(q.y,q.z).toVar();weights.assign(vec3(0,w,float(1).sub(w)))}).ElseIf(q.y.equal(smallest),()=>{const w=edge(q.x,q.z).toVar();weights.assign(vec3(w,0,float(1).sub(w)))}).Else(()=>{const w=edge(q.x,q.y).toVar();weights.assign(vec3(w,float(1).sub(w),0))});return weights
++})
++export interface BoxColorMaterialState {model:'eevee53-box-color-opaque-v1';visibleAlpha:1}
++const builtBoxNodes=new WeakMap<object,BoxColorMaterialState>()
++const builtBoxColors=new WeakSet<object>()
++const objectRecord=(value:unknown):value is Record<string,any>=>!!value&&typeof value==='object'&&!Array.isArray(value)
++export function boxColorMaterialState(channels:unknown):BoxColorMaterialState|undefined {
++ const contains=(value:unknown):boolean=>Array.isArray(value)?value.some(contains):objectRecord(value)?value.op==='texture_box_ref'&&value.model===BOX_IMAGE_MODEL||Object.values(value).some(contains):false
++ if(!contains(channels))return undefined
++ if(objectRecord(channels)&&Object.entries(channels).some(([name,entry])=>name!=='Base Color'&&contains(entry)))return fail('material composition currently qualifies Base Color only')
++ const c=channels as Record<string,any>,alpha=c.Alpha?.tslIr?.output
++ if(['Base Color','Metallic','Roughness','Emission','Alpha'].some(name=>!c[name]?.tslIr))return fail('material state needs all five core source channel programs')
++ if(!c['Base Color']?.tslIr||alpha?.op!=='const_float'||alpha.value!==1)return fail('complete color currently requires Base Color and direct opaque Alpha1 programs')
++ return Object.freeze({model:'eevee53-box-color-opaque-v1',visibleAlpha:1})
++}
++export function validateBoxMaterialNodes(nodes:Record<string,unknown>,state:unknown):BoxColorMaterialState|undefined {
++ if(state===undefined){if(builtBoxNodes.has(nodes)||(objectRecord(nodes.colorNode)&&builtBoxColors.has(nodes.colorNode)))return fail('built BOX material requires its returned materialState at installation');return undefined}
++ if(!objectRecord(state)||Object.keys(state).sort().join(',')!=='model,visibleAlpha'||state.model!=='eevee53-box-color-opaque-v1'||state.visibleAlpha!==1)return fail('material state needs the opaque Alpha1 BOX model')
++ if(['colorNode','metalnessNode','roughnessNode','emissiveNode','opacityNode'].some(name=>!objectRecord(nodes[name])||(nodes[name] as any).isNode!==true))return fail('material state requires all five complete built core channel nodes')
++ const wrapper=nodes.opacityNode as Record<string,any>,alpha=wrapper.isVarNode===true&&wrapper.intent===true?wrapper.node:wrapper
++ if(!objectRecord(alpha)||alpha.isConstNode!==true||alpha.nodeType!=='float'||alpha.value!==1)return fail('material state must match its built opaque Alpha1 node')
++ return {model:'eevee53-box-color-opaque-v1',visibleAlpha:1}
++}
++export function registerBoxMaterialNodes(nodes:Record<string,unknown>,state:BoxColorMaterialState):void {validateBoxMaterialNodes(nodes,state);builtBoxNodes.set(nodes,state);builtBoxColors.add(nodes.colorNode as object)}
++export function assertBoxRenderer(renderer:unknown):void {
++ const candidate=renderer as {getMaxAnisotropy?:()=>number}|undefined
++ const maximum=candidate?.getMaxAnisotropy?.()
++ if(typeof maximum!=='number'||!Number.isFinite(maximum)||maximum<2)return fail('actual renderer cannot preserve native anisotropy2; use a supported node renderer')
++}
++export function buildBoxImage(expression:TslIrExpression,p:any,map:Texture,options:BuildTslOptions):any {
++ const box=expression.box as any,ref=expression.ref as any,image=expression.image as any
++ if(expression.op!=='texture_box_ref'||expression.model!==BOX_IMAGE_MODEL||expression.sourceEngine!=='EEVEE'||expression.projection!=='BOX'||expression.output!=='color'||expression.interpolation!=='Linear'||expression.extension!=='REPEAT'||box?.schemaVersion!==1||box.model!==BOX_IMAGE_MODEL||box.blend!==BOX_IMAGE_BLEND||box.normal?.op!=='geometry_context'||box.normal.output!=='object-normal'||box.normal.sourceEngine!=='EEVEE'||box.normal.model!=='primary-triangles-v1'||box.normal.normalStorage!=='SNORM10'||ref?.samplingModel!==BOX_IMAGE_MODEL||ref.interpolation!=='Linear'||ref.extension!=='REPEAT'||image?.width!==1024||image.height!==1024||image.colorSpace!=='sRGB')return fail('unsupported source domain/model; keep the authored graph and use a qualified export')
++ assertBoxTexturePrepared(map)
++ const approved=uniform(1).onObjectUpdate(frame=>{assertBoxTexturePrepared(map);assertBoxRenderer(frame.renderer)}),n:any=buildGeometryContext(box.normal,options.objectSpace?.basis),w:any=boxWeights(n,float(box.blend)).toVar()
++ const chart=[vec2(n.x.lessThan(0).select(float(1).sub(p.y),p.y),p.z),vec2(n.y.greaterThan(0).select(float(1).sub(p.x),p.x),p.z),vec2(n.z.greaterThan(0).select(float(1).sub(p.y),p.y),p.x)],samples=chart.map(uv=>texture(map,uv))
++ return samples[0]!.mul(w.x).add(samples[1]!.mul(w.y)).add(samples[2]!.mul(w.z)).rgb.mul(approved)
++}
+diff --git a/packages/blendlink/src/tslMaterialProgram.ts b/packages/blendlink/src/tslMaterialProgram.ts
+index 2f3efded2ef2b76fc36bc1d9426e55ac91fcca24..820537c4ddaa6c723dcc3608ab25486ae35600d5 100644
+--- a/packages/blendlink/src/tslMaterialProgram.ts
++++ b/packages/blendlink/src/tslMaterialProgram.ts
+@@ -0,0 +1 @@
++import { boxColorMaterialState, registerBoxMaterialNodes, type BoxColorMaterialState } from './tslBoxImage.js'
+@@ -103,2 +104,2 @@ export interface BuiltMaterialProgram {
+-  /** Explicit owned render state for the complete static shadow program. */
+-  materialState?: ShadowMaterialState
++  /** Pass this complete program's explicit ownership to the installer. */
++  materialState?: ShadowMaterialState | BoxColorMaterialState
+@@ -214,3 +215,3 @@ export function buildOptionsFor(
+- * defect, not a fidelity downgrade). Returns only nodes — never a
+- * material; the installer owns clone construction because the null-slot
+- * restore list must be derived from a FRESHLY constructed clone.
++ * defect, not a fidelity downgrade). Fresh BOX state requires zero skips.
++ * Returns nodes and any required material state, never a material; the
++ * installer owns clone construction and its fresh null-slot restore list.
+@@ -226,0 +228,3 @@ export function buildMaterialProgram(
++  const boxState = boxColorMaterialState(channels)
++  if (materialState && boxState) fail('Combined BOX color and shadow material state is not qualified')
++  const completeState = materialState ?? boxState
+@@ -251,0 +256,3 @@ export function buildMaterialProgram(
++  } else if (boxState) {
++    if (skipped.length) fail('BOX material state requires zero runtime channel skips')
++    registerBoxMaterialNodes(nodes, boxState)
+@@ -253 +260 @@ export function buildMaterialProgram(
+-  return { nodes, skipped, ...(materialState ? { materialState } : {}) }
++  return { nodes, skipped, ...(completeState ? { materialState: completeState } : {}) }
+diff --git a/packages/blendlink/src/tslMaterialRuntime.ts b/packages/blendlink/src/tslMaterialRuntime.ts
+index dc0d063fd0f31480307dc33114e1e06337b9bd37..c8b1f48f68e549c1aab78c9db363000251841f93 100644
+--- a/packages/blendlink/src/tslMaterialRuntime.ts
++++ b/packages/blendlink/src/tslMaterialRuntime.ts
+@@ -2,0 +3,3 @@ export type { ShadowMaterialState } from './tslShadowExclusion.js'
++import { irInspectionChildren } from './tslIrInspection.js'
++import { BOX_IMAGE_MODEL, checkedBoxCompanion, prepareBoxTexture, configureBoxClone, cloneBoxImageSource, readBoxMipResponse, validateBoxMaterialNodes, type BoxColorMaterialState } from './tslBoxImage.js'
++export type { BoxColorMaterialState } from './tslBoxImage.js'
+@@ -103,0 +107,2 @@ export interface InstallTslMaterialsOptions {
++  /** Override companion transport only; byte count/hash/layout remain mandatory. */
++  loadProgramMipBytes?: (name: string, entry: MaterialProgramImage, url: string) => Promise<Uint8Array>
+@@ -145 +150 @@ export function installProgramIntoMaterial(
+-  materialState: ShadowMaterialState | undefined = undefined,
++  materialState: ShadowMaterialState | BoxColorMaterialState | undefined = undefined,
+@@ -150,3 +155,2 @@ export function installProgramIntoMaterial(
+-/** Clone ownership is explicit: Vertex Alpha controls its scalar binding;
+- * static shadow programs reuse that complete RGB/explicit Alpha setup so
+- * implicit carrier or vertex RGBA cannot multiply their owned channels. */
++/** Explicit ownership suppresses implicit carrier RGB/Alpha for complete
++ * shadow or BOX programs. Historical programs keep their generic clone. */
+@@ -157 +161 @@ function installCompiledProgramMaterial(
+-  materialState?: ShadowMaterialState,
++  materialState?: ShadowMaterialState | BoxColorMaterialState,
+@@ -159 +163,3 @@ function installCompiledProgramMaterial(
+-  const shadowState = validateShadowMaterialNodes(nodes, materialState, message => { throw new TslIrError(message) })
++  const isBoxState = materialState?.model === 'eevee53-box-color-opaque-v1'
++  const boxState = validateBoxMaterialNodes(nodes, isBoxState ? materialState : undefined)
++  const shadowState = validateShadowMaterialNodes(nodes, isBoxState ? undefined : materialState, message => { throw new TslIrError(message) })
+@@ -163,2 +169,2 @@ function installCompiledProgramMaterial(
+-  const clone = ownsVertexAlphaOpacity || shadowState
+-    ? createOwnedVertexAlphaMaterial(Boolean(physical),shadowState ? true : nodes.colorNode!=null)
++  const clone = ownsVertexAlphaOpacity || shadowState || boxState
++    ? createOwnedVertexAlphaMaterial(Boolean(physical), shadowState || boxState ? true : nodes.colorNode != null)
+@@ -216,0 +223,7 @@ function installCompiledProgramMaterial(
++  } else if (boxState) {
++    clone.opacity = 1
++    clone.transparent = false
++    clone.depthWrite = true
++    clone.alphaTest = 0
++    clone.alphaHash = false
++    clone.alphaToCoverage = false
+@@ -242,0 +256 @@ async function defaultProgramTexture(
++  if(entry.boxMipmaps && [...new Uint8Array(digest)].map(item=>item.toString(16).padStart(2,'0')).join('')!==checkedBoxCompanion(entry.boxMipmaps).sourceSha256)throw new Error('BOX image source bytes disagree with immutable mip ownership; re-export the scene')
+@@ -260,0 +275,2 @@ async function defaultProgramTexture(
++  let bitmapClosed=false
++  texture.addEventListener('dispose',()=>{if(!bitmapClosed){bitmap.close();bitmapClosed=true}})
+@@ -272 +288 @@ export async function loadProgramTextures(
+-  options: Pick<InstallTslMaterialsOptions, 'loadProgramTexture' | 'signal'>,
++  options: Pick<InstallTslMaterialsOptions, 'loadProgramTexture' | 'loadProgramMipBytes' | 'signal'>,
+@@ -281,0 +298,15 @@ export async function loadProgramTextures(
++  const boxNames=new Set<string>()
++  const visit=(value:unknown):void=>{
++    if(Array.isArray(value)){value.forEach(visit);return}
++    if(!value||typeof value!=='object')return
++    const expression=value as TslIrExpression
++    if(expression.op==='texture_box_ref'){
++      const ref=expression.ref as Record<string,unknown>|undefined
++      if(ref?.samplingModel!==BOX_IMAGE_MODEL||typeof ref.image!=='string')throw new TslIrError('BOX image program lacks its immutable sampling contract')
++      boxNames.add(ref.image)
++    }
++    irInspectionChildren(value).forEach(visit)
++  }
++  visit(document.materials)
++  if(boxNames.size>8)throw new TslIrError('BOX image preparation exceeds its eight-image transaction budget')
++  for(const name of boxNames){if(!document.images?.[name])throw new TslIrError('BOX image is missing from the immutable image table');checkedBoxCompanion(document.images[name]!.boxMipmaps)}
+@@ -295,0 +327,7 @@ export async function loadProgramTextures(
++      if(boxNames.has(name)){
++        const companion=checkedBoxCompanion(entry.boxMipmaps),mipUrl=new URL(companion.file,base).toString()
++        let payload:Uint8Array
++        if(options.loadProgramMipBytes)payload=await options.loadProgramMipBytes(name,entry,mipUrl)
++        else {const response=await fetch(mipUrl,options.signal?{signal:options.signal}:undefined);if(!response.ok)throw new TslIrError(`BOX mip companion fetch failed (${response.status}); re-export and republish together`);payload=await readBoxMipResponse(response,companion.bytes,options.signal)}
++        aborted();const original=decoded.get(name)!,prepared=await prepareBoxTexture(original,entry.boxMipmaps,payload,options.signal);decoded.set(name,prepared);original.dispose();aborted()
++      }
+@@ -312 +350,4 @@ export async function loadProgramTextures(
+-      const key = `${name}|${interpolation}|${extension}`
++      const model=ref.samplingModel
++      if(model!==undefined&&model!==BOX_IMAGE_MODEL)throw new TslIrError('Program image has an unsupported sampling model')
++      if(model===BOX_IMAGE_MODEL&&!boxNames.has(name))throw new TslIrError('BOX image sampling was not prepared for this program')
++      const key = `${name}|${interpolation}|${extension}|${model??'flat'}`
+@@ -315 +356 @@ export async function loadProgramTextures(
+-        texture = source.clone()
++        texture = boxNames.has(name)?cloneBoxImageSource(source):source.clone()
+@@ -326 +367,2 @@ export async function loadProgramTextures(
+-        texture.needsUpdate = true
++        if(model===BOX_IMAGE_MODEL)configureBoxClone(source,texture)
++        else {texture.mipmaps=[];texture.needsUpdate = true}
+@@ -683 +725 @@ export async function installTslMaterials(
+-              throw new TslIrError('Shadow material state requires a complete source surface program without skips')
++              throw new TslIrError(`${program.materialState.model === 'eevee53-box-color-opaque-v1' ? 'BOX' : 'Shadow'} material state requires a complete source surface program without skips`)
+diff --git a/packages/blendlink/src/tslNodeRecipe.ts b/packages/blendlink/src/tslNodeRecipe.ts
+index 11bee77f5f87f4e780b05f06dfbb6ef4f494d615..3aaef8292fc67ad1bf17c32c776eefc2ef26ddbb 100644
+--- a/packages/blendlink/src/tslNodeRecipe.ts
++++ b/packages/blendlink/src/tslNodeRecipe.ts
+@@ -0,0 +1 @@
++import { buildBoxImage } from './tslBoxImage.js'
+@@ -1382,0 +1384 @@ function build(expression: TslIrExpression): TslExpression {
++    case 'texture_box_ref':
+@@ -1404,0 +1407,2 @@ function build(expression: TslIrExpression): TslExpression {
++      if(expression.op==='texture_box_ref')return buildBoxImage(expression,vector,map as import('three').Texture,activeOptions)
++      if(expression.projection!==undefined && expression.projection!=='FLAT')return fail('IR texture_ref projection has no qualified model')
+diff --git a/packages/blendlink/src/tslNormalInputBounds.ts b/packages/blendlink/src/tslNormalInputBounds.ts
+index 68c349ec1ed0e5be2b5912ebd28bde5c897261ae..84d08cd008b225bdbef42802b2d16c03f936f430 100644
+--- a/packages/blendlink/src/tslNormalInputBounds.ts
++++ b/packages/blendlink/src/tslNormalInputBounds.ts
+@@ -214,0 +215 @@ export function normalInputBounds(
++    case 'texture_box_ref':throw new TslIrError('Normal Map tangent blended BOX composition has no qualified frame/sampler port yet')
+@@ -215,0 +217 @@ export function normalInputBounds(
++      if(expression.projection==='BOX')throw new TslIrError('Normal Map tangent blended BOX composition has no qualified frame/sampler port yet')

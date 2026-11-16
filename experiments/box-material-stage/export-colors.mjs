@@ -7,10 +7,10 @@ import{createHash}from'node:crypto'
 import{createNodePortBlenderLauncher}from'../../scripts/lib/node-port-python.mjs'
 import{archiveNativeLauncher,validateNativeArchive}from'../../scripts/lib/native-proof-archive.mjs'
 import{executeNodePortCommand}from'../../scripts/lib/node-port-contract.mjs'
-import{assertCandidateSdk}from'./candidate-sdk.mjs'
-await assertCandidateSdk({checkOnly:process.argv[2]==='--check-sdk'});if(process.argv[2]==='--check-sdk')process.exit(0)
+import{assertProofSdk}from'./proof-sdk.mjs'
+const sdkProof=await assertProofSdk({checkOnly:process.argv[2]==='--check-sdk'});if(process.argv[2]==='--check-sdk')process.exit(0)
 const{resolveConfig}=await import('../../packages/blendlink/dist/config.js'),{syncAll,verifyAll,publishedAssetPath}=await import('../../packages/blendlink/dist/sync.js'),{parseManifest}=await import('../../packages/blendlink/dist/typegen.js')
-assert.equal(process.argv[3],'--gpu-lease')
+assert.equal(process.argv[3],'--gpu-lease');assert.ok(process.argv[4]===undefined||process.argv[4]==='--target-width=512');assert.equal(process.argv[5],undefined)
 const root=resolve(import.meta.dirname,'../..'),out=resolve(process.argv[2]),hash=b=>createHash('sha256').update(b).digest('hex'),fixture=JSON.parse(await readFile(join(out,'fixtures.json')))
 assert.equal(fixture.status,'SAVED_OWNED_ORIGINAL_COLOR_ONLY_FIXTURES');assert.equal(fixture.sourceOriginalSha256,hash(await readFile(fixture.sourceOriginal)));assert.deepEqual(fixture.calls,{gpu:0,render:0})
 for(const c of fixture.cases)assert.equal(hash(await readFile(c.sourceFile)),c.sourceSha256)
@@ -21,7 +21,17 @@ for(const folder of['packages/blender-addon','packages/blendlink/blender'])for(c
 await mkdir(join(out,'compiled'));await mkdir(join(out,'export-archive'))
 const launcher=await createNodePortBlenderLauncher({blender:'/Applications/Blender.app/Contents/MacOS/Blender',directory:join(out,'export-launchers')});let passed=false
 try{
- const policy=await executeNodePortCommand({argv:[launcher.executable,'--background','--factory-startup','--disable-autoexec','--python-exit-code','17','--python',join(import.meta.dirname,'audit-colors.py'),'--',out],cwd:root,timeoutMs:30000,logPath:join(out,'source-policy.log')});assert.equal(policy.exitCode,0);assert.equal(policy.timedOut,false)
+ // Each saved189MB case retains its own30s deadline. Three policy calls
+ // have an explicit aggregate maximum3*30s, instead of sharing one30s timer.
+ const policyRows=[],caseReports=[]
+ for(const input of fixture.cases){
+  assert.ok(['plane-1','source-Plane.021','source-Walls'].includes(input.id))
+  const command=await executeNodePortCommand({argv:[launcher.executable,'--background','--factory-startup','--disable-autoexec','--python-exit-code','17','--python',join(import.meta.dirname,'audit-colors.py'),'--',out,'--case='+input.id],cwd:root,timeoutMs:30000,logPath:join(out,'source-policy-'+input.id+'.log')});assert.equal(command.exitCode,0);assert.equal(command.timedOut,false)
+  const file='source-policy-'+input.id+'.json',bytes=await readFile(join(out,file)),report=JSON.parse(bytes)
+  assert.equal(report.status,'PASSED_SINGLE_SAVED_COLOR_SOURCE_POLICY_NO_GPU');assert.equal(report.selectedCase,input.id);assert.deepEqual(report.calls,{gpu:0,render:0,bake:0});assert.equal(report.guards.status,'PERSISTENT_NATIVE_LOOKUP_DENIAL_SELFTEST_PASSED');assert.equal(report.guards.nativeGpuRenderBakeCalls,0);assert.deepEqual(report.rows.map(r=>r.id),[input.id]);assert.equal(report.scriptSha256,hash(await readFile(join(import.meta.dirname,'audit-colors.py'))))
+  policyRows.push(...report.rows);caseReports.push({id:input.id,file,sha256:hash(bytes),elapsedMs:command.elapsedMs,deadlineMs:30000})
+ }
+ await writeFile(join(out,'source-policy.json'),JSON.stringify({status:'PASSED_SAVED_COLOR_SOURCE_POLICY_NO_GPU',supportCredit:0,calls:{gpu:0,render:0,bake:0},rows:policyRows,caseReports,policyCalls:fixture.cases.length,perCaseDeadlineMs:30000,aggregatePolicyCallDeadlineMs:fixture.cases.length*30000,scriptSha256:hash(await readFile(join(import.meta.dirname,'audit-colors.py')))},null,2)+'\n')
  const config=resolveConfig({blenderPath:launcher.executable,outDir:'public/models',genDir:'src/generated',scenes:fixture.cases.map((c,i)=>({name:'boxColorCase'+i,file:c.sourceFile,automaticMaterials:true}))},join(out,'compiled'))
  await syncAll(config,{force:true});assert.deepEqual((await verifyAll(config)).filter(i=>i.severity!=='warning'),[])
  const rows=[]
@@ -41,5 +51,5 @@ try{
   if(manifest.sourcePresentation){row.presentationPath=publishedAssetPath(scene,manifest.sourcePresentation.url,manifest);row.presentationSha256=hash(await readFile(row.presentationPath))}
   rows.push(row);assert.equal(hash(await readFile(original.sourceFile)),original.sourceSha256)
  }
- await writeFile(join(out,'final.json'),JSON.stringify({status:'EXPORTED_OWNED_ORIGINAL_BOX_COLOR_FINALS_NOT_SCENE_ACCEPTANCE',supportCredit:0,materialCredit:0,sceneCredit:0,fixtureSha256:hash(await readFile(join(out,'fixtures.json'))),provenance,rows},null,2)+'\n');passed=true
-}finally{try{await launcher.finalize();const archive={passed,identity:launcher.identity,proof:await archiveNativeLauncher(launcher,join(out,'export-archive'),passed)};await writeFile(join(out,'export-native-proof.json'),JSON.stringify(archive,null,2)+'\n');if(passed)await validateNativeArchive(archive,join(out,'export-archive'),{expectedScripts:[{path:join(import.meta.dirname,'audit-colors.py'),invocations:1}],expectedFinalSources:fixture.cases.map(c=>c.sourceFile),helperInputs:{helper:join(root,'scripts/lib/node-port-python.mjs'),bridge:join(root,'scripts/node-port-blender.mjs')}})}finally{await launcher.dispose()}}
+ await writeFile(join(out,'final.json'),JSON.stringify({status:'EXPORTED_OWNED_ORIGINAL_BOX_COLOR_FINALS_NOT_SCENE_ACCEPTANCE',sdkProof,supportCredit:0,materialCredit:0,sceneCredit:0,fixtureSha256:hash(await readFile(join(out,'fixtures.json'))),provenance,rows},null,2)+'\n');passed=true
+}finally{try{await launcher.finalize();const archive={passed,identity:launcher.identity,proof:await archiveNativeLauncher(launcher,join(out,'export-archive'),passed)};await writeFile(join(out,'export-native-proof.json'),JSON.stringify(archive,null,2)+'\n');if(passed)await validateNativeArchive(archive,join(out,'export-archive'),{expectedScripts:[{path:join(import.meta.dirname,'audit-colors.py'),invocations:fixture.cases.length}],expectedFinalSources:fixture.cases.map(c=>c.sourceFile),helperInputs:{helper:join(root,'scripts/lib/node-port-python.mjs'),bridge:join(root,'scripts/node-port-blender.mjs')}})}finally{await launcher.dispose()}}

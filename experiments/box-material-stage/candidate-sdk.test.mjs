@@ -17,3 +17,6 @@ test('pinned file list covers exactly the private patch paths',async()=>{
 test('missing private file is a hard refusal, not a public runtime fallback',async()=>{
  await assert.rejects(assertCandidateSdk({repository:root}),/private.*patch is absent or mismatched/i)
 })
+test('public SDK rejects the integrated43840 profile on every entrypoint before output/GPU',()=>{
+ for(const entry of['export-colors.mjs','native-color-references.mjs','installed.mjs','read-installed.mjs'])assert.throws(()=>execFileSync(process.execPath,[join(import.meta.dirname,entry),'--check-sdk','--profile=integrated43840'],{cwd:root,encoding:'utf8',stdio:'pipe'}),error=>error.status===1&&/Integrated BOX research SDK is absent or mismatched/.test(error.stderr))
+})

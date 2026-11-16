@@ -1,0 +1,9 @@
+{
+  "status": "FAILED_BEFORE_GEOMETRY_DRAWS_NO_FRAME_CREDIT",
+  "directory": "/tmp/scenetoweb-real-mikk-normal-browser-r1",
+  "sourceCommit": "1c470ccc",
+  "reason": "Direct accessor-array hashes used exporter vertex order against original-loop-ordered source arrays. Both APIs correctly refused before geometry draws. Each retained only the storage canary.",
+  "correction": "Validation-only canonicalization by transported _STW_CORNER identity, with raw Uint32 copies. Geometry, indices, shader attributes, native fields and frame arithmetic are unchanged.",
+  "cpuControls": "Actual GLTFLoader parses of all eight original-source exports pass canonical hashes; duplicate, fractional, missing and out-of-range loop IDs refuse. Negative zero bits and input arrays remain unchanged.",
+  "supportCredit": 0
+}

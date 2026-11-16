@@ -1,0 +1,35 @@
+{
+  "status": "CPU_DIAGNOSTIC_ONLY_NOT_QUALIFICATION",
+  "sdk": {
+    "status": "INTEGRATED_PRIVATE_SOURCE_BYTES_VERIFIED_DIAGNOSTIC_ONLY_NOT_QUALIFIED",
+    "profile": "integrated-box-color-43840-target512",
+    "sourceCommit": "43840cc6f59c44938b80c996d05f4b24b23ffc32",
+    "manifestSha256": "cc2be878793683b00096c65d51be7eb49b20e192aa8f236f2248f8ee74db013f",
+    "guardSha256": "6901f29904c9463894cae78116632a6def365d14f52093de51d425c33dddc41e",
+    "files": 2064,
+    "gpuOpened": false
+  },
+  "producerSha256": "0172068c22d73839d8c1886fce0d329a6b7a8d55907a82b8802cd7c99d9c8ad5",
+  "timeoutMs": 60000,
+  "result": {
+    "argv": [
+      "/Applications/Blender.app/Contents/MacOS/Blender",
+      "--background",
+      "--factory-startup",
+      "--disable-autoexec",
+      "--python-exit-code",
+      "17",
+      "--python-expr",
+      "import sys; sys.pycache_prefix=\"/tmp/scenetoweb-box-policy-cpu-profile-r1/owned-cache\"; sys.dont_write_bytecode=True",
+      "--python",
+      "/tmp/scenetoweb-box-policy-cpu-profile-r1/profile.py",
+      "--",
+      "/tmp/scenetoweb-box-policy-cpu-profile-r1"
+    ],
+    "exitCode": 0,
+    "signal": null,
+    "timedOut": false,
+    "elapsedMs": 37601,
+    "logPath": "/tmp/scenetoweb-box-policy-cpu-profile-r1/native.log"
+  }
+}

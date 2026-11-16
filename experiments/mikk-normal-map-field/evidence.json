@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "status": "CPU_REAL_WASM_FRAME_PREPARED_NATIVE_DIAGNOSTIC_PENDING",
+  "supportCredit": 0,
+  "sourceBase": "70a60a9c",
+  "dependencies": {
+    "mikkWasm": "2538e93b",
+    "cornerTransport": "785a3460",
+    "mathSpec": "0cbbe73fd76d246c89b9d1ca9e3703a71f6dc46e"
+  },
+  "directory": "/tmp/scenetoweb-real-mikk-frame-prepare-r4",
+  "sourceFiles": {
+    "prepare.py": "8d1b876222bbaf5153a77c7be46c28424b8ab62f4e8e8ee8fe9d45f6b8eac91b",
+    "native_fixture.py": "d49b29b4c1e43939d1eea2af7cbfe9c014b92c6a7440976f7c5e67aa56274336",
+    "contract.json": "23821a88b85309e9453966e6eefc697d82909eb873d12e11d5ef202c965a7963",
+    "prepare.mjs": "559609f0c87bdd94685796c71a52cf203c971f185358b9a04e6f5305f342729f",
+    "preflight.py": "b80d769612c7f538019ad1549f761510709f326044a580fcda024defd64189e9",
+    "read-transport.mjs": "b092ef4b6a577f703930a650c78de6b5239cefa3d47565cc31b9e6dbe4d3df76"
+  },
+  "captureReportSha256": "089073583bad02aacf65aa6ef88eb873347a8bf8aca75f5f9fab1d0efec7cafd",
+  "nativeArchiveSha256": "84766d045e923f69de64b592d3dbb62ac7f74174d1a7f8f68bb2fac2e303e8c9",
+  "closed": {
+    "path": "/tmp/scenetoweb-real-mikk-frame-prepare-r4-final-closed.json",
+    "sha256": "57a277d6f438ae393b01d5d61a88df596b5227046d06c05d5fe74425478e5efd"
+  },
+  "preflight": {
+    "path": "/tmp/scenetoweb-real-mikk-frame-preflight-r4.json",
+    "sha256": "d90f34055b6a5486877a94d992e2e34067a7c6bc4ad716542bdb66398eea30c9"
+  },
+  "wasm": {
+    "path": "/private/tmp/scenetoweb-mikk-wasm-r3/mikk-probe.stripped.wasm",
+    "sha256": "8d7dd3d655aa8ae00bffc135a34f8d244519f2da36a755d6fbb023dc03932555"
+  },
+  "counts": {
+    "meshes": 4,
+    "exportTuples": 8,
+    "customRawFloat32WordsExact": 159072,
+    "renders": 0
+  },
+  "earlierPreparations": [
+    {
+      "directory": "/tmp/scenetoweb-real-mikk-frame-prepare-r1",
+      "scope": "Real WASM transport only, no frame/camera schema; no GPU"
+    },
+    {
+      "directory": "/tmp/scenetoweb-real-mikk-frame-prepare-r2",
+      "scope": "Frame schema added; tiny UV-negative was not zero, no GPU"
+    },
+    {
+      "directory": "/tmp/scenetoweb-real-mikk-frame-prepare-r3",
+      "scope": "Resource/counter closure; tiny UV-negative was not zero, no GPU"
+    }
+  ],
+  "next": "One bounded native Metal32-field observation; browser TBN candidate and native comparison remain unqualified."
+}

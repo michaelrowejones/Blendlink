@@ -112,6 +112,127 @@
       "planStderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "accepted": false,
       "note": "Selected for porting only. First Final failed; later standalone Final artifact smoke on6d7c1cf passes with source unchanged. Browser baseline refuses authored Rect Area lights. Global Blender paths include two missing unused weak-ID provenance paths; separate audit records scope. No acceptance or node credit."
+    },
+    {
+      "id": "cube-diorama",
+      "sourceCommit": "a1684d3adc18ad8afead3d7d23c2e33a39bf8abf",
+      "url": "https://download.blender.org/demo/asset-bundles/cube-diorama/cube-diorama-v1.0.0.zip",
+      "bytes": 11674153,
+      "sha256": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e",
+      "inventorySha256": "07d0abc7155f3051e44b93826ef32db6df8dc6178191f3e1810ce85758894b0e",
+      "sourceUnchanged": true,
+      "reachableShaderCompositorKinds": 48,
+      "sceneObjects": 61,
+      "particleSystems": 0,
+      "license": "CC0-1.0",
+      "accepted": false,
+      "selectedForPorting": false,
+      "planExitCode": 1,
+      "planJson": true,
+      "planReportSha256": "1e6a30240503ec29cb3f0331a30b409ca28aef3f02e35facf88614d4138bc8e7",
+      "planStderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "planErrors": [
+        {
+          "code": "material.compilation-blocked",
+          "material": "Boards - Basketweave",
+          "summary": "Object \"Floor\" requires exactly 8,388,608 render SIMPLE-subdivision triangles, proved from its source quad mesh before evaluated-mesh allocation; the static normal receiver budget is 2,000,000.",
+          "reasons": [
+            "Object \"Floor\" requires exactly 8,388,608 render SIMPLE-subdivision triangles, proved from its source quad mesh before evaluated-mesh allocation; the static normal receiver budget is 2,000,000. Use an explicitly reviewed lower-resolution coincident receiver or reduce redundant static subdivision; SceneToWeb will not silently bake viewport geometry or omit the normal."
+          ]
+        }
+      ],
+      "note": "CC0 original, but source plan hard-refuses Floor 8,388,608 render SIMPLE-subdivision triangles against 2,000,000 normal receiver budget. Broader procedural library/material corpus; defer without changing source geometry.",
+      "acquisition": {
+        "id": "cube-diorama",
+        "url": "https://download.blender.org/demo/asset-bundles/cube-diorama/cube-diorama-v1.0.0.zip",
+        "downloadFile": "cube-diorama-v1.0.0.zip",
+        "downloadBytes": 11606058,
+        "downloadSha256": "b76732089f6e41d3543a986875963eb13742dde4f68021974f25564b727dde6a",
+        "archiveEntry": "cube_diorama/cube_diorama.blend",
+        "extractDirectory": "extracted/cube-diorama-v1.0.0",
+        "sourcePath": "extracted/cube-diorama-v1.0.0/cube_diorama/cube_diorama.blend",
+        "source": {
+          "bytes": 11674153,
+          "sha256": "a9906942c7100612cdcbc086b31179c96d1125c034140b39a87b9fe9fe65ab7e"
+        }
+      }
+    },
+    {
+      "id": "race-spaceship",
+      "sourceCommit": "a1684d3adc18ad8afead3d7d23c2e33a39bf8abf",
+      "url": "https://download.blender.org/demo/eevee/race_spaceship/race_spaceship.blend",
+      "bytes": 18406591,
+      "sha256": "282911120247f944de3a665b2d37f0fcc3254fc3f0c9da38623cdb94eacff71a",
+      "inventorySha256": "b307c38680e02a0e32a8b3c721d1592d1f2a3dca34f92383bb3dcc0513e4e17f",
+      "sourceUnchanged": true,
+      "reachableShaderCompositorKinds": 13,
+      "sceneObjects": 55,
+      "particleSystems": 0,
+      "license": "CC-BY (version unspecified)",
+      "accepted": false,
+      "selectedForPorting": false,
+      "planExitCode": 1,
+      "planJson": true,
+      "planReportSha256": "57375e09838d1530a1ab3714b546db6cc4aecc7cde8d12a43fae5ffbcc909cae",
+      "planStderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "planErrors": [
+        {
+          "code": "material.used-needs-bake",
+          "material": "black.004",
+          "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+          "reasons": [
+            "Texture Coordinate Object output is not serialized by stock glTF; author a UV map or bake the result.",
+            "Subsurface Radius is authored but is omitted by glTF.",
+            "Subsurface Scale is authored but is omitted by glTF."
+          ]
+        },
+        {
+          "code": "material.used-needs-bake",
+          "material": "Material.007",
+          "summary": "The active shader graph cannot publish faithfully as editable glTF.",
+          "reasons": [
+            "Add Shader combines shaders; Blender's glTF exporter may silently keep only one branch.",
+            "Emission Shader is reduced to glTF emissive/unlit behavior; scene-light interaction can differ.",
+            "Subsurface Radius is authored but is omitted by glTF.",
+            "Subsurface Scale is authored but is omitted by glTF."
+          ]
+        }
+      ],
+      "note": "13-kind product candidate has two structured needs-bake materials, authored animated DOF camera and nondefault gamma/exposure. Missing fx3 image is in an unused authored Cube.013 slot (all 2847 raw polygons slot0, missing image slot3; only Subsurf modifier), not broadly declared closed. No recommendation before source-camera DOF and material routes close; CC-BY version unspecified."
+    },
+    {
+      "id": "racing-car",
+      "sourceCommit": "a1684d3adc18ad8afead3d7d23c2e33a39bf8abf",
+      "url": "https://download.blender.org/demo/test/splash-pokedstudio.blend.zip",
+      "bytes": 58525268,
+      "sha256": "9dc8c2eaf1def129f37f11cdb4610c5c1a17d08d85d6d1cf0dcc335d392a2adc",
+      "inventorySha256": "dca1331c6d331bf49d6ef23e691a63c96988bf4dbc60dbfc742fe08624c57e64",
+      "sourceUnchanged": true,
+      "reachableShaderCompositorKinds": 46,
+      "sceneObjects": 306,
+      "particleSystems": 30,
+      "license": "CC-BY-SA (version unspecified)",
+      "accepted": false,
+      "selectedForPorting": false,
+      "planExitCode": null,
+      "planJson": false,
+      "planReportSha256": null,
+      "planStderrSha256": null,
+      "note": "Official product splash original is broader than its thumbnail: 306 objects,30 particle systems,46 reachable shader/compositor kinds,86 material outputs. Camera DOF is off, but particle/shader scope is unsuitable for this bounded positive. No plan attempted after read-only complexity census; source unchanged.",
+      "acquisition": {
+        "id": "racing-car",
+        "url": "https://download.blender.org/demo/test/splash-pokedstudio.blend.zip",
+        "downloadFile": "splash-pokedstudio.blend.zip",
+        "downloadBytes": 20348369,
+        "downloadSha256": "5e5c881ddecf8703ad43214f480f6a3be1b67b9b40143700180f106b46628363",
+        "archiveEntry": "splash-pokedstudio.blend",
+        "extractDirectory": "extracted/racing-car",
+        "sourcePath": "extracted/racing-car/splash-pokedstudio.blend",
+        "source": {
+          "bytes": 58525268,
+          "sha256": "9dc8c2eaf1def129f37f11cdb4610c5c1a17d08d85d6d1cf0dcc335d392a2adc"
+        }
+      }
     }
   ]
 }

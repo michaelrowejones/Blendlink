@@ -356,3 +356,66 @@ rerun from actual Finals and independently closed across all eight tuples,
 [updated receipt](../experiments/shadow-transparent-branch/qualified-evidence.json)
 preserves both earlier qualified records. No whole original scene is accepted
 yet, and no hosted workflow, package publication or spreadsheet edit ran.
+
+## Follow-up: shared frame and visual proof pipeline
+
+The [real Mikk field pilot](../experiments/mikk-normal-map-field/README.md) now
+compares actual original-corner transport on both Metal APIs. Its 34 finite
+NormalMap diagnostic fields cover 2,228,224 RGBA words and stay within the
+unchanged `2^-10` bound; masks and Alpha are exact. Twenty-four independent
+control fields remain separate. Six pure-B boundary fields are unqualified,
+including 3,528 native-finite to browser-NaN words. An independent replay is
+byte-identical to the frozen report. No production NormalMap admission follows.
+
+The [actual normal-image audit](../experiments/mikk-normal-map-field/IMAGE_CONE_AUDIT.md)
+uses correlated source-image values rather than unrelated global extrema.
+Conservative base-level bounds are positive for all 2,731 Walls triangles and
+2,184 of 2,198 Plane.021 triangles. The remaining 14 are inconclusive, not
+observed zeros. Modeled higher mips are reported as modeled. The separate
+44 normalized filtered-LOD checks remain valid; invalid integer-fetch probes
+are not used as higher-level storage evidence.
+
+The [film boundary audit](../experiments/mikk-normal-map-field/FILM_BOUNDARY_AUDIT.md)
+shows why EXR32 is not a raw NormalMap oracle: native film includes a late
+whole-pixel NaN cleanup and half storage. Other lighting stages have different
+policies. A shared presentation implementation needs its own native controls;
+this discovery does not invent a normalize-zero fallback.
+
+The integrated BOX candidate has three fresh Finals, 27 native observations and
+252 installed readbacks across all four GPU/API tuples at the declared
+64×4, 128×8 and 512×32 field sizes. Independent replay retains all 152 strict
+violations among 3,391,488 words. All 36 frozen visual-policy frames satisfy
+the one-display-code and bounded-outline proposal, and same-valid-coverage
+Mapping has zero violations. All 12 case/tuple lifecycle checks balance;
+opened/closed bitmaps and test-owned geometry/attributes are accounted for.
+This is unlit color-field evidence, not full BSDF, original camera, NormalMap
+composition or whole-scene acceptance. Production admission remains a separate
+source-domain review.
+
+Two reusable proof fixes remove repeated investigation: numeric fields are
+canonicalized once for strict, visual and Mapping readers, with actual
+asymmetric observation-entry tests; each large source-policy case has its own
+30-second worker deadline and a persistent native-work denial self-test. The
+three policy workers take about 13–14 seconds each. Earlier timeout, geometry
+resource and misoriented-reader failures remain retained. Successful immutable
+Final/native stages were reused for the final browser/CPU replay.
+
+The [integrated research reconstruction](../experiments/box-material-stage/PRODUCTION_CANDIDATE.md)
+restores the exact private source tree and commit without an unpublished-branch
+dependency. It performs no installation or GPU work. Production node categories
+remain unchanged, and the selected original scenes remain unaccepted. Additional
+official auditions did not produce a simpler guaranteed positive; their scope,
+license and source-preservation findings stay in the audition ledger.
+
+Root review accepts the captured BOX source program as a verified visual slice,
+while the broader emitter remains experimental. The
+[admission review](../experiments/box-material-stage/ADMISSION_REVIEW_R3.md)
+identifies untested image/vector/downstream composition domains. No artist-name
+whitelist or broad format-wide support claim was added. The next admission
+pilot should use held-out images and explicit coordinate contracts.
+
+The permanent `test:node-pipeline` now includes the pure CPU visual, canonical
+readback, geometry-ownership and fixed-origin controls. It passes 252 of 255
+Node checks with three declared skips, plus all eleven Python checks, using
+the verified Python runtime required by the safe archive tests. The separate
+19 focused pilot checks also pass. These tests add no native numerical credit.

@@ -1,0 +1,38 @@
+BOX_CPU_PHASE {"phase": "compiler-import", "seconds": 0.37336087494622916, "totalSeconds": 0.37382362491916865}
+00:04.777  blend            | Read blend: "/private/tmp/scenetoweb-box-color-finals-r4/plane-1.blend"
+BOX_CPU_PHASE {"case": null, "event": "begin", "phase": "plan-materials", "totalSeconds": 4.2846235409379005}
+BOX_CPU_PHASE {"case": null, "event": "end", "phase": "plan-materials", "seconds": 0.4566324589541182, "totalSeconds": 4.741889290977269}
+BOX_CPU_PHASE {"case": null, "event": "begin", "phase": "private-carrier-probe", "totalSeconds": 4.7426182909403}
+BOX_CPU_PHASE {"case": null, "event": "begin", "phase": "plan-materials", "totalSeconds": 4.742803040891886}
+BOX_CPU_PHASE {"case": null, "event": "end", "phase": "plan-materials", "seconds": 0.0018735419725999236, "totalSeconds": 4.744821915985085}
+BOX_CPU_PHASE {"case": null, "event": "end", "phase": "private-carrier-probe", "raised": "ProbeFinished", "seconds": 0.21361529198475182, "totalSeconds": 4.956415082910098}
+BOX_CPU_PHASE {"case": null, "event": "begin", "phase": "plan-materials", "totalSeconds": 4.957097915932536}
+BOX_CPU_PHASE {"case": null, "event": "end", "phase": "plan-materials", "seconds": 0.002583499997854233, "totalSeconds": 4.959897707914934}
+BOX_CPU_PHASE {"case": null, "event": "begin", "phase": "plan-materials", "totalSeconds": 4.960407999926247}
+BOX_CPU_PHASE {"case": null, "event": "end", "phase": "plan-materials", "seconds": 0.004678332945331931, "totalSeconds": 4.9652946658898145}
+00:16.411  blend            | Read blend: "/private/tmp/scenetoweb-box-color-finals-r4/source-Plane.021.blend"
+BOX_CPU_PHASE {"case": null, "event": "begin", "phase": "plan-materials", "totalSeconds": 15.978354665916413}
+BOX_CPU_PHASE {"case": null, "event": "end", "phase": "plan-materials", "seconds": 0.047056542010977864, "totalSeconds": 16.025966374902055}
+BOX_CPU_PHASE {"case": null, "event": "begin", "phase": "private-carrier-probe", "totalSeconds": 16.026959749986418}
+BOX_CPU_PHASE {"case": null, "event": "begin", "phase": "plan-materials", "totalSeconds": 16.029286665958352}
+BOX_CPU_PHASE {"case": null, "event": "end", "phase": "plan-materials", "seconds": 0.018253750051371753, "totalSeconds": 16.04788704100065}
+BOX_CPU_PHASE {"case": null, "event": "end", "phase": "private-carrier-probe", "raised": "ProbeFinished", "seconds": 0.02590016694739461, "totalSeconds": 16.055173499975353}
+BOX_CPU_PHASE {"case": null, "event": "begin", "phase": "plan-materials", "totalSeconds": 16.05593112495262}
+BOX_CPU_PHASE {"case": null, "event": "end", "phase": "plan-materials", "seconds": 0.02019608300179243, "totalSeconds": 16.076312290970236}
+BOX_CPU_PHASE {"case": null, "event": "begin", "phase": "plan-materials", "totalSeconds": 16.077106082928367}
+BOX_CPU_PHASE {"case": null, "event": "end", "phase": "plan-materials", "seconds": 0.004530458012595773, "totalSeconds": 16.081960874958895}
+00:28.721  blend            | Read blend: "/private/tmp/scenetoweb-box-color-finals-r4/source-Walls.blend"
+BOX_CPU_PHASE {"case": null, "event": "begin", "phase": "plan-materials", "totalSeconds": 28.269840665976517}
+BOX_CPU_PHASE {"case": null, "event": "end", "phase": "plan-materials", "seconds": 0.06398279196582735, "totalSeconds": 28.334475457901135}
+BOX_CPU_PHASE {"case": null, "event": "begin", "phase": "private-carrier-probe", "totalSeconds": 28.335128915961832}
+BOX_CPU_PHASE {"case": null, "event": "begin", "phase": "plan-materials", "totalSeconds": 28.335339415934868}
+BOX_CPU_PHASE {"case": null, "event": "end", "phase": "plan-materials", "seconds": 0.01922429201658815, "totalSeconds": 28.354721707990393}
+BOX_CPU_PHASE {"case": null, "event": "end", "phase": "private-carrier-probe", "raised": "ProbeFinished", "seconds": 0.027694375021383166, "totalSeconds": 28.363031915971078}
+BOX_CPU_PHASE {"case": null, "event": "begin", "phase": "plan-materials", "totalSeconds": 28.36386291589588}
+BOX_CPU_PHASE {"case": null, "event": "end", "phase": "plan-materials", "seconds": 0.021161124925129116, "totalSeconds": 28.38537487492431}
+BOX_CPU_PHASE {"case": null, "event": "begin", "phase": "plan-materials", "totalSeconds": 28.38606941595208}
+BOX_CPU_PHASE {"case": null, "event": "end", "phase": "plan-materials", "seconds": 0.003635540953837335, "totalSeconds": 28.390081540914252}
+BOX_CPU_PROFILE_COMPLETE
+Blender 5.3.0 (hash 02f0899d78e3 built 2026-11-10 01:31:21)
+
+Blender quit

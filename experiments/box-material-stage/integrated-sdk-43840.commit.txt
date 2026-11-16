@@ -1,0 +1,6 @@
+tree 45a9e62cef2a6cb94fa5c41ac0478d22f0b4ad82
+parent a1684d3adc18ad8afead3d7d23c2e33a39bf8abf
+author michaelrowejones <120781270+michaelrowejones@users.noreply.github.com> 1794801299 -0600
+committer michaelrowejones <120781270+michaelrowejones@users.noreply.github.com> 1794801299 -0600
+
+Prepare private BOX color candidate with explicit Shadow state separation [skip ci]

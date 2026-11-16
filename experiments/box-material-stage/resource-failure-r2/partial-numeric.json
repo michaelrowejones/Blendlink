@@ -1,0 +1,233 @@
+{
+  "status": "FAILED_RESOURCE_CAPTURE_PARTIAL_NUMERIC_DIAGNOSTIC_ONLY_ZERO_CREDIT",
+  "profile": "metal",
+  "backend": "webgpu",
+  "packageSha256": "a0556c36289535f654bf019094ccc344f0bf5843f2addbecbcb02cf83b1ea3bb",
+  "rows": [
+    {
+      "width": 64,
+      "height": 4,
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-target512-diagnostic-v2",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 256,
+        "actualCovered": 256,
+        "commonCovered": 256,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 132,
+        "actualOutlinePixels": 132,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 1,
+          "actual": 1,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 2,
+          "sourcePixels": 3,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 1,
+          "sourcePixels": 2,
+          "limit": 1,
+          "marginPixels": 1,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 768,
+        "commonBackgroundWords": 0,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 768,
+        "differences": 14,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.018229166666666668,
+        "rmsCodeDifference": 0.13501543121683043,
+        "rawMaxAbsSameCoverage": 0.00048798322677612305,
+        "proposalSatisfied": true
+      },
+      "rawColor": {
+        "words": 1024,
+        "differences": 768,
+        "violations": 0,
+        "maxAbs": 0.00048798322677612305,
+        "maxUlp": 8187
+      },
+      "rawMapping": {
+        "words": 1024,
+        "differences": 768,
+        "violations": 0,
+        "maxAbs": 0.00048410892486572266,
+        "maxUlp": 8184
+      }
+    },
+    {
+      "width": 128,
+      "height": 8,
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-target512-diagnostic-v2",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 1024,
+        "actualCovered": 1024,
+        "commonCovered": 1024,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 268,
+        "actualOutlinePixels": 268,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 1,
+          "actual": 1,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 6,
+          "sourcePixels": 11,
+          "limit": 6,
+          "marginPixels": 6,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 2,
+          "sourcePixels": 6,
+          "limit": 2,
+          "marginPixels": 2,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 3072,
+        "commonBackgroundWords": 0,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 3072,
+        "differences": 71,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.023111979166666668,
+        "rmsCodeDifference": 0.1520262449929836,
+        "rawMaxAbsSameCoverage": 0.0004881620407104492,
+        "proposalSatisfied": true
+      },
+      "rawColor": {
+        "words": 4096,
+        "differences": 3069,
+        "violations": 0,
+        "maxAbs": 0.0004881620407104492,
+        "maxUlp": 8190
+      },
+      "rawMapping": {
+        "words": 4096,
+        "differences": 3072,
+        "violations": 0,
+        "maxAbs": 0.0004870295524597168,
+        "maxUlp": 8171
+      }
+    },
+    {
+      "width": 512,
+      "height": 32,
+      "status": "DIAGNOSTIC_ONLY_NO_SUPPORT_OR_ACCEPTANCE_CREDIT",
+      "policy": "unlit-ldr-standard-srgb-target512-diagnostic-v2",
+      "proposalSatisfied": true,
+      "geometry": {
+        "sourceCovered": 16384,
+        "actualCovered": 16384,
+        "commonCovered": 16384,
+        "xorPixels": 0,
+        "xorViewportFraction": 0,
+        "xorSourceFraction": 0,
+        "sourceOutlinePixels": 1084,
+        "actualOutlinePixels": 1084,
+        "outlineOutsideOnePixel": 0,
+        "foreground": {
+          "source": 1,
+          "actual": 1,
+          "oneToOne": true
+        },
+        "holes": {
+          "source": 0,
+          "actual": 0,
+          "oneToOne": true
+        },
+        "missingEndpoints": 0,
+        "proposedBudget": {
+          "viewportFraction": 0.005,
+          "sourceFraction": 0.01,
+          "viewportPixels": 82,
+          "sourcePixels": 164,
+          "limit": 82,
+          "marginPixels": 82,
+          "withinBudget": true
+        },
+        "stricterDiagnosticBudget": {
+          "viewportFraction": 0.001,
+          "sourceFraction": 0.005,
+          "viewportPixels": 17,
+          "sourcePixels": 82,
+          "limit": 17,
+          "marginPixels": 17,
+          "withinBudget": true
+        },
+        "proposalSatisfied": true
+      },
+      "display": {
+        "commonCoveredWords": 49152,
+        "commonBackgroundWords": 0,
+        "coverageDisagreementWords": 0,
+        "comparedWords": 49152,
+        "differences": 1306,
+        "violations": 0,
+        "maxCodeDifference": 1,
+        "meanCodeDifference": 0.026570638020833332,
+        "rmsCodeDifference": 0.1630050245263419,
+        "rawMaxAbsSameCoverage": 0.000522315502166748,
+        "proposalSatisfied": true
+      },
+      "rawColor": {
+        "words": 65536,
+        "differences": 49142,
+        "violations": 0,
+        "maxAbs": 0.000522315502166748,
+        "maxUlp": 8763
+      },
+      "rawMapping": {
+        "words": 65536,
+        "differences": 49152,
+        "violations": 0,
+        "maxAbs": 0.00048810243606567383,
+        "maxUlp": 8191
+      }
+    }
+  ]
+}

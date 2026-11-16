@@ -153,6 +153,17 @@ positive scene retain:
 - Preview and Final differences explained; final acceptance uses the actual
   exported artifact and public installer, not an experiment-only renderer.
 
+The approved fidelity target is artist-visible consistency across GPUs. Keep
+byte-exact asset/IR/mip transport, numerical kernel checks, ownership and
+declared source domains as independent checks. Retain strict numerical failures even when a
+separate displayed-image criterion passes. Visual criteria must declare the
+display transfer, exposure, resolution, every-pixel color budget and tightly
+bounded silhouette allowance before capture; they must reject wrong materials,
+missing features and displaced geometry. Never silently discard edge pixels or
+use an aggregate similarity score to hide a local defect. An unlit material
+field proves only that field. Whole-scene acceptance still includes framing,
+lighting, compositing, motion and the artist's actual exported workflow.
+
 ## Performance and usability targets
 
 These initial targets apply to deliberately small/medium fixtures. Milestone 0
