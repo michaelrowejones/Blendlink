@@ -1,0 +1,30 @@
+{
+  "scope": "Source/mathCPUaudit only, no native draw/GPU/frame qualification",
+  "nativeSourceRoot": "/private/tmp/blendlink-node-port-pipeline/artifacts/upstream-source-watch/blender",
+  "sourcePinsSha256": "af03f32178cb5e0d36726ab136d8e3acc41fb3b8b6bb1bfdc35b874cee6d7c38",
+  "referenceSha256": "922c709f9bef4045a3799cb54105673468a092c1bd7303022aff47c808c6d647",
+  "resultSha256": "7c9ec923036a4653a9bcf3d5871c49f6b6dc3d00d704b0bc1b5f1c7a19ee71f5",
+  "sourceOriginalSha256": "9f636b2e1a59b3d181f90caf1b1703658eeadebad57f3c6207737d2fe3ffd85e",
+  "frozenWasmExperimentCommit": "2538e93b1dc5a7ebdd49fe6e2cb88ed06fe3c1a5",
+  "frozenWasmComparisonReport": "/tmp/scenetoweb-mikk-wasm-comparison-r4/report.json",
+  "frozenWasmComparisonSha256": "2ca9a6d539d29980208b1094b2d62b71df9f8d94d4a4950866cb8dcd1a807d47",
+  "strictRepeatedLoopWrites": {
+    "Walls": {
+      "uniqueLoops": 5489,
+      "repeatWrites": 72,
+      "wordConflicts": 0
+    },
+    "Plane.021": {
+      "uniqueLoops": 4444,
+      "repeatWrites": 0,
+      "wordConflicts": 0
+    }
+  },
+  "checks": 21,
+  "renderCalls": 0,
+  "saveCalls": 0,
+  "gpuRuns": 0,
+  "productionChanges": 0,
+  "supportCredit": 0,
+  "sceneAcceptance": false
+}

@@ -52,7 +52,7 @@ test('proof-pinned historical sentinel is explicit and cannot be hidden or repla
   }
 })
 
-test('actual repository discovery retains all five narrow policy suites with their exact printed sentinels', () => {
+test('actual repository discovery retains all six narrow policy suites with their exact printed sentinels', () => {
   const suites = actual()
   for (const [file, rule] of Object.entries(HEADLESS_SUITE_PROFILES)) {
     const discovered = suites.filter(suite => suite.file === file)
@@ -63,17 +63,17 @@ test('actual repository discovery retains all five narrow policy suites with the
   assert.equal(suites.at(-1).file, 'run_headless.py')
 })
 
-test('actual applicable5.3 profile includes five policies; legacy versions explicitly get zero credit', () => {
+test('actual applicable5.3 profile includes six policies; legacy versions explicitly get zero credit', () => {
   const suites = actual()
   const selected = suites.filter(suite => suite.profile)
-  assert.equal(selected.length, 5)
+  assert.equal(selected.length, 6)
   const matched = planHeadlessSuites(suites, context)
   assert.equal(matched.notApplicable.length, 0)
   assert.equal(matched.applicable.length, suites.length)
   for (const version of [[4, 2, 0], [5, 2, 0], [5, 3, 1]]) {
     const plan = planHeadlessSuites(suites, { ...context, version })
-    assert.equal(plan.applicable.length, suites.length - 5)
-    assert.equal(plan.notApplicable.length, 5)
+    assert.equal(plan.applicable.length, suites.length - 6)
+    assert.equal(plan.notApplicable.length, 6)
     for (const suite of plan.notApplicable) {
       assert.equal(suite.status, 'not-applicable')
       assert.equal(suite.coverageCredit, 0)
@@ -84,12 +84,12 @@ test('actual applicable5.3 profile includes five policies; legacy versions expli
 
 test('native build, host, architecture and backend restrictions follow actual source admission', () => {
   const suites = actual().filter(suite => suite.profile)
-  assert.equal(planHeadlessSuites(suites, { ...context, buildHash: 'unqualified' }).notApplicable.length, 5)
+  assert.equal(planHeadlessSuites(suites, { ...context, buildHash: 'unqualified' }).notApplicable.length, 6)
   for (const mismatch of [{ platform: 'linux' }, { machine: 'x86_64' }, { gpuBackend: 'OPENGL' }, { gpuBackend: null }]) {
     const plan = planHeadlessSuites(suites, { ...context, ...mismatch })
     // float2 pins version/build, but its source does not claim a Metal host restriction.
     assert.deepEqual(plan.applicable.map(suite => suite.file), ['shader_vector2_check.py'])
-    assert.equal(plan.notApplicable.length, 4)
+    assert.equal(plan.notApplicable.length, 5)
   }
 })
 

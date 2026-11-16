@@ -1,0 +1,174 @@
+{
+  "schemaVersion": 1,
+  "status": "CPU_LAYOUT_DIAGNOSIS_ONLY",
+  "originalCaptureStatus": "failed",
+  "sourceCommit": "6019e1ba0c4dee223744c93bd34ec0dbe584efcb",
+  "sourceSha256": "9f636b2e1a59b3d181f90caf1b1703658eeadebad57f3c6207737d2fe3ffd85e",
+  "nativeBuild": "02f0899d78e3",
+  "reportSha256": "15b02c10cc6afba25a71168e754d39d887e2be5b14159065b0dedfc4655eb2c6",
+  "nativeReportSha256": "6e130f37b63586d8922548e88806502cb5faec29f4f35b0acd36e38f733629d1",
+  "supportCredit": 0,
+  "sceneAcceptance": false,
+  "automaticEnablement": false,
+  "originalReportUnchanged": true,
+  "missingBackends": [
+    "webgl2"
+  ],
+  "rows": [
+    {
+      "backend": "webgpu",
+      "case": "source-Plane.021",
+      "kind": "mask",
+      "negative": false,
+      "rawSha256": "609d94fd134dc7c81584e52bde905182fe473ebff0a300dd71a948c672630a66",
+      "normalizedSha256": "609d94fd134dc7c81584e52bde905182fe473ebff0a300dd71a948c672630a66",
+      "nativeSha256": "609d94fd134dc7c81584e52bde905182fe473ebff0a300dd71a948c672630a66",
+      "gate": 0,
+      "maximum": 0,
+      "violations": 0
+    },
+    {
+      "backend": "webgpu",
+      "case": "source-Plane.021",
+      "kind": "normal",
+      "negative": false,
+      "rawSha256": "9dbc617cb4a5578c24d641d23058a08b9f422664e7c16683bd552240ce90e735",
+      "normalizedSha256": "d7c3431ae7f791671cf73d9e3322fd8c44ec4dda1a724b961e2cd7cd3ef4b404",
+      "nativeSha256": "a178ef36b3ac3133aa30736a604d54bcbe77c569611a224e48e619797b64f293",
+      "gate": 0.0009765625,
+      "maximum": 0.00020647048950195312,
+      "violations": 0
+    },
+    {
+      "backend": "webgpu",
+      "case": "source-Plane.021",
+      "kind": "face",
+      "negative": false,
+      "rawSha256": "b465ae9f7ce972df3533061ec90ade920368cb849a62f46d5d492088defe80e4",
+      "normalizedSha256": "ec25b63e6eedd8b89e1cb3a54dc81db9440b96746c5cf99b834a31c1ca282286",
+      "nativeSha256": "ec25b63e6eedd8b89e1cb3a54dc81db9440b96746c5cf99b834a31c1ca282286",
+      "gate": 0.0009765625,
+      "maximum": 0,
+      "violations": 0
+    },
+    {
+      "backend": "webgpu",
+      "case": "source-Plane.021",
+      "kind": "position",
+      "negative": false,
+      "rawSha256": "ed994921db46d82db139028a7ba236cd49bd786ed1912e69fc48a389e598863d",
+      "normalizedSha256": "679e3a5a6d5d7bc562e2cdc393e864e53b3afcb86481c9765c887f5c823479bf",
+      "nativeSha256": "c89a41ae10b90170bca9821563d1d14f500919e2381aa4cc710b46b6212d2808",
+      "gate": 0.0009765625,
+      "maximum": 0.0004819631576538086,
+      "violations": 0
+    },
+    {
+      "backend": "webgpu",
+      "case": "source-Plane.021",
+      "kind": "position",
+      "negative": true,
+      "rawSha256": "59f213534de7a855549f7a2cc678a168eec1649429a66e9163191c33bbf7bea9",
+      "normalizedSha256": "983c506b1e9dfb4650d5ddd591c4e3f8742878085bf6d6b65bc4d3afbe6961e2",
+      "nativeSha256": "c89a41ae10b90170bca9821563d1d14f500919e2381aa4cc710b46b6212d2808",
+      "gate": 0.0009765625,
+      "maximum": 0.014189362525939941,
+      "violations": 83
+    },
+    {
+      "backend": "webgpu",
+      "case": "source-Walls",
+      "kind": "mask",
+      "negative": false,
+      "rawSha256": "611c93154d26fbd679a04be05cb6f140a336ca308c67b45174291acedaca7e32",
+      "normalizedSha256": "611c93154d26fbd679a04be05cb6f140a336ca308c67b45174291acedaca7e32",
+      "nativeSha256": "611c93154d26fbd679a04be05cb6f140a336ca308c67b45174291acedaca7e32",
+      "gate": 0,
+      "maximum": 0,
+      "violations": 0
+    },
+    {
+      "backend": "webgpu",
+      "case": "source-Walls",
+      "kind": "normal",
+      "negative": false,
+      "rawSha256": "4361255b8b2a970fe6769ec4198a2d20837d4bef88b4d1bb162a0d61a84c67c5",
+      "normalizedSha256": "2c5d8314e7140d5a6c37cb54a5473e95924241d57ff9fbce8f7af12f93ac5c25",
+      "nativeSha256": "70339b272cd7875f3283f7fdc877d0f3f0852bb7fe5ad6a6ff7c5b22641a3a81",
+      "gate": 0.0009765625,
+      "maximum": 0.00008431077003479004,
+      "violations": 0
+    },
+    {
+      "backend": "webgpu",
+      "case": "source-Walls",
+      "kind": "face",
+      "negative": false,
+      "rawSha256": "ee97c6828515c17a903bfcda5a38acb07fdab06db2c27ed6bec52c9bb13d6b01",
+      "normalizedSha256": "5e4f1a9c7c9fbc863144387da965a0b0c208fa739ab1f1998ec17f284ab9f216",
+      "nativeSha256": "5e4f1a9c7c9fbc863144387da965a0b0c208fa739ab1f1998ec17f284ab9f216",
+      "gate": 0.0009765625,
+      "maximum": 0,
+      "violations": 0
+    },
+    {
+      "backend": "webgpu",
+      "case": "source-Walls",
+      "kind": "position",
+      "negative": false,
+      "rawSha256": "e5668cc781db3761461ef846010563c0e4860f05e83aec55e42bc923ab14b7ae",
+      "normalizedSha256": "061f72f5bb6dc02ae0303f0d71eb94685e6b440c5ecfb810bece3eec40434b85",
+      "nativeSha256": "aaca77d028cb892440a00119e25d15d6fcdc307a408a463bc586e4329b770c50",
+      "gate": 0.0009765625,
+      "maximum": 0.00048542022705078125,
+      "violations": 0
+    },
+    {
+      "backend": "webgpu",
+      "case": "source-Walls",
+      "kind": "position",
+      "negative": true,
+      "rawSha256": "21762ebcd4f5eaeb5953a602246ad1e0a308f07ef463d9d9487f83604c71858d",
+      "normalizedSha256": "982cc912a0469c577dd1c6d096790197b155ef916df282bc698b658af6dff618",
+      "nativeSha256": "aaca77d028cb892440a00119e25d15d6fcdc307a408a463bc586e4329b770c50",
+      "gate": 0.0009765625,
+      "maximum": 0.70458984375,
+      "violations": 139
+    }
+  ],
+  "layoutWitnesses": [
+    {
+      "case": "source-Plane.021",
+      "covered": 76,
+      "xMaxAbs": 0.000052615179380155475,
+      "topLeftYMaxAbs": 0.000021535832382180153,
+      "bottomLeftYMaxAbs": 1.5000215358323823
+    },
+    {
+      "case": "source-Walls",
+      "covered": 112,
+      "xMaxAbs": 0.000048699804631402444,
+      "topLeftYMaxAbs": 0.000026068098969656006,
+      "bottomLeftYMaxAbs": 1.5000235923530443
+    }
+  ],
+  "pins": {
+    "/tmp/scenetoweb-camera-shift-browser-r1/report.json": "15b02c10cc6afba25a71168e754d39d887e2be5b14159065b0dedfc4655eb2c6",
+    "/tmp/scenetoweb-box-storage-native-r3/native.json": "6e130f37b63586d8922548e88806502cb5faec29f4f35b0acd36e38f733629d1",
+    "/tmp/scenetoweb-camera-shift-browser-r1/camera-packets.json": "144ba6df8bd911379bcc44916ed67790c54091dc1d1ec99f279ec88a03b13230",
+    "/tmp/scenetoweb-camera-shift-browser-r1/producer.mjs": "efb0a0c0914e2b12c8e0289cc5a57537ce6a7aed14ebe54cc109fe39c5695c9b",
+    "/tmp/scenetoweb-camera-shift-browser-r1/browser.js": "9247227b36f61ba8a587c83b2f4faa341c1342edd63747325c56b305f730b140",
+    "/tmp/scenetoweb-camera-shift-browser-r1/webgpu-source-Plane.021-mask.rgba32f": "609d94fd134dc7c81584e52bde905182fe473ebff0a300dd71a948c672630a66",
+    "/tmp/scenetoweb-box-storage-native-r3/SNORM10-source-Plane.021-mask.rgba32f": "609d94fd134dc7c81584e52bde905182fe473ebff0a300dd71a948c672630a66",
+    "/tmp/scenetoweb-camera-shift-browser-r1/webgpu-source-Plane.021-normal.rgba32f": "9dbc617cb4a5578c24d641d23058a08b9f422664e7c16683bd552240ce90e735",
+    "/tmp/scenetoweb-box-storage-native-r3/SNORM10-source-Plane.021-normal.rgba32f": "a178ef36b3ac3133aa30736a604d54bcbe77c569611a224e48e619797b64f293",
+    "/tmp/scenetoweb-box-storage-native-r3/SNORM10-source-Plane.021-face.rgba32f": "ec25b63e6eedd8b89e1cb3a54dc81db9440b96746c5cf99b834a31c1ca282286",
+    "/tmp/scenetoweb-box-storage-native-r3/SNORM10-source-Plane.021-position.rgba32f": "c89a41ae10b90170bca9821563d1d14f500919e2381aa4cc710b46b6212d2808",
+    "/tmp/scenetoweb-box-storage-native-r3/SNORM10-source-Walls-mask.rgba32f": "611c93154d26fbd679a04be05cb6f140a336ca308c67b45174291acedaca7e32",
+    "/tmp/scenetoweb-box-storage-native-r3/SNORM10-source-Walls-normal.rgba32f": "70339b272cd7875f3283f7fdc877d0f3f0852bb7fe5ad6a6ff7c5b22641a3a81",
+    "/tmp/scenetoweb-box-storage-native-r3/SNORM10-source-Walls-face.rgba32f": "5e4f1a9c7c9fbc863144387da965a0b0c208fa739ab1f1998ec17f284ab9f216",
+    "/tmp/scenetoweb-box-storage-native-r3/SNORM10-source-Walls-position.rgba32f": "aaca77d028cb892440a00119e25d15d6fcdc307a408a463bc586e4329b770c50",
+    "/private/tmp/scenetoweb-v1-camera-shift/experiments/camera-projection-shift/replay.mjs": "fb799b82974f51f50f020b11e31636e3ec34a23bcab511f43408ac404a69eff6"
+  },
+  "rule": "WebGPU raw texture rows top-left; Blender Image.pixels rows bottom-left. Reverse whole rows only; no channel, value, pixel or tolerance adjustment."
+}

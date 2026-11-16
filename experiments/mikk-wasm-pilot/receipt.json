@@ -1,0 +1,144 @@
+{
+  "schemaVersion": 1,
+  "status": "PASSED_EXACT_CPU_ORACLE",
+  "scope": "Experimental maintainer-built WASM oracle; no production integration, source draw-frame certificate or node/scene promotion",
+  "baseAuditCommit": "ec3e5c89c1739c8c0bab3c1f18813f951365fafa",
+  "toolchain": {
+    "releaseUrl": "https://github.com/WebAssembly/wasi-sdk/releases/tag/wasi-sdk-34",
+    "archive": {
+      "path": "/tmp/scenetoweb-wasi-toolchain/wasi-sdk-34.0-arm64-macos.tar.gz",
+      "bytes": 180322002,
+      "sha256": "9c59398106b417f8f14913380fdf0097a8cc0ff4af9eb3ce0065a859e88d49e9"
+    },
+    "officialArchiveDigest": "sha256:9c59398106b417f8f14913380fdf0097a8cc0ff4af9eb3ce0065a859e88d49e9",
+    "releaseApi": {
+      "path": "/tmp/scenetoweb-wasi-sdk-release.json",
+      "bytes": 28370,
+      "sha256": "8a538b2f67273c43de2c221760aacb303d3a31847eddaf2ac79fe6ebdfc427fc"
+    },
+    "LLVMCommit": "895aa2c896ada719451be2e3673c83da8ddf1141",
+    "wasiLibcCommit": "2e6fb9d8ee0cdf9e431fbcabe8af3115de000a13",
+    "nodeVersion": "v24.22.1"
+  },
+  "build": {
+    "path": "/tmp/scenetoweb-mikk-wasm-r3/build.json",
+    "bytes": 1195,
+    "sha256": "6e6c24ea59dfb98220bb7db00a7cdb66d38d3d2d9fa417ddaf383a0781f54401"
+  },
+  "wasm": {
+    "path": "/tmp/scenetoweb-mikk-wasm-r3/mikk-probe.stripped.wasm",
+    "bytes": 270662,
+    "sha256": "8d7dd3d655aa8ae00bffc135a34f8d244519f2da36a755d6fbb023dc03932555"
+  },
+  "sourceFiles": [
+    {
+      "path": "experiments/mikk-wasm-pilot/build.py",
+      "bytes": 1574,
+      "sha256": "3fdfb20a26ee5e9c1b708c449ea6480177609fce4e54cf70273bc5eb88da443b"
+    },
+    {
+      "path": "experiments/mikk-wasm-pilot/run.mjs",
+      "bytes": 512,
+      "sha256": "57ac1f2eac8889d3aac21faf6626d4423e9122475c9966cf8e95bacc5d80d81e"
+    },
+    {
+      "path": "experiments/mikk-wasm-pilot/compare.py",
+      "bytes": 3998,
+      "sha256": "3dc1e3eab337a828d00123a6455d57c48e4ce1eff160ddaa3eb9b8422d7e71a9"
+    },
+    {
+      "path": "experiments/mikk-wasm-pilot/public-native.py",
+      "bytes": 2246,
+      "sha256": "16983b498c8f072f4aa7f7b785fe11b9001832712b86e97c7131fdece922f201"
+    }
+  ],
+  "nativeComparison": {
+    "path": "/tmp/scenetoweb-mikk-wasm-comparison-r4/report.json",
+    "bytes": 7924,
+    "sha256": "2ca9a6d539d29980208b1094b2d62b71df9f8d94d4a4950866cb8dcd1a807d47"
+  },
+  "freshPublicNative": {
+    "path": "/tmp/scenetoweb-mikk-public-native-r2/report.json",
+    "bytes": 962,
+    "sha256": "c09f259b793c8eb8f4ddf6957bc54b52c7080fef38b98cdad254c1c957b5b91b"
+  },
+  "freshPublicNativeLog": {
+    "path": "/tmp/scenetoweb-mikk-public-native-r2.log",
+    "bytes": 1054,
+    "sha256": "e5a3b8ee7cbf6ecc88dc01c66279e866ef4d2417f1698146cc4eda6c996b4074"
+  },
+  "retainedFirstBuildFailure": {
+    "path": "/tmp/scenetoweb-mikk-wasm-r1/build.log",
+    "bytes": 572,
+    "sha256": "7ded5234b827f8b1cf4cfec16e1f99cc1f2664b94fc60f2859e80d8c0d10ce34"
+  },
+  "licenses": [
+    {
+      "path": "/tmp/scenetoweb-mikk-wasm-r2/wasi-sdk-LICENSE",
+      "bytes": 12243,
+      "sha256": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5"
+    },
+    {
+      "path": "/tmp/scenetoweb-mikk-wasm-r2/LLVM-LICENSE.txt",
+      "bytes": 15141,
+      "sha256": "8d85c1057d742e597985c7d4e6320b015a9139385cff4cbae06ffc0ebe89afee"
+    },
+    {
+      "path": "/tmp/scenetoweb-mikk-wasm-r2/libcxx-LICENSE.txt",
+      "bytes": 16703,
+      "sha256": "539dd7aed86e8a4f12cbdd0e6c50c189c7d74847e4fecc64ce2c6ee3a01da38b"
+    },
+    {
+      "path": "/tmp/scenetoweb-mikk-wasm-r2/wasi-libc-LICENSE-pinned.txt",
+      "bytes": 910,
+      "sha256": "2711a8b5a5cdfef0e639f96c1aca12ae23d7d64a02d0507f1bdf14d2b27bbc3a"
+    }
+  ],
+  "linkedRuntimeArchives": [
+    {
+      "path": "/tmp/scenetoweb-wasi-toolchain/wasi-sdk-34.0-arm64-macos/share/wasi-sysroot/lib/wasm32-wasip1/noeh/libc++.a",
+      "bytes": 8409242,
+      "sha256": "82b58f9a0455a519e4d3dfd93dd2853b0ef16850624015f85cf7ff028e8268d9"
+    },
+    {
+      "path": "/tmp/scenetoweb-wasi-toolchain/wasi-sdk-34.0-arm64-macos/share/wasi-sysroot/lib/wasm32-wasip1/noeh/libc++abi.a",
+      "bytes": 1386694,
+      "sha256": "28b3e752a773f71c69adf4580254088c9ac4d3b5495b25cbc41c91e57ba72222"
+    },
+    {
+      "path": "/tmp/scenetoweb-wasi-toolchain/wasi-sdk-34.0-arm64-macos/share/wasi-sysroot/lib/wasm32-wasip1/libc.a",
+      "bytes": 3245870,
+      "sha256": "a9aff53312240258085fd94da05e18545f4c98b2f6a91ce4985b519eb8159fb9"
+    },
+    {
+      "path": "/tmp/scenetoweb-wasi-toolchain/wasi-sdk-34.0-arm64-macos/share/wasi-sysroot/lib/wasm32-wasip1/crt1-command.o",
+      "bytes": 1913,
+      "sha256": "5c915e8a62ed0175d59e90514b208ae4ee7094ba57e1eb8019433bd41c1d3361"
+    },
+    {
+      "path": "/tmp/scenetoweb-wasi-toolchain/wasi-sdk-34.0-arm64-macos/lib/clang/23/lib/wasm32-unknown-wasip1/libclang_rt.builtins.a",
+      "bytes": 470462,
+      "sha256": "41b9a4712800c3de6d0e853d1ce420ac383a2399b1d262ee880bcbbb0214661a"
+    }
+  ],
+  "linkProfile": {
+    "path": "/tmp/scenetoweb-mikk-wasm-r3/link-profile.txt",
+    "bytes": 3014,
+    "sha256": "28dbe4ce562d1ed11896cb9b8747ccb95d9edfbad6f225fcced9d309efdf375f"
+  },
+  "licenseAudit": {
+    "mikkHeaders": "Apache-2.0, original notices in pinned4headers",
+    "cppRuntime": "Apache-2.0 WITH LLVM-exception; pinned LLVM libc++/libc++abi/compiler-rt",
+    "wasiLibc": "Multi-license Apache/LLVM-exception, Apache, MIT and inherited CC0/BSD2/BSD3 per pinned manifest",
+    "GPLShaderOrDrawImplementationLinked": false,
+    "separatePublicWitness": "GPL-3.0-or-later Python, not linked into WASM",
+    "nodeRuntimeBundled": false,
+    "artifactDistributed": false
+  },
+  "sourceUnchanged": true,
+  "renderCalls": 0,
+  "saveCalls": 0,
+  "gpuRuns": 0,
+  "supportCredit": 0,
+  "sceneAcceptance": false
+}

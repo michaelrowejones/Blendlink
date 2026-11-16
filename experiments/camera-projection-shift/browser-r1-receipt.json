@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "status": "FAILED_INITIAL_CAPTURE_CPU_LAYOUT_DIAGNOSIS_ONLY",
+  "frozenCandidateCommit": "6019e1ba0c4dee223744c93bd34ec0dbe584efcb",
+  "nativeDirectory": "/tmp/scenetoweb-box-storage-native-r3",
+  "captureDirectory": "/tmp/scenetoweb-camera-shift-browser-r1",
+  "initialExitCode": 1,
+  "initialFailure": "Native positive field mismatch: source-Plane.021 normal, WebGPU",
+  "originalReportNeverModified": true,
+  "rawUnprocessedRows": "All 10 WebGPU field rows retained in report.json (8 as full uint32 words, 2 as pinned files); no WebGL2 rows captured.",
+  "supportCredit": 0,
+  "sceneAcceptance": false,
+  "automaticEnablement": false,
+  "sdkInstallChanged": false,
+  "geometryGuardChanged": false,
+  "files": [
+    {
+      "path": "/tmp/scenetoweb-camera-shift-browser-r1/report.json",
+      "bytes": 205378,
+      "sha256": "15b02c10cc6afba25a71168e754d39d887e2be5b14159065b0dedfc4655eb2c6"
+    },
+    {
+      "path": "/tmp/scenetoweb-camera-shift-browser-r1/producer.mjs",
+      "bytes": 8211,
+      "sha256": "efb0a0c0914e2b12c8e0289cc5a57537ce6a7aed14ebe54cc109fe39c5695c9b"
+    },
+    {
+      "path": "/tmp/scenetoweb-camera-shift-browser-r1/browser.js",
+      "bytes": 4094,
+      "sha256": "9247227b36f61ba8a587c83b2f4faa341c1342edd63747325c56b305f730b140"
+    },
+    {
+      "path": "/tmp/scenetoweb-camera-shift-browser-r1/camera-packets.json",
+      "bytes": 5477,
+      "sha256": "144ba6df8bd911379bcc44916ed67790c54091dc1d1ec99f279ec88a03b13230"
+    },
+    {
+      "path": "/tmp/scenetoweb-camera-shift-browser-r1/webgpu-source-Plane.021-mask.rgba32f",
+      "bytes": 4096,
+      "sha256": "609d94fd134dc7c81584e52bde905182fe473ebff0a300dd71a948c672630a66"
+    },
+    {
+      "path": "/tmp/scenetoweb-camera-shift-browser-r1/webgpu-source-Plane.021-normal.rgba32f",
+      "bytes": 4096,
+      "sha256": "9dbc617cb4a5578c24d641d23058a08b9f422664e7c16683bd552240ce90e735"
+    }
+  ],
+  "cpuReplay": {
+    "path": "/tmp/scenetoweb-camera-shift-r1-layout-diagnosis-r2.json",
+    "bytes": 8273,
+    "sha256": "28dc98fdb93431f594a98e81dc676f51a5bdc7b572a7ccc8a39087e6f251fa63"
+  },
+  "threeVersion": "0.184.0",
+  "readbackImplementationPins": [
+    {
+      "path": "node_modules/three/src/renderers/common/Renderer.js",
+      "bytes": 97258,
+      "sha256": "24a8580179438da25865c986c298e29c3ceadf270bd6625cc849bbd17aaf6e2e"
+    },
+    {
+      "path": "node_modules/three/src/renderers/webgpu/utils/WebGPUTextureUtils.js",
+      "bytes": 48613,
+      "sha256": "5f241b35187e26b1d1b56279330df466d55f62bdce4a53e0106835cacba06ce1"
+    },
+    {
+      "path": "node_modules/three/src/renderers/webgl-fallback/utils/WebGLTextureUtils.js",
+      "bytes": 39637,
+      "sha256": "6b08fc0d0af38b893bd243991ba09eef844c2af99cb07c59f53f7a1c7149acc0"
+    }
+  ],
+  "nextUnit": "Frozen corrected producer declares fixed WebGPU top-left/native bottom-left, GL2 bottom-left unchanged; independent asymmetric XY calibration and all raw rows persisted before assertions. Request one fresh browser-only four-tuple run; no guard or default enablement."
+}

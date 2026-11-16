@@ -1,0 +1,8666 @@
+{
+  "sourceSha256": "9f636b2e1a59b3d181f90caf1b1703658eeadebad57f3c6207737d2fe3ffd85e",
+  "producerSha256": "3d4b206895e5ee9a51bdf789be1b9bd6203bdb1c3e1141a694373d502391a05b",
+  "extractorSha256": "185fd77955206afef3c4c891bc3438942a9e4aa6e8fa7e300962db722d49f336",
+  "nativeBuild": "02f0899d78e3",
+  "renderAttempts": 0,
+  "saveCalls": 0,
+  "automaticEnablement": false,
+  "supportCredit": 0,
+  "originalActiveCamera": "Camera",
+  "originalCameras": [
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Camera",
+      "cameraType": "PERSP",
+      "frame": 4,
+      "renderExtent": [
+        1920,
+        1080
+      ],
+      "renderBorder": {
+        "enabled": true,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        1.0,
+        1.0
+      ],
+      "lensMillimeters": 18.0,
+      "sensorFit": "AUTO",
+      "sensorWidthMillimeters": 32.0,
+      "sensorHeightMillimeters": 18.0,
+      "orthoScale": 6.0,
+      "shift": [
+        0.0,
+        -0.08999999612569809
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 100.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        1.125,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2.0,
+        -0.31999996304512024,
+        0.0,
+        0.0,
+        0.0,
+        -1.0020020008087158,
+        -0.20020020008087158,
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "cameraWorldGltf": [
+        0.6415709853172302,
+        0.057403817772865295,
+        -0.7649127244949341,
+        5.569934368133545,
+        -1.1303053497613291e-06,
+        0.9971959590911865,
+        0.07483484596014023,
+        1.6000006198883057,
+        0.7670636773109436,
+        -0.04801100492477417,
+        0.6397720575332642,
+        2.945012331008911,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [
+        "Render border/crop needs a separate transport proof"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "PERSP",
+      "frame": 1,
+      "renderExtent": [
+        1920,
+        1080
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        1.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "AUTO",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.0,
+        0.0
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        2.777777671813965,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        4.938271522521973,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -1.0001999139785767,
+        -0.20002000033855438,
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          0.277777761220932,
+          -0.7407407760620117,
+          0.9001899361610413
+        ],
+        [
+          0.27777776718139646,
+          0.1975308656692505,
+          0.9801979064941406
+        ],
+        [
+          -0.32407404979070026,
+          0.8230452537536621,
+          0.9668633143107096
+        ]
+      ],
+      "id": "PERSP-AUTO-1920x1080-pixel1x1-shift0x0",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -0.025200000032782555,
+            -0.008100000210106373,
+            -0.10000000149011612
+          ],
+          "direction": [
+            -0.2436101734638214,
+            -0.0783032700419426,
+            -0.9667071104049683
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.0,
+            0.0,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            0.02160000242292881,
+            0.016200000420212746,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.2085326910018921,
+            0.15639951825141907,
+            -0.9654291272163391
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "PERSP",
+      "frame": 1,
+      "renderExtent": [
+        1920,
+        1080
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        1.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "AUTO",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.17000000178813934,
+        -0.09000000357627869
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        2.777777671813965,
+        0.0,
+        0.3400000035762787,
+        0.0,
+        0.0,
+        4.938271522521973,
+        -0.3199999928474426,
+        0.0,
+        0.0,
+        0.0,
+        -1.0001999139785767,
+        -0.20002000033855438,
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          -0.06222224235534668,
+          -0.4207407832145691,
+          0.9001899361610413
+        ],
+        [
+          -0.06222224235534668,
+          0.5175308227539063,
+          0.9801979064941406
+        ],
+        [
+          -0.6640740235646566,
+          1.1430452664693196,
+          0.9668633143107096
+        ]
+      ],
+      "id": "PERSP-AUTO-1920x1080-pixel1x1-shift0.17x-0.09",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -0.012960001826286316,
+            -0.014579999260604382,
+            -0.10000000149011612
+          ],
+          "direction": [
+            -0.1272023469209671,
+            -0.14310261607170105,
+            -0.9814994931221008
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.012239999137818813,
+            -0.006479999516159296,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.12124275416135788,
+            -0.06418734043836594,
+            -0.990545392036438
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            0.03384000062942505,
+            0.009720000438392162,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.3191938102245331,
+            0.09168333560228348,
+            -0.9432441592216492
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "PERSP",
+      "frame": 1,
+      "renderExtent": [
+        1920,
+        1080
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        2.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "AUTO",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.0,
+        0.0
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        2.777777671813965,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        9.876543045043945,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -1.0001999139785767,
+        -0.20002000033855438,
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          0.277777761220932,
+          -1.4814815521240234,
+          0.9001899361610413
+        ],
+        [
+          0.27777776718139646,
+          0.395061731338501,
+          0.9801979064941406
+        ],
+        [
+          -0.32407404979070026,
+          1.6460905075073242,
+          0.9668633143107096
+        ]
+      ],
+      "id": "PERSP-AUTO-1920x1080-pixel2x1-shift0x0",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -0.025200000032782555,
+            -0.004050000105053186,
+            -0.10000000149011612
+          ],
+          "direction": [
+            -0.24417224526405334,
+            -0.0392419695854187,
+            -0.9689375162124634
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.0,
+            0.0,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            0.02160000242292881,
+            0.008100000210106373,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.2104722410440445,
+            0.07892708480358124,
+            -0.9744085073471069
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "PERSP",
+      "frame": 1,
+      "renderExtent": [
+        1920,
+        1080
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        2.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "AUTO",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.17000000178813934,
+        -0.09000000357627869
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        2.777777671813965,
+        0.0,
+        0.3400000035762787,
+        0.0,
+        0.0,
+        9.876543045043945,
+        -0.64000004529953,
+        0.0,
+        0.0,
+        0.0,
+        -1.0001999139785767,
+        -0.20002000033855438,
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          -0.06222224235534668,
+          -0.8414815068244934,
+          0.9001899361610413
+        ],
+        [
+          -0.06222224235534668,
+          1.0350618362426758,
+          0.9801979064941406
+        ],
+        [
+          -0.6640740235646566,
+          2.286090532938639,
+          0.9668633143107096
+        ]
+      ],
+      "id": "PERSP-AUTO-1920x1080-pixel2x1-shift0.17x-0.09",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -0.012960001826286316,
+            -0.010530000552535057,
+            -0.10000000149011612
+          ],
+          "direction": [
+            -0.12783004343509674,
+            -0.10386189073324203,
+            -0.9863427877426147
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.012239999137818813,
+            -0.006480000447481871,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.12124275416135788,
+            -0.06418734043836594,
+            -0.990545392036438
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            0.03384000062942505,
+            0.001619999879039824,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.32050615549087524,
+            0.015343379229307175,
+            -0.9471222162246704
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "PERSP",
+      "frame": 1,
+      "renderExtent": [
+        1080,
+        1920
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        1.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "AUTO",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.0,
+        0.0
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        4.938271522521973,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2.777777671813965,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -1.0001999139785767,
+        -0.20002000033855438,
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          0.4938271641731262,
+          -0.4166666567325592,
+          0.9001899361610413
+        ],
+        [
+          0.49382715225219725,
+          0.1111111044883728,
+          0.9801979064941406
+        ],
+        [
+          -0.5761316617329916,
+          0.46296294530232746,
+          0.9668633143107096
+        ]
+      ],
+      "id": "PERSP-AUTO-1080x1920-pixel1x1-shift0x0",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -0.014174999669194221,
+            -0.014400000683963299,
+            -0.10000000149011612
+          ],
+          "direction": [
+            -0.1389419138431549,
+            -0.14114736020565033,
+            -0.9801899790763855
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.0,
+            0.0,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            0.012150000780820847,
+            0.028800001367926598,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.11596667766571045,
+            0.2748839855194092,
+            -0.9544582366943359
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "PERSP",
+      "frame": 1,
+      "renderExtent": [
+        1080,
+        1920
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        1.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "AUTO",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.17000000178813934,
+        -0.09000000357627869
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        4.9382710456848145,
+        0.0,
+        0.6044445037841797,
+        0.0,
+        0.0,
+        2.777777671813965,
+        -0.18000000715255737,
+        0.0,
+        0.0,
+        0.0,
+        -1.0001999139785767,
+        -0.20002000033855438,
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          -0.11061739921569824,
+          -0.23666664958000183,
+          0.9001899361610413
+        ],
+        [
+          -0.11061739921569824,
+          0.2911111116409302,
+          0.9801979064941406
+        ],
+        [
+          -1.1805761655171711,
+          0.6429629325866699,
+          0.9668633143107096
+        ]
+      ],
+      "id": "PERSP-AUTO-1080x1920-pixel1x1-shift0.17x-0.09",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -0.001934999250806868,
+            -0.02088000439107418,
+            -0.10000000149011612
+          ],
+          "direction": [
+            -0.018938101828098297,
+            -0.20435543358325958,
+            -0.9787135720252991
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.012240002863109112,
+            -0.006480000913143158,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.12124278396368027,
+            -0.06418735533952713,
+            -0.990545392036438
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            0.024390006437897682,
+            0.022320004180073738,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.23157213628292084,
+            0.21191838383674622,
+            -0.9494550228118896
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "PERSP",
+      "frame": 1,
+      "renderExtent": [
+        1080,
+        1920
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        2.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "AUTO",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.0,
+        0.0
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        2.777777671813965,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        3.125,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -1.0001999139785767,
+        -0.20002000033855438,
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          0.277777761220932,
+          -0.4687500298023224,
+          0.9001899361610413
+        ],
+        [
+          0.27777776718139646,
+          0.125,
+          0.9801979064941406
+        ],
+        [
+          -0.32407404979070026,
+          0.5208333333333334,
+          0.9668633143107096
+        ]
+      ],
+      "id": "PERSP-AUTO-1080x1920-pixel2x1-shift0x0",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -0.025200003758072853,
+            -0.012800001539289951,
+            -0.10000001639127731
+          ],
+          "direction": [
+            -0.2424996793270111,
+            -0.12317442893981934,
+            -0.9623003602027893
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.0,
+            0.0,
+            -0.10000001639127731
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            0.02160000614821911,
+            0.025600003078579903,
+            -0.10000001639127731
+          ],
+          "direction": [
+            0.20481599867343903,
+            0.24274484813213348,
+            -0.9482221603393555
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "PERSP",
+      "frame": 1,
+      "renderExtent": [
+        1080,
+        1920
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        2.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "AUTO",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.17000000178813934,
+        -0.09000000357627869
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        2.777777910232544,
+        0.0,
+        0.3400000035762787,
+        0.0,
+        0.0,
+        3.125,
+        -0.20250004529953003,
+        0.0,
+        0.0,
+        0.0,
+        -1.0001999139785767,
+        -0.20002000033855438,
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          -0.06222221255302429,
+          -0.26624998450279236,
+          0.9001899361610413
+        ],
+        [
+          -0.06222221851348877,
+          0.327500057220459,
+          0.9801979064941406
+        ],
+        [
+          -0.6640741030375162,
+          0.7233333587646484,
+          0.9668633143107096
+        ]
+      ],
+      "id": "PERSP-AUTO-1080x1920-pixel2x1-shift0.17x-0.09",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -0.012959999032318592,
+            -0.019280001521110535,
+            -0.10000000149011612
+          ],
+          "direction": [
+            -0.12623834609985352,
+            -0.18779902160167694,
+            -0.9740613102912903
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.012239999137818813,
+            -0.006480001844465733,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.12124274671077728,
+            -0.06418735533952713,
+            -0.990545392036438
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            0.03384000062942505,
+            0.019119998440146446,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.3154126703739166,
+            0.17821186780929565,
+            -0.9320705533027649
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "PERSP",
+      "frame": 1,
+      "renderExtent": [
+        1920,
+        1080
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        1.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "HORIZONTAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.0,
+        0.0
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        2.777777671813965,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        4.938271522521973,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -1.0001999139785767,
+        -0.20002000033855438,
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          0.277777761220932,
+          -0.7407407760620117,
+          0.9001899361610413
+        ],
+        [
+          0.27777776718139646,
+          0.1975308656692505,
+          0.9801979064941406
+        ],
+        [
+          -0.32407404979070026,
+          0.8230452537536621,
+          0.9668633143107096
+        ]
+      ],
+      "id": "PERSP-HORIZONTAL-1920x1080-pixel1x1-shift0x0",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -0.025200000032782555,
+            -0.008100000210106373,
+            -0.10000000149011612
+          ],
+          "direction": [
+            -0.2436101734638214,
+            -0.0783032700419426,
+            -0.9667071104049683
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.0,
+            0.0,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            0.02160000242292881,
+            0.016200000420212746,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.2085326910018921,
+            0.15639951825141907,
+            -0.9654291272163391
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "PERSP",
+      "frame": 1,
+      "renderExtent": [
+        1920,
+        1080
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        1.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "HORIZONTAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.17000000178813934,
+        -0.09000000357627869
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        2.777777671813965,
+        0.0,
+        0.3400000035762787,
+        0.0,
+        0.0,
+        4.938271522521973,
+        -0.3199999928474426,
+        0.0,
+        0.0,
+        0.0,
+        -1.0001999139785767,
+        -0.20002000033855438,
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          -0.06222224235534668,
+          -0.4207407832145691,
+          0.9001899361610413
+        ],
+        [
+          -0.06222224235534668,
+          0.5175308227539063,
+          0.9801979064941406
+        ],
+        [
+          -0.6640740235646566,
+          1.1430452664693196,
+          0.9668633143107096
+        ]
+      ],
+      "id": "PERSP-HORIZONTAL-1920x1080-pixel1x1-shift0.17x-0.09",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -0.012960001826286316,
+            -0.014579999260604382,
+            -0.10000000149011612
+          ],
+          "direction": [
+            -0.1272023469209671,
+            -0.14310261607170105,
+            -0.9814994931221008
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.012239999137818813,
+            -0.006479999516159296,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.12124275416135788,
+            -0.06418734043836594,
+            -0.990545392036438
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            0.03384000062942505,
+            0.009720000438392162,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.3191938102245331,
+            0.09168333560228348,
+            -0.9432441592216492
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "PERSP",
+      "frame": 1,
+      "renderExtent": [
+        1920,
+        1080
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        2.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "HORIZONTAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.0,
+        0.0
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        2.777777671813965,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        9.876543045043945,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -1.0001999139785767,
+        -0.20002000033855438,
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          0.277777761220932,
+          -1.4814815521240234,
+          0.9001899361610413
+        ],
+        [
+          0.27777776718139646,
+          0.395061731338501,
+          0.9801979064941406
+        ],
+        [
+          -0.32407404979070026,
+          1.6460905075073242,
+          0.9668633143107096
+        ]
+      ],
+      "id": "PERSP-HORIZONTAL-1920x1080-pixel2x1-shift0x0",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -0.025200000032782555,
+            -0.004050000105053186,
+            -0.10000000149011612
+          ],
+          "direction": [
+            -0.24417224526405334,
+            -0.0392419695854187,
+            -0.9689375162124634
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.0,
+            0.0,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            0.02160000242292881,
+            0.008100000210106373,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.2104722410440445,
+            0.07892708480358124,
+            -0.9744085073471069
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "PERSP",
+      "frame": 1,
+      "renderExtent": [
+        1920,
+        1080
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        2.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "HORIZONTAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.17000000178813934,
+        -0.09000000357627869
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        2.777777671813965,
+        0.0,
+        0.3400000035762787,
+        0.0,
+        0.0,
+        9.876543045043945,
+        -0.64000004529953,
+        0.0,
+        0.0,
+        0.0,
+        -1.0001999139785767,
+        -0.20002000033855438,
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          -0.06222224235534668,
+          -0.8414815068244934,
+          0.9001899361610413
+        ],
+        [
+          -0.06222224235534668,
+          1.0350618362426758,
+          0.9801979064941406
+        ],
+        [
+          -0.6640740235646566,
+          2.286090532938639,
+          0.9668633143107096
+        ]
+      ],
+      "id": "PERSP-HORIZONTAL-1920x1080-pixel2x1-shift0.17x-0.09",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -0.012960001826286316,
+            -0.010530000552535057,
+            -0.10000000149011612
+          ],
+          "direction": [
+            -0.12783004343509674,
+            -0.10386189073324203,
+            -0.9863427877426147
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.012239999137818813,
+            -0.006480000447481871,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.12124275416135788,
+            -0.06418734043836594,
+            -0.990545392036438
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            0.03384000062942505,
+            0.001619999879039824,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.32050615549087524,
+            0.015343379229307175,
+            -0.9471222162246704
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "PERSP",
+      "frame": 1,
+      "renderExtent": [
+        1080,
+        1920
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        1.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "HORIZONTAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.0,
+        0.0
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        2.777777671813965,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.5625,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -1.0001999139785767,
+        -0.20002000033855438,
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          0.277777761220932,
+          -0.2343750149011612,
+          0.9001899361610413
+        ],
+        [
+          0.27777776718139646,
+          0.0625,
+          0.9801979064941406
+        ],
+        [
+          -0.32407404979070026,
+          0.2604166666666667,
+          0.9668633143107096
+        ]
+      ],
+      "id": "PERSP-HORIZONTAL-1080x1920-pixel1x1-shift0x0",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -0.025200003758072853,
+            -0.025600003078579903,
+            -0.10000001639127731
+          ],
+          "direction": [
+            -0.23716239631175995,
+            -0.2409268617630005,
+            -0.9411206841468811
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.0,
+            0.0,
+            -0.10000001639127731
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            0.02160000614821911,
+            0.051200006157159805,
+            -0.10000001639127731
+          ],
+          "direction": [
+            0.18880657851696014,
+            0.4475414454936981,
+            -0.8741045594215393
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "PERSP",
+      "frame": 1,
+      "renderExtent": [
+        1080,
+        1920
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        1.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "HORIZONTAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.17000000178813934,
+        -0.09000000357627869
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        2.777777910232544,
+        0.0,
+        0.3400000035762787,
+        0.0,
+        0.0,
+        1.5625001192092896,
+        -0.10124999284744263,
+        0.0,
+        0.0,
+        0.0,
+        -1.0001999139785767,
+        -0.20002000033855438,
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          -0.06222221255302429,
+          -0.13312503695487976,
+          0.9001899361610413
+        ],
+        [
+          -0.06222221851348877,
+          0.1637500047683716,
+          0.9801979064941406
+        ],
+        [
+          -0.6640741030375162,
+          0.3616666793823242,
+          0.9668633143107096
+        ]
+      ],
+      "id": "PERSP-HORIZONTAL-1080x1920-pixel1x1-shift0.17x-0.09",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -0.012959999032318592,
+            -0.03208000212907791,
+            -0.10000000149011612
+          ],
+          "direction": [
+            -0.12247639149427414,
+            -0.3031668961048126,
+            -0.9450339674949646
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.012239999137818813,
+            -0.006479998584836721,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.12124275416135788,
+            -0.06418733298778534,
+            -0.990545392036438
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            0.03384000062942505,
+            0.04472000524401665,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.2951546609401703,
+            0.3900507688522339,
+            -0.872206449508667
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "PERSP",
+      "frame": 1,
+      "renderExtent": [
+        1080,
+        1920
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        2.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "HORIZONTAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.0,
+        0.0
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        2.777777671813965,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        3.125,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -1.0001999139785767,
+        -0.20002000033855438,
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          0.277777761220932,
+          -0.4687500298023224,
+          0.9001899361610413
+        ],
+        [
+          0.27777776718139646,
+          0.125,
+          0.9801979064941406
+        ],
+        [
+          -0.32407404979070026,
+          0.5208333333333334,
+          0.9668633143107096
+        ]
+      ],
+      "id": "PERSP-HORIZONTAL-1080x1920-pixel2x1-shift0x0",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -0.025200003758072853,
+            -0.012800001539289951,
+            -0.10000001639127731
+          ],
+          "direction": [
+            -0.2424996793270111,
+            -0.12317442893981934,
+            -0.9623003602027893
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.0,
+            0.0,
+            -0.10000001639127731
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            0.02160000614821911,
+            0.025600003078579903,
+            -0.10000001639127731
+          ],
+          "direction": [
+            0.20481599867343903,
+            0.24274484813213348,
+            -0.9482221603393555
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "PERSP",
+      "frame": 1,
+      "renderExtent": [
+        1080,
+        1920
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        2.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "HORIZONTAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.17000000178813934,
+        -0.09000000357627869
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        2.777777910232544,
+        0.0,
+        0.3400000035762787,
+        0.0,
+        0.0,
+        3.125,
+        -0.20250004529953003,
+        0.0,
+        0.0,
+        0.0,
+        -1.0001999139785767,
+        -0.20002000033855438,
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          -0.06222221255302429,
+          -0.26624998450279236,
+          0.9001899361610413
+        ],
+        [
+          -0.06222221851348877,
+          0.327500057220459,
+          0.9801979064941406
+        ],
+        [
+          -0.6640741030375162,
+          0.7233333587646484,
+          0.9668633143107096
+        ]
+      ],
+      "id": "PERSP-HORIZONTAL-1080x1920-pixel2x1-shift0.17x-0.09",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -0.012959999032318592,
+            -0.019280001521110535,
+            -0.10000000149011612
+          ],
+          "direction": [
+            -0.12623834609985352,
+            -0.18779902160167694,
+            -0.9740613102912903
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.012239999137818813,
+            -0.006480001844465733,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.12124274671077728,
+            -0.06418735533952713,
+            -0.990545392036438
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            0.03384000062942505,
+            0.019119998440146446,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.3154126703739166,
+            0.17821186780929565,
+            -0.9320705533027649
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "PERSP",
+      "frame": 1,
+      "renderExtent": [
+        1920,
+        1080
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        1.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "VERTICAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.0,
+        0.0
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        2.34375,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        4.166666507720947,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -1.0001999139785767,
+        -0.20002000033855438,
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          0.234375,
+          -0.625,
+          0.9001899361610413
+        ],
+        [
+          0.234375,
+          0.1666666626930237,
+          0.9801979064941406
+        ],
+        [
+          -0.2734375,
+          0.6944444179534912,
+          0.9668633143107096
+        ]
+      ],
+      "id": "PERSP-VERTICAL-1920x1080-pixel1x1-shift0x0",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -0.029866665601730347,
+            -0.009600001387298107,
+            -0.10000000149011612
+          ],
+          "direction": [
+            -0.28497248888015747,
+            -0.09159831702709198,
+            -0.954149067401886
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.0,
+            0.0,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            0.025600001215934753,
+            0.019200002774596214,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.24382059276103973,
+            0.1828654557466507,
+            -0.952424168586731
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "PERSP",
+      "frame": 1,
+      "renderExtent": [
+        1920,
+        1080
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        1.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "VERTICAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.17000000178813934,
+        -0.09000000357627869
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        2.34375,
+        0.0,
+        0.19124996662139893,
+        0.0,
+        0.0,
+        4.166666507720947,
+        -0.18000005185604095,
+        0.0,
+        0.0,
+        0.0,
+        -1.0001999139785767,
+        -0.20002000033855438,
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          0.043125033378601074,
+          -0.44499993324279785,
+          0.9001899361610413
+        ],
+        [
+          0.043125033378601074,
+          0.3466667175292969,
+          0.9801979064941406
+        ],
+        [
+          -0.4646874666213989,
+          0.8744444847106934,
+          0.9668633143107096
+        ]
+      ],
+      "id": "PERSP-VERTICAL-1920x1080-pixel1x1-shift0.17x-0.09",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -0.02170666866004467,
+            -0.013920003548264503,
+            -0.10000000149011612
+          ],
+          "direction": [
+            -0.21019083261489868,
+            -0.13479071855545044,
+            -0.9683238863945007
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.008159997873008251,
+            -0.004320001695305109,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.08125437051057816,
+            -0.04301704838871956,
+            -0.9957646727561951
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            0.03376000002026558,
+            0.014880000613629818,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.3167315125465393,
+            0.13960203528404236,
+            -0.9381857514381409
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "PERSP",
+      "frame": 1,
+      "renderExtent": [
+        1920,
+        1080
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        2.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "VERTICAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.0,
+        0.0
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        1.171875,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        4.166666507720947,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -1.0001999139785767,
+        -0.20002000033855438,
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          0.1171875,
+          -0.625,
+          0.9001899361610413
+        ],
+        [
+          0.1171875,
+          0.1666666626930237,
+          0.9801979064941406
+        ],
+        [
+          -0.13671875,
+          0.6944444179534912,
+          0.9668633143107096
+        ]
+      ],
+      "id": "PERSP-VERTICAL-1920x1080-pixel2x1-shift0x0",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -0.05973333120346069,
+            -0.009600001387298107,
+            -0.10000000149011612
+          ],
+          "direction": [
+            -0.5110785961151123,
+            -0.08213765174150467,
+            -0.8556004166603088
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.0,
+            0.0,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            0.05120000243186951,
+            0.019200002774596214,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.44922512769699097,
+            0.1684594303369522,
+            -0.8773928284645081
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "PERSP",
+      "frame": 1,
+      "renderExtent": [
+        1920,
+        1080
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        2.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "VERTICAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.17000000178813934,
+        -0.09000000357627869
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        1.1718748807907104,
+        0.0,
+        0.09562502056360245,
+        0.0,
+        0.0,
+        4.166666507720947,
+        -0.18000005185604095,
+        0.0,
+        0.0,
+        0.0,
+        -1.0001999139785767,
+        -0.20002000033855438,
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          0.021562471985816956,
+          -0.44499993324279785,
+          0.9001899361610413
+        ],
+        [
+          0.021562469005584717,
+          0.3466667175292969,
+          0.9801979064941406
+        ],
+        [
+          -0.2323437531789144,
+          0.8744444847106934,
+          0.9668633143107096
+        ]
+      ],
+      "id": "PERSP-VERTICAL-1920x1080-pixel2x1-shift0.17x-0.09",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -0.051573336124420166,
+            -0.013920003548264503,
+            -0.10000000149011612
+          ],
+          "direction": [
+            -0.4548972249031067,
+            -0.12277992814779282,
+            -0.8820395469665527
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.00816000159829855,
+            -0.004320001695305109,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.08125440776348114,
+            -0.04301704838871956,
+            -0.9957646727561951
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            0.05936000868678093,
+            0.014880000613629818,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.5063154101371765,
+            0.12692002952098846,
+            -0.8529571890830994
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "PERSP",
+      "frame": 1,
+      "renderExtent": [
+        1080,
+        1920
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        1.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "VERTICAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.0,
+        0.0
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        7.407407760620117,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        4.166666507720947,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -1.0001999139785767,
+        -0.20002000033855438,
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          0.7407407760620117,
+          -0.625,
+          0.9001899361610413
+        ],
+        [
+          0.7407407760620117,
+          0.1666666626930237,
+          0.9801979064941406
+        ],
+        [
+          -0.864197572072347,
+          0.6944444179534912,
+          0.9668633143107096
+        ]
+      ],
+      "id": "PERSP-VERTICAL-1080x1920-pixel1x1-shift0x0",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -0.009450000710785389,
+            -0.009600001387298107,
+            -0.10000000149011612
+          ],
+          "direction": [
+            -0.0936540812253952,
+            -0.09514066576957703,
+            -0.9910485148429871
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.0,
+            0.0,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            0.008100001141428947,
+            0.019200002774596214,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.07929656654596329,
+            0.18796223402023315,
+            -0.978969931602478
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "PERSP",
+      "frame": 1,
+      "renderExtent": [
+        1080,
+        1920
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        1.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "VERTICAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.17000000178813934,
+        -0.09000000357627869
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        7.407407283782959,
+        0.0,
+        0.6044443845748901,
+        0.0,
+        0.0,
+        4.166666507720947,
+        -0.18000000715255737,
+        0.0,
+        0.0,
+        0.0,
+        -1.0001999139785767,
+        -0.20002000033855438,
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          0.1362963318824768,
+          -0.4449999928474426,
+          0.9001899361610413
+        ],
+        [
+          0.13629631996154784,
+          0.34666666984558103,
+          0.9801979064941406
+        ],
+        [
+          -1.4686419169108074,
+          0.8744444052378336,
+          0.9668633143107096
+        ]
+      ],
+      "id": "PERSP-VERTICAL-1080x1920-pixel1x1-shift0.17x-0.09",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -0.0012900009751319885,
+            -0.01392000075429678,
+            -0.10000000149011612
+          ],
+          "direction": [
+            -0.012775774113833904,
+            -0.13785941898822784,
+            -0.9903693795204163
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.0081599997356534,
+            -0.004320000298321247,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.08125438541173935,
+            -0.043017033487558365,
+            -0.9957646131515503
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            0.016260001808404922,
+            0.014880000613629818,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.1587887555360794,
+            0.14531221985816956,
+            -0.9765605926513672
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "PERSP",
+      "frame": 1,
+      "renderExtent": [
+        1080,
+        1920
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        2.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "VERTICAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.0,
+        0.0
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        3.7037038803100586,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        4.166666507720947,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -1.0001999139785767,
+        -0.20002000033855438,
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          0.37037038803100586,
+          -0.625,
+          0.9001899361610413
+        ],
+        [
+          0.37037038803100586,
+          0.1666666626930237,
+          0.9801979064941406
+        ],
+        [
+          -0.4320987860361735,
+          0.6944444179534912,
+          0.9668633143107096
+        ]
+      ],
+      "id": "PERSP-VERTICAL-1080x1920-pixel2x1-shift0x0",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -0.018900001421570778,
+            -0.009600001387298107,
+            -0.10000000149011612
+          ],
+          "direction": [
+            -0.18489140272140503,
+            -0.09391310811042786,
+            -0.978261411190033
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.0,
+            0.0,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            0.016200002282857895,
+            0.019200002774596214,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.15711814165115356,
+            0.18621410429477692,
+            -0.9698650240898132
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "PERSP",
+      "frame": 1,
+      "renderExtent": [
+        1080,
+        1920
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        2.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "VERTICAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.17000000178813934,
+        -0.09000000357627869
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        3.7037038803100586,
+        0.0,
+        0.30222228169441223,
+        0.0,
+        0.0,
+        4.166666507720947,
+        -0.18000000715255737,
+        0.0,
+        0.0,
+        0.0,
+        -1.0001999139785767,
+        -0.20002000033855438,
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          0.06814810633659363,
+          -0.4449999928474426,
+          0.9001899361610413
+        ],
+        [
+          0.06814811229705811,
+          0.34666666984558103,
+          0.9801979064941406
+        ],
+        [
+          -0.734321117401123,
+          0.8744444052378336,
+          0.9668633143107096
+        ]
+      ],
+      "id": "PERSP-VERTICAL-1080x1920-pixel2x1-shift0.17x-0.09",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -0.010739999823272228,
+            -0.013920001685619354,
+            -0.10000000149011612
+          ],
+          "direction": [
+            -0.1057775691151619,
+            -0.13709719479084015,
+            -0.9848935604095459
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.00816000159829855,
+            -0.004320000763982534,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.08125440031290054,
+            -0.04301703721284866,
+            -0.9957646727561951
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            0.02436000294983387,
+            0.014880001544952393,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.2342435121536255,
+            0.14308470487594604,
+            -0.9615906476974487
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "ORTHO",
+      "frame": 1,
+      "renderExtent": [
+        1920,
+        1080
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        1.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "AUTO",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.0,
+        0.0
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        0.2857142984867096,
+        0.0,
+        0.0,
+        -0.0,
+        0.0,
+        0.5079365372657776,
+        0.0,
+        -0.0,
+        0.0,
+        0.0,
+        -0.0020001998636871576,
+        -1.0001999139785767,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          0.05714286118745804,
+          -0.15238097310066223,
+          -0.9961994886398315
+        ],
+        [
+          0.2857142984867096,
+          0.2031746208667755,
+          -0.9801979064941406
+        ],
+        [
+          -0.20000000298023224,
+          0.5079365372657776,
+          -0.9881986975669861
+        ]
+      ],
+      "id": "ORTHO-AUTO-1920x1080-pixel1x1-shift0x0",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -2.4499998092651367,
+            -0.7875000238418579,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.0,
+            0.0,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            2.0999999046325684,
+            1.5750000476837158,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "ORTHO",
+      "frame": 1,
+      "renderExtent": [
+        1920,
+        1080
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        1.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "AUTO",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.17000000178813934,
+        -0.09000000357627869
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        0.2857142984867096,
+        0.0,
+        0.0,
+        -0.3400000035762787,
+        0.0,
+        0.5079365372657776,
+        0.0,
+        0.31999996304512024,
+        0.0,
+        0.0,
+        -0.0020001998636871576,
+        -1.0001999139785767,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          -0.28285714983940125,
+          0.167618989944458,
+          -0.9961994886398315
+        ],
+        [
+          -0.05428570508956909,
+          0.5231745839118958,
+          -0.9801979064941406
+        ],
+        [
+          -0.5400000214576721,
+          0.8279365301132202,
+          -0.9881986975669861
+        ]
+      ],
+      "id": "ORTHO-AUTO-1920x1080-pixel1x1-shift0.17x-0.09",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -1.2599997520446777,
+            -1.4174998998641968,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            1.190000057220459,
+            -0.6299998760223389,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            3.2899999618530273,
+            0.945000171661377,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "ORTHO",
+      "frame": 1,
+      "renderExtent": [
+        1920,
+        1080
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        2.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "AUTO",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.0,
+        0.0
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        0.2857142984867096,
+        0.0,
+        0.0,
+        -0.0,
+        0.0,
+        1.0158730745315552,
+        0.0,
+        -0.0,
+        0.0,
+        0.0,
+        -0.0020001998636871576,
+        -1.0001999139785767,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          0.05714286118745804,
+          -0.30476194620132446,
+          -0.9961994886398315
+        ],
+        [
+          0.2857142984867096,
+          0.406349241733551,
+          -0.9801979064941406
+        ],
+        [
+          -0.20000000298023224,
+          1.0158730745315552,
+          -0.9881986975669861
+        ]
+      ],
+      "id": "ORTHO-AUTO-1920x1080-pixel2x1-shift0x0",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -2.4499998092651367,
+            -0.39375001192092896,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.0,
+            0.0,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            2.0999999046325684,
+            0.7875000238418579,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "ORTHO",
+      "frame": 1,
+      "renderExtent": [
+        1920,
+        1080
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        2.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "AUTO",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.17000000178813934,
+        -0.09000000357627869
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        0.2857142984867096,
+        0.0,
+        0.0,
+        -0.3400000035762787,
+        0.0,
+        1.0158730745315552,
+        0.0,
+        0.6399999856948853,
+        0.0,
+        0.0,
+        -0.0020001998636871576,
+        -1.0001999139785767,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          -0.28285714983940125,
+          0.3352380394935608,
+          -0.9961994886398315
+        ],
+        [
+          -0.05428570508956909,
+          1.046349287033081,
+          -0.9801979064941406
+        ],
+        [
+          -0.5400000214576721,
+          1.6558730602264404,
+          -0.9881986975669861
+        ]
+      ],
+      "id": "ORTHO-AUTO-1920x1080-pixel2x1-shift0.17x-0.09",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -1.2599997520446777,
+            -1.0237499475479126,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            1.190000057220459,
+            -0.6299999356269836,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            3.2899999618530273,
+            0.15750008821487427,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "ORTHO",
+      "frame": 1,
+      "renderExtent": [
+        1080,
+        1920
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        1.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "AUTO",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.0,
+        0.0
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        0.5079365372657776,
+        0.0,
+        0.0,
+        -0.0,
+        0.0,
+        0.2857142984867096,
+        0.0,
+        -0.0,
+        0.0,
+        0.0,
+        -0.0020001998636871576,
+        -1.0001999139785767,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          0.10158731043338776,
+          -0.08571429550647736,
+          -0.9961994886398315
+        ],
+        [
+          0.5079365372657776,
+          0.11428572237491608,
+          -0.9801979064941406
+        ],
+        [
+          -0.35555556416511536,
+          0.2857142984867096,
+          -0.9881986975669861
+        ]
+      ],
+      "id": "ORTHO-AUTO-1080x1920-pixel1x1-shift0x0",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -1.3781248331069946,
+            -1.3999998569488525,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.0,
+            0.0,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            1.1812498569488525,
+            2.799999713897705,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "ORTHO",
+      "frame": 1,
+      "renderExtent": [
+        1080,
+        1920
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        1.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "AUTO",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.17000000178813934,
+        -0.09000000357627869
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        0.5079365372657776,
+        0.0,
+        0.0,
+        -0.6044444441795349,
+        0.0,
+        0.2857142984867096,
+        0.0,
+        0.17999999225139618,
+        0.0,
+        0.0,
+        -0.0020001998636871576,
+        -1.0001999139785767,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          -0.5028571486473083,
+          0.09428569674491882,
+          -0.9961994886398315
+        ],
+        [
+          -0.09650790691375732,
+          0.29428571462631226,
+          -0.9801979064941406
+        ],
+        [
+          -0.9600000381469727,
+          0.4657142758369446,
+          -0.9881986975669861
+        ]
+      ],
+      "id": "ORTHO-AUTO-1080x1920-pixel1x1-shift0.17x-0.09",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -0.18812501430511475,
+            -2.0299997329711914,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            1.1899998188018799,
+            -0.6299998760223389,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            2.3712496757507324,
+            2.169999837875366,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "ORTHO",
+      "frame": 1,
+      "renderExtent": [
+        1080,
+        1920
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        2.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "AUTO",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.0,
+        0.0
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        0.2857142984867096,
+        0.0,
+        0.0,
+        -0.0,
+        0.0,
+        0.3214285969734192,
+        0.0,
+        -0.0,
+        0.0,
+        0.0,
+        -0.0020001998636871576,
+        -1.0001999139785767,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          0.05714286118745804,
+          -0.09642858058214188,
+          -0.9961994886398315
+        ],
+        [
+          0.2857142984867096,
+          0.12857143580913544,
+          -0.9801979064941406
+        ],
+        [
+          -0.20000000298023224,
+          0.3214285969734192,
+          -0.9881986975669861
+        ]
+      ],
+      "id": "ORTHO-AUTO-1080x1920-pixel2x1-shift0x0",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -2.450000047683716,
+            -1.244444489479065,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.0,
+            0.0,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            2.1000001430511475,
+            2.48888897895813,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "ORTHO",
+      "frame": 1,
+      "renderExtent": [
+        1080,
+        1920
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        2.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "AUTO",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.17000000178813934,
+        -0.09000000357627869
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        0.2857142984867096,
+        0.0,
+        0.0,
+        -0.3399999737739563,
+        0.0,
+        0.3214285671710968,
+        0.0,
+        0.20250000059604645,
+        0.0,
+        0.0,
+        -0.0020001998636871576,
+        -1.0001999139785767,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          -0.28285712003707886,
+          0.10607142746448517,
+          -0.9961994886398315
+        ],
+        [
+          -0.054285675287246704,
+          0.3310714364051819,
+          -0.9801979064941406
+        ],
+        [
+          -0.5399999618530273,
+          0.5239285826683044,
+          -0.9881986975669861
+        ]
+      ],
+      "id": "ORTHO-AUTO-1080x1920-pixel2x1-shift0.17x-0.09",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -1.2600001096725464,
+            -1.8744447231292725,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            1.1899999380111694,
+            -0.6300000548362732,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            3.2899999618530273,
+            1.858889102935791,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "ORTHO",
+      "frame": 1,
+      "renderExtent": [
+        1920,
+        1080
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        1.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "HORIZONTAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.0,
+        0.0
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        0.2857142984867096,
+        0.0,
+        0.0,
+        -0.0,
+        0.0,
+        0.5079365372657776,
+        0.0,
+        -0.0,
+        0.0,
+        0.0,
+        -0.0020001998636871576,
+        -1.0001999139785767,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          0.05714286118745804,
+          -0.15238097310066223,
+          -0.9961994886398315
+        ],
+        [
+          0.2857142984867096,
+          0.2031746208667755,
+          -0.9801979064941406
+        ],
+        [
+          -0.20000000298023224,
+          0.5079365372657776,
+          -0.9881986975669861
+        ]
+      ],
+      "id": "ORTHO-HORIZONTAL-1920x1080-pixel1x1-shift0x0",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -2.4499998092651367,
+            -0.7875000238418579,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.0,
+            0.0,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            2.0999999046325684,
+            1.5750000476837158,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "ORTHO",
+      "frame": 1,
+      "renderExtent": [
+        1920,
+        1080
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        1.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "HORIZONTAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.17000000178813934,
+        -0.09000000357627869
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        0.2857142984867096,
+        0.0,
+        0.0,
+        -0.3400000035762787,
+        0.0,
+        0.5079365372657776,
+        0.0,
+        0.31999996304512024,
+        0.0,
+        0.0,
+        -0.0020001998636871576,
+        -1.0001999139785767,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          -0.28285714983940125,
+          0.167618989944458,
+          -0.9961994886398315
+        ],
+        [
+          -0.05428570508956909,
+          0.5231745839118958,
+          -0.9801979064941406
+        ],
+        [
+          -0.5400000214576721,
+          0.8279365301132202,
+          -0.9881986975669861
+        ]
+      ],
+      "id": "ORTHO-HORIZONTAL-1920x1080-pixel1x1-shift0.17x-0.09",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -1.2599997520446777,
+            -1.4174998998641968,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            1.190000057220459,
+            -0.6299998760223389,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            3.2899999618530273,
+            0.945000171661377,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "ORTHO",
+      "frame": 1,
+      "renderExtent": [
+        1920,
+        1080
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        2.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "HORIZONTAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.0,
+        0.0
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        0.2857142984867096,
+        0.0,
+        0.0,
+        -0.0,
+        0.0,
+        1.0158730745315552,
+        0.0,
+        -0.0,
+        0.0,
+        0.0,
+        -0.0020001998636871576,
+        -1.0001999139785767,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          0.05714286118745804,
+          -0.30476194620132446,
+          -0.9961994886398315
+        ],
+        [
+          0.2857142984867096,
+          0.406349241733551,
+          -0.9801979064941406
+        ],
+        [
+          -0.20000000298023224,
+          1.0158730745315552,
+          -0.9881986975669861
+        ]
+      ],
+      "id": "ORTHO-HORIZONTAL-1920x1080-pixel2x1-shift0x0",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -2.4499998092651367,
+            -0.39375001192092896,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.0,
+            0.0,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            2.0999999046325684,
+            0.7875000238418579,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "ORTHO",
+      "frame": 1,
+      "renderExtent": [
+        1920,
+        1080
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        2.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "HORIZONTAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.17000000178813934,
+        -0.09000000357627869
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        0.2857142984867096,
+        0.0,
+        0.0,
+        -0.3400000035762787,
+        0.0,
+        1.0158730745315552,
+        0.0,
+        0.6399999856948853,
+        0.0,
+        0.0,
+        -0.0020001998636871576,
+        -1.0001999139785767,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          -0.28285714983940125,
+          0.3352380394935608,
+          -0.9961994886398315
+        ],
+        [
+          -0.05428570508956909,
+          1.046349287033081,
+          -0.9801979064941406
+        ],
+        [
+          -0.5400000214576721,
+          1.6558730602264404,
+          -0.9881986975669861
+        ]
+      ],
+      "id": "ORTHO-HORIZONTAL-1920x1080-pixel2x1-shift0.17x-0.09",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -1.2599997520446777,
+            -1.0237499475479126,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            1.190000057220459,
+            -0.6299999356269836,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            3.2899999618530273,
+            0.15750008821487427,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -1.0
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "ORTHO",
+      "frame": 1,
+      "renderExtent": [
+        1080,
+        1920
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        1.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "HORIZONTAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.0,
+        0.0
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        0.2857142984867096,
+        0.0,
+        0.0,
+        -0.0,
+        0.0,
+        0.1607142984867096,
+        0.0,
+        -0.0,
+        0.0,
+        0.0,
+        -0.0020001998636871576,
+        -1.0001999139785767,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          0.05714286118745804,
+          -0.04821429029107094,
+          -0.9961994886398315
+        ],
+        [
+          0.2857142984867096,
+          0.06428571790456772,
+          -0.9801979064941406
+        ],
+        [
+          -0.20000000298023224,
+          0.1607142984867096,
+          -0.9881986975669861
+        ]
+      ],
+      "id": "ORTHO-HORIZONTAL-1080x1920-pixel1x1-shift0x0",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -2.450000047683716,
+            -2.48888897895813,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.0,
+            0.0,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            2.1000001430511475,
+            4.97777795791626,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "ORTHO",
+      "frame": 1,
+      "renderExtent": [
+        1080,
+        1920
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        1.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "HORIZONTAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.17000000178813934,
+        -0.09000000357627869
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        0.2857142984867096,
+        0.0,
+        0.0,
+        -0.3399999737739563,
+        0.0,
+        0.1607143133878708,
+        0.0,
+        0.10124999284744263,
+        0.0,
+        0.0,
+        -0.0020001998636871576,
+        -1.0001999139785767,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          -0.28285712003707886,
+          0.05303569510579109,
+          -0.9961994886398315
+        ],
+        [
+          -0.054285675287246704,
+          0.16553571820259094,
+          -0.9801979064941406
+        ],
+        [
+          -0.5399999618530273,
+          0.2619643211364746,
+          -0.9881986975669861
+        ]
+      ],
+      "id": "ORTHO-HORIZONTAL-1080x1920-pixel1x1-shift0.17x-0.09",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -1.2599999904632568,
+            -3.1188883781433105,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            1.1899998188018799,
+            -0.6299998760223389,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            3.2899997234344482,
+            4.347777366638184,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "ORTHO",
+      "frame": 1,
+      "renderExtent": [
+        1080,
+        1920
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        2.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "HORIZONTAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.0,
+        0.0
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        0.2857142984867096,
+        0.0,
+        0.0,
+        -0.0,
+        0.0,
+        0.3214285969734192,
+        0.0,
+        -0.0,
+        0.0,
+        0.0,
+        -0.0020001998636871576,
+        -1.0001999139785767,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          0.05714286118745804,
+          -0.09642858058214188,
+          -0.9961994886398315
+        ],
+        [
+          0.2857142984867096,
+          0.12857143580913544,
+          -0.9801979064941406
+        ],
+        [
+          -0.20000000298023224,
+          0.3214285969734192,
+          -0.9881986975669861
+        ]
+      ],
+      "id": "ORTHO-HORIZONTAL-1080x1920-pixel2x1-shift0x0",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -2.450000047683716,
+            -1.244444489479065,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.0,
+            0.0,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            2.1000001430511475,
+            2.48888897895813,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "ORTHO",
+      "frame": 1,
+      "renderExtent": [
+        1080,
+        1920
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        2.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "HORIZONTAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.17000000178813934,
+        -0.09000000357627869
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        0.2857142984867096,
+        0.0,
+        0.0,
+        -0.3399999737739563,
+        0.0,
+        0.3214285671710968,
+        0.0,
+        0.20250000059604645,
+        0.0,
+        0.0,
+        -0.0020001998636871576,
+        -1.0001999139785767,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          -0.28285712003707886,
+          0.10607142746448517,
+          -0.9961994886398315
+        ],
+        [
+          -0.054285675287246704,
+          0.3310714364051819,
+          -0.9801979064941406
+        ],
+        [
+          -0.5399999618530273,
+          0.5239285826683044,
+          -0.9881986975669861
+        ]
+      ],
+      "id": "ORTHO-HORIZONTAL-1080x1920-pixel2x1-shift0.17x-0.09",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -1.2600001096725464,
+            -1.8744447231292725,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            1.1899999380111694,
+            -0.6300000548362732,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            3.2899999618530273,
+            1.858889102935791,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "ORTHO",
+      "frame": 1,
+      "renderExtent": [
+        1920,
+        1080
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        1.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "VERTICAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.0,
+        0.0
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        0.1607142984867096,
+        0.0,
+        0.0,
+        -0.0,
+        0.0,
+        0.2857142984867096,
+        0.0,
+        -0.0,
+        0.0,
+        0.0,
+        -0.0020001998636871576,
+        -1.0001999139785767,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          0.03214285895228386,
+          -0.08571429550647736,
+          -0.9961994886398315
+        ],
+        [
+          0.1607142984867096,
+          0.11428572237491608,
+          -0.9801979064941406
+        ],
+        [
+          -0.11250000447034836,
+          0.2857142984867096,
+          -0.9881986975669861
+        ]
+      ],
+      "id": "ORTHO-VERTICAL-1920x1080-pixel1x1-shift0x0",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -4.355555057525635,
+            -1.399999976158142,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.0,
+            0.0,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            3.7333333492279053,
+            2.799999952316284,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "ORTHO",
+      "frame": 1,
+      "renderExtent": [
+        1920,
+        1080
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        1.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "VERTICAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.17000000178813934,
+        -0.09000000357627869
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        0.1607142835855484,
+        0.0,
+        0.0,
+        -0.19124996662139893,
+        0.0,
+        0.2857142984867096,
+        0.0,
+        0.18000003695487976,
+        0.0,
+        0.0,
+        -0.0020001998636871576,
+        -1.0001999139785767,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          -0.15910710394382477,
+          0.0942857414484024,
+          -0.9961994886398315
+        ],
+        [
+          -0.030535683035850525,
+          0.29428577423095703,
+          -0.9801979064941406
+        ],
+        [
+          -0.3037499785423279,
+          0.46571433544158936,
+          -0.9881986975669861
+        ]
+      ],
+      "id": "ORTHO-VERTICAL-1920x1080-pixel1x1-shift0.17x-0.09",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -3.165555953979492,
+            -2.0299999713897705,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            1.1899996995925903,
+            -0.6300000548362732,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            4.923333168029785,
+            2.169999837875366,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "ORTHO",
+      "frame": 1,
+      "renderExtent": [
+        1920,
+        1080
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        2.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "VERTICAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.0,
+        0.0
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        0.0803571492433548,
+        0.0,
+        0.0,
+        -0.0,
+        0.0,
+        0.2857142984867096,
+        0.0,
+        -0.0,
+        0.0,
+        0.0,
+        -0.0020001998636871576,
+        -1.0001999139785767,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          0.01607142947614193,
+          -0.08571429550647736,
+          -0.9961994886398315
+        ],
+        [
+          0.0803571492433548,
+          0.11428572237491608,
+          -0.9801979064941406
+        ],
+        [
+          -0.05625000223517418,
+          0.2857142984867096,
+          -0.9881986975669861
+        ]
+      ],
+      "id": "ORTHO-VERTICAL-1920x1080-pixel2x1-shift0x0",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -8.71111011505127,
+            -1.399999976158142,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.0,
+            0.0,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            7.4666666984558105,
+            2.799999952316284,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "ORTHO",
+      "frame": 1,
+      "renderExtent": [
+        1920,
+        1080
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        2.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "VERTICAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.17000000178813934,
+        -0.09000000357627869
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        0.0803571417927742,
+        0.0,
+        0.0,
+        -0.09562500566244125,
+        0.0,
+        0.2857142984867096,
+        0.0,
+        0.18000003695487976,
+        0.0,
+        0.0,
+        -0.0020001998636871576,
+        -1.0001999139785767,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          -0.07955357432365417,
+          0.0942857414484024,
+          -0.9961994886398315
+        ],
+        [
+          -0.015267863869667053,
+          0.29428577423095703,
+          -0.9801979064941406
+        ],
+        [
+          -0.15187500417232513,
+          0.46571433544158936,
+          -0.9881986975669861
+        ]
+      ],
+      "id": "ORTHO-VERTICAL-1920x1080-pixel2x1-shift0.17x-0.09",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -7.521111011505127,
+            -2.0299999713897705,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            1.190000057220459,
+            -0.6300000548362732,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            8.656667709350586,
+            2.169999837875366,
+            -0.0999755859375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "ORTHO",
+      "frame": 1,
+      "renderExtent": [
+        1080,
+        1920
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        1.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "VERTICAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.0,
+        0.0
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        0.5079365372657776,
+        0.0,
+        0.0,
+        -0.0,
+        0.0,
+        0.2857142984867096,
+        0.0,
+        -0.0,
+        0.0,
+        0.0,
+        -0.0020001998636871576,
+        -1.0001999139785767,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          0.10158731043338776,
+          -0.08571429550647736,
+          -0.9961994886398315
+        ],
+        [
+          0.5079365372657776,
+          0.11428572237491608,
+          -0.9801979064941406
+        ],
+        [
+          -0.35555556416511536,
+          0.2857142984867096,
+          -0.9881986975669861
+        ]
+      ],
+      "id": "ORTHO-VERTICAL-1080x1920-pixel1x1-shift0x0",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -1.3781248331069946,
+            -1.3999998569488525,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.0,
+            0.0,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            1.1812498569488525,
+            2.799999713897705,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "ORTHO",
+      "frame": 1,
+      "renderExtent": [
+        1080,
+        1920
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        1.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "VERTICAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.17000000178813934,
+        -0.09000000357627869
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        0.5079365372657776,
+        0.0,
+        0.0,
+        -0.6044444441795349,
+        0.0,
+        0.2857142984867096,
+        0.0,
+        0.17999999225139618,
+        0.0,
+        0.0,
+        -0.0020001998636871576,
+        -1.0001999139785767,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          -0.5028571486473083,
+          0.09428569674491882,
+          -0.9961994886398315
+        ],
+        [
+          -0.09650790691375732,
+          0.29428571462631226,
+          -0.9801979064941406
+        ],
+        [
+          -0.9600000381469727,
+          0.4657142758369446,
+          -0.9881986975669861
+        ]
+      ],
+      "id": "ORTHO-VERTICAL-1080x1920-pixel1x1-shift0.17x-0.09",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -0.18812501430511475,
+            -2.0299997329711914,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            1.1899998188018799,
+            -0.6299998760223389,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            2.3712496757507324,
+            2.169999837875366,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "ORTHO",
+      "frame": 1,
+      "renderExtent": [
+        1080,
+        1920
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        2.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "VERTICAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.0,
+        0.0
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        0.2539682686328888,
+        0.0,
+        0.0,
+        -0.0,
+        0.0,
+        0.2857142984867096,
+        0.0,
+        -0.0,
+        0.0,
+        0.0,
+        -0.0020001998636871576,
+        -1.0001999139785767,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          0.05079365521669388,
+          -0.08571429550647736,
+          -0.9961994886398315
+        ],
+        [
+          0.2539682686328888,
+          0.11428572237491608,
+          -0.9801979064941406
+        ],
+        [
+          -0.17777778208255768,
+          0.2857142984867096,
+          -0.9881986975669861
+        ]
+      ],
+      "id": "ORTHO-VERTICAL-1080x1920-pixel2x1-shift0x0",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -2.7562496662139893,
+            -1.3999998569488525,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.0,
+            0.0,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            2.362499713897705,
+            2.799999713897705,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "ORTHO",
+      "frame": 1,
+      "renderExtent": [
+        1080,
+        1920
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        2.0,
+        1.0
+      ],
+      "lensMillimeters": 50.0,
+      "sensorFit": "VERTICAL",
+      "sensorWidthMillimeters": 36.0,
+      "sensorHeightMillimeters": 24.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.17000000178813934,
+        -0.09000000357627869
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 1000.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        0.2539682686328888,
+        0.0,
+        0.0,
+        -0.30222222208976746,
+        0.0,
+        0.2857142984867096,
+        0.0,
+        0.17999999225139618,
+        0.0,
+        0.0,
+        -0.0020001998636871576,
+        -1.0001999139785767,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "cameraWorldGltf": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "controlPoints": [
+        [
+          0.2,
+          -0.3,
+          -2
+        ],
+        [
+          1,
+          0.4,
+          -10
+        ],
+        [
+          -0.7,
+          1,
+          -6
+        ]
+      ],
+      "nativeNdc": [
+        [
+          -0.2514285743236542,
+          0.09428569674491882,
+          -0.9961994886398315
+        ],
+        [
+          -0.04825395345687866,
+          0.29428571462631226,
+          -0.9801979064941406
+        ],
+        [
+          -0.48000001907348633,
+          0.4657142758369446,
+          -0.9881986975669861
+        ]
+      ],
+      "id": "ORTHO-VERTICAL-1080x1920-pixel2x1-shift0.17x-0.09",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -1.5662498474121094,
+            -2.0299997329711914,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            1.1899998188018799,
+            -0.6299998760223389,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            3.552499532699585,
+            2.169999837875366,
+            -0.099945068359375
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "PERSP",
+      "frame": 1,
+      "renderExtent": [
+        64,
+        4
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        1.0,
+        1.0
+      ],
+      "lensMillimeters": 18.0,
+      "sensorFit": "AUTO",
+      "sensorWidthMillimeters": 32.0,
+      "sensorHeightMillimeters": 18.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.0,
+        0.0
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 100.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        1.125,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        18.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -1.0020020008087158,
+        -0.20020020008087158,
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "cameraWorldGltf": [
+        0.641571044921875,
+        0.057403869926929474,
+        -0.7649126648902893,
+        5.569934368133545,
+        -1.076208718586713e-06,
+        0.9971959590911865,
+        0.07483496516942978,
+        1.6000006198883057,
+        0.7670636177062988,
+        -0.04801112785935402,
+        0.6397721171379089,
+        2.945012331008911,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "id": "derived-source-optics64x4-shift(0, 0)",
+      "derivation": "Original optical data/pose in a fresh64x4 nonborder observation scene; not original scene admission",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -0.06222222000360489,
+            -0.0022222220432013273,
+            -0.10000000149011612
+          ],
+          "direction": [
+            -0.5282078385353088,
+            -0.01886456459760666,
+            -0.8489055037498474
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.0,
+            0.0,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.0,
+            0.0,
+            -0.9999999403953552
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            0.053333330899477005,
+            0.004444444086402655,
+            -0.10000000149011612
+          ],
+          "direction": [
+            0.4702267646789551,
+            0.03918556123971939,
+            -0.8816752433776855
+          ]
+        }
+      ]
+    },
+    {
+      "version": 1,
+      "model": "native-static-camera-projection-v1",
+      "qualification": "cpu-matrix-candidate",
+      "automaticEnabled": false,
+      "nativeVersion": [
+        5,
+        3,
+        0
+      ],
+      "nativeBuild": "02f0899d78e3",
+      "camera": "Static projection CPU fixture",
+      "cameraType": "PERSP",
+      "frame": 1,
+      "renderExtent": [
+        64,
+        4
+      ],
+      "renderBorder": {
+        "enabled": false,
+        "cropToBorder": false,
+        "bounds": [
+          0.0,
+          0.0,
+          1.0,
+          1.0
+        ]
+      },
+      "pixelAspect": [
+        1.0,
+        1.0
+      ],
+      "lensMillimeters": 18.0,
+      "sensorFit": "AUTO",
+      "sensorWidthMillimeters": 32.0,
+      "sensorHeightMillimeters": 18.0,
+      "orthoScale": 7.0,
+      "shift": [
+        0.0,
+        -0.08999999612569809
+      ],
+      "clipNear": 0.10000000149011612,
+      "clipFar": 100.0,
+      "projectionClipRange": "minus-one-to-one",
+      "projection": [
+        1.125,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        17.999998092651367,
+        -2.8799993991851807,
+        0.0,
+        0.0,
+        0.0,
+        -1.0020020008087158,
+        -0.20020020008087158,
+        0.0,
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "cameraWorldGltf": [
+        0.641571044921875,
+        0.057403869926929474,
+        -0.7649126648902893,
+        5.569934368133545,
+        -1.076208718586713e-06,
+        0.9971959590911865,
+        0.07483496516942978,
+        1.6000006198883057,
+        0.7670636177062988,
+        -0.04801112785935402,
+        0.6397721171379089,
+        2.945012331008911,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "candidateRejectionReasons": [],
+      "id": "derived-source-optics64x4-shift(0.0, -0.08999999612569809)",
+      "derivation": "Original optical data/pose in a fresh64x4 nonborder observation scene; not original scene admission",
+      "nativeRays": [
+        {
+          "ndc": [
+            -0.7,
+            -0.4
+          ],
+          "nearPoint": [
+            -0.06222222000360489,
+            -0.018222220242023468,
+            -0.09999999403953552
+          ],
+          "direction": [
+            -0.5220901370048523,
+            -0.15289781987667084,
+            -0.8390734195709229
+          ]
+        },
+        {
+          "ndc": [
+            0,
+            0
+          ],
+          "nearPoint": [
+            0.0,
+            -0.01599999889731407,
+            -0.09999999403953552
+          ],
+          "direction": [
+            0.0,
+            -0.15799051523208618,
+            -0.9874407052993774
+          ]
+        },
+        {
+          "ndc": [
+            0.6,
+            0.8
+          ],
+          "nearPoint": [
+            0.0533333383500576,
+            -0.011555553413927555,
+            -0.09999999403953552
+          ],
+          "direction": [
+            0.46816110610961914,
+            -0.1014348715543747,
+            -0.8778018951416016
+          ]
+        }
+      ]
+    }
+  ],
+  "stockGltfControls": [
+    {
+      "kind": "PERSP",
+      "sourceProjection": {
+        "version": 1,
+        "model": "native-static-camera-projection-v1",
+        "qualification": "cpu-matrix-candidate",
+        "automaticEnabled": false,
+        "nativeVersion": [
+          5,
+          3,
+          0
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "camera": "Static projection CPU fixture",
+        "cameraType": "PERSP",
+        "frame": 1,
+        "renderExtent": [
+          1920,
+          1080
+        ],
+        "renderBorder": {
+          "enabled": false,
+          "cropToBorder": false,
+          "bounds": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ]
+        },
+        "pixelAspect": [
+          1.0,
+          1.0
+        ],
+        "lensMillimeters": 50.0,
+        "sensorFit": "AUTO",
+        "sensorWidthMillimeters": 36.0,
+        "sensorHeightMillimeters": 24.0,
+        "orthoScale": 7.0,
+        "shift": [
+          0.17000000178813934,
+          -0.09000000357627869
+        ],
+        "clipNear": 0.10000000149011612,
+        "clipFar": 100.0,
+        "projectionClipRange": "minus-one-to-one",
+        "projection": [
+          2.777777671813965,
+          0.0,
+          0.3400000035762787,
+          0.0,
+          0.0,
+          4.938271522521973,
+          -0.3199999928474426,
+          0.0,
+          0.0,
+          0.0,
+          -1.0020020008087158,
+          -0.20020020008087158,
+          0.0,
+          0.0,
+          -1.0,
+          0.0
+        ],
+        "cameraWorldGltf": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          -1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "candidateRejectionReasons": []
+      },
+      "gltfCameras": [
+        {
+          "name": "Fixture optics",
+          "perspective": {
+            "aspectRatio": 1.7777777777777777,
+            "yfov": 0.39959648408210363,
+            "zfar": 100,
+            "znear": 0.10000000149011612
+          },
+          "type": "perspective"
+        }
+      ],
+      "glbSha256": "692858d211c699bcb9115237cb9c6fac00bc6774c310a03edb429d3e5e97aca8"
+    },
+    {
+      "kind": "ORTHO",
+      "sourceProjection": {
+        "version": 1,
+        "model": "native-static-camera-projection-v1",
+        "qualification": "cpu-matrix-candidate",
+        "automaticEnabled": false,
+        "nativeVersion": [
+          5,
+          3,
+          0
+        ],
+        "nativeBuild": "02f0899d78e3",
+        "camera": "Static projection CPU fixture",
+        "cameraType": "ORTHO",
+        "frame": 1,
+        "renderExtent": [
+          1920,
+          1080
+        ],
+        "renderBorder": {
+          "enabled": false,
+          "cropToBorder": false,
+          "bounds": [
+            0.0,
+            0.0,
+            1.0,
+            1.0
+          ]
+        },
+        "pixelAspect": [
+          1.0,
+          1.0
+        ],
+        "lensMillimeters": 50.0,
+        "sensorFit": "AUTO",
+        "sensorWidthMillimeters": 36.0,
+        "sensorHeightMillimeters": 24.0,
+        "orthoScale": 7.0,
+        "shift": [
+          0.17000000178813934,
+          -0.09000000357627869
+        ],
+        "clipNear": 0.10000000149011612,
+        "clipFar": 100.0,
+        "projectionClipRange": "minus-one-to-one",
+        "projection": [
+          0.2857142984867096,
+          0.0,
+          0.0,
+          -0.3400000035762787,
+          0.0,
+          0.5079365372657776,
+          0.0,
+          0.31999996304512024,
+          0.0,
+          0.0,
+          -0.0200200192630291,
+          -1.0020020008087158,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "cameraWorldGltf": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          -1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "candidateRejectionReasons": []
+      },
+      "gltfCameras": [
+        {
+          "name": "Fixture optics",
+          "orthographic": {
+            "xmag": 3.5,
+            "ymag": 1.96875,
+            "zfar": 100,
+            "znear": 0.10000000149011612
+          },
+          "type": "orthographic"
+        }
+      ],
+      "glbSha256": "b1a7b30812b69d982004e6df24accb45856e0fda812bc93c55d8b55daff55084"
+    }
+  ],
+  "borderControl": {
+    "version": 1,
+    "model": "native-static-camera-projection-v1",
+    "qualification": "cpu-matrix-candidate",
+    "automaticEnabled": false,
+    "nativeVersion": [
+      5,
+      3,
+      0
+    ],
+    "nativeBuild": "02f0899d78e3",
+    "camera": "Static projection CPU fixture",
+    "cameraType": "ORTHO",
+    "frame": 1,
+    "renderExtent": [
+      1920,
+      1080
+    ],
+    "renderBorder": {
+      "enabled": true,
+      "cropToBorder": false,
+      "bounds": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ]
+    },
+    "pixelAspect": [
+      1.0,
+      1.0
+    ],
+    "lensMillimeters": 50.0,
+    "sensorFit": "AUTO",
+    "sensorWidthMillimeters": 36.0,
+    "sensorHeightMillimeters": 24.0,
+    "orthoScale": 7.0,
+    "shift": [
+      0.17000000178813934,
+      -0.09000000357627869
+    ],
+    "clipNear": 0.10000000149011612,
+    "clipFar": 100.0,
+    "projectionClipRange": "minus-one-to-one",
+    "projection": [
+      0.2857142984867096,
+      0.0,
+      0.0,
+      -0.3400000035762787,
+      0.0,
+      0.5079365372657776,
+      0.0,
+      0.31999996304512024,
+      0.0,
+      0.0,
+      -0.0200200192630291,
+      -1.0020020008087158,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "cameraWorldGltf": [
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      -1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "candidateRejectionReasons": [
+      "Render border/crop needs a separate transport proof"
+    ]
+  },
+  "sourceUnchanged": true
+}

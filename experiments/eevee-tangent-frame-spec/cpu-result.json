@@ -1,0 +1,42 @@
+{
+  "checks": 21,
+  "status": "CPU_MATH_BOUNDARIES_PASSED",
+  "ordinaryZeroNormalize": "UNQUALIFIED_NOT_REPLACED",
+  "gpuQualification": false,
+  "supportCredit": 0,
+  "rawNormalControl": {
+    "interpolated": [
+      0.0,
+      0.4000000059604645,
+      0.800000011920929
+    ],
+    "source": [
+      0.6000000238418579,
+      0.6399999856948853,
+      0.47999998927116394
+    ],
+    "incorrectFragmentRenormalization": [
+      0.5570860505104065,
+      0.6643638014793396,
+      0.4982728660106659
+    ]
+  },
+  "rawTangentControl": {
+    "interpolated": [
+      0.800000011920929,
+      0.4000000059604645,
+      0.0,
+      1.0
+    ],
+    "source": [
+      0.3113996088504791,
+      0.5449492335319519,
+      0.7784988880157471
+    ],
+    "incorrectFragmentRenormalization": [
+      0.33218199014663696,
+      0.5813183784484863,
+      0.7427813410758972
+    ]
+  }
+}

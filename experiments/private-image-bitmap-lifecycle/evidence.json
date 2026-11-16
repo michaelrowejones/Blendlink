@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "status": "VERIFIED_NATIVE_IMAGE_BITMAP_LIFECYCLE",
+  "sourceCommit": "1abed642ba742858f3aa2b02bb0fcd42255e3423",
+  "scope": "Private default-loader decode ownership and public cleanup; no node, source-engine, scene appearance or performance acceptance.",
+  "directory": "/tmp/scenetoweb-private-imagebitmap-browser-r2",
+  "readerSha256": "0d1e6be4c0f7219428239f3dbd0bb7eb9bce95c2b2e37afc9bffed108e41668b",
+  "artifacts": {
+    "report.json": "3c0bed462cbfc2cc81cb81caee426989222a345df4f41e821a7ce9d18b3dd3f3",
+    "producer.mjs": "13a39cbe10e11d98b28e2b01b6675a27d72275cea23b62bad42d0f890ccd04db",
+    "fixture.js": "c5928f4a91e88babe85a7165ceaef21cc102a0ad324413a4d24f730def18926a",
+    "packed.glb": "76326a1136f9f03433acbafdb2c605a2fb3065cf50bddaf51a55aae31ce01267",
+    "required.glb": "1e10bfed9cbcdabe8d5646744b6f403143f8c3f36bd48a33168150b1685a5a3f",
+    "external.gltf": "30ebe8861ffe1e39590c453e8fea4d568895092266d443de059aee52a292f1b4",
+    "fixture.png": "8e546007599fa6df13786602a501cc2933ae498bb8ed8ff0fa4664f551cad2be",
+    "programs.json": "7d1db17a70b66a981ede690b89438c36c4d29fc301aa08702984a77110637b18",
+    "index.html": "0dfcc6e4dd9cec111ea4bac3c0d40f5ea8752fb2364faee521f5e2582a99858e",
+    "sdk-snapshot/packages/blendlink/src/threeRuntime.ts": "2bc5443cf0539a1a4e67115f8e61181e81b0c6c2a687e433b6afcaeb74b43f77",
+    "sdk-snapshot/packages/blendlink/src/threePrivateImageBitmaps.ts": "eb67b324f184d027ea91c4e3551a4998b20d146f01000f9a3915817d56a76c1f",
+    "sdk-snapshot/packages/blendlink/dist/threeRuntime.js": "a3571b413435ec429220c2334c8d45f3f1c8d0404ec90adcd99c19df9f6745ad",
+    "sdk-snapshot/packages/blendlink/dist/threePrivateImageBitmaps.js": "cbd6209510728b01110cb1e26a4527087f55edb6cb21702529b8a3e4defc5ca5"
+  },
+  "counts": {
+    "cases": 8,
+    "actualNativeDecodes": 8,
+    "ownedCloses": 5,
+    "borrowedPreserved": 3
+  },
+  "failedDiagnostics": [
+    {
+      "directory": "/tmp/scenetoweb-private-imagebitmap-browser-r1",
+      "status": "FAILED_VITE_403_BEFORE_DECODE",
+      "supportCredit": 0
+    }
+  ]
+}

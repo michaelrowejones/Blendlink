@@ -44,24 +44,70 @@ def collect_outputs(value, outputs):
         for child in value: collect_outputs(child, outputs)
 
 
-def validate_camera(outputs):
+def _static_optics(camera):
+    animation = camera.data.animation_data
+    return not animation or not (animation.action or animation.drivers or any(track.strips for track in animation.nla_tracks))
+
+
+def _object_normal_projection_independent(outputs, context_ir, camera, matrix, scene):
+    """Pinned field-only exception; this does not transport a source camera.
+
+    ObjectNormal reads packed corner normals, owner/view normal transforms and
+    front-facing orientation, not projection coefficients. The shifted native
+    EEVEE observations close on both actual backends; every other output keeps
+    its original projection refusal. Unscoped callers remain conservative.
+    """
+    if (outputs != {"object-normal"} or context_ir is None or
+            bpy.app.version != (5, 3, 0) or bpy.app.build_hash != b"02f0899d78e3" or
+            scene.render.engine not in {"BLENDER_EEVEE", "BLENDER_EEVEE_NEXT"} or
+            camera.data.type != "PERSP" or not _static_optics(camera)):
+        return False
+    linear = matrix.to_3x3()
+    if (not all(math.isfinite(value) for row in matrix for value in row) or
+            any(abs(linear.col[index].length - 1) > 1e-5 for index in range(3)) or
+            not all(math.isfinite(value) for value in (camera.data.shift_x, camera.data.shift_y))):
+        return False
+    render = scene.render
+    if render.use_multiview or render.pixel_aspect_x != 1 or render.pixel_aspect_y != 1:
+        return False
+    if render.use_border and (render.use_crop_to_border or
+            (render.border_min_x, render.border_min_y, render.border_max_x, render.border_max_y) != (0, 0, 1, 1)):
+        return False
+    records = []
+    def collect(value):
+        if isinstance(value, dict):
+            if value.get("op") == "geometry_context": records.append(value)
+            # Image samples are validated numeric payload, not executable IR.
+            # Keep the image's vector and every other dependency visible.
+            for key, child in value.items():
+                if value.get("op") != "tex_image" or key != "pixels": collect(child)
+        elif isinstance(value, (list, tuple)):
+            for child in value: collect(child)
+    collect(context_ir)
+    return bool(records) and all(record.get("output") == "object-normal" and
+            record.get("model") == "primary-triangles-v1" and record.get("sourceEngine") == "EEVEE" and
+            record.get("normalStorage") == "SNORM10" for record in records)
+
+
+def validate_camera(outputs, context_ir=None):
     if not outputs & VIEW_OUTPUTS: return
     scene = bpy.context.scene
     camera = scene.camera
     if camera is None: return  # A browser camera is supplied and checked on every draw.
     if camera.data.type not in {"PERSP", "ORTHO"}:
         raise ValueError("Primary geometry context requires a perspective or orthographic camera")
-    matrix = camera.evaluated_get(bpy.context.evaluated_depsgraph_get()).matrix_world.to_3x3()
+    camera_matrix = camera.evaluated_get(bpy.context.evaluated_depsgraph_get()).matrix_world
+    matrix = camera_matrix.to_3x3()
     axes = [matrix.col[index].normalized() for index in range(3)]
     if matrix.determinant() <= 0 or max(abs(axes[a].dot(axes[b])) for a,b in ((0,1),(0,2),(1,2))) > 1e-5:
         raise ValueError("Primary geometry context has no verified reflected/sheared camera projection binding")
-    if camera.data.shift_x != 0 or camera.data.shift_y != 0 or scene.render.use_border:
+    if (camera.data.shift_x != 0 or camera.data.shift_y != 0 or scene.render.use_border) and not _object_normal_projection_independent(outputs, context_ir, camera, camera_matrix, scene):
         raise ValueError("Primary geometry view coordinates have no verified shifted/cropped camera projection binding")
 
 
-def validate_owner(obj, outputs):
+def validate_owner(obj, outputs, context_ir=None):
     if not outputs: return
-    validate_camera(outputs)
+    validate_camera(outputs, context_ir)
     if obj.type != "MESH" or obj.data.shape_keys or obj.find_armature() or any(mod.show_render for mod in obj.modifiers):
         raise ValueError("Geometry context currently requires authored triangle meshes without modifiers, skin or morph deformation")
     animation = obj.data.animation_data

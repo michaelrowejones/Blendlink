@@ -1438,7 +1438,7 @@
     },
     "shader:ShaderNodeTexCoord": {
       "category": "partial",
-      "limits": "All7 ordinary UV/Object/Generated/Camera/Normal/Window/Reflection outputs now have live routes. New Camera/Normal/Window/Reflection routes share the measured primary-triangle context and limits of ShaderNodeNewGeometry: explicit bases, per-draw actual matrices, native normal storage/interpolation, no modifiers/deformation/generated or GPU instances, and named reflected/sheared/shifted/cropped source-camera limits. Object override and instancer coordinate domains remain unported. Native EEVEE proof is Metal; browser WebGPU and WebGL2 both pass. No automatic primary-field-to-UV-ray capture or complete Blender lighting/BSDF parity claim. Fresh unnamed/default UV inputs bind the source owner's active-render layer explicitly (first four exported UV channels), independently of edit selection. Shared materials split runtime/carrier variants by actual owner UV layout. Missing, stale or nonfinite runtime attributes refuse; legacy serialized unnamed uv keeps TEXCOORD_0. Hybrid channel baking retains the original source selection even when it adds a private atlas layer.",
+      "limits": "All7 ordinary UV/Object/Generated/Camera/Normal/Window/Reflection outputs now have live routes. New Camera/Normal/Window/Reflection routes share the measured primary-triangle context and limits of ShaderNodeNewGeometry: explicit bases, per-draw actual matrices, native normal storage/interpolation, no modifiers/deformation/generated or GPU instances, and named reflected/sheared/shifted/cropped source-camera limits. A separately proven Blender 5.3.0 build02f0899d78e3 EEVEE SNORM10 ObjectNormal-only exception admits rigid perspective source cameras with static optics, square pixels, one view, finite shift and no border, or an exact full rectangle with crop disabled. It requires scoped primary-triangle IR provenance; Window/Incoming/Reflection, mixed outputs, other versions/builds/profiles, ORTHO shift, optical animation, actual crop and unscoped callers retain their existing refusal. This is material-field admission, not source-camera/framing transport or scene acceptance. Object override and instancer coordinate domains remain unported. Native EEVEE proof is Metal; browser WebGPU and WebGL2 both pass. No automatic primary-field-to-UV-ray capture or complete Blender lighting/BSDF parity claim. Fresh unnamed/default UV inputs bind the source owner's active-render layer explicitly (first four exported UV channels), independently of edit selection. Shared materials split runtime/carrier variants by actual owner UV layout. Missing, stale or nonfinite runtime attributes refuse; legacy serialized unnamed uv keeps TEXCOORD_0. Hybrid channel baking retains the original source selection even when it adds a private atlas layer.",
       "runtimePath": "packages/blendlink/src/tslNodeRecipe.ts",
       "runtimeOps": [
         "uv",
@@ -1500,6 +1500,12 @@
         {
           "path": "experiments/geometry-context-differential/README.md",
           "anchor": "Source active-render UV"
+        },
+        {
+          "path": "packages/blender-addon/tests/geometry_camera_domain_check.py"
+        },
+        {
+          "path": "experiments/camera-projection-shift/browser-r2-receipt.json"
         }
       ],
       "renderer": "WebGPURenderer, WebGPU or WebGL2 backend; legacy WebGLRenderer has no live program installer",
@@ -1530,6 +1536,22 @@
         "maximumCyclesAbsoluteEncodedRgbError": 0.000016957521438598633,
         "maximumEeveeAbsoluteEncodedRgbError": 0.0009713172912597656,
         "scope": "Shared corpus across9 geometry/view outputs plus independent RGB control, both bases and browser backends; not per-class node counts. Native Linux/OpenGL not certified by this Metal run.",
+        "objectNormalProjectionDomain": {
+          "nativeVersion": "5.3.0",
+          "nativeBuild": "02f0899d78e3",
+          "sourceEngine": "EEVEE",
+          "normalStorage": "SNORM10",
+          "output": "object-normal only",
+          "nativeBackend": "Metal",
+          "actualBrowserBackends": [
+            "WebGPU",
+            "WebGL2 via WebGPURenderer"
+          ],
+          "observations": 2,
+          "positiveFieldRows": 16,
+          "ignoredShiftNegatives": 4,
+          "scope": "Rigid perspective cameras, static optics, square pixels, one view, finite shift, no border or exact full rectangle with crop disabled. Source optics may not be animated. No new runtime camera transport, generic geometry-node support, ORTHO GPU or whole-scene acceptance. Source-policy CPU suite also exercises historical-version/default-caller and crop/other-output refusals."
+        },
         "activeRenderUv": {
           "nativeVersions": [
             "4.2.0",
@@ -19106,7 +19128,7 @@
         "standaloneLightPathFields": "unsupported",
         "scope": "terminal white-transparent shadow branch only",
         "evidence": "experiments/shadow-transparent-branch/qualified-evidence.json",
-        "evidenceSha256": "3d766a64a7f2955be8a9790ce1bc1b56ddca752fb424c3897a1558d20f4231c6",
+        "evidenceSha256": "815f066bdfb4f4dfe518c51733815aec895f0410195e381b3fb5f1d3fbfe520c",
         "closedReader": {
           "path": "experiments/shadow-transparent-branch/read.mjs",
           "sha256": "f42f85ee6abefde9a1d2eb123ee9adc4425bc6ff3c84d0813e81793af65ab63d"

@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "role": "Narrow source-material guard admission; no default camera transport or scene acceptance",
+  "baseSourceCommit": "70a60a9c616f3da43eebf3aa92c9cf84976043b4",
+  "nativeVersion": [
+    5,
+    3,
+    0
+  ],
+  "nativeBuild": "02f0899d78e3",
+  "sourcePolicyChecks": 49,
+  "rendered": false,
+  "saved": false,
+  "gpuRunsThisChange": 0,
+  "sourceFiles": [
+    {
+      "path": "packages/blender-addon/geometry_ir.py",
+      "bytes": 14545,
+      "sha256": "50c082d7024c2f536ca57dd0d9dbfbc7c562dbce0f89abb9082d5bced11b616f"
+    },
+    {
+      "path": "packages/blender-addon/material_compiler.py",
+      "bytes": 421076,
+      "sha256": "0adf22ea2ff88fb06eb7557607debd6d8fa58c17a76c1afddc93b665de670918"
+    },
+    {
+      "path": "packages/blender-addon/tests/geometry_camera_domain_check.py",
+      "bytes": 7282,
+      "sha256": "933f68cc7bacda52d4d75c2433a03236eb8f2fc0793af5cbd0d98693453d1c72"
+    },
+    {
+      "path": "scripts/lib/addon-headless-suites.mjs",
+      "bytes": 5480,
+      "sha256": "78cf360c2535e7ab85248d028e6c7c281e644fe8071417178f09e7e8f55ca4dd"
+    },
+    {
+      "path": "scripts/lib/addon-headless-suites.test.mjs",
+      "bytes": 5777,
+      "sha256": "2c410f1b27381d2d3d6932fabbd35d17d185894efd9bedc577b55e317c77d03b"
+    }
+  ],
+  "nativeLogs": [
+    {
+      "path": "/tmp/scenetoweb-object-normal-camera-domain-cpu-r6.log",
+      "bytes": 564,
+      "sha256": "214ac23e080a90c4885a555aa0e8422d709bd30953f27de02689cfea0c49c169"
+    },
+    {
+      "path": "/tmp/scenetoweb-object-normal-geometry_export_check.py.log",
+      "bytes": 423,
+      "sha256": "f5740062f83a9418a5f5d07b12f0fe69b443d062a3735a22ef9c5e40db037132"
+    },
+    {
+      "path": "/tmp/scenetoweb-object-normal-geometry_context_check.py.log",
+      "bytes": 114,
+      "sha256": "1b83e76c89ba3b0250ecabefb056bd984edfd3f5509908a30c1c18ebe955b0a8"
+    },
+    {
+      "path": "/tmp/scenetoweb-object-normal-camera_data_check.py.log",
+      "bytes": 415,
+      "sha256": "0559256446da7e430f1ec89b3e6bcf67c1ef25d0f96282ad7706f9da94c25965"
+    }
+  ],
+  "priorClosedFieldProof": {
+    "experimentCommit": "ab3576e2d6f6f5e04793ba2a05e3973ffe90d823",
+    "reportPath": "/tmp/scenetoweb-camera-shift-browser-r2/report.json",
+    "reportSha256": "0ba40e908b9ead5808a9665eb58d1603769240a98b3be0c1889650bdbb32aae9",
+    "actualBackends": [
+      "WebGPU",
+      "WebGL2 via WebGPURenderer"
+    ],
+    "positiveFieldRows": 16,
+    "ignoredShiftNegatives": 4
+  },
+  "sceneAcceptance": false,
+  "defaultSourceCameraEnabled": false,
+  "runtimeMathChanged": false,
+  "oldVersionGuardWidened": false,
+  "additionalChecks": {
+    "headlessDiscoveryPolicyTests": 7,
+    "diffWhitespaceErrors": 0,
+    "headlessDiscoveryLog": {
+      "path": "/tmp/scenetoweb-object-normal-camera-domain-discovery-r2.log",
+      "bytes": 873,
+      "sha256": "f4db8cf9e91096946551c8a6f22b590e3844947ba6b0b31069eb7a6cd270771d"
+    }
+  },
+  "sourcePolicyRunnerProfile": {
+    "sentinel": "BLENDLINK_GEOMETRY_CAMERA_DOMAIN_PASSED",
+    "version": [
+      5,
+      3,
+      0
+    ],
+    "buildHash": "02f0899d78e3",
+    "platform": "darwin",
+    "machine": "arm64",
+    "gpuBackend": "METAL",
+    "nonmatchingStatus": "not-applicable",
+    "nonmatchingCoverageCredit": 0
+  }
+}

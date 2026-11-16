@@ -297,3 +297,62 @@ evidence rather than physical Safari/iOS acceptance. The source coverage export
 has no fingerprint drift, validation failure or native availability changes.
 No spreadsheet write, hosted workflow, package publication or real-user test
 was performed in this batch.
+
+## Artist fidelity and current integration
+
+The release goal now explicitly prioritizes artist-visible fidelity across GPUs.
+Exact source data, mip bytes, ownership and deterministic math checks remain
+separate requirements. Existing failed strict image comparisons remain recorded;
+a separate declared visual gate must be reviewed before granting any additional
+material scope. Unlit color-field acceptance cannot establish whole-scene or
+EEVEE/Three BRDF fidelity.
+
+The [installed BOX color candidate](../experiments/box-material-stage/PRODUCTION_CANDIDATE.md)
+completes all four Metal/SwiftShader × WebGPU/WebGL2 captures. Both Metal APIs
+pass the unchanged strict reader. SwiftShader has 50 word violations among
+245,760 compared words: two silhouette pixels and one interior color component
+per API. The interior error is about 0.28 of one 8-bit linear code step. This
+remains an experimental patch with no production admission or coverage credit.
+A resource-harness repair is retained but has not yet been hardware validated.
+
+The [portable Mikk helper](../experiments/mikk-wasm-pilot/README.md) matches
+24,842 native CPU callback rows exactly, including signed zero and packed
+normal/sign checks. It removes the artist-side compiler dependency.
+[Corner transport](../experiments/corner-frame-transport/README.md) preserves
+159,024 custom Float32 words and original oriented triangles through actual
+exports. The [source specification](../experiments/eevee-tangent-frame-spec/README.md)
+identifies EEVEE's raw interpolated Ni/tangent ordering; ordinary Three TBN
+renormalization can change the result. These are foundations for the pending
+NormalMap field proof, not a qualified NormalMap port. Degenerate UV/final-zero
+cases remain explicit unresolved boundaries.
+
+[ObjectNormal camera-domain admission](OBJECT_NORMAL_CAMERA_DOMAIN.md) now allows
+only the pinned static ObjectNormal-only channel under shifted perspective
+optics and an exact full-rectangle non-cropping border. It changes no camera
+installation or runtime normal math; other geometry outputs retain their
+refusals. The complete original Archviz camera framing is still unported.
+
+Private default glTF loading now releases only its own decoded ImageBitmaps
+on disposal, cancellation, rollback and late completion. Actual native browser
+decoding verifies five owned images close exactly once and three borrowed
+application/preloaded/cache controls remain open. The independent
+[lifecycle record](../experiments/private-image-bitmap-lifecycle/README.md)
+grants no rendering or scene-fidelity credit.
+
+Clean executable checkpoint `afeca797` passed the complete pinned 5.3 local
+contract in 310.909 seconds: 221 unit-test files, 1,914 passes and six optional
+skips, 129 release-policy checks, 16 real KTX checks, 191 applicable native
+headless suites and zero applicability skips, packed consumers/examples,
+isolated extension installation/reinstallation and all three bake workflows.
+The workspace remained stable. Four unqualified stock-material relaxations
+remain explicitly excluded; native-positive qualification and public-release
+readiness are false. Evidence is
+`artifacts/v1-53-materials-contract-r2/report.json` in the integration checkout.
+Subsequent merges add experiments/documentation only.
+
+On combined checkpoint `f6875a60`, the Glass/opaque shadow qualification was
+rerun from actual Finals and independently closed across all eight tuples,
+88 fields and 5,767,168 installed words, plus native controls. The
+[updated receipt](../experiments/shadow-transparent-branch/qualified-evidence.json)
+preserves both earlier qualified records. No whole original scene is accepted
+yet, and no hosted workflow, package publication or spreadsheet edit ran.

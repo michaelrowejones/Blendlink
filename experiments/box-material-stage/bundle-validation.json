@@ -1,0 +1,24 @@
+{
+  "status": "EXPERIMENTS_ONLY_BUNDLE_CPU_VALIDATED_NOT_PORT_QUALIFICATION",
+  "generatedAt": "2026-11-16T03:40:13.278998+00:00",
+  "publicBase": "70a60a9c616f3da43eebf3aa92c9cf84976043b4",
+  "privateCaptureCommit": "71a464a23e79bae48720ba524c21fb903c525805",
+  "privateResourceRepairCommit": "72a333227c00a600be3cb762a638f2d6cb2c7169",
+  "patchSha256": "3d35630c3d0bdae9a3a3c25eba2832707ad8b006e7e6894fdf239d937c4380d2",
+  "checks": {
+    "publicBaselineGuardTests": 3,
+    "privateEntrypointsRefused": 5,
+    "guardTestLogSha256": "66039b58a4460bbd28349dbd4ca1296127beb10ab4dffc46f8fde6f15922f7db",
+    "patchApplyCheck": true,
+    "patchRoundTripExactFiles": 17,
+    "patchRoundTripLogSha256": "6d74dce8af44dd45025859d14e1da847ea5afaf887be0bf525d0580873d5ed4e",
+    "frozenSourceSnapshots": 8,
+    "frozenFailedResultSnapshots": 2,
+    "sourcePackagesDiffEmpty": true,
+    "originalPrivateWorktreeCleanAndUnchanged": true,
+    "gpuOpened": false,
+    "nativeLaunched": false
+  },
+  "resourceRepair": "Harness-only owned-geometry repair preserved but untested on GPU.",
+  "strictProof": "Failed50/245760words; no threshold changes, no support/material/scene credit."
+}

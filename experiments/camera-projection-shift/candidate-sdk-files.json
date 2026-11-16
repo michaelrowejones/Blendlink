@@ -1,0 +1,31 @@
+{
+  "baseSourceCommit": "751dcffec11256f0b6347d833eef4bb9f8525f47",
+  "patchSha256": "3412806f1cbfb8acaccdccdb0724459bb57a857f954c476533553b499e0944bf",
+  "files": [
+    {
+      "path": "packages/blendlink/blender/source_camera_projection.py",
+      "bytes": 3495,
+      "sha256": "185fd77955206afef3c4c891bc3438942a9e4aa6e8fa7e300962db722d49f336"
+    },
+    {
+      "path": "packages/blendlink/blender/source_presentation.py",
+      "bytes": 11583,
+      "sha256": "25a9ea3ca49072d81b475389f08840e3b07cbb185b85a09f96ef5be0e3284219"
+    },
+    {
+      "path": "packages/blendlink/src/sourceCameraProjection.ts",
+      "bytes": 6882,
+      "sha256": "351064e3dac19fd35830edb178393c5ee68ef9c95c1a736734f75531af812299"
+    },
+    {
+      "path": "packages/blendlink/src/sourceCameraProjection.test.ts",
+      "bytes": 7056,
+      "sha256": "01ef2f6cc3986d9b2a8eef1c4b11ade30f362cc322f0439b4adc628fcc5411d3"
+    },
+    {
+      "path": "packages/blendlink/src/sourceDisplay.ts",
+      "bytes": 3602,
+      "sha256": "d86d83de636c390f1d84810a514322eff6641aaaafeaf8ae2d3b379087cd47e9"
+    }
+  ]
+}

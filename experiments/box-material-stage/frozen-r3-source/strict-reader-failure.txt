@@ -1,0 +1,19 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Native field gate failed: swiftshader/webgpu/source-Plane.021/mask/128
+
+3 !== 0
+
+    at closeInstalled (file:///private/tmp/scenetoweb-v1-box-color-production/experiments/box-material-stage/read-installed.mjs:84:115)
+    at async file:///private/tmp/scenetoweb-v1-box-color-production/experiments/box-material-stage/read-installed.mjs:99:87 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 3,
+  expected: 0,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.22.1

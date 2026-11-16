@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "status": "CPU_CORNER_ATTRIBUTE_TRANSPORT_CLOSED_NOT_NATIVE_FRAME_OR_RENDER_QUALIFICATION",
+  "supportCredit": 0,
+  "sourceCommit": "70a60a9c616f3da43eebf3aa92c9cf84976043b4",
+  "directory": "/tmp/scenetoweb-corner-frame-transport-r2",
+  "closed": {
+    "path": "/tmp/scenetoweb-corner-frame-transport-r2-closed-archive.json",
+    "sha256": "f08be8759f635549f834eb7a52c808971747c188a3f7ac8f2a7b4b9c863ccd6e",
+    "readerSha256": "9ce789fbf08b39b22f4a793db5b05590835071d47f069e2810485ba88b7c4c86"
+  },
+  "capture": {
+    "reportSha256": "421d0125bb3170035a87aafb8381cc75b6c190c9302720439d79f526c146c938",
+    "nativeArchiveSha256": "218a03ffddc90e21853c4e23d6c80644501cd03250967f49cbad12f2b55ceb77",
+    "producerSha256": "396a7953a3ae78d8a8a63c73d64580d39d5663b4855b69e49ec7409b20998eeb"
+  },
+  "counts": {
+    "tuples": 6,
+    "customRawFloat32WordsExact": 159024,
+    "customSnorm10NormalComponentsExact": 59634
+  },
+  "sourceNormalReferences": [
+    {
+      "name": "Walls",
+      "path": "/tmp/scenetoweb-archviz-tangent-cpu-r2/Walls.json",
+      "sha256": "98c0119876f34ff8aa993130786a3cfa42c7d54407a644fcc0f6f9c414fb48bb",
+      "rawNormalSha256": "048f49dd3b4d830d75000f0ef20b5c98e999ce99dff4ae7a85c8ceaa4bb0bc7f",
+      "transportExact": true
+    },
+    {
+      "name": "Plane.021",
+      "path": "/tmp/scenetoweb-archviz-tangent-cpu-r2/Plane.021.json",
+      "sha256": "1dcae4d453f2b2d3a9b96fca3a007d2bdf3ff4bcf3c995744ed3695a6cddf3f0",
+      "rawNormalSha256": "f115044c97bc951167f9873c5c7d46759bd74070e29b33fa96b33a0071e837a6",
+      "transportExact": true
+    }
+  ],
+  "failedCaptures": [
+    {
+      "directory": "/tmp/scenetoweb-corner-frame-transport-r1",
+      "failure": "use_selection alone included 4 other selected original-scene meshes; independent reader requires exactly 1",
+      "supportCredit": 0
+    }
+  ],
+  "limits": [
+    "Dummy tangent/sign fields establish transport only.",
+    "No triangulation, custom-normal assignment, source save, render or native GPU proof.",
+    "No production admission, custom frame/normal-map support, original scene acceptance or performance qualification."
+  ]
+}

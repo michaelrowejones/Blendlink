@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "role": "CPU projection/field-dependency candidate; no default install or guard/support promotion",
+  "baseSourceCommit": "751dcffec11256f0b6347d833eef4bb9f8525f47",
+  "nativeReportPath": "/tmp/scenetoweb-camera-shift-native-cpu-r4/references.json",
+  "nativeReportSha256": "5fd647801baccbed7a844d681ab0f39cad40b3537f543881d03e64ef5bcd9a0a",
+  "producerSha256": "3d4b206895e5ee9a51bdf789be1b9bd6203bdb1c3e1141a694373d502391a05b",
+  "extractorSha256": "185fd77955206afef3c4c891bc3438942a9e4aa6e8fa7e300962db722d49f336",
+  "nativeBuild": "02f0899d78e3",
+  "sourceSha256": "9f636b2e1a59b3d181f90caf1b1703658eeadebad57f3c6207737d2fe3ffd85e",
+  "originalCamera": {
+    "version": 1,
+    "model": "native-static-camera-projection-v1",
+    "qualification": "cpu-matrix-candidate",
+    "automaticEnabled": false,
+    "nativeVersion": [
+      5,
+      3,
+      0
+    ],
+    "nativeBuild": "02f0899d78e3",
+    "camera": "Camera",
+    "cameraType": "PERSP",
+    "frame": 4,
+    "renderExtent": [
+      1920,
+      1080
+    ],
+    "renderBorder": {
+      "enabled": true,
+      "cropToBorder": false,
+      "bounds": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ]
+    },
+    "pixelAspect": [
+      1.0,
+      1.0
+    ],
+    "lensMillimeters": 18.0,
+    "sensorFit": "AUTO",
+    "sensorWidthMillimeters": 32.0,
+    "sensorHeightMillimeters": 18.0,
+    "orthoScale": 6.0,
+    "shift": [
+      0.0,
+      -0.08999999612569809
+    ],
+    "clipNear": 0.10000000149011612,
+    "clipFar": 100.0,
+    "projectionClipRange": "minus-one-to-one",
+    "projection": [
+      1.125,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      2.0,
+      -0.31999996304512024,
+      0.0,
+      0.0,
+      0.0,
+      -1.0020020008087158,
+      -0.20020020008087158,
+      0.0,
+      0.0,
+      -1.0,
+      0.0
+    ],
+    "cameraWorldGltf": [
+      0.6415709853172302,
+      0.057403817772865295,
+      -0.7649127244949341,
+      5.569934368133545,
+      -1.1303053497613291e-06,
+      0.9971959590911865,
+      0.07483484596014023,
+      1.6000006198883057,
+      0.7670636773109436,
+      -0.04801100492477417,
+      0.6397720575332642,
+      2.945012331008911,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "candidateRejectionReasons": [
+      "Render border/crop needs a separate transport proof"
+    ]
+  },
+  "effectiveCropOrRenderSubrect": false,
+  "nativeSyntheticCases": 48,
+  "derivedObservationCases": 2,
+  "cpuTests": 61,
+  "sourcePins": [
+    {
+      "path": "source/blender/blenkernel/intern/camera.cc",
+      "sha256": "0d61e299ce12cedc2397121be6f8235e0d3031ad4b52afc19cd150a3a8cf4427"
+    },
+    {
+      "path": "node_modules/three/src/cameras/PerspectiveCamera.js",
+      "sha256": "1cc44938885f785649a978ecb6f57c444561381ddab24de19fc59b400009b111"
+    },
+    {
+      "path": "node_modules/three/src/cameras/OrthographicCamera.js",
+      "sha256": "5525c2365774222ee96c4e4303d0257a4b16739e1e69769977c0a739b4f3fd54"
+    }
+  ],
+  "renderAttempts": 0,
+  "saveCalls": 0,
+  "sourceUnchanged": true,
+  "automaticEnablement": false,
+  "geometryGuardsChanged": false,
+  "supportCredit": 0,
+  "sceneAcceptance": false
+}

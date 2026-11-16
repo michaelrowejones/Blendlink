@@ -1,0 +1,789 @@
+{
+  "status": "FRESH_SAVED_FINAL_INSTALLED_BOX_COLOR_STRICT_GATE_FAILED",
+  "supportCredit": 0,
+  "materialCredit": 0,
+  "sceneCredit": 0,
+  "sourceCommit": "71a464a23e79bae48720ba524c21fb903c525805",
+  "readerCommit": "71a464a23e79bae48720ba524c21fb903c525805",
+  "packageSha256": "5fe07db26cd6ec60925ea9f4364ae340b0038c547bbe86e0c8ca0de6626de675",
+  "pins": {
+    "browserReport": {
+      "path": "/tmp/scenetoweb-box-color-installed-r3/report.json",
+      "sha256": "62d5447b2f818a157d97a4630be171663b20b6daffa9edf4ce6ee34c4bb7d90a"
+    },
+    "nativeReport": {
+      "path": "/tmp/scenetoweb-box-color-native-installed-r2/reference.json",
+      "sha256": "ad4b8d066570bf3efde609600ef1a5435502406199ccca9c1d7de4157021d918"
+    },
+    "nativeArchive": {
+      "path": "/tmp/scenetoweb-box-color-native-installed-r2/native-archive.json",
+      "sha256": "d042891f8d077918ce4c26985a2d61e8cb70c382cb2ba1c9918f99c5e03b74c4"
+    },
+    "final": {
+      "path": "/tmp/scenetoweb-box-color-finals-r6/final.json",
+      "sha256": "2bcd117903d7770954bdaadd3bf23d5ad079ac617733f14599dec3cc922b9d5b"
+    },
+    "exportArchive": {
+      "path": "/tmp/scenetoweb-box-color-finals-r6/export-native-proof.json",
+      "sha256": "0cc1d3e2090aff563f50dbc53c493bc179e92d3867ac7d743c43eb572475d5dc"
+    },
+    "strictReaderFailure": {
+      "path": "/tmp/scenetoweb-box-color-installed-closed-r3.log",
+      "sha256": "9bc00b49b832422414d22e21a5e93052ee009ea0e4e053ea3b9d20b06ebb25c4"
+    },
+    "numericDiagnostic": {
+      "path": "/tmp/scenetoweb-box-color-installed-r3-numeric-diagnostic.json",
+      "sha256": "479c4f06f1621e5168e358d8d8a01c9d4d79bbb28d81faf0985aca61342b5057"
+    }
+  },
+  "strictGate": {
+    "maskAlphaExact": true,
+    "rgbMaxAbs": 0.0009765625,
+    "words": 245760,
+    "violations": 50,
+    "missingOrExcludedPixels": 0,
+    "thresholdChanged": false
+  },
+  "counts": {
+    "savedFinals": 3,
+    "nativeObservations": 18,
+    "browserTuples": 4,
+    "rawRows": 204
+  },
+  "summary": [
+    {
+      "tuple": "metal/webgpu",
+      "numericWords": 61440,
+      "violations": 0,
+      "rows": 51,
+      "bitmap": {
+        "opened": 9,
+        "closed": 9
+      },
+      "callerBitmaps": {
+        "opened": 0,
+        "closed": 0
+      },
+      "maximumAnisotropy": 16,
+      "preparationMilliseconds": [
+        {
+          "id": "plane-1",
+          "milliseconds": 37.5
+        },
+        {
+          "id": "source-Plane.021",
+          "milliseconds": 27.90000009536743
+        },
+        {
+          "id": "source-Walls",
+          "milliseconds": 27.899999976158142
+        }
+      ],
+      "capturedLifecycleControlsPassed": true,
+      "resourceCaveat": "Texture/geometries counts balanced, but poison test removed its uploaded color attribute before geometry disposal; renderer attribute count accumulated1/case. New owned-geometry harness repair is unqualified."
+    },
+    {
+      "tuple": "metal/webgl2",
+      "numericWords": 61440,
+      "violations": 0,
+      "rows": 51,
+      "bitmap": {
+        "opened": 9,
+        "closed": 9
+      },
+      "callerBitmaps": {
+        "opened": 0,
+        "closed": 0
+      },
+      "maximumAnisotropy": 16,
+      "preparationMilliseconds": [
+        {
+          "id": "plane-1",
+          "milliseconds": 31.799999952316284
+        },
+        {
+          "id": "source-Plane.021",
+          "milliseconds": 28.600000023841858
+        },
+        {
+          "id": "source-Walls",
+          "milliseconds": 30.700000047683716
+        }
+      ],
+      "capturedLifecycleControlsPassed": true,
+      "resourceCaveat": "Texture/geometries counts balanced, but poison test removed its uploaded color attribute before geometry disposal; renderer attribute count accumulated1/case. New owned-geometry harness repair is unqualified."
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "numericWords": 61440,
+      "violations": 25,
+      "rows": 51,
+      "bitmap": {
+        "opened": 9,
+        "closed": 9
+      },
+      "callerBitmaps": {
+        "opened": 0,
+        "closed": 0
+      },
+      "maximumAnisotropy": 16,
+      "preparationMilliseconds": [
+        {
+          "id": "plane-1",
+          "milliseconds": 46.39999997615814
+        },
+        {
+          "id": "source-Plane.021",
+          "milliseconds": 24.800000071525574
+        },
+        {
+          "id": "source-Walls",
+          "milliseconds": 26.299999952316284
+        }
+      ],
+      "capturedLifecycleControlsPassed": true,
+      "resourceCaveat": "Texture/geometries counts balanced, but poison test removed its uploaded color attribute before geometry disposal; renderer attribute count accumulated1/case. New owned-geometry harness repair is unqualified."
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "numericWords": 61440,
+      "violations": 25,
+      "rows": 51,
+      "bitmap": {
+        "opened": 9,
+        "closed": 9
+      },
+      "callerBitmaps": {
+        "opened": 0,
+        "closed": 0
+      },
+      "maximumAnisotropy": 16,
+      "preparationMilliseconds": [
+        {
+          "id": "plane-1",
+          "milliseconds": 28.100000023841858
+        },
+        {
+          "id": "source-Plane.021",
+          "milliseconds": 28.90000009536743
+        },
+        {
+          "id": "source-Walls",
+          "milliseconds": 25.899999976158142
+        }
+      ],
+      "capturedLifecycleControlsPassed": true,
+      "resourceCaveat": "Texture/geometries counts balanced, but poison test removed its uploaded color attribute before geometry disposal; renderer attribute count accumulated1/case. New owned-geometry harness repair is unqualified."
+    }
+  ],
+  "failures": [
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "source-Plane.021",
+      "kind": "mask",
+      "width": 128,
+      "bound": 0,
+      "words": 4096,
+      "differences": 3,
+      "violations": 3,
+      "maxAbs": 1,
+      "maxUlp": 1065353216,
+      "bad": [
+        {
+          "x": 104,
+          "y": 7,
+          "channel": 0,
+          "actual": 1,
+          "native": 0
+        },
+        {
+          "x": 104,
+          "y": 7,
+          "channel": 1,
+          "actual": 1,
+          "native": 0
+        },
+        {
+          "x": 104,
+          "y": 7,
+          "channel": 2,
+          "actual": 1,
+          "native": 0
+        }
+      ]
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "source-Plane.021",
+      "kind": "mapping",
+      "width": 128,
+      "bound": 0.0009765625,
+      "words": 4096,
+      "differences": 927,
+      "violations": 3,
+      "maxAbs": 0.5820291638374329,
+      "maxUlp": 1058340829,
+      "bad": [
+        {
+          "x": 104,
+          "y": 7,
+          "channel": 0,
+          "actual": 0.5820291638374329,
+          "native": 0
+        },
+        {
+          "x": 104,
+          "y": 7,
+          "channel": 1,
+          "actual": 0.46550044417381287,
+          "native": 0
+        },
+        {
+          "x": 104,
+          "y": 7,
+          "channel": 2,
+          "actual": 0.5197098255157471,
+          "native": 0
+        }
+      ]
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "source-Plane.021",
+      "kind": "color",
+      "width": 128,
+      "bound": 0.0009765625,
+      "words": 4096,
+      "differences": 927,
+      "violations": 3,
+      "maxAbs": 0.6875730156898499,
+      "maxUlp": 1060111561,
+      "bad": [
+        {
+          "x": 104,
+          "y": 7,
+          "channel": 0,
+          "actual": 0.68611741065979,
+          "native": 0
+        },
+        {
+          "x": 104,
+          "y": 7,
+          "channel": 1,
+          "actual": 0.6873301267623901,
+          "native": 0
+        },
+        {
+          "x": 104,
+          "y": 7,
+          "channel": 2,
+          "actual": 0.6875730156898499,
+          "native": 0
+        }
+      ]
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "source-Plane.021",
+      "kind": "alpha",
+      "width": 128,
+      "bound": 0,
+      "words": 4096,
+      "differences": 3,
+      "violations": 3,
+      "maxAbs": 1,
+      "maxUlp": 1065353216,
+      "bad": [
+        {
+          "x": 104,
+          "y": 7,
+          "channel": 0,
+          "actual": 1,
+          "native": 0
+        },
+        {
+          "x": 104,
+          "y": 7,
+          "channel": 1,
+          "actual": 1,
+          "native": 0
+        },
+        {
+          "x": 104,
+          "y": 7,
+          "channel": 2,
+          "actual": 1,
+          "native": 0
+        }
+      ]
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "source-Walls",
+      "kind": "mask",
+      "width": 64,
+      "bound": 0,
+      "words": 1024,
+      "differences": 3,
+      "violations": 3,
+      "maxAbs": 1,
+      "maxUlp": 1065353216,
+      "bad": [
+        {
+          "x": 16,
+          "y": 3,
+          "channel": 0,
+          "actual": 1,
+          "native": 0
+        },
+        {
+          "x": 16,
+          "y": 3,
+          "channel": 1,
+          "actual": 1,
+          "native": 0
+        },
+        {
+          "x": 16,
+          "y": 3,
+          "channel": 2,
+          "actual": 1,
+          "native": 0
+        }
+      ]
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "source-Walls",
+      "kind": "mapping",
+      "width": 64,
+      "bound": 0.0009765625,
+      "words": 1024,
+      "differences": 308,
+      "violations": 3,
+      "maxAbs": 0.5820474028587341,
+      "maxUlp": 1058341135,
+      "bad": [
+        {
+          "x": 16,
+          "y": 3,
+          "channel": 0,
+          "actual": 0.5820474028587341,
+          "native": 0
+        },
+        {
+          "x": 16,
+          "y": 3,
+          "channel": 1,
+          "actual": 0.4877501428127289,
+          "native": 0
+        },
+        {
+          "x": 16,
+          "y": 3,
+          "channel": 2,
+          "actual": 0.5191407203674316,
+          "native": 0
+        }
+      ]
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "source-Walls",
+      "kind": "color",
+      "width": 64,
+      "bound": 0.0009765625,
+      "words": 1024,
+      "differences": 336,
+      "violations": 3,
+      "maxAbs": 0.6883835792541504,
+      "maxUlp": 1060125160,
+      "bad": [
+        {
+          "x": 16,
+          "y": 3,
+          "channel": 0,
+          "actual": 0.6867918968200684,
+          "native": 0
+        },
+        {
+          "x": 16,
+          "y": 3,
+          "channel": 1,
+          "actual": 0.6883835792541504,
+          "native": 0
+        },
+        {
+          "x": 16,
+          "y": 3,
+          "channel": 2,
+          "actual": 0.6881706714630127,
+          "native": 0
+        }
+      ]
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "source-Walls",
+      "kind": "alpha",
+      "width": 64,
+      "bound": 0,
+      "words": 1024,
+      "differences": 3,
+      "violations": 3,
+      "maxAbs": 1,
+      "maxUlp": 1065353216,
+      "bad": [
+        {
+          "x": 16,
+          "y": 3,
+          "channel": 0,
+          "actual": 1,
+          "native": 0
+        },
+        {
+          "x": 16,
+          "y": 3,
+          "channel": 1,
+          "actual": 1,
+          "native": 0
+        },
+        {
+          "x": 16,
+          "y": 3,
+          "channel": 2,
+          "actual": 1,
+          "native": 0
+        }
+      ]
+    },
+    {
+      "tuple": "swiftshader/webgpu",
+      "id": "source-Walls",
+      "kind": "color",
+      "width": 128,
+      "bound": 0.0009765625,
+      "words": 4096,
+      "differences": 1317,
+      "violations": 1,
+      "maxAbs": 0.0011001825332641602,
+      "maxUlp": 18458,
+      "bad": [
+        {
+          "x": 26,
+          "y": 0,
+          "channel": 2,
+          "actual": 0.6925064325332642,
+          "native": 0.69140625
+        }
+      ]
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "source-Plane.021",
+      "kind": "mask",
+      "width": 128,
+      "bound": 0,
+      "words": 4096,
+      "differences": 3,
+      "violations": 3,
+      "maxAbs": 1,
+      "maxUlp": 1065353216,
+      "bad": [
+        {
+          "x": 104,
+          "y": 7,
+          "channel": 0,
+          "actual": 1,
+          "native": 0
+        },
+        {
+          "x": 104,
+          "y": 7,
+          "channel": 1,
+          "actual": 1,
+          "native": 0
+        },
+        {
+          "x": 104,
+          "y": 7,
+          "channel": 2,
+          "actual": 1,
+          "native": 0
+        }
+      ]
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "source-Plane.021",
+      "kind": "mapping",
+      "width": 128,
+      "bound": 0.0009765625,
+      "words": 4096,
+      "differences": 927,
+      "violations": 3,
+      "maxAbs": 0.5820291638374329,
+      "maxUlp": 1058340829,
+      "bad": [
+        {
+          "x": 104,
+          "y": 7,
+          "channel": 0,
+          "actual": 0.5820291638374329,
+          "native": 0
+        },
+        {
+          "x": 104,
+          "y": 7,
+          "channel": 1,
+          "actual": 0.46550044417381287,
+          "native": 0
+        },
+        {
+          "x": 104,
+          "y": 7,
+          "channel": 2,
+          "actual": 0.5197098255157471,
+          "native": 0
+        }
+      ]
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "source-Plane.021",
+      "kind": "color",
+      "width": 128,
+      "bound": 0.0009765625,
+      "words": 4096,
+      "differences": 927,
+      "violations": 3,
+      "maxAbs": 0.6875854730606079,
+      "maxUlp": 1060111770,
+      "bad": [
+        {
+          "x": 104,
+          "y": 7,
+          "channel": 0,
+          "actual": 0.6861286163330078,
+          "native": 0
+        },
+        {
+          "x": 104,
+          "y": 7,
+          "channel": 1,
+          "actual": 0.6873409748077393,
+          "native": 0
+        },
+        {
+          "x": 104,
+          "y": 7,
+          "channel": 2,
+          "actual": 0.6875854730606079,
+          "native": 0
+        }
+      ]
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "source-Plane.021",
+      "kind": "alpha",
+      "width": 128,
+      "bound": 0,
+      "words": 4096,
+      "differences": 3,
+      "violations": 3,
+      "maxAbs": 1,
+      "maxUlp": 1065353216,
+      "bad": [
+        {
+          "x": 104,
+          "y": 7,
+          "channel": 0,
+          "actual": 1,
+          "native": 0
+        },
+        {
+          "x": 104,
+          "y": 7,
+          "channel": 1,
+          "actual": 1,
+          "native": 0
+        },
+        {
+          "x": 104,
+          "y": 7,
+          "channel": 2,
+          "actual": 1,
+          "native": 0
+        }
+      ]
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "source-Walls",
+      "kind": "mask",
+      "width": 64,
+      "bound": 0,
+      "words": 1024,
+      "differences": 3,
+      "violations": 3,
+      "maxAbs": 1,
+      "maxUlp": 1065353216,
+      "bad": [
+        {
+          "x": 16,
+          "y": 3,
+          "channel": 0,
+          "actual": 1,
+          "native": 0
+        },
+        {
+          "x": 16,
+          "y": 3,
+          "channel": 1,
+          "actual": 1,
+          "native": 0
+        },
+        {
+          "x": 16,
+          "y": 3,
+          "channel": 2,
+          "actual": 1,
+          "native": 0
+        }
+      ]
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "source-Walls",
+      "kind": "mapping",
+      "width": 64,
+      "bound": 0.0009765625,
+      "words": 1024,
+      "differences": 308,
+      "violations": 3,
+      "maxAbs": 0.5820474028587341,
+      "maxUlp": 1058341135,
+      "bad": [
+        {
+          "x": 16,
+          "y": 3,
+          "channel": 0,
+          "actual": 0.5820474028587341,
+          "native": 0
+        },
+        {
+          "x": 16,
+          "y": 3,
+          "channel": 1,
+          "actual": 0.4877501428127289,
+          "native": 0
+        },
+        {
+          "x": 16,
+          "y": 3,
+          "channel": 2,
+          "actual": 0.5191407203674316,
+          "native": 0
+        }
+      ]
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "source-Walls",
+      "kind": "color",
+      "width": 64,
+      "bound": 0.0009765625,
+      "words": 1024,
+      "differences": 336,
+      "violations": 3,
+      "maxAbs": 0.6883832216262817,
+      "maxUlp": 1060125154,
+      "bad": [
+        {
+          "x": 16,
+          "y": 3,
+          "channel": 0,
+          "actual": 0.6867915391921997,
+          "native": 0
+        },
+        {
+          "x": 16,
+          "y": 3,
+          "channel": 1,
+          "actual": 0.6883832216262817,
+          "native": 0
+        },
+        {
+          "x": 16,
+          "y": 3,
+          "channel": 2,
+          "actual": 0.6881701946258545,
+          "native": 0
+        }
+      ]
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "source-Walls",
+      "kind": "alpha",
+      "width": 64,
+      "bound": 0,
+      "words": 1024,
+      "differences": 3,
+      "violations": 3,
+      "maxAbs": 1,
+      "maxUlp": 1065353216,
+      "bad": [
+        {
+          "x": 16,
+          "y": 3,
+          "channel": 0,
+          "actual": 1,
+          "native": 0
+        },
+        {
+          "x": 16,
+          "y": 3,
+          "channel": 1,
+          "actual": 1,
+          "native": 0
+        },
+        {
+          "x": 16,
+          "y": 3,
+          "channel": 2,
+          "actual": 1,
+          "native": 0
+        }
+      ]
+    },
+    {
+      "tuple": "swiftshader/webgl2",
+      "id": "source-Walls",
+      "kind": "color",
+      "width": 128,
+      "bound": 0.0009765625,
+      "words": 4096,
+      "differences": 1317,
+      "violations": 1,
+      "maxAbs": 0.0011002421379089355,
+      "maxUlp": 18459,
+      "bad": [
+        {
+          "x": 26,
+          "y": 0,
+          "channel": 2,
+          "actual": 0.6925064921379089,
+          "native": 0.69140625
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Both Metal APIs pass the full field census; that does not qualify the promised four tuples.",
+    "Both SwiftShader APIs fail at two silhouette pixels and one interior Walls blue word.",
+    "No profile narrowing, source support, full material/scene acceptance, or threshold relaxation is authorized by this result.",
+    "Original files, raw rows, failed strict-reader log, prior8ULP failure and prior incomplete captures are retained."
+  ]
+}

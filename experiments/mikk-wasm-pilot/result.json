@@ -1,0 +1,175 @@
+{
+  "status": "PASSED_EXACT_CPU_ORACLE",
+  "supportCredit": 0,
+  "sceneAcceptance": false,
+  "renderCalls": 0,
+  "wasm": {
+    "path": "/tmp/scenetoweb-mikk-wasm-r3/mikk-probe.stripped.wasm",
+    "bytes": 270662,
+    "sha256": "8d7dd3d655aa8ae00bffc135a34f8d244519f2da36a755d6fbb023dc03932555"
+  },
+  "runnerSha256": "57ac1f2eac8889d3aac21faf6626d4423e9122475c9966cf8e95bacc5d80d81e",
+  "comparatorSha256": "3dc1e3eab337a828d00123a6455d57c48e4ce1eff160ddaa3eb9b8422d7e71a9",
+  "nativeReportSha256": "365f059d9c6cd8c85703f83b382f265f6f33eb570087e3ea7d6505b34f989521",
+  "publicReportSha256": "c09f259b793c8eb8f4ddf6957bc54b52c7080fef38b98cdad254c1c957b5b91b",
+  "rows": [
+    {
+      "id": "Walls-native-face-model",
+      "callbackRows": 5561,
+      "inputSha256": "31e74bb81a64b5de17db37e6f871b6e573df7a21e7354399ca3a9a76dfe0b1ab",
+      "nativeOutputSha256": "13dade5a0afe5d8f37bb009c0b92ad08d2e1f39afc370f3ed8998ee8091e2309",
+      "wasmOutputSha256": "13dade5a0afe5d8f37bb009c0b92ad08d2e1f39afc370f3ed8998ee8091e2309",
+      "float32WordDifferences": 0,
+      "snorm10ChangedRows": 0,
+      "signWordDifferences": 0,
+      "maximumAbsoluteDifference": 0.0
+    },
+    {
+      "id": "Walls-all-triangles",
+      "callbackRows": 8193,
+      "inputSha256": "f987ab25d8f0ca4778273218ca09b2b67157752d87ef1117e7bfe54118028bf5",
+      "nativeOutputSha256": "f84ded8d966c2b428ec0a50c278f4e3fcc70beb4ae37967b695322e1f77ed76e",
+      "wasmOutputSha256": "f84ded8d966c2b428ec0a50c278f4e3fcc70beb4ae37967b695322e1f77ed76e",
+      "float32WordDifferences": 0,
+      "snorm10ChangedRows": 0,
+      "signWordDifferences": 0,
+      "maximumAbsoluteDifference": 0.0
+    },
+    {
+      "id": "Plane.021-native-face-model",
+      "callbackRows": 4444,
+      "inputSha256": "e459d8cbd8d7851ecd5c4bcdb91b0c4fa9dde24ee8a378991f419ea3215c2234",
+      "nativeOutputSha256": "3bb2c68f414b6bf7390c58c4f7a7c3d91f35ebc351341a249c309dab208adb62",
+      "wasmOutputSha256": "3bb2c68f414b6bf7390c58c4f7a7c3d91f35ebc351341a249c309dab208adb62",
+      "float32WordDifferences": 0,
+      "snorm10ChangedRows": 0,
+      "signWordDifferences": 0,
+      "maximumAbsoluteDifference": 0.0,
+      "publicNativeFloat32WordDifferences": 0,
+      "publicNativeSnorm10ChangedRows": 0,
+      "publicNativeMaximumAbsoluteDifference": 0.0
+    },
+    {
+      "id": "Plane.021-all-triangles",
+      "callbackRows": 6594,
+      "inputSha256": "28cacb85b2f26b6fd5e118d6790635c2d5906e7fac58f5ac27e45e56e0ce6528",
+      "nativeOutputSha256": "8e318b0855dc9cc8a18e2261c0ee8d59f710ffcf7c158a8f172746d3c0bb46a2",
+      "wasmOutputSha256": "8e318b0855dc9cc8a18e2261c0ee8d59f710ffcf7c158a8f172746d3c0bb46a2",
+      "float32WordDifferences": 0,
+      "snorm10ChangedRows": 0,
+      "signWordDifferences": 0,
+      "maximumAbsoluteDifference": 0.0
+    },
+    {
+      "id": "ngon-native-face-model",
+      "callbackRows": 9,
+      "inputSha256": "4db82f1c596c621487ae389574a3149dc76a35b38424d171328aa3d5b46c8bde",
+      "nativeOutputSha256": "7543bd444861037c8d5b0c00b943de3a2d04bf5af41feefa5ccc24893318a017",
+      "wasmOutputSha256": "7543bd444861037c8d5b0c00b943de3a2d04bf5af41feefa5ccc24893318a017",
+      "float32WordDifferences": 0,
+      "snorm10ChangedRows": 0,
+      "signWordDifferences": 0,
+      "maximumAbsoluteDifference": 0.0
+    },
+    {
+      "id": "ngon-all-triangles",
+      "callbackRows": 9,
+      "inputSha256": "4db82f1c596c621487ae389574a3149dc76a35b38424d171328aa3d5b46c8bde",
+      "nativeOutputSha256": "7543bd444861037c8d5b0c00b943de3a2d04bf5af41feefa5ccc24893318a017",
+      "wasmOutputSha256": "7543bd444861037c8d5b0c00b943de3a2d04bf5af41feefa5ccc24893318a017",
+      "float32WordDifferences": 0,
+      "snorm10ChangedRows": 0,
+      "signWordDifferences": 0,
+      "maximumAbsoluteDifference": 0.0
+    },
+    {
+      "id": "zero-uv-normal-parallel-native-face-model",
+      "callbackRows": 3,
+      "inputSha256": "d94966f5f8eea2ecd731a46f27481066940076737b0aa38e406c6b619fc39293",
+      "nativeOutputSha256": "0f4e008f54ac8643a88079cbc6f1a1614f10ba3e04a6bbb517d608f19a4a517c",
+      "wasmOutputSha256": "0f4e008f54ac8643a88079cbc6f1a1614f10ba3e04a6bbb517d608f19a4a517c",
+      "float32WordDifferences": 0,
+      "snorm10ChangedRows": 0,
+      "signWordDifferences": 0,
+      "maximumAbsoluteDifference": 0.0
+    },
+    {
+      "id": "zero-uv-normal-parallel-all-triangles",
+      "callbackRows": 3,
+      "inputSha256": "d94966f5f8eea2ecd731a46f27481066940076737b0aa38e406c6b619fc39293",
+      "nativeOutputSha256": "0f4e008f54ac8643a88079cbc6f1a1614f10ba3e04a6bbb517d608f19a4a517c",
+      "wasmOutputSha256": "0f4e008f54ac8643a88079cbc6f1a1614f10ba3e04a6bbb517d608f19a4a517c",
+      "float32WordDifferences": 0,
+      "snorm10ChangedRows": 0,
+      "signWordDifferences": 0,
+      "maximumAbsoluteDifference": 0.0
+    },
+    {
+      "id": "tiny-uv-native-face-model",
+      "callbackRows": 3,
+      "inputSha256": "ac517d229171e39acaae621b4984f954d0227a3bc66f7ede821b4ea2efbbf671",
+      "nativeOutputSha256": "fe3009ea843a7d261b021580f43ec3edf80bdfeb5ef3b9a9cef35e6e55ed8838",
+      "wasmOutputSha256": "fe3009ea843a7d261b021580f43ec3edf80bdfeb5ef3b9a9cef35e6e55ed8838",
+      "float32WordDifferences": 0,
+      "snorm10ChangedRows": 0,
+      "signWordDifferences": 0,
+      "maximumAbsoluteDifference": 0.0
+    },
+    {
+      "id": "tiny-uv-all-triangles",
+      "callbackRows": 3,
+      "inputSha256": "ac517d229171e39acaae621b4984f954d0227a3bc66f7ede821b4ea2efbbf671",
+      "nativeOutputSha256": "fe3009ea843a7d261b021580f43ec3edf80bdfeb5ef3b9a9cef35e6e55ed8838",
+      "wasmOutputSha256": "fe3009ea843a7d261b021580f43ec3edf80bdfeb5ef3b9a9cef35e6e55ed8838",
+      "float32WordDifferences": 0,
+      "snorm10ChangedRows": 0,
+      "signWordDifferences": 0,
+      "maximumAbsoluteDifference": 0.0
+    },
+    {
+      "id": "warped-quad-native-face-model",
+      "callbackRows": 4,
+      "inputSha256": "decb9707fc523421c7d4e35b89cefd762c2a944047a209eca37c7171a473579b",
+      "nativeOutputSha256": "cbb4b486f42ff686d4b4316d9f7358f99251e60cddaf538552fc496a714ddb52",
+      "wasmOutputSha256": "cbb4b486f42ff686d4b4316d9f7358f99251e60cddaf538552fc496a714ddb52",
+      "float32WordDifferences": 0,
+      "snorm10ChangedRows": 0,
+      "signWordDifferences": 0,
+      "maximumAbsoluteDifference": 0.0
+    },
+    {
+      "id": "warped-quad-all-triangles",
+      "callbackRows": 6,
+      "inputSha256": "0b46f23dac8d650056af4e4ab3570401f5c355c317cf758dbba8b6e670c8479f",
+      "nativeOutputSha256": "8a74165d54531de808c778d18803ed74f0567972ee6d300bc0ea4773a1d3fb9c",
+      "wasmOutputSha256": "8a74165d54531de808c778d18803ed74f0567972ee6d300bc0ea4773a1d3fb9c",
+      "float32WordDifferences": 0,
+      "snorm10ChangedRows": 0,
+      "signWordDifferences": 0,
+      "maximumAbsoluteDifference": 0.0
+    },
+    {
+      "id": "folded-quad-quadFaces",
+      "callbackRows": 4,
+      "inputSha256": "9207a164ff8459a655aebd56e39540adae44cd8bc441c51043f5979127dbbe29",
+      "nativeOutputSha256": "d1e4f87189091ea9df84f84e601943268ef57761d8094558065c58f57752e566",
+      "wasmOutputSha256": "d1e4f87189091ea9df84f84e601943268ef57761d8094558065c58f57752e566",
+      "float32WordDifferences": 0,
+      "snorm10ChangedRows": 0,
+      "signWordDifferences": 0,
+      "maximumAbsoluteDifference": 0.0
+    },
+    {
+      "id": "folded-quad-triangleFaces",
+      "callbackRows": 6,
+      "inputSha256": "9c0f6241a1cfb81dec78955d8936bd981469f1eecfed1a29efab3932c29f368c",
+      "nativeOutputSha256": "650526d7076326b0833237c3e094cf80186332116f88b8539a0f7a30a5396042",
+      "wasmOutputSha256": "650526d7076326b0833237c3e094cf80186332116f88b8539a0f7a30a5396042",
+      "float32WordDifferences": 0,
+      "snorm10ChangedRows": 0,
+      "signWordDifferences": 0,
+      "maximumAbsoluteDifference": 0.0
+    }
+  ],
+  "publicWalls": "Native public calc_tangents refused n-gons; WASM/native C++ equality is a source-model result, not a native draw/GPU tangent certificate."
+}

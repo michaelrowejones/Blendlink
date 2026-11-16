@@ -1,0 +1,95 @@
+{
+  "blenderSourceCommit": "02f0899d78e374b63e7181d9061e1f7ab03419cc",
+  "files": [
+    {
+      "path": "source/blender/gpu/shaders/material/gpu_shader_material_normal_map.bsl.hh",
+      "sha256": "ead6fbd21fb6999bddaba80ecaaead734652e955a25ac39d7572f74fc8ac8ccf",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/nodes/shader/nodes/node_shader_normal_map.cc",
+      "sha256": "ee7a8d605a5ed83a2ec4a6d2c2f2a934d791dc429bebdc9713318b391c5e26a3",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/draw/intern/mesh_extractors/extract_mesh_vbo_tan.cc",
+      "sha256": "ef630e3aba5b4873be9b2e22305ff4fff4dce3aa97dedaf25b9b40609bcf8c31",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/draw/intern/mesh_extractors/extract_mesh_vbo_lnor.cc",
+      "sha256": "43cb212e536060b2c995635f4f631895eec8e24b7e19883368a19689967540b2",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/gpu/GPU_attribute_convert.hh",
+      "sha256": "b7fcc230c24282c1a306bdb5010dc8ed3ac6f3ba2829ebcc3213561571689fde",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/blenlib/BLI_normalized_int_types.hh",
+      "sha256": "b5f2e03d9b1b7cc00ca869613844017a427e5f91e5e902214a1a3f87a2a8d033",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/draw/engines/eevee/shaders/eevee_attributes_mesh_lib.bsl.hh",
+      "sha256": "32f926c272da61ac845414f6809acf85f2f64079e8687dcb380fe5f5f5ad9307",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/draw/engines/eevee/shaders/eevee_geom_mesh.bsl.hh",
+      "sha256": "880e75767ef2699015af8ac381248e1c2a13619895f5f62ad8e4893a4f0f4e8e",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/draw/engines/eevee/shaders/eevee_surf_common.bsl.hh",
+      "sha256": "6bcd581abc2197eccba2fb6d905e8542c98392b69597019e3ec48e1d06e5c599",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/draw/engines/eevee/shaders/eevee_nodetree_lib.bsl.hh",
+      "sha256": "a802cf032dc9fe05f9c91cf5fedb1dd1713d651e735c166f3531851c8b58f583",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/draw/engines/eevee/eevee_shader.cc",
+      "sha256": "e5d500cbaa7d8892cf8f141d7ff0b38083dc67c0c40d07ad816e4bda2649d4b6",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/draw/intern/draw_shader_shared.hh",
+      "sha256": "42247b6f91f94db434eac1a8b479ea8afad5e96a77c269652249e0eb7db0213b",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/draw/intern/draw_resource.hh",
+      "sha256": "5bdbd149eeea3e370045b96ed41d7a0dfca62ad8e1129a8ecc99ec26327ce5b4",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/gpu/intern/gpu_codegen.cc",
+      "sha256": "c7de419f1cc1dc256d7fdb4d2a8c371546c32a7a70a9b2008896800e91ba03f8",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/draw/intern/draw_cache_extract_mesh.cc",
+      "sha256": "55c81b03b230eeda40e20a52459012fb2b7c40275a53169ad4eede8b93b7ec82",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/blenkernel/intern/mesh_tangent.cc",
+      "sha256": "5f903346e4eecd6b9213ee95a9ce45aaea1edc5ef08a3d3aed14ad948dbf576b",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/gpu/shaders/common/gpu_shader_math_vector_safe.bsl.hh",
+      "sha256": "b9fc80efce007f492addf26d1c83a8ac9979fe01abccbc41cb8961195d15bad8",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "source/blender/gpu/shaders/gpu_shader_codegen_lib.glsl",
+      "sha256": "e0d5f3bec96196d7020fc874b9f8f40615d56633f07faef9972a60133352512b",
+      "license": "GPL-2.0-or-later"
+    }
+  ]
+}

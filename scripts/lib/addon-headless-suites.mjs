@@ -23,6 +23,9 @@ export const HEADLESS_SUITE_PROFILES = Object.freeze({
   'shadow_branch_check.py': Object.freeze({
     sentinel: 'SCENETOWEB_SHADOW_BRANCH_SOURCE_CHECK_PASSED', profile: pinnedMetal53,
   }),
+  'geometry_camera_domain_check.py': Object.freeze({
+    sentinel: 'BLENDLINK_GEOMETRY_CAMERA_DOMAIN_PASSED', profile: pinnedMetal53,
+  }),
 })
 
 const derivedLabel = file => file.replace(/\.py$/, '').replace(/_/g, ' ')

@@ -1,0 +1,95 @@
+{
+  "status": "PRIVATE_UNQUALIFIED_BOX_COLOR_CANDIDATE_EXPERIMENT_ONLY",
+  "publicExperimentBase": "70a60a9c616f3da43eebf3aa92c9cf84976043b4",
+  "baseSourceCommit": "751dcffec11256f0b6347d833eef4bb9f8525f47",
+  "capturedPrivateSourceCommit": "71a464a23e79bae48720ba524c21fb903c525805",
+  "resourceRepairCommit": "72a333227c00a600be3cb762a638f2d6cb2c7169",
+  "patchSha256": "3d35630c3d0bdae9a3a3c25eba2832707ad8b006e7e6894fdf239d937c4380d2",
+  "files": [
+    {
+      "path": "packages/blender-addon/box_image_ir.py",
+      "bytes": 5731,
+      "sha256": "c562b9acfcea30cc6e7b1e0bc8f9ecc5b22f89f9fa74393512d95b2584756f5f"
+    },
+    {
+      "path": "packages/blender-addon/box_image_mips.py",
+      "bytes": 5092,
+      "sha256": "29d09e86c431451127f1666fe80377c8ec7c070d9c3395a5e6d44d22757dce5a"
+    },
+    {
+      "path": "packages/blender-addon/material_compiler.py",
+      "bytes": 422162,
+      "sha256": "380f8f84569a99672b4764a1aec8943e19c3d5c21f9b1614ef54a9b6dd47dca6"
+    },
+    {
+      "path": "packages/blender-addon/normal_input_bounds.py",
+      "bytes": 8219,
+      "sha256": "45ef2c156bf7b463783e9a0ccf9a768c718bb6297aea50551357f7da19c0a45e"
+    },
+    {
+      "path": "packages/blender-addon/shader_domains.py",
+      "bytes": 4311,
+      "sha256": "9d7a247f232f60b31dcd4021e2207b196b42ef34749e45282648a926fcc03ace"
+    },
+    {
+      "path": "packages/blender-addon/tsl_ir.py",
+      "bytes": 144931,
+      "sha256": "787cdca797be52e71a956498af2a5bedab871581fc61749dccf2a7f62c0b8d51"
+    },
+    {
+      "path": "packages/blendlink/blender/export_scene.py",
+      "bytes": 319159,
+      "sha256": "53654207137d3ca429c020c7d85a4fcb7b05469f4a77c1df62b1a7a0f62394da"
+    },
+    {
+      "path": "packages/blendlink/conformance/tsl-ir-ops.json",
+      "bytes": 2083,
+      "sha256": "9ab240cd702f7d1b3f7ec3d49a525475b79a8784438fa44747002ce776ba8a3a"
+    },
+    {
+      "path": "packages/blendlink/src/compiledMaterialPrograms.ts",
+      "bytes": 35531,
+      "sha256": "a8f826d2a041926afcdb855693b6deb01d8a9688d252c4ef414cf3cb45ba0c27"
+    },
+    {
+      "path": "packages/blendlink/src/materialProgramDocument.ts",
+      "bytes": 9470,
+      "sha256": "7fb94737c59dd76841ebc787bfac5d87c1f5288311991ce8e05d4671589afce4"
+    },
+    {
+      "path": "packages/blendlink/src/materialProgramRendererRequirements.ts",
+      "bytes": 5489,
+      "sha256": "6c60369902ffa923e24cb8ad84e1757cabbcb1c7615483f7c28a3f33d97a164e"
+    },
+    {
+      "path": "packages/blendlink/src/tslBoxImage.test.ts",
+      "bytes": 11645,
+      "sha256": "54090648550b7a1ee3068e3279d372d085efd71d502b0fd1338e5decc5530ce0"
+    },
+    {
+      "path": "packages/blendlink/src/tslBoxImage.ts",
+      "bytes": 14221,
+      "sha256": "190ab71e9dc1790f4678aed1bdc1ed2a926ebbb58646ccfbc66ded8dc2ea9475"
+    },
+    {
+      "path": "packages/blendlink/src/tslMaterialProgram.ts",
+      "bytes": 10694,
+      "sha256": "49cf65c42ed2bea592e539ca29bba4707c50fa4f4b03fba160367301f1517cb1"
+    },
+    {
+      "path": "packages/blendlink/src/tslMaterialRuntime.ts",
+      "bytes": 39352,
+      "sha256": "bb7a115c0b91c541c0b323b13a26d90ee5ad5e8c89c4e85a0928c5ea8bf79b16"
+    },
+    {
+      "path": "packages/blendlink/src/tslNodeRecipe.ts",
+      "bytes": 144820,
+      "sha256": "ea9915c4df5ced937adc8f841db38862d9192008b84105fdea03ff9837a3e38b"
+    },
+    {
+      "path": "packages/blendlink/src/tslNormalInputBounds.ts",
+      "bytes": 13871,
+      "sha256": "5442e266b847e06c9be5128569f042c84854478d7082d17d2b15450159b7f550"
+    }
+  ]
+}

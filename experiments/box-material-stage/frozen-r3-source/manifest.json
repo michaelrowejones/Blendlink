@@ -1,0 +1,68 @@
+{
+  "sourceCommit": "71a464a23e79bae48720ba524c21fb903c525805",
+  "status": "ARCHIVED_EXACT_PRODUCER_AND_READER_BYTES_NOT_RELOCATABLE_ENTRYPOINTS",
+  "files": [
+    {
+      "originalPath": "experiments/box-material-stage/audit-colors.py",
+      "snapshot": "audit-colors.py.source",
+      "bytes": 4508,
+      "sha256": "a97a307b27410d77060c80e95744c80433f158439d92565702ab5662c4bd58af"
+    },
+    {
+      "originalPath": "experiments/box-material-stage/export-colors.mjs",
+      "snapshot": "export-colors.mjs.source",
+      "bytes": 6806,
+      "sha256": "be8979024a43e21acfdb11ff4e51f59974f8f8f8f0a23810b25ea378a508134a"
+    },
+    {
+      "originalPath": "experiments/box-material-stage/installed-browser.js",
+      "snapshot": "installed-browser.js.source",
+      "bytes": 11832,
+      "sha256": "b3cd6a15bdf25e85451a702c5dbd618979e3a9b92c8cee7498399a67af6a33c6"
+    },
+    {
+      "originalPath": "experiments/box-material-stage/installed.mjs",
+      "snapshot": "installed.mjs.source",
+      "bytes": 8530,
+      "sha256": "e26d6c54b7ae97c70028ba658f72edf7204c8660a2d09dee08639a4286fab22b"
+    },
+    {
+      "originalPath": "experiments/box-material-stage/native-color-references.mjs",
+      "snapshot": "native-color-references.mjs.source",
+      "bytes": 2159,
+      "sha256": "e2215554e5f43dcb7eb2566f9aa6c45a29fb882ecd67a42b6fbdc24af3fdab2d"
+    },
+    {
+      "originalPath": "experiments/box-material-stage/read-installed.mjs",
+      "snapshot": "read-installed.mjs.source",
+      "bytes": 15485,
+      "sha256": "fd5e0a9d6c72953e9e2ee3441abdafbece7210c4ae438e69d657fc8cea6c3e5b"
+    },
+    {
+      "originalPath": "experiments/box-material-stage/reference-colors.py",
+      "snapshot": "reference-colors.py.source",
+      "bytes": 3312,
+      "sha256": "6cbf081f68a0b6594b0216aa6347d1a5b8114d1ab4be601b8e1e16bc0a533888"
+    },
+    {
+      "originalPath": "experiments/box-material-stage/save-colors.py",
+      "snapshot": "save-colors.py.source",
+      "bytes": 4334,
+      "sha256": "91dedcbe4f8efd8f7684deb373052b13f2431177ffc0100e31ffd81a52834889"
+    }
+  ],
+  "frozenResults": [
+    {
+      "originalPath": "/tmp/scenetoweb-box-color-installed-closed-r3.log",
+      "snapshot": "strict-reader-failure.txt",
+      "bytes": 591,
+      "sha256": "9bc00b49b832422414d22e21a5e93052ee009ea0e4e053ea3b9d20b06ebb25c4"
+    },
+    {
+      "originalPath": "/tmp/scenetoweb-box-color-installed-r3-numeric-diagnostic.json",
+      "snapshot": "numeric-diagnostic.json",
+      "bytes": 33715,
+      "sha256": "479c4f06f1621e5168e358d8d8a01c9d4d79bbb28d81faf0985aca61342b5057"
+    }
+  ]
+}

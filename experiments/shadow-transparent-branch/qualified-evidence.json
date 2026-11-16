@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "status": "QUALIFIED_BOUNDED_TERMINAL_SHADOW_BRANCH",
-  "generatedAt": "2026-11-16T01:29:17.724572+00:00",
+  "generatedAt": "2026-11-16T03:43:19.503307+00:00",
   "node": "shader:ShaderNodeLightPath",
   "support": "partial",
   "sceneAcceptance": false,
@@ -56,17 +56,17 @@
   },
   "cases": [
     {
-      "nativeDirectory": "/tmp/scenetoweb-shadow-native-r9-original",
-      "browserDirectory": "/tmp/scenetoweb-shadow-browser-r13-original",
-      "closedReport": "/tmp/scenetoweb-shadow-original-closed-r3.json",
-      "closedSha256": "c72f71155b544278687d9e18985358775b06423c7c0a1c1741a659e3a51bade0",
+      "nativeDirectory": "/tmp/scenetoweb-shadow-native-r11-combined-original",
+      "browserDirectory": "/tmp/scenetoweb-shadow-browser-r15-combined-original",
+      "closedReport": "/tmp/scenetoweb-shadow-combined-original-closed-r4.json",
+      "closedSha256": "9ae4621ae7e78cc0823b159997e4309ca1f106412b093d3d26a48a83e494a1ed",
       "closed": {
         "status": "BOUNDED_SHADOW_AND_OWNED_ALPHA_CLOSED_NOT_SCENE_ACCEPTANCE",
         "fixture": "original-archviz-glass",
-        "sourceCommit": "d196e170a92a9dd892261f2cddeb9e82a8354658",
-        "browserSourceCommit": "127a0733689e9abbb5289cba3b59b8d03f71a67d",
-        "nativeReportSha256": "f911823abcd8bfc995574902f10f0cca65d29d5ada3f6ad96ad6207f67a80d97",
-        "browserReportSha256": "7bc4f2f953e5d5dea827992be2c781a24a0768281f24460a18f31798528da8f3",
+        "sourceCommit": "f6875a60244c1a3f2fcbc3ae7d59dd10f0798905",
+        "browserSourceCommit": "f6875a60244c1a3f2fcbc3ae7d59dd10f0798905",
+        "nativeReportSha256": "03787cc4983c5b2d180dfca6b3f9c945873c64cca4d2356304db3a13b64bce8e",
+        "browserReportSha256": "49f5434aaf16fa0c42ad59a4868a978d5235fe8558f2359129277e77ee68db06",
         "nativeProducerSha256": "6534df7ba3e382486f8554dc4483323dad77e3b7ca374b00f36e53a52fe426a0",
         "browserProducerSha256": "b4a01f104e3f078c3ff6e7f258f2322077f844818e4796f2e24d75af73a43dd6",
         "finalGlbSha256": "ee32f0d0503a5e64c610247add0a46355407ac54000e0d02fd2db25464ffab81",
@@ -136,17 +136,17 @@
       }
     },
     {
-      "nativeDirectory": "/tmp/scenetoweb-shadow-native-r10-opaque",
-      "browserDirectory": "/tmp/scenetoweb-shadow-browser-r14-opaque",
-      "closedReport": "/tmp/scenetoweb-shadow-opaque-closed-r3.json",
-      "closedSha256": "1b6a6285fa7c8471655335a97d9f2f76216a63f4f683e646adee2adca7896e5b",
+      "nativeDirectory": "/tmp/scenetoweb-shadow-native-r12-combined-opaque",
+      "browserDirectory": "/tmp/scenetoweb-shadow-browser-r16-combined-opaque",
+      "closedReport": "/tmp/scenetoweb-shadow-combined-opaque-closed-r4.json",
+      "closedSha256": "ac5f68ac62e7e74609b0b5f9de461f2a43cfac455ab10c50612a4de5c568c149",
       "closed": {
         "status": "BOUNDED_SHADOW_AND_OWNED_ALPHA_CLOSED_NOT_SCENE_ACCEPTANCE",
         "fixture": "opaque-primary",
-        "sourceCommit": "d196e170a92a9dd892261f2cddeb9e82a8354658",
-        "browserSourceCommit": "127a0733689e9abbb5289cba3b59b8d03f71a67d",
-        "nativeReportSha256": "356f74a0b845849f8e599da9ca1892500c13356f4eea0a20c27ab5ec86bfe8b9",
-        "browserReportSha256": "5f0706eda98039c808fab19b0e29a328ca4a15ad22fd3aec33329b06d5c88790",
+        "sourceCommit": "f6875a60244c1a3f2fcbc3ae7d59dd10f0798905",
+        "browserSourceCommit": "f6875a60244c1a3f2fcbc3ae7d59dd10f0798905",
+        "nativeReportSha256": "e92ddab644aa0bd38a6b796fc70c2cd4c31524da84a164ab4f46f4b3ab0e1a5e",
+        "browserReportSha256": "d6a3e4697e392fc0b725705ff76623d464686539b85fc05e5892ba9d021c2078",
         "nativeProducerSha256": "6534df7ba3e382486f8554dc4483323dad77e3b7ca374b00f36e53a52fe426a0",
         "browserProducerSha256": "b4a01f104e3f078c3ff6e7f258f2322077f844818e4796f2e24d75af73a43dd6",
         "finalGlbSha256": "0fde2f8b94e71f0af67e14deeb6c085ed7e76a7415711bf50129a317ea5464cf",
@@ -233,6 +233,11 @@
       "receipt": "experiments/shadow-transparent-branch/qualified-evidence-initial.json",
       "sha256": "6d3d3cc763fa4999fdd45ee2178957428d2d925a33d5f5db02ffd6fae9101ba4",
       "scope": "Initial no-COLOR_0 qualification; replaced by complete RGB/Alpha owner and supporting implicit-color controls."
+    },
+    {
+      "receipt": "experiments/shadow-transparent-branch/qualified-evidence-rgba-initial.json",
+      "sha256": "3d766a64a7f2955be8a9790ce1bc1b56ddca752fb424c3897a1558d20f4231c6",
+      "scope": "Initial complete RGB/Alpha proof, before private ImageBitmap ownership and ObjectNormal camera-domain changes; retained unchanged."
     }
   ]
 }

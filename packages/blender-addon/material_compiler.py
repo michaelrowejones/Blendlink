@@ -3490,7 +3490,7 @@ def _plan_tsl_program(
         geometry_ir.collect_outputs(entry.get("tslIr"), outputs)
         if outputs:
             try:
-                for obj, _slot in raw_bindings: geometry_ir.validate_owner(obj, outputs)
+                for obj, _slot in raw_bindings: geometry_ir.validate_owner(obj, outputs, entry['tslIr'])
                 if camera_data_ir.required(entry['tslIr']):
                     for obj, _slot in raw_bindings: camera_data_ir.validate_owner(obj)
                 geometry_ir.bind_normal_model(entry['tslIr'], [obj for obj, _slot in raw_bindings])

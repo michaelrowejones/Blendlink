@@ -1,3 +1,4 @@
+import { ownPrivateGltfImageBitmaps, type PrivateGltfImageBitmaps } from './threePrivateImageBitmaps.js'
 import * as THREE from 'three'
 import { loadSourcePresentation } from './sourceDisplay.js'
 import { FlyControls } from 'three/addons/controls/FlyControls.js'
@@ -1898,6 +1899,7 @@ async function prepareThreeCompiledSceneAttempt(
   }
   options.signal?.addEventListener('abort', abortOwnedRequests, { once: true })
   const loader = options.loader ?? new GLTFLoader(manager)
+  const ownedImages = options.loader ? null : ownPrivateGltfImageBitmaps(loader)
   const suppliedLoader = options.loader
     ? loader as GLTFLoader & {
         ktx2Loader?: KTX2Loader | null
@@ -1961,7 +1963,7 @@ async function prepareThreeCompiledSceneAttempt(
         // pool); this observer owns either settlement of the losing GLTF load.
         // A late graph is disposed, while a late rejection is deliberately
         // consumed so the actionable CSP failure remains the primary error.
-        if (sceneLoad) observeLateKtx2CspSceneLoad(sceneLoad, ownsNodeLights ? callerLights : null)
+        if (sceneLoad) observeLateKtx2CspSceneLoad(sceneLoad, ownsNodeLights ? callerLights : null, ownedImages)
         abortOwnedRequests()
         throw error
       }
@@ -1997,9 +1999,11 @@ async function prepareThreeCompiledSceneAttempt(
       loaded,
       ownedKtx2Loader,
       ownedNodeLights,
+      ownedImages,
     )
   } catch (error) {
     const disposalErrors = loaded ? disposeLoadedThreeResources(loaded, ownedNodeLights) : []
+    disposalErrors.push(...(ownedImages?.dispose() ?? []))
     if (ownedKtx2Loader) {
       try { ownedKtx2Loader.dispose() } catch (disposeError) { disposalErrors.push(disposeError) }
     }
@@ -3218,12 +3222,14 @@ function ownLoadedThreePreparedResources(
   loaded: GLTF,
   ownedKtx2Loader: KTX2Loader | null = null,
   ownedNodeLights: readonly THREE.Light[] = [],
+  ownedImages: PrivateGltfImageBitmaps | null = null,
 ): PreparedThreeCompiledScene {
   let resourcesDisposed = false
   const releaseResources = (): unknown[] => {
     if (resourcesDisposed) return []
     resourcesDisposed = true
     const errors = disposeLoadedThreeResources(loaded, ownedNodeLights)
+    errors.push(...(ownedImages?.dispose() ?? []))
     if (ownedKtx2Loader) {
       try { ownedKtx2Loader.dispose() } catch (error) { errors.push(error) }
     }
@@ -3426,9 +3432,10 @@ function disposeLoadedThreeResources(loaded: GLTF, ownedNodeLights: readonly THR
   return errors
 }
 
-function observeLateKtx2CspSceneLoad(load: Promise<LoadedWithBindings>, callerLights: ReadonlySet<THREE.Light> | null = null): void {
+function observeLateKtx2CspSceneLoad(load: Promise<LoadedWithBindings>, callerLights: ReadonlySet<THREE.Light> | null = null, ownedImages: PrivateGltfImageBitmaps | null = null): void {
   void load.then((lateLoaded) => {
     const errors = disposeLoadedThreeResources(lateLoaded, callerLights ? privateLoadedNodeLights(lateLoaded, callerLights) : [])
+    errors.push(...(ownedImages?.dispose() ?? []))
     if (errors.length > 0) {
       console.error(
         'SceneToWeb received a late glTF result after a KTX2 CSP failure, but could not ' +

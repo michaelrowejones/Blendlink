@@ -1,0 +1,293 @@
+diff --git a/packages/blendlink/blender/source_camera_projection.py b/packages/blendlink/blender/source_camera_projection.py
+new file mode 100644
+index 00000000..f08904fe
+--- /dev/null
++++ b/packages/blendlink/blender/source_camera_projection.py
+@@ -0,0 +1,54 @@
++# SPDX-License-Identifier: GPL-3.0-or-later
++"""Read-only static optical snapshot. Metadata alone never installs a camera."""
++import bpy
++from mathutils import Matrix
++
++
++def extract_camera_projection(scene, *, camera=None, depsgraph=None, extent=None):
++    camera = camera or scene.camera
++    if camera is None or camera.type != 'CAMERA':
++        return None
++    depsgraph = depsgraph or bpy.context.evaluated_depsgraph_get()
++    evaluated = camera.evaluated_get(depsgraph)
++    data = evaluated.data
++    render = scene.render
++    width, height = extent or (max(1, int(render.resolution_x*render.resolution_percentage/100)),
++                              max(1, int(render.resolution_y*render.resolution_percentage/100)))
++    reasons = []
++    if data.type not in {'PERSP', 'ORTHO'}:
++        reasons.append('Only perspective and orthographic cameras are in the static candidate')
++    if render.use_border:
++        reasons.append('Render border/crop needs a separate transport proof')
++    if render.use_multiview:
++        reasons.append('Multiview cameras need a separate transport proof')
++    if len(camera.constraints):
++        reasons.append('Constrained camera motion is not in the static candidate')
++    for owner in (scene, camera, camera.data):
++        animation = owner.animation_data
++        if animation and (animation.action or animation.drivers or animation.nla_tracks):
++            reasons.append('Animated camera/scene optics are not in the static candidate')
++            break
++    axes = [evaluated.matrix_world.col[index].to_3d() for index in range(3)]
++    if any(abs(axis.length-1)>1e-5 for axis in axes) or evaluated.matrix_world.to_3x3().determinant()<=0:
++        reasons.append('Scaled or reflected camera transforms are not in the static candidate')
++    if max(abs(axes[a].dot(axes[b])) for a,b in ((0,1),(0,2),(1,2)))>1e-5:
++        reasons.append('Sheared camera transforms are not in the static candidate')
++    projection = evaluated.calc_matrix_camera(depsgraph, x=width, y=height,
++        scale_x=render.pixel_aspect_x, scale_y=render.pixel_aspect_y)
++    # Exact glTF axis permutation avoids a trigonometric90-degree roundoff.
++    world = Matrix(((1,0,0,0),(0,0,1,0),(0,-1,0,0),(0,0,0,1))) @ evaluated.matrix_world
++    return {'version':1,'model':'native-static-camera-projection-v1',
++        'qualification':'cpu-matrix-candidate','automaticEnabled':False,
++        'nativeVersion':list(bpy.app.version),'nativeBuild':bpy.app.build_hash.decode(),
++        'camera':camera.name,'cameraType':data.type,'frame':scene.frame_current,
++        'renderExtent':[width,height],
++        'renderBorder':{'enabled':bool(render.use_border),'cropToBorder':bool(render.use_crop_to_border),
++                        'bounds':[float(render.border_min_x),float(render.border_min_y),float(render.border_max_x),float(render.border_max_y)]},
++        'pixelAspect':[float(render.pixel_aspect_x),float(render.pixel_aspect_y)],
++        'lensMillimeters':float(data.lens),'sensorFit':data.sensor_fit,
++        'sensorWidthMillimeters':float(data.sensor_width),'sensorHeightMillimeters':float(data.sensor_height),
++        'orthoScale':float(data.ortho_scale),'shift':[float(data.shift_x),float(data.shift_y)],
++        'clipNear':float(data.clip_start),'clipFar':float(data.clip_end),
++        'projectionClipRange':'minus-one-to-one','projection':[float(v) for row in projection for v in row],
++        'cameraWorldGltf':[float(v) for row in world for v in row],
++        'candidateRejectionReasons':reasons}
+diff --git a/packages/blendlink/blender/source_presentation.py b/packages/blendlink/blender/source_presentation.py
+index 8c2140c7..59cf6de2 100644
+--- a/packages/blendlink/blender/source_presentation.py
++++ b/packages/blendlink/blender/source_presentation.py
+@@ -212,0 +213,4 @@ def export_source_presentation(scene, glb_path):
++    import source_camera_projection
++    source_camera = source_camera_projection.extract_camera_projection(scene)
++    if source_camera is not None:
++        result['cameraProjection'] = source_camera
+diff --git a/packages/blendlink/src/sourceCameraProjection.test.ts b/packages/blendlink/src/sourceCameraProjection.test.ts
+new file mode 100644
+index 00000000..7b856b65
+--- /dev/null
++++ b/packages/blendlink/src/sourceCameraProjection.test.ts
+@@ -0,0 +1,100 @@
++import{describe,expect,it}from'vitest'
++import{Matrix4,Vector3,Vector4,PerspectiveCamera,OrthographicCamera,WebGLCoordinateSystem,WebGPUCoordinateSystem}from'three'
++import references from '../../../experiments/camera-projection-shift/native-cpu.json'
++import{createExperimentalSourceCameraProjection,type SourceCameraProjection}from'./sourceCameraProjection.js'
++
++const source=(index=0)=>structuredClone(references.cases[index])as unknown as SourceCameraProjection
++function nativeMatrix(p:readonly number[]){return new Matrix4().set(...p as Parameters<Matrix4['set']>)}
++function point(matrix:Matrix4,p:readonly number[]){const v=new Vector4(p[0],p[1],p[2],1).applyMatrix4(matrix);return[v.x/v.w,v.y/v.w,v.z/v.w]}
++function closeArray(a:readonly number[],b:readonly number[],epsilon=2e-5){expect(a).toHaveLength(b.length);a.forEach((v,i)=>expect(Math.abs(v-b[i])).toBeLessThan(epsilon))}
++
++describe('static source projection candidate, no automatic installation',()=>{
++ it.each(references.cases.map((row,index)=>[row.id,index]as const))('matches native matrix/rays %s',(_id,index)=>{
++  const row=references.cases[index],metadata=source(index)
++  for(const system of[WebGLCoordinateSystem,WebGPUCoordinateSystem]){
++   const factory=createExperimentalSourceCameraProjection(metadata,system),camera=factory.camera
++   expect(factory.automaticEnabled).toBe(false)
++   expect(camera.coordinateSystem).toBe(system)
++   const expected=nativeMatrix(metadata.projection),actual=camera.projectionMatrix
++   for(let r=0;r<4;r++)for(let c=0;c<4;c++){
++    const native=expected.elements[c*4+r]
++    const adjusted=system===WebGPUCoordinateSystem&&r===2?(native+expected.elements[c*4+3])/2:native
++    expect(Math.abs(actual.elements[c*4+r]-adjusted)).toBeLessThan(2e-5)
++   }
++   if('controlPoints'in row&&'nativeNdc'in row)row.controlPoints.forEach((p,i)=>{
++    const expected=row.nativeNdc[i],ndc=point(actual,p)
++    closeArray(ndc,[expected[0],expected[1],system===WebGPUCoordinateSystem?(expected[2]+1)/2:expected[2]])
++   })
++   row.nativeRays.forEach(ray=>{
++    const near=new Vector4(...ray.ndc,system===WebGPUCoordinateSystem?0:-1,1).applyMatrix4(camera.projectionMatrixInverse)
++    const far=new Vector4(...ray.ndc,1,1).applyMatrix4(camera.projectionMatrixInverse)
++    const a=new Vector3(near.x/near.w,near.y/near.w,near.z/near.w),b=new Vector3(far.x/far.w,far.y/far.w,far.z/far.w)
++    closeArray(a.toArray().slice(0,2),ray.nearPoint.slice(0,2))
++    // Blender's float32 inverse of a long-range orthographic matrix subtracts
++    // two ~far/2 values at the near plane. Bound that CPU-oracle cancellation
++    // by float32 epsilon*far; independently check the authored near scalar.
++    expect(Math.abs(a.z+metadata.clipNear)).toBeLessThan(1e-8)
++    expect(Math.abs(a.z-ray.nearPoint[2])).toBeLessThan(2**-23*metadata.clipFar)
++    closeArray(b.sub(a).normalize().toArray(),ray.direction)
++   })
++   const before=camera.projectionMatrix.clone()
++   factory.resize(metadata.renderExtent[0]*2,metadata.renderExtent[1]*2)
++   closeArray(camera.projectionMatrix.elements,before.elements)
++   expect(()=>factory.resize(1000,777)).toThrow(/authored aspect/)
++  }
++ })
++ it('actual stock glTF camera exports retain centered projections and omit both authored shifts',()=>{
++  for(const entry of references.stockGltfControls){
++   const gltf=entry.gltfCameras[0] as unknown as {perspective?:{yfov:number;aspectRatio:number;znear:number;zfar:number};orthographic?:{xmag:number;ymag:number;znear:number;zfar:number}}
++   const data=gltf.perspective??gltf.orthographic!
++   const centered=gltf.perspective?new PerspectiveCamera(gltf.perspective.yfov*180/Math.PI,gltf.perspective.aspectRatio,data.znear,data.zfar)
++    :new OrthographicCamera(-gltf.orthographic!.xmag,gltf.orthographic!.xmag,gltf.orthographic!.ymag,-gltf.orthographic!.ymag,data.znear,data.zfar)
++   const native=entry.sourceProjection.projection
++   const slots=entry.kind==='PERSP'?[8,9]:[12,13],nativeSlots=entry.kind==='PERSP'?[2,6]:[3,7]
++   slots.forEach(slot=>expect(Math.abs(centered.projectionMatrix.elements[slot])).toBe(0))
++   expect(Math.abs(native[nativeSlots[0]])+Math.abs(native[nativeSlots[1]])).toBeGreaterThan(.1)
++  }
++ })
++ it('lens shift translates the image plane without changing signed projected triangle facing',()=>{
++  const vertices=[[-.3,-.2,-2],[.8,-.1,-3],[-.2,.7,-5]]
++  const signedArea=(m:Matrix4)=>{const[a,b,c]=vertices.map(v=>point(m,v));return(b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0])}
++  for(const row of references.cases){
++   const shifted=nativeMatrix(row.projection),centered=shifted.clone()
++   if(row.cameraType==='PERSP'){centered.elements[8]=0;centered.elements[9]=0}else{centered.elements[12]=0;centered.elements[13]=0}
++   expect(signedArea(shifted)).toBeCloseTo(signedArea(centered),12)
++   const deltas=vertices.map(v=>{const a=point(shifted,v),b=point(centered,v);return[a[0]-b[0],a[1]-b[1]]})
++   deltas.forEach(delta=>closeArray(delta,deltas[0],1e-12))
++  }
++ })
++ it('records and refuses the original border flag even when its bounds currently cover the full frame',()=>{
++  const original=references.originalCameras[0]
++  expect(original.shift).toEqual([0,-.08999999612569809])
++  expect(original.renderBorder).toEqual({enabled:true,cropToBorder:false,bounds:[0,0,1,1]})
++  expect(()=>createExperimentalSourceCameraProjection(original as unknown as SourceCameraProjection)).toThrow(/rejected|border/)
++ })
++ it('recovers the actual original optical off-axis term in an explicitly nonborder full-frame math control',()=>{
++  const original=structuredClone(references.originalCameras[0]) as unknown as SourceCameraProjection
++  // This is a derived CPU matrix control. The unmodified original above
++  // remains refused; no production border/source admission is changed.
++  original.renderBorder.enabled=false;original.candidateRejectionReasons=[]
++  const {camera}=createExperimentalSourceCameraProjection(original)
++  expect(camera.view?.offsetY).toBeCloseTo(172.79998004436493,5)
++  expect(camera.projectionMatrix.elements[9]).toBeCloseTo(-.31999996304512024,7)
++ })
++ it.each(['near','matrix-z','pixel-aspect','border','scale','reflection'])( 'refuses mismatched/unsupported %s',kind=>{
++  const metadata=source()
++  if(kind==='near')metadata.clipNear=NaN
++  if(kind==='matrix-z')(metadata.projection as number[])[10]=0
++  if(kind==='pixel-aspect')metadata.pixelAspect=[2,1]
++  if(kind==='border')metadata.renderBorder.enabled=true
++  if(kind==='scale'){(metadata.cameraWorldGltf as number[])[0]=2}
++  if(kind==='reflection'){(metadata.cameraWorldGltf as number[])[0]=-1}
++  expect(()=>createExperimentalSourceCameraProjection(metadata)).toThrow()
++ })
++ it('uses owned cloned metadata; caller changes do not rewrite a live camera or resize policy',()=>{
++  const metadata=source(),before=structuredClone(metadata),factory=createExperimentalSourceCameraProjection(metadata)
++  metadata.renderExtent=[100,100];(metadata.projection as number[])[2]=9
++  factory.resize(...before.renderExtent)
++  expect(factory.camera.view?.offsetX).toBeCloseTo(before.projection[2]*before.renderExtent[0]*before.pixelAspect[0]/2)
++ })
++})
+diff --git a/packages/blendlink/src/sourceCameraProjection.ts b/packages/blendlink/src/sourceCameraProjection.ts
+new file mode 100644
+index 00000000..cec9312a
+--- /dev/null
++++ b/packages/blendlink/src/sourceCameraProjection.ts
+@@ -0,0 +1,106 @@
++/** Static native projection transport candidate. No installer calls this module.
++ * Projection bounds are decoded from native metadata; Three owns clip-Z math. */
++import {Matrix4,OrthographicCamera,PerspectiveCamera,WebGLCoordinateSystem,WebGPUCoordinateSystem,
++ type CoordinateSystem} from 'three'
++
++export interface SourceCameraProjection {
++ version:1
++ model:'native-static-camera-projection-v1'
++ qualification:'cpu-matrix-candidate'
++ automaticEnabled:false
++ nativeVersion:readonly number[]
++ nativeBuild:string
++ camera:string
++ cameraType:'PERSP'|'ORTHO'
++ frame:number
++ renderExtent:readonly[number,number]
++ pixelAspect:readonly[number,number]
++ renderBorder:{enabled:boolean;cropToBorder:boolean;bounds:readonly[number,number,number,number]}
++ lensMillimeters:number
++ sensorFit:string
++ sensorWidthMillimeters:number
++ sensorHeightMillimeters:number
++ orthoScale:number
++ shift:readonly[number,number]
++ clipNear:number
++ clipFar:number
++ projectionClipRange:'minus-one-to-one'
++ projection:readonly number[]
++ cameraWorldGltf:readonly number[]
++ candidateRejectionReasons:readonly string[]
++}
++
++function validate(source:SourceCameraProjection):void{
++ const fail=(reason:string):never=>{throw Error('Static source camera projection: '+reason)}
++ if(source.version!==1||source.model!=='native-static-camera-projection-v1'
++   ||source.qualification!=='cpu-matrix-candidate'||source.automaticEnabled!==false)
++  fail('unsupported unqualified metadata contract')
++ if(!source.renderBorder||source.renderBorder.enabled!==false||typeof source.renderBorder.cropToBorder!=='boolean'
++   ||source.renderBorder.bounds?.length!==4||!source.renderBorder.bounds.every(v=>Number.isFinite(v)&&v>=0&&v<=1))fail('render border/crop is outside the static shift candidate')
++ if(source.nativeVersion?.join('.')!=='5.3.0'||source.nativeBuild!=='02f0899d78e3')fail('source matrix model is pinned to Blender 5.3.0 build 02f0899d78e3')
++ if(!['PERSP','ORTHO'].includes(source.cameraType)||source.projectionClipRange!=='minus-one-to-one')fail('unsupported camera class or clip range')
++ if(!Array.isArray(source.candidateRejectionReasons)||source.candidateRejectionReasons.length)fail('source optics rejected: '+source.candidateRejectionReasons?.join('; '))
++ for(const matrix of[source.projection,source.cameraWorldGltf])
++  if(!Array.isArray(matrix)||matrix.length!==16||!matrix.every(Number.isFinite))fail('invalid matrix')
++ if(!Number.isFinite(source.clipNear)||!Number.isFinite(source.clipFar)||source.clipNear<=0||source.clipFar<=source.clipNear)fail('invalid source clipping')
++ if(source.renderExtent?.length!==2||!source.renderExtent.every(v=>Number.isInteger(v)&&v>0)
++   ||source.pixelAspect?.length!==2||!source.pixelAspect.every(v=>Number.isFinite(v)&&v>0))fail('invalid native render extent/pixel aspect')
++ const p=source.projection
++ if(p[0]<=0||p[5]<=0||Math.abs(p[1])+Math.abs(p[4])>1e-7)fail('unsupported optical XY skew or reflected image')
++ if(source.cameraType==='PERSP'&&(p[3]!==0||p[7]!==0||p[12]!==0||p[13]!==0||p[14]!==-1||p[15]!==0))fail('invalid perspective rows')
++ if(source.cameraType==='ORTHO'&&(p[2]!==0||p[6]!==0||p[12]!==0||p[13]!==0||p[14]!==0||p[15]!==1))fail('invalid orthographic rows')
++ const nativeAspect=source.renderExtent[0]*source.pixelAspect[0]/(source.renderExtent[1]*source.pixelAspect[1])
++ if(Math.abs(p[5]/p[0]-nativeAspect)>2e-5*Math.max(1,nativeAspect))fail('matrix and native pixel aspect disagree')
++ const expected=new Matrix4()
++ if(source.cameraType==='PERSP'){
++  const cx=source.clipNear*p[2]/p[0],cy=source.clipNear*p[6]/p[5],hx=source.clipNear/p[0],hy=source.clipNear/p[5]
++  expected.makePerspective(cx-hx,cx+hx,cy+hy,cy-hy,source.clipNear,source.clipFar,WebGLCoordinateSystem)
++ }else{
++  const cx=-p[3]/p[0],cy=-p[7]/p[5],hx=1/p[0],hy=1/p[5]
++  expected.makeOrthographic(cx-hx,cx+hx,cy+hy,cy-hy,source.clipNear,source.clipFar,WebGLCoordinateSystem)
++ }
++ for(let row=0;row<4;row++)for(let column=0;column<4;column++)
++  if(Math.abs(expected.elements[column*4+row]-p[row*4+column])>3e-5*Math.max(1,Math.abs(p[row*4+column])))fail('native matrix/clipping parameters disagree')
++ const world=new Matrix4().set(...source.cameraWorldGltf as Parameters<Matrix4['set']>)
++ if(world.determinant()<=0||Math.abs(world.determinant()-1)>1e-4)fail('source camera world transform is not a rigid positive frame')
++ const w=world.elements
++ for(let axis=0;axis<3;axis++){
++  const length=w[axis*4]**2+w[axis*4+1]**2+w[axis*4+2]**2
++  if(Math.abs(length-1)>1e-4)fail('scaled source camera basis')
++  for(let other=axis+1;other<3;other++)
++   if(Math.abs(w[axis*4]*w[other*4]+w[axis*4+1]*w[other*4+1]+w[axis*4+2]*w[other*4+2])>1e-4)fail('sheared source camera basis')
++ }
++ if(w[3]!==0||w[7]!==0||w[11]!==0||w[15]!==1)fail('projective source world transform')
++ if(typeof source.camera!=='string'||!source.camera||!Number.isFinite(source.frame))fail('missing source identity')
++}
++
++/** New research-owned camera only: never rewrites an application camera.
++ * Uniform output resize preserves authored rays. Other aspect/crop policies
++ * need fresh native matrices and are deliberately refused in this candidate. */
++export function createExperimentalSourceCameraProjection(source:SourceCameraProjection,
++ coordinateSystem:CoordinateSystem=WebGLCoordinateSystem){
++ validate(source)
++ if(coordinateSystem!==WebGLCoordinateSystem&&coordinateSystem!==WebGPUCoordinateSystem)
++  throw Error('Static source camera projection requires a declared WebGL/WebGPU clip range')
++ const snapshot=structuredClone(source),p=snapshot.projection
++ const camera=snapshot.cameraType==='PERSP'
++  ?new PerspectiveCamera(2*Math.atan(1/p[5])*180/Math.PI,p[5]/p[0],snapshot.clipNear,snapshot.clipFar)
++  :new OrthographicCamera(-1/p[0],1/p[0],1/p[5],-1/p[5],snapshot.clipNear,snapshot.clipFar)
++ camera.name=snapshot.camera;camera.coordinateSystem=coordinateSystem
++ camera.matrixAutoUpdate=false
++ camera.matrix.set(...snapshot.cameraWorldGltf as Parameters<Matrix4['set']>)
++ camera.updateMatrixWorld(true)
++ const resize=(width:number,height:number):void=>{
++  if(!Number.isInteger(width)||!Number.isInteger(height)||width<=0||height<=0
++   ||Math.abs(width/height-snapshot.renderExtent[0]/snapshot.renderExtent[1])>1e-6)
++   throw Error('Static source camera projection currently preserves the authored aspect only; no implicit crop or reframe')
++  const fullWidth=width*snapshot.pixelAspect[0],fullHeight=height*snapshot.pixelAspect[1]
++  // A full-size view offset translates both image axes; filmOffset alone
++  // cannot represent vertical shift. Camera basis/pose is not moved.
++  const offsetX=(snapshot.cameraType==='PERSP'?p[2]:-p[3])*fullWidth/2
++  const offsetY=(snapshot.cameraType==='PERSP'?-p[6]:p[7])*fullHeight/2
++  camera.setViewOffset(fullWidth,fullHeight,offsetX,offsetY,fullWidth,fullHeight)
++ }
++ resize(...snapshot.renderExtent)
++ return{camera,resize,qualification:'cpu-matrix-candidate' as const,automaticEnabled:false as const}
++}
+diff --git a/packages/blendlink/src/sourceDisplay.ts b/packages/blendlink/src/sourceDisplay.ts
+index ba238410..82249fd5 100644
+--- a/packages/blendlink/src/sourceDisplay.ts
++++ b/packages/blendlink/src/sourceDisplay.ts
+@@ -21,0 +22 @@ export interface SourcePresentation {
++  cameraProjection?: import('./sourceCameraProjection.js').SourceCameraProjection
